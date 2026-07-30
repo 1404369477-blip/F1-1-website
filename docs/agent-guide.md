@@ -73,3 +73,16 @@
 - 如何回退
 
 用户确认后,再更新 Spec 和代码。
+
+## UI / 设计可视化确认
+
+凡涉及 UI、交互、视觉呈现、页面布局、设计稿、用户体验路径的节点,设计产出不能只交文字说明、ASCII 线框、Markdown 表格或抽象结论;必须提供用户可直接判断的可视化预览。
+
+- 优先使用 OpenDesign 等专用设计工具生成可编辑设计产物或 artifact。
+- 如果当前会话未热加载 OpenDesign MCP、OpenDesign 没有 active project、权限不足或工具连接失败,必须明确说明失败原因,并用本地 HTML + PNG 截图、Figma、可打开图片预览等方式兜底。
+- OpenDesign 接入时,先确认本机 OpenDesign App 是否运行,再确认 daemon 健康状态;不要假设默认端口一定是 7456,应从 OpenDesign 日志或本机监听端口确认实际 daemon URL。
+- 若 OpenDesign artifact 写入提示没有 active project,要求用户在 OpenDesign 内创建或点进项目,或使用兜底方案交付,不能卡住节点。
+- 未安装 / 未运行 OpenDesign、权限不足、连接失败或 MCP 未热加载时,主动询问用户是否需要帮忙安装 / 启动 / 授权 / 注册 MCP / 重载或新开会话。
+- 用户不想处理 OpenDesign 或不愿意重载 / 新开会话时,不得卡住,应按用户偏好直接选择本地 HTML + PNG、Figma 或可打开图片预览。
+- 设计回报必须同时包含设计说明文档路径和可视化预览路径;若使用兜底方案,写清 OpenDesign 当前状态和后续恢复条件。
+- 用户确认设计视觉或交互方向前,不得进入正式实现。用户只反馈功能方向 OK 但 UI 未确认时,只能推进功能可行性或技术评估。

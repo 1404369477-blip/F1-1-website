@@ -7,6 +7,7 @@
 
 ## 2026-07-30
 
+- ✅ 已按 `vibe-project-foundation` v0.1.0 的新版模板增量同步 UI / 设计可视化确认规则及多会话审核报告路径。
 - ✅ 搭好开发前地基:`docs/` `app/` `design/` `scratch/` + `CLAUDE.md` 等 AI 工作层。
 - ✅ 已创建 `docs/spec.md` 作为后续开发唯一准绳,并准备 `AGENTS.md` / `CLAUDE.md` 两个轻入口。
 - 📌 下一步:确认结构 → 进入 M1 Spec v0,先写清问题、用户、场景、边界和成功标准。
