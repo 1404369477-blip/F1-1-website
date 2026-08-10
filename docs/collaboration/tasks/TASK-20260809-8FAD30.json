@@ -1,0 +1,60 @@
+{
+  "acceptance_exit": "在同一production候选上，独立详情200可读且返回信息流可用；inline与独立详情分别实达404/通用错误/同对象重试恢复；回顶在鼠标/键盘/reduced-motion下恢复阅读焦点；连续两条手风琴互斥、整条居中、外点关闭；主题在刷新/重开、非法cookie、localStorage拒写/异常时安全恢复且React hydration零错误。1440/1024/390关键视觉几何与冻结设计一致；逐Function ID报告源码hash、入口、成功/失败/恢复和未验证项。只跑与改动相关的一轮聚焦验证、lint/typecheck/build，禁止以整站PASS收口。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/src/app/globals.css",
+    "app/src/components/f1/f1-page-shell.tsx",
+    "app/src/components/f1/story-parts.tsx",
+    "app/src/features/stories/feed-experience.tsx",
+    "app/src/features/stories/story-detail-experience.tsx",
+    "app/src/tests/public-ui.test.ts",
+    "docs/collaboration/部门/开发部/报告/2026-08-09-公开阅读功能闭环第一波实现报告.md",
+    "docs/collaboration/部门/开发部/交接班文档.md"
+  ],
+  "authorization_evidence": "用户当前明确要求；COR-20260809T102214-960E65",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T11:07+08:00",
+      "evidence": "用户当前明确要求；COR-20260809T102214-960E65",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/019fb374-7c86-7882-9e51-76114ce69e7f",
+  "completion_class": "standard",
+  "confirmation": "用户2026-08-09明确要求开发部高度贴合视觉设计，并落实所有功能项；本任务是已确认本地功能的第一波闭环，用户门禁项保持关闭。",
+  "created_at": "2026-08-09T11:07+08:00",
+  "department": "开发部",
+  "details": "以docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md、公开页冻结设计SHA-256 5a84bfb27294ebd727369118a95528f5b788bfacbe2d56cc03fcb006f6168cb1及COR-20260809T102214-960E65为唯一入口，落实PUB-DETAIL-001、PUB-DETAIL-004、PUB-DETAIL-005、UI-TOP-001、UI-ACCORDION-001、UI-THEME-002剩余异常存储路径。硬门：高度贴合确认视觉；每个Function ID必须有真实可达入口、同源数据/状态链、失败与恢复出口。组件预留、静态分支、隐藏状态、NOT_RUN、文档或测试专用入口不计完成。不得改DTO/DB/data/accepted ADR/设计稿/package lock，不得触碰P1-03多图、Admin、RSS、真实外部能力或部署。若视觉稿未定义必要可见控件，停止该单项并提交精确设计缺口，不自行改向。",
+  "domain_stage": "M5公开页全功能闭环第一波",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任何实现需要新增可见控件但冻结视觉无锚点：停止该Function ID，记录差异并回设计部，不自行设计。",
+    "故障态只能靠静态Demo、隐藏开关或测试组件到达：保持P1并回报需要的数据/运行故障fixture。",
+    "实现会改 accepted DTO/DB/data/依赖或与多媒体successor冲突：停止越界部分并回统筹拆 successor。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已按COR-20260809T102214-960E65与全功能追踪矩阵逐Function ID核对真实入口、状态链、失败和恢复；视觉差异表明确1440/1024/390与深浅主题证据缺口；未将静态分支、测试触发器、前序证据或NOT_RUN计为完成；未新增debug入口、第二数据真值、DTO/DB/data/依赖、外部I/O或越界功能；3011/3012已停止且任务/tmp已清理",
+  "node": "在多媒体V2接线前关闭不依赖新数据合同的公开页P1",
+  "pointers": [
+    "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md",
+    "design/ui/F1+1-v0.2-全站设计/F1+1-v0.2-final-20260808.html",
+    "docs/collaboration/tasks/TASK-20260809-4C59A9.json"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-09-公开阅读功能闭环第一波实现报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-8FAD30",
+  "title": "公开阅读功能闭环第一波：详情恢复、回顶、手风琴与主题异常",
+  "unverified": [
+    "UI-TOP-001与UI-ACCORDION-001的reduced-motion真实浏览器出口；UI-THEME-002真实Storage getter/setter抛错的浏览器实机出口（聚焦测试已证通用catch）；当前最终候选1024深浅主题及1440/390缺失主题的同视口视觉对照；最终故障代理轮次OS PID原始值"
+  ],
+  "updated_at": "2026-08-09T11:42+08:00",
+  "verified": [
+    "PUB-DETAIL-001/004/005在同一production候选完成成功、404/503、同对象重试与返回信息流；UI-TOP鼠标/键盘回顶至y=0并恢复主区焦点；UI-ACCORDION互斥、整条居中、外点关闭；390 Escape精确回原触发图；非法主题cookie安全回dark，cookie-only light刷新/重开且React#418=0；Node24聚焦测试12/12、lint 0 errors、typecheck与build通过；独立静态对抗复核P0=0/P1=0（实现层）"
+  ]
+}

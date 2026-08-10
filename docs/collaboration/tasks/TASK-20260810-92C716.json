@@ -1,0 +1,56 @@
+{
+  "acceptance_exit": "提交测试部final successor报告与机器manifest；单次进程内harness PASS，59+1/local_synthetic/retired-stopped-disabled、session destroy清除/后续401语义及HTTP映射静态锚点均闭合；结合A3293F实跑证据判测试出口P0=0/P1=0并TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-08-10-92C716进程内最终缺口复验报告.md",
+    "docs/collaboration/部门/测试部/报告/TASK-20260810-92C716-evidence/evidence-manifest.json"
+  ],
+  "authorization_evidence": "用户已批准4CBFA7；其环境装配失败后，本后继缩窄为无server、无正式DB、无外联的同一测试缺口。",
+  "authorization_history": [
+    {
+      "at": "2026-08-10T09:40+08:00",
+      "evidence": "用户已批准4CBFA7；其环境装配失败后，本后继缩窄为无server、无正式DB、无外联的同一测试缺口。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "测试部/019fb379-9212-7e80-a5df-587d339936c4",
+  "completion_class": "audit",
+  "confirmation": "本任务是最终测试缺口的进程内收口；禁止再次创建完整HTTP实例或重复A3293F矩阵。",
+  "created_at": "2026-08-10T09:40+08:00",
+  "department": "测试部",
+  "details": "承接ACK的A3293F与4CBFA7：A3293F已独立HTTP验证至list_after=200，产品缺陷=false；4CBFA7因shadow fixture路径在监听前拒绝，产品缺陷=false。为避免第三次重复实例，本任务严禁启动server/端口/readiness。唯一候选仍为ACK 875B6C。使用固定Node24一次性进程内harness：把closed DB SHA ddf3778c物理复制到0700 temp root下canonical basename，使用openSafeDatabase(...,{appRoot,allowTestRoot:tempRoot})和SourceManagementRepository只读副本，断言list limit100=59 baseline+1 local、local meta.origin=local_synthetic且lifecycle/onboarding/enabled=retired/stopped/false；独立实例化AdminSessionStore，create/get后destroy，断言清除cookie、activeCount=0且后续get为ADMIN_SESSION_REQUIRED；只读核对http.ts DELETE session分支仍先consumeCsrf再destroy并返回204、list分支仍调用sessions.get，因此与A3293F真实HTTP证据组合关闭destroy204/后401出口。不得改任何repo文件、运行server/build/typecheck/全量、打开正式DB或外联。",
+  "domain_stage": "M5-SOURCE-MGMT测试最终缺口",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "输入SHA、closed DB、875B6C或A3293F/4CBFA7证据漂移：不运行并block。",
+    "harness需要server、fixture初始化、修改repo、正式DB或第二次调用：立即block，不扩大。",
+    "任一进程内断言首错或临时副本/正式资产清理异常：停止并保留实得，不修harness重跑。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "使用closed DB物理副本且未打开正式DB；使用local_synthetic未延续local_overlay错误；harness仅调用一次且无重跑；未导入server、触发readiness、监听端口、外联或运行build/typecheck/全量；A3293F与4CBFA7历史FAIL未覆盖，PASS不外推整套产品",
+  "node": "不用server/shadow app，只在进程内验证closed DB副本投影与session销毁语义",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260810-A3293F.json",
+    "docs/collaboration/tasks/TASK-20260810-4CBFA7.json",
+    "docs/collaboration/部门/测试部/报告/2026-08-10-A3293F修复后独立HTTP恢复矩阵报告.md",
+    "docs/collaboration/部门/测试部/报告/2026-08-10-4CBFA7最小successor独立复验报告.md",
+    "docs/collaboration/tasks/TASK-20260810-875B6C.json"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-08-10-92C716进程内最终缺口复验报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260810-92C716",
+  "title": "进程内关闭local_synthetic与session destroy最终缺口",
+  "unverified": [
+    "本轮按合同禁止新server与真实HTTP destroy请求；真实provider、外部API、Admin UI、部署与生产数据能力保持关闭且不在范围"
+  ],
+  "updated_at": "2026-08-10T09:56+08:00",
+  "verified": [
+    "冻结875B6C与A3293F/4CBFA7输入SHA匹配；固定Node24单次进程内harness exit0；closed DB副本integrity=ok；Repository精确59 baseline+1 local_synthetic且local为retired/stopped/disabled；AdminSessionStore create/get/destroy、清除cookie、activeCount=0、销毁后ADMIN_SESSION_REQUIRED/401；http.ts consumeCsrf→destroy→204及list sessions.get静态映射；无server/readiness/listener/HTTP/外联；正式DB零漂移、临时根零残留"
+  ]
+}

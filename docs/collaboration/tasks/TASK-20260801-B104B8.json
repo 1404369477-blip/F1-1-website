@@ -1,0 +1,64 @@
+{
+  "acceptance_exit": "提交测试部审核报告，列出P0/P1/P2、合同矛盾、必改项、可执行验收命令与M4正式开工Go或No-Go结论，并完成任务返回TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-08-01-Spec-v1与M4-ADR跨合同可验收性复核报告.md"
+  ],
+  "authorization_evidence": "用户已授权本地技术选型与app开工；当前为定版前只读复核，DEC-20260801T223248-7C91D6。",
+  "authorization_history": [
+    {
+      "at": "2026-08-01T23:46+08:00",
+      "evidence": "用户已授权本地技术选型与app开工；当前为定版前只读复核，DEC-20260801T223248-7C91D6。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "测试部/019fb379-9212-7e80-a5df-587d339936c4",
+  "completion_class": "audit",
+  "confirmation": "复核通过后由统筹部合并开发与安全意见，再交产品部定版；本任务不授权实现。",
+  "created_at": "2026-08-01T23:46+08:00",
+  "department": "测试部",
+  "details": "读取Spec v1候选、ADR-M4-KICKOFF-001、首批页面设计合同与token map、本地MVP数据合同、开发预检和M4验收矩阵。独立检查术语、目录、字段、状态机、命令、四个纵向切片、fixture-only边界、失败恢复、人工审核与发布hash是否一致且可测试；建立accepted前Go或No-Go表，覆盖Node24门禁、依赖安装、build/lint/type/test、SQLite幂等与双worker、四页全部状态、响应式和无障碍、XSS/SSRF/open redirect/prompt injection、零外部调用。只读报告，不修改Spec、ADR、设计、数据或app。",
+  "domain_stage": "M4系统路线复核",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任何跨文档字段或状态机冲突可能形成第二套真值时判阻断并定位到精确文件/条目。",
+    "任何验收出口依赖真实平台、真实Base、部署或自动发布时改为fixture/mock证据或标Unknown，不越权验证。",
+    "当前机器无法启动端口或安装依赖时区分合同问题与环境限制，保留可执行的无socket或延后验证出口。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未把 proposed 文档写成 accepted；未把 M3 影子或 fixture 写成业务真值；未把 Python disposable probe PASS 写成 Node/Next app、真实平台或生产 SLO 通过；按统筹部裁决把 Node25、lockfile、spike和运行收据限定为 C 实现验收门禁，不阻断 A 定版后创建最小脚手架；设计 handoff/visual_diff=0 仅作为已核收输入，实际 app UI/AT 保留为 C 未验证；未访问或修改真实飞书资源，未保存 token/open_id/appId/auth 原始 JSON。",
+  "node": "在系统ADR定版前完成跨合同独立测试复核",
+  "pointers": [
+    "docs/spec.md",
+    "docs/decisions/system/2026-08-01-F1+1-M4本地Kickoff系统路线-proposed.md",
+    "docs/collaboration/部门/测试部/报告/2026-08-01-M4本地Kickoff与首批纵向切片验收矩阵.md",
+    "design/ui/F1+1-首批页面token-map-v0.1.json",
+    "data/mvp-contract-v0/manifest.json"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-08-01-Spec-v1与M4-ADR跨合同可验收性复核报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260801-B104B8",
+  "title": "复核Spec v1与M4 ADR可验收性",
+  "unverified": [
+    "P0 合同修订、ADR accepted 状态和产品/数据/安全/开发共同签收的等价合同。",
+    "Node24.x LTS、locked npm install、node:sqlite spike、app 初始化后 migration/seed/worker/test/contract/lint/typecheck/build/check 收据。",
+    "四页实际路由/DTO/权限、实现后可视化预览、键盘/屏幕阅读器/AT、响应式和真实 media/fonts。",
+    "P0 security/error fixture、deny-all、XSS/SSRF/open redirect/prompt injection、CSRF/越权、并发/崩溃/急停/对账运行证据。",
+    "任何真实 Base/provider/Collector/平台/AI/图片/部署/表单提交/自动发布和生产 15 分钟 SLO。",
+    "snapshot last-known-good 与 published projection 的补充 fixture 及其机械对账。"
+  ],
+  "updated_at": "2026-08-02T00:11+08:00",
+  "verified": [
+    "已读取 Spec v1 proposed、M4 proposed ADR、设计 token map、MVP schema/mapping/state-machine/fixtures/manifest、开发预检、既有 M4 矩阵和安全部 M4 审核。",
+    "现场核对 M3 离线载荷 59×33、33/9 mapping、全部 enabled=false、synthetic entity counts/8 cases、四页状态和视口集合。",
+    "定位 source gate、未知发布、epoch/fence、Bundle/hash/public identity、fixture、状态可达性和安全 A 层的 P0/P1 缺口；Node v25.5.0、app package/lock absent 作为 C 轴环境事实。",
+    "disposable Python/SQLite probe 通过：双 worker、幂等、mock 错误路径、external_calls=0、无 socket。",
+    "报告已拆分 A 合同定版、B 定版后最小脚手架许可、C 实现验收三轴；A 当前 NO-GO，B 仅在 A 通过后条件 GO，C 当前 NO-GO。"
+  ]
+}

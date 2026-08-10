@@ -1,0 +1,148 @@
+{
+  "schemaVersion": "f1plus1-admin-mac-legacy-wpa-temp-local-v0.4",
+  "bundleId": "f1plus1-admin-mac-legacy-wpa-temp-local-v0.4",
+  "status": "template_not_exported",
+  "taskId": "TASK-20260809-F27F25",
+  "rootRule": "BUNDLE_ROOT is the directory containing bundle-manifest.json; consumers read only the listed relative regular files and never traverse to a project root, parent, sibling, symlink, hardlink or special file",
+  "manifestSelfHash": {
+    "includedInFiles": false,
+    "rule": "transmit the SHA-256 of the final bundle-manifest.json out of band"
+  },
+  "closedFileSet": true,
+  "extraEntriesAllowed": false,
+  "deviceFactAllowlist": {
+    "modelFamily": "MacBook Air (M1, 2020)",
+    "memoryGB": 8,
+    "osVersion": "macOS 26.5.1",
+    "powerMode": "long_term_connected",
+    "networkPhysicalMode": "wifi_only",
+    "currentWifiSecurity": "legacy_wpa_low_security",
+    "evidence": "user_confirmed"
+  },
+  "uniqueIdentifierPolicy": {
+    "copyAllowed": false,
+    "writeAllowed": false,
+    "hashAllowed": false,
+    "encodeAllowed": false,
+    "forbiddenClasses": [
+      "ssid_or_wifi_name",
+      "wifi_or_router_address",
+      "ip_address",
+      "network_hardware_address",
+      "serial_number",
+      "hardware_uuid",
+      "disk_identifier",
+      "device_id",
+      "apple_account",
+      "overlay_id",
+      "recovery_secret",
+      "credential_or_token"
+    ]
+  },
+  "phaseContracts": {
+    "TEMP-LOCAL": {
+      "status": "planning_only_not_authorized",
+      "bindScope": "loopback_only",
+      "profile": "synthetic_only",
+      "provider": "fixture_or_mock_only",
+      "publishMode": "manual_only_no_real_publish",
+      "externalCalls": 0,
+      "externalSideEffects": 0,
+      "realAccounts": 0,
+      "realData": 0,
+      "publicAdminListeners": 0,
+      "publicSshListeners": 0,
+      "networkChanges": 0,
+      "fileVaultChanges": 0,
+      "sshChanges": 0,
+      "uuChanges": 0,
+      "productionAuthorized": false
+    },
+    "SECURE-NET": {
+      "status": "future_gate_not_authorized",
+      "minimumTargetModes": [
+        "WPA2 Personal (AES)",
+        "WPA2/WPA3 Transitional"
+      ],
+      "legacyWpaAcceptedAsSecure": false,
+      "wpa3OnlyPrebootCompatibilityAssumed": false,
+      "dot1xPrebootCompatibilityAssumed": false,
+      "previousJoinRequired": true,
+      "routerDhcpReservationRequired": true,
+      "gatewayPrivateVpnRequired": true,
+      "externalCellularRestartFileVaultDrillRequired": true,
+      "hostUuOrTailscaleCountsAsPrebootEvidence": false,
+      "rtoUntilDrill": "unknown",
+      "independentNetworkOrGateway": "future_option_not_temp_local_prerequisite"
+    }
+  },
+  "files": [
+    {
+      "path": "runbook/legacy-wpa-temp-local-v0.4.md",
+      "role": "current_successor_runbook",
+      "bytes": 12522,
+      "sha256": "68f7622b41888e573de79f5537893c23983c691bbbc6ae73452b4fe1155e74db"
+    },
+    {
+      "path": "prompts/fixed-mac-planning-only-v0.4.md",
+      "role": "planning_only_handoff_prompt",
+      "bytes": 5466,
+      "sha256": "ef2aebcceed80b936486ea3b2f8e8ed510ab8e5602a8fc3112700e8bb0297c3f"
+    },
+    {
+      "path": "history/remote-recovery-v0.3.md",
+      "role": "predecessor_readonly",
+      "bytes": 17230,
+      "sha256": "1bdfe81cdefeddf418bb776c2de0f9fa1131db945d15f5d6b06d55dce6c7dd6c"
+    }
+  ],
+  "readOrder": [
+    "history/remote-recovery-v0.3.md",
+    "runbook/legacy-wpa-temp-local-v0.4.md",
+    "prompts/fixed-mac-planning-only-v0.4.md"
+  ],
+  "officialEvidence": [
+    {
+      "authority": "Apple",
+      "url": "https://support.apple.com/en-us/102766",
+      "assertion": "Apple recommends WPA3 Personal, then WPA2/WPA3 Transitional, and allows WPA2 Personal AES where stronger modes are unavailable; WPA/WPA2 mixed, WPA Personal, WEP and TKIP are weak settings to avoid",
+      "verifiedAt": "2026-08-09",
+      "scope": "wifi_security_recommendation_only"
+    },
+    {
+      "authority": "Apple",
+      "url": "https://support.apple.com/en-ca/guide/deployment/dep82064ec40/web",
+      "assertion": "Apple documents conditional FileVault SSH unlock on Apple silicon with macOS 26 or later and lists previously joined open Wi-Fi or WPA2-PSK for the boot-stage Wi-Fi path",
+      "verifiedAt": "2026-08-09",
+      "scope": "platform_and_preboot_network_prerequisites_only"
+    }
+  ],
+  "hardStops": [
+    "predecessor_or_input_hash_drift",
+    "closed_file_set_mismatch",
+    "unique_identifier_secret_address_or_account_present",
+    "non_loopback_listener_or_unknown_bind_scope",
+    "external_call_or_external_side_effect_nonzero_or_unknown",
+    "real_account_real_data_real_provider_real_media_or_production_resource_requested",
+    "installation_login_network_filevault_ssh_uu_router_backup_upload_or_deployment_action_requested_without_new_precise_authorization",
+    "legacy_wpa_claimed_as_secure_preboot_remote_recovery_or_production_evidence",
+    "temp_local_pass_claimed_as_secure_net_remote_rpo_rto_or_production_pass"
+  ],
+  "authorization": {
+    "planningOnly": true,
+    "localRuntimeAllowed": false,
+    "installationAllowed": false,
+    "loginAllowed": false,
+    "networkReadAllowed": false,
+    "networkChangeAllowed": false,
+    "remoteLoginOrSshEnableAllowed": false,
+    "fileVaultChangeAllowed": false,
+    "uuEnableAllowed": false,
+    "externalIoAllowed": false,
+    "realAccountOrDataAllowed": false,
+    "backupUploadAllowed": false,
+    "deploymentAllowed": false,
+    "productionAuthorized": false
+  },
+  "nextSingleQuestion": "是否批准后继任务在这台固定 Mac 上，对一个精确 hash 候选执行一次 TEMP-LOCAL 验证：仅本机 loopback、synthetic fixture、externalCalls=0，不启用 UU/SSH/FileVault、不改网络、不读取真实账号/数据、不部署；执行前仍需回报精确命令、候选 hash、临时路径与停止/回退？"
+}

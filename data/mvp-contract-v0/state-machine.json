@@ -1,0 +1,625 @@
+{
+  "contract_version": "mvp-local-v0.3",
+  "canonical_json_rule_version": "canonical-json-v1",
+  "canonical_json_rule": {
+    "version": "canonical-json-v1",
+    "encoding": "UTF-8",
+    "key_order": "lexicographic Unicode code-point order",
+    "whitespace": "compact JSON separators comma=',' and colon=':'",
+    "numbers": "finite JSON numbers only; no NaN, Infinity or exponent rewriting",
+    "nulls": "preserve explicit null values; never omit a present null",
+    "unicode": "preserve Unicode code points with ensure_ascii=false; no NFC/NFD normalization",
+    "hash": "SHA-256 over the exact compact UTF-8 byte sequence",
+    "rfc8785": "project-defined canonical JSON; not RFC 8785 JCS"
+  },
+  "gate_priority": [
+    "platform",
+    "authorization",
+    "adapter"
+  ],
+  "state_machines": {
+    "source_onboarding": {
+      "initial": "validating",
+      "states": [
+        "validating",
+        "activation_pending",
+        "queued",
+        "collecting",
+        "active",
+        "normalization_failed",
+        "dedup_needs_review",
+        "linked_existing",
+        "blocked_adapter_missing",
+        "blocked_authorization",
+        "blocked_platform",
+        "queue_failed",
+        "collection_failed",
+        "stopped",
+        "cancelled",
+        "dead_letter"
+      ],
+      "transitions": [
+        {
+          "from": "validating",
+          "to": "normalization_failed",
+          "guard": "canonical_url_valid=false or normalization_status=invalid"
+        },
+        {
+          "from": "validating",
+          "to": "dedup_needs_review",
+          "guard": "normalization_status=valid and dedup_status=needs_review"
+        },
+        {
+          "from": "validating",
+          "to": "linked_existing",
+          "guard": "normalization_status=valid and dedup_status=linked_existing"
+        },
+        {
+          "from": "validating",
+          "to": "activation_pending",
+          "guard": "canonical_url_valid=true and normalization_status=valid and dedup_status=unique"
+        },
+        {
+          "from": "activation_pending",
+          "to": "blocked_platform",
+          "priority": 1,
+          "guard": "platform_allowed != allowed"
+        },
+        {
+          "from": "activation_pending",
+          "to": "blocked_authorization",
+          "priority": 2,
+          "guard": "platform_allowed=allowed and adapter_authorization_status != valid"
+        },
+        {
+          "from": "activation_pending",
+          "to": "blocked_adapter_missing",
+          "priority": 3,
+          "guard": "platform_allowed=allowed and adapter_authorization_status=valid and adapter_status != ready"
+        },
+        {
+          "from": "activation_pending",
+          "to": "queued",
+          "guard": "canonical_url_valid=true and normalization_status=valid and dedup_status=unique and platform_allowed=allowed and adapter_authorization_status=valid and adapter_status=ready and enabled=false and source_stop_status=clear and five_epochs_match; activation transaction atomically sets enabled=true and writes one outbox/task operation"
+        },
+        {
+          "from": "blocked_platform",
+          "to": "activation_pending",
+          "guard": "platform_allowed=allowed and recheck all three gates, normalization, dedup and five_epochs"
+        },
+        {
+          "from": "blocked_authorization",
+          "to": "activation_pending",
+          "guard": "platform_allowed=allowed and adapter_authorization_status=valid and recheck all three gates and five_epochs"
+        },
+        {
+          "from": "blocked_adapter_missing",
+          "to": "activation_pending",
+          "guard": "platform_allowed=allowed and adapter_authorization_status=valid and adapter_status=ready and recheck all three gates and five_epochs"
+        },
+        {
+          "from": "normalization_failed",
+          "to": "validating",
+          "guard": "normalization_status=valid and canonical_url_valid=true; recheck all three gates and five_epochs"
+        },
+        {
+          "from": "dedup_needs_review",
+          "to": "validating",
+          "guard": "dedup_status=unique and normalization_status=valid; recheck all three gates and five_epochs"
+        },
+        {
+          "from": "queued",
+          "to": "collecting",
+          "guard": "lease acquired for same operation and key; enabled=true and source_stop_status=clear and five_epochs_match"
+        },
+        {
+          "from": "queued",
+          "to": "stopped",
+          "guard": "source_stop_status != clear; record stop and recheck all three gates and five_epochs before resume"
+        },
+        {
+          "from": "queued",
+          "to": "cancelled",
+          "guard": "source_stop_status is recorded; explicit cancellation with audit; recheck all three gates and five_epochs before any new operation"
+        },
+        {
+          "from": "queued",
+          "to": "queue_failed",
+          "guard": "queue rejects immutable operation"
+        },
+        {
+          "from": "queue_failed",
+          "to": "activation_pending",
+          "guard": "retry_count < max_retry and same onboarding_operation_id/key; recheck all three gates and five_epochs"
+        },
+        {
+          "from": "queue_failed",
+          "to": "dead_letter",
+          "guard": "retry_count >= max_retry"
+        },
+        {
+          "from": "collecting",
+          "to": "active",
+          "guard": "adapter, authorization, platform and five epochs pass"
+        },
+        {
+          "from": "collecting",
+          "to": "collection_failed",
+          "guard": "bounded provider failure"
+        },
+        {
+          "from": "collection_failed",
+          "to": "collecting",
+          "guard": "retry_count < max_retry and same operation/key; recheck stop, gates and five epochs"
+        },
+        {
+          "from": "collection_failed",
+          "to": "dead_letter",
+          "guard": "retry_count >= max_retry"
+        },
+        {
+          "from": "collecting",
+          "to": "stopped",
+          "guard": "source_stop_status != clear; recheck all three gates and five_epochs before resume"
+        },
+        {
+          "from": "collecting",
+          "to": "cancelled",
+          "guard": "source_stop_status is recorded; explicit cancellation with audit; recheck all three gates and five_epochs before any new operation"
+        },
+        {
+          "from": "active",
+          "to": "stopped",
+          "guard": "source_stop_status != clear; recheck all three gates and five_epochs before resume"
+        },
+        {
+          "from": "stopped",
+          "to": "activation_pending",
+          "guard": "explicit resume creates no new identity and rechecks normalization, dedup, gates and five epochs"
+        },
+        {
+          "from": "active",
+          "to": "cancelled",
+          "guard": "explicit cancellation with audit event"
+        },
+        {
+          "from": "cancelled",
+          "to": "activation_pending",
+          "guard": "new explicit activation operation with new operation id; recheck all three gates and five_epochs"
+        },
+        {
+          "from": "dead_letter",
+          "to": "activation_pending",
+          "guard": "manual requeue with new audit; recheck normalization, dedup, all three gates and five_epochs"
+        }
+      ],
+      "lifecycle_rules": {
+        "field": "lifecycle_status",
+        "states": [
+          "proposed",
+          "active",
+          "paused",
+          "retired"
+        ],
+        "paused_only_here": true,
+        "transitions": [
+          {
+            "from": "proposed",
+            "to": "active",
+            "guard": "activation transaction completed"
+          },
+          {
+            "from": "active",
+            "to": "paused",
+            "guard": "manual or safety pause; collection_onboarding_status remains active"
+          },
+          {
+            "from": "paused",
+            "to": "active",
+            "guard": "explicit resume and all three gates/fences pass"
+          },
+          {
+            "from": "active",
+            "to": "retired",
+            "guard": "explicit retirement with audit"
+          }
+        ]
+      }
+    },
+    "capture_normalization": {
+      "initial": "pending",
+      "states": [
+        "pending",
+        "valid",
+        "invalid",
+        "needs_review"
+      ],
+      "transitions": [
+        {
+          "from": "pending",
+          "to": "valid",
+          "guard": "canonical URL validates"
+        },
+        {
+          "from": "pending",
+          "to": "invalid",
+          "guard": "canonical URL cannot be normalized"
+        },
+        {
+          "from": "pending",
+          "to": "needs_review",
+          "guard": "normalizer ambiguity"
+        }
+      ]
+    },
+    "content_lifecycle": {
+      "initial": "captured",
+      "states": [
+        "captured",
+        "normalized",
+        "dedup_pending",
+        "review_pending",
+        "approved",
+        "rejected",
+        "publish_queued",
+        "published",
+        "failed"
+      ],
+      "transitions": [
+        {
+          "from": "captured",
+          "to": "normalized",
+          "guard": "content_hash_input validated and content_version_hash recomputed"
+        },
+        {
+          "from": "normalized",
+          "to": "dedup_pending",
+          "guard": "dedup fingerprint computed"
+        },
+        {
+          "from": "dedup_pending",
+          "to": "review_pending",
+          "guard": "canonical event selected"
+        },
+        {
+          "from": "review_pending",
+          "to": "approved",
+          "guard": "ReviewDecision approved_bundle_hash equals current Bundle.bundle_hash"
+        },
+        {
+          "from": "review_pending",
+          "to": "rejected",
+          "guard": "reviewer rejects"
+        },
+        {
+          "from": "approved",
+          "to": "publish_queued",
+          "guard": "immutable approved Bundle queued"
+        },
+        {
+          "from": "publish_queued",
+          "to": "published",
+          "guard": "same Publication key succeeds"
+        },
+        {
+          "from": "publish_queued",
+          "to": "failed",
+          "guard": "terminal failure or safety stop"
+        }
+      ]
+    },
+    "review_decision": {
+      "initial": "pending",
+      "states": [
+        "pending",
+        "changes_requested",
+        "approved",
+        "rejected",
+        "superseded"
+      ],
+      "transitions": [
+        {
+          "from": "pending",
+          "to": "changes_requested",
+          "guard": "reviewer requests edit"
+        },
+        {
+          "from": "pending",
+          "to": "approved",
+          "guard": "immutable Bundle hash and five fences captured"
+        },
+        {
+          "from": "pending",
+          "to": "rejected",
+          "guard": "reviewer rejects"
+        },
+        {
+          "from": "approved",
+          "to": "superseded",
+          "guard": "content/summary/source/rights/policy/media/schema/fence changes"
+        }
+      ]
+    },
+    "publication": {
+      "initial": "queued",
+      "states": [
+        "queued",
+        "publishing",
+        "published",
+        "retryable_failed",
+        "reconcile_wait",
+        "terminal_failed",
+        "blocked",
+        "emergency_stopped"
+      ],
+      "transitions": [
+        {
+          "from": "queued",
+          "to": "publishing",
+          "guard": "approved_bundle_hash/current hash/five fences match"
+        },
+        {
+          "from": "publishing",
+          "to": "published",
+          "guard": "same Publication.idempotency_key succeeds; public_id/generation unchanged"
+        },
+        {
+          "from": "publishing",
+          "to": "retryable_failed",
+          "guard": "transient error and attempts remain"
+        },
+        {
+          "from": "retryable_failed",
+          "to": "publishing",
+          "guard": "same idempotency_key and reconcile_key; attempt < max_attempts; recheck approved hash and five_epochs"
+        },
+        {
+          "from": "publishing",
+          "to": "reconcile_wait",
+          "guard": "outcome unknown; persist same reconcile_key and public_id"
+        },
+        {
+          "from": "reconcile_wait",
+          "to": "published",
+          "guard": "query confirms published; same public_id/generation"
+        },
+        {
+          "from": "reconcile_wait",
+          "to": "retryable_failed",
+          "guard": "query confirms not submitted; bounded retry same key and recheck five_epochs"
+        },
+        {
+          "from": "reconcile_wait",
+          "to": "terminal_failed",
+          "guard": "query confirms terminal failure"
+        },
+        {
+          "from": "reconcile_wait",
+          "to": "emergency_stopped",
+          "guard": "emergency stop asserted"
+        },
+        {
+          "from": "publishing",
+          "to": "terminal_failed",
+          "guard": "permanent error or attempts exhausted"
+        },
+        {
+          "from": "queued",
+          "to": "blocked",
+          "guard": "hash mismatch, stop state or stale fence"
+        },
+        {
+          "from": "blocked",
+          "to": "queued",
+          "guard": "block cleared; recheck approved hash, manual_only, five_epochs and same idempotency_key"
+        },
+        {
+          "from": "queued",
+          "to": "emergency_stopped",
+          "guard": "global stop asserted"
+        }
+      ]
+    },
+    "outbox_job": {
+      "initial": "pending",
+      "states": [
+        "pending",
+        "leased",
+        "succeeded",
+        "retryable_failed",
+        "terminal_failed",
+        "cancelled",
+        "stale_epoch",
+        "reconcile_wait",
+        "dead_letter"
+      ],
+      "transitions": [
+        {
+          "from": "pending",
+          "to": "leased",
+          "guard": "lease acquired for same key and fresh five-epoch envelope"
+        },
+        {
+          "from": "leased",
+          "to": "succeeded",
+          "guard": "operation acknowledged"
+        },
+        {
+          "from": "leased",
+          "to": "retryable_failed",
+          "guard": "transient error and attempts remain"
+        },
+        {
+          "from": "retryable_failed",
+          "to": "leased",
+          "guard": "same idempotency_key and attempt < max_attempts; recheck five_epochs and fresh lease"
+        },
+        {
+          "from": "leased",
+          "to": "stale_epoch",
+          "guard": "any epoch/lease stale; reject before provider call"
+        },
+        {
+          "from": "leased",
+          "to": "terminal_failed",
+          "guard": "permanent error or attempts exhausted"
+        },
+        {
+          "from": "leased",
+          "to": "cancelled",
+          "guard": "explicit cancellation or stop"
+        },
+        {
+          "from": "terminal_failed",
+          "to": "dead_letter",
+          "guard": "failure budget exhausted and audit retained"
+        },
+        {
+          "from": "leased",
+          "to": "reconcile_wait",
+          "guard": "publish outcome unknown; use Publication.reconcile_key"
+        },
+        {
+          "from": "reconcile_wait",
+          "to": "succeeded",
+          "guard": "query confirms submitted operation"
+        },
+        {
+          "from": "reconcile_wait",
+          "to": "dead_letter",
+          "guard": "query confirms terminal failure"
+        },
+        {
+          "from": "dead_letter",
+          "to": "pending",
+          "guard": "manual requeue retains operation/idempotency key and rechecks five_epochs"
+        }
+      ]
+    }
+  },
+  "idempotency_keys": [
+    {
+      "operation": "source_activation",
+      "fields": [
+        "source_id",
+        "onboarding_operation_id",
+        "operation_id"
+      ],
+      "retry_rule": "Source, TaskEnvelope and OutboxJob reuse one operation id/key; one activation transaction sets enabled and queued."
+    },
+    {
+      "operation": "content_ingest",
+      "fields": [
+        "platform",
+        "source_id",
+        "external_content_id",
+        "content_version_hash"
+      ],
+      "retry_rule": "same content version maps to one Content row"
+    },
+    {
+      "operation": "dedup",
+      "fields": [
+        "dedup_fingerprint"
+      ],
+      "retry_rule": "reuse canonical Event and append member once"
+    },
+    {
+      "operation": "publication",
+      "fields": [
+        "release_bundle_id",
+        "approved_bundle_hash",
+        "publication_id",
+        "idempotency_key",
+        "reconcile_key"
+      ],
+      "retry_rule": "Publication, OutboxJob and TaskEnvelope use exact Publication.idempotency_key; reconcile query uses exact Publication.reconcile_key; one bundle/hash has one public_id."
+    },
+    {
+      "operation": "snapshot_sync",
+      "fields": [
+        "source_config_epoch",
+        "snapshot_manifest_hash"
+      ],
+      "retry_rule": "partial/empty/stale snapshot retains last-known-good"
+    }
+  ],
+  "runtime_fence": {
+    "required_fields": [
+      "task_id",
+      "operation_id",
+      "payload_hash",
+      "source_config_epoch",
+      "source_safety_epoch",
+      "authorization_version",
+      "policy_epoch",
+      "recovery_epoch",
+      "lease_token",
+      "lease_expiry",
+      "deadline",
+      "attempt",
+      "idempotency_key",
+      "reconcile_key"
+    ],
+    "max_task_window_seconds": 900,
+    "window_assertion": "now < lease_expiry <= deadline <= now + max_task_window_seconds",
+    "stale_rejection": "Missing, unknown, zero, non-monotonic epoch or expired lease rejects before provider/outbox/commit/publish/stop side effects.",
+    "source_config_epoch_name": "source_config_epoch",
+    "epoch_zero_policy": "epoch=0 is always an invalid input and must be schema-rejected; it is not a valid live envelope.",
+    "lease_policy": "live lease is at least 128-bit opaque; synthetic fixture shape is synthetic:lease:<32 lowercase hex characters>."
+  },
+  "invariants": [
+    {
+      "id": "INV-TRUTH-001",
+      "severity": "block",
+      "rule": "Base is the only accepted A/D business truth; local contract and snapshot cannot write back or become a second truth; M3 unknown/pending/proposed/false/null values and disabled shadow rows remain unchanged."
+    },
+    {
+      "id": "INV-GATE-002",
+      "severity": "block",
+      "rule": "Validating requires canonical_url_valid, normalization_status=valid and dedup_status=unique; platform, authorization and adapter block in that priority; one activation transaction binds Source, TaskEnvelope and Outbox operation/key and atomically writes enabled false→true plus queued."
+    },
+    {
+      "id": "INV-FENCE-003",
+      "severity": "block",
+      "rule": "Task/publication/outbox work requires a fresh five-epoch envelope and lease, bounded window and CAS; stale, zero, missing or non-monotonic fences cannot call a provider or update current results."
+    },
+    {
+      "id": "INV-IDENTITY-004",
+      "severity": "block",
+      "rule": "Publication, OutboxJob and TaskEnvelope reuse the exact Publication.idempotency_key and reconcile_key; one release_bundle_id plus bundle_hash has at most one Publication/public_id/generation and PublishedProjection is read-only derived."
+    },
+    {
+      "id": "INV-HASH-005",
+      "severity": "block",
+      "rule": "Content, Summary, ReleaseBundle canonical payload/bundle inputs and ReviewDecision approval hashes are explicit, canonical-json-v1 recomputable and immutable; approved_bundle_hash equals the current Bundle hash and changed frozen input supersedes approval."
+    },
+    {
+      "id": "INV-RECONCILE-006",
+      "severity": "block",
+      "rule": "reconcile_wait has independent confirmed-published, confirmed-not-submitted, terminal-failure and emergency-stop outcomes; all preserve one Publication identity/key, while partial or stale snapshots retain last-known-good and never promote a candidate hash."
+    },
+    {
+      "id": "INV-INTERNAL-007",
+      "severity": "block",
+      "rule": "SourceObservation and AuditEvent are internal-only, additionalProperties=false, synthetic and never enter domain/Base/public DTO; SummaryDraft is Summary(summary_status=draft), not a new entity."
+    },
+    {
+      "id": "INV-AUDIT-008",
+      "severity": "high",
+      "rule": "AuditEvent is append-only with monotonic sequence, occurred_at/clock, redaction, retention/cleanup, owner, operation/task/epoch/hash evidence and no secrets, original content or private identifiers."
+    },
+    {
+      "id": "INV-SECURITY-009",
+      "severity": "block",
+      "rule": "No credential, personal identifier, real content, real URL or unauthorized media is stored in synthetic fixtures; all security/error fixtures remain synthetic_only with external_calls=0."
+    }
+  ],
+  "migration_boundary": {
+    "m3_to_local": "M3 33/9 fields seed Source and CapturedItem only; migration_batch_id remains traceable.",
+    "real_content": "No real post, private content, platform account ID, token or media is imported by this contract task.",
+    "provider": "No Base resource write, Base truth switch, base_direct/base_snapshot switch or Collector call is allowed here.",
+    "internal": "Internal contract is separate from domain schema and Base mapping; no SourceObservation/SummaryDraft/AuditEvent field is a domain truth.",
+    "future_extension": "New domain entities or enum values require a new contract version and migration review."
+  }
+}

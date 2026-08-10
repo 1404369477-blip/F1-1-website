@@ -1,0 +1,55 @@
+{
+  "acceptance_exit": "交付一份非技术用户可执行、技术人员可落地的分阶段预配置手册和产品报告；双主机/专用机/无公网Admin/writer=1/RPO/RTO/备份一致性/双端能力边界逐项可追溯；明确准备与实施授权的分界；至少列出3类错误配置及关闭/恢复路径；官方事实有直接来源与访问日期；doctor通过并提交TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/runbooks/F1+1-专用Admin-MacBook服务器预配置手册-v0.1.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-09-专用Admin-MacBook服务器预配置手册报告.md"
+  ],
+  "authorization_evidence": "用户于当前会话要求汇报整体进度并提前规划服务器MacBook配置；此前已确认专用Admin MacBook和双主机窄范围合同。",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T18:18+08:00",
+      "evidence": "用户于当前会话要求汇报整体进度并提前规划服务器MacBook配置；此前已确认专用Admin MacBook和双主机窄范围合同。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "本任务获用户“提前规划服务器MacBook”授权，仅产出规划文档；真实配置、供应商选择、安装、账号、网络、备份上传与部署继续未授权。",
+  "created_at": "2026-08-09T18:18+08:00",
+  "department": "产品部",
+  "details": "基于现行 accepted 双主机、专用 Admin MacBook、Mac/iPhone 全功能等价、RPO≤15m/RTO≤4h 合同，以及研究部《2026-08-09-专用Admin-MacBook私有访问与异机备份候选》，形成一份用户可直接照着准备的《F1+1 专用 Admin MacBook 服务器预配置手册 v0.1》。只做 planning_only，不安装、不登录、不购买、不生成密钥、不改真实 Mac/网络/云资源。手册必须明确以“Admin MacBook 仅承载采集/处理/审核/唯一写主/备份调度，公开网站由独立 public-host 提供只读访问”为当前合同假设；若用户否定则停止在架构分支。按阶段列出：硬件与地点参数、清空/专用化、macOS 更新与自动登录、FileVault/密钥托管、具名运营账号与无 sudo 非交互服务账号、个人 iCloud/同步/开发环境禁区、屏幕锁/共享服务/防火墙、供电/散热/合盖/睡眠/重启维护、以太网/固定局域网地址/无端口转发与 UPnP、私有 overlay 决策前后边界、Node24/launchd/目录与权限、SQLite 唯一写主与文件族、≤5m一致快照/异机加密备份/manifest/hash、监控告警、更新回退、替代恢复 Mac 与隔离恢复演练。把每项分为“现在可准备”“需用户决策”“需真实实施授权”“实施后验收”，给出责任人、失败关闭动作、回退和证明材料；列出用户仍需提供的精确参数。涉及当前 macOS/Tailscale/restic/SQLite/Node 行为时只使用 Apple、项目官方文档或已核收研究报告，必要时刷新官方一手来源并注明访问日期，不用百度，不把供应商候选写成已选。不得修改 accepted ADR、app、data、design 或部署资源；只新增手册和产品报告。",
+  "domain_stage": "admin-macbook-preconfiguration-planning",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若“服务器MacBook”是否同时承载公开站点会改变架构，手册只能按现行双主机合同写成条件假设，不得代用户合并主机。",
+    "若某一 macOS 或供应商操作缺少当前官方证据、版本相关或会产生不可逆后果，标记Unknown/待实施窗口，不给猜测性命令。",
+    "若规划要求登录、付费、安装、创建账户、生成密钥、改真实网络或设备，立即停止在规划边界并交回统筹部申请单独授权。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查主机合并、供应商代选、官方能力外推为实机PASS、猜测性命令、活跃DB/WAL/SHM复制、私网连通替代认证、真实安装/账号/网络/密钥/付费/探针/上传/部署；均未越界",
+  "node": "PRODUCT-ADMIN-MAC-RUNBOOK-01",
+  "pointers": [
+    "docs/spec/F1+1-M5-Admin专用MacBook补充实施合同-v0.2.md",
+    "docs/collaboration/部门/研究部/报告/2026-08-09-专用Admin-MacBook私有访问与异机备份候选.md"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-09-专用Admin-MacBook服务器预配置手册报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-8A0B98",
+  "title": "PRODUCT-ADMIN-MAC-RUNBOOK：形成专用MacBook服务器预配置手册",
+  "unverified": [
+    "精确设备/OS/地点、账号/FileVault/供电睡眠、overlay/网络、Node/launchd/SQLite、备份目标/密钥/监控、public-host和替代恢复Mac均未实施或实机验证",
+    "供应商/计划/费用、中国大陆目标网络可用性、五分钟freshness producer、异机备份组合、Mac/iPhone双端与RPO/RTO演练仍待用户决策和真实实施授权"
+  ],
+  "updated_at": "2026-08-09T18:26+08:00",
+  "verified": [
+    "手册绑定DEC-20260809T181921-EC703A和现行双主机/专用MacBook合同，固定Admin只承载后台/采集处理/唯一写主/备份调度、public-host独立、无公网Admin、writer=1、Mac/iPhone等价、RPO<=15m与RTO<=4h",
+    "六阶段均包含PREP/DECIDE/AUTH/VERIFY、Owner、失败关闭与恢复；11项用户参数、8类错误配置、官方一手来源和2026-08-09访问日期均已机械核对；Markdown链接与git diff --check通过"
+  ]
+}

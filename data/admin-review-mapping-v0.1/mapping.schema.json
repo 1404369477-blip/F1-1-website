@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:f1plus1:admin-review-implementation-mapping:v0.1",
+  "title": "Admin review DTO implementation mapping document schema",
+  "description": "Validates the proposed DTO-to-existing-contract mapping document. It is implementation metadata, not a domain schema.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "mapping_version",
+    "classification",
+    "contract_refs",
+    "source_registry",
+    "dto_slots",
+    "transaction_protocol",
+    "reachability",
+    "invariants",
+    "expected_counts",
+    "external_calls"
+  ],
+  "properties": {
+    "mapping_version": {"const": "admin-review-mapping-v0.1"},
+    "classification": {"const": "proposed_implementation_mapping_not_domain_schema"},
+    "contract_refs": {
+      "type": "object",
+      "additionalProperties": {"type": "string", "minLength": 1}
+    },
+    "source_registry": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {"$ref": "#/$defs/source"}
+    },
+    "dto_slots": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "minProperties": 1,
+        "additionalProperties": {"type": "string", "minLength": 1}
+      }
+    },
+    "transaction_protocol": {
+      "type": "object",
+      "additionalProperties": {"$ref": "#/$defs/transaction"}
+    },
+    "reachability": {"type": "object"},
+    "invariants": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "expected_counts": {
+      "type": "object",
+      "additionalProperties": {"type": "integer", "minimum": 0}
+    },
+    "external_calls": {"const": 0}
+  },
+  "$defs": {
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "owner", "json_pointers", "transform"],
+      "properties": {
+        "kind": {"enum": ["field", "derived", "constant", "internal_receipt"]},
+        "owner": {"type": "string", "minLength": 1},
+        "json_pointers": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string"}
+        },
+        "transform": {"type": "string", "minLength": 1}
+      }
+    },
+    "transaction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["trigger", "preconditions", "writes", "forbidden_writes", "commit_result", "failure_exit"],
+      "properties": {
+        "trigger": {"type": "string", "minLength": 1},
+        "preconditions": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "writes": {"type": "array", "items": {"type": "string"}},
+        "forbidden_writes": {"type": "array", "items": {"type": "string"}},
+        "commit_result": {"type": "string", "minLength": 1},
+        "failure_exit": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

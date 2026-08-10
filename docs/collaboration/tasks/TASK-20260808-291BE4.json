@@ -1,0 +1,66 @@
+{
+  "acceptance_exit": "用户只需回答一个明确问题即可批准或拒绝精确RSS本地试验；合同完整列出来源、频率、保留与删除、失败关闭、安全控制、验证标准、回退和仍需另行授权的生产能力，开发可据此先实现纯本地运输安全层。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/decisions/system/2026-08-09-F1+1-VS-RSS-0本地低频RSS试验-draft.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-09-VS-RSS-0用户决策包与系统合同草案报告.md"
+  ],
+  "authorization_evidence": "本地规划任务，不进行外部I/O或系统切换",
+  "authorization_history": [
+    {
+      "at": "2026-08-08T22:31+08:00",
+      "evidence": "本地规划任务，不进行外部I/O或系统切换",
+      "state": "none"
+    }
+  ],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "本任务只交付draft与决策包；用户明确批准后才能派真实RSS请求任务，生产展示、摘要、图片、second-hop、Base/provider仍需独立门禁。",
+  "created_at": "2026-08-08T22:31+08:00",
+  "department": "产品部",
+  "details": "吸收已ACK的 TASK-20260808-493D17、CAD1DB、33A937；起草不进入accepted的VS-RSS-0系统合同和用户决策包，推荐MotorSport F1 RSS作为链接/稳定ID/发布时间/去重的主试验，Formula1.com仅作可选瞬时结构失败关闭样本；固定精确URL、请求次数与频率、最多20条、保留字段、临时数据删除、无description/媒体/second-hop/Base/provider/公开投影，以及安全报告的十项入口控制；清楚区分用户批准、第三方权利和生产放行；不得发起真实请求、不得写app/data、不得修改accepted ADR正文。",
+  "domain_stage": "真实采集产品决策",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "权利或条款证据无法支撑持久化字段：进一步收窄为无内容诊断或标拒绝，不默认允许。",
+    "方案需要改变accepted信源ADR、Base真值或公开DTO：只列变更提案，不改accepted正文。",
+    "无法把用户批准问题压缩为单一精确选择：提交最小冲突清单并等待统筹，不散发多个模糊门禁。"
+  ],
+  "from_department": "统筹部",
+  "impact_declaration": {
+    "admission": "manual",
+    "base_revision": "TASK-20260808-291BE4@rev1",
+    "external_effects": [
+      "none"
+    ],
+    "owner_task": "TASK-20260808-291BE4",
+    "shared_contracts": [
+      "TASK-20260808-291BE4-vs-rss-0-draft"
+    ],
+    "write_paths": [
+      "docs"
+    ]
+  },
+  "mistake_check": "已修正授权截止时间机械冲突、永久收据完整URL残留、GUID/Atom与canonical回退及U+001F幂等规则、碰撞字节比较、XML节点/深度/字段上限、TLS/identity/schema固定reason code；未访问外部、未写代码、未改Spec/accepted ADR/app/data、未把用户批准等同第三方权利或生产放行",
+  "node": "把研究、数据、安全结论收敛为可单次拍板的最小RSS试验方案",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-08-首条RSS纵切权利与入口安全门禁报告.md"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-09-VS-RSS-0用户决策包与系统合同草案报告.md",
+  "resolution": null,
+  "revision": 5,
+  "schema_version": 1,
+  "task_id": "TASK-20260808-291BE4",
+  "title": "VS-RSS-0用户决策包与系统合同草案",
+  "unverified": [
+    "Motorsport RSS 执行时可达性、地区差异、ETag/Last-Modified、GUID稳定性、编辑删除语义、长期错误率及内容/摘要/商业/媒体权利；十项运输安全代码、独立测试安全负例、真实Collector/SQLite/Base/审核UI/生产出口和15分钟指标均未验证；真实请求继续关闭"
+  ],
+  "updated_at": "2026-08-09T09:48+08:00",
+  "verified": [
+    "研究、数据、安全三项输入任务均为 acknowledged；数据包离线 validator PASS，59 X/0 RSS/59 disabled、Source 39/39、source_item 18/18、external_calls=0、writes_to_base=false；草案 status=draft/authorization_state=user_required，唯一用户批准问题机械计数为1；三路只读对抗复验均为 P0=0/P1=0；目标文档 git diff --check 通过"
+  ]
+}

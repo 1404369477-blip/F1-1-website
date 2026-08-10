@@ -1,0 +1,59 @@
+{
+  "acceptance_exit": "提交安全部正式v0.3复验报告并给唯一PASS或FAIL；R1-R13逐项列证据、拒绝条件、P0/P1/P2和B/C pending。PASS必须A层P0=0且P1=0、无单一配置可启用真实I/O、internal/lease/hash/publication/seed边界无矛盾；完成后TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-02-M4-A轴v0.3安全合同定版复验报告.md"
+  ],
+  "authorization_evidence": "用户已明确授权项目全员开工并持续推进本地工程；本任务纯本地只读、无外部I/O",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T02:10+08:00",
+      "evidence": "用户已明确授权项目全员开工并持续推进本地工程；本任务纯本地只读、无外部I/O",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "只有安全部PASS且P0=0/P1=0才允许进入产品accepted收口；FAIL退回数据/产品修订。",
+  "created_at": "2026-08-02T02:10+08:00",
+  "department": "安全部",
+  "details": "只读复验已ACK的产品任务TASK-20260802-5BAF26与数据任务TASK-20260802-D80846。目标限定docs/spec.md、M4 proposed ADR、docs/progress.md、data/mvp-contract-v0全部v0.3产物及产品/数据收口报告。逐项复验R1至R13静态合同，重点检查6/5/9/3基数、16 onboarding状态、4 reconcile case、11 artifact hashes、900秒窗口、epoch0拒绝、完整job派生的task/lease/payload唯一性、strict release snapshots与可重算content/summary/payload/bundle/decision hash、单一Publication/public_id/idempotency/reconcile链、SourceObservation/AuditEvent internal-only字段/schema hash、Summary(draft)映射、seed source_artifact_sha256与subset_hash分离、三门/stop/recovery/five-fence出口、synthetic_only与external_calls=0。只判断A轴静态可定版性；B/C代码和运行收据保持后置。禁止改文件、运行生成器、安装依赖、联网或操作任何外部资源。",
+  "domain_stage": "M4-A-v0.3-security-revalidation",
+  "event_receipts": [
+    "MIL-20260802T022117-983526"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 任一R1-R13静态拒绝语义、identity/hash/fence/internal/seed不一致：FAIL并精确定位，不自行补丁。",
+    "2) 仅app/Node/SQLite/端口/渗透等B/C收据不存在：列pending，不误判A层。",
+    "3) 真实平台、许可、token、部署、媒体权利：保持Unknown，禁止扩大到外部访问。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已将任务JSON acknowledged与报告/Spec/progress/ADR旧时态拆开并保留P1；未把Spec/ADR proposed写成accepted，未把synthetic external_calls=0写成真实runtime deny-all；未把M3 shadow上游来源URL误写成真实内容导入；未运行生成器main()，只做独立内存复算。早期只读脚本曾误读snapshot/security字段及有一次语法错误，均未写文件，纠正后所有focused checks通过。未把32-hex synthetic lease扩展为live CSPRNG收据。",
+  "node": "M4/A轴定版门禁/v0.3安全复验",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-02-M4-A轴v0.3安全合同定版复验报告.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-02-M4-A轴v0.3安全合同定版复验报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-9E9AC7",
+  "title": "复验M4 A轴v0.3 R1至R13与数据安全合同",
+  "unverified": [
+    "发现1项P1时态漂移：TASK-20260802-D80846.json已acknowledged，但docs/spec.md、docs/progress.md、M4 proposed ADR以及产品/数据报告仍有“D80846进行中、尚未交付/ACK、待统筹ACK”旧文案；未修改上游文件，故A轴整体FAIL/NO-GO。",
+    "未验证原生Draft 2020-12 JSON Schema引擎（环境无jsonschema包）、Node24/Next/npm lock、SQLite/WAL/CAS、真实端口、HTTP/CSRF、日志/secret、SSRF/XSS/XML/media、summary worker、deny-all真实进程、并发/崩溃恢复、build/test/部署或生产收据。",
+    "未访问或操作Feishu/Base/OAuth/provider/Collector/真实URL、真实内容、媒体、AI、发布、部署、账号、ACL、scope或网络；未执行auth、login/logout/refresh/revoke/reauthorize、采集或外部写入。"
+  ],
+  "updated_at": "2026-08-02T02:22+08:00",
+  "verified": [
+    "已读取收件箱、任务JSON、产品v0.3报告、数据v0.3报告、Spec、progress、M4 proposed ADR与data/mvp-contract-v0；产品和数据任务JSON当前均为acknowledged，数据唯一合同路径为data/mvp-contract-v0。",
+    "R1-R13逐项给出唯一PASS：R9的11个TaskEnvelope按完整job_id独立重算task_id、lease_token、payload_hash并验证全局唯一、五epoch>=1、attempt<=max、now<lease_expiry<=deadline<=now+900s；R10独立重算7个Content、7个Summary、5个Bundle、5个ReviewDecision hash，strict snapshots字段与payload根精确一致。",
+    "5个Publication的(bundle,approved_hash)与public_id唯一；publish Outbox、TaskEnvelope、Publication的idempotency_key和reconcile_key逐字一致；3个PublishedProjection正确回指。internal-contract文件SHA=462605a2258d2922d9b982f490aeda3a1395f9e1dcf718fb8745e49db2afade8，3个AuditEvent schema_hash一致、sequence=1/2/3、domain_refs/base_mapping_refs为空。",
+    "manifest 11/11 artifact hash、3层及layer hash、3个subset hash、source_artifact_sha256/count、M3 33/9/59与59/59 enabled=false均独立复算通过；6组state machine、16 onboarding states、5类key、9条invariant、platform>authorization>adapter、三门/恢复/stop/dead-letter/reconcile出口和synthetic/no-egress边界通过；独立exercised-subset schema validator为0 error。",
+    "未发现P0；security/internal/domain/seed fixtures均synthetic_only=true且external_calls=0，manifest external_write_performed=false、real_content_imported=false、credential_material_present=false；本轮未运行生成器main()或任何外部动作。"
+  ]
+}

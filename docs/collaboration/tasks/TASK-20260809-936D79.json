@@ -1,0 +1,57 @@
+{
+  "acceptance_exit": "单一合同覆盖用户入口、字段、状态、操作、API/DTO、事务、幂等、失败恢复、响应式/无障碍与安全边界；现有Source字段逐项映射；无第二枚举/第二真值/物理删除；若profile拓扑未决只保留一个明确决策点；可直接触发数据和设计successor，真实外部能力=0。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/spec/F1+1-SOURCE-MGMT-001本地synthetic信源管理纵切实现合同-v0.1.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-09-SOURCE-MGMT-001本地synthetic信源管理纵切合同报告.md"
+  ],
+  "authorization_evidence": "主会话：用户要求信源库可快速增加/删减/溯源，完成规范化查重后采集且公开需人工审核；当前仅实现本地synthetic边界。",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T20:54+08:00",
+      "evidence": "主会话：用户要求信源库可快速增加/删减/溯源，完成规范化查重后采集且公开需人工审核；当前仅实现本地synthetic边界。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "用户长期确认指定信源库、规范化/查重、低质初筛和人工审核路线，并要求持续推进初版；SOURCE-MGMT-001为LOCAL-CONFIRMED且不触发真实外部能力。",
+  "created_at": "2026-08-09T20:54+08:00",
+  "department": "产品部",
+  "details": "只做产品/接口/状态合同，不改app/data/accepted ADR。范围固定为loopback local-dev /admin/sources：查看59条本地synthetic白名单；按平台/生命周期/启用/入队状态筛选；查看规范化、查重、identity/relevance/monitorability、adapter/authorization/platform gate和最近本地mock收据；新增一个synthetic Source；显式validate；仅在adapter ready + authorization valid + platform allowed及五fence fresh时原子activate为enabled+queued；stop提升fence并阻断旧任务；validation与dead-letter两类重试不可混用。物理删除改为审计可追溯的stop/retire，不删除历史。必须区分展示alias与canonical enum，不新增第二真值。定义closed DTO/API、session/Origin/CSRF、幂等key、事务/operation receipt、loading/empty/partial/error/conflict/stale/blocked/dead-letter/active/stopped状态、390/1440出口、失败恢复和公开页不受影响边界。全部provider/adapter只用fixture/mock，externalCalls=0；真实URL账号/Base/平台请求/AI/媒体/发布/部署关闭。吸收accepted M4 ADR、安全合同、VS1 worker与现有source_config_fixture字段；若现有单profile无法同时承载公开页与Admin源库，明确提出一个最小架构决策点，不自行造第二写主。交付proposed实现合同、产品报告和对设计/数据/开发的精确交接清单。",
+  "domain_stage": "M5-本地synthetic信源管理产品合同",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "现有合同对profile/写主/事务相互冲突：列首个冲突并保留单一决策点，不猜实现；任何路径需要真实平台URL/账号/外联或Base写入：删除并FAIL；把UI alias写成canonical状态、把停止当删除或把validation当activation：P1并修正后再完成。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查未把alias当canonical enum、未把validation当activation、未把stop当删除、未把unknown写成Publication reconcile_wait；未复制59行、未新增第二写主/第二Source schema/第二operation命名集，未把数据候选claimed外推为ACK。",
+  "node": "把已有Source状态、59条禁用fixture、VS1门禁和/admin/sources设计合同收敛为开发可直接消费的单一纵切合同",
+  "pointers": [
+    "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md",
+    "docs/decisions/system/2026-08-01-F1+1-M4本地Kickoff系统路线-accepted.md",
+    "docs/collaboration/部门/设计部/报告/2026-08-02-M4-C层四页组件与状态实现交接清单.md",
+    "docs/collaboration/部门/安全部/报告/2026-08-02-M4-VS-1本地管理API会话与CSRF安全合同候选.md"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-09-SOURCE-MGMT-001本地synthetic信源管理纵切合同报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-936D79",
+  "title": "SOURCE-MGMT-001本地synthetic信源管理纵切实现合同",
+  "unverified": [
+    "数据任务TASK-20260809-8F382B仍为claimed、未ACK；其报告中的source_validation lane与第二operation命名集须按本合同修订，profile在此前not ready。",
+    "/admin/sources API、SQLite profile/migration、worker、页面、390/1440设计冻结及17项golden均未实现或运行。"
+  ],
+  "updated_at": "2026-08-09T21:16+08:00",
+  "verified": [
+    "Source 39/39字段、16个onboarding状态、4个lifecycle状态与frozen transition已机械对齐；合同SHA-256=0d1bbcabeef2fbb68041f889486b6f654dff462ace69181a1cb7d1c9348cc6de。",
+    "唯一拓扑决策点=1；进程单profile/单SQLite、无ATTACH/跨库join、59基线不复制、public DB零写入。",
+    "validation intent唯一等于command receipt；add/validate Outbox=0，只有activate新建source_activation Outbox/TaskEnvelope；command receipt六枚举含source_retire。",
+    "外部调用、真实provider/Base/平台、AI、媒体、发布和部署均为0/closed；只新增产品合同与报告。"
+  ]
+}

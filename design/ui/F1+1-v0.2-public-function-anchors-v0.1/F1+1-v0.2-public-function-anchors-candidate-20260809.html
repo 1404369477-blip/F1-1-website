@@ -1,0 +1,1916 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F1+1 · v0.2 公开页全功能视觉锚点候选</title>
+<meta name="description" content="以 F1+1 v0.2 最终冻结 HTML 原样副本为视觉基准，仅增补公开页已确认 Function ID 的分类筛选、分页、七类状态、独立/行内详情错误恢复与 0/1/4 媒体视觉锚点。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   F1+1 v0.2-draft · 时间线优先迭代
+   信息 + 时间 + 时间线 · 极简收敛 · 默认深色 + 完整浅色
+   玻璃仅在悬浮工具使用 · 时间线主体为实色表面
+   ============================================================ */
+
+/* ---------- 1. Tokens ---------- */
+:root {
+  /* type */
+  --font-display: "Barlow Condensed", "Inter Tight", "Source Han Sans CN", "思源黑体 CN", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-body: "Inter", "Source Han Sans CN", "思源黑体 CN", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-mono: "SF Mono", ui-monospace, "Menlo", "Consolas", monospace;
+
+  /* spacing (紧凑编辑节奏) */
+  --s-1: 4px; --s0: 8px; --s1: 12px; --s2: 16px; --s3: 24px; --s4: 32px; --s5: 48px; --s6: 64px; --s7: 96px;
+
+  /* radius — 克制，矩形为主 */
+  --r-sm: 6px; --r-md: 10px; --r-lg: 14px;
+
+  /* motion */
+  --t-fast: 140ms; --t-base: 240ms;
+  --ease: cubic-bezier(.22,.61,.36,1);
+  --blur: 16px;
+
+  /* progressive reveal（悬停浮现） */
+  --reveal-ms: 150ms;
+  --reveal-ease: cubic-bezier(.22,.61,.36,1);
+  --reveal-scale: 1.04;
+}
+
+:root, [data-theme="dark"] {
+  color-scheme: dark;
+  --bg: oklch(0.145 0.008 252);
+  --bg-elev: oklch(0.172 0.01 252);
+  --surface: oklch(0.205 0.012 252);
+  --surface-2: oklch(0.25 0.013 252);
+  --fg: oklch(0.94 0.006 252);
+  --fg-strong: oklch(0.985 0.003 252);
+  --muted: oklch(0.68 0.012 252);
+  --faint: oklch(0.60 0.012 252);
+  --border: oklch(0.285 0.012 252);
+  --border-strong: oklch(0.48 0.014 252); /* 控件边界，非文本对比 ≥3:1 */
+  --accent: oklch(0.73 0.117 246);        /* 交互蓝 ≈ #6EA8FE */
+  --accent-deep: oklch(0.6 0.125 246);
+  --signal: oklch(0.70 0.168 38);         /* 信号橙红 ≈ #FF7658 */
+  --on-accent: oklch(0.16 0.02 252);
+  --focus: oklch(0.76 0.13 246);
+  --ok: oklch(0.72 0.15 155);
+  --danger: oklch(0.68 0.19 25);
+
+  /* 玻璃 — 仅悬浮工具 / toast */
+  --glass-bg: oklch(0.205 0.012 252 / 0.55);
+  --glass-bg-strong: oklch(0.205 0.012 252 / 0.85);
+  --glass-border: oklch(1 0 0 / 0.10);
+  --glass-hi: inset 0 1px 0 oklch(1 0 0 / 0.07);
+
+  --shadow-1: 0 1px 2px oklch(0 0 0 / 0.24), 0 8px 24px oklch(0 0 0 / 0.22);
+  --shadow-2: 0 2px 6px oklch(0 0 0 / 0.28), 0 20px 48px oklch(0 0 0 / 0.34);
+
+  /* 无框文字按钮的「一点阴影」：纯文字 + 阴影脱离背景，不做胶囊/描边 */
+  --ts-1: 0 1px 2px oklch(0 0 0 / 0.55), 0 2px 8px oklch(0 0 0 / 0.32);
+
+  /* v0.2m Dock 背板（1024/390 底部「点击无效区」渐变末端色） */
+  --dock-bg: oklch(0.145 0.008 252 / 0.92);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: oklch(0.97 0.005 250);
+  --bg-elev: oklch(0.99 0.003 250);
+  --surface: oklch(1 0 0 / 1);
+  --surface-2: oklch(0.94 0.006 250);
+  --fg: oklch(0.22 0.012 252);
+  --fg-strong: oklch(0.14 0.012 252);
+  --muted: oklch(0.46 0.015 252);
+  --faint: oklch(0.54 0.015 252);
+  --border: oklch(0.88 0.008 250);
+  --border-strong: oklch(0.64 0.01 250); /* 控件边界，非文本对比 ≥3:1 */
+  --accent: oklch(0.47 0.14 246);         /* 浅色加深，保证 4.5:1 */
+  --accent-deep: oklch(0.42 0.14 246);
+  --signal: oklch(0.50 0.15 35);
+  --on-accent: oklch(0.99 0.002 252);
+  --focus: oklch(0.44 0.14 246);
+  --ok: oklch(0.48 0.13 155);
+  --danger: oklch(0.52 0.16 25);
+
+  --glass-bg: oklch(1 0 0 / 0.5);
+  --glass-bg-strong: oklch(1 0 0 / 0.85);
+  --glass-border: oklch(0 0 0 / 0.08);
+  --glass-hi: inset 0 1px 0 oklch(1 0 0 / 0.65);
+
+  --shadow-1: 0 1px 2px oklch(0 0 0 / 0.05), 0 10px 28px oklch(0.2 0.02 252 / 0.10);
+  --shadow-2: 0 2px 6px oklch(0 0 0 / 0.05), 0 24px 56px oklch(0.2 0.02 252 / 0.14);
+
+  /* 无框文字按钮的「一点阴影」：浅色主题下为柔和暗影，保证半透明文字与背景分离 */
+  --ts-1: 0 1px 1px oklch(0 0 0 / 0.20), 0 2px 6px oklch(0 0 0 / 0.12);
+
+  /* v0.2m Dock 背板（1024/390 底部「点击无效区」渐变末端色） */
+  --dock-bg: oklch(0.97 0.005 250 / 0.9);
+}
+
+/* ---------- 2. Base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 15.5px;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition: background var(--t-base) var(--ease), color var(--t-base) var(--ease);
+}
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+::selection { background: oklch(0.55 0.12 246 / 0.35); }
+
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: var(--r-sm); }
+h1, h2, h3, h4 { font-family: var(--font-display); line-height: 1.16; margin: 0; text-wrap: balance; }
+p { margin: 0; overflow-wrap: break-word; }
+[hidden] { display: none !important; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* ---------- 3. Glass（克制：仅悬浮工具 / toast） ---------- */
+.glass {
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(var(--blur)) saturate(160%);
+  backdrop-filter: blur(var(--blur)) saturate(160%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-hi), var(--shadow-1);
+}
+.glass-strong {
+  background: var(--glass-bg-strong);
+  -webkit-backdrop-filter: blur(var(--blur)) saturate(150%);
+  backdrop-filter: blur(var(--blur)) saturate(150%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-hi), var(--shadow-1);
+}
+
+/* ---------- 4. App shell（单列居中） ---------- */
+.app { container-type: inline-size; max-width: 880px; margin-inline: auto; padding-inline: clamp(16px, 3.5vw, 40px); }
+body[data-width="1024"] .app,
+body[data-width="390"] .app {
+  max-width: var(--sim-w);
+  border-inline: 1px solid var(--border);
+}
+body[data-width="390"] .app { --sim-w: 390px; padding-inline: 16px; }
+body[data-width="1024"] .app { --sim-w: 1024px; }
+
+.shell { padding: clamp(24px, 4vw, 40px) 0 var(--s6); }
+
+/* ---------- 5. 极简顶栏（标记 + 搜索 + 主题，默认低对比「痕迹」） ---------- */
+.topbar {
+  display: flex; align-items: center; gap: var(--s2);
+  padding: 8px 0;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+.brand-min {
+  display: inline-flex; align-items: center; gap: 7px;
+  min-height: 44px;
+  font-family: var(--font-display); font-weight: 800; font-size: 17px;
+  letter-spacing: .02em; color: var(--fg-strong);
+}
+.brand-min .brand-glyph { width: 7px; height: 7px; border-radius: 50%; background: var(--signal); flex: none; }
+.brand-min:hover { color: var(--accent); }
+.draft-mark {
+  font-size: 10px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--faint); border: 1px solid var(--border); border-radius: 4px;
+  padding: 3px 7px; white-space: nowrap;
+  opacity: .6;
+}
+.top-actions { margin-left: auto; display: flex; align-items: center; gap: var(--s1); }
+
+/* 搜索（低对比痕迹，hover/focus 浮现 + 放大） */
+.search {
+  display: inline-flex; align-items: center;
+  min-height: 44px; padding: 0 10px;
+  border: 0; border-radius: var(--r-sm);
+  background: transparent; color: var(--faint);
+}
+.search input {
+  width: 88px; font: inherit; font-size: 13px; line-height: 1.4;
+  color: var(--fg); background: transparent; border: 0; outline: 0; padding: 0;
+  transition: width var(--t-base) var(--ease);
+}
+.search input::placeholder { color: var(--faint); }
+.search:hover, .search:focus-within {
+  background: var(--surface);
+  color: var(--fg);
+}
+.search:focus-within input { width: 150px; }
+.search:focus-within input::placeholder { color: var(--muted); }
+
+.seg {
+  display: inline-flex; padding: 2px; gap: 2px;
+  border-radius: var(--r-sm);
+  background: transparent;
+}
+.seg button {
+  min-height: 44px; min-width: 44px; padding: 0 12px;
+  border-radius: calc(var(--r-sm) - 1px);
+  font-size: 12.5px; font-weight: 600; color: var(--faint);
+  transition: color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+}
+.seg button:hover { color: var(--fg); background: var(--bg-elev); }
+.seg button.is-active { color: var(--accent); font-weight: 700; background: var(--bg-elev); }
+
+/* ---------- 5b. 悬停浮现（progressive reveal） ----------
+   低对比常驻 → hover/focus 浮现（全对比 + 微放大）
+   focus-within 让整组（如搜索框）一起浮现；触屏提升基准对比；reduced-motion 取消放大 */
+.trace {
+  opacity: .5;
+  transform: scale(1);
+  transition: opacity var(--reveal-ms) var(--reveal-ease),
+              color var(--reveal-ms) var(--reveal-ease),
+              background-color var(--reveal-ms) var(--reveal-ease),
+              border-color var(--reveal-ms) var(--reveal-ease),
+              transform var(--reveal-ms) var(--reveal-ease);
+}
+.trace:hover, .trace:focus-visible, .trace:focus-within {
+  opacity: 1;
+  transform: scale(var(--reveal-scale));
+}
+/* 顶栏整体作为「痕迹」：鼠标进入顶栏，控件先浮现到 0.85；移到具体控件再全显 */
+.topbar .trace { opacity: .5; }
+.topbar:hover .trace { opacity: .85; }
+.topbar .trace:hover,
+.topbar .trace:focus-visible,
+.topbar .trace:focus-within { opacity: 1; transform: scale(var(--reveal-scale)); }
+/* 触屏：无 hover，提升基准对比避免不可发现 */
+@media (pointer: coarse) {
+  .trace, .topbar .trace { opacity: .85; }
+}
+/* 证据/调试：`#reveal=1` 时全部痕迹显形（不带动效），便于导出「浮现」态 */
+html[data-reveal="true"] .trace { opacity: 1; }
+
+/* ---------- 6. 时间线（核心） ---------- */
+.timeline { max-width: 920px; margin-inline: auto; }
+
+.timeline-kicker {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 11px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--faint); margin-bottom: var(--s4);
+}
+.timeline-kicker::before { content: ""; width: 16px; height: 1px; background: var(--border-strong); }
+
+/* v0.2 增量锚点：保持冻结内容列、颜色、字重与矩形分段语言，仅补正式分类出口。 */
+.feed-filters {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 2px;
+  margin: calc(var(--s2) * -1) 0 var(--s4);
+}
+.feed-filters button { white-space: nowrap; }
+.feed-filters .filter-label {
+  margin-right: 6px; color: var(--faint); font-size: 10px; font-weight: 700;
+  letter-spacing: .14em; text-transform: uppercase;
+}
+.pagination {
+  min-height: 56px; display: flex; align-items: center; justify-content: center;
+  padding: var(--s1) 0 var(--s5);
+}
+.pagination button {
+  min-width: 128px; min-height: 44px; padding-inline: var(--s2);
+  color: var(--accent); font-weight: 650; font-size: 12.5px;
+  border: 1px solid var(--border); border-radius: var(--r-sm); background: var(--bg-elev);
+}
+.pagination button:hover { border-color: var(--border-strong); color: var(--fg); }
+.pagination-status { color: var(--faint); font-size: 12px; }
+.no-media {
+  min-height: 44px; display: inline-flex; align-items: center;
+  color: var(--faint); font-size: 11.5px; border-block: 1px solid var(--border);
+}
+.state-box.is-inline {
+  padding: var(--s4) var(--s2); margin: 0 0 var(--s5); border-block: 1px solid var(--border);
+}
+.detail-route {
+  width: min(100%, 720px); text-align: left; display: grid; gap: var(--s2);
+  justify-items: start; padding: var(--s3) 0;
+}
+.detail-route .detail-kicker { color: var(--faint); font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+.detail-route h1 { font: 750 clamp(28px, 5vw, 44px)/1.08 var(--font-display); color: var(--fg-strong); }
+.detail-route p, .detail-route li { color: var(--muted); font-size: 14px; line-height: 1.75; }
+.detail-route ul { padding-left: 1.2em; display: grid; gap: 6px; }
+.detail-route .detail-actions { display: flex; flex-wrap: wrap; gap: var(--s2); }
+.detail-route .detail-actions a { margin-top: 0; }
+.state-box > .detail-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--s2); }
+.state-box > .detail-actions a { margin-top: 0; }
+.inline-problem {
+  display: grid; gap: 8px; padding: var(--s2); border-left: 2px solid var(--signal); background: var(--surface);
+}
+.inline-problem strong { color: var(--fg); }
+.inline-problem a { color: var(--accent); min-height: 44px; display: inline-flex; align-items: center; width: max-content; }
+
+.tl { list-style: none; margin: 0; padding: 0; position: relative; }
+/* 纵向时间轴（发丝线）— 与节点圆点同轴，位于日期列与内容之间的空隙 */
+.tl::before {
+  content: ""; position: absolute; top: 10px; bottom: 10px; left: 78px;
+  width: 1px; background: var(--border);
+}
+
+.tl-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: var(--s4);
+  padding-bottom: var(--s5);
+  scroll-margin-top: 20px;
+}
+/* 时间轴节点 — 位于日期列右侧空隙，对齐「日期行」中心（日期 display 20px/行高 1.75 的行盒中心） */
+.tl-item::before {
+  content: ""; position: absolute; left: 74px; top: 38px;
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--bg); border: 1.5px solid var(--border-strong);
+}
+.tl-item.is-live::before { background: var(--signal); border-color: var(--signal); }
+
+/* 时间标记 — 左对齐；时刻在上、对齐「分类」行，日期在下、对齐「标题」行。
+   对齐方式：让 .tl-t/.tl-d 与右侧 .tl-cat/.tl-title 采用相同的行盒
+   （同为 11px/行高 1.75 与 20px/行高 1.75、且行盒顶部对齐），
+   从而时刻/日期与分类/标题的文字基线一致、视觉同一行。 */
+.tl-time { text-align: left; padding-top: 0; }
+.tl-t {
+  display: block;
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em;
+  color: var(--faint); font-variant-numeric: tabular-nums;
+  line-height: 1.75;   /* 与 .tl-cat 同一行盒 → 时刻对齐分类行 */
+}
+.tl-d {
+  display: block; margin-top: 6px;
+  font-family: var(--font-display); font-weight: 600; font-size: 20px;
+  line-height: 1.75;   /* 与 .tl-title 同一行盒 → 日期对齐标题行（行盒顶 = 分类行盒 + 6px 间距） */
+  letter-spacing: .02em; color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 条目（整条为展开按钮） */
+.tl-entry { min-width: 0; }
+.tl-summary-btn {
+  display: block; width: 100%; text-align: left;
+  border-radius: var(--r-md);
+  /* 水平方向零 padding/margin：标题/摘要信息块与右侧主图、展开详情、证据行共用同一水平盒
+     （左缘=右缘一致），修正「标题信息块与主图未对齐」；垂直方向保留外扩以维持点击/悬停热区。 */
+  padding: 10px 0 12px;
+  margin: -10px 0 -12px;
+  transition: background var(--t-fast) var(--ease);
+  color: var(--muted);
+}
+.tl-summary-btn:hover { background: var(--bg-elev); }
+.tl-summary-btn:active { background: var(--surface-2); }
+
+.tl-head { display: flex; align-items: center; gap: var(--s1); margin-bottom: 6px; }
+.tl-cat {
+  font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--faint);
+}
+.tl-live {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 700; letter-spacing: .08em; color: var(--signal);
+}
+.tl-live::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--signal); animation: pulse 2.4s ease-out infinite; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 oklch(0.7 0.168 38 / 0.55); } 70% { box-shadow: 0 0 0 7px oklch(0.7 0.168 38 / 0); } 100% { box-shadow: 0 0 0 0 oklch(0.7 0.168 38 / 0); } }
+
+/* 展开指示（唯一图标）— 低对比常驻，条目 hover/focus 浮现 */
+.tl-caret {
+  width: 18px; height: 18px; margin-left: auto; position: relative; flex: none;
+  opacity: .35;
+  transform: scale(1);
+  transition: opacity var(--reveal-ms) var(--reveal-ease), transform var(--reveal-ms) var(--reveal-ease);
+}
+.tl-caret::before, .tl-caret::after {
+  content: ""; position: absolute; top: 7px; width: 8px; height: 1.5px;
+  background: currentColor; transition: transform var(--t-base) var(--ease);
+}
+.tl-caret::before { left: 2px; transform: rotate(45deg); }
+.tl-caret::after  { right: 2px; transform: rotate(-45deg); }
+.tl-summary-btn.is-open .tl-caret::before { transform: rotate(-45deg); }
+.tl-summary-btn.is-open .tl-caret::after  { transform: rotate(45deg); }
+.tl-summary-btn:hover .tl-caret,
+.tl-summary-btn:focus-visible .tl-caret,
+.tl-summary-btn.is-open .tl-caret { opacity: .9; transform: scale(1.08); }
+
+/* ---------- 展开聚焦：当前条目高亮，其余降对比/灰度 ---------- */
+.tl-item { transition: opacity var(--t-base) var(--ease), filter var(--t-base) var(--ease); }
+#tl.is-focusing .tl-item:not(.is-open) { opacity: .38; filter: grayscale(.85); }
+.tl-item.is-open .tl-summary-btn { background: var(--bg-elev); }
+.tl-item.is-open .tl-title { color: var(--accent); }
+@media (pointer: coarse) {
+  #tl.is-focusing .tl-item:not(.is-open) { opacity: .5; filter: grayscale(.7); }
+}
+
+.tl-title {
+  display: block;
+  font-size: 20px; font-weight: 700; letter-spacing: .004em;
+  color: var(--fg-strong);
+  transition: color var(--t-fast) var(--ease);
+}
+.tl-summary-btn:hover .tl-title { color: var(--accent); }
+
+.tl-lead {
+  margin-top: 5px;
+  color: var(--muted); font-size: 14.5px; line-height: 1.7; max-width: 62ch;
+  /* v0.2j: 摘要完整显示、不省略 —— 移除 -webkit-line-clamp 截断;
+     手机端与桌面一致完整呈现长摘要(信息即内容,不藏不漏)。 */
+}
+
+/* 图片 · 单张主图 + 条目右下角小缩略图（v0.2f 修订）
+   只显示单张主图（放大、原比例、限高、整图缩放不裁切），主图内部不放缩略图；
+   多图时缩略图移到条目（内容简介）右下角的证据行，与左侧来源文本（信源·作者·时间）
+   同一行横向对齐：来源文本左、缩略图右，缩小为 32px（移动 28px / 触屏 40px）。
+   点击切换主图、悬停预览、键盘 Enter/Space 固定、滑动切图联动缩略图高亮全部保留。
+   单图内容不显示缩略图。 */
+.tl-media {
+  margin-top: var(--s2); min-width: 0;
+  display: block; width: fit-content; max-width: 100%;
+}
+
+/* 主图（原比例、限高、整图缩放不裁切） */
+.ph-main {
+  display: block;
+  width: auto; height: auto;
+  max-width: 100%;
+  max-height: 360px;
+  border-radius: 4px;             /* 对齐 v0.1「新闻图片 4px 硬边」 */
+  box-shadow: 0 1px 3px rgba(0,0,0,.16), 0 8px 24px rgba(0,0,0,.12);
+  background: var(--surface-2);
+  cursor: zoom-in;
+  will-change: transform, opacity;
+}
+
+/* 多图媒体区：主图区支持滑动切图（触摸/鼠标拖拽 pointer + 触控板双指 wheel/deltaX）。
+   纵向滚动仍交还页面（touch-action:pan-y），仅横向手势由 JS 接管；
+   拖拽中用 grab/grabbing 光标提示可滑切，点击放大保留。 */
+.tl-media.multi { touch-action: pan-y; }
+.tl-media.multi .ph-main { cursor: grab; }
+.tl-media.multi.swiping .ph-main { cursor: grabbing; }
+
+/* 证据行右侧操作组（前往原文 + 缩略图导航）— margin-left:auto 使窄屏换行时仍右对齐 */
+.ev-right { display: inline-flex; align-items: flex-end; gap: var(--s1); flex-wrap: wrap; margin-left: auto; } /* v0.2j: 右侧操作(前往原文+缩略图)底部对齐来源文本 */
+
+/* 条目右下角小缩略图 — 与来源文本同一行、右侧对齐，不再叠放于主图内部 */
+.ph-thumbs { display: inline-flex; gap: 5px; align-items: flex-end; }
+.ph-thumb {
+  display: block;
+  height: 32px; width: auto;
+  border-radius: 4px;
+  object-fit: cover;
+  opacity: .75;
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+  background: var(--surface-2);
+  transition: opacity var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+}
+.ph-thumb:hover { opacity: 1; transform: scale(1.08); }
+.ph-thumb.is-active { opacity: 1; border-color: var(--accent); }
+.ph-thumb:focus-visible { border-color: var(--focus); }
+/* 触屏：无 hover，提升基准对比并保证命中区 ≥40px（视觉高度 + 行距 ≈ 44px） */
+@media (pointer: coarse) {
+  .ph-thumb { height: 40px; opacity: .85; }
+}
+
+/* 展开动画 — 详情在摘要下方逐步展开，把底部证据行推到内容底部 */
+.tl-collapse {
+  display: grid; grid-template-rows: 0fr;
+  transition: grid-template-rows var(--t-base) var(--ease);
+}
+.tl-collapse.is-open { grid-template-rows: 1fr; }
+.tl-collapse > .tl-detail { overflow: hidden; min-height: 0; }
+
+/* 就地展开详情 — 在摘要下方直接展开，无独立信息块 */
+.tl-zh-label {
+  display: block;
+  padding-top: var(--s1);
+  font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--faint); margin-bottom: 6px;
+}
+.tl-zh { margin-top: 6px; font-size: 14px; line-height: 1.6; color: var(--fg); max-width: 100%; }
+
+/* 证据行（条目右下角唯一一份：信源 · 作者 · 时间）— 来源文本左、右侧操作右。
+   v0.2j: align-items 从 center 改 flex-end → 右侧缩略图与左侧来源文本「底部对齐」。 */
+.tl-ev {
+  display: flex; align-items: flex-end; justify-content: space-between; gap: var(--s2); flex-wrap: wrap;
+  margin-top: 10px; font-size: 11.5px; line-height: 1.3; color: var(--faint);
+}
+.tl-ev .evs { display: flex; gap: 6px; flex-wrap: wrap; }
+.tl-ev b { color: var(--muted); font-weight: 500; }
+.tl-ev .sep { color: var(--border-strong); }
+
+/* 前往原文 — 展开详情后显示；行内文本、与来源文本同字号（11.5px）、同一行右端对齐，
+   不做大按钮、不单独占整行；折叠时（无 .is-open）隐藏。触屏抬升命中区到 44px。 */
+.tl-original-link {
+  color: var(--accent); font-weight: 600; font-size: 11.5px;
+  display: inline-flex; align-items: flex-end; gap: 3px;
+  min-height: 32px; padding: 0 2px;
+}
+.tl-original-link:hover { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.tl-item:not(.is-open) .tl-original-link { display: none; }
+@media (pointer: coarse) { .tl-original-link { min-height: 44px; } }
+
+/* 搜索无匹配（轻量提示） */
+.search-empty {
+  text-align: center; font-size: 13px; color: var(--muted);
+  padding: var(--s6) 0;
+}
+
+/* ---------- 7. 轻量状态 ---------- */
+.state-box {
+  padding: var(--s7) 0; text-align: center;
+  display: grid; gap: var(--s1); justify-items: center;
+}
+.state-box .sb-code { font-family: var(--font-display); font-size: 44px; font-weight: 800; line-height: 1; color: var(--accent); }
+.state-box .sb-title { font-size: 16px; font-weight: 600; color: var(--fg); }
+.state-box .sb-msg { font-size: 13.5px; color: var(--muted); }
+.state-box a {
+  color: var(--accent); font-weight: 600;
+  min-height: 44px; display: inline-flex; align-items: center; gap: 4px; margin-top: var(--s1);
+}
+.state-box a:hover { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+
+/* loading 骨架 — 与时间线同构 */
+.skel-time { width: 56px; height: 26px; border-radius: 4px; background: var(--surface-2); margin-left: auto; position: relative; overflow: hidden; }
+.skel-lines { display: grid; gap: 9px; padding-top: 2px; }
+.skel-lines i { display: block; height: 12px; border-radius: 4px; background: var(--surface-2); position: relative; overflow: hidden; }
+.skel-lines i:nth-child(1) { width: 78%; }
+.skel-lines i:nth-child(2) { width: 100%; }
+.skel-lines i:nth-child(3) { width: 54%; }
+.skel-time::after, .skel-lines i::after {
+  content: ""; position: absolute; inset: 0; translate: -100% 0;
+  background: linear-gradient(100deg, transparent 30%, oklch(1 0 0 / 0.06) 50%, transparent 70%);
+  animation: shimmer 1.4s infinite;
+}
+:root[data-theme="light"] .skel-time::after, :root[data-theme="light"] .skel-lines i::after {
+  background: linear-gradient(100deg, transparent 30%, oklch(0 0 0 / 0.04) 50%, transparent 70%);
+}
+@keyframes shimmer { to { translate: 100% 0; } }
+
+/* ---------- 8. 页脚 ---------- */
+.site-footer {
+  border-top: 1px solid var(--border);
+  padding: var(--s3) 0 var(--s6);
+  display: grid; gap: 6px;
+  font-size: 11.5px; color: var(--faint);
+}
+.site-footer .fs { display: flex; gap: var(--s2); flex-wrap: wrap; }
+.site-footer a { color: var(--muted); min-height: 36px; display: inline-flex; align-items: center; }
+.site-footer a:hover { color: var(--accent); }
+
+/* ---------- 9. 右下角悬浮按钮组 + 底部 Dock（v0.2m 修订，TASK-20260808-D4F614） ----------
+   v0.2j: 回到顶部 / 设置均无外框纯文字 + text-shadow、默认隐形、hover/focus 高亮（.trace 悬停浮现）。
+   v0.2m 修订：
+   ① 设置按钮颜色与回到顶部一致（同一套无框文字 + text-shadow + trace 悬停）；新增主题单按钮同款式。
+   ② 网页端（1440）：回到顶部 + 设置 + 主题按钮 position:fixed 于视口右下角（right:16px），
+      不再镜像内容列宽度/居中，去掉「锚到内容列」做法——不随内容列移动。
+   ③ iPad（1024）/ 手机（390）：底部设「点击无效区」Dock——整条底部渐变模糊背板
+      （linear-gradient 透明→背景色 + backdrop-filter 轻微模糊），pointer-events 拦截点击、
+      不穿透下层内容；功能按钮置入 Dock 内（右下对齐）。 */
+.fab-anchor {
+  position: fixed; right: 16px; bottom: 0; z-index: 80;
+  pointer-events: none;
+  padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+}
+.fab-inner {
+  position: relative;
+  display: flex; flex-direction: column; align-items: flex-end;
+  pointer-events: none;
+}
+.fab-row {
+  display: inline-flex; align-items: center; gap: 6px;
+  pointer-events: auto;
+}
+.fab, .back-to-top, .theme-fab {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 44px; min-height: 44px; padding: 0 8px;
+  background: transparent; border: 0; border-radius: 0;
+  font-size: 12.5px; font-weight: 600; letter-spacing: .02em; line-height: 1.2;
+  color: var(--muted);
+  text-shadow: var(--ts-1);
+}
+.fab:hover, .fab:focus-visible,
+.back-to-top:hover, .back-to-top:focus-visible,
+.theme-fab:hover, .theme-fab:focus-visible { color: var(--accent); }
+.draft-panel {
+  position: absolute; right: 0; bottom: calc(100% + 8px); z-index: 80;
+  width: 268px;
+  padding: var(--s2);
+  display: grid; gap: var(--s1);
+  pointer-events: auto;
+  background: var(--bg);
+  /* 从底部缓缓升起(Web 浮动面板) */
+  transform: translateY(calc(100% + 16px));
+  opacity: 0;
+  visibility: hidden;
+  transition: transform .34s cubic-bezier(.2,.8,.2,1), opacity .34s ease, visibility 0s .34s;
+}
+.draft-panel.is-open {
+  transform: translateY(0);
+  opacity: 1;
+  visibility: visible;
+  transition: transform .34s cubic-bezier(.2,.8,.2,1), opacity .34s ease;
+}
+.dp-head { display: flex; justify-content: space-between; align-items: baseline; }
+.dp-head strong { font-size: 15px; font-weight: 700; }
+.dp-head span { font-size: 10px; color: var(--faint); letter-spacing: .1em; }
+.dp-group { display: grid; gap: 6px; }
+.dp-group > label { font-size: 11px; font-weight: 600; letter-spacing: .12em; color: var(--faint); }
+.dp-group .seg { display: flex; flex-wrap: wrap; }
+.dp-group .seg button { flex: 1 1 auto; min-height: 44px; min-width: 44px; }
+.sw { display: flex; align-items: center; gap: 8px; min-height: 44px; font-size: 12.5px; color: var(--muted); cursor: pointer; }
+.sw input { width: 18px; height: 18px; accent-color: var(--accent); }
+.dp-note { font-size: 11px; color: var(--faint); line-height: 1.6; }
+
+/* 正式设置项（占位骨架）：标签 + 值 + 占位角标；非交互，待产品确认 */
+.dp-formal { gap: 2px; }
+.dp-item {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s1);
+  min-height: 34px; padding: 0;
+  font-size: 12.5px; color: var(--muted);
+}
+.dp-item > span { color: var(--fg); }
+.dp-tag {
+  font-size: 10px; letter-spacing: .08em; color: var(--faint);
+  border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; margin-left: 6px;
+  white-space: nowrap;
+}
+/* 调试控件（DRAFT）折叠区：明显标注、默认折叠，仅证据导出 / 回归用 */
+.dp-debug { border-top: 1px dashed var(--border); padding-top: var(--s2); }
+.dp-debug summary {
+  cursor: pointer; font-size: 10.5px; font-weight: 700; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--signal); min-height: 28px;
+  display: flex; align-items: center;
+}
+.dp-debug[open] summary { margin-bottom: var(--s1); }
+.dp-debug .dp-group { margin-bottom: var(--s1); }
+
+/* —— 底部「点击无效区」Dock（1024 / 390，含 width 参数模拟）——
+   渐变模糊背板拦截点击：除功能按钮外，该区域点击不穿透到下层内容。 */
+body[data-width="1024"] .fab-anchor,
+body[data-width="390"] .fab-anchor {
+  left: 0; right: 0; bottom: 0;
+  max-width: 880px; margin-inline: auto;
+  box-sizing: border-box;
+  overflow: hidden;
+  max-height: calc(48px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: 0; /* 覆盖 Web 默认的 16px，避免功能区偏高 */
+  pointer-events: auto; /* 拦截点击：该区域命中 Dock 本体，不穿透下层内容 */
+  background: var(--bg);
+  display: flex; justify-content: flex-end; align-items: flex-end;
+  transition: max-height .34s cubic-bezier(.2,.8,.2,1);
+}
+body[data-width="1024"] .fab-anchor.is-open,
+body[data-width="390"] .fab-anchor.is-open {
+  max-height: calc(440px + env(safe-area-inset-bottom, 0px));
+  background: var(--bg);
+}
+/* 顶部分割线：内缩与顶栏一致（两端断开，不贴边） */
+body[data-width="1024"] .fab-anchor::before,
+body[data-width="390"] .fab-anchor::before {
+  content: "";
+  position: absolute; top: 0; height: 1px;
+  left: clamp(16px, 3.5vw, 40px); right: clamp(16px, 3.5vw, 40px);
+  background: var(--border);
+  pointer-events: none;
+}
+body[data-width="1024"] .fab-anchor { max-width: 1024px; }
+body[data-width="390"] .fab-anchor { max-width: 390px; }
+body[data-width="390"] .fab-anchor::before { left: 16px; right: 16px; }
+body[data-width="1024"] .fab-inner,
+body[data-width="390"] .fab-inner {
+  width: 100%; max-width: 880px; margin-inline: auto;
+  padding: 0 clamp(16px, 3.5vw, 40px) calc(4px + env(safe-area-inset-bottom, 0px)) 0;
+  box-sizing: border-box;
+  flex-direction: column; align-items: flex-end; justify-content: flex-end;
+  pointer-events: none;
+}
+body[data-width="1024"] .fab-inner { max-width: 1024px; }
+body[data-width="390"] .fab-inner { max-width: 390px; padding-inline: 16px; }
+body[data-width="1024"] .draft-panel,
+body[data-width="390"] .draft-panel {
+  position: static; width: 100%;
+  transform: none; opacity: 1; visibility: visible;
+  margin-bottom: 8px;
+}
+/* 真实视口（非 width 参数模拟）在平板 / 窄屏同样启用 Dock，按钮跟随内容列 */
+@media (max-width: 1100px) {
+  .fab-anchor {
+    left: 0; right: 0; bottom: 0;
+    max-width: 880px; margin-inline: auto;
+    box-sizing: border-box;
+    overflow: hidden;
+    max-height: calc(48px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: 0;
+    pointer-events: auto;
+    background: var(--bg);
+    display: flex; justify-content: flex-end; align-items: flex-end;
+    transition: max-height .34s cubic-bezier(.2,.8,.2,1);
+  }
+  .fab-anchor.is-open {
+  max-height: calc(440px + env(safe-area-inset-bottom, 0px));
+  background: var(--bg);
+}
+  .fab-anchor::before {
+    content: "";
+    position: absolute; top: 0; height: 1px;
+    left: clamp(16px, 3.5vw, 40px); right: clamp(16px, 3.5vw, 40px);
+    background: var(--border);
+    pointer-events: none;
+  }
+  .fab-inner {
+    width: 100%; max-width: 880px; margin-inline: auto;
+    padding: 0 clamp(16px, 3.5vw, 40px) calc(4px + env(safe-area-inset-bottom, 0px)) 0;
+    box-sizing: border-box;
+    flex-direction: column; align-items: flex-end; justify-content: flex-end;
+    pointer-events: none;
+  }
+  .draft-panel {
+    position: static; width: 100%;
+    transform: none; opacity: 1; visibility: visible;
+    margin-bottom: 8px;
+  }
+}
+
+/* toast */
+.toast {
+  position: fixed; left: 50%; bottom: 24px; translate: -50% 0; z-index: 90;
+  padding: 10px 16px; border-radius: var(--r-md);
+  font-size: 12.5px; color: var(--fg);
+  opacity: 0; pointer-events: none;
+  transition: opacity var(--t-base) var(--ease), translate var(--t-base) var(--ease);
+}
+.toast.show { opacity: 1; translate: -50% -4px; }
+
+/* ---------- 图片 lightbox：hover 放大镜光标，点击居中全彩预览，其余灰度压暗 ---------- */
+.tl-media .ph { cursor: zoom-in; }
+.lightbox {
+  position: fixed; inset: 0; z-index: 200;
+  display: grid; place-items: center;
+  background: rgba(0,0,0,.66);
+  cursor: zoom-out;
+  padding: 5vh 4vw;
+  touch-action: pan-y; /* v0.2b 滑动翻页：横向拖动交给 JS（pointer 事件），纵向仍可滚 */
+}
+.lightbox img {
+  max-width: 70vw; max-height: 70vh;
+  width: auto; height: auto;
+  border-radius: var(--r-md);
+  box-shadow: 0 24px 90px rgba(0,0,0,.6);
+  will-change: transform, opacity;
+}
+.lb-nav {
+  position: absolute; top: 50%; translate: 0 -50%;
+  width: 48px; height: 48px; border-radius: 50%;
+  border: 0; background: rgba(255,255,255,.14); color: #fff; font-size: 26px; line-height: 1;
+  cursor: pointer; display: grid; place-items: center;
+  transition: background var(--t-fast) var(--ease);
+}
+.lb-nav:hover { background: rgba(255,255,255,.26); }
+.lb-prev { left: 4vw; }
+.lb-next { right: 4vw; }
+.lb-count {
+  position: absolute; bottom: 4vh; left: 50%; translate: -50% 0;
+  color: rgba(255,255,255,.7); font-size: 13px; letter-spacing: .06em;
+}
+/* 打开时背景逐渐降对比、降低清晰度（灰度 + 模糊 + 压暗） */
+body.lb-open .app { filter: grayscale(.85) blur(4px); opacity: .35; transition: filter var(--t-base) var(--ease), opacity var(--t-base) var(--ease); }
+body:not(.lb-open) .app { filter: grayscale(0) blur(0); opacity: 1; transition: filter var(--t-base) var(--ease), opacity var(--t-base) var(--ease); }
+
+/* ---------- 10. 可访问降级 ---------- */
+/* reduced-transparency：玻璃 → 不透明 surface */
+@media (prefers-reduced-transparency: reduce) {
+  .glass, .glass-strong {
+    -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
+    background: var(--surface) !important;
+  }
+}
+@media (forced-colors: active) {
+  :focus-visible { outline-color: Highlight; }
+  .tl-item::before, .brand-glyph { forced-color-adjust: none; background: Highlight; border-color: Highlight; }
+  .pagination button, .draft-mark, .inline-problem { border-color: CanvasText; }
+  .glass, .glass-strong, .fab-anchor { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; background: Canvas !important; color: CanvasText; }
+}
+html[data-rt="true"] .glass,
+html[data-rt="true"] .glass-strong {
+  -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
+  background: var(--surface) !important;
+  box-shadow: var(--shadow-1) !important;
+}
+/* reduced-motion：取消位移 / 缩放 / 自动播放 */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  html { scroll-behavior: auto !important; }
+  .tl-live::before { animation: none; }
+  /* 悬停浮现：只保留对比度/可见度变化，取消放大动效 */
+  .trace, .tl-caret { transform: none !important; }
+  .search input { width: 150px !important; }
+}
+html[data-rm="true"] *, html[data-rm="true"] *::before, html[data-rm="true"] *::after {
+  animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important;
+}
+html[data-rm="true"] .tl-live::before { animation: none; }
+html[data-rm="true"] .trace, html[data-rm="true"] .tl-caret { transform: none !important; }
+html[data-rm="true"] .search input { width: 150px !important; }
+
+/* 低性能端降 blur */
+@media (update: slow), (pointer: coarse) and (max-width: 700px) {
+  .glass, .glass-strong { -webkit-backdrop-filter: blur(8px) saturate(140%); backdrop-filter: blur(8px) saturate(140%); }
+}
+
+/* ---------- 11. 移动（390）重排 ---------- */
+@container (max-width: 700px) {
+  .tl::before { display: none; }
+  .tl-item { grid-template-columns: 1fr; gap: var(--s1); padding-bottom: var(--s4); }
+  .tl-item::before { display: none; }
+  .tl-time { text-align: left; display: flex; align-items: baseline; gap: 8px; padding-top: 0; flex-direction: row-reverse; justify-self: start; } /* justify-self:start → 并排簇收缩并贴左缘，日期/时间落在条目左上角（原 row-reverse 满宽拉伸把簇推到右缘） */
+  .tl-d { font-size: 18px; line-height: 1; margin-top: 0; }
+  .tl-t { margin-top: 0; line-height: 1; }
+  .tl-summary-btn { padding: 8px 0 10px; margin: -8px 0 -10px; } /* 与桌面同口径：水平零 padding/margin，标题块与主图/详情/证据行同盒对齐 */
+  .topbar { padding-block: 6px; }
+  .shell { padding-top: 20px; }
+  .draft-mark { display: none; }
+  .search input { width: 72px; }
+  .search:focus-within input { width: 120px; }
+  .top-actions { gap: var(--s0); }
+  .ph-main { max-height: 280px; }
+  .ph-thumbs { gap: 3px; }
+  .ph-thumb { height: 22px; }
+  /* v0.2k 移动断点：修复 4 图条目右侧操作区（前往原文+缩略图）过宽触发 .tl-ev 的
+     flex-wrap 换行、使缩略图掉到下一行与来源文本错排的问题。收紧为单行：来源文本区
+     允许收缩（.evs 内部换行）、右侧操作组不收缩、间距收紧、缩略图再缩小 →
+     缩略图与来源文本同一行、底部对齐。仅移动断点，桌面端不受影响。 */
+  .tl-ev { flex-wrap: nowrap; gap: var(--s1); }
+  .tl-ev .evs { flex: 1 1 auto; min-width: 0; }
+  .ev-right { flex: 0 0 auto; gap: 6px; }
+}
+@media (max-width: 700px) {
+  .tl::before { display: none; }
+  .tl-item { grid-template-columns: 1fr; gap: var(--s1); padding-bottom: var(--s4); }
+  .tl-item::before { display: none; }
+  .tl-time { text-align: left; display: flex; align-items: baseline; gap: 8px; padding-top: 0; flex-direction: row-reverse; justify-self: start; } /* justify-self:start → 并排簇收缩并贴左缘，日期/时间落在条目左上角（原 row-reverse 满宽拉伸把簇推到右缘） */
+  .tl-d { font-size: 18px; line-height: 1; margin-top: 0; }
+  .tl-t { margin-top: 0; line-height: 1; }
+  .tl-summary-btn { padding: 8px 0 10px; margin: -8px 0 -10px; } /* 与桌面同口径：水平零 padding/margin，标题块与主图/详情/证据行同盒对齐 */
+  .topbar { padding-block: 6px; }
+  .shell { padding-top: 20px; }
+  .draft-mark { display: none; }
+  .search input { width: 72px; }
+  .search:focus-within input { width: 120px; }
+  .top-actions { gap: var(--s0); }
+  .ph-main { max-height: 280px; }
+  .ph-thumbs { gap: 3px; }
+  .ph-thumb { height: 22px; }
+  /* v0.2k 移动断点：修复 4 图条目右侧操作区（前往原文+缩略图）过宽触发 .tl-ev 的
+     flex-wrap 换行、使缩略图掉到下一行与来源文本错排的问题。收紧为单行：来源文本区
+     允许收缩（.evs 内部换行）、右侧操作组不收缩、间距收紧、缩略图再缩小 →
+     缩略图与来源文本同一行、底部对齐。仅移动断点，桌面端不受影响。 */
+  .tl-ev { flex-wrap: nowrap; gap: var(--s1); }
+  .tl-ev .evs { flex: 1 1 auto; min-width: 0; }
+  .ev-right { flex: 0 0 auto; gap: 6px; }
+}
+</style>
+</head>
+<body data-theme="dark" data-width="1440">
+
+<div class="app">
+  <!-- ===== 极简顶栏：仅标记 + 主题 ===== -->
+  <header class="topbar" data-od-id="UI-TOP-001-topbar">
+    <a class="brand-min trace" href="#state=timeline" data-od-id="UI-TOP-001-brand">
+      <span class="brand-glyph" aria-hidden="true"></span>F1+1
+    </a>
+    <span class="draft-mark" data-od-id="draft-mark">v0.2 DRAFT</span>
+    <div class="top-actions">
+      <div class="search trace" data-od-id="PUB-FEED-003-search">
+        <input type="search" id="search-input" placeholder="搜索时间线" aria-label="搜索时间线" autocomplete="off" spellcheck="false">
+      </div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <!-- ===== 时间线（核心） ===== -->
+    <section class="timeline" id="main-reading" tabindex="-1" data-od-id="V-PUB-SHELL" aria-label="F1+1 信息时间线">
+      <p class="timeline-kicker" data-od-id="V-PUB-TIMELINE-KICKER">信息 + 时间 + 时间线 · 7 条示例 · 倒序</p>
+      <div class="feed-filters seg" data-od-id="PUB-FEED-003-filters" role="group" aria-label="资讯分类筛选">
+        <span class="filter-label" aria-hidden="true">分类</span>
+        <button type="button" class="is-active" data-filter="all" aria-pressed="true">全部</button>
+        <button type="button" data-filter="news" aria-pressed="false">赛事新闻</button>
+        <button type="button" data-filter="social" aria-pressed="false">车手社交</button>
+        <button type="button" data-filter="history" aria-pressed="false">名宿历史</button>
+        <button type="button" data-filter="culture" aria-pressed="false">赛场趣事</button>
+      </div>
+      <ol class="tl" id="tl" data-od-id="PUB-FEED-001-timeline" aria-live="polite"></ol>
+      <p id="search-empty" class="search-empty" hidden data-od-id="PUB-FEED-003-empty">没有匹配的条目</p>
+      <div id="pagination" class="pagination" data-od-id="PUB-FEED-005-pagination">
+        <button id="load-more" type="button">加载更多</button>
+        <span id="pagination-status" class="pagination-status" tabindex="-1" hidden aria-live="polite">已无更多内容</span>
+      </div>
+      <div id="state-box" class="state-box" data-od-id="PUB-FEED-004-state" hidden></div>
+    </section>
+  </main>
+
+  <!-- ===== 页脚 ===== -->
+  <footer class="site-footer" data-od-id="site-footer">
+    <div class="fs">
+      <span>F1+1 · v0.2-draft 时间线草案 · 未接入正式产品</span>
+      <a href="evidence.html" data-od-id="footer-evidence">证据墙 evidence.html ↗</a>
+      <a href="design-system.md" data-external data-message="设计系统说明（本地文档）">设计系统说明 ↗</a>
+    </div>
+    <p>示例内容与原创占位影像，不构成真实新闻；聚合内容版权归原作者与来源所有。</p>
+  </footer>
+</div>
+
+<!-- ===== 右下角悬浮工具（v0.2m）：回到顶部 + 设置 + 主题单按钮 同一行；均无外框纯文字 + text-shadow、默认隐形、hover/focus 高亮。
+    1440 固定于视口右下角；1024/390 置入底部「点击无效区」Dock（渐变模糊背板拦截点击、不穿透下层内容）。 ===== -->
+<div class="fab-anchor">
+<div class="fab-inner">
+<aside class="draft-panel" id="draft-panel" data-od-id="draft-tool">
+  <div class="dp-head"><strong>设置</strong><span>正式设置项待产品确认</span></div>
+  <div class="dp-group">
+    <label>客户端 / 宽度</label>
+    <div class="seg" data-ctrl="width">
+      <button type="button" data-val="1440" class="is-active">网页 1440</button>
+      <button type="button" data-val="1024">iPad 1024</button>
+      <button type="button" data-val="390">手机 390</button>
+    </div>
+  </div>
+  <div class="dp-group dp-formal">
+    <div class="dp-item"><span>语言</span><span>简体中文<span class="dp-tag">占位</span></span></div>
+    <div class="dp-item"><span>来源偏好</span><span>全部来源<span class="dp-tag">占位</span></span></div>
+    <div class="dp-item"><span>通知</span><span>关闭<span class="dp-tag">占位</span></span></div>
+    <div class="dp-item"><span>显示密度</span><span>标准<span class="dp-tag">占位</span></span></div>
+    <p class="dp-note">以上为正式设置项的占位骨架；具体选项与交互待产品确认后补齐，不进入正式实现。</p>
+  </div>
+  <details class="dp-debug" data-od-id="draft-debug">
+    <summary>调试控件 DRAFT</summary>
+    <div class="dp-group">
+      <label>状态（证据导出）</label>
+      <div class="seg" data-ctrl="state">
+        <button type="button" data-val="timeline" class="is-active">时间线</button>
+        <button type="button" data-val="loading">加载</button>
+        <button type="button" data-val="empty">空</button>
+        <button type="button" data-val="error">错误</button>
+        <button type="button" data-val="404">404</button>
+        <button type="button" data-val="nomore">无更多</button>
+        <button type="button" data-val="partial">部分</button>
+        <button type="button" data-val="offline">离线</button>
+        <button type="button" data-val="inline-404">行内 404</button>
+        <button type="button" data-val="inline-error">行内错误</button>
+        <button type="button" data-val="detail">独立详情</button>
+        <button type="button" data-val="detail-404">详情 404</button>
+        <button type="button" data-val="detail-error">详情错误</button>
+      </div>
+    </div>
+    <div class="dp-group">
+      <label>降级模拟</label>
+      <label class="sw"><input type="checkbox" id="sim-rt"> 减少透明</label>
+      <label class="sw"><input type="checkbox" id="sim-rm"> 减少动效</label>
+    </div>
+    <p class="dp-note">调试控件仅用于证据导出 / 回归（#theme=…&width=…&state=…&open=…）；正式设置不包含这些。</p>
+  </details>
+</aside>
+  <div class="fab-row" role="group" aria-label="右下角工具">
+    <button class="back-to-top trace" type="button" id="back-to-top" data-od-id="UI-TOP-001-back-to-top">↑ 回到顶部</button>
+    <button class="fab trace" type="button" id="fab" aria-expanded="false" aria-controls="draft-panel" data-od-id="draft-tool-toggle">设置</button>
+    <button class="theme-fab trace" type="button" id="theme-btn" aria-pressed="true" data-od-id="UI-THEME-002-toggle">深</button>
+  </div>
+  </div>
+</div>
+
+<div class="toast glass-strong" id="toast" role="status" aria-live="polite"></div>
+
+<div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="图片放大预览" tabindex="-1">
+  <img src="" alt="">
+  <button type="button" class="lb-nav lb-prev" aria-label="上一张">‹</button>
+  <button type="button" class="lb-nav lb-next" aria-label="下一张">›</button>
+  <span class="lb-count" aria-live="polite"></span>
+</div>
+
+<script>
+/* ============================================================
+   F1+1 v0.2-draft · 时间线示例数据与交互
+   数据语义沿用公开 feed / detail（无新增后端实体）
+   ============================================================ */
+Object.assign(window, {
+  FEED: [
+    { id:'r1', cat:'车手', title:'菲蒂帕尔迪力挺汉密尔顿：看好他在法拉利冲击总冠军', summary:'两届 F1 世界冠军菲蒂帕尔迪表示，看到汉密尔顿在法拉利重拾状态让他十分振奋，希望这位英国车手能发起真正的总冠军冲击。', source:'Motorsport.com', author:'', date:'08-06', clock:'18:00', publishedAt:'2026-08-06 18:00', aggregatedAt:'今日', originalUrl:'https://www.motorsport.com/f1/news/lewis-hamilton-backed-for-ferrari-f1-championship-push-by-emerson-fittipaldi/10844491/', live:false, zh:['两届 F1 世界冠军埃默森·菲蒂帕尔迪表示，看到汉密尔顿在法拉利重拾状态让他十分振奋，希望这位英国车手能在赛季后半段发起真正的总冠军冲击。','汉密尔顿目前正处于加盟法拉利的第二个赛季；首赛季的表现曾让一些人质疑他能否继续参与顶级竞争，但近期的势头正在扭转这一印象。'], imgs:[{src:'https://cdn-4.motorsport.com/images/amp/0Zq88vN6/s6/lewis-hamilton-ferrari.jpg', alt:'配图 1 lewis hamilton ferrari'},{src:'https://cdn-4.motorsport.com/images/amp/6b8jBjj2/s6/lewis-hamilton-ferrari.jpg', alt:'配图 2 lewis hamilton ferrari'},{src:'https://cdn-1.motorsport.com/images/amp/YK15b710/s6/ferrari-499p-evo-test-a-monza.jpg', alt:'配图 3 ferrari 499p evo test a '},{src:'https://cdn-4.motorsport.com/images/amp/6Vy7vynY/s6/frederic-vasseur-ferrari.jpg', alt:'配图 4 frederic vasseur ferrari'}] },
+    { id:'r2', cat:'新闻', title:'F1 夏休期是什么，为何每年都会发生？', summary:'F1 现已进入夏休期，系列赛在上周匈牙利大奖赛与下一场荷兰大奖赛之间暂停。', source:'Motorsport.com', author:'', date:'08-06', clock:'16:00', publishedAt:'2026-08-06 16:00', aggregatedAt:'今日', originalUrl:'https://www.motorsport.com/f1/news/what-is-the-f1-summer-break-why-does-it-happen-how-long/10346924/', live:false, zh:['F1 现已进入夏休期，赛季在上周匈牙利大奖赛与下一场荷兰大奖赛之间暂停。','尽管赛历因中东局势多次调整，F1 仍以连续 11 场大奖赛结束了上半赛季；为何冠军需要两周休整、车队在停赛期间做什么，是本文解答的重点。'], imgs:[{src:'https://cdn-4.motorsport.com/images/amp/0Zq8w4V6/s6/lando-norris-mclaren-3.jpg', alt:'F1 夏休期是什么，为何每年都会发生？'}] },
+    { id:'r3', cat:'动态', title:'威廉姆斯 F1 模拟器车手的一天：工作内容与真实影响', summary:'威廉姆斯模拟器车手维克托·马丁斯谈到自己的角色：对赛车有影响，但并非直接。', source:'Motorsport.com', author:'', date:'08-06', clock:'14:27', publishedAt:'2026-08-06 14:27', aggregatedAt:'今日', originalUrl:'https://www.motorsport.com/f1/news/what-life-is-like-as-a-williams-f1-simulator-driver/10843241/', live:false, zh:['威廉姆斯模拟器车手维克托·马丁斯在采访中谈到自己的角色：他对赛车有影响，但并非直接——团队里有许多部门、许多工作都在持续改进与分析。','他坦言在“开发”层面参与是肯定的，但“直接决定赛车”则算不上；这背后是模拟器车手与工程师、车手之间复杂的分工协作。'], imgs:[] },
+    { id:'r4', cat:'周边趣闻', title:'博塔斯在 F1 夏休期斩获越野骑行佳绩', summary:'博塔斯在 F1 夏休期初段拿下 UCI 砾石世锦赛资格，于年龄组中位列第五。', source:'Motorsport.com', author:'', date:'08-06', clock:'12:55', publishedAt:'2026-08-06 12:55', aggregatedAt:'今日', originalUrl:'https://www.motorsport.com/f1/news/valtteri-bottas-celebrates-major-off-road-cycling-success-during-f1-summer-break/10844506/', live:false, zh:['博塔斯利用 F1 夏休的开始，在捷克举行的资格赛中锁定 UCI 砾石世锦赛参赛资格，并以年龄组第五完赛。','这位芬兰车手与奥运自行车手女友蒂芙尼·克伦威尔一同参加了这场 131 公里的越野骑行赛事，而 F1 围场正处在强制夏休期。'], imgs:[{src:'https://cdn-4.motorsport.com/images/amp/6Vy7PadY/s6/valtteri-bottas-cadillac-racin.jpg', alt:'配图 1 valtteri bottas cadillac'},{src:'https://cdn-8.motorsport.com/images/amp/YN7vvGa6/s6/valtteri-bottas-cadillac-racin.jpg', alt:'配图 2 valtteri bottas cadillac'},{src:'https://cdn-9.motorsport.com/images/amp/0R7wn7r2/s6/valtteri-bottas-cadillac-racin.jpg', alt:'配图 3 valtteri bottas cadillac'}] },
+    { id:'r5', cat:'新闻', title:'F1 2026 中期评分：凯迪拉克的冒险开局可圈可点', summary:'全新 F1 车队并不常见；对资金充足的凯迪拉克这样新的加入者，中期评分关注其开局是否达到预期。', source:'Motorsport.com', author:'', date:'08-06', clock:'12:00', publishedAt:'2026-08-06 12:00', aggregatedAt:'今日', originalUrl:'https://www.motorsport.com/f1/news/f1-2026-mid-season-grades-cadillac-gets-off-to-respectable-start-to-its-adventure/10844400/', live:false, zh:['全新 F1 车队并不常见，因此对新加入者很难抱有明确预期；资金充足的凯迪拉克以与车队领队劳登此前执掌曼诺时截然不同的条件入局。','它不得不在更多部件上自主生产或采购，比 F1 上一次有新车队时要求更高；中期评分关注其开局是否达到预期。'], imgs:[{src:'https://cdn-8.motorsport.com/images/amp/0o5AKJ7Y/s6/team-report-card-cadillac.jpg', alt:'配图 1 team report card cadilla'},{src:'https://cdn-7.motorsport.com/images/amp/6Vy7PadY/s6/valtteri-bottas-cadillac-racin.jpg', alt:'配图 2 valtteri bottas cadillac'},{src:'https://cdn-3.motorsport.com/images/amp/27NoaLv0/s6/sergio-perez-cadillac-racing.jpg', alt:'配图 3 sergio perez cadillac ra'}] },
+    { id:'r6', cat:'车手', title:'菲蒂帕尔迪：安东内利与罗素之争对 F1 是好事', summary:'菲蒂帕尔迪认为，梅赛德斯队内罗素与安东内利不断升温的竞争，正是这项运动所需要的。', source:'Motorsport.com', author:'', date:'08-06', clock:'11:44', publishedAt:'2026-08-06 11:44', aggregatedAt:'昨日', originalUrl:'https://www.motorsport.com/f1/news/emerson-fittipaldi-explains-why-kimi-antonelli-george-russell-battle-is-good-for-f1/10844481/', live:false, zh:['菲蒂帕尔迪认为，梅赛德斯队内罗素与安东内利之间不断升温的竞争，正是这项运动所需要的。','汉密尔顿转投法拉利后，罗素本被普遍视为布拉克利车队的领军者；他在安东内利的新秀赛季曾将其护于翼下，而如今两人的关系正在演变。'], imgs:[{src:'https://cdn-1.motorsport.com/images/amp/2Qe8nd32/s6/george-russell-mercedes-andrea.jpg', alt:'菲蒂帕尔迪：安东内利与罗素之争对 F1 是好事'}] },
+    { id:'r7', cat:'周边趣闻', title:'阿斯顿·马丁发布新款限量版格兰菲迪威士忌', summary:'阿斯顿·马丁 F1 车队与其官方合作伙伴格兰菲迪推出新款限量版单一麦芽威士忌。', source:'Motorsport.com', author:'', date:'08-06', clock:'11:13', publishedAt:'2026-08-06 11:13', aggregatedAt:'昨日', originalUrl:'https://www.motorsport.com/f1/news/aston-martin-unveils-new-limited-edition-glenfiddich-whisky/10844454/', live:false, zh:['阿斯顿·马丁 F1 车队与其官方合作伙伴格兰菲迪推出了一款新的限量版单一麦芽威士忌。','这是双方自 2024 年 11 月建立多年合作关系以来的第二款联名作品——格兰菲迪 × 阿斯顿·马丁 F1 车队 16 年陈酿限量版第 2 号。'], imgs:[{src:'https://cdn-6.motorsport.com/images/amp/6lmdbbK0/s6/fernando-alonso-aston-martin-r.jpg', alt:'阿斯顿·马丁发布新款限量版格兰菲迪威士忌'}] },
+    { id:'r8', cat:'新闻', title:'沃尔斯向威廉姆斯发出强硬讯息：困境中的坚持', summary:'威廉姆斯领队沃尔斯在 F1 夏休之际发出强硬讯息，坚称“积极的改变被掩盖了”。', source:'Motorsport.com', author:'', date:'08-06', clock:'10:35', publishedAt:'2026-08-06 10:35', aggregatedAt:'昨日', originalUrl:'https://www.motorsport.com/f1/news/james-vowles-sends-defiant-williams-f1-message-amid-2026-struggles/10844441/', live:false, zh:['威廉姆斯领队沃尔斯在 F1 进入夏休之际发出了一条态度强硬的讯息，坚称“积极的改变被掩盖了”，尽管车队在 2026 规则周期开局艰难。','格罗夫车队目前以 11 个积分位列车队积分榜第九；尽管拥有塞恩斯与阿尔本这对备受好评的车手组合，威廉姆斯仍未摆脱困境。'], imgs:[{src:'https://cdn-3.motorsport.com/images/amp/6DGqQRwY/s6/james-vowles-williams.jpg', alt:'配图 1 james vowles williams'},{src:'https://cdn-5.motorsport.com/images/amp/2y7Qo3p6/s6/victor-martins-williams.jpg', alt:'配图 2 victor martins williams'},{src:'https://cdn-6.motorsport.com/images/amp/2eZxrwlY/s6/alexander-albon-williams.jpg', alt:'配图 3 alexander albon williams'},{src:'https://cdn-7.motorsport.com/images/amp/Y9lLVr82/s6/carlos-sainz-williams.jpg', alt:'配图 4 carlos sainz williams'}] },
+    { id:'r9', cat:'车手', title:'诺里斯被赞“货真价实”：心理韧性经受考验', summary:'前 F1 比赛工程师斯梅德利盛赞诺里斯心理素质，称这位迈凯伦车手“货真价实”。', source:'Motorsport.com', author:'', date:'08-06', clock:'10:13', publishedAt:'2026-08-06 10:13', aggregatedAt:'昨日', originalUrl:'https://www.motorsport.com/f1/news/lando-norris-branded-the-real-deal-after-showing-mental-resilience/10844102/', live:false, zh:['前 F1 比赛工程师罗布·斯梅德利盛赞诺里斯心理素质强大，称这位迈凯伦车手“货真价实”。','在播客节目中，斯梅德利谈及 2025 年世界冠军在斯帕-弗朗科尔尚比利时大奖赛后的公众观感——尽管受 10 位发车罚退，诺里斯整场仍展现了强劲节奏。'], imgs:[{src:'https://cdn-4.motorsport.com/images/amp/0JXwgXBY/s6/lando-norris-mclaren.jpg', alt:'配图 1 lando norris mclaren'},{src:'https://cdn-1.motorsport.com/images/amp/6x7LMBjY/s6/lando-norris-mclaren.jpg', alt:'配图 2 lando norris mclaren'}] },
+    { id:'r10', cat:'新闻', title:'F1 该禁止动力单元算法吗？FIA 为何说不', summary:'F1 官方坚称车迷正在享受比赛，但车手们对 2026 新规的批评声明显更多。', source:'Motorsport.com', author:'', date:'08-06', clock:'08:18', publishedAt:'2026-08-06 08:18', aggregatedAt:'昨日', originalUrl:'https://www.motorsport.com/f1/news/should-f1-ban-power-unit-algorithms-heres-why-the-fia-says-no/10844411/', live:false, zh:['F1 官方基于其“车迷之声”计划坚称车迷正在享受比赛，但车手们对 2026 新规的批评声明显更多。','斯帕大奖赛上，皮亚斯特里指出车手常被自家动力单元“吓到”——排位赛中他因此损失了可观时间；这也是“是否应禁止动力单元算法”争论的由来。'], imgs:[{src:'https://cdn-2.motorsport.com/images/amp/0JXwlEAY/s6/charles-leclerc-ferrari-lewis-.jpg', alt:'F1 该禁止动力单元算法吗？FIA 为何说不'}] }
+  ]
+});
+
+/* 离线 SVG 占位图 — 模拟不同宽高比（16:9 / 4:3 / 3:2 / 1:1）的真实图片，可测 object-fit / 行高 */
+function phSVG(w, h, label) {
+  var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '">'
+    + '<rect width="100%" height="100%" fill="#15151a"/>'
+    + '<path d="M0 ' + Math.round(h * 0.62) + ' L' + w + ' ' + Math.round(h * 0.5) + ' L' + w + ' ' + h + ' L0 ' + h + ' Z" fill="#1d1d24"/>'
+    + '<rect x="' + Math.round(w * 0.06) + '" y="' + Math.round(h * 0.08) + '" width="' + Math.round(w * 0.88) + '" height="' + Math.round(h * 0.18) + '" rx="' + Math.round(h * 0.03) + '" fill="#232330"/>'
+    + '<text x="' + Math.round(w * 0.06) + '" y="' + Math.round(h * 0.08 + h * 0.13) + '" fill="#8c8c96" font-family="sans-serif" font-size="' + Math.round(h * 0.09) + '" font-weight="600">' + label + '</text>'
+    + '<text x="' + Math.round(w * 0.06) + '" y="' + Math.round(h * 0.9) + '" fill="#6e6e78" font-family="sans-serif" font-size="' + Math.round(h * 0.05) + '">' + w + '×' + h + '</text>'
+    + '</svg>';
+  return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+}
+
+var $ = function (s, r) { return (r || document).querySelector(s); };
+var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+var PUBLIC_FILTER = 'all';
+var PUBLIC_VISIBLE = 7;
+
+function scopeOf(it) {
+  if (it.id === 'r1' || it.id === 'r6') return 'history';
+  if (it.cat === '动态' || it.id === 'r9') return 'social';
+  if (it.cat === '周边趣闻') return 'culture';
+  return 'news';
+}
+function filteredFeed() {
+  return window.FEED.filter(function (it) { return PUBLIC_FILTER === 'all' || scopeOf(it) === PUBLIC_FILTER; });
+}
+
+/* ---------- 滑动切图共享工具（时间线主图 + lightbox 共用） ----------
+   prefersReducedMotion：尊重 prefers-reduced-motion / [data-rm] 强制降级
+   cancelAnim：取消元素进行中的动画（换图前重置）
+   swipeThresh：主图滑动切图阈值 = max(44px, 媒体区宽度 × 0.12)，
+                横向位移主导（|dx|>|dy|）且超过该值才判定滑切，否则回弹 */
+function prefersReducedMotion() {
+  return (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) || document.documentElement.dataset.rm === 'true';
+}
+function cancelAnim(el) {
+  var as = (el && el.getAnimations) ? el.getAnimations() : [];
+  as.forEach(function (a) { a.cancel(); });
+}
+function swipeThresh(el) {
+  var w = (el && el.getBoundingClientRect ? el.getBoundingClientRect().width : 0) || 0;
+  return Math.max(44, Math.round(w * 0.12));
+}
+
+/* 沙箱友好的存储 / 路由（导出渲染器可能拒绝 localStorage / history） */
+function storeGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+function storeSet(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* noop */ } }
+function safeReplaceState(url) { try { history.replaceState(null, '', url); } catch (e) { /* noop */ } }
+
+/* ---------- 媒体区模板：单张主图（主图内部不放缩略图）；单图 → 仅主图 ---------- */
+function mediaHTML(it, imgs, src, alt) {
+  if (!imgs || !imgs.length) return '';
+  var m0 = imgs[0];
+  return '<img class="ph-main" data-idx="0" src="' + src(m0) + '" alt="' + alt(m0, 0) + '" loading="lazy" tabindex="0" role="button" aria-label="放大图片">';
+}
+
+/* 证据行右侧缩略图导航 — 多图时渲染，位于条目右下角、与来源文本同一行横向对齐 */
+function thumbsHTML(it, imgs, src, alt) {
+  if (!imgs || imgs.length <= 1) return '';
+  return '<span class="ph-thumbs" aria-label="图片导航">' + imgs.map(function (im, i) {
+    var on = i === 0;
+    return '<img class="ph-thumb' + (on ? ' is-active' : '') + '" src="' + src(im) + '" alt="' + alt(im, i) + '" data-idx="' + i + '" loading="lazy" tabindex="0" role="button" aria-label="查看第 ' + (i + 1) + ' 张图" aria-pressed="' + (on ? 'true' : 'false') + '"' + (on ? ' aria-current="true"' : '') + '>';
+  }).join('') + '</span>';
+}
+
+/* ---------- 时间线条目模板（按钮式手风琴，就地展开） ---------- */
+function itemHTML(it, open) {
+  var detId = 'det-' + it.id;
+  var authorSeg = it.author ? '<span class="sep">·</span><span><b>' + it.author + '</b></span>' : '';
+  var imgs = it.imgs || [];
+  var mediaId = (imgs.length === 1 || imgs.length === 4) ? ('PUB-MEDIA-' + imgs.length) : ('V-PUB-MEDIA-' + imgs.length);
+  function src(im) { return im.src || phSVG(im.w, im.h, im.label); }
+  function alt(im, i) { return im.alt || ('配图 ' + (i + 1)); }
+  var mediaBlock = imgs.length
+    ? '<span class="tl-media' + (imgs.length > 1 ? ' multi' : '') + '" data-od-id="' + mediaId + '-' + it.id + '" data-cur="0"' + (imgs.length > 1 ? ' data-n="' + imgs.length + '"' : '') + '>' + mediaHTML(it, imgs, src, alt) + '</span>'
+    : '<span class="no-media" data-od-id="PUB-MEDIA-0-' + it.id + '">无媒体 · 标题、摘要与来源保持完整</span>';
+  return '<li class="tl-item' + (it.live ? ' is-live' : '') + '" data-scope="' + scopeOf(it) + '" data-od-id="tl-item-' + it.id + '">'
+    + '<div class="tl-time" aria-hidden="true">'
+    +   '<span class="tl-t">' + it.clock + '</span>'
+    +   '<span class="tl-d">' + it.date + '</span>'
+    + '</div>'
+    + '<div class="tl-entry">'
+    +   '<button type="button" class="tl-summary-btn' + (open ? ' is-open' : '') + '"'
+    +     ' aria-expanded="' + (open ? 'true' : 'false') + '"'
+    +     ' aria-controls="' + detId + '" data-id="' + it.id + '" data-od-id="UI-ACCORDION-001-' + it.id + '">'
+    +     '<span class="tl-head">'
+    +       '<span class="tl-cat">' + it.cat + '</span>'
+    +       (it.live ? '<span class="tl-live">直播</span>' : '')
+    +       '<span class="tl-caret" aria-hidden="true"></span>'
+    +     '</span>'
+    +     '<span class="tl-title">' + it.title + '</span>'
+    +     '<span class="tl-lead">' + it.summary + '</span>'
+    +   '</button>'
+    +   mediaBlock
+    +   '<div class="tl-collapse' + (open ? ' is-open' : '') + '">'
+    +     '<div class="tl-detail" id="' + detId + '" data-od-id="PUB-DETAIL-004-inline-' + it.id + '">'
+    +       '<span class="tl-zh-label">中文提炼</span>'
+    +       it.zh.map(function (p) { return '<p class="tl-zh">' + p + '</p>'; }).join('')
+    +     '</div>'
+    +   '</div>'
+    +   '<span class="tl-ev">'
+    +     '<span class="evs"><span><b>' + it.source + '</b></span>' + authorSeg + '<span class="sep">·</span><span><b>' + it.date + ' ' + it.clock + '</b></span></span>'
+    +     '<span class="ev-right">'
+    +       '<a class="tl-original-link" href="#" data-external data-message="原文链接（示例）">前往原文 ↗</a>'
+    +       thumbsHTML(it, imgs, src, alt)
+    +     '</span>'
+    +   '</span>'
+    + '</div></li>';
+}
+
+function skeletonHTML(n) {
+  var s = '';
+  for (var i = 0; i < n; i++) {
+    s += '<li class="tl-item" data-od-id="skel-' + i + '" aria-hidden="true">'
+      + '<div class="tl-time"><span class="skel-time"></span></div>'
+      + '<div class="skel-lines"><i></i><i></i><i></i></div>'
+      + '</li>';
+  }
+  return s;
+}
+
+var STATES = {
+  empty: { code: '0',   title: '暂无内容',    msg: '当前没有可显示的聚合内容。', link: '刷新' },
+  error: { code: '!',   title: '加载失败',    msg: '聚合服务暂时不可用，请稍后再试。', link: '重试' },
+  '404': { code: '404', title: '未找到这条内容', msg: '链接可能已失效。', link: '返回时间线' },
+  nomore: { code: '∅',  title: '已无更多内容', msg: '已经到底了，没有更多聚合内容。', link: '返回顶部' },
+  partial: { code: 'i', title: '部分内容加载成功', msg: '部分内容加载成功，部分失败；可重试失败项。', link: '重试失败项' },
+  offline: { code: 'ⓘ', title: '离线 / 受限',  msg: '当前网络受限，无法刷新；恢复网络后重试。', link: '刷新' }
+};
+
+/* ---------- 渲染 ---------- */
+function renderTimeline(openId) {
+  var tl = $('#tl');
+  var html = '';
+  var scoped = filteredFeed();
+  scoped.slice(0, PUBLIC_VISIBLE).forEach(function (it) {
+    html += itemHTML(it, it.id === openId);
+  });
+  tl.innerHTML = html;
+  updateFilterControls();
+  updatePagination(scoped.length);
+  syncOpenState(openId);
+  var si = $('#search-input');
+  if (si) applySearch(si.value);
+  bindMedia();       /* 渲染后绑定主图/缩略图交互（悬停预览/点击固定/键盘/lightbox） */
+}
+/* 图片采用「单张主图 + 右下角小缩略图」；单图内容仅主图 */
+
+function renderSkeleton() {
+  $('#tl').innerHTML = skeletonHTML(5);
+}
+
+function renderStateBox(st) {
+  var s = STATES[st];
+  if (!s) return;
+  $('#state-box').innerHTML =
+      '<span class="sb-code">' + s.code + '</span>'
+    + '<span class="sb-title">' + s.title + '</span>'
+    + '<span class="sb-msg">' + s.msg + '</span>'
+    + '<a href="#state=timeline" data-nav-state' + (st === 'partial' ? ' data-retry-page="same-cursor"' : '') + '>' + s.link + ' →</a>';
+}
+
+function renderInlineProblem(st) {
+  renderTimeline('r2');
+  var detail = $('#det-r2');
+  if (!detail) return;
+  var is404 = st === 'inline-404';
+  detail.innerHTML = '<div class="inline-problem" data-od-id="PUB-DETAIL-004-' + (is404 ? '404' : 'error') + '">'
+    + '<strong>' + (is404 ? '未找到公开详情' : '详情读取失败') + '</strong>'
+    + '<span>' + (is404 ? '该 publicId 没有可公开的投影；不显示内部状态。' : '时间线内容继续保留，可重试同一 publicId。') + '</span>'
+    + '<a href="#state=' + st + '" data-retry-detail="r2">重试同一条内容 →</a></div>';
+}
+
+function renderDetailRoute(st) {
+  var box = $('#state-box');
+  var error = st === 'detail-error';
+  var missing = st === 'detail-404';
+  box.setAttribute('data-od-id', missing || error ? 'PUB-DETAIL-005-state' : 'PUB-DETAIL-001-route');
+  if (st === 'detail') {
+    box.innerHTML = '<article class="detail-route">'
+      + '<span class="detail-kicker">独立详情 · PublishedProjection</span>'
+      + '<h1>F1 夏休期是什么，为何每年都会发生？</h1>'
+      + '<p>在公开详情页中继续阅读中文详情；标题、来源与时间保持和资讯流同一对象。</p>'
+      + '<h2>关键点</h2><ul><li>夏休期位于连续大奖赛之后。</li><li>车队在强制休整期限制日常工作。</li><li>下一站恢复时沿用同一赛季上下文。</li></ul>'
+      + '<h2>关联内容</h2><ul aria-label="最多三条关联内容"><li>荷兰大奖赛前瞻</li><li>车队夏休期工作规则</li><li>赛季下半程关键节点</li></ul>'
+      + '<div class="detail-actions"><a href="#state=timeline">← 返回资讯流</a><a href="#state=detail" data-external data-message="原文链接（示例）">前往原文 ↗</a></div>'
+      + '</article>';
+    return;
+  }
+  box.innerHTML = '<span class="sb-code">' + (missing ? '404' : '!') + '</span>'
+    + '<span class="sb-title">' + (missing ? '未找到公开详情' : '详情读取失败') + '</span>'
+    + '<span class="sb-msg">' + (missing ? '非法、未公开与不存在统一显示此状态。' : '保持当前 URL，可重试同一条公开详情。') + '</span>'
+    + '<div class="detail-actions"><a href="#state=detail">重试同一 URL →</a><a href="#state=timeline">返回资讯流 →</a></div>';
+}
+
+function updateFilterControls() {
+  $$('[data-filter]').forEach(function (b) {
+    var active = b.dataset.filter === PUBLIC_FILTER;
+    b.classList.toggle('is-active', active);
+    b.setAttribute('aria-pressed', active ? 'true' : 'false');
+  });
+}
+
+function updatePagination(total) {
+  var pagination = $('#pagination'), button = $('#load-more'), status = $('#pagination-status');
+  if (!pagination || !button || !status) return;
+  var hasMore = PUBLIC_VISIBLE < total;
+  pagination.hidden = total === 0;
+  button.hidden = !hasMore;
+  status.hidden = hasMore;
+  status.textContent = total && !hasMore ? '已无更多内容' : '';
+}
+
+function render(st, openId) {
+  var tl = $('#tl'), box = $('#state-box'), pagination = $('#pagination'), filters = $('.feed-filters');
+  box.classList.remove('is-inline');
+  box.setAttribute('data-od-id', 'PUB-FEED-004-state');
+  if (st === 'timeline') {
+    tl.hidden = false; box.hidden = true; filters.hidden = false; renderTimeline(openId);
+  } else if (st === 'loading') {
+    tl.hidden = false; box.hidden = true; filters.hidden = false; pagination.hidden = true; renderSkeleton();
+  } else if (st === 'nomore') {
+    PUBLIC_VISIBLE = filteredFeed().length;
+    tl.hidden = false; box.hidden = true; filters.hidden = false; renderTimeline(openId);
+  } else if (st === 'partial') {
+    tl.hidden = false; box.hidden = false; filters.hidden = false; renderTimeline(openId); renderStateBox(st); box.classList.add('is-inline');
+  } else if (st === 'inline-404' || st === 'inline-error') {
+    tl.hidden = false; box.hidden = true; filters.hidden = false; renderInlineProblem(st);
+  } else if (st === 'detail' || st === 'detail-404' || st === 'detail-error') {
+    tl.hidden = true; box.hidden = false; filters.hidden = true; pagination.hidden = true; renderDetailRoute(st);
+  } else {
+    tl.hidden = true; box.hidden = false; filters.hidden = false; pagination.hidden = true; renderStateBox(st);
+  }
+}
+
+/* ---------- 搜索（轻量客户端过滤，无后端实体） ---------- */
+function applySearch(q) {
+  q = (q || '').trim().toLowerCase();
+  var items = $$('#tl .tl-item');
+  if (!items.length) return;
+  var visible = 0;
+  items.forEach(function (item) {
+    var hit = !q || item.textContent.toLowerCase().indexOf(q) >= 0;
+    item.hidden = !hit;
+    if (hit) visible++;
+  });
+  var note = $('#search-empty');
+  if (note) note.hidden = !(q && visible === 0);
+}
+function bindSearch() {
+  var input = $('#search-input');
+  if (!input) return;
+  input.addEventListener('input', function () {
+    applySearch(input.value);
+    var p = getParams();
+    if (input.value) { p.search = input.value; } else { delete p.search; }
+    setParams(p);
+  });
+}
+
+/* ---------- 路由（URL 参数驱动，供导出证据） ---------- */
+function getParams() {
+  var h = location.hash.replace(/^#/, '');
+  var p = {};
+  if (!h) return p;
+  h.split('&').forEach(function (kv) {
+    var i = kv.indexOf('=');
+    if (i > 0) p[kv.slice(0, i)] = decodeURIComponent(kv.slice(i + 1));
+  });
+  return p;
+}
+function setParams(p) {
+  var keys = ['theme', 'width', 'state', 'open', 'search', 'filter'];
+  var cur = getParams();
+  keys.forEach(function (k) { if (p[k] !== undefined) cur[k] = p[k]; else delete cur[k]; });
+  var q = keys.filter(function (k) { return cur[k]; }).map(function (k) { return k + '=' + encodeURIComponent(cur[k]); }).join('&');
+  safeReplaceState(q ? ('#' + q) : location.pathname);
+}
+
+function applyRoute() {
+  var p = getParams();
+  var theme = p.theme || window.DEFAULT_THEME || storeGet('f1p1-theme') || 'dark';
+  var width = p.width || window.DEFAULT_WIDTH || '1440';
+  var state = p.state || window.DEFAULT_STATE || 'timeline';
+  PUBLIC_FILTER = p.filter || 'all';
+  document.documentElement.dataset.theme = theme;
+  document.body.dataset.theme = theme;
+  document.body.dataset.width = width;
+  document.documentElement.dataset.reveal = (p.reveal === '1' || window.DEFAULT_REVEAL) ? 'true' : 'false';
+
+  var si = $('#search-input');
+  if (si) si.value = p.search || window.DEFAULT_SEARCH || '';
+
+  render(state, p.open || window.DEFAULT_OPEN);
+
+  /* 同步控制：主题单按钮显示当前主题；宽度/状态调试控件同步选中态 */
+  updateThemeButton(theme);
+  $$('[data-ctrl="width"] button').forEach(function (b) { b.classList.toggle('is-active', b.dataset.val === width); });
+  $$('[data-ctrl="state"] button').forEach(function (b) { b.classList.toggle('is-active', b.dataset.val === state); });
+}
+
+/* ---------- 主题 / 宽度 / 状态 ---------- */
+/* 主题单按钮：只显示一个字符（深/浅），点击一次切换深浅 */
+function updateThemeButton(t) {
+  var btn = $('#theme-btn');
+  if (!btn) return;
+  var dark = t !== 'light';
+  btn.textContent = dark ? '深' : '浅';
+  btn.setAttribute('aria-pressed', dark ? 'true' : 'false');
+  btn.setAttribute('aria-label', '当前主题：' + (dark ? '深色' : '浅色') + '，点击切换');
+}
+function setTheme(t) {
+  storeSet('f1p1-theme', t);
+  var p = getParams(); p.theme = t; setParams(p); applyRoute();
+}
+function setWidth(w) {
+  var p = getParams(); p.width = w; setParams(p); applyRoute();
+}
+function setState(s) {
+  var p = getParams(); p.state = s;
+  if (s !== 'timeline') delete p.open;
+  setParams(p); applyRoute();
+}
+function setA11y(k, on) { document.documentElement.dataset[k] = on ? 'true' : 'false'; }
+
+/* ---------- 交互：就地展开（手风琴，一次一个） ---------- */
+function setItemOpen(id, open) {
+  var tl = $('#tl');
+  var det = document.getElementById('det-' + id);
+  var btn = $('.tl-summary-btn[data-id="' + id + '"]', tl);
+  var item = btn ? btn.closest('.tl-item') : null;
+  var collapse = det ? det.closest('.tl-collapse') : null;
+  if (open) {
+    $$('#tl .tl-collapse').forEach(function (c) { c.classList.remove('is-open'); });
+    $$('#tl .tl-summary-btn').forEach(function (b) { b.classList.remove('is-open'); b.setAttribute('aria-expanded', 'false'); });
+    $$('#tl .tl-item').forEach(function (li) { li.classList.remove('is-open'); });
+    if (collapse) collapse.classList.add('is-open');
+    if (btn) { btn.classList.add('is-open'); btn.setAttribute('aria-expanded', 'true'); }
+    if (item) item.classList.add('is-open');
+    tl.classList.add('is-focusing');
+    /* 展开动画结束后，滚动定位到整条内容垂直居中（reduced-motion 时不滚动动画）。
+       居中偏移按「条目高度相对视口」计算并夹取下限 16px：条目高于视口时保持时间/标题可见，
+       不高于视口时整条内容居中——准确定位到整条内容中央，时间上方不留大片空白。 */
+    var target = item || det || btn;
+    if (target) {
+      var rm = (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) || document.documentElement.dataset.rm === 'true';
+      setTimeout(function () {
+        var rect = target.getBoundingClientRect();
+        var vh = window.innerHeight || document.documentElement.clientHeight;
+        var gap = Math.max(16, Math.round((vh - rect.height) / 2));
+        var top = Math.max(0, Math.round((window.pageYOffset || 0) + rect.top - gap));
+        window.scrollTo({ top: top, behavior: rm ? 'auto' : 'smooth' });
+      }, rm ? 0 : 260);
+    }
+  } else if (det) {
+    if (collapse) collapse.classList.remove('is-open');
+    if (btn) { btn.classList.remove('is-open'); btn.setAttribute('aria-expanded', 'false'); }
+    if (item) item.classList.remove('is-open');
+    if (!$('#tl .tl-item.is-open')) tl.classList.remove('is-focusing');
+  }
+}
+/* 渲染后同步展开聚焦态（供 `#open=` 初始加载 / 搜索重渲染使用；不自动滚动） */
+function syncOpenState(openId) {
+  var tl = $('#tl');
+  if (!tl) return;
+  $$('#tl .tl-item').forEach(function (li) { li.classList.remove('is-open'); });
+  if (openId) {
+    var item = $('.tl-item[data-od-id="tl-item-' + openId + '"]', tl);
+    if (item) item.classList.add('is-open');
+    tl.classList.add('is-focusing');
+  } else {
+    tl.classList.remove('is-focusing');
+  }
+}
+function bindTimeline() {
+  $('#tl').addEventListener('click', function (e) {
+    var btn = e.target.closest('.tl-summary-btn');
+    if (!btn) return;
+    var id = btn.getAttribute('data-id');
+    var det = document.getElementById('det-' + id);
+    if (!det) return;
+    var collapse = det.closest('.tl-collapse');
+    var willOpen = collapse ? !collapse.classList.contains('is-open') : det.hidden;
+    setItemOpen(id, willOpen);
+    var p = getParams();
+    if (willOpen) { p.open = id; setParams(p); }
+    else { if (p.open) { delete p.open; setParams(p); } }
+  });
+}
+
+function bindFeedControls() {
+  var filters = $('.feed-filters');
+  if (filters) filters.addEventListener('click', function (e) {
+    var button = e.target.closest('[data-filter]');
+    if (!button) return;
+    PUBLIC_FILTER = button.dataset.filter;
+    PUBLIC_VISIBLE = 7;
+    var p = getParams();
+    p.state = 'timeline';
+    if (PUBLIC_FILTER === 'all') delete p.filter; else p.filter = PUBLIC_FILTER;
+    delete p.open;
+    setParams(p);
+    render('timeline');
+  });
+  var loadMore = $('#load-more');
+  if (loadMore) loadMore.addEventListener('click', function () {
+    PUBLIC_VISIBLE = Math.min(filteredFeed().length, PUBLIC_VISIBLE + 7);
+    renderTimeline();
+    var status = $('#pagination-status');
+    if (status && !status.hidden) status.focus && status.focus();
+  });
+  document.addEventListener('click', function (e) {
+    var retry = e.target.closest('[data-retry-detail]');
+    if (!retry) return;
+    e.preventDefault();
+    var p = getParams(); p.state = 'timeline'; p.open = retry.dataset.retryDetail; setParams(p); applyRoute();
+  });
+  document.addEventListener('click', function (e) {
+    var retry = e.target.closest('[data-retry-page]');
+    if (!retry) return;
+    e.preventDefault();
+    var p = getParams(); p.state = 'timeline'; delete p.open; setParams(p); applyRoute();
+  });
+}
+
+/* 展开详情时，点击核心区（展开内容）外部 → 自动收起并恢复主页面 */
+function bindCollapseOutside() {
+  document.addEventListener('click', function (e) {
+    var open = $('#tl .tl-item.is-open');
+    if (!open || open.contains(e.target)) return;
+    var btn = $('.tl-summary-btn', open);
+    if (btn) setItemOpen(btn.getAttribute('data-id'), false);
+    var p = getParams();
+    if (p.open) { delete p.open; setParams(p); }
+  });
+}
+
+/* ---------- 外链 / toast ---------- */
+function toast(msg) {
+  var t = $('#toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._h); t._h = setTimeout(function () { t.classList.remove('show'); }, 2000);
+}
+function bindExternal() {
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a[data-external]');
+    if (a) { e.preventDefault(); toast(a.getAttribute('data-message') || '示例外链（草案未发布）'); }
+  });
+}
+
+/* ---------- 媒体区交互（v0.2f）：单张主图 + 条目右下角证据行小缩略图 ----------
+   悬停缩略图 → 主图临时预览；移走 → 恢复当前固定图；点击/键盘 Enter → 固定切换；
+   主图（含 data-idx 当前激活索引）点击/Enter → 打开 lightbox。单图内容无缩略图、仅主图。
+   缩略图位于证据行（.tl-ev 右侧）、条目按钮之外，不再叠放于主图内部。 */
+function setMainImage(media, idx) {
+  var host = media.closest('.tl-item') || media;
+  var thumbs = $$('.ph-thumb', host);
+  var main = $('.ph-main', media);
+  if (!main || !thumbs.length) return;
+  var ph = thumbs[idx];
+  if (!ph) return;
+  main.src = ph.src;
+  main.alt = ph.alt || '';
+  main.setAttribute('data-idx', String(idx));
+  media.setAttribute('data-cur', String(idx));
+  thumbs.forEach(function (t, i) {
+    var on = i === idx;
+    t.classList.toggle('is-active', on);
+    t.setAttribute('aria-current', on ? 'true' : 'false');
+    t.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+}
+function bindMedia() {
+  $$('.tl-media.multi').forEach(function (media) {
+    var host = media.closest('.tl-item') || media; /* 缩略图已移到条目证据行，以条目为宿主 */
+    var thumbs = $$('.ph-thumb', host);
+    var main = $('.ph-main', media);
+    /* 悬停预览：临时切换主图；移走恢复当前固定图（拖拽滑切中不预览，避免覆盖跟随图） */
+    host.addEventListener('mouseover', function (e) {
+      var t = e.target.closest('.ph-thumb');
+      if (!t || !main || media.classList.contains('swiping')) return;
+      var cur = parseInt(media.getAttribute('data-cur'), 10);
+      var idx = parseInt(t.getAttribute('data-idx'), 10);
+      if (idx === cur) return;
+      main.src = t.src; main.alt = t.alt || ''; main.setAttribute('data-idx', String(idx));
+    });
+    host.addEventListener('mouseout', function (e) {
+      var t = e.target.closest('.ph-thumb');
+      if (!t || !main) return;
+      var cur = parseInt(media.getAttribute('data-cur'), 10);
+      var pinned = thumbs[cur];
+      if (pinned) { main.src = pinned.src; main.alt = pinned.alt || ''; main.setAttribute('data-idx', String(cur)); }
+    });
+    /* 点击缩略图：固定切换主图（缩略图在条目按钮之外，不会误触发手风琴展开/收起） */
+    host.addEventListener('click', function (e) {
+      var t = e.target.closest('.ph-thumb');
+      if (!t) return;
+      e.preventDefault();
+      setMainImage(media, parseInt(t.getAttribute('data-idx'), 10));
+    });
+    /* 键盘：聚焦缩略图 Enter/Space → 固定切换 */
+    host.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      var t = document.activeElement;
+      if (t && t.classList.contains('ph-thumb')) {
+        e.preventDefault();
+        setMainImage(media, parseInt(t.getAttribute('data-idx'), 10));
+      }
+    });
+    /* 主图滑动切图：触摸/鼠标拖拽（pointer）+ 触控板双指（wheel/deltaX） */
+    bindMainSwipe(media);
+  });
+}
+
+/* 主图滑切自然过渡：当前图滑出一侧、下一张从对侧滑入；reduced-motion 瞬时切换。
+   dir=+1 下一张（左滑/触控板两指左滑）、dir=-1 上一张 */
+function switchMainBy(media, dir, animate) {
+  var n = parseInt(media.getAttribute('data-n'), 10);
+  if (!n || n < 2) return;
+  var cur = parseInt(media.getAttribute('data-cur'), 10);
+  var next = ((cur + dir) % n + n) % n;
+  if (next === cur) return;
+  var main = $('.ph-main', media);
+  if (!main) return;
+  var w = main.getBoundingClientRect().width || 240;
+  var outX = (dir > 0 ? 1 : -1) * Math.round(w * 0.3);
+  if (animate && !prefersReducedMotion()) {
+    cancelAnim(main);
+    main.style.transform = ''; main.style.opacity = '';
+    main.animate([
+      { transform: 'translateX(0) scale(1)', opacity: 1 },
+      { transform: 'translateX(' + (-outX) + 'px) scale(.96)', opacity: .3 }
+    ], { duration: 200, easing: 'cubic-bezier(.2,.6,.2,1)', fill: 'forwards' }).onfinish = function () {
+      main.style.transform = ''; main.style.opacity = '';
+      setMainImage(media, next);
+      cancelAnim(main);
+      main.animate([
+        { transform: 'translateX(' + outX + 'px) scale(.96)', opacity: .3 },
+        { transform: 'translateX(0) scale(1)', opacity: 1 }
+      ], { duration: 250, easing: 'cubic-bezier(.2,.6,.2,1)', fill: 'forwards' });
+    };
+  } else {
+    setMainImage(media, next);
+  }
+}
+
+/* 时间线主图滑动切图绑定：
+   - pointer 拖拽：按下记录起点（缩略图/叠层不触发）→ 横向跟随 translateX → 抬起
+     超阈值且横向主导（|dx|>|dy|）→ 自然切图并记 swiped（抑制随后 click 误开 lightbox）；
+     低于阈值 → 回弹。竖移主导 → 交回页面滚动（touch-action:pan-y）。
+   - wheel：仅横向主导（|deltaX|>|deltaY|、非 ctrl 捏合），按「连续手势」累计，超阈值切图；
+     纵向 wheel 放行页面滚动。
+   - 【一次滑动只翻一张】pointer 与 wheel 共享手势锁 flipLockUntil：
+     ①任一来源翻页后锁定 FLIP_LOCK ms，同源或他源（触控板同时发 pointer+wheel、touch 派生 wheel）在锁期内不翻页；
+     ②wheel 按连续手势累计（事件间隔超 WHEEL_GAP 视为新手势），连续手势内翻页后锁定直至手势停歇，
+       杜绝慢速长滑二次累计再次翻页；
+     ③滑动量级拖拽无论是否翻页都记 swiped，避免随后的 click 误开 lightbox。 */
+function bindMainSwipe(media) {
+  var main = $('.ph-main', media);
+  if (!main) return;
+  var drag = null;
+  var flipLockUntil = 0, FLIP_LOCK = 400, WHEEL_GAP = 100;
+  var wheelAcc = 0, lastWheelAt = 0, wheelFlipLock = false;
+  var swipedTimer = null;
+  /* swiped 标记仅需抑制「紧随滑动的 click」；超时自动清除，避免 pointercancel/无 click 时残留，
+     导致之后正常的轻点被误抑制（打不开 lightbox）。 */
+  function markSwiped() {
+    media.dataset.swiped = '1';
+    clearTimeout(swipedTimer);
+    swipedTimer = setTimeout(function () { if (media.dataset.swiped === '1') media.dataset.swiped = ''; }, 400);
+  }
+  var reset = function () {
+    if (drag && drag.locked) media.classList.remove('swiping');
+    drag = null;
+  };
+  media.addEventListener('pointerdown', function (e) {
+    if (e.target.closest('.ph-thumb') || e.target.closest('.ph-thumbs')) return; /* 缩略图命中区不触发主图滑切 */
+    if (e.pointerType === 'mouse' && e.button !== 0) return; /* 仅左键 / 触摸 / 笔 */
+    clearTimeout(swipedTimer); media.dataset.swiped = ''; /* 新手势清除滑动标记 */
+    cancelAnim(main);
+    main.style.transform = ''; main.style.opacity = '';
+    drag = { x: e.clientX, y: e.clientY, pointerId: e.pointerId };
+    /* 注意：pointerdown 时先不 setPointerCapture——轻点（未锁定拖拽）不捕获，
+       保证随后 click 的目标仍是主图（能正常打开 lightbox）；仅在真正进入横向拖拽时捕获。 */
+  });
+  media.addEventListener('pointermove', function (e) {
+    if (!drag) return;
+    var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    if (!drag.locked && Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+    if (!drag.locked) {
+      drag.locked = true;
+      try { media.setPointerCapture(drag.pointerId); } catch (err) { /* noop */ }
+    }
+    media.classList.add('swiping');
+    drag.dx = dx;
+    main.style.transform = 'translateX(' + dx + 'px)';
+  });
+  function endDrag(e) {
+    if (!drag) return;
+    var dx = (drag.dx != null) ? drag.dx : (e.clientX - drag.x);
+    var dy = e.clientY - drag.y;
+    var locked = drag.locked;
+    media.classList.remove('swiping');
+    drag = null;
+    main.style.transform = ''; main.style.opacity = '';
+    if (!locked) return;
+    if (Math.abs(dx) >= swipeThresh(media) && Math.abs(dx) > Math.abs(dy)) {
+      /* 锁期内不翻页（防 pointer 与 wheel 同一手势双触发）；滑动量级拖拽仍记 swiped 抑制随后 click */
+      if (Date.now() >= flipLockUntil) {
+        flipLockUntil = Date.now() + FLIP_LOCK;
+        switchMainBy(media, dx < 0 ? 1 : -1, true); /* 左滑下一张 / 右滑上一张 */
+      }
+      markSwiped();
+    } else if (!prefersReducedMotion()) {
+      cancelAnim(main);
+      main.animate([{ transform: 'translateX(' + dx + 'px)' }, { transform: 'translateX(0)' }], { duration: 240, easing: 'cubic-bezier(.22,.61,.36,1)' });
+    }
+  }
+  media.addEventListener('pointerup', endDrag);
+  media.addEventListener('pointercancel', reset);
+  /* 触控板双指：wheel 事件带 deltaX；横向主导才接管，按连续手势累计，超阈值切图；
+     共享手势锁 + 连续手势内锁定，保证一次滑动只翻一张；纵向 wheel 放行页面滚动。 */
+  media.addEventListener('wheel', function (e) {
+    if (e.ctrlKey) return; /* 捏合缩放 / 组合键，不拦截 */
+    if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return; /* 纵向滚动交给页面 */
+    e.preventDefault();
+    var now = Date.now();
+    if (now - lastWheelAt > WHEEL_GAP) { wheelAcc = 0; wheelFlipLock = false; } /* 手势停歇后视为新手势 */
+    lastWheelAt = now;
+    if (wheelFlipLock || now < flipLockUntil) { wheelAcc = 0; return; } /* 连续手势已翻页 / 共享锁期内不翻页 */
+    wheelAcc += e.deltaX;
+    if (Math.abs(wheelAcc) < swipeThresh(media)) return;
+    var dir = wheelAcc > 0 ? 1 : -1; /* deltaX>0（两指左滑）→ 下一张 */
+    wheelAcc = 0;
+    wheelFlipLock = true; /* 锁定当前连续手势：同手势剩余 wheel 不再翻页 */
+    flipLockUntil = now + FLIP_LOCK;
+    markSwiped(); /* wheel 翻页同样抑制随后的 click 误开 lightbox */
+    switchMainBy(media, dir, true);
+  }, { passive: false });
+}
+
+/* ---------- 图片 lightbox：点击 → 从原始位置缩放放大、居中全彩；多图滑动自然切图；背景逐渐降对比/模糊 ---------- */
+function bindLightbox() {
+  var lb = $('#lightbox'), img = $('img', lb);
+  img.draggable = false; /* 禁止原生图片拖拽，保证鼠标横向滑动由本页手势接管 */
+  var prev = $('.lb-prev', lb), next = $('.lb-next', lb), count = $('.lb-count', lb);
+  var gallery = [], gidx = 0, lastTrigger = null;
+  var drag = null, swiped = false;
+  var LB_EASE = 'cubic-bezier(.2,.6,.2,1)';
+  /* 【一次滑动只翻一张】lightbox 内 pointer 与 wheel 共享手势锁：任一来源翻页后锁定，
+     防触控板同时发 pointer+wheel / touch 派生 wheel 双翻页；wheel 按连续手势累计。 */
+  var lbFlipLockUntil = 0, LB_FLIP_LOCK = 400, LB_WHEEL_GAP = 100;
+  window.__lbOpen = false;
+  function rm() { return (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) || document.documentElement.dataset.rm === 'true'; }
+  function cancelAnim(el) { var as = (el && el.getAnimations) ? el.getAnimations() : []; as.forEach(function (a) { a.cancel(); }); }
+  function updateCount() {
+    count.textContent = (gidx + 1) + ' / ' + gallery.length;
+    prev.hidden = next.hidden = gallery.length < 2;
+  }
+  function setImage(i) {
+    if (!gallery.length) return;
+    gidx = ((i % gallery.length) + gallery.length) % gallery.length;
+    var ph = gallery[gidx];
+    img.src = ph.src; img.alt = ph.alt || '';
+    updateCount();
+  }
+  /* 自然切图（苹果相册式）：当前图向一侧滑出、下一张从对侧滑入；reduced-motion 瞬时切换 */
+  function slideSwap(delta, animate, startX) {
+    if (gallery.length < 2) return;
+    var nextIdx = ((gidx + delta) % gallery.length + gallery.length) % gallery.length;
+    if (nextIdx === gidx) return;
+    if (animate && !rm()) {
+      cancelAnim(img);
+      var w = img.getBoundingClientRect().width || 240;
+      var outX = (delta > 0 ? 1 : -1) * Math.round(w * 0.34);
+      startX = startX || 0;
+      img.animate([
+        { transform: 'translateX(' + startX + 'px) scale(1)', opacity: 1 },
+        { transform: 'translateX(' + (-outX) + 'px) scale(.96)', opacity: .2 }
+      ], { duration: 210, easing: LB_EASE, fill: 'forwards' })
+      .onfinish = function () {
+        gidx = nextIdx;
+        var ph = gallery[gidx];
+        img.src = ph.src; img.alt = ph.alt || '';
+        updateCount();
+        img.animate([
+          { transform: 'translateX(' + outX + 'px) scale(.96)', opacity: .2 },
+          { transform: 'translateX(0) scale(1)', opacity: 1 }
+        ], { duration: 250, easing: LB_EASE, fill: 'forwards' });
+      };
+    } else {
+      setImage(nextIdx);
+    }
+  }
+  function closeLb() {
+    if (lb.hidden) return;
+    cancelAnim(img);
+    img.style.transform = ''; img.style.opacity = '';
+    var done = function () { lb.hidden = true; document.body.classList.remove('lb-open'); window.__lbOpen = false; if (lastTrigger && lastTrigger.isConnected) lastTrigger.focus(); };
+    if (rm()) { done(); return; }
+    lb.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 180, easing: 'ease-in' }).onfinish = done;
+  }
+  function openFrom(ph, startIdx) {
+    var host = ph.closest('.tl-item');
+    gallery = [];
+    if (host) {
+      var thumbs = $$('.ph-thumb', host);
+      if (thumbs.length) {
+        thumbs.forEach(function (s) { gallery.push(s); });
+      } else {
+        var main = $('.ph-main', host);
+        if (main) gallery.push(main);
+      }
+    } else gallery = [ph];
+    gidx = (startIdx != null) ? startIdx : 0;
+    if (startIdx == null) {
+      var gsrc = ph.src;
+      for (var g = 0; g < gallery.length; g++) { if (gallery[g].src === gsrc) { gidx = g; break; } }
+    }
+    var s = ph.getBoundingClientRect();
+    swiped = false; /* 每次打开重置滑动标记 */
+    cancelAnim(img);
+    img.style.transform = ''; img.style.opacity = '';
+    lb.hidden = false;
+    document.body.classList.add('lb-open');
+    window.__lbOpen = true;
+    lastTrigger = ph;
+    lb.focus();
+    setImage(gidx);
+    img.style.transformOrigin = '0 0';
+    var start = function () {
+      var e2 = img.getBoundingClientRect();
+      var k = (s.width && e2.width) ? Math.min(s.width / e2.width, s.height / e2.height) : 1;
+      var dx = s.left - e2.left, dy = s.top - e2.top;
+      img.animate([
+        { transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + k + ')', opacity: .7 },
+        { transform: 'translate(0,0) scale(1)', opacity: 1 }
+      ], { duration: rm() ? 0 : 340, easing: 'cubic-bezier(.2,.8,.2,1)' });
+      lb.animate([{ opacity: 0 }, { opacity: 1 }], { duration: rm() ? 0 : 260 });
+    };
+    if (img.complete) start(); else img.addEventListener('load', start, { once: true });
+  }
+  window.__openLightbox = openFrom;
+
+  document.addEventListener('click', function (e) {
+    /* 相册轮播的点击已由轮播舞台 pointerup 处理（tap→放大/切图）；
+       此处仅处理单图主图（整图缩放）打开 lightbox 与 lightbox 遮罩点击关闭 */
+    var mainImg = e.target.closest('.ph-main');
+    if (mainImg) {
+      var hostMedia = mainImg.closest('.tl-media');
+      if (hostMedia && hostMedia.dataset.swiped === '1') { hostMedia.dataset.swiped = ''; return; } /* 刚发生的主图滑切：不误开 lightbox */
+      openFrom(mainImg, parseInt(mainImg.getAttribute('data-idx') || '0', 10)); return;
+    }
+    if (e.target.closest('.lb-nav')) return;
+    if (e.target.closest('#lightbox')) {
+      if (swiped) { swiped = false; return; } /* 刚发生的滑动翻页：不触发点击关闭 */
+      closeLb();
+    }
+  });
+  prev.addEventListener('click', function (e) { e.stopPropagation(); slideSwap(-1, true); });
+  next.addEventListener('click', function (e) { e.stopPropagation(); slideSwap(1, true); });
+  document.addEventListener('keydown', function (e) {
+    /* 键盘操作：Enter/Space 聚焦单图主图开 lightbox */
+    if (e.key === 'Enter' || e.key === ' ') {
+      var t = document.activeElement;
+      if (t && t.classList.contains('ph-main') && lb.hidden) {
+        e.preventDefault(); openFrom(t, parseInt(t.getAttribute('data-idx') || '0', 10)); return;
+      }
+      return;
+    }
+    if (lb.hidden) return;
+    if (e.key === 'Escape') closeLb();
+    else if (e.key === 'ArrowRight') { e.preventDefault(); slideSwap(1, true); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); slideSwap(-1, true); }
+  });
+  /* 滑动切图（触摸 + 鼠标）：拖动跟随 → 超阈值自然切图 / 不足回弹；配合 .lightbox 的 touch-action:pan-y */
+  function startDrag(e) {
+    if (e.target.closest('.lb-nav')) return; /* 翻页按钮：不启动滑动捕获，保证 click 命中按钮（‹› 与滑动互不干扰） */
+    if (e.pointerType === 'mouse' && e.button !== 0) return; /* 仅左键/触摸/笔 */
+    swiped = false; /* 新手势开始，清除上次滑动标记，避免误吞后续点击 */
+    cancelAnim(img);
+    img.style.transform = ''; img.style.opacity = '';
+    drag = { x: e.clientX, y: e.clientY };
+    try { lb.setPointerCapture(e.pointerId); } catch (err) { /* noop */ }
+  }
+  function moveDrag(e) {
+    if (!drag) return;
+    var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    if (!drag.locked && Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+    drag.locked = true;
+    drag.dx = dx;
+    img.style.transform = 'translateX(' + dx + 'px)';
+  }
+  function endDrag(e) {
+    if (!drag) return;
+    var dx = (drag.dx != null) ? drag.dx : (e.clientX - drag.x);
+    var dy = e.clientY - drag.y;
+    var locked = drag.locked;
+    drag = null;
+    img.style.transform = ''; img.style.opacity = '';
+    if (!locked) return;
+    if (Math.abs(dx) >= 48 && Math.abs(dx) > Math.abs(dy)) {
+      swiped = true; /* 滑动量级：抑制随后的 click 关闭 lightbox */
+      if (Date.now() >= lbFlipLockUntil) { /* 共享锁：防 pointer 与 wheel 同一手势双翻页 */
+        lbFlipLockUntil = Date.now() + LB_FLIP_LOCK;
+        slideSwap(dx < 0 ? 1 : -1, true, dx); /* 左滑 → 下一张；右滑 → 上一张 */
+      }
+    } else if (!rm()) {
+      img.animate([{ transform: 'translateX(' + dx + 'px)' }, { transform: 'translateX(0)' }], { duration: 240, easing: LB_EASE });
+    }
+  }
+  lb.addEventListener('pointerdown', startDrag);
+  lb.addEventListener('pointermove', moveDrag);
+  lb.addEventListener('pointerup', endDrag);
+  lb.addEventListener('pointercancel', function () { drag = null; img.style.transform = ''; img.style.opacity = ''; });
+  /* 触控板双指（wheel/deltaX）滑动切图：横向主导才接管（|deltaX|>|deltaY|、非 ctrl 捏合），
+     与 pointer 拖动同阈值 48px；累计超阈值自然切图，350ms 冷却防一次手势多次触发；
+     纵向 wheel 不拦截（与 pointer 的 touch-action:pan-y 语义一致，纵向交还系统）。 */
+  var lbWheelAcc = 0, lbWheelAt = 0, lbWheelFlipLock = false;
+  lb.addEventListener('wheel', function (e) {
+    if (gallery.length < 2) return;
+    if (e.ctrlKey) return;
+    if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
+    e.preventDefault();
+    var now = Date.now();
+    if (now - lbWheelAt > LB_WHEEL_GAP) { lbWheelAcc = 0; lbWheelFlipLock = false; } /* 手势停歇后视为新手势 */
+    lbWheelAt = now;
+    if (lbWheelFlipLock || now < lbFlipLockUntil) { lbWheelAcc = 0; return; } /* 连续手势已翻页 / 共享锁期内不翻页 */
+    lbWheelAcc += e.deltaX;
+    if (Math.abs(lbWheelAcc) < 48) return;
+    var dir = lbWheelAcc > 0 ? 1 : -1; /* deltaX>0（两指左滑）→ 下一张 */
+    lbWheelAcc = 0;
+    lbWheelFlipLock = true; /* 锁定当前连续手势：同手势剩余 wheel 不再翻页 */
+    lbFlipLockUntil = now + LB_FLIP_LOCK;
+    slideSwap(dir, true);
+  }, { passive: false });
+}
+
+/* ---------- 悬浮工具（v0.2m） ---------- */
+function bindPanel() {
+  var fab = $('#fab'), panel = $('#draft-panel');
+  function setOpen(open) {
+    if (!panel) return;
+    var dock = fab ? fab.closest('.fab-anchor') : null;
+    var isDock = dock && (document.body.dataset.width === '1024' || document.body.dataset.width === '390' || window.innerWidth <= 1100);
+    if (isDock) {
+      dock.classList.toggle('is-open', open); /* Dock(1024/390):功能区整体展开 */
+    } else {
+      if (open) {
+        panel.classList.remove('is-open');
+        void panel.offsetWidth;
+        panel.classList.add('is-open'); /* Web:浮动面板缓缓升起 */
+      } else {
+        panel.classList.remove('is-open');
+      }
+    }
+    if (fab) { fab.setAttribute('aria-expanded', String(open)); fab.textContent = open ? '收起' : '设置'; }
+  }
+  /* 设置按钮本身：切换开合（打开/收起） */
+  fab.addEventListener('click', function () {
+    var dock = fab.closest('.fab-anchor');
+    var isDock = dock && (document.body.dataset.width === '1024' || document.body.dataset.width === '390' || window.innerWidth <= 1100);
+    var container = isDock ? dock : panel;
+    setOpen(container ? !container.classList.contains('is-open') : false);
+  });
+  /* 设置界面展开后：点击面板外部（页面任意处）自动收起（不只点收起按钮） */
+  document.addEventListener('click', function (e) {
+    var dock = fab ? fab.closest('.fab-anchor') : null;
+    var isDock = dock && (document.body.dataset.width === '1024' || document.body.dataset.width === '390' || window.innerWidth <= 1100);
+    var container = isDock ? dock : panel;
+    if (!container || !container.classList.contains('is-open')) return;
+    if (e.target.closest('#draft-panel') || e.target.closest('#fab')) return;
+    setOpen(false);
+  });
+  /* 回到顶部：平滑滚动回页首，reduced-motion 时瞬时（尊重 prefers-reduced-motion / [data-rm]） */
+  var backToTop = $('#back-to-top');
+  backToTop.addEventListener('click', function () {
+    var rm = prefersReducedMotion();
+    window.scrollTo({ top: 0, left: 0, behavior: rm ? 'auto' : 'smooth' });
+    var reading = $('#main-reading');
+    if (reading) setTimeout(function () { reading.focus({ preventScroll: true }); }, rm ? 0 : 260);
+  });
+  /* 主题单按钮：点击一次切换深浅主题，按钮显示当前主题（置设置按钮右侧） */
+  var themeBtn = $('#theme-btn');
+  themeBtn.addEventListener('click', function () {
+    var cur = document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
+    setTheme(cur === 'dark' ? 'light' : 'dark');
+  });
+  /* 调试控件（DRAFT）：宽度 / 状态 / 降级模拟，仅证据导出与回归用 */
+  $$('[data-ctrl="width"] button').forEach(function (b) { b.addEventListener('click', function () { setWidth(b.dataset.val); }); });
+  $$('[data-ctrl="state"] button').forEach(function (b) { b.addEventListener('click', function () { setState(b.dataset.val); }); });
+  $('#sim-rt').addEventListener('change', function (e) { setA11y('rt', e.target.checked); });
+  $('#sim-rm').addEventListener('change', function (e) { setA11y('rm', e.target.checked); });
+}
+
+/* ---------- init ---------- */
+function init() {
+  bindTimeline(); bindFeedControls(); bindExternal(); bindLightbox(); bindMedia(); bindPanel(); bindSearch(); bindCollapseOutside();
+  applyRoute();
+  window.addEventListener('hashchange', applyRoute);
+  if (document.documentElement.dataset.rt === 'true') $('#sim-rt').checked = true;
+  if (document.documentElement.dataset.rm === 'true') $('#sim-rm').checked = true;
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else { init(); }
+</script>
+</body>
+</html>

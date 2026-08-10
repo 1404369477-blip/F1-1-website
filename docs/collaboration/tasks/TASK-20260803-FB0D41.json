@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "测试部提交YAML final审核报告，decision=pass|fail，列P0/P1/P2、8项SHA、两次生成/validator/故障注入收据；v0.3/M3零漂移，12套图和DTO映射全部可机械复算；P0=0且P1=0才PASS；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-08-03-v0.4公开数据机器合同与12条发布图-独立测试报告.md"
+  ],
+  "authorization_evidence": "用户确认双profile与v0.4 successor，并要求持续按部门推进可用初版。",
+  "authorization_history": [
+    {
+      "at": "2026-08-03T12:50+08:00",
+      "evidence": "用户确认双profile与v0.4 successor，并要求持续按部门推进可用初版。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "测试部/审核成员:/root/test_v04_data_review",
+  "completion_class": "audit",
+  "confirmation": "安全与测试都PASS后统筹才核收数据任务并派开发；审核只报告，不修改产物。",
+  "created_at": "2026-08-03T12:50+08:00",
+  "department": "测试部",
+  "details": "只读审查ADR-M4-PUBLIC-READ-001 accepted、data/mvp-contract-v0.4-public-synthetic八项机器产物与数据部final报告。独立重跑两次generator/validator，验证输出字节确定；逐项检查schema required/enum/additionalProperties、1 Source、12 CapturedItem/Content/Summary/Bundle/Decision/Publication/Projection、10 Media、12 public-demo-*唯一、FK/hash/fence/approved→published不变量、DTO字段唯一来源；验证v0.3 11个SHA与M3 59x39/59 disabled/e7a8；至少注入缺行、重复ID、枚举错、hash错、fence错、ledger/count错与旧hash漂移，均须拒绝。只写测试部final报告，不修改产品/data/app/设计/lock。",
+  "domain_stage": "数据合同独立测试门禁",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "生成器两次输出不一致、manifest/hash不能从声明输入复算、或任一required/enum/FK/ID/fence冲突：P1 FAIL。",
+    "缺行/重复/enum/hash/fence/profile/旧基线篡改存在漏检或错误继续PASS：P1 FAIL并停止开发。",
+    "测试受宿主Python/工具限制无法独立执行：明确NOT_RUN与证据缺口，不继承数据部报告写PASS。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已将shell临时目录清理防护拒绝和一次jq只读表达式失败如实写入报告；故障注入重绑非目标hash避免假拒绝；未继承数据部结论、未改data/app/ADR/lock、未留下__pycache__/pyc；P0=0/P1=1故decision=fail，不ack。",
+  "node": "机械复验数据部v0.4 successor产物的确定性、完整性、旧基线零漂移与失败关闭",
+  "pointers": [
+    "docs/decisions/system/2026-08-03-F1+1-公开读模型与API接线-v0.4-successor-accepted.md",
+    "data/mvp-contract-v0.4-public-synthetic",
+    "docs/collaboration/tasks/TASK-20260802-EFA8A7.json"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-08-03-v0.4公开数据机器合同与12条发布图-独立测试报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260803-FB0D41",
+  "title": "独立测试v0.4公开数据机器合同与12条发布图",
+  "unverified": [
+    "P1仍待数据部修订：生成器只校验待退役app/demo-data.ts固定SHA、实际读取内嵌STORIES，API切换后存在内容双源或再生成失败；原生Draft 2020-12引擎与后续SQLite/API/runtime均未验证。"
+  ],
+  "updated_at": "2026-08-03T13:05+08:00",
+  "verified": [
+    "双轮隔离生成、每轮双validator与8项字节SHA均一致且等于正式产物；12套完整图、10 Media、12个public-demo-*、schema/FK/hash/fence/批准发布链与DTO映射通过；v0.3 11项及M3 59×39/59 disabled/e7a8零漂移；12类临时故障全部被拒绝且临时目录已清理。"
+  ]
+}

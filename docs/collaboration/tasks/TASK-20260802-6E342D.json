@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "交付开发可直接实现的VS-1数据库蓝图：表/字段/约束/索引/迁移顺序/事务边界/fixture映射/失败回滚与schema fingerprint更新步骤齐全；所有字段能溯源到冻结合同或明确标internal；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/数据部/报告/2026-08-02-M4-VS-1-SQLite迁移与fixture映射蓝图.md"
+  ],
+  "authorization_evidence": "用户已明确要求持续推进网站并由对应部门全员开工；本任务仅本地数据设计。",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T13:12+08:00",
+      "evidence": "用户已明确要求持续推进网站并由对应部门全员开工；本任务仅本地数据设计。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "数据部/019fb371-9834-78d3-a7b3-4f4c62819520",
+  "completion_class": "standard",
+  "confirmation": "仅数据蓝图，不修改实现或冻结合同。",
+  "created_at": "2026-08-02T13:12+08:00",
+  "department": "数据部",
+  "details": "只读冻结data/mvp-contract-v0 v0.3、Spec、VS-0 Source39表与迁移合同，设计VS-1 append-only migration蓝图，不改app/data/Spec/ADR。覆盖SourceObservation internal-only唯一(source_id,external_id)、Content内容hash、Event确定性dedupe、Inbox/Outbox/TaskAttempt/DeadLetter/Audit最小字段、唯一键/外键/CHECK/状态/epoch/lease/deadline/attempt、source onboarding activation事务、operation id贯通、59条M3 seed保持disabled、synthetic fixture选择与固定hash。给每表DDL级字段类型/约束/索引、repository DTO映射、seed范围、retention与不变量，禁止创造第二领域schema或把internal表写回Base。",
+  "domain_stage": "M4-C-VS1-data-blueprint",
+  "event_receipts": [
+    "DATA_VS1_SQLITE_BLUEPRINT_SUBMITTED_OFFLINE_READ_ONLY"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 冻结schema/internal contract缺少字段或语义冲突：逐字段列缺口并阻断该DDL，不自行造领域字段。",
+    "2) 需要修改accepted data v0.3或Base 33字段：停止并提交后继数据决策，不直接编辑冻结产物。",
+    "3) 需要真实平台数据、外联或生产数据库能力：改用synthetic fixture并标后置，禁止调用外部资源。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已自检：未修改data/app/Spec/ADR；未创建第二domain schema；M3 59行保持disabled且不写Base；internal表不进入domain/public；operation_id/idempotency/five-fence/900秒窗口、strict release snapshot、source_artifact_sha256与subset_hash scope、独立snapshot job均已覆盖；旧JCS命名未引入。",
+  "node": "M4/C层/VS-1数据蓝图",
+  "pointers": [
+    "docs/collaboration/部门/数据部/报告/2026-08-02-M4-VS-1-SQLite迁移与fixture映射蓝图.md"
+  ],
+  "report": "docs/collaboration/部门/数据部/报告/2026-08-02-M4-VS-1-SQLite迁移与fixture映射蓝图.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-6E342D",
+  "title": "交付M4 VS-1 mock采集链路SQLite迁移与fixture映射蓝图",
+  "unverified": [
+    "Node24 node:sqlite真实迁移/Repository/worker运行、WAL/crash recovery/lock contention/CAS/lease动态行为、59x39 bridge与subset hash runtime重算、mock retry/dead-letter/reconcile测试、生产存储和Base/provider/真实平台均未在本任务执行。"
+  ],
+  "updated_at": "2026-08-02T13:24+08:00",
+  "verified": [
+    "已读取并解析冻结v0.3/Spec/VS-0边界；完成13个领域对象与internal SourceObservation17/AuditEvent25的DDL级字段pointer、类型映射、PK/FK/UNIQUE/CHECK/索引；完成0001-0008只追加迁移、11/11 fingerprint门禁、BEGIN IMMEDIATE/CAS/lease/deadline/五fence、五类幂等、inbox/outbox/task_attempt/dead_letter/audit、59x33 shadow→59x39 e7a8且disabled、22 cases与三层seed/subset hash映射、失败回滚/安全边界；git diff --check、报告静态检查、冻结JSON解析和doctor已通过；无外部IO。"
+  ]
+}

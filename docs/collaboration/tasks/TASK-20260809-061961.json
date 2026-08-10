@@ -1,0 +1,77 @@
+{
+  "acceptance_exit": "交付accepted successor或可直接确认的唯一候选、实施合同及Spec/矩阵索引同步；逐Admin Function ID列Mac/iPhone入口等价、公开/后台双主机边界、单一数据真值与最小跨主机接口、故障/恢复、备份和回滚；旧accepted字节不变；产品/领域/安全三路审查P0=0/P1=0；开发无需自行补产品选择即可实现本地切片，生产部署仍明确未授权。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/decisions/system/2026-08-09-F1+1-M5-Admin双主机拓扑-successor-accepted.md",
+    "docs/spec/F1+1-M5-Admin双主机实施合同-v0.2.md",
+    "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md",
+    "docs/spec/README.md",
+    "docs/spec.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-09-M5-Admin独立主机与双端实施合同报告.md"
+  ],
+  "authorization_evidence": "用户2026-08-09回复：A. 独立小型服务器",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T12:19+08:00",
+      "evidence": "用户2026-08-09回复：A. 独立小型服务器",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "用户明确选择A：独立小型服务器；此前Admin双端、私有入口、RTO/RPO与标准冗余均已确认。",
+  "created_at": "2026-08-09T12:19+08:00",
+  "department": "产品部",
+  "details": "在TASK-20260809-5708AA完成并由统筹ACK后领取；再等待安全部TASK-20260809-1D7401完成并由统筹ACK。以用户选择A为唯一拓扑：公开站与Admin分别部署在独立主机，Admin主机不承载公开站流量且无公网Admin入口；Mac和iPhone通过私有客户端获得同一全功能Admin，应用层仍强认证，默认关闭的受控break-glass保持。发布最小system ADR successor和Admin实施合同修订，绑定全部Admin Function ID、真实入口、状态/失败/恢复、双端映射、双主机数据流、RTO≤4小时、RPO≤15分钟、标准冗余与部署前门禁；旧accepted历史不可原地改写。具体云厂商、主机形态、地域/可用区、域名/证书、私网产品、存储/密钥仍以单一待确认项或部署门禁表示，不擅自选择，不实施。",
+  "domain_stage": "M5 Admin独立主机产品合同",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若安全部1D7401未ACK或结论FAIL，保持等待，不提前accepted或弱化其门禁。",
+    "若独立主机导致第二业务真值、双写或公开站获得Admin mutation凭据，停止并退回单写/最小接口设计。",
+    "若仍缺一个会实质改变拓扑或成本的用户选择，只提出一个精确问题并保持生产部署user-gated，不自行选供应商。"
+  ],
+  "from_department": "统筹部",
+  "impact_declaration": {
+    "admission": "manual",
+    "base_revision": "a9691e71b1552592cc5ded8d5db66c336262301c",
+    "external_effects": [
+      "none；仅本地产品文档，不部署、不访问外部、不创建资源"
+    ],
+    "owner_task": "TASK-20260809-061961",
+    "shared_contracts": [
+      "Admin独立主机、唯一写主、公开只读投影、Mac/iPhone全功能等价、RTO≤4h、RPO≤15m"
+    ],
+    "write_paths": [
+      "docs/decisions/system/2026-08-09-F1+1-M5-Admin双主机拓扑-successor-accepted.md",
+      "docs/spec/F1+1-M5-Admin双主机实施合同-v0.2.md",
+      "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md",
+      "docs/spec/README.md",
+      "docs/spec.md"
+    ]
+  },
+  "mistake_check": "未改旧accepted历史、data/app/design；未形成第二真值/双写；未将拓扑accepted外推为Admin业务、视觉或生产放行；未选择供应商或部署参数；unknown、terminal/retry、bootstrap、崩溃收据与generation串行已闭合",
+  "node": "把用户主机选择并入Admin产品与系统实施真值",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260809-1D7401.json",
+    "docs/spec/F1+1-M5最小人工审核台纵切产品合同-v0.1.md",
+    "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md",
+    "docs/agent-guide.md"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-09-M5-Admin独立主机与双端实施合同报告.md",
+  "resolution": null,
+  "revision": 5,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-061961",
+  "title": "冻结Admin独立主机拓扑与双端实施合同",
+  "unverified": [
+    "真实主机/供应商/地域/域名/TLS/私网/密钥/备份介质/监控；真实Mac/iPhone、跨机push、WebAuthn、RPO/RTO演练和大陆网络；ADMIN-DECISION、ADMIN-VISUAL、PRODUCTION-DEPLOYMENT-MANIFEST仍待独立门禁"
+  ],
+  "updated_at": "2026-08-09T13:10+08:00",
+  "verified": [
+    "5708AA与1D7401均已ACK；用户A拓扑、Mac/iPhone全功能、唯一写主、公开只读投影、RTO≤4h、RPO≤15m已固化；产品/安全/领域三路审查P0=0/P1=0；表格与15项reason code机械校验通过；生产仍未授权"
+  ]
+}

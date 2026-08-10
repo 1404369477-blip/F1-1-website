@@ -1,0 +1,66 @@
+{
+  "acceptance_exit": "data/mvp-contract-v0成为唯一v0.2合同：所有JSON可解析并通过JSON Schema/引用/枚举可达性/幂等/manifest hash/fixture计数机械校验；M3 33/9和59 disabled不回归，成功投影与P0失败样本可执行且external_calls=0；提交数据部报告并TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "data/mvp-contract-v0/schema.json",
+    "data/mvp-contract-v0/base-mapping.json",
+    "data/mvp-contract-v0/state-machine.json",
+    "data/mvp-contract-v0/fixtures.synthetic.json",
+    "data/mvp-contract-v0/runtime-envelope.schema.json",
+    "data/mvp-contract-v0/security-fixtures.schema.json",
+    "data/mvp-contract-v0/security-fixtures.synthetic.json",
+    "data/mvp-contract-v0/seed-layers.json",
+    "data/mvp-contract-v0/manifest.json",
+    "data/mvp-contract-v0/generate_contract.py",
+    "docs/collaboration/部门/数据部/报告/2026-08-02-本地MVP数据合同v0.2升级与P0闭合.md"
+  ],
+  "authorization_evidence": "用户已授权本地工程合同与app开工；当前为机器合同修订且不触发外部资源，DEC-20260801T223248-7C91D6。",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T00:14+08:00",
+      "evidence": "用户已授权本地工程合同与app开工；当前为机器合同修订且不触发外部资源，DEC-20260801T223248-7C91D6。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "数据部/019fb371-9834-78d3-a7b3-4f4c62819520",
+  "completion_class": "standard",
+  "confirmation": "产品与数据产物完成后由安全部和测试部复验；本任务不授权app实现、Base写入或任何真实外部IO。",
+  "created_at": "2026-08-02T00:14+08:00",
+  "department": "数据部",
+  "details": "读取测试部跨合同报告、产品M4 ADR候选和安全A层报告。data/mvp-contract-v0仍是未accepted的唯一机器合同，请在该目录原位升级内部schema_version到mvp-local-v0.2，不创建并行真值或残留旧合同目录；同步schema.json、state-machine.json、fixtures.synthetic.json、manifest.json、generate_contract.py和必要的新runtime-envelope.schema.json、security-fixtures.synthetic.json、seed-layers.json。统一基线：adapter ready/authorization valid/platform allowed后方可queued/collecting；补齐linked_existing、blocked_adapter_missing、blocked_authorization、blocked_platform、stop/cancel/dead-letter等可达转换；发布未知统一reconcile_wait并含查询确认成功/确认未提交/终态失败/急停；source_config_epoch为唯一命名；TaskEnvelope含五epoch、lease_token/expiry、deadline、attempt与stale拒绝；新增不可变ReleaseBundle和ReviewDecision，Publication含稳定public_id、publish_generation、approved_bundle_hash、reconcile key；canonical JSON SHA-256规则版本化。保持M3 33/9 mapping完整且59条seed全部enabled=false，分离m3-shadow-seed、synthetic-case-seed和安全错误seed并逐项hash；补至少3条本地published projection happy path、adapter/auth/platform阻断、429/5xx/timeout、XSS/SSRF/open redirect/prompt injection/XML/media/CSRF/secret、旧fence与reconcile_wait合成用例，全部使用synthetic.invalid或synthetic scheme且零真实IO。修复snapshot failure与stale epoch共用job引用并提供last-known-good可对账事实。只改data合同与数据部报告，不改Spec/ADR/app/Base。",
+  "domain_stage": "M4 A轴合同修订",
+  "event_receipts": [
+    "docs/collaboration/部门/数据部/日志/2026-W31.md#MIL-20260802T004308-4999B2"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若ReleaseBundle/ReviewDecision最小模型与产品合同无法无歧义映射，停止相关字段定稿并报告精确冲突，不保留两套hash或public identity。",
+    "若扩展fixture会引入真实账号内容、凭证、网络访问或媒体下载，改用纯synthetic payload并保持零外连，不能借真实平台补样本。",
+    "若原位升级破坏M3 33/9 mapping、59 disabled或既有安全不变量，恢复一致性后再完成；不创建第二合同目录绕过。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已复核M3影子不成为第二真值、59 disabled不升级、无source_config_version双命名、无publish_unknown、重试不生成第二public_id、Bundle/ReviewDecision单一hash链、stale不用非法0、snapshot与stale job分离、canonical-json-v1不冒称RFC8785 JCS、安全fixture仅synthetic且零外连；协调方误触生成器和一次KeyError校验均已重新生成并复验",
+  "node": "在同一合同目录闭合状态机、Bundle、发布、fence与fixture缺口",
+  "pointers": [
+    "docs/collaboration/部门/测试部/报告/2026-08-01-Spec-v1与M4-ADR跨合同可验收性复核报告.md",
+    "docs/collaboration/部门/安全部/报告/2026-08-01-M4本地安全门禁与外部IO隔离-审核报告.md",
+    "data/mvp-contract-v0/manifest.json",
+    "docs/decisions/system/2026-08-01-F1+1-M4本地Kickoff系统路线-proposed.md"
+  ],
+  "report": "docs/collaboration/部门/数据部/报告/2026-08-02-本地MVP数据合同v0.2升级与P0闭合.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-90B1C2",
+  "title": "修订本地MVP数据合同闭合M4 P0",
+  "unverified": [
+    "真实JSON Schema引擎、SQLite、Base/飞书、provider、Collector、审核服务、发布服务、真实平台授权/限流/媒体权利/生产规模未验证；仅离线合成路径已验证"
+  ],
+  "updated_at": "2026-08-02T00:46+08:00",
+  "verified": [
+    "最终两次确定性生成无变化；manifest artifact_hashes全部匹配；JSON Schema/引用/枚举可达性/幂等机械校验通过；M3 33/9、59行且59 disabled；ReleaseBundle/ReviewDecision/Publication hash与public_id绑定；reconcile_wait四路查询分支；TaskEnvelope五epoch与envelope=1/current=2 stale；snapshot job与stale job独立；3 published projections；16类P0安全fixture；external_calls=0；生成物零命中jcs-v1和旧epoch别名；对抗审查PASS P0=0/P1=0"
+  ]
+}

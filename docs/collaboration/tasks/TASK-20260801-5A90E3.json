@@ -1,0 +1,65 @@
+{
+  "acceptance_exit": "报告当前 CSV SHA256 与行数；生成可被 lark-cli 直接消费的两个字段定义 JSON、59行 record batch create JSON和载荷 manifest；验证每行33字段、枚举/布尔/空值符合执行包、source_id与canonical_url各59唯一、migration_batch_id一致、enabled全为false；载荷可被标准 JSON 解析；不得包含 base_token、user token、open_id 等凭证；完成只读自审并按协议 complete/TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "data/m3-base-shadow-import-v0/main-source-fields.json",
+    "data/m3-base-shadow-import-v0/mobile-capture-fields.json",
+    "data/m3-base-shadow-import-v0/main-source-record-batch.json",
+    "data/m3-base-shadow-import-v0/manifest.json",
+    "data/m3-base-shadow-import-v0/generate_payloads.py",
+    "docs/collaboration/部门/数据部/报告/2026-08-01-M3飞书Base影子导入离线载荷报告.md"
+  ],
+  "authorization_evidence": "用户已明确授权完成规范化与查重后立即开始采集准备，并在当前 M3 门禁中授权真实 Base 资源创建与59条影子导入；未授权真值切换。",
+  "authorization_history": [
+    {
+      "at": "2026-08-01T15:04+08:00",
+      "evidence": "用户已明确授权完成规范化与查重后立即开始采集准备，并在当前 M3 门禁中授权真实 Base 资源创建与59条影子导入；未授权真值切换。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "数据部/019fb371-9834-78d3-a7b3-4f4c62819520",
+  "completion_class": "standard",
+  "confirmation": "确认点：数据部只交付离线、可重复生成且可审计的载荷；统筹部读回核验后才决定是否执行单次外部写入。",
+  "created_at": "2026-08-01T15:04+08:00",
+  "department": "数据部",
+  "details": "仅做离线预检与确定性载荷生成，不得写入飞书。以产品部 M3 执行包和 data/x-source-inventory-v0.csv 为唯一合同，复核 CSV SHA256、59 行、source_id/canonical_url 唯一性，生成主表33字段、手机捕获表9字段的建表 JSON，以及59行批量导入 JSON与清单。严格使用执行包映射和默认值；不得自行补充身份、可监控性或启用结论。正式载荷可放 data/，报告放数据部报告目录。",
+  "domain_stage": "M3-资源创建门禁",
+  "event_receipts": [
+    "MIL-20260801T151858-421DF5"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "CSV 哈希、行数或唯一性与执行包不一致时停止生成正式载荷，记录差异并 blocked，不得猜测修补。",
+    "字段映射或枚举存在歧义时回传统筹部，不得新增默认值或把 unknown/pending 改成已验证状态。",
+    "不得调用任何飞书写入命令；载荷中不得持久化资源 token、用户凭证或个人标识。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已读取错题集，当前没有正式错题条目。额外自检了授权边界、批次内唯一性不得冒充平台ID或跨批查重、unknown/pending/proposed/false/null默认值、凭证与外部资源标识泄漏、禁止飞书写入，均未命中遗漏。",
+  "node": "M3-Base影子导入预检",
+  "pointers": [
+    "data/x-source-inventory-v0.csv",
+    "docs/collaboration/部门/产品部/报告/2026-08-01-F1+1飞书Base影子建表-M3执行包.md"
+  ],
+  "report": "完成M3影子导入离线载荷：按产品执行包生成两张表字段JSON、59行记录批量JSON、manifest、确定性生成器和数据部报告。输入合同、字段/行数/枚举/布尔/空值/批次ID/哈希全部通过；全程离线，没有飞书写入、资源创建、真值或provider切换。",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260801-5A90E3",
+  "title": "生成并校验M3飞书Base影子导入载荷",
+  "unverified": [
+    "真实Base是否存在、资源级权限、字段创建及平台实际返回未验证。",
+    "59条真实写入、分页读回、59/59外部对账与部分成功恢复未执行。",
+    "三个视图和手机表单的真实创建/读回行为未验证；业务真值、A/D provider、Collector与15分钟采集能力均未切换或实测。"
+  ],
+  "updated_at": "2026-08-01T15:21+08:00",
+  "verified": [
+    "输入CSV SHA-256为bbb84a7f8f625e8106ae6e0b2714a363940dbf3f20dcbbf300fa6552de1ac01b，与产品合同一致；数据行59，source_id与canonical_url各59个大小写不敏感唯一值。",
+    "主信源33字段JSON与手机捕获9字段JSON逐对象等于产品执行包；59行批量载荷采用fields+rows形状，每行严格33值且逐行映射正确。",
+    "59/59保持dedup_status/verification_status为pending，identity/relevance/monitorability/adapter_authorization为unknown，lifecycle_status为proposed，enabled为false，约定空值均为null，migration_batch_id一致。",
+    "4个交付JSON均可解析，manifest哈希与文件实值一致；重复生成SHA-256不变；敏感信息与外部资源标识扫描0命中；没有调用飞书读写。",
+    "只读对抗审查PASS：阻断0、重要0、一般0；git diff --check通过。"
+  ]
+}

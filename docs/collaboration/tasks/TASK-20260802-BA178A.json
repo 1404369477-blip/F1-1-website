@@ -1,0 +1,56 @@
+{
+  "acceptance_exit": "四份产品所有权文档中的D80846当前状态与任务JSON acknowledged一致；准确保留两份首轮v0.3 FAIL历史、唯一P1原因、待复验状态、proposed及A/B/C边界；rg不再命中将D80846描述为进行中/尚未交付或ACK的现行语句；提交修订报告或在既有产品报告中留变更证据，完成后TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/spec.md",
+    "docs/progress.md",
+    "docs/decisions/system/2026-08-01-F1+1-M4本地Kickoff系统路线-proposed.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-02-M4-A轴第二轮产品合同修订报告.md"
+  ],
+  "authorization_evidence": "用户已明确授权全员持续推进本地网站工程；该任务只改本地产品文档时态，无外部I/O",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T02:31+08:00",
+      "evidence": "用户已明确授权全员持续推进本地网站工程；该任务只改本地产品文档时态，无外部I/O",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "本任务完成只关闭时态P1，不自动接受ADR；必须等待安全部和测试部独立PASS。",
+  "created_at": "2026-08-02T02:31+08:00",
+  "department": "产品部",
+  "details": "仅做时态与证据状态同步：把docs/spec.md、docs/progress.md、M4 proposed ADR、产品部v0.3修订报告中TASK-20260802-D80846仍进行中/尚未交付或ACK/尚未复验等旧叙述，改为数据v0.3任务已完成并由统筹部ACK；安全部TASK-20260802-9E9AC7与测试部TASK-20260802-C093C7首轮v0.3复验均为P0=0、P1=1、FAIL，唯一P1为该时态漂移，等待修订后聚焦复验。保持Spec与ADR proposed，A轴NO-GO直到安全/测试复验PASS；B/C pending；外部能力关闭。禁止改data、生成器、app、accepted ADR或任何产品语义/字段/状态/门禁。",
+  "domain_stage": "M4-A-v0.3-timing-sync",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 若发现需改产品语义或数据合同，立即停止并回报统筹部，不扩大本任务。",
+    "2) 若历史事实与当前事实难以同时表达，保留首轮FAIL为历史收据，新增当前时态，不覆写审核报告。",
+    "3) 若链接或引用存在歧义，只修可证实的任务状态，保持proposed与NO-GO。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未把数据任务ACK等同A轴复验通过；保留首轮两审P0=0/P1=1/FAIL历史与唯一时态P1，未把v0.3升级为accepted，未修改产品语义或越过NO-GO/外部关闭边界。",
+  "node": "M4/A轴定版门禁/v0.3时态修订/产品文档",
+  "pointers": [
+    "docs/collaboration/部门/产品部/报告/2026-08-02-M4-A轴v0.3时态同步报告.md"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-02-M4-A轴第二轮产品合同修订报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-BA178A",
+  "title": "同步M4 v0.3数据ACK与复验时态",
+  "unverified": [
+    "安全部与测试部在时态修订后的聚焦复验尚未完成；B/C实现与运行收据、真实外部能力仍未验证。"
+  ],
+  "updated_at": "2026-08-02T02:40+08:00",
+  "verified": [
+    "D80846任务JSON当前为acknowledged且由统筹部ACK；四份产品文档已同步D80846已完成/ACK、首轮v0.3安全/测试复验P0=0/P1=1/FAIL且唯一P1为时态漂移、修订后待聚焦复验。",
+    "Spec与M4 proposed ADR继续为proposed，A轴保持NO-GO，B/C运行收据后置，外部能力保持关闭；未改data、app、accepted ADR或历史审核报告。",
+    "定向rg未命中D80846仍进行中/尚未交付或ACK/待统筹的现行表述；git diff --check与目标文件尾随空白检查通过。"
+  ]
+}

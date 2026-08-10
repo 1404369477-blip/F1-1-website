@@ -1,0 +1,61 @@
+{
+  "acceptance_exit": "提交研究部final报告：覆盖指定四个平台并回链一手证据；现有Top 12逐项复核且新增候选去重；相似产品和基础设施分层；给出差异矩阵、优先级、采用门禁、负责人、1至3步最小验证建议；事实/推断/Unknown明确分开；独立自检确认无真实采集、无登录、无外部写入。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/研究部/报告/2026-08-02-F1聚合竞品与前沿工具雷达增量刷新.md",
+    "docs/progress.md"
+  ],
+  "authorization_evidence": "当前用户消息明确授权只读深度调研与部门分工；未授权安装、真实采集、登录、付费、部署或外部写入。",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T10:52+08:00",
+      "evidence": "当前用户消息明确授权只读深度调研与部门分工；未授权安装、真实采集、登录、付费、部署或外部写入。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "研究部/019fb36c-1f86-78d3-a6d7-f87f124bd710",
+  "completion_class": "standard",
+  "confirmation": "用户本轮明确要求派合适部门深度调研GitHub、X、Reddit、Product Hunt、类似项目、聚合工具、skills/tools/agent架构，并专项阅读AIHot仓库。",
+  "created_at": "2026-08-02T10:52+08:00",
+  "department": "研究部",
+  "details": "在已核收的D11DCA与D9DA43基础上做增量深度刷新，避免重复劳动。优先使用git/gh/curl等CLI和内置只读搜索，覆盖GitHub、X、Reddit、Product Hunt及必要的一手官网/官方文档；禁止登录绕过、付费、账号创建或外部写入。把候选分为相似成品、RSS/reader/监控、网页提取/去重/工作流、F1结构化数据、skills/tools/agent架构五类；逐项核对可追溯URL、检索时间、维护活跃度、许可证或Unknown、中国大陆可达性风险、单人运维成本、15分钟白名单采集适配度。对比F1+1在中文摘要、图片可选、原链、人工审核、来源治理、手机新增、发布对账上的差异；形成新增/变化/淘汰清单与可立即借鉴、需synthetic spike、需单平台授权、暂不采用四档建议。若没有新的高价值候选，必须如实写明并解释检索覆盖。",
+  "domain_stage": "M4前沿调研增量刷新",
+  "event_receipts": [
+    "aihot_sparse_clone_readonly: git rev-parse HEAD=f430c4b11eb7ce715d77768ff787855b7a025187; aihot files=9; manifest payload hash matches=6/6; install.sh not executed; network/API/external write=0",
+    "independent_review=PASS; top12=12/12; four_platform_primary_links=present; local_links=ok; report_status=final"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "X、Reddit或Product Hunt页面因登录、区域或动态加载不可读时，记录阻断和检索日期，退回官方文档、公开RSS或仓库证据，不使用代理、Cookie、匿名私有接口或浏览器绕过。",
+    "许可证、商业用途、内容再展示权或当前维护状态缺乏一手证据时标Unknown/conditional，不把stars、upvotes、营销文案或公开可见性当准入。",
+    "候选重复、换壳或仅覆盖单一子能力时合并计数并说明能力边界，不包装成可替代F1+1全链路的现成方案。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "独立复核三层 AI Hot 版本：v1.2.1 固定历史、v1.2.2 未固定历史观察、v1.2.3 当前固定 SHA；确认当前不再写成 v1.2.2 或 HEAD Unknown；Top12=12/12、四平台回链、候选去重、无登录/安装/真实采集/外部写入均复核通过。",
+  "node": "M4/研究/前沿生态增量刷新",
+  "pointers": [
+    "docs/spec.md",
+    "docs/collaboration/部门/研究部/报告/2026-08-02-F1+1前沿方案综合评估与采用路线.md"
+  ],
+  "report": "docs/collaboration/部门/研究部/报告/2026-08-02-F1聚合竞品与前沿工具雷达增量刷新.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-8FF37A",
+  "title": "刷新F1聚合竞品与前沿工具雷达",
+  "unverified": [
+    "TASK-20260802-5BD745 的跨版本逐文件语义差异与迁移影响报告尚未交叉收口",
+    "远端服务端、真实平台账号/scope/API、内容权利、地域可达性、生产 SLA、供应链和外部 LLM/发布链路仍为 Unknown/conditional",
+    "未执行任何真实平台 spike；X、Reddit、Instagram、RSS/OpenF1 等仍需独立授权门禁"
+  ],
+  "updated_at": "2026-08-02T11:15+08:00",
+  "verified": [
+    "四个平台的公开一手证据、访问边界与回链已写入报告",
+    "D9DA43 既有 Top 12 已 12/12 逐项复核，新增候选按能力 archetype 去重",
+    "AI Hot 当前 main=f430c4b11eb7ce715d77768ff787855b7a025187、v1.2.3、9 文件及 manifest 六项载荷 6/6 hash 已由研究部独立只读复核",
+    "本轮未登录、未安装、未调用真实 API、未执行真实采集、未发生外部写入"
+  ]
+}

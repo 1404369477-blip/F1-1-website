@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "提交安全部final诊断报告，给出可复现的精确首个被拒调用、调用链和externalCalls变化；唯一推荐必须只开放启动所需的精确loopback入站监听或等价无DNS路径，并证明所有出站connect/http/https/fetch/dns named-host/child process继续fail closed；同时规定启动失败与正常退出的guard、DB、lock、server清理顺序和开发/测试验收向量。P0=0、P1=0，列已验证/未验证/错题自检，doctor与TASK_STATE_OK通过。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-10-SOURCE-MGMT启动期no-egress与loopback监听冲突独立诊断报告.md"
+  ],
+  "authorization_evidence": "用户持续目标授权推进本地初版；本任务是零外网独立安全诊断，不改产品或生产状态。",
+  "authorization_history": [
+    {
+      "at": "2026-08-10T00:01+08:00",
+      "evidence": "用户持续目标授权推进本地初版；本任务是零外网独立安全诊断，不改产品或生产状态。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "统筹部依据安全报告创建单一开发successor；安全诊断本身不授权修改代码或把F1466E写成PASS。",
+  "created_at": "2026-08-10T00:01+08:00",
+  "department": "安全部",
+  "details": "固定输入为TASK-20260809-F1466E阻断报告、app/evidence/TASK-20260809-F1466E/manifest.json、Repository SHA=741aad53d872f837afbe1d3c94bb3047deb54d711d76045f6b2e1684c4598912及现行app/src/server/vs1/no-egress.ts、source-management/server.ts、runtime.ts、app/scripts/serve.ts。安全部只读产品文件；可在独立临时目录用固定Node24做一个不访问外网、不启动产品实例、不写canonical DB的最小进程探针，精确定位guard安装后至server.listen前哪个被patch入口递增externalCalls并抛错。按第一性原理区分入站loopback监听、本进程DNS解析、出站loopback连接和非loopback外联；给唯一推荐修复合同和最多两种备选，明确允许/拒绝集合、TOCTOU、恢复与自动释放runtime/profile lock。不得放宽raw authority、Host/Origin/session/CSRF，禁止关闭guard、restore后再长期运行、允许任意DNS/hostname、允许任意localhost出站、外网、真实数据、依赖或产品实现修改。",
+  "domain_stage": "M5-SOURCE-MGMT安全诊断",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "无法在零外网临时探针中定位首个调用：保持Unknown，提交最小一次性诊断插桩方案，不猜根因或修改产品。",
+    "任一候选会允许非loopback、任意hostname/DNS、出站loopback HTTP或在runtime期间restore全局guard：判FAIL并排除该方案。",
+    "探针触发canonical DB、产品端口、外部I/O、残留进程/lock/临时文件或保护文件漂移：立即停止并安全清理任务资源，报告P0/P1。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已区分入站监听、数字地址归一化、出站loopback和外联；未放开通用DNS/localhost出站；强制options.all数组语义与server.address复核；排除restore窗口和guard外预绑定；未改产品/DB/依赖、未启动产品实例或外联，临时根已清理；报告含P0=0/P1=0、TASK_STATE_OK。",
+  "node": "独立定位F1466E监听前EXTERNAL_IO_FORBIDDEN的首个调用，并冻结不放宽外联边界的最小修复合同",
+  "pointers": [],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-10-SOURCE-MGMT启动期no-egress与loopback监听冲突独立诊断报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260810-F213DE",
+  "title": "SOURCE-MGMT启动期no-egress与loopback监听冲突独立诊断",
+  "unverified": [
+    "推荐的一次性guard-owned listener能力尚未实现；F1466E仍BLOCKED，closed receipt/完整HTTP链NOT_RUN；IPv6产品启动、fault points、SIGINT/SIGTERM、DB/lock清理顺序和OS级no-egress未运行。"
+  ],
+  "updated_at": "2026-08-10T00:14+08:00",
+  "verified": [
+    "F1466E manifest与四个现行代码文件hash已重算；首个拒绝调用精确为server.listen(127.0.0.1)→node:net lookupAndListen→dns.lookup(host,{all:true},cb)→guard.denied，externalCalls 0→1且未监听；exact all-aware无DNS数组可监听127.0.0.1/IPv4并保持0；naive callback可落到:: wildcard；named-host DNS、dns promises、net/http/fetch loopback与child process继续逐项拒绝。"
+  ]
+}

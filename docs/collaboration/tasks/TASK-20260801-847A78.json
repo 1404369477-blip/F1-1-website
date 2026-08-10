@@ -1,0 +1,67 @@
+{
+  "acceptance_exit": "提交可评审的Spec v1候选和proposed系统ADR：技术栈、选择理由、替代方案、模块/数据/API边界、app布局合同、依赖与本地命令、首批3–5个纵向切片、风险/回滚/验收、付费/部署/外发/Base真值/真实采集/自动发布用户门禁全部明确；完成任务并TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/spec.md",
+    "docs/decisions/system/2026-08-01-F1+1-M4本地Kickoff系统路线-proposed.md",
+    "docs/progress.md"
+  ],
+  "authorization_evidence": "用户明确回复可以开工，允许团队自主技术选型、固化系统ADR、冻结首版工程合同并初始化本地app；高风险边界另行确认。决策日志DEC-20260801T223248-7C91D6。",
+  "authorization_history": [
+    {
+      "at": "2026-08-01T22:35+08:00",
+      "evidence": "用户明确回复可以开工，允许团队自主技术选型、固化系统ADR、冻结首版工程合同并初始化本地app；高风险边界另行确认。决策日志DEC-20260801T223248-7C91D6。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "用户已授权本地技术路线与app初始化；付费、部署上线、外部发布、Base真值切换、真实采集和自动发布继续需要单独确认。",
+  "created_at": "2026-08-01T22:35+08:00",
+  "department": "产品部",
+  "details": "用户已授权团队在不付费、不部署、不外发、不切Base业务真值、不启动真实采集/真实表单提交/自动发布的边界内自主技术选型、固化系统ADR并启动本地app。请产品部吸收docs/spec.md、现有MVP系统架构proposed包、accepted ADR-SOURCE-001、AI Hot/采集调研、安全基线、设计规范v0.1、M3数据合同和最新权限边界；按奥卡姆剃刀选择首版技术栈和模块边界，形成Spec v1候选、M4本地Kickoff proposed系统ADR与纵向功能切片顺序。必须明确中国大陆部署约束、个人维护成本、白名单15分钟目标、人工审核、中文摘要/图片/原链、adapter/provider/outbox/幂等、安全epoch、mock与真实外部服务隔离、app目录边界、环境变量名和本地启动/验证合同。产品部只改Spec/系统ADR/产品规划文档，不写正式业务代码。",
+  "domain_stage": "M3 Spec v1候选与M4 Kickoff准备",
+  "event_receipts": [
+    "MIL-20260801T230410-43C1A2",
+    "DEC-20260801T223248-7C91D6"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一关键技术选择需要付费、境外强依赖或中国大陆不可达服务时不得默认采用，给本地/国内可用替代并标红门禁。",
+    "现有accepted ADR、用户确认或设计规范发生冲突时停止冻结，列出精确冲突交统筹部裁决，不原地改accepted ADR。",
+    "无法在当前证据下证明真实平台采集可行时使用mock/adapter合同推进本地闭环，不把实验结果写成生产可用。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已读取 docs/collaboration/错题集.md，当前无正式错题条目；自检未把 fixture 当 Base 真值、未把 M3 CLI 回读误写为 provider/Collector 生产可用、未把 Appica/Base UI 当选定依赖、未把 proposed 写成 accepted、未修改 accepted ADR、未触发真实飞书或 OAuth 写操作、未新增第二套领域字段。",
+  "node": "把已确认需求、研究、设计、数据与安全边界收敛为可实施系统合同",
+  "pointers": [
+    "docs/spec.md",
+    "docs/decisions/system/2026-07-30-F1+1-MVP与系统架构决策包-proposed.md",
+    "docs/decisions/system/2026-08-01-F1+1-信源库A到D演进路线-accepted.md",
+    "design/ui/F1+1-全站设计规范-v0.1.md"
+  ],
+  "report": "产品部 M4 本地 Kickoff 产出：Spec v1 候选、ADR-M4-KICKOFF-001 proposed、进度同步。",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260801-847A78",
+  "title": "形成Spec v1候选与M4本地Kickoff系统路线",
+  "unverified": [
+    "未创建 app 正式代码、package manifest、lockfile 或可运行命令；Node 24 迁移与 node:sqlite 事务/锁/恢复 spike 未执行",
+    "真实 Base/provider/Collector/API、真实采集、真实表单提交、外部 AI/图片、自动发布、部署、付费、外发和 production storage 未验证",
+    "M3 直接协作者边界、OAuth 最小 grant 收敛、真实本地 HTTP 端口、目标网络依赖安装、平台条款/费用/图片权利/容量/RTO/RPO 未验证；VoiceOver/NVDA/TalkBack 实机未验证"
+  ],
+  "updated_at": "2026-08-01T23:45+08:00",
+  "verified": [
+    "用户授权与任务 JSON 已读取；M4 范围为本地技术选型/系统 ADR/Spec，真实外部能力边界保持关闭",
+    "Spec v1 候选保持 proposed；ADR-M4-KICKOFF-001 保持 proposed；accepted ADR-SOURCE-001 未修改",
+    "Next.js App Router/React/TypeScript、Node 24 Active/Maintenance LTS 目标、node:sqlite repository、Zod、CSS Modules、Vitest/Testing Library、npm lockfile、SQLite 本地边界与替代方案已写明",
+    "模块/数据/API/provider/adapter/outbox/CAS/epoch、loopback admin/Origin/CSRF、fail-closed 环境变量、canonical app 布局与本地命令已写明",
+    "四个纵向切片及 15 分钟 synthetic-only 预算、设计四页/全量状态/响应式/无障碍验收、数据部唯一领域合同与 M3 不反写边界已写明",
+    "OAuth runtime profile 仅记录 granular permission gate；M4 fixture-only，不执行重授权/撤权/logout/refresh/token 轮换；三路只读对抗审查 P0/P1=0",
+    "git diff --check、agent_team_task.py doctor、JSON/链接/Markdown fence 检查通过；app 仍只有 README；无 accepted ADR diff；milestone 日志已追加"
+  ]
+}

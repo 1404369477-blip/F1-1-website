@@ -1,0 +1,122 @@
+{
+  "access_rule": "synthetic assets only; assetRef must start synthetic: and contain no URL delimiter; external_calls=0",
+  "api_compatibility": {
+    "default_without_explicit_v2_accept": "serve unchanged public-read-v0.1",
+    "integrity_failure": {
+      "http": 500,
+      "reasonCode": "PUBLIC_READ_INTEGRITY_FAILED"
+    },
+    "rollback": "disable explicit v2 negotiation and continue byte-compatible v1; never rewrite v0.4 fixture or manifest",
+    "unsupported_version": {
+      "http": 406,
+      "reasonCode": "PUBLIC_MEDIA_VERSION_UNSUPPORTED"
+    },
+    "v1_down_conversion": "media=[] => null; media length 1..4 => first item mapped to legacy media object; ordering makes first item stable",
+    "v2_accept": "application/vnd.f1plus1.public-read-v0.2+json",
+    "v2_response": "schemaVersion public-read-v0.2 and media array 0..4"
+  },
+  "classification": "proposed_public_dto_successor_not_domain_schema",
+  "domain_chain": [
+    "MediaCandidate",
+    "ReleaseBundle",
+    "ReviewDecision",
+    "Publication",
+    "PublishedProjection"
+  ],
+  "entity_additions": [],
+  "external_calls": 0,
+  "guards": [
+    "0 <= media_refs length <= 4 and all ids unique",
+    "media_refs, canonical_payload.media, media_presentations have identical ids, length and order",
+    "each MediaCandidate belongs to the same Content and is selected, license allowed, safety passed",
+    "candidate media_hash equals canonical media snapshot hash and synthetic asset hash is recomputable",
+    "ReleaseBundle approved hash/five fences and Publication/Projection hash chain remain current",
+    "any one mismatch rejects the entire story with PUBLIC_READ_INTEGRITY_FAILED; no partial gallery"
+  ],
+  "implementation_handoff": [
+    {
+      "change": "add PublicMediaItemV2/PublicFeedItemV2 and explicit response version union; keep V1 unchanged",
+      "file": "app/src/server/public/types.ts"
+    },
+    {
+      "change": "validate three ordered lists and full hash/rights/safety chain; emit V2 array or V1 first-item down-conversion",
+      "file": "app/src/server/public/repository.ts"
+    },
+    {
+      "change": "negotiate exact V2 media type; default V1; unsupported version 406",
+      "file": "app/src/app/api/public/feed/route.ts"
+    },
+    {
+      "change": "use identical negotiation and mapping for detail/related items",
+      "file": "app/src/app/api/public/stories/[publicId]/route.ts"
+    },
+    {
+      "change": "successor migration must store the immutable media_presentations snapshot and include it in payload/bundle hashes; do not alter v0.4 migration",
+      "file": "app/migrations"
+    }
+  ],
+  "input_extension": {
+    "cardinality": "same length and order as ReleaseBundle.media_refs and canonical_payload.media",
+    "classification": "immutable_snapshot_member_on_existing_entity",
+    "field": "media_presentations",
+    "hash_rule": "included in canonical payload_hash and bundle_hash before approval; any change creates a new immutable Bundle",
+    "owner": "ReleaseBundle.canonical_payload",
+    "required_item_fields": [
+      "media_candidate_id",
+      "alt_zh",
+      "caption_zh",
+      "credit_display",
+      "tone"
+    ]
+  },
+  "item_mapping": {
+    "media[].altZh": {
+      "owner": "ReleaseBundle",
+      "pointer": "/canonical_payload/media_presentations/{index}/alt_zh"
+    },
+    "media[].assetRef": {
+      "guard": "synthetic scheme only; no URL",
+      "owner": "MediaCandidate",
+      "pointer": "/asset_ref"
+    },
+    "media[].captionZh": {
+      "owner": "ReleaseBundle",
+      "pointer": "/canonical_payload/media_presentations/{index}/caption_zh"
+    },
+    "media[].creditDisplay": {
+      "owner": "ReleaseBundle",
+      "pointer": "/canonical_payload/media_presentations/{index}/credit_display"
+    },
+    "media[].mediaHash": {
+      "join": "canonical_payload.media/{index}/media_hash",
+      "owner": "MediaCandidate",
+      "pointer": "/media_hash"
+    },
+    "media[].mediaId": {
+      "join": "MediaCandidate.media_candidate_id and canonical_payload.media/{index}/media_candidate_id",
+      "owner": "ReleaseBundle",
+      "pointer": "/media_refs/{index}"
+    },
+    "media[].tone": {
+      "owner": "ReleaseBundle",
+      "pointer": "/canonical_payload/media_presentations/{index}/tone"
+    }
+  },
+  "mapping_version": "public-multimedia-mapping-v0.1",
+  "non_media_compatibility": "all public-read-v0.1 feed/detail/page/source/originalLink fields and meanings remain byte-shape compatible; detail retains leadZh/bodyZh/keyPointsZh",
+  "predecessor": {
+    "immutable": true,
+    "manifest": "data/mvp-contract-v0.4-public-synthetic/manifest.json",
+    "version": "public-read-v0.1"
+  },
+  "real_media": 0,
+  "state_rule": "restricted wins; otherwise empty media => media_missing; otherwise available",
+  "successor": {
+    "array_order": "ReleaseBundle.media_refs order",
+    "media_cardinality": "0..4",
+    "primary_media": "media[0] when present",
+    "thumbnail_order": "media[1..] without reorder",
+    "version": "public-read-v0.2"
+  },
+  "writes_to_base": false
+}

@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "92c716-final-successor-evidence-v1",
+  "taskId": "TASK-20260810-92C716",
+  "decision": "pass",
+  "p0": 0,
+  "p1": 0,
+  "p2": 0,
+  "candidate": {
+    "developmentReportSha256": "022e1d2db619494b60d0d5c6190946f0a453953ec5b878885d5ce3cc9f4e910f",
+    "developmentManifestSha256": "1d402722e2139fd5fbab0de791e691939273e0a534672aba71a629b45486519e",
+    "securitySha256": "a455df964f86045ff4157142a7cd378f2f64a12bb46a54661daa711d0750f965",
+    "httpSha256": "1883d161e3f582f17761bfae1d5a1ddb5a37ed9d8ca8ccecde67783609c583e6",
+    "repositorySha256": "741aad53d872f837afbe1d3c94bb3047deb54d711d76045f6b2e1684c4598912",
+    "closedDbSha256": "ddf3778c62cf95f195b1f08db8b075d676069f4cc9fb39804063e1004dd2e939"
+  },
+  "predecessorEvidence": {
+    "a3293fReportSha256": "a81910b7e7e5dd56e565e48a5d023197052ae5c4f67727e688cdf7198d00ef67",
+    "a3293fManifestSha256": "7fa1cf50e44dc4b23553fb0e7efc10a3bb098d8e242392b3fde290eb5ac45e5a",
+    "a3293fVerifiedThrough": "real HTTP list_after=200",
+    "a3293fProductDefect": false,
+    "fourCbfa7Status": "ACKNOWLEDGED_HISTORICAL_FAIL_NO_PRODUCT_DEFECT"
+  },
+  "harness": {
+    "invocations": 1,
+    "sha256": "ddf468d15d449d9ef93a3162d076b3ee59ab3838dcca1e65821007f9ede9496c",
+    "nodeVersion": "24.18.0",
+    "serverImported": false,
+    "readinessCalled": false,
+    "listenerCreated": false,
+    "externalCalls": 0,
+    "exitCode": 0
+  },
+  "repository": {
+    "integrity": "ok",
+    "total": 60,
+    "baseline": 59,
+    "local": 1,
+    "localSourceId": "src-local-14ae0ef1ac47d753a1994519",
+    "origin": "local_synthetic",
+    "lifecycleStatus": "retired",
+    "onboardingStatus": "stopped",
+    "enabled": false
+  },
+  "session": {
+    "createStatus": 201,
+    "getState": "active",
+    "clearCookieMaxAgeZero": true,
+    "activeCountAfterDestroy": 0,
+    "afterDestroyReasonCode": "ADMIN_SESSION_REQUIRED",
+    "afterDestroyStatus": 401
+  },
+  "httpStatic": {
+    "consumeCsrfBeforeDestroy": true,
+    "destroyCallsStore": true,
+    "destroyStatus": 204,
+    "listCallsSessionGet": true
+  },
+  "scope": {
+    "newHttpServerRun": false,
+    "newHttpRequests": false,
+    "build": false,
+    "typecheck": false,
+    "fullTest": false,
+    "formalDbOpened": false,
+    "externalIo": false
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "acceptance_exit": "安全部final报告status=final且decision=pass|fail；逐项给P0/P1/P2、已验证/未验证、开发必须实现的机械门和真实用户失败/恢复出口；若pass须证明合同层P0/P1=0并固定候选/hash，若fail须给首个可执行整改点；externalCalls=0，doctor通过。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-09-SOURCE-MGMT-001-v0.2实施前独立安全审查报告.md"
+  ],
+  "authorization_evidence": "2026-08-09主会话持续推进；产品v0.2与数据合同已ACK。",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T21:28+08:00",
+      "evidence": "2026-08-09主会话持续推进；产品v0.2与数据合同已ACK。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "用户已持续授权推进本地初版；本任务为只读安全审核，不授权实现、外联、真实设备或生产。",
+  "created_at": "2026-08-09T21:28+08:00",
+  "department": "安全部",
+  "details": "只读审查docs/spec/F1+1-SOURCE-MGMT-001本地synthetic信源管理纵切实现合同-v0.2.md，固定SHA-256=a4b7230c89b0083f6d3f412d2c3f3f767c7f131d4ea422f85fe5721f75df686b；同时核对数据报告SHA-256=4498eea95e8d2461bd3c4bbb1e3ff67de2247a65c0da99951a194b2b9e9d3d95、既有local Admin session/Origin/CSRF候选与accepted M4/M5边界。覆盖exact Host/Origin/authority、session/cookie/CSRF、canonical JSON/size、command与business identity、CAS/five-fence、stop/retire/dead-letter、response loss、single profile/handle/writer、baseline 403、public只读、no-egress、URL不可外联、日志脱敏和同UID local-dev残余风险。只提交安全部final报告，不改产品合同/Spec/ADR/app/data/design，不运行网络/服务/DB，不开放真实provider/Base或生产能力。",
+  "domain_stage": "M5-SOURCE-MGMT实施前安全门",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "候选hash漂移或数据/产品语义不一致：立即fail并停止；发现绕过session/CSRF、第二writer/handle、baseline可写、外联或identity重复风险：P1且不放行；需要真实网络、设备、密钥或生产实测才能判断的项保持Unknown并与合同层结论分离。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已核对固定hash无漂移；区分合同文字与实现证据、UNIQUE约束与identity熵、96-bit碰撞的可用性残余；未访问网络、未运行服务/DB、未修改产品/数据/实现/设计；报告含唯一FAIL、P0/P1/P2、已验证/未验证、机械门、用户失败/恢复出口和字面TASK_STATE_OK。",
+  "node": "对唯一产品v0.2与已ACK数据拓扑做实现前安全裁决，给开发和设计明确的P0/P1门禁",
+  "pointers": [
+    "docs/spec/F1+1-SOURCE-MGMT-001本地synthetic信源管理纵切实现合同-v0.2.md",
+    "docs/collaboration/部门/数据部/报告/2026-08-09-SOURCE-MGMT-001-SQLite-profile-mutation-successor数据合同.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-09-SOURCE-MGMT-001-v0.2实施前独立安全审查报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-96AF52",
+  "title": "SOURCE-MGMT-001 v0.2实施前独立安全审查",
+  "unverified": [
+    "实际HTTP adapter/session/CSRF/SQLite/worker/UI/receipt、真实端口与进程、OS no-egress、WAL/断电恢复、浏览器及生产环境均未运行；外部provider/Base/真实平台能力未授权且保持关闭。"
+  ],
+  "updated_at": "2026-08-09T21:35+08:00",
+  "verified": [
+    "固定产品v0.2 SHA=a4b7230c89b0083f6d3f412d2c3f3f767c7f131d4ea422f85fe5721f75df686b；数据ACK合同SHA=4498eea95e8d2461bd3c4bbb1e3ff67de2247a65c0da99951a194b2b9e9d3d95；主体合同覆盖baseline 403、single profile/handle/writer、canonical JSON<=16KiB、CAS/five-fence、stop/retire/dead-letter、response-loss、public只读、no-egress与日志脱敏；发现P1=2、P2=1；externalCalls=0。"
+  ]
+}

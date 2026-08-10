@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "设计部在 6838E5 草案上补足滑动切图交互（触控+wheel，时间线/详情/lightbox 三处），产出证据与报告；用户确认后由统筹派开发落地。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "design/ui/F1+1-v0.2-全站设计/index.html"
+  ],
+  "authorization_evidence": "用户要求触控板双指与手机端滑动切图（2026-08-08）",
+  "authorization_history": [
+    {
+      "at": "2026-08-08T13:33+08:00",
+      "evidence": "用户要求触控板双指与手机端滑动切图（2026-08-08）",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "设计部/统筹部并行子代理",
+  "completion_class": "standard",
+  "confirmation": "用户体验确认门。",
+  "created_at": "2026-08-08T13:33+08:00",
+  "department": "设计部",
+  "details": "用户反馈(2026-08-08)：①触控板双指滑动切图当前不支持（触控板生成 wheel 事件，需 wheel 处理，现有 pointer/touch 覆盖不到）；②手机也要支持滑动切图，且时间线（简介/feed）页与详情页都要支持。在 TASK-20260808-6838E5 单主图+右下角缩略图草案基础上补充：时间线条目主图支持滑动切图（触摸 + 触控板双指 wheel，滑动切换主图、缩略图联动），详情页媒体区支持滑动切图（触摸 + wheel），lightbox 补充触控板双指（wheel）滑动自然切图；明确手势方向、阈值、与点击/滚动/缩放的区分。产出设计草案更新 + 视觉证据 + 报告，停在用户体验确认门。",
+  "domain_stage": "design_direction_revision",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若滑动与点击/滚动冲突，说明手势判定取舍，不擅自改已确认布局。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查错题集,无命中",
+  "node": "v0.2-swipe-interaction-revision",
+  "pointers": [
+    "design/ui/F1+1-v0.2-全站设计/index.html; design/ui/F1+1-v0.2-全站设计/evidence/"
+  ],
+  "report": "docs/collaboration/部门/设计部/报告/2026-08-08-滑动切图交互补充报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260808-3F4C36",
+  "title": "设计补充:滑动切图支持触控板双指 + 时间线/详情页均支持",
+  "unverified": [
+    "用户尚未确认;正式app(含详情页)未落地;真实触控板/手机体验待用户/测试部"
+  ],
+  "updated_at": "2026-08-08T13:47+08:00",
+  "verified": [
+    "时间线主图/lightbox 支持 pointer+wheel 滑动切图(含触控板双指),与点击/滚动不冲突;报告含时间线/详情/lightbox 三处滑动切图交互规范;证据PNG已产出"
+  ]
+}

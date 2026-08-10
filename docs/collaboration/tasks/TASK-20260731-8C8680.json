@@ -1,0 +1,50 @@
+{
+  "acceptance_exit": "只修改指定proposed决策包的验证状态/证据链接；保持全部产品合同和proposed边界不变；运行本地链接、Markdown、git diff --check与doctor；列出已验证/未验证和错题自检；complete并输出TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/decisions/system/2026-07-31-F1+1-信源库维护决策包-proposed.md"
+  ],
+  "authorization_evidence": "用户确认的即时采集门禁已完成产品吸收和独立复验。",
+  "authorization_history": [
+    {
+      "at": "2026-07-31T22:28+08:00",
+      "evidence": "用户确认的即时采集门禁已完成产品吸收和独立复验。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "测试部独立复验已pass并由统筹部核收，需同步文档时态。",
+  "created_at": "2026-07-31T22:28+08:00",
+  "department": "产品部",
+  "details": "测试部TASK-20260731-FC8378已通过并由统筹核收。仅更新docs/decisions/system/2026-07-31-F1+1-信源库维护决策包-proposed.md中的验证时态：移除“当前修订版尚未由测试部正式复验”这一过时表述，链接测试部final报告并记录0阻断、0重要、1个已由统筹同步进度闭环的一般项。不得修改即时采集业务合同、A/D proposed状态、Spec或其他文件。",
+  "domain_stage": "M2需求确认",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "不得把文档复验pass写成实现、平台、飞书授权或A/D架构放行；不得改Spec、progress或业务谓词。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已读取项目错题集，当前无历史错题条目；专项检查未把测试文档pass扩写为实现通过、平台可用、飞书授权或A/D放行；未修改业务合同、Spec、progress、publish predicate或A/D状态，只同步了proposed决策包的验证时态与报告链接。",
+  "node": "M2-信源即时采集文档验收收口",
+  "pointers": [
+    "docs/decisions/system/2026-07-31-F1+1-信源库维护决策包-proposed.md",
+    "docs/collaboration/部门/测试部/报告/2026-07-31-即时采集门禁文档合同-复验报告.md"
+  ],
+  "report": "已完成小范围收口：仅在现有proposed决策包中同步测试部final/pass复验结果、0/0/1问题统计与报告链接，并删除过时的“尚未正式复验”表述。业务合同、Spec、progress和A/D proposed状态保持不变。",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260731-8C8680",
+  "title": "同步即时采集门禁独立复验结果",
+  "unverified": [
+    "该复验仅覆盖静态文档合同；transactional outbox、队列、双epoch栅栏、适配器授权检查、内容审核hash和发布重试仍未实现或运行验证；真实平台能力、飞书授权与资源状态未验证；A/D架构仍待用户接受。"
+  ],
+  "updated_at": "2026-07-31T22:31+08:00",
+  "verified": [
+    "测试部TASK-20260731-FC8378状态为acknowledged，final报告decision=pass并由统筹部核收；报告结论为0阻断、0重要、1个一般问题，一般项仅为复验完成后的进度时态且已由统筹同步闭环；proposed决策包已链接该报告并移除“当前修订版尚未由测试部正式复验”的过时表述；报告链接存在；package仍为status=proposed且A/D状态未变；Spec与progress修改前后SHA-256一致；Markdown围栏、尾随空格、git diff --check和TASK doctor均通过。"
+  ]
+}

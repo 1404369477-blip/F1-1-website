@@ -1,0 +1,51 @@
+{
+  "acceptance_exit": "提交final报告与P0/P1/P2：明确本地HTTP无Secure是否可接受及生产前门槛；验证非法cookie安全回默认、响应不泄露敏感信息、无外联；输出可执行修复建议，若有P1则不得放行对应Function ID。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-09-主题cookie与动态SSR边界定向安全复核报告.md"
+  ],
+  "authorization_evidence": "COR-20260809T102214-960E65；TASK-20260809-4C59A9已ACK",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T11:06+08:00",
+      "evidence": "COR-20260809T102214-960E65；TASK-20260809-4C59A9已ACK",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "用户已确认本地高保真与全部功能闭环；本任务只对新主题持久化边界做必要独立安全审查。",
+  "created_at": "2026-08-09T11:06+08:00",
+  "department": "安全部",
+  "details": "绑定当前layout/theme preference/shell源码，只读审查f1p1-theme白名单、Path、SameSite、Max-Age、Domain缺省、HttpOnly不适用原因、本地HTTP无Secure的边界、cookie不得参与权限判断、请求动态化与缓存/no-store影响、日志/响应泄露及外部I/O=0。不得扩为整站安全复审，不修改实现。",
+  "domain_stage": "M5公开页主题持久化安全复核",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "发现cookie参与认证/权限/业务真值或包含敏感值：立即P0/P1并阻断。",
+    "动态SSR导致缓存混用、主题跨用户泄露或健康/公开GET语义漂移：判P1并给最短证据。",
+    "无法证明零外联或源码hash漂移：停止使用旧收据，标记未验证。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未把scoped PASS外推整站或生产；本地HTTP无Secure仅限127.0.0.1非敏感偏好；HttpOnly不适用依赖cookie永远非敏感且不参与安全判断；未修改实现、启动实例、执行外联或扩大审查",
+  "node": "核收TASK-20260809-4C59A9引入的非敏感主题cookie与动态SSR边界",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260809-4C59A9.json"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-09-主题cookie与动态SSR边界定向安全复核报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-6680C2",
+  "title": "主题cookie与动态SSR边界定向安全复核",
+  "unverified": [
+    "非法或超长cookie的真实production HTTP响应；浏览器拒写cookie/localStorage异常/legacy首帧；HTTPS/HSTS/CDN/反代/生产Secure、HTML cache header及跨用户缓存隔离；真实多图与整站其他功能NOT_RUN"
+  ],
+  "updated_at": "2026-08-09T11:13+08:00",
+  "verified": [
+    "三文件SHA-256已复算；f1p1-theme服务端/客户端仅接受dark|light，非法值静态回退dark且不回显；cookie只决定主题，不参与身份/权限/业务真值；Path=/、SameSite=Strict、Max-Age=31536000、Domain缺省host-only；读写点各唯一；目标文件无外联、日志、敏感响应或后台能力；上游dark/light SSR、hydration及externalCalls=0收据已交叉核对"
+  ]
+}

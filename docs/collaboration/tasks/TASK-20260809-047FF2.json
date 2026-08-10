@@ -1,0 +1,58 @@
+{
+  "acceptance_exit": "交付不可变候选路径、SHA-256、1440/1024/390深浅样板、Function ID→data-od-id/组件/状态映射、成功/失败/恢复视觉；列出与v0.2的所有可见差异。只有用户后续确认才能替换公开视觉基线，开发部在确认前只可实现已有锚点。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "design/ui/F1+1-v0.2-public-function-anchors-v0.1/F1+1-v0.2-public-function-anchors-candidate-20260809.html",
+    "design/ui/F1+1-v0.2-public-function-anchors-v0.1/implementation-map.md",
+    "design/ui/F1+1-v0.2-public-function-anchors-v0.1/SHA256.txt",
+    "docs/collaboration/部门/设计部/报告/2026-08-09-公开页全功能视觉锚点候选报告.md"
+  ],
+  "authorization_evidence": "用户2026-08-09当前明确要求",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T11:08+08:00",
+      "evidence": "用户2026-08-09当前明确要求",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "设计部/当前正式会话",
+  "completion_class": "standard",
+  "confirmation": "用户明确要求开发高度贴合视觉并落实全部功能；本任务只产出公开页增量视觉候选，不代表用户已确认新视觉。",
+  "created_at": "2026-08-09T11:08+08:00",
+  "department": "设计部",
+  "details": "只处理公开页本地已确认功能的视觉缺口：PUB-FEED-003分类筛选、PUB-FEED-004七状态真实出口、PUB-FEED-005加载更多/partial、PUB-DETAIL-001/004/005独立详情与错误恢复、UI-TOP-001、UI-ACCORDION-001、UI-THEME-002异常回退、UI-A11Y-001可见焦点/200%/forced-colors/reduced-transparency，以及0/1/4媒体successor的最终衔接。保持已确认v0.2设计语言、栅格、字体、色彩、动效与1440/1024/390结构，不覆盖冻结文件；产出单一增量候选、元素/状态/响应式/无障碍实现标注和hash。Admin、sources后台、RSS、真实媒体和部署不在本任务。若当前TASK-20260809-69BC5A仍等待旧审批，先报告该依赖，不新建部门会话。",
+  "domain_stage": "M5公开页全功能视觉补齐候选",
+  "event_receipts": [
+    "COR-20260809T161027-D4A454",
+    "MIL-20260809T161617-0FDE09"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "现有设计任务仍处于审批等待且无法领取：保持queued并回报，不另开新会话或绕过审批。",
+    "某Function ID需要改变信息架构或新增业务决策：停止该项，回产品部补合同。",
+    "无法在三视口和双主题保持一致或会覆盖已冻结文件：拒绝落账，保留原基线。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已纠正首版没有严格继承最新冻结视觉的问题，未复用首版浏览器记录；2/3图没有误标为0图；kicker恢复冻结原文，offline文案与实际状态一致，nomore保留已读时间线，partial标明same-cursor恢复；没有把DRAFT控件、静态状态分支或data-od-id写成正式功能完成；没有把静态锚点外推为浏览器、PNG、Kimi或无障碍通过；任务完成只收口增量候选，不替换冻结视觉基线，也不解除用户视觉确认门。",
+  "node": "为功能矩阵中尚无冻结视觉锚点的公开功能提供同一视觉体系的可交付候选",
+  "pointers": [
+    "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md",
+    "design/ui/F1+1-v0.2-全站设计/F1+1-v0.2-final-20260808.html"
+  ],
+  "report": "docs/collaboration/部门/设计部/报告/2026-08-09-公开页全功能视觉锚点候选报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-047FF2",
+  "title": "补齐公开页全功能视觉锚点候选与实现标注",
+  "unverified": [
+    "当前候选六张PNG、完整浏览器交互、390实际中心差、分类切换、分页append、partial恢复、行内与独立详情恢复、主题持久化、回顶焦点、Storage getter/setter异常均未取得当前候选运行收据；读屏、200%缩放、forced-colors实机、实体安全区、正式PublishedProjection、App、API与路由接线未运行；Kimi未读取当前候选截图，Open Design未进入生成流程；用户尚未确认修正后的候选。"
+  ],
+  "updated_at": "2026-08-09T16:18+08:00",
+  "verified": [
+    "最新冻结输入SHA-256未漂移；候选JavaScript、HTML与CSS静态结构可解析；目标Function ID及其成功、失败和恢复视觉锚点存在；1440/1024/390深浅主题配置、0/1/4 exact媒体锚点、44px控件、可见焦点、forced-colors、reduced-motion、reduced-transparency与safe-area锚点存在；候选HTML和实现映射SHA与清单一致；首版偏离冻结视觉的候选及浏览器记录已明确作废；两路只读对抗审查P0=0/P1=0；未修改v0.2冻结稿、正式App、Spec、accepted ADR或数据合同。"
+  ]
+}

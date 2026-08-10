@@ -1,0 +1,59 @@
+{
+  "acceptance_exit": "提交研究部final证据报告：每项关键结论附官方直链和取证日期，列出精确scope名称/用途/证据/不确定性矩阵，区分app已开通scope、用户实际grant和资源ACL；给出缩权/轮换/撤权的官方能力与Unknown，1–3条失败路径；complete/TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/研究部/报告/2026-08-01-飞书OAuth最小Scope与撤权轮换官方语义核验.md"
+  ],
+  "authorization_evidence": "用户同意OAuth 142 scopes最小化只读分析并要求执行工作交对应部门。",
+  "authorization_history": [
+    {
+      "at": "2026-08-01T22:22+08:00",
+      "evidence": "用户同意OAuth 142 scopes最小化只读分析并要求执行工作交对应部门。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "研究部/019fb36c-1f86-78d3-a6d7-f87f124bd710",
+  "completion_class": "standard",
+  "confirmation": "本任务仅研究，不授权任何OAuth或飞书资源变更；结论由产品部吸收并经安全/测试复核后再交用户决策。",
+  "created_at": "2026-08-01T22:22+08:00",
+  "department": "研究部",
+  "details": "用户同意推进OAuth最小化只读分析。请研究部只使用飞书/Lark官方开发文档、官方CLI仓库/embedded docs等一手资料，核验当前可用的精确scope名称、Base资源/表/字段/视图/表单/记录只读所需权限、公共权限读取所需权限、scope依赖与可拆分粒度；同时核验缩窄授权、新旧token并存、refresh token行为、CLI logout是否仅清本地凭证、服务端撤权入口及恢复语义。不要访问真实Base或用户授权状态，不要登录/登出/撤权，不要使用百度或二手博客。",
+  "domain_stage": "M2权限风险收口",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "官方文档无法证明精确scope或撤权语义时保留Unknown，不用SDK字段名或经验猜测平台行为。",
+    "不同官方资料或CLI版本语义冲突时记录版本和冲突，暂停单一结论并交统筹部裁决。",
+    "资料要求登录真实租户、访问真实Base或改变认证状态时停止该路径，只保留公开一手证据。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "独立复核通过；未登录、未登出、未撤权、未读取授权状态，未访问或修改真实 Base/ACL；未把 app scope、user grant、token scope 与资源 ACL 混同；未将 scope 或 CLI logout 成功 JSON 推断为服务端授权已撤销；对官方资料冲突、历史 scope、grant 级撤权和恢复时序均保留 Unknown。",
+  "node": "用官方一手资料核验Base只读、权限读取、OAuth缩权与撤权的精确能力边界",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-01-M3-OAuth过宽Scope-安全残余风险报告.md",
+    "docs/spec.md"
+  ],
+  "report": "docs/collaboration/部门/研究部/报告/2026-08-01-飞书OAuth最小Scope与撤权轮换官方语义核验.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260801-F4526F",
+  "title": "核验飞书OAuth最小scope与撤权轮换官方语义",
+  "unverified": [
+    "用户历史 grant 的单 scope 删除及公开 Feishu 手动撤销全部 token/grant API 契约",
+    "撤权幂等性、完成时延、事件 payload/重试与恢复时序",
+    "授权管理 UI 当前具体步骤、不同 CLI 版本 logout 细节及官方 CLI endpoint host 映射",
+    "docs:permission.setting:readonly 与当前公共权限 API 的独立映射、聚合 scope 兼容细节",
+    "真实租户/Base ACL 下的实际 HTTP 结果（本次明确未访问）"
+  ],
+  "updated_at": "2026-08-01T22:50+08:00",
+  "verified": [
+    "官方文档确认 app 开通、用户 grant、资源 ACL 三层边界及 Base granular scope profile",
+    "官方 v2 OAuth 确认用户授权累积、token/refresh scope 子集缩窄、重复缩窄不累积并以响应 scope 为准",
+    "官方 v2 refresh 确认 refresh token 一次性轮换、旧 refresh 立即失效、旧 access token 在自身到期前继续有效",
+    "官方事件与 CLI 一手资料确认 revoked_v4、CLI logout 撤权尝试/本地清理、device flow 自动补 offline_access，并记录版本冲突"
+  ]
+}

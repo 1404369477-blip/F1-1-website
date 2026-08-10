@@ -1,0 +1,51 @@
+{
+  "acceptance_exit": "提交唯一PASS/FAIL测试复验报告，列P0/P1、版本/hash、命令/退出码、SQLite实际source_id与全探针、build零漂移证据；PASS要求P0=0且P1=0，任何失败阻止C业务实现。TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-08-02-M4-C层Node24与SQLite能力预检测试复验报告.md"
+  ],
+  "authorization_evidence": "用户已授权持续推进本地工程；本任务只做已完成预检的独立测试复验",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T04:36+08:00",
+      "evidence": "用户已授权持续推进本地工程；本任务只做已完成预检的独立测试复验",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "测试部/019fb379-9212-7e80-a5df-587d339936c4",
+  "completion_class": "audit",
+  "confirmation": "仅本地只读/临时测试复验；真实外部能力持续关闭。",
+  "created_at": "2026-08-02T04:36+08:00",
+  "department": "测试部",
+  "details": "只读独立复验 TASK-20260802-D27E44 的报告与当前 app。用绝对Node24/npm11.16验证版本和npm ls；机械核对官方归档SHA与package-lock SHA；用临时目录重跑node:sqlite capability，覆盖sqlite>=3.51.3、WAL、FULL、busy_timeout、user_version、BEGIN IMMEDIATE双连接锁竞争、rollback/commit/checkpoint、SIGKILL/crash后reopen与完整性、权限和清理；运行lint/typecheck/build至少一次，并核对workspace-root warning=0、配置/源码/lock前后零漂移。禁止npm install/lifecycle/真实外联/业务实现/Spec/ADR修改。首轮FAIL/P1历史须保留。",
+  "domain_stage": "M4-C-local-runtime-capability-preflight-review",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) SQLite版本或WAL/锁/rollback/checkpoint/crash recovery任一失败：FAIL，禁止静默换数据库。",
+    "2) lint/typecheck/build失败、workspace root警告复现或源码/lock漂移：FAIL并给最小复现。",
+    "3) 临时目录/DB/WAL/SHM未清理或命令需联网/安装：FAIL或标Unknown，禁止扩大范围。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未修改app配置/源码、Spec、accepted ADR、data或design；未执行npm install/ci或共享依赖清理；临时目录只由mktemp创建并由固定Node fs.rmSync清理。没有继承开发PASS，亲自重跑全部有效门槛；没有隐藏开发首轮FAIL、本轮SQLite readiness包装错误、错cwd/build harness、共享node_modules并发误删或无效npm exec事故。无效npm exec可能访问registry，故报告未宣称整场会话external_calls=0；最终有效npm/build收据从统筹恢复后的现成树重新建立。PASS仅覆盖local preflight，不代表C业务实现、完整安全或生产放行。",
+  "node": "M4/C层/本地工具链测试复验",
+  "pointers": [
+    "docs/collaboration/部门/测试部/报告/2026-08-02-M4-C层Node24与SQLite能力预检测试复验报告.md"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-08-02-M4-C层Node24与SQLite能力预检测试复验报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-6F480F",
+  "title": "独立复验M4 C层Node24 SQLite与可复现构建",
+  "unverified": [
+    "SHASUMS PGP签名；统筹恢复npm ci的原始进程级网络/lifecycle抓包；无效npm exec是否实际发出registry数据包；Repository/migration、fixture seed、CAS/lease/outbox、schema/state/hash、四页UI/API、admin安全、完整R12 deny-all、真实端口、无障碍AT、生产存储/网络文件系统/多实例/容量/RTO/RPO，以及任何真实provider/Base/平台/AI/媒体/发布/部署/付费/外发。"
+  ],
+  "updated_at": "2026-08-02T09:33+08:00",
+  "verified": [
+    "最终PASS，当前P0=0/P1=0：固定Node v24.18.0/npm 11.16.0/Darwin arm64；官方归档SHA-256=e1a97e14c99c803e96c7339403282ea05a499c32f8d83defe9ef5ec66f979ed1；lock SHA-256=de0eb658c3e407b17d6c94466f4766a343997b7e11d88e60c52d2dccd8544b83；恢复后npm ls依赖节点865且problems=[]。独立node:sqlite=3.53.1，source_id=2026-05-05 10:34:17 c88b22011a54b4f6fbd149e9f8e4de77658ce58143a1af0e3785e4e6475127e9；WAL/FULL/busy_timeout/user_version/BEGIN IMMEDIATE双连接锁竞争/rollback/commit/checkpoint/SIGKILL-reopen/integrity/0700与0600权限/Node清理全部exit0。恢复后lint/typecheck/build均exit0；37 candidate、11配置、25源码分桶、status、lock和关键配置构建前后完全一致；workspace-root/multiple-lock/tsconfig rewrite warning=0。开发首轮FAIL、测试包装器错误与共享依赖误删恢复历史均保留。"
+  ]
+}

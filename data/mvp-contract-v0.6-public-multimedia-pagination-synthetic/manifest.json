@@ -1,0 +1,214 @@
+{
+  "candidate_canonical_sha256": "52775a139bf8d7352cd5c751e090794a2aac878a3515d9c35fb61e3f13ffa532",
+  "candidate_file_sha256": "1eddfe54394757ff1cf00dce12ec2409772817256fe40177bc04e5a54989608b",
+  "candidate_path": "data/mvp-contract-v0.6-public-multimedia-pagination-synthetic/runtime-graph.public-multimedia-pagination-synthetic.json",
+  "classification": "data-native_runtime_graph_successor_not_domain_schema",
+  "contract_version": "public-read-v0.2",
+  "determinism_receipt": "2aebc861aa5a4018f922231ea8a35cfe56ac0f48b36c1775695db543386c02f7",
+  "distribution": {
+    "content_type": {
+      "driver_social": 6,
+      "legends_history": 6,
+      "paddock_fun": 6,
+      "race_news": 6
+    },
+    "media_count": {
+      "0": 8,
+      "1": 8,
+      "4": 8
+    },
+    "media_total": 40
+  },
+  "entity_additions": 0,
+  "external_calls": 0,
+  "fixture_set": "public-multimedia-pagination-24-v0.6",
+  "frozen_input_hashes": {
+    "app/.local/f1plus1-public-multimedia-synthetic.sqlite": "a1f712aacf0d78664ea9962dfe9902c194422ce099bab968a84d9a2c64cbf50c",
+    "app/.local/f1plus1-public-synthetic.sqlite": "24536392e0ca00524010ba70ff55f754cd892e3f3f4652eb69ae6a182deaf041",
+    "app/.local/f1plus1.sqlite": "df82598ca2405ad2dfebd01503ac5615a10dcbd40807d308a87fa5c27fb519c0",
+    "app/.local/receipts/m3-shadow.closed.json": "4309961dd363413444821f29586a15eec96cc18b396a3f8aad44330ec5d5bbdc",
+    "app/.local/receipts/public-synthetic.closed.json": "2c5ca3555b108761fb5b224e0cad77a29d8fc16e56d3eb4d6b80448365492803",
+    "app/.local/receipts/public-synthetic.data.closed.json": "71286412fcfc04428145b86ba2a174d93417e6604f16883a7a5a87f7e76cacdc",
+    "app/migrations/0001_local_foundation.sql": "9c8c083b8f3c566023e9438c254d5b1c09d87430dec08f6e6905ed84b6fb3176",
+    "app/migrations/0002_source_fixture.sql": "12a755754744689f977ac8b8d5d4443ec63cd5612aaff50eb920badf1ebfb031",
+    "app/migrations/0003_public_synthetic_profile.sql": "57df4d990cded9d69551d0acf97615ef5d9fd3d5ecceb05ebb10d3812549498a",
+    "app/migrations/profiles/public-multimedia-synthetic/0003_public_multimedia_synthetic_profile.sql": "1f88116c62d2d29e469ff0dce356d07b41c8b142a00769774a3cf67709968b43",
+    "app/package-lock.json": "89807e33818cfb851b57da65a5675e413e5593d01d6773c3a71a6cc6ea3d85d3",
+    "app/package.json": "e39a413a0ae2000b781433e983a9df48c26b0f5c1db1ce950e2b0b6dd6be7752",
+    "app/src/server/db/public-multimedia-synthetic.ts": "844d8edc2520d5e0dcf446e9f0d4b11ea843624c8f1b8e423c0c1236c664bfe0",
+    "app/src/server/public/cursor.ts": "e20f8b95d779ade72e1c34c9f3c8ed60b5509db3014e3059ea5c51b48529e74d",
+    "app/src/server/public/repository.ts": "4c114687da195eb1a077889e924c43760901e30f2fc61e397b46f6341843ec1c",
+    "app/src/server/public/types.ts": "64d61d5f4e255592febc333ec690bb94cb95bf0f8bc2beede150268462e8aa95",
+    "data/mvp-contract-v0.4-public-synthetic/fixtures.public-synthetic.json": "c7d9d88b170214b283a214625d6fd2028fd8eb3a6a2701c556cb2364eb9941e4",
+    "data/mvp-contract-v0.4-public-synthetic/manifest.json": "3b296868dc0c0000fb94856b334ff7d1f698e3e80d4bb02e7062142dc1a0e554",
+    "data/mvp-contract-v0.4-public-synthetic/profile-ledger.json": "1f7719490a18a49842427907b53c3dbde5813709a2ad611f7cfaca891880caf1",
+    "data/mvp-contract-v0.5-public-multimedia-synthetic/fixtures.multimedia-synthetic.json": "ee52a70cda9eea32600a443ad5411cd76d2b4cf3d8894d9b46396c28252823c0",
+    "data/mvp-contract-v0.5-public-multimedia-synthetic/generate_runtime_graph.py": "84f9decf5103e5eb1077f773daf0b41c19e69388f1a1ccce8cb0f87cc5ca4f65",
+    "data/mvp-contract-v0.5-public-multimedia-synthetic/generate_successor.py": "23f4d8adf0f75f65f56997f9e7ecaa75d70790239fe860373012925cd2d2dc31",
+    "data/mvp-contract-v0.5-public-multimedia-synthetic/manifest.json": "a8b607a46e265ded3ddda85c05bcc627d4b9f4d50192b29028704a435affe1ba",
+    "data/mvp-contract-v0.5-public-multimedia-synthetic/public-multimedia-mapping.json": "3c05b244c0087d9aea35f63f80c38329b0e7205f78a04e7afcb097a1ef04ae7a",
+    "data/mvp-contract-v0.5-public-multimedia-synthetic/runtime-graph.public-multimedia-synthetic.json": "dc03afda4e005617b25ab19706b2ed4aeb13fce2d868006865469d280e2e1130",
+    "data/mvp-contract-v0.5-public-multimedia-synthetic/runtime-profile-manifest.json": "5559745cfbab3179e9a62d531dc0a8e858299765be4f84f05dd563506bbaeff7",
+    "data/mvp-contract-v0.5-public-multimedia-synthetic/schema.json": "ade4feda490a8bc2fd68817d8f48ac0994cdf81dd4703e3317003d04705451de",
+    "data/mvp-contract-v0.5-public-multimedia-synthetic/validate_runtime_graph.py": "eeb094e8539cb2edcba11fcd3be2b81df373706d617119859bb683a939fc17f1",
+    "data/mvp-contract-v0.5-public-multimedia-synthetic/validate_successor.py": "58063ea96b585fff65b11dedd3b95417a1ded9abc81e08aa102f19bc646e64c7"
+  },
+  "frozen_input_scope": "three canonical profile DBs, old closed receipts, old migrations/App data readers and v0.4/v0.5 data artifacts",
+  "implementation_handoff": {
+    "app_changes_in_this_task": false,
+    "cursor_scope": [
+      "source",
+      "contentType"
+    ],
+    "forbidden": [
+      "second domain schema",
+      "runtime dual read",
+      "old profile mutation",
+      "real media",
+      "external URL enablement",
+      "Base write"
+    ],
+    "migration_change_required": false,
+    "page_size": 12,
+    "repository_expected_projection_count": 24,
+    "schema_change_required": false,
+    "seed_change_required_in_successor_dev_task": true,
+    "sort": [
+      "published_at DESC",
+      "public_id DESC"
+    ]
+  },
+  "manifest_root_sha256": "0a0374e8eb417574128796a7d6b4c9fb3bba786430a649207aca2007225f800b",
+  "manifest_version": "public-multimedia-pagination-successor-manifest-v0.1",
+  "original_link_contract": {
+    "enabled": false,
+    "reason": "synthetic_only",
+    "url": null
+  },
+  "pagination_contract": {
+    "cursor_schema": {
+      "contentType": "current contentType filter or null",
+      "publicId": "last item publicId",
+      "publishedAt": "last item publishedAt",
+      "source": "current source filter or null",
+      "v": 1
+    },
+    "filtered_public_ids": {
+      "driver_social": [
+        "public-page2-driver-social-23",
+        "public-page2-driver-social-19",
+        "public-page2-driver-social-15",
+        "public-page2-driver-social-11",
+        "public-page2-driver-social-07",
+        "public-page2-driver-social-03"
+      ],
+      "legends_history": [
+        "public-page2-legends-history-22",
+        "public-page2-legends-history-18",
+        "public-page2-legends-history-14",
+        "public-page2-legends-history-10",
+        "public-page2-legends-history-06",
+        "public-page2-legends-history-02"
+      ],
+      "paddock_fun": [
+        "public-page2-paddock-fun-21",
+        "public-page2-paddock-fun-17",
+        "public-page2-paddock-fun-13",
+        "public-page2-paddock-fun-09",
+        "public-page2-paddock-fun-05",
+        "public-page2-paddock-fun-01"
+      ],
+      "race_news": [
+        "public-page2-race-news-24",
+        "public-page2-race-news-20",
+        "public-page2-race-news-16",
+        "public-page2-race-news-12",
+        "public-page2-race-news-08",
+        "public-page2-race-news-04"
+      ]
+    },
+    "page_size": 12,
+    "scope_rule": "cursor source/contentType must exactly equal current query scope; mismatch => PUBLIC_CURSOR_INVALID",
+    "sort": [
+      "publication.published_at DESC",
+      "projection.public_id DESC"
+    ],
+    "tie_break_exercised": true,
+    "unfiltered": {
+      "page1_has_more": true,
+      "page1_next_cursor": {
+        "cursorAt": "2026-08-09T12:06:00Z",
+        "cursorId": "eyJjb250ZW50VHlwZSI6bnVsbCwicHVibGljSWQiOiJwdWJsaWMtcGFnZTItbGVnZW5kcy1oaXN0b3J5LTE0IiwicHVibGlzaGVkQXQiOiIyMDI2LTA4LTA5VDEyOjA2OjAwWiIsInNvdXJjZSI6bnVsbCwidiI6MX0"
+      },
+      "page1_public_ids": [
+        "public-page2-race-news-24",
+        "public-page2-driver-social-23",
+        "public-page2-paddock-fun-21",
+        "public-page2-legends-history-22",
+        "public-page2-race-news-20",
+        "public-page2-driver-social-19",
+        "public-page2-paddock-fun-17",
+        "public-page2-legends-history-18",
+        "public-page2-race-news-16",
+        "public-page2-driver-social-15",
+        "public-page2-paddock-fun-13",
+        "public-page2-legends-history-14"
+      ],
+      "page2_has_more": false,
+      "page2_next_cursor": null,
+      "page2_public_ids": [
+        "public-page2-race-news-12",
+        "public-page2-driver-social-11",
+        "public-page2-paddock-fun-09",
+        "public-page2-legends-history-10",
+        "public-page2-race-news-08",
+        "public-page2-driver-social-07",
+        "public-page2-paddock-fun-05",
+        "public-page2-legends-history-06",
+        "public-page2-race-news-04",
+        "public-page2-driver-social-03",
+        "public-page2-paddock-fun-01",
+        "public-page2-legends-history-02"
+      ]
+    }
+  },
+  "profile_id": "public-multimedia-synthetic",
+  "real_content_imported": false,
+  "real_media": 0,
+  "row_counts": {
+    "captured_items": 24,
+    "contents": 24,
+    "events": 0,
+    "media_candidates": 40,
+    "outbox_jobs": 0,
+    "publications": 24,
+    "published_projections": 24,
+    "release_bundles": 24,
+    "review_decisions": 24,
+    "sources": 1,
+    "summaries": 24
+  },
+  "schema_additions": 0,
+  "seed_transaction_contract": {
+    "canonical_install": "build and validate task-owned candidate DB, close/checkpoint/hash, then no-clobber atomic install under a separately authorized development task",
+    "expected_counts": {
+      "captured_items": 24,
+      "contents": 24,
+      "events": 0,
+      "media_candidates": 40,
+      "outbox_jobs": 0,
+      "publications": 24,
+      "published_projections": 24,
+      "release_bundles": 24,
+      "review_decisions": 24,
+      "sources": 1,
+      "summaries": 24
+    },
+    "failure": "rollback all successor writes; retain current v0.5 canonical DB and graph",
+    "idempotency": "same candidate root => same rows/counts/root",
+    "mode": "single BEGIN IMMEDIATE transaction after all frozen/root checks",
+    "replace_scope": "only rows owned by successor fixture_set after explicit ownership proof",
+    "target_profile": "public-multimedia-synthetic only"
+  },
+  "writes_to_base": false
+}

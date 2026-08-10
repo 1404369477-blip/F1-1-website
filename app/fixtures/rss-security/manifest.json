@@ -1,0 +1,25 @@
+{
+  "package_version": "rss-security-offline-v0.1",
+  "task_id": "TASK-20260809-88561C",
+  "status": "pass",
+  "source_contract": "docs/decisions/system/2026-08-09-F1+1-VS-RSS-0本地低频RSS试验-draft.md#6",
+  "synthetic_only": true,
+  "external_calls": 0,
+  "writes_to_base": false,
+  "provider_switch": false,
+  "real_source_enabled": false,
+  "counts": {
+    "vectors": 46,
+    "contracts_covered": 10,
+    "unresolved_primary_reason_codes": 0
+  },
+  "artifact_hashes": {
+    "minimal-valid.xml": "1a278c74b23d4e5f8eb25f4487bd2bbffca0b3d140c35f7ab9c18409f46e9137",
+    "vectors.json": "70a171c0a617fe9cbc2e3cf891adaee42765adff67655b4dd2f5e10e843b5144",
+    "validate.py": "eac314bb9e1a06ceb3aea2fe68eeecc0067c723784226be6b5fa2d85d94a1a53"
+  },
+  "validation_command": "python3 app/fixtures/rss-security/validate.py",
+  "expected_validation_status": "PASS",
+  "blocking_conflicts": [],
+  "usage_gate": "Approved as an offline implementation input only. It does not authorize any external request, Source enablement, Base/provider operation, public output, or production collection."
+}

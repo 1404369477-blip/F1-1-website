@@ -1,0 +1,45 @@
+{
+  "acceptance_exit": "真实页面聚焦验收通过；首页、筛选、分页、详情、related 与失败状态符合已核收 DTO；P0=0、P1=0；测试部报告 status=final、decision=pass 并 TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-08-04-697D1B公开前端API单一数据源独立功能验收报告.md"
+  ],
+  "authorization_evidence": "",
+  "authorization_history": [],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "测试部/019fb379-9212-7e80-a5df-587d339936c4",
+  "completion_class": "audit",
+  "confirmation": "审核结论只回 pass/fail 与证据；发现问题不直接返工，由统筹部决定退回路径。",
+  "created_at": "2026-08-04T19:18+08:00",
+  "department": "测试部",
+  "details": "独立审核 TASK-20260804-538692 的真实用户出口。只读验收，不修改实现。启动现有应用后用一次聚焦验收覆盖：首页真实读取 /api/public/feed；四类 contentType 筛选；游标加载与无更多；详情 /api/public/stories/{publicId}；related；loading、empty、error、retry；API 404/500/网络失败时无 demo、fixture、SQLite 或静态 fallback。核对浏览器只使用同源相对路径，错误界面不泄露内部路径、SQL、堆栈或响应正文。严格控制验证量，不运行全量 check/build；提交测试部 final 审核报告，列出命令、用户出口证据、已验证、未验证、P0/P1/P2 与 decision。",
+  "domain_stage": "independent_review",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "API/网络/500 失败时若出现静态内容回退、旧内容残留、内部信息泄露或不可重试，判 fail。",
+    "不存在或非法 publicId 若未进入明确 404，或沿用上一条详情/静态详情，判 fail。",
+    "筛选、游标或 malformed DTO 若造成跨筛选串页、重复/错序、未闭合错误或页面崩溃，判 fail。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "首轮seed因继承环境禁用变量被ENV_FORBIDDEN拒绝，改用env -i后成功；包装器隐藏启动错误，仅用内部相同Next CLI建立真实出口；协调消息到达时服务刚停止，随后只恢复同一3000供设计复用；未因失败态安全而误判整体PASS，最终FAIL且未ACK。",
+  "node": "frontend-api-wiring-review",
+  "pointers": [
+    "TASK-20260804-538692; docs/decisions/system/2026-08-03-F1+1-公开读模型与API接线-v0.4-successor-accepted.md"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-08-04-697D1B公开前端API单一数据源独立功能验收报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260804-697D1B",
+  "title": "公开前端 API 单一数据源独立功能验收",
+  "unverified": [
+    "feed成功态不可达，四类筛选、cursor加载、排序去重、empty/no-more未获真实浏览器通过证明；详情成功态不稳定，正文与related未通过；未跑full check/build/额外套件；npm run dev包装器与直接Next CLI差异保留Unknown。"
+  ],
+  "updated_at": "2026-08-04T19:38+08:00",
+  "verified": [
+    "固定Node24、canonical public-synthetic migration/seed与真实127.0.0.1:3000浏览器出口；feed closed 500及安全重试；现存与未知详情错误映射；服务停止后的网络失败保持安全闭合、无静态fallback/旧内容/内部泄露；端口、DB/sidecar、.next、临时文件和浏览器标签已清理。"
+  ]
+}

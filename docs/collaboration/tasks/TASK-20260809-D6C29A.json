@@ -1,0 +1,67 @@
+{
+  "acceptance_exit": "v0.2 successor逐项对应关闭安全报告P1-1、P1-2、P2-1、P2-2；RPO_BREACH写入集合和恢复门完全枚举；RTO起止及Unknown/FAIL唯一；break-glass和public-host负向证据进入阶段表及实施证据包；v0.1 hash不变；提交报告、diff check和doctor通过、TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/runbooks/F1+1-专用Admin-MacBook服务器预配置手册-v0.2.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-09-专用Admin-MacBook预配置手册-v0.2整改报告.md"
+  ],
+  "authorization_evidence": "用户要求提前规划服务器MacBook；安全部已发现两项P1与两项P2，整改是交付安全可用规划的必要步骤。",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T18:32+08:00",
+      "evidence": "用户要求提前规划服务器MacBook；安全部已发现两项P1与两项P2，整改是交付安全可用规划的必要步骤。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "本任务只修规划文档；真实配置、供应商、安装、账号、网络、密钥、备份上传和部署仍未授权。",
+  "created_at": "2026-08-09T18:32+08:00",
+  "department": "产品部",
+  "details": "基于已ACK的安全FAIL报告 TASK-20260809-48792F，新建 successor：docs/runbooks/F1+1-专用Admin-MacBook服务器预配置手册-v0.2.md；不得修改已被固定SHA审查的v0.1。逐项关闭P1：一，将 backupAge≥15m、可信时钟unknown、远端认证回读失败统一为RPO_BREACH；冻结所有会产生不可重建业务状态的持久写，包括采集、处理、信源、审核、发布、权限、设备和配置，只有明确可证明不改变业务真值的查询及last-known-good public GET可继续；解除必须绑定同一新恢复点完成Online Backup封闭、hash/manifest/signature、异机认证回读、下载解密、SQLite完整性与可信时钟。二，RTO唯一起点固定为service_unavailable_at、可信监控首次失败时间、人工发现时间三者中的最早可证时间；incident_declared_at只作响应字段；起点/时钟无法证明则Unknown/FAIL；终点同时满足Admin私有入口、Mac/iPhone等价能力、writer=1、旧主fenced、数据库恢复点完整和public-host last-known-good或完整投影。关闭P2：在Phase C和证据包显式加入默认关闭、具名开启、最长30分钟、不续期、自动撤销、关闭失败隔离与回读的break-glass，且不绕过passkey/session/Origin/一次性CSRF/CAS/fence；在证据包增加public-host负向隔离矩阵，证明/admin与Admin API不可达、无主库/共享挂载、无Admin/备份解密/签名私钥或高权限凭据、只有单向签名公开投影。保留双主机、专用机、writer=1、无公网Admin、Mac/iPhone等价、planning_only和全部AUTH停止线。提交产品整改报告；不改accepted ADR/Spec/app/data/design/真实资源。",
+  "domain_stage": "admin-macbook-preconfiguration-remediation",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若需要改动v0.1才能表达修正，停止；必须以新v0.2 successor交付并保留v0.1审计hash。",
+    "若某类持久写是否可重建无法由现行合同证明，默认纳入RPO_BREACH冻结集合，不得自行豁免。",
+    "若break-glass需公网Admin、延长超过30分钟、自动续期或绕过应用强认证，判合同冲突并交回统筹部，不得写入v0.2。"
+  ],
+  "from_department": "统筹部",
+  "impact_declaration": {
+    "admission": "manual",
+    "base_revision": "a9691e71b1552592cc5ded8d5db66c336262301c",
+    "external_effects": [
+      "none；只新增本地planning successor和产品报告"
+    ],
+    "owner_task": "TASK-20260809-D6C29A",
+    "shared_contracts": [
+      "v0.1固定SHA-256不变；v0.2只关闭RPO_BREACH、RTO、break-glass、public-host负向证据四项缺口；所有真实实施继续关闭"
+    ],
+    "write_paths": [
+      "docs/runbooks/F1+1-专用Admin-MacBook服务器预配置手册-v0.2.md"
+    ]
+  },
+  "mistake_check": "保留v0.1固定字节；未改accepted ADR/Spec/app/data/design；未将高风险mutation旧语义残留为现行合同；未以incident_declared_at重置RTO；break-glass无公网Admin、不续期、不超过30分钟且不绕过强认证/fence；public-host无主库/共享挂载/高权限与私钥；planning未冒充实施PASS",
+  "node": "PRODUCT-ADMIN-MAC-RUNBOOK-02",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-09-专用Admin-MacBook预配置手册独立安全复核报告.md",
+    "docs/runbooks/F1+1-专用Admin-MacBook服务器预配置手册-v0.1.md"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-09-专用Admin-MacBook预配置手册-v0.2整改报告.md",
+  "resolution": null,
+  "revision": 5,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-D6C29A",
+  "title": "PRODUCT-ADMIN-MAC-RUNBOOK-v0.2：关闭RPO/RTO两项P1与实施证据P2",
+  "unverified": [
+    "真实MacBook/macOS/账号/FileVault/供电/网络/overlay/可信时钟/SQLite备份/异机存储/密钥/public-host/Mac-iPhone能力，以及RPO/RTO/break-glass/public-host运行收据均未验证并保持closed"
+  ],
+  "updated_at": "2026-08-09T18:41+08:00",
+  "verified": [
+    "v0.1 SHA-256复算仍为cf87d710fe47b0778c96e82fbf7ff862aac9519568c9de4a433a88cb6973f8c0；P1-1/P1-2/P2-1/P2-2均有唯一successor条款、阶段表入口和mandatory证据包；RPO_BREACH全持久写冻结/同一恢复点解冻、RTO最早可证起点/全链终点/UNKNOWN_FAIL、break-glass和public-host负向矩阵已机械检索；git diff --check通过；无外部调用或真实实施"
+  ]
+}

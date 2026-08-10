@@ -1,0 +1,52 @@
+{
+  "acceptance_exit": "新增澄清附录，消除B范围歧义，给一句唯一用户确认问题和选择后VS-0至VS-3/R12/生产状态；complete、doctor、TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/产品部/报告/2026-08-02-M4-SQLite方案B适用范围澄清附录.md"
+  ],
+  "authorization_evidence": "用户已授权持续推进本地网站建设；本任务只消除产品决策包歧义。",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T13:15+08:00",
+      "evidence": "用户已授权持续推进本地网站建设；本任务只消除产品决策包歧义。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "仅产品范围澄清，不修改实现或accepted真值。",
+  "created_at": "2026-08-02T13:15+08:00",
+  "department": "产品部",
+  "details": "214FED已ACK且不可改。其报告一处写方案B适用于M4 local-only，另一处写B不能用于VS-1，可能把R5威胁模型与VS-1其他门禁混淆。请新增澄清附录，只读判断：若用户接受owner-only可信单用户且恶意同UID/共享FS/生产排除，该R5范围是否可覆盖同一台本机上的VS-0至VS-3 SQLite操作；同时列明VS-1仍必须独立通过no-egress、worker/lease/fence/session等门禁，真实外部与部署继续关闭。不得修改214FED原报告/accepted ADR/Spec/app，不替用户确认。",
+  "domain_stage": "M4-C-R5-scope-clarification",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 若R5窄威胁模型无法逻辑覆盖本地VS-1至VS-3，给出具体新增风险，不笼统阻断。",
+    "2) 若VS-1阻断来自R12/worker/session等其他门禁，分开列明，不归咎于R5。",
+    "3) 不改已ACK报告或accepted真值；需变更时只提出successor ADR输入。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "只新增澄清附录；未修改214FED原报告、accepted ADR、Spec、app、data或外部资源；未将B写成VS-1至VS-3整体PASS，也未把独立门禁失败归因于R5",
+  "node": "M4/C层/R5范围澄清",
+  "pointers": [
+    "docs/collaboration/部门/产品部/报告/2026-08-02-M4-SQLite方案B适用范围澄清附录.md"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-02-M4-SQLite方案B适用范围澄清附录.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-124BE1",
+  "title": "澄清方案B对M4本地VS-1至VS-3的适用范围",
+  "unverified": [
+    "用户尚未确认方案B；successor ADR、范围化R5复验及VS-0至VS-3各自运行收据未完成；真实外部能力、共享/网络文件系统、多用户与生产继续关闭"
+  ],
+  "updated_at": "2026-08-02T13:20+08:00",
+  "verified": [
+    "已只读核对已ACK的214FED原报告、Spec R5、accepted M4 ADR及安全29333B证据；明确方案B的R5范围可覆盖同一可信owner-only本机VS-0至VS-3的SQLite存储层，不代表各切片整体放行",
+    "已按VS-0/VS-1/VS-2/VS-3分别列出R5作用、R9/R12/worker/lease/fence/session/CSRF/R4/R7/R8/R10/R13等独立门禁、选择前后状态、最小验收出口和唯一用户确认问题"
+  ]
+}

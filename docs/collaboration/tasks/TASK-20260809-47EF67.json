@@ -1,0 +1,44 @@
+{
+  "acceptance_exit": "提交测试部final报告和闭集证据manifest/原始账本/六格截图；前后候选hash一致；App/server与页面触发外部请求=0；浏览器普通后代被Seatbelt限制为声明loopback且非白名单成功连接=0；五Function逐项PASS，或以首个精确P1/环境BLOCKED诚实结束。无论结果停止App/浏览器/代理、端口与任务进程清零、临时根清理；C层被阻断且无A/B关联/无App数据的工具尝试单列，不计App Function P1。",
+  "artifacts": [],
+  "authorization_evidence": "2026-08-09主会话持续推进初版；TASK-20260809-3AE944 PASS/ACK明确允许按合同执行一次后继localhost-only浏览器验收。",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T20:39+08:00",
+      "evidence": "2026-08-09主会话持续推进初版；TASK-20260809-3AE944 PASS/ACK明确允许按合同执行一次后继localhost-only浏览器验收。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "环境BLOCKED：App域sandbox-exec在服务/浏览器启动前返回sandbox_apply Operation not permitted（exit71）；按3AE944合同禁止绕过Seatbelt，五Function保持NOT_RUN。报告：docs/collaboration/部门/测试部/报告/2026-08-09-47EF67-localhost浏览器终验环境阻断报告.md；manifest：docs/collaboration/部门/测试部/报告/TASK-20260809-47EF67-evidence/evidence-manifest.json",
+  "claimed_by": "测试部/019fb379-9212-7e80-a5df-587d339936c4",
+  "completion_class": "audit",
+  "confirmation": "用户持续授权推进本地初版；安全部TASK-20260809-3AE944已PASS并由统筹ACK，只授权一次localhost-only浏览器验收，不授权外网、依赖、候选修改或部署。",
+  "created_at": "2026-08-09T20:39+08:00",
+  "department": "测试部",
+  "details": "冻结候选：11源码聚合SHA=7b1e8977c3e7296f4e5cf165b106bc322c2ef19dbd5e506f51e2c4ec92465281；canonical DB SHA=eb2d7ad2787a290f7a13adcb063215d58654bc9f66d1d8ff60b98f14592b9551；BUILD_ID文件SHA=8155e435b052ae87467671cfc0bdfc59bf931922eb55fcf16f03fc68a5efb1c5；build-manifest SHA=b8c57b58a1f524871415bd233871800d9608e35f2f4f188b2d58675e38f0881c；middleware-manifest SHA=3e662212864bc4c124cfc53fa5d428813c619852b447c9fd2d9926cd39d7a4a6。严格依据安全报告2026-08-09-公开前端浏览器A-B-C分层与localhost-only验收合同安全裁决.md。使用现有playwright-core 1.58.2及固定revision1208独立chrome-headless-shell，禁止系统Chrome、安装、下载和外网。App域与Browser域均从最外层由sandbox-exec约束，只允许manifest精确loopback端口；先做白名单端口正例和未授权loopback端口EPERM负例。任务专属0700临时根/新profile；保存启动参数、进程树、PID到exe、全target CDP/Playwright请求、lsof、console/pageerror、状态/焦点/几何/截图/hash。只运行一次同一浏览器run，覆盖PUB-FEED-003四类各6且scope不串、PUB-FEED-004七态和唯一恢复、PUB-FEED-005 12+12及page2失败保留12同cursor恢复24、UI-A11Y-001键盘/焦点/语义/200%/forced-colors/reduced-motion/reduced-transparency、UI-RESP-002 1440/1024/390深浅六格及390非零safe-area/末条可达/零横溢。可用任务临时loopback故障代理或浏览器条件，不得加App调试入口。禁止重跑19/19、lint、typecheck或build；只回读已有收据与hash。不得修改app/data/design/spec/ADR/package/lock/canonical DB。首个A/B外联、候选漂移、sandbox失效、非白名单成功连接或Function失败即停止，不在同任务重跑覆盖首错。",
+  "domain_stage": "公开前端-单次浏览器终验",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "冻结hash、工具revision或headless-shell hash漂移：测试前block，不重建或替换候选；Seatbelt正负例、后代覆盖、CDP/进程/lsof账本不完整：环境BLOCKED，五Function保持NOT_RUN，不判App泄漏；首个Function、A/B外联或非白名单成功连接失败：保存首错并停止，禁止同任务第二轮覆盖。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "按安全部已ACK的A/B/C合同，对冻结公开前端候选只执行一次真实浏览器矩阵，关闭五个Function证据缺口或保留首错",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-09-公开前端浏览器A-B-C分层与localhost-only验收合同安全裁决.md",
+    "docs/collaboration/部门/开发部/报告/2026-08-09-筛选分页七状态与无障碍核心闭环实现报告.md",
+    "docs/collaboration/部门/开发部/报告/TASK-20260809-F67080-evidence/evidence-manifest.json"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-47EF67",
+  "title": "公开前端同候选localhost-only单次真实浏览器验收",
+  "unverified": [],
+  "updated_at": "2026-08-09T22:31+08:00",
+  "verified": []
+}

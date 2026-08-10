@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "安全部final报告decision=pass|fail，列P0/P1/P2、新正式产物SHA/root hashes、五类P1及同类变体的独立攻击收据；symlink/parent-symlink/semantic repack/DTO redirect全部fail closed；当前DTO零泄露、旧基线零漂移；P0=0且P1=0才PASS；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-04-v0.4公开数据机器合同五项P1整改-安全聚焦复验.md"
+  ],
+  "authorization_evidence": "用户确认继续；本任务是已授权v0.4方向的必要失败整改复验。",
+  "authorization_history": [
+    {
+      "at": "2026-08-04T12:39+08:00",
+      "evidence": "用户确认继续；本任务是已授权v0.4方向的必要失败整改复验。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/审核成员:/root/security_v04_p1_recheck",
+  "completion_class": "audit",
+  "confirmation": "安全与测试聚焦复验均PASS后统筹才核收D53BF3并派开发。",
+  "created_at": "2026-08-04T12:39+08:00",
+  "department": "安全部",
+  "details": "严格只读审查TASK-20260803-D53BF3最终产物与报告，对照首轮安全FAIL和测试FAIL逐项复验：data-native单一输入由generator实际解析且无app再生成依赖/内嵌STORIES；Decision顶层与decision_hash_input/five fences exact；manifest/profile/ledger关键语义closed exact且相互绑定；DTO mapping为机器closed allowlist并拒绝internal URL/hash/fence/reviewer/raw/private指针；generator对父链/目标symlink、非regular、越界和竞态安全，项目外sentinel不可修改。同步复验12套链、v0.3 11项、M3 59x39/e7a8、无网络/shell/dynamic exec。所有攻击只在TemporaryDirectory影子副本，不修改data/app/product/design/lock。",
+  "domain_stage": "数据合同P1安全复验",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一五项P1或同类协调篡改可PASS，或外部sentinel被写：P1/P0 FAIL并停止开发。",
+    "root hash只由包内互相引用且开发pin边界未明确，或安全语义仍是自然语言未封闭：P1/P2如实报告。",
+    "正式产物被审核探针修改、出现临时缓存/外联或继承数据部自测代替独立证据：FAIL。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未继承数据部自测；每个攻击均用全新TemporaryDirectory并重绑非目标外层收据；正式data只读且未运行generator；竞态压力结果未扩张为完整R5通过；包内互引未写成运行时信任锚，保留P2；未修改app/Spec/ADR/design/lock/SQLite，未ACK上游任务。",
+  "node": "对D53BF3整改快照重做五项对抗探针并核验数据包可交开发",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260803-D53BF3.json",
+    "docs/collaboration/部门/安全部/报告/2026-08-03-v0.4公开数据机器合同独立安全审查.md",
+    "docs/collaboration/部门/测试部/报告/2026-08-03-v0.4公开数据机器合同与12条发布图-独立测试报告.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-04-v0.4公开数据机器合同五项P1整改-安全聚焦复验.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260804-0AEACE",
+  "title": "聚焦复验v0.4数据五项P1整改与安全写入",
+  "unverified": [
+    "SQLite双库/migration/seed/运行时ATTACH隔离、Repository/API/cursor/Problem/前端接线、开发代码root pin、完整R5同UID威胁模型、原生Draft 2020-12交叉验证、R12 OS级no-egress、真实外部能力与部署均不在本任务实现或验证范围。"
+  ],
+  "updated_at": "2026-08-04T13:09+08:00",
+  "verified": [
+    "独立确认9项正式SHA；两套无app临时根各连续生成/验证2次且9项字节全等；29项P1/同类协调篡改29/29 fail closed；五个decision fence 5/5拒绝；manifest/profile/ledger exact与repack、DTO URL/hash/fence/reviewer/raw/internal改指、target/parent/input symlink、nonregular及40轮6360次目标竞态均拒绝或安全完成且外部sentinel不变；独立12链/60 fence/12 DTO零泄露；v0.3 11/11与M3 59x39/59 disabled/e7a831零漂移；AST无network/shell/dynamic exec；root SHA准确；无缓存临时残留；doctor与git diff --check通过。"
+  ]
+}

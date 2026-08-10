@@ -1,0 +1,46 @@
+{
+  "acceptance_exit": "提交测试部final Markdown报告，给出pass/fail、阻断/重要/一般问题、验证命令与证据；检查ADR frontmatter status=accepted、proposed包 status=proposed、交叉链接、确认与授权边界、A/D不变量、独立门禁与中间停止态、故障/回滚、Spec与progress一致性、无真实飞书写入、Markdown/本地链接、git diff --check、task doctor；列出未验证项与错题自检；complete并输出TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-08-01-A到D-accepted路线合同-复验报告.md"
+  ],
+  "authorization_evidence": "",
+  "authorization_history": [],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "测试部/019fb379-9212-7e80-a5df-587d339936c4",
+  "completion_class": "audit",
+  "confirmation": "无需额外确认",
+  "created_at": "2026-08-01T13:33+08:00",
+  "department": "测试部",
+  "details": "独立只读复验 TASK-20260801-24D860 的落盘结果。核对 accepted ADR、docs/spec.md、信源库 proposed 决策包与 docs/progress.md：用户只接受先A后D窄范围路线；现有详细决策包继续 proposed；真实Base创建、59条导入、Base业务真值切换、A base_direct切换与D base_snapshot切换未获本路线授权；D严格Base到本地单向只读且本地不得反写；Base真值与A provider是两个独立门禁，门禁间隙Collector安全停止；故障与回滚不得恢复legacy第二真值。验证2026-08-01只读auth证据只证明身份/token/租户级scopes，不证明具体Base存在、资源权限或API实读。不得修改上游产品文档、不得访问或创建真实飞书资源。",
+  "domain_stage": "通用执行",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若发现越权、路线状态冲突、双向同步/第二真值、门禁合并、故障时回退legacy、把CLI scope当资源权限或文档链接失效，判定相应级别并只提交报告与最小修复建议，不修改产品文档。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已读取错题集，当前无历史条目；专项检查整包误升accepted、路线确认扩张为资源/导入/切换授权、门禁合并、间隙继续legacy、D反写/第二真值、故障回滚复活legacy、scope冒充资源权限及只测正常路径，均未命中。子Agent只读对抗复核维持pass，并促使明确auth一般项仅为证据追踪性未覆盖。",
+  "node": "M2-信源库A到D路线独立复验",
+  "pointers": [
+    "docs/decisions/system/2026-08-01-F1+1-信源库A到D演进路线-accepted.md",
+    "docs/decisions/system/2026-07-31-F1+1-信源库维护决策包-proposed.md",
+    "docs/spec.md",
+    "docs/progress.md"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-08-01-A到D-accepted路线合同-复验报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260801-E5128C",
+  "title": "独立复验A到D accepted 路线合同",
+  "unverified": [
+    "auth脱敏原始JSON、CLI版本与退出码未独立留存或重跑；具体Base存在、资源级ACL、表/表单/记录和API实读写；真实资源与59条导入；A/D实现、稳定窗口、分页/故障/恢复/epoch/provider切换；平台授权、性能、成本、UI和用户出口。"
+  ],
+  "updated_at": "2026-08-01T13:47+08:00",
+  "verified": [
+    "ADR-SOURCE-001 status=accepted且只接受A到D窄范围路线；原详细包保持status=proposed；真实资源、59条导入、Base真值、A base_direct与D base_snapshot均保留独立门禁；Base真值先切时legacy冻结且Collector停止；D严格Base到本地单向只读；A/D故障回滚不恢复legacy或第二真值；auth摘要只用于身份/token/租户级scope边界；Spec/progress一致；20项合同检查、8个转换探针、14个本地链接、Markdown、上游哈希、git diff --check和doctor通过。"
+  ]
+}

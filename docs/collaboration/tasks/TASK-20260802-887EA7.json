@@ -1,0 +1,58 @@
+{
+  "acceptance_exit": "测试部报告给出独立PASS/FAIL、P0/P1/P2、精确UI SHA、Node24命令收据、HTTP和390/1440/主题/交互/状态结果；验证结束3000/3101零监听；字面TASK_STATE_OK完成。统筹仅在无P0/P1且证据覆盖验收出口后核收开发任务。",
+  "artifacts": [],
+  "authorization_evidence": "用户已授权持续推进初版并要求执行工作分配到对应部门；前端复杂切片按agent-team需要独立审查。",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T23:49+08:00",
+      "evidence": "用户已授权持续推进初版并要求执行工作分配到对应部门；前端复杂切片按agent-team需要独立审查。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "",
+  "completion_class": "audit",
+  "confirmation": "测试部完成后由统筹部核收；若P0/P1则退回原开发部修正，原窗口继续复用。",
+  "created_at": "2026-08-02T23:49+08:00",
+  "department": "测试部",
+  "details": "开发任务已completed但未ACK。测试部不得仅采信开发报告或统筹收据，先核对任务列出的UI SHA与当前字节一致，再用固定Node24独立执行公开UI测试、lint、typecheck、build及可行的完整check。对/、/stories/demo-qualifying-window、未知publicId的200/200/404，12条本地合成数据、四分类、default/restricted/empty/no-more、筛选/Chip、禁用原文入口、详情中文摘要/关键点/来源/相关内容、详情导航当前态、390/1440无横向溢出、主题、移动菜单Escape焦点恢复进行独立验证。只读检查页面源码/构建产物不存在外部HTTP(S)资源或旧/story/[storyId]。不得修改app/Spec/ADR/data/design/lockfile；只出测试报告。另案Next后置启动失败日志P1、R5/R12、SQLite/API和真实外部能力必须留在范围外。",
+  "domain_stage": "独立测试验收",
+  "event_receipts": [],
+  "execution_state": "queued",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一当前UI SHA与开发完成快照不一致、测试过程中发现并发修改或旧/story路由复活：停止并按快照漂移FAIL，不混用证据。",
+    "12条/四类/四状态、筛选Chip、详情结构、实际404、禁用原文或390/1440/焦点任一不满足：按P1/FAIL报告，不代替开发修改。",
+    "测试命令或浏览器受宿主限制无法独立执行：明确NOT_RUN/证据缺口，不把统筹或开发收据改写成独立PASS；清理已启动进程后回报统筹。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "对TASK-20260802-C29BB8完成快照做独立只读功能、路由、响应式、交互和回归测试",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260802-C29BB8.json",
+    "docs/collaboration/部门/开发部/报告/2026-08-02-M4-VS-1公开信息流与内容详情前端实现报告.md",
+    "docs/collaboration/部门/统筹部/报告/2026-08-02-M4-VS-1公开前端本地浏览器验收收据.md",
+    "design/ui/F1+1-首批页面实现级设计合同-v0.1.md"
+  ],
+  "report": "",
+  "resolution": {
+    "evidence": "docs/collaboration/部门/测试部/报告/2026-08-03-M4-VS-1公开前端P1整改独立回归报告.md",
+    "reason": "原任务对应整改前快照；新任务对CD4228精确整改后快照完成独立PASS并已ACK，继续执行旧快照会产生重复和过期证据。",
+    "receipt_id": "RES-20260803T125833-07984EC7",
+    "replacement_revision": 4,
+    "replacement_state": "acknowledged",
+    "replacement_task_id": "TASK-20260803-5991EE",
+    "resolved_at": "2026-08-03T12:58+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "superseded",
+    "target_revision_before": 1
+  },
+  "revision": 2,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-887EA7",
+  "title": "独立回归首批公开资讯流与详情前端",
+  "unverified": [],
+  "updated_at": "2026-08-03T12:58+08:00",
+  "verified": []
+}

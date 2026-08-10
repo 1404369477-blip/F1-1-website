@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "提交安全部 final 报告并绑定上述候选 hash；decision=pass|fail，列 P0/P1/P2；对 no-egress、路径/输入、凭据/日志、lease/fence、失败结算与清理给独立证据；P0=0/P1=0 方可 pass；明确 OS/系统调用级与真实外部能力未验证，TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-09-VS1最终候选-no-egress输入与失败结算独立安全复验.md"
+  ],
+  "authorization_evidence": "TASK-20260809-D6114C 已 acknowledged；用户既有本地 synthetic 授权",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T13:33+08:00",
+      "evidence": "TASK-20260809-D6114C 已 acknowledged；用户既有本地 synthetic 授权",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "用户已确认本地 synthetic 采集、低质量初筛、中文整理与人工审核前路线；本任务只读审核，无外部能力。",
+  "created_at": "2026-08-09T13:33+08:00",
+  "department": "安全部",
+  "details": "候选精确身份：ADR 95421002e6b5b52061d6d41b6342f92bb919bfdf937ca00ab69fc9f9a2cc5612；合同 2913bc78bd43969f8354b63d9906b346839102d76f05702d6c41f54145c4ed6c；package e39a413a0ae2000b781433e983a9df48c26b0f5c1db1ce950e2b0b6dd6be7752；lock 89807e33818cfb851b57da65a5675e413e5593d01d6773c3a71a6cc6ea3d85d3；worker 57fcea6ac269daccce8a21072198b4ccc3f0529823a79383a97d0a3af67de814；contract-entry 7f52c992ffdd3a92c06d3c87aa0babcce83e4fa12c55f3933968e246a0f40297；fixture-loader 7c21bf9e3e0c38a166a831613118daf0f3fcf837d08ca6723553e732133326e9；no-egress a8c117708d31fb236e059183c9b08c6a56ab091ac38bde121ef0234e85a22d2d；pipeline a74240b8d479cfec2fd0e83bc6146fd05ab6b85e12e7149d4b016dc1b92cf806；vs1-test d43658bd81f20e42691256430dd036e329853c7759af595494d5d86c933862cf；registry/seed/manifest 21347151fbc69de403dd4d7b7aec3f315e2d8de4646f622d8b5377924f610ee1 / 4ab8a3bab537c82e43612fa11b81cdacea2043d4027bd09fcf91b04f5677a648 / 7343f8bc76d68b7993b29ed5232e3487621effb3a27518e0f754a5dd07fef39e；migrations 0001..0006 = dc235534c492b9c763f63e2752bd4d78cc4f05ecf8e3600a3a906c3d0aae029b,3c96d4be93ebbc3dcc56bbb1780bec7f65c76f9c9ae1a7a391d3895d10f5c748,f1014f95dea2d556ea632493448b6db98350b89baea55f018a1975c9baec7460,276e31b466eda82ec5076307f4bab62b37b1ef496146e555edbae5f7a6408696,f5a8e18f1d437cdca18990d27d15be06c12b08efda771e12f903600bb7bc9a6a,c27b9c0274605db15ad91462f6752637ae35c54b7632920718229f06dda7c17e；开发 receipt/VOP d6c93b0d0ad690f7177b2e071695228d6e320743a1162d7a0722198bb31ab7a4 / 642f1576f96efcf97f05ae2613ac2432b0deffe5a5004b4a002fc547f86d2b5a。 只读审查 worker 与 test:contract 在业务模块导入前安装 guard；验证 fetch/WebSocket/net/http/https/http2/tls/dns/dgram/child_process/cluster/worker_threads 阻断、externalCalls 真实计数、env fail-closed、regular-file/hardlink/permission/hash/duplicate-key/size 边界、0700/0600、无 ATTACH、日志与 receipt allowlist、lease/fence/stop 在成功和失败结算前重验。只做必要安全探针，不修改实现/合同，不把进程级证据外推为 OS 级 R12 或生产能力。",
+  "domain_stage": "M5 VS1 最终候选独立门禁",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "候选 hash 漂移、guard 晚于业务导入、存在未覆盖网络/子进程出口或 externalCalls 可伪造，立即 fail。",
+    "receipt/log/错误含 token、路径、stack、正文或允许 hardlink/symlink/ATTACH/权限漂移，判 P1/P0 并 fail。",
+    "若验证需要真实网络、依赖安装、凭据或外部 provider，保持关闭并列未验证，不越权执行。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查：未在首个非零后重试或换系统Node；未把hash匹配/开发收据冒充本轮PASS；未把未初始化externalCalls写成0；未把monkeypatch外推OS能力；未把任务FAIL扩大为实现漏洞结论；未修改实现/合同/data/lock、联网、安装或操作外部资源；TASK_STATE_OK",
+  "node": "确认最终 VS1 候选在本地 synthetic 范围内 fail closed 且不泄漏",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260809-D6114C.json",
+    "docs/decisions/system/2026-08-09-F1+1-VS1本地synthetic纵切-successor-accepted.md",
+    "docs/spec/F1+1-VS1本地synthetic纵切实施合同-v0.2.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-09-VS1最终候选-no-egress输入与失败结算独立安全复验.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-ED377D",
+  "title": "独立复验 VS1 no-egress、输入边界与失败收据",
+  "unverified": [
+    "本轮候选动态行为；进程级no-egress真实拒绝与externalCalls；25 cases；失败结算；receipt/log/cleanup动态收据；固定Node24工具链身份；OS/系统调用级隔离；同UID路径TOCTOU；真实provider/RSS/Base/AI/Admin/发布/部署/生产能力"
+  ],
+  "updated_at": "2026-08-09T13:42+08:00",
+  "verified": [
+    "20个任务真值artifact hash及两份开发证据hash全部匹配；静态复核guard先于业务导入、已枚举Node进程出口、fixture路径/hash/duplicate-key/regular-file/hardlink/permission/closed schema、日志与receipt allowlist、128-bit lease/期限/五fence/stop、成功失败结算/retry/dead-letter/016A-G回滚/replay/no-work/cleanup helper；固化receipt/VOP无敏感模式；临时任务前缀扫描为空；唯一获准Node24 clean-room test:contract命令因固定工具链可执行文件不存在在进入npm/候选前exit127，依用户首个非零停止，未重试"
+  ]
+}

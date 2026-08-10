@@ -1,0 +1,2 @@
+0b6c5d6d0a993e0bc1e90218b02aae4d318fbafa148c954e72a40d51db36563d  F1+1-v0.2-public-function-anchors-candidate-20260809.html
+ca64cb913d5e18768aae005094f7c8660ad5c2a8994aab25d747a4876091e8f2  implementation-map.md

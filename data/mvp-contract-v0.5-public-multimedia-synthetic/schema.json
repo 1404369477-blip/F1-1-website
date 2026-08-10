@@ -1,0 +1,671 @@
+{
+  "$defs": {
+    "CanonicalMediaPresentationV2": {
+      "additionalProperties": false,
+      "properties": {
+        "alt_zh": {
+          "maxLength": 300,
+          "minLength": 1,
+          "type": "string"
+        },
+        "caption_zh": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "credit_display": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "media_candidate_id": {
+          "pattern": "^media-[a-z0-9-]+$",
+          "type": "string"
+        },
+        "tone": {
+          "enum": [
+            "night",
+            "blue",
+            "amber",
+            "violet",
+            "slate"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "media_candidate_id",
+        "alt_zh",
+        "caption_zh",
+        "credit_display",
+        "tone"
+      ],
+      "type": "object"
+    },
+    "CanonicalMediaSnapshotV2": {
+      "additionalProperties": false,
+      "properties": {
+        "license_status": {
+          "const": "allowed"
+        },
+        "media_candidate_id": {
+          "pattern": "^media-[a-z0-9-]+$",
+          "type": "string"
+        },
+        "media_hash": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "safety_status": {
+          "const": "passed"
+        }
+      },
+      "required": [
+        "media_candidate_id",
+        "media_hash",
+        "license_status",
+        "safety_status"
+      ],
+      "type": "object"
+    },
+    "PublicFeedItemV2": {
+      "additionalProperties": false,
+      "properties": {
+        "contentType": {
+          "enum": [
+            "race_news",
+            "driver_social",
+            "legends_history",
+            "paddock_fun"
+          ]
+        },
+        "media": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "altZh": {
+                "maxLength": 300,
+                "minLength": 1,
+                "type": "string"
+              },
+              "assetRef": {
+                "pattern": "^synthetic:[a-z0-9._:-]+$",
+                "type": "string"
+              },
+              "captionZh": {
+                "anyOf": [
+                  {
+                    "maxLength": 300,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "creditDisplay": {
+                "anyOf": [
+                  {
+                    "maxLength": 120,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "kind": {
+                "const": "synthetic_placeholder"
+              },
+              "mediaHash": {
+                "pattern": "^[a-f0-9]{64}$",
+                "type": "string"
+              },
+              "mediaId": {
+                "pattern": "^media-[a-z0-9-]+$",
+                "type": "string"
+              },
+              "tone": {
+                "enum": [
+                  "night",
+                  "blue",
+                  "amber",
+                  "violet",
+                  "slate"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind",
+              "mediaId",
+              "assetRef",
+              "mediaHash",
+              "altZh",
+              "captionZh",
+              "creditDisplay",
+              "tone"
+            ],
+            "type": "object"
+          },
+          "maxItems": 4,
+          "minItems": 0,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "originalLink": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "const": false
+            },
+            "reason": {
+              "enum": [
+                "synthetic_only",
+                "source_restricted"
+              ]
+            },
+            "url": {
+              "type": "null"
+            }
+          },
+          "required": [
+            "enabled",
+            "url",
+            "reason"
+          ],
+          "type": "object"
+        },
+        "publicId": {
+          "pattern": "^public-[a-z0-9-]+$",
+          "type": "string"
+        },
+        "publishedAt": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "source": {
+          "additionalProperties": false,
+          "properties": {
+            "accessStatus": {
+              "enum": [
+                "available",
+                "restricted"
+              ]
+            },
+            "byline": {
+              "type": "string"
+            },
+            "displayName": {
+              "type": "string"
+            },
+            "platform": {
+              "enum": [
+                "x",
+                "instagram",
+                "reddit",
+                "website",
+                "rss"
+              ]
+            },
+            "sourceId": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "sourceId",
+            "platform",
+            "displayName",
+            "byline",
+            "accessStatus"
+          ],
+          "type": "object"
+        },
+        "sourcePublishedAt": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sourceTimeStatus": {
+          "enum": [
+            "known",
+            "unknown"
+          ]
+        },
+        "state": {
+          "enum": [
+            "available",
+            "restricted",
+            "media_missing"
+          ]
+        },
+        "summaryZh": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "titleZh": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "publicId",
+        "contentType",
+        "state",
+        "titleZh",
+        "summaryZh",
+        "publishedAt",
+        "sourcePublishedAt",
+        "sourceTimeStatus",
+        "source",
+        "media",
+        "originalLink"
+      ],
+      "type": "object"
+    },
+    "PublicMediaItemV2": {
+      "additionalProperties": false,
+      "properties": {
+        "altZh": {
+          "maxLength": 300,
+          "minLength": 1,
+          "type": "string"
+        },
+        "assetRef": {
+          "pattern": "^synthetic:[a-z0-9._:-]+$",
+          "type": "string"
+        },
+        "captionZh": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "creditDisplay": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "kind": {
+          "const": "synthetic_placeholder"
+        },
+        "mediaHash": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "mediaId": {
+          "pattern": "^media-[a-z0-9-]+$",
+          "type": "string"
+        },
+        "tone": {
+          "enum": [
+            "night",
+            "blue",
+            "amber",
+            "violet",
+            "slate"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "mediaId",
+        "assetRef",
+        "mediaHash",
+        "altZh",
+        "captionZh",
+        "creditDisplay",
+        "tone"
+      ],
+      "type": "object"
+    },
+    "PublicPageV1Compatible": {
+      "additionalProperties": false,
+      "properties": {
+        "hasMore": {
+          "type": "boolean"
+        },
+        "nextCursor": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "cursorAt": {
+                  "type": "string"
+                },
+                "cursorId": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "cursorAt",
+                "cursorId"
+              ],
+              "type": "object"
+            }
+          ]
+        },
+        "pageSize": {
+          "const": 12
+        }
+      },
+      "required": [
+        "pageSize",
+        "hasMore",
+        "nextCursor"
+      ],
+      "type": "object"
+    },
+    "PublicStoryDetailV2": {
+      "additionalProperties": false,
+      "properties": {
+        "bodyZh": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "contentType": {
+          "enum": [
+            "race_news",
+            "driver_social",
+            "legends_history",
+            "paddock_fun"
+          ]
+        },
+        "keyPointsZh": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "leadZh": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "media": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "altZh": {
+                "maxLength": 300,
+                "minLength": 1,
+                "type": "string"
+              },
+              "assetRef": {
+                "pattern": "^synthetic:[a-z0-9._:-]+$",
+                "type": "string"
+              },
+              "captionZh": {
+                "anyOf": [
+                  {
+                    "maxLength": 300,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "creditDisplay": {
+                "anyOf": [
+                  {
+                    "maxLength": 120,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "kind": {
+                "const": "synthetic_placeholder"
+              },
+              "mediaHash": {
+                "pattern": "^[a-f0-9]{64}$",
+                "type": "string"
+              },
+              "mediaId": {
+                "pattern": "^media-[a-z0-9-]+$",
+                "type": "string"
+              },
+              "tone": {
+                "enum": [
+                  "night",
+                  "blue",
+                  "amber",
+                  "violet",
+                  "slate"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind",
+              "mediaId",
+              "assetRef",
+              "mediaHash",
+              "altZh",
+              "captionZh",
+              "creditDisplay",
+              "tone"
+            ],
+            "type": "object"
+          },
+          "maxItems": 4,
+          "minItems": 0,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "originalLink": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "const": false
+            },
+            "reason": {
+              "enum": [
+                "synthetic_only",
+                "source_restricted"
+              ]
+            },
+            "url": {
+              "type": "null"
+            }
+          },
+          "required": [
+            "enabled",
+            "url",
+            "reason"
+          ],
+          "type": "object"
+        },
+        "publicId": {
+          "pattern": "^public-[a-z0-9-]+$",
+          "type": "string"
+        },
+        "publishedAt": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "source": {
+          "additionalProperties": false,
+          "properties": {
+            "accessStatus": {
+              "enum": [
+                "available",
+                "restricted"
+              ]
+            },
+            "byline": {
+              "type": "string"
+            },
+            "displayName": {
+              "type": "string"
+            },
+            "platform": {
+              "enum": [
+                "x",
+                "instagram",
+                "reddit",
+                "website",
+                "rss"
+              ]
+            },
+            "sourceId": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "sourceId",
+            "platform",
+            "displayName",
+            "byline",
+            "accessStatus"
+          ],
+          "type": "object"
+        },
+        "sourcePublishedAt": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sourceTimeStatus": {
+          "enum": [
+            "known",
+            "unknown"
+          ]
+        },
+        "state": {
+          "enum": [
+            "available",
+            "restricted",
+            "media_missing"
+          ]
+        },
+        "summaryZh": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "titleZh": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "publicId",
+        "contentType",
+        "state",
+        "titleZh",
+        "summaryZh",
+        "publishedAt",
+        "sourcePublishedAt",
+        "sourceTimeStatus",
+        "source",
+        "media",
+        "originalLink",
+        "leadZh",
+        "bodyZh",
+        "keyPointsZh"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "urn:f1plus1:public-read:v0.2-multimedia-synthetic",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Presentation DTO schema only. It adds no domain entity and does not mutate v0.4.",
+  "oneOf": [
+    {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/PublicFeedItemV2"
+          },
+          "type": "array"
+        },
+        "page": {
+          "$ref": "#/$defs/PublicPageV1Compatible"
+        },
+        "schemaVersion": {
+          "const": "public-read-v0.2"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "items",
+        "page"
+      ],
+      "title": "Feed response",
+      "type": "object"
+    },
+    {
+      "additionalProperties": false,
+      "properties": {
+        "relatedItems": {
+          "items": {
+            "$ref": "#/$defs/PublicFeedItemV2"
+          },
+          "type": "array"
+        },
+        "schemaVersion": {
+          "const": "public-read-v0.2"
+        },
+        "story": {
+          "$ref": "#/$defs/PublicStoryDetailV2"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "story",
+        "relatedItems"
+      ],
+      "title": "Detail response",
+      "type": "object"
+    }
+  ],
+  "title": "F1+1 public-read-v0.2 multimedia DTO successor"
+}

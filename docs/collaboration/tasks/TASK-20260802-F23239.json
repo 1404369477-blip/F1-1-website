@@ -1,0 +1,54 @@
+{
+  "acceptance_exit": "提交测试复验报告唯一PASS/FAIL；PASS要求B层P0=0/P1=0、package/lock/版本/目录/README/defaults一致且可机械复算；Node24/npm ci/build/test等列C pending；完成后TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-08-02-M4-B层工程结构与可复现锁基线复验报告.md"
+  ],
+  "authorization_evidence": "用户已授权持续推进本地网站工程；本任务纯本地只读，无外部I/O",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T03:33+08:00",
+      "evidence": "用户已授权持续推进本地网站工程；本任务纯本地只读，无外部I/O",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "测试部/019fb379-9212-7e80-a5df-587d339936c4",
+  "completion_class": "audit",
+  "confirmation": "测试与安全两份B层PASS后才进入C层本地实现；真实外部能力继续关闭。",
+  "created_at": "2026-08-02T03:33+08:00",
+  "department": "测试部",
+  "details": "只读复验已ACK的TASK-20260802-F8BF72与TASK-20260802-D2724D及app/静态地基。机械核对package.json/package-lock.json解析与依赖集合一致、lockfileVersion=3、精确Node24.18.0/npm11.16.0/Next16.2.11、resolved/integrity计数、无浮动与非官方源；核对.nvmrc/.node-version/.npmrc、tsconfig/Next/ESLint、.env.example、README和accepted canonical目录全部存在，pending命令设计为非零拒绝，node_modules缺失。只评B静态结构；不运行Node25 build/test，不安装依赖，不改文件、不联网。",
+  "domain_stage": "M4-B-independent-test-review",
+  "event_receipts": [
+    "TASK-20260802-F23239-TEST-20260802-FAIL-P1"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) package/lock集合或版本不一致、目录缺失、README旧态、pending命令可能误报成功：FAIL定位。",
+    "2) lock存在非官方源/缺integrity/浮动tag：FAIL，不自行修正。",
+    "3) 仅Node24与运行收据缺失：列C层pending，不把Node25结果当证据。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "将B静态机器基线与现行合同状态分开计数；只计一个当前P1，不把C层pending或历史F8BF72 PARTIAL/2026-08-01段落误算为额外问题；未联网、未安装、未运行Node/npm/build/test、未修改上游。",
+  "node": "M4/B层/独立测试复验",
+  "pointers": [
+    "docs/collaboration/部门/测试部/报告/2026-08-02-M4-B层工程结构与可复现锁基线复验报告.md"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-08-02-M4-B层工程结构与可复现锁基线复验报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-F23239",
+  "title": "复验M4 B层工程结构与可复现锁基线",
+  "unverified": [
+    "Node24/npm11.16.0实机、npm ci、SQLite、build/test/lint/typecheck、运行时安全、UI/API、业务切片与真实外部能力均保持C层pending/Unknown。"
+  ],
+  "updated_at": "2026-08-02T03:43+08:00",
+  "verified": [
+    "B层静态机器基线无缺陷：package/lock依赖集合与精确版本一致，lockfileVersion=3，399/399 resolved为官方registry，399/399 integrity为sha512；版本文件、配置、canonical目录、README、pending非零、node_modules缺失均通过。",
+    "唯一当前问题为Spec/accepted ADR实施状态时态漂移：仍写app仅README、初始化未完成或无lockfile；实际B层已由F8BF72/D2724D交付并ACK。"
+  ]
+}

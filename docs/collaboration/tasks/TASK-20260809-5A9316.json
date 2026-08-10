@@ -1,0 +1,52 @@
+{
+  "acceptance_exit": "数据部final报告绑定最终候选/收据hash，逐项证明领域图、事务回滚、retry/dead-letter、幂等与hash不变量，旧冻结输入零漂移；P0=0/P1=0方可pass；列已验证/未验证和错题自检，TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/数据部/报告/2026-08-09-VS1-00591f最终候选领域事务hash独立门禁报告.md"
+  ],
+  "authorization_evidence": "TASK-20260809-3A8C0E已ACK；替代旧候选3E8EDB",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T14:05+08:00",
+      "evidence": "TASK-20260809-3A8C0E已ACK；替代旧候选3E8EDB",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "019fb371-9834-78d3-a7b3-4f4c62819520",
+  "completion_class": "standard",
+  "confirmation": "只读独立数据门禁；本地synthetic已授权，不触发外部能力。",
+  "created_at": "2026-08-09T14:05+08:00",
+  "department": "数据部",
+  "details": "等待当前DATA-MM-01任务完成并由统筹ACK后再领取。最终候选仅app/scripts/vs1-contract.ts变更为SHA-256=00591f56b1d148113259bfb21d227138fc7b177a25240befcc1391dcdc73b1e4；assertion receipt file=2fcaefd2998ad9b5c4885c5d7b64a1ee290be4c9cf898b98a19f85c99ce08750，core=98258fe9591688216707afc16dc7a84c8b1a6d370cd9851c275ee3a0e5992e85。只读核对25 case对冻结registry/fixture、领域实体增量、rollback hash、retry/dead-letter attempt history、replay/no-work、Content/Summary/Bundle/hash与三个Function ID；worker/pipeline/fixture/seed/manifest/migrations/package-lock应与D6114C基线字节一致。无需运行worker或生成数据；可运行一次正式test:contract或纯验证器，但不得修改app/data/合同。",
+  "domain_stage": "M5 VS1最终候选数据门禁",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "DATA-MM-01未完成/未ACK时保持queued，不并发claim或修改同一数据目录。",
+    "任一领域行、attempt history、hash/fixture映射或rollback不符时fail并保留首证据，不改候选自证。",
+    "需要真实provider/Base/AI/网络、依赖安装或新增实体时立即停止回统筹。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已使用5A9316 supersede后的00591f最终入口，未领取旧3E8EDB；区分文件SHA与core SHA且core不含换行；覆盖成功、retry/dead-letter、9项rollback、replay/no-work，未以HAPPY外推失败路径；候选与冻结输入未修改；TASK_STATE_OK",
+  "node": "以最终00591f候选取代旧3E8EDB并关闭领域/事务/hash门禁",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260809-3A8C0E.json",
+    "docs/spec/F1+1-VS1本地synthetic纵切实施合同-v0.2.md"
+  ],
+  "report": "docs/collaboration/部门/数据部/报告/2026-08-09-VS1-00591f最终候选领域事务hash独立门禁报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-5A9316",
+  "title": "独立复验VS1最终候选领域图与恢复收据",
+  "unverified": [
+    "真实provider、Base、AI、浏览器、生产环境；按任务边界未运行worker、普通测试、build/check、依赖安装或整站回归"
+  ],
+  "updated_at": "2026-08-09T15:46+08:00",
+  "verified": [
+    "最终contract-entry=00591f56…b1e4、receipt file=2fcaefd2…8750、core=98258fe9…2e85；25个唯一case且25/25 PASS、逐case及顶层externalCalls=0；HAPPY实体增量和Content/Event/Summary/Bundle hash及ID独立复算一致；012/016A-G/017共9项rollback，014重试、015 dead-letter、replay/no-work、三个Function ID均闭合；唯一一次固定Node24 test:contract exit0；D6114C worker/pipeline/fixture/no-egress/registry/seed/manifest/package/lock/migrations测试前后零漂移；临时根无残留；P0=0/P1=0"
+  ]
+}

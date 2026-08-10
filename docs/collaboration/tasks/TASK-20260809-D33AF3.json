@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "提交安全部 final successor 报告；先重算 Node/npm 与关键候选 hash，再一次运行固定 clean-room test:contract；exit0、cases=25、externalCalls=0、输出无路径/stack/URL/secret、任务DB/receipt/WAL/SHM/临时根为0，且P0=0/P1=0时decision=pass；明确继承ED377D静态结论、P2仍Unknown，TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-09-VS1固定Node24动态安全收据-successor复验报告.md"
+  ],
+  "authorization_evidence": "TASK-20260809-ED377D acknowledged；项目内Node24工具链已只读核实",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T13:42+08:00",
+      "evidence": "TASK-20260809-ED377D acknowledged；项目内Node24工具链已只读核实",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "用户既有本地synthetic授权；ED377D已ACK且唯一P1为工具路径错误",
+  "created_at": "2026-08-09T13:42+08:00",
+  "department": "安全部",
+  "details": "严格复用 ED377D 已静态匹配的同一20项候选 hash，不修改任何候选。固定工具链精确为项目内 app/.local/toolchains/node-v24.18.0-darwin-arm64/bin/node，版本v24.18.0，SHA-256=ee6fb0e015284d83a91e8ec5213f43a157f8a392b58555301682892ba928c04a；npm CLI 为 app/.local/toolchains/node-v24.18.0-darwin-arm64/lib/node_modules/npm/bin/npm-cli.js，版本11.16.0，SHA-256=8e5f6f3429f8cdbe693cdc29904e9d5a7b127a494bd15c804bd54c7403bfcbe7。只运行一次 clean-room test:contract 动态安全复验并检查输出与临时根；禁止重新做静态长审或完整测试套件。",
+  "domain_stage": "M5 VS1 安全动态收据后继门禁",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "Node/npm版本或hash、任一关键候选hash漂移即fail，不换工具链。",
+    "唯一命令非零、externalCalls>0、输出泄漏或清理不完整即fail并停止，不重试。",
+    "若需要联网、安装、系统Node、修改候选或外部凭据，保持关闭并fail，不越权。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查：唯一动态命令仅一次；未运行其他npm script或重复静态长审；未修改/清理候选；未使用系统Node、安装、联网或外部凭据；未把externalCalls=0外推OS能力；保留ED377D FAIL历史，仅以successor关闭P1；TASK_STATE_OK",
+  "node": "关闭 ED377D 唯一 Node 路径证据 P1",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260809-ED377D.json",
+    "docs/collaboration/tasks/TASK-20260809-D6114C.json",
+    "app/.local/toolchains/node-v24.18.0-darwin-arm64/bin/node"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-09-VS1固定Node24动态安全收据-successor复验报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-D33AF3",
+  "title": "后继复验 VS1 固定 Node24 动态安全收据",
+  "unverified": [
+    "OS/系统调用级no-egress；同UID路径TOCTOU；真实provider/RSS/Base/AI/Admin/发布/部署/生产能力；平台网络与凭据"
+  ],
+  "updated_at": "2026-08-09T13:46+08:00",
+  "verified": [
+    "项目内Node24.18.0与npm11.16.0 SHA及11项关键候选SHA命令前后全部匹配；唯一env-i clean-room test:contract exit0，结构化输出event=vs1_contract/status=ok/cases=25/externalCalls=0；候选输出无绝对路径、stack、源码行、URL、token/key/secret/fixture正文，stderr为空；精确D33AF3与候选D6114C临时前缀扫描显示任务根/SQLite/DB/receipt/WAL/SHM均为0；继承ED377D静态结论并关闭其唯一P1；未运行其他npm script、联网、安装、修改或清理候选"
+  ]
+}

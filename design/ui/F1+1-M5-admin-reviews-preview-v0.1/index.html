@@ -1,0 +1,691 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="F1+1 M5 最小人工审核台 v0.1 交互预览。仅用于用户确认，不连接正式 App 或数据。">
+  <title>F1+1 · 人工审核台预览</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: oklch(0.145 0.008 252);
+      --bg-elev: oklch(0.172 0.01 252);
+      --surface: oklch(0.205 0.012 252);
+      --surface-2: oklch(0.25 0.013 252);
+      --fg: oklch(0.94 0.006 252);
+      --strong: oklch(0.985 0.003 252);
+      --muted: oklch(0.68 0.012 252);
+      --faint: oklch(0.60 0.012 252);
+      --border: oklch(0.285 0.012 252);
+      --border-strong: oklch(0.48 0.014 252);
+      --accent: oklch(0.73 0.117 246);
+      --accent-deep: oklch(0.6 0.125 246);
+      --focus: oklch(0.76 0.13 246);
+      --ok: oklch(0.72 0.15 155);
+      --warning: oklch(0.78 0.13 78);
+      --danger: oklch(0.68 0.19 25);
+      --glass: oklch(0.18 0.012 252 / .72);
+      --shadow: 0 18px 60px oklch(0 0 0 / .28);
+      --font-ui: Inter, "Source Han Sans CN", "PingFang SC", system-ui, sans-serif;
+      --font-display: "Barlow Condensed", Inter, "PingFang SC", system-ui, sans-serif;
+    }
+    :root[data-theme="light"] {
+      color-scheme: light;
+      --bg: oklch(0.97 0.005 250);
+      --bg-elev: oklch(0.99 0.003 250);
+      --surface: oklch(1 0 0);
+      --surface-2: oklch(0.94 0.006 250);
+      --fg: oklch(0.22 0.012 252);
+      --strong: oklch(0.14 0.012 252);
+      --muted: oklch(0.46 0.015 252);
+      --faint: oklch(0.54 0.015 252);
+      --border: oklch(0.88 0.008 250);
+      --border-strong: oklch(0.64 0.01 250);
+      --accent: oklch(0.47 0.14 246);
+      --accent-deep: oklch(0.42 0.14 246);
+      --focus: oklch(0.44 0.14 246);
+      --ok: oklch(0.48 0.13 155);
+      --warning: oklch(0.52 0.13 78);
+      --danger: oklch(0.52 0.16 25);
+      --glass: oklch(1 0 0 / .76);
+      --shadow: 0 18px 60px oklch(0.18 0.02 252 / .13);
+    }
+    * { box-sizing: border-box; }
+    html { min-width: 320px; background: var(--bg); }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--fg);
+      background:
+        radial-gradient(circle at 82% 0%, color-mix(in oklch, var(--accent) 8%, transparent), transparent 32rem),
+        var(--bg);
+      font-family: var(--font-ui);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+    button, input, textarea, select { font: inherit; }
+    button, a, input, textarea, select { -webkit-tap-highlight-color: transparent; }
+    button { color: inherit; }
+    button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 2px;
+    }
+    .skip {
+      position: fixed; left: 16px; top: -80px; z-index: 200;
+      padding: 10px 14px; color: var(--strong); background: var(--surface);
+      border: 1px solid var(--border-strong); border-radius: 8px;
+    }
+    .skip:focus { top: 12px; }
+    .topbar {
+      position: sticky; top: 0; z-index: 60;
+      min-height: 64px;
+      display: flex; align-items: center; justify-content: space-between; gap: 24px;
+      padding: 0 28px;
+      background: var(--glass);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(18px) saturate(140%);
+    }
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .brand-mark { font-family: var(--font-display); font-size: 18px; font-weight: 800; color: var(--strong); letter-spacing: .02em; }
+    .brand-mark::before { content: ""; display: inline-block; width: 7px; height: 7px; margin-right: 8px; border-radius: 50%; background: var(--warning); }
+    .route { color: var(--muted); font-size: 13px; white-space: nowrap; }
+    .draft { color: var(--faint); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; border: 1px solid var(--border); border-radius: 4px; padding: 3px 7px; }
+    .top-actions { display: flex; align-items: center; gap: 8px; }
+    .icon-btn, .quiet-btn, .primary-btn, .danger-btn, .secondary-btn {
+      min-height: 44px; border-radius: 9px; border: 1px solid transparent; cursor: pointer;
+      transition: background .16s ease, border-color .16s ease, color .16s ease, transform .16s ease;
+    }
+    .icon-btn { min-width: 44px; padding: 0 12px; background: transparent; color: var(--muted); }
+    .icon-btn:hover { color: var(--strong); background: var(--bg-elev); }
+    .shell { display: grid; grid-template-columns: minmax(300px, 368px) minmax(0, 1fr); min-height: calc(100vh - 64px); }
+    .queue {
+      min-width: 0; border-right: 1px solid var(--border); background: color-mix(in oklch, var(--bg) 88%, var(--surface));
+    }
+    .queue-head { padding: 26px 24px 18px; border-bottom: 1px solid var(--border); }
+    .eyebrow { margin: 0 0 6px; color: var(--faint); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { margin-bottom: 8px; color: var(--strong); font-family: var(--font-display); font-size: 28px; line-height: 1.12; }
+    .queue-sub { margin: 0; color: var(--muted); font-size: 13px; }
+    .filters { display: grid; grid-template-columns: 1fr auto; gap: 8px; padding: 14px 16px; border-bottom: 1px solid var(--border); }
+    .field, .area, .select {
+      width: 100%; min-height: 44px; color: var(--fg); background: var(--bg-elev);
+      border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px;
+    }
+    .field::placeholder, .area::placeholder { color: var(--faint); }
+    .queue-list { list-style: none; margin: 0; padding: 0; }
+    .queue-item { border-bottom: 1px solid var(--border); }
+    .queue-button {
+      display: block; width: 100%; min-height: 112px; padding: 16px 20px; text-align: left;
+      border: 0; border-left: 3px solid transparent; background: transparent; cursor: pointer;
+    }
+    .queue-button:hover { background: var(--bg-elev); }
+    .queue-button[aria-current="true"] { background: var(--bg-elev); border-left-color: var(--accent); }
+    .queue-meta, .evidence-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--faint); font-size: 11.5px; }
+    .queue-title { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin: 8px 0 10px; color: var(--strong); font-size: 15px; font-weight: 650; line-height: 1.45; }
+    .status { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); white-space: nowrap; }
+    .status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--faint); }
+    .status.pending::before { background: var(--warning); }
+    .status.blocked::before { background: var(--danger); }
+    .status.rejected::before { background: var(--danger); }
+    .status.approved::before, .status.published::before { background: var(--ok); }
+    .detail { min-width: 0; padding: 28px clamp(24px, 5vw, 76px) 120px; }
+    .detail-inner { width: min(100%, 920px); margin: 0 auto; }
+    .mobile-back { display: none; }
+    .detail-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 28px; margin-bottom: 28px; }
+    .detail-head h2 { margin-bottom: 8px; color: var(--strong); font-family: var(--font-display); font-size: clamp(26px, 3vw, 40px); line-height: 1.14; }
+    .detail-meta { margin: 0; color: var(--muted); }
+    .integrity {
+      min-width: 180px; padding: 12px 14px; border-left: 2px solid var(--ok); background: var(--bg-elev);
+    }
+    .integrity.is-blocked { border-left-color: var(--danger); }
+    .integrity strong { display: block; color: var(--strong); font-size: 13px; }
+    .integrity span { color: var(--muted); font-size: 12px; }
+    .review-grid { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(260px, .72fr); gap: 28px; }
+    .section { margin-bottom: 28px; }
+    .section-title { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+    .section-title h3 { margin: 0; color: var(--strong); font-size: 14px; letter-spacing: .02em; }
+    .section-title span { color: var(--faint); font-size: 11px; }
+    .media {
+      aspect-ratio: 16/9; display: grid; align-content: end; padding: 22px;
+      background:
+        linear-gradient(145deg, transparent 25%, color-mix(in oklch, var(--accent) 20%, transparent) 25% 32%, transparent 32%),
+        linear-gradient(160deg, var(--surface-2), var(--bg-elev));
+      border-radius: 4px; border: 1px solid var(--border); overflow: hidden;
+    }
+    .media strong { color: var(--strong); font-family: var(--font-display); font-size: 22px; }
+    .media span { color: var(--muted); font-size: 12px; }
+    .evidence-card { padding: 18px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .evidence-card dl { display: grid; grid-template-columns: 96px 1fr; gap: 8px 16px; margin: 0; }
+    dt { color: var(--faint); }
+    dd { margin: 0; color: var(--fg); }
+    .editor { padding: 20px; background: var(--bg-elev); border: 1px solid var(--border); border-radius: 10px; }
+    .form-row + .form-row { margin-top: 16px; }
+    label { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 7px; color: var(--strong); font-weight: 600; }
+    label small { color: var(--faint); font-weight: 400; }
+    .area { min-height: 138px; resize: vertical; }
+    .form-note { margin: 12px 0 0; color: var(--faint); font-size: 12px; }
+    .action-panel { position: sticky; top: 92px; }
+    .state-card { padding: 20px; background: var(--bg-elev); border: 1px solid var(--border); border-radius: 10px; }
+    .state-card h3 { margin-bottom: 6px; color: var(--strong); font-size: 18px; }
+    .state-card p { margin-bottom: 16px; color: var(--muted); }
+    .action-stack { display: grid; gap: 10px; }
+    .primary-btn, .danger-btn, .secondary-btn, .quiet-btn { padding: 10px 16px; font-weight: 650; }
+    .primary-btn { color: oklch(0.12 0.02 252); background: var(--accent); border-color: var(--accent); }
+    :root[data-theme="light"] .primary-btn { color: white; }
+    .primary-btn:hover { background: var(--accent-deep); border-color: var(--accent-deep); }
+    .secondary-btn { color: var(--strong); background: transparent; border-color: var(--border-strong); }
+    .secondary-btn:hover { background: var(--surface); }
+    .danger-btn { color: var(--danger); background: transparent; border-color: color-mix(in oklch, var(--danger) 60%, var(--border)); }
+    .danger-btn:hover { color: var(--strong); background: color-mix(in oklch, var(--danger) 18%, var(--bg-elev)); }
+    .quiet-btn { color: var(--muted); background: transparent; border-color: transparent; }
+    .quiet-btn:hover { color: var(--strong); background: var(--surface); }
+    button:disabled { opacity: .45; cursor: not-allowed; }
+    .safety-note { margin: 16px 0 0; padding-top: 14px; border-top: 1px solid var(--border); color: var(--faint); font-size: 11.5px; }
+    .outcome { display: none; margin-top: 18px; padding: 16px; border-left: 2px solid var(--ok); background: var(--surface); }
+    .outcome.is-visible { display: block; }
+    .outcome strong { display: block; color: var(--strong); }
+    .outcome span { color: var(--muted); }
+    .system-state { display: none; min-height: 520px; place-items: center; text-align: center; }
+    .system-state.is-visible { display: grid; }
+    .state-symbol { display: block; margin-bottom: 14px; color: var(--faint); font-family: var(--font-display); font-size: 64px; line-height: 1; }
+    .state-copy { width: min(100%, 460px); }
+    .state-copy h2 { margin-bottom: 8px; color: var(--strong); font-size: 24px; }
+    .state-copy p { color: var(--muted); }
+    .skeleton { width: min(100%, 720px); }
+    .skel-line { height: 14px; margin: 12px 0; border-radius: 4px; background: linear-gradient(90deg, var(--surface-2), var(--surface), var(--surface-2)); background-size: 220% 100%; animation: shimmer 1.6s linear infinite; }
+    .skel-line:nth-child(2) { width: 72%; }
+    .skel-line:nth-child(3) { width: 88%; }
+    @keyframes shimmer { to { background-position: -220% 0; } }
+    .dialog-backdrop {
+      position: fixed; inset: 0; z-index: 100; display: none; place-items: center; padding: 20px;
+      background: oklch(0.06 0.01 252 / .72); backdrop-filter: blur(8px);
+    }
+    .dialog-backdrop.is-open { display: grid; }
+    .dialog {
+      width: min(100%, 520px); max-height: min(86vh, 680px); overflow: auto; padding: 24px;
+      background: var(--surface); border: 1px solid var(--border-strong); border-radius: 14px; box-shadow: var(--shadow);
+    }
+    .dialog h2 { margin-bottom: 8px; color: var(--strong); font-size: 24px; }
+    .dialog p { color: var(--muted); }
+    .dialog-summary { margin: 18px 0; padding: 14px; border-left: 2px solid var(--accent); background: var(--bg-elev); }
+    .dialog-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 22px; }
+    .draft-tools {
+      position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 70;
+      display: flex; align-items: center; gap: 8px; padding: 7px;
+      background: var(--glass); border: 1px solid var(--border); border-radius: 12px; backdrop-filter: blur(16px);
+    }
+    .draft-tools label { margin: 0; color: var(--faint); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; }
+    .draft-tools .select { width: auto; min-height: 44px; padding: 7px 30px 7px 9px; font-size: 12px; }
+    .dialog-summary { white-space: pre-line; }
+    .toast {
+      position: fixed; left: 50%; bottom: 78px; z-index: 120; translate: -50% 18px; opacity: 0;
+      width: max-content; max-width: calc(100vw - 32px); padding: 10px 14px; color: var(--strong);
+      background: var(--glass); border: 1px solid var(--border); border-radius: 9px; backdrop-filter: blur(16px);
+      pointer-events: none; transition: opacity .18s ease, translate .18s ease;
+    }
+    .toast.is-visible { opacity: 1; translate: -50% 0; }
+    @media (max-width: 760px) {
+      .topbar { min-height: 56px; padding: 0 16px; }
+      .route, .draft { display: none; }
+      .shell { display: block; min-height: calc(100vh - 56px); }
+      .queue { border-right: 0; }
+      .queue-head { padding: 22px 16px 14px; }
+      .filters { padding: 12px 16px; }
+      .queue-button { min-height: 116px; padding: 16px; border-left: 0; }
+      .queue-button[aria-current="true"] { box-shadow: inset 3px 0 var(--accent); }
+      .detail { display: none; padding: 16px 16px 120px; }
+      body[data-mobile-view="detail"] .queue { display: none; }
+      body[data-mobile-view="detail"] .detail { display: block; }
+      .mobile-back { display: inline-flex; align-items: center; min-height: 44px; margin-bottom: 12px; padding: 0; border: 0; background: transparent; color: var(--accent); cursor: pointer; }
+      .detail-head { display: block; margin-bottom: 20px; }
+      .detail-head h2 { font-size: 28px; }
+      .integrity { min-width: 0; margin-top: 16px; }
+      .review-grid { display: block; }
+      .action-panel { position: static; }
+      .media { padding: 16px; }
+      .editor { padding: 16px; }
+      .draft-tools { left: 12px; right: 12px; bottom: calc(8px + env(safe-area-inset-bottom, 0px)); justify-content: space-between; }
+      .draft-tools label { display: none; }
+      .draft-tools .select { max-width: 152px; }
+      .dialog { padding: 20px; }
+      .dialog-actions { display: grid; grid-template-columns: 1fr 1fr; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+    @media (prefers-reduced-transparency: reduce) {
+      .topbar, .draft-tools, .toast, .dialog-backdrop { backdrop-filter: none; background: var(--surface); }
+    }
+    @media (forced-colors: active) {
+      * { forced-color-adjust: auto; }
+      .status::before { border: 1px solid CanvasText; }
+    }
+  </style>
+</head>
+<body data-mobile-view="list">
+  <a class="skip" href="#review-detail">跳到审核详情</a>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">F1+1</span>
+      <span class="route">/admin/reviews · loopback local-dev</span>
+      <span class="draft">Preview v0.1</span>
+    </div>
+    <div class="top-actions">
+      <button class="icon-btn" id="theme-toggle" type="button" aria-label="当前深色主题，切换主题">深</button>
+    </div>
+  </header>
+
+  <div class="shell">
+    <aside class="queue" aria-label="待审核队列">
+      <div class="queue-head">
+        <p class="eyebrow">Manual review</p>
+        <h1>人工审核台</h1>
+        <p class="queue-sub">4 条 synthetic 候选 · 只显示可读状态</p>
+      </div>
+      <div class="filters">
+        <input class="field" id="queue-search" type="search" placeholder="搜索标题或来源" aria-label="搜索待审核队列">
+        <button class="icon-btn" id="refresh-list" type="button" aria-label="刷新审核队列">↻</button>
+      </div>
+      <ul class="queue-list" id="queue-list"></ul>
+    </aside>
+
+    <main class="detail" id="review-detail" tabindex="-1">
+      <button class="mobile-back" id="mobile-back" type="button">← 返回待审核队列</button>
+      <div class="detail-inner" id="normal-detail">
+        <header class="detail-head">
+          <div>
+            <p class="eyebrow" id="detail-category">赛事动态 · Bundle v3</p>
+            <h2 id="detail-title">菲蒂帕尔迪力挺汉密尔顿：看好他在法拉利冲击总冠军</h2>
+            <p class="detail-meta"><span id="detail-source">Motorsport.com</span> · <span id="detail-time">08-06 18:00</span> · 无外部写入</p>
+          </div>
+          <div class="integrity" id="integrity-box">
+            <strong id="integrity-title">完整性检查可读</strong>
+            <span id="integrity-copy">版本、来源、媒体与发布栅栏一致</span>
+          </div>
+        </header>
+
+        <div class="review-grid">
+          <div>
+            <section class="section" aria-labelledby="media-title">
+              <div class="section-title"><h3 id="media-title">媒体快照</h3><span>synthetic · 无真实媒体请求</span></div>
+              <div class="media" role="img" aria-label="F1 资讯 synthetic 媒体占位图">
+                <strong>F1+1 MEDIA SNAPSHOT</strong>
+                <span>16:9 · 权利状态与来源随 Bundle 固定</span>
+              </div>
+            </section>
+
+            <section class="section evidence-card" aria-labelledby="evidence-title">
+              <div class="section-title"><h3 id="evidence-title">来源证据</h3><span>隐藏内部 hash 与 fence</span></div>
+              <dl>
+                <dt>来源</dt><dd id="evidence-source">Motorsport.com · synthetic fixture</dd>
+                <dt>来源时间</dt><dd id="evidence-time">2026-08-06 18:00</dd>
+                <dt>媒体状态</dt><dd id="evidence-media">可显示 · 无图时保留标题、摘要和来源</dd>
+                <dt>版本</dt><dd id="evidence-version">Bundle v3 · Summary v2</dd>
+                <dt>完整性</dt><dd id="evidence-integrity">全部必要链路可读；内部值不进入页面</dd>
+              </dl>
+            </section>
+
+            <section class="section editor" aria-labelledby="editor-title">
+              <div class="section-title"><h3 id="editor-title">中文标题与摘要</h3><span>浏览器内未保存输入</span></div>
+              <div class="form-row">
+                <label for="title-input">中文标题 <small><span id="title-count">28</span> / 512</small></label>
+                <input class="field" id="title-input" maxlength="512" value="菲蒂帕尔迪力挺汉密尔顿：看好他在法拉利冲击总冠军">
+              </div>
+              <div class="form-row">
+                <label for="summary-input">中文摘要 <small><span id="summary-count">61</span> / 10000</small></label>
+                <textarea class="area" id="summary-input" maxlength="10000">两届 F1 世界冠军菲蒂帕尔迪表示，看到汉密尔顿在法拉利重拾状态让他十分振奋，希望这位英国车手能在赛季后半段发起真正的总冠军冲击。</textarea>
+              </div>
+              <button class="secondary-btn" id="save-revision" type="button">保存并生成待审核版本</button>
+              <p class="form-note">预览只演示“生成新版本”的信息与反馈；不会覆盖旧 Bundle，也不会写入任何数据。</p>
+            </section>
+          </div>
+
+          <aside class="action-panel" aria-label="当前审核动作">
+            <div class="state-card" id="action-card">
+              <p class="eyebrow">Current state</p>
+              <h3 id="action-title" tabindex="-1">待审核</h3>
+              <p id="action-copy">核对来源与中文整理后选择批准或拒绝。批准仍不会自动发布。</p>
+              <div class="action-stack" id="action-stack">
+                <button class="primary-btn" id="approve" type="button">批准当前版本</button>
+                <button class="danger-btn" id="reject" type="button">拒绝并填写原因</button>
+              </div>
+              <div class="outcome" id="outcome" role="status"></div>
+              <p class="safety-note">所有动作均为本地交互演示。正式页面必须重新验证 session、Origin、CSRF、当前版本和完整性栅栏。</p>
+            </div>
+          </aside>
+        </div>
+      </div>
+
+      <section class="system-state" id="system-state" aria-live="polite"></section>
+    </main>
+  </div>
+
+  <div class="dialog-backdrop" id="dialog-backdrop" aria-hidden="true">
+    <section class="dialog" id="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title" aria-describedby="dialog-copy">
+      <p class="eyebrow" id="dialog-eyebrow">Confirm action</p>
+      <h2 id="dialog-title">确认操作</h2>
+      <p id="dialog-copy"></p>
+      <div class="dialog-summary" id="dialog-summary"></div>
+      <div id="reject-field" hidden>
+        <label for="reject-reason">拒绝原因 <small>必填 · 1–500 字</small></label>
+        <textarea class="area" id="reject-reason" maxlength="500" placeholder="说明需要修改或不能通过的具体原因"></textarea>
+        <p class="form-note" id="reject-error" role="alert"></p>
+      </div>
+      <div class="dialog-actions">
+        <button class="secondary-btn" id="dialog-cancel" type="button">取消</button>
+        <button class="primary-btn" id="dialog-confirm" type="button">确认</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="draft-tools" aria-label="预览控制">
+    <label for="preview-state">DRAFT 状态</label>
+    <select class="select" id="preview-state">
+      <option value="pending">待审核</option>
+      <option value="approved">已批准待发布</option>
+      <option value="retry-ready">发布失败，可人工重试</option>
+      <option value="published">已发布</option>
+      <option value="rejected">已拒绝</option>
+      <option value="loading-list">列表加载中</option>
+      <option value="loading-detail">详情加载中</option>
+      <option value="saving">保存 / 决定处理中</option>
+      <option value="saved">新版本待审核</option>
+      <option value="empty">空队列</option>
+      <option value="error">读取错误</option>
+      <option value="stale">版本已过期</option>
+      <option value="conflict">决定冲突</option>
+      <option value="reconcile">发布结果待对账</option>
+      <option value="terminal-failed">发布终态失败</option>
+      <option value="emergency-stopped">发布急停</option>
+      <option value="blocked">完整性阻断</option>
+      <option value="partial">部分可读</option>
+    </select>
+    <button class="icon-btn" id="reset-preview" type="button">重置</button>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+
+  <script>
+    (function () {
+      'use strict';
+      var items = [
+        { id:'review-01', cat:'赛事动态', title:'菲蒂帕尔迪力挺汉密尔顿：看好他在法拉利冲击总冠军', summary:'两届 F1 世界冠军菲蒂帕尔迪表示，看到汉密尔顿在法拉利重拾状态让他十分振奋，希望这位英国车手能在赛季后半段发起真正的总冠军冲击。', source:'Motorsport.com', time:'08-06 18:00', sourceTime:'2026-08-06 18:00', media:'可显示 · 权利状态已知', state:'pending', updated:'刚刚更新', bundle:'v3', summaryVersion:'v2' },
+        { id:'review-02', cat:'新闻', title:'F1 夏休期是什么，为何每年都会发生？', summary:'赛历中的夏休期同时约束工厂停工和团队节奏，本文整理时间窗口、适用范围与赛季恢复节点。', source:'Motorsport.com', time:'08-06 16:00', sourceTime:'2026-08-06 16:00', media:'无图 · 保留标题、摘要和来源', state:'pending', updated:'4 分钟前', bundle:'v2', summaryVersion:'v2' },
+        { id:'review-03', cat:'动态', title:'威廉姆斯 F1 模拟器车手的一天：工作内容与真实影响', summary:'该候选的来源快照与 Bundle fence 不一致，所有 mutation 必须隐藏。', source:'Motorsport.com', time:'08-06 14:27', sourceTime:'2026-08-06 14:27', media:'不可用 · 完整性阻断', state:'blocked', updated:'原因 INTEGRITY_FENCE_MISMATCH', bundle:'v1', summaryVersion:'v1', reasonCode:'INTEGRITY_FENCE_MISMATCH' },
+        { id:'review-04', cat:'周边趣闻', title:'博塔斯在 F1 夏休期斩获越野骑行佳绩', summary:'博塔斯在赛历间歇参加越野骑行赛事，文章保留来源但没有可验证的来源时间。', source:'Motorsport.com', time:'无时间', sourceTime:'无来源时间', media:'可显示 · 权利状态已知', state:'pending', updated:'18 分钟前', bundle:'v2', summaryVersion:'v1' }
+      ];
+      var currentId = 'review-01';
+      var currentState = 'pending';
+      var dialogAction = null;
+      var lastFocus = null;
+      var pendingNavigation = null;
+      var dirty = false;
+      var listScrollY = 0;
+      var dialogBackground = ['.skip', '.topbar', '.shell', '.draft-tools', '.toast'];
+      var $ = function (s) { return document.querySelector(s); };
+      var $$ = function (s) { return Array.prototype.slice.call(document.querySelectorAll(s)); };
+      var stateLabels = { pending:'待审核', blocked:'完整性阻断', approved:'已批准', rejected:'已拒绝', published:'已发布' };
+
+      function params() { return new URLSearchParams(location.hash.slice(1)); }
+      function replaceParam(key, value) {
+        var p = params(); p.set(key, value); history.replaceState(null, '', '#' + p.toString());
+      }
+      function toast(text) {
+        var el = $('#toast'); el.textContent = text; el.classList.add('is-visible');
+        clearTimeout(toast.timer); toast.timer = setTimeout(function(){ el.classList.remove('is-visible'); }, 2200);
+      }
+      function currentItem() { return items.find(function (item) { return item.id === currentId; }) || items[0]; }
+      function focusStateTitle() { setTimeout(function(){ $('#action-title').focus(); }, 0); }
+      function restoreListPosition() {
+        document.body.dataset.mobileView = 'list';
+        requestAnimationFrame(function(){ window.scrollTo(0, listScrollY); var selected = $('.queue-button[aria-current="true"]'); if (selected) selected.focus({ preventScroll:true }); });
+      }
+      function updateDirtyUI() {
+        var note = $('#outcome');
+        if (currentState !== 'pending' && currentState !== 'saved') return;
+        if (dirty) {
+          if ($('#approve')) $('#approve').disabled = true;
+          if ($('#reject')) $('#reject').disabled = true;
+          note.innerHTML = '<strong>存在未保存输入</strong><span>先保存生成新 Bundle，或在离开时明确丢弃；当前 Bundle 不能按这些输入批准。</span>';
+          note.classList.add('is-visible');
+        }
+      }
+      function renderDetail(item) {
+        $('#detail-category').textContent = item.cat + ' · Bundle ' + item.bundle;
+        $('#detail-title').textContent = item.title;
+        $('#detail-source').textContent = item.source;
+        $('#detail-time').textContent = item.time;
+        $('#evidence-source').textContent = item.source + ' · synthetic fixture';
+        $('#evidence-time').textContent = item.sourceTime;
+        $('#evidence-media').textContent = item.media;
+        $('#evidence-version').textContent = 'Bundle ' + item.bundle + ' · Summary ' + item.summaryVersion;
+        $('#title-input').value = item.title;
+        $('#summary-input').value = item.summary;
+        $('#title-count').textContent = item.title.length;
+        $('#summary-count').textContent = item.summary.length;
+        $('#integrity-box').classList.toggle('is-blocked', item.state === 'blocked');
+        $('#integrity-title').textContent = item.state === 'blocked' ? '完整性检查阻断' : '完整性检查可读';
+        $('#integrity-copy').textContent = item.state === 'blocked' ? '原因码 ' + item.reasonCode : '版本、来源、媒体与发布栅栏一致';
+        $('#evidence-integrity').textContent = item.state === 'blocked' ? '原因码 ' + item.reasonCode + '；所有 mutation 已隐藏' : '全部必要链路可读；内部值不进入页面';
+        dirty = false;
+      }
+      function selectItem(id) {
+        currentId = id;
+        var item = currentItem();
+        listScrollY = window.scrollY;
+        renderDetail(item);
+        setPreviewState(['pending','blocked','approved','rejected','published'].indexOf(item.state) >= 0 ? item.state : 'pending');
+        document.body.dataset.mobileView = 'detail';
+        $('#review-detail').focus();
+        toast(item.state === 'blocked' ? '该 Bundle 已进入完整性阻断，所有 mutation 已隐藏' : '已载入所选 Bundle 的可读详情');
+      }
+      function requestDiscard(next) {
+        if (!dirty) { next(); return; }
+        pendingNavigation = next;
+        openDialog('discard');
+      }
+      function renderQueue(query) {
+        query = (query || '').trim().toLowerCase();
+        var rows = items.filter(function (it) { return !query || (it.title + it.source).toLowerCase().indexOf(query) >= 0; });
+        $('#queue-list').innerHTML = rows.map(function (it) {
+          return '<li class="queue-item"><button class="queue-button" type="button" data-id="' + it.id + '" aria-current="' + (it.id === currentId) + '">'
+            + '<span class="queue-meta"><span>' + it.cat + ' · ' + it.time + '</span><span class="status ' + it.state + '">' + stateLabels[it.state] + '</span></span>'
+            + '<span class="queue-title">' + it.title + '</span>'
+            + '<span class="evidence-row"><span>' + it.source + ' · ' + it.media + '</span><span>' + it.updated + '</span></span>'
+            + '</button></li>';
+        }).join('');
+        $$('.queue-button').forEach(function (button) {
+          button.addEventListener('click', function () {
+            var nextId = button.dataset.id;
+            requestDiscard(function(){ selectItem(nextId); });
+          });
+        });
+      }
+      function syncQueueState(state) {
+        var listUnavailable = state === 'loading-list' || state === 'empty' || state === 'error';
+        $('#queue-search').disabled = listUnavailable;
+        $('.queue-sub').textContent = listUnavailable
+          ? ({ 'loading-list':'正在读取 synthetic 候选', empty:'0 条 synthetic 候选', error:'队列暂不可读' })[state]
+          : '4 条 synthetic 候选 · 只显示可读状态';
+        $('#queue-list').removeAttribute('aria-busy');
+        if (state === 'loading-list') {
+          $('#queue-list').setAttribute('aria-busy', 'true');
+          $('#queue-list').innerHTML = '<li class="queue-item"><div class="queue-button" aria-hidden="true"><span class="skel-line"></span><span class="skel-line"></span><span class="skel-line"></span></div></li>';
+        } else if (state === 'empty') {
+          $('#queue-list').innerHTML = '<li class="queue-item"><div class="queue-button"><span class="queue-title">暂无待审核内容</span><span class="evidence-row"><span>等待下一条完整 Bundle</span></span></div></li>';
+        } else if (state === 'error') {
+          $('#queue-list').innerHTML = '<li class="queue-item"><div class="queue-button"><span class="queue-title">队列读取失败</span><span class="evidence-row"><span>可重试同一读取</span></span></div></li>';
+        } else {
+          renderQueue($('#queue-search').value);
+        }
+      }
+      function setTheme(theme) {
+        theme = theme === 'light' ? 'light' : 'dark';
+        document.documentElement.dataset.theme = theme;
+        $('#theme-toggle').textContent = theme === 'dark' ? '深' : '浅';
+        $('#theme-toggle').setAttribute('aria-label', '当前' + (theme === 'dark' ? '深色' : '浅色') + '主题，切换主题');
+        replaceParam('theme', theme);
+      }
+      function normalVisible(on) { $('#normal-detail').hidden = !on; $('#system-state').classList.toggle('is-visible', !on); }
+      function systemState(kind) {
+        normalVisible(false);
+        var item = currentItem();
+        var data = {
+          'loading-list':['…','正在读取审核队列','保持当前上下文，不开放任何 mutation。'],
+          'loading-detail':['…','正在读取所选详情','队列位置保持不变；详情完成前不开放任何 mutation。'],
+          saving:['…','正在处理当前操作','当前对象的全部 mutation 已锁定；保持同一 operation 等待结果。'],
+          empty:['0','暂无待审核内容','当前没有满足完整性与可审核条件的 Bundle。'],
+          error:['!','审核队列读取失败','可以重试同一读取请求；不会触发任何审核或发布动作。'],
+          stale:['↻','当前版本已过期','放弃本地未保存输入并加载最新 Bundle 后再重新确认。'],
+          conflict:['≠','已有不同终态决定','查看当前服务端状态；不得覆盖已有 ReviewDecision。'],
+          'terminal-failed':['!','发布进入终态失败','原因码 PUBLICATION_TERMINAL_FAILURE；返回队列，不创建新 publicId 或新发布。'],
+          'emergency-stopped':['■','发布已被急停','原因码 EMERGENCY_STOPPED；当前对象不提供 mutation。'],
+          blocked:['×','完整性检查未通过','原因码 ' + (item.reasonCode || 'INTEGRITY_GUARD_FAILED') + '；当前对象所有 mutation 已隐藏。'],
+          partial:['i','部分队列可读','review-03 · 原因码 INTEGRITY_FENCE_MISMATCH；该损坏项只可查看原因，不能 mutation。']
+        }[kind];
+        var retryLabel = ({ empty:'刷新队列', error:'重试同一读取', stale:'加载最新版本', conflict:'查看当前状态', blocked:'重新加载', 'terminal-failed':'返回审核队列', 'emergency-stopped':'返回审核队列' })[kind];
+        var retry = retryLabel ? '<button class="secondary-btn" type="button" id="state-retry">' + retryLabel + '</button>' : '';
+        $('#system-state').innerHTML = '<div class="state-copy"><span class="state-symbol">' + data[0] + '</span><h2>' + data[1] + '</h2><p>' + data[2] + '</p>' + retry + '</div>';
+        if ($('#state-retry')) $('#state-retry').addEventListener('click', function(){
+          if (kind === 'terminal-failed' || kind === 'emergency-stopped') { restoreListPosition(); toast('已返回审核队列；终态保持不变'); return; }
+          if (kind === 'blocked') { toast('完整性阻断仍存在；没有开放 mutation'); return; }
+          setPreviewState('pending'); toast('已恢复预览中的待审核状态');
+        });
+      }
+      function renderAction(state) {
+        normalVisible(true);
+        var title = $('#action-title'), copy = $('#action-copy'), stack = $('#action-stack'), out = $('#outcome');
+        out.classList.remove('is-visible'); out.innerHTML = '';
+        if (state === 'pending' || state === 'saved') {
+          title.textContent = state === 'saved' ? '新版本已生成，等待审核' : '待审核';
+          copy.textContent = state === 'saved' ? 'Bundle v4 已成为当前可审核版本；旧 Bundle 保持不可变并已退出当前动作。' : '核对来源与中文整理后选择批准或拒绝。批准仍不会自动发布。';
+          stack.innerHTML = '<button class="primary-btn" id="approve" type="button">批准当前版本</button><button class="danger-btn" id="reject" type="button">拒绝并填写原因</button>';
+          if (state === 'saved') {
+            out.innerHTML = '<strong>新版本已生成</strong><span>Summary v3 · Bundle v4 · 当前页面已切换到新版本</span>'; out.classList.add('is-visible');
+          }
+        } else if (state === 'approved' || state === 'retry-ready') {
+          title.textContent = state === 'retry-ready' ? '发布失败，可人工重试' : '已批准，等待手动发布';
+          copy.textContent = state === 'retry-ready' ? '同一 Publication 的重试守卫已满足；仍需一次独立、显式确认。' : '批准决定已绑定当前版本，Publication=queued 且 manual-only 守卫通过。';
+          stack.innerHTML = '<button class="primary-btn" id="manual-publish" type="button">' + (state === 'retry-ready' ? '手动重试同一发布' : '手动发布当前批准版本') + '</button><button class="quiet-btn" id="return-queue" type="button">返回队列</button>';
+          if (state === 'retry-ready') { out.innerHTML = '<strong>重试守卫已通过</strong><span>同一 publicId · 同一 idempotency key · 不创建第二 Publication</span>'; out.classList.add('is-visible'); }
+          else { out.innerHTML = '<strong>手动发布守卫已通过</strong><span>Decision=approved · Publication=queued · manual-only</span>'; out.classList.add('is-visible'); }
+        } else if (state === 'published') {
+          title.textContent = '已发布'; copy.textContent = '本地公开投影已确认成功；公开身份和 generation 保持唯一。';
+          stack.innerHTML = '<button class="secondary-btn" id="open-public" type="button">打开公开详情</button><button class="quiet-btn" id="refresh-public" type="button">刷新公开信息流</button>';
+          out.innerHTML = '<strong>公开投影已确认</strong><span>/stories/public-demo-001 · generation 1</span>'; out.classList.add('is-visible');
+        } else if (state === 'rejected') {
+          title.textContent = '已拒绝'; copy.textContent = '拒绝决定已绑定当前 Bundle。没有创建 Publication 或公开投影。';
+          stack.innerHTML = '<button class="quiet-btn" id="return-queue" type="button">返回待审核队列</button>';
+          out.innerHTML = '<strong>拒绝原因已保留</strong><span>中文摘要需要补充来源上下文。</span>'; out.classList.add('is-visible');
+        } else if (state === 'reconcile') {
+          title.textContent = '发布结果待对账'; copy.textContent = '结果未知时只查询同一 operation；禁止创建新 Publication、publicId 或发布请求。';
+          stack.innerHTML = '<button class="secondary-btn" id="query-operation" type="button">查询同一操作结果</button><button class="quiet-btn" id="return-queue" type="button">返回队列</button>';
+          out.innerHTML = '<strong>reconcile_wait</strong><span>同一 reconcile key · 不盲重试</span>'; out.classList.add('is-visible');
+        }
+        bindActions();
+        updateDirtyUI();
+      }
+      function setPreviewState(state) {
+        currentState = state; $('#preview-state').value = state; replaceParam('state', state);
+        syncQueueState(state);
+        if (['loading-list','loading-detail','saving','empty','error','stale','conflict','terminal-failed','emergency-stopped','blocked','partial'].indexOf(state) >= 0) systemState(state);
+        else renderAction(state);
+      }
+      function setDialogBackgroundInert(on) {
+        dialogBackground.forEach(function (selector) {
+          var element = $(selector);
+          if (!element) return;
+          if (on) {
+            element.setAttribute('inert', '');
+            element.setAttribute('aria-hidden', 'true');
+          } else {
+            element.removeAttribute('inert');
+            element.removeAttribute('aria-hidden');
+          }
+        });
+      }
+      function openDialog(action) {
+        dialogAction = action; lastFocus = document.activeElement; $('#reject-field').hidden = action !== 'reject'; $('#reject-error').textContent = '';
+        var item = currentItem();
+        var currentSummary = $('#summary-input').value.trim();
+        var currentTitle = $('#title-input').value.trim();
+        var content = {
+          approve:['确认批准当前版本','批准会记录当前版本的审核决定，并准备唯一待发布身份。批准后仍需手动发布。','Bundle ' + item.bundle + '\n标题：' + currentTitle + '\n摘要：' + currentSummary + '\n来源：' + item.source + '\n媒体：' + item.media,'确认批准'],
+          reject:['确认拒绝当前版本','拒绝会记录不可变决定，不创建 Publication，也不会删除来源证据。','Bundle ' + item.bundle + '\n标题：' + currentTitle + '\n来源：' + item.source + '\n媒体：' + item.media,'确认拒绝'],
+          publish:['确认手动发布','这会把当前批准版本写入本地公开投影。页面不会乐观显示成功。','批准版本 Bundle ' + item.bundle + '\nDecision=approved · Publication=queued\nmanual-only 守卫已通过 · generation 1','确认手动发布'],
+          discard:['丢弃未保存输入？','当前浏览器输入尚未生成新 Summary/Bundle。继续会丢弃这些输入。','当前 Bundle ' + item.bundle + '\n标题与摘要的未保存修改不会进入任何决定','丢弃并继续']
+        }[action];
+        $('#dialog-title').textContent = content[0]; $('#dialog-copy').textContent = content[1]; $('#dialog-summary').textContent = content[2];
+        $('#dialog-confirm').textContent = content[3]; $('#dialog-confirm').className = (action === 'reject' || action === 'discard') ? 'danger-btn' : 'primary-btn';
+        setDialogBackgroundInert(true);
+        $('#dialog-backdrop').classList.add('is-open'); $('#dialog-backdrop').setAttribute('aria-hidden','false');
+        setTimeout(function(){ $('#dialog-cancel').focus(); }, 0);
+      }
+      function closeDialog(restoreFocus) {
+        $('#dialog-backdrop').classList.remove('is-open'); $('#dialog-backdrop').setAttribute('aria-hidden','true'); dialogAction = null;
+        setDialogBackgroundInert(false);
+        if (restoreFocus !== false && lastFocus) lastFocus.focus();
+        if (restoreFocus !== false) pendingNavigation = null;
+      }
+      function confirmDialog() {
+        var action = dialogAction;
+        if (action === 'discard') {
+          var next = pendingNavigation; pendingNavigation = null; dirty = false; closeDialog(false); if (next) next(); return;
+        }
+        if (action === 'reject') {
+          var reason = $('#reject-reason').value.trim();
+          if (!reason) { $('#reject-error').textContent = '请填写拒绝原因。'; $('#reject-reason').focus(); return; }
+          currentItem().state = 'rejected'; closeDialog(false); setPreviewState('rejected'); focusStateTitle(); toast('预览：拒绝决定已记录'); return;
+        }
+        if (action === 'approve') { currentItem().state = 'approved'; closeDialog(false); setPreviewState('approved'); focusStateTitle(); toast('预览：已批准，仍需手动发布'); return; }
+        if (action === 'publish') { currentItem().state = 'published'; closeDialog(false); setPreviewState('published'); focusStateTitle(); toast('预览：本地公开投影已确认'); }
+      }
+      function bindActions() {
+        if ($('#approve')) $('#approve').addEventListener('click', function(){ openDialog('approve'); });
+        if ($('#reject')) $('#reject').addEventListener('click', function(){ openDialog('reject'); });
+        if ($('#manual-publish')) $('#manual-publish').addEventListener('click', function(){ openDialog('publish'); });
+        if ($('#return-queue')) $('#return-queue').addEventListener('click', function(){ requestDiscard(function(){ restoreListPosition(); toast('已返回审核队列'); }); });
+        if ($('#open-public')) $('#open-public').addEventListener('click', function(){ toast('预览没有连接正式公开路由'); });
+        if ($('#refresh-public')) $('#refresh-public').addEventListener('click', function(){ toast('预览没有发起正式读取请求'); });
+        if ($('#query-operation')) $('#query-operation').addEventListener('click', function(){ toast('预览：只查询同一 operation，不创建新发布'); });
+      }
+      $('#theme-toggle').addEventListener('click', function(){ setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'); });
+      $('#queue-search').addEventListener('input', function(){ renderQueue(this.value); });
+      $('#refresh-list').addEventListener('click', function(){ toast('预览：队列已刷新，无网络请求'); });
+      $('#mobile-back').addEventListener('click', function(){ requestDiscard(restoreListPosition); });
+      $('#title-input').addEventListener('input', function(){ dirty = true; $('#title-count').textContent = this.value.length; updateDirtyUI(); });
+      $('#summary-input').addEventListener('input', function(){ dirty = true; $('#summary-count').textContent = this.value.length; updateDirtyUI(); });
+      $('#save-revision').addEventListener('click', function(){
+        setPreviewState('saving');
+        setTimeout(function(){
+          var item = currentItem(); item.title = $('#title-input').value.trim(); item.summary = $('#summary-input').value.trim(); item.bundle = 'v4'; item.summaryVersion = 'v3'; item.state = 'pending'; dirty = false;
+          renderDetail(item); setPreviewState('saved'); focusStateTitle(); toast('预览：已生成新的待审核版本，旧版本保持不变');
+        }, 520);
+      });
+      $('#dialog-cancel').addEventListener('click', closeDialog);
+      $('#dialog-confirm').addEventListener('click', confirmDialog);
+      $('#dialog-backdrop').addEventListener('click', function(e){ if (e.target === this) closeDialog(); });
+      document.addEventListener('keydown', function(e){
+        if (e.key === 'Escape' && $('#dialog-backdrop').classList.contains('is-open')) closeDialog();
+        if (e.key === 'Tab' && $('#dialog-backdrop').classList.contains('is-open')) {
+          var focusable = $$('#dialog button:not([disabled]), #dialog textarea:not([hidden])').filter(function(el){ return !el.closest('[hidden]'); });
+          if (!focusable.length) return; var first = focusable[0], last = focusable[focusable.length-1];
+          if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+          else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        }
+      });
+      window.addEventListener('beforeunload', function(e){ if (dirty) { e.preventDefault(); e.returnValue = ''; } });
+      $('#preview-state').addEventListener('change', function(){ setPreviewState(this.value); });
+      $('#reset-preview').addEventListener('click', function(){ requestDiscard(function(){
+        currentId = 'review-01'; dirty = false; renderDetail(currentItem()); setPreviewState('pending'); restoreListPosition(); toast('预览已重置');
+      }); });
+
+      var p = params();
+      setTheme(p.get('theme') || 'dark');
+      renderDetail(currentItem());
+      renderQueue('');
+      setPreviewState(p.get('state') || 'pending');
+      if (matchMedia('(max-width:760px)').matches && p.get('view') === 'detail') document.body.dataset.mobileView = 'detail';
+    }());
+  </script>
+</body>
+</html>

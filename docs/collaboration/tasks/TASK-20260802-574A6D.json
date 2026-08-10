@@ -1,0 +1,57 @@
+{
+  "acceptance_exit": "提交独立复验报告，明确pre-clean与post-clean两阶段结论、逐项PASS/FAIL、归档/会话/任务/工具链/关键hash证据、实际释放空间、保留与删除边界；task doctor与项目回归通过，9个Codex任务可见，7A9C48仍claimed且未误报完成，6F7563仍queued或按正式恢复收据领取；给出P0/P1/P2、未验证项和TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-08-02-新Mac迁移完整复验与清理后回归报告.md"
+  ],
+  "authorization_evidence": "用户于2026-08-02明确回复“可以，先做一次完整复验”，承接此前“迁移完成后清理多余缓存/备份并恢复任务”的授权。",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T18:29+08:00",
+      "evidence": "用户于2026-08-02明确回复“可以，先做一次完整复验”，承接此前“迁移完成后清理多余缓存/备份并恢复任务”的授权。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "测试部/019fb379-9212-7e80-a5df-587d339936c4",
+  "completion_class": "audit",
+  "confirmation": "用户已明确要求先做完整复验；只有复验通过才清理冗余迁移归档、缓存与备份，并在清理后恢复任务。测试部保持独立，只读验证，不代替统筹删除。",
+  "created_at": "2026-08-02T18:29+08:00",
+  "department": "测试部",
+  "details": "在Apple M5、macOS 26.6目标机上独立核验迁移后的磁盘真值与执行环境。清理前只读检查硬件、Git HEAD与dirty工作区、91项任务doctor、9个Codex任务可见性、会话与manifest、portable/warm归档hash和隔离解包、Node24/npm与完整check、关键断点hash、skills及飞书CLI可用性；复核统筹列出的精确清理清单。统筹完成已授权的精确清理后，再检查必要项目文件/依赖/工具链/部门任务仍可用、无归档或缓存误删，不修改app/Spec/ADR/data/design，不执行外部写入。",
+  "domain_stage": "project-migration-target-verification-cleanup-regression",
+  "event_receipts": [
+    "post-clean read-only probes: task doctor=93; list_threads/read_thread 9/9; SQLite mode=ro integrity ok and 39x59/59 disabled; 10/10 conversation hashes; Node24/npm/lark version; deleted/retained boundary checks"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 任一归档hash、关键断点hash、Git/任务/会话数量或完整check不符：FAIL，要求停止清理并保留迁移包。",
+    "2) 清理清单触及node_modules、精确Node24、SQLite业务状态、项目文档/对话/任务真值、全局凭证或无法证明可重建的文件：P0/FAIL，不批准删除。",
+    "3) 飞书CLI、Codex任务同步或工具链失败：区分项目迁移完整性与机器环境故障，提供最短复现；修复前相关能力保持closed。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已修正 list_threads/read_thread 接口认知、Keychain closed 口径和 node_modules/Node24/SQLite 保留边界；纠正 shasum 清单 cwd 与 community-plugins.json 路径；未重建归档/缓存、未运行会留下大缓存的 full check、未修改受保护产物",
+  "node": "项目迁移/目标机复验/清理后回归",
+  "pointers": [
+    "docs/collaboration/部门/测试部/报告/2026-08-02-新Mac迁移完整复验与清理后回归报告.md"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-08-02-新Mac迁移完整复验与清理后回归报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-574A6D",
+  "title": "独立复验新Mac迁移、清理边界与任务恢复",
+  "unverified": [
+    "本机会话 pgrep 受 sysmond service not found 限制；统筹删除前确认无 Obsidian 进程、目标文件句柄及 27123/27124 监听，保留为 P2 环境可见性 Unknown",
+    "OAuth/Keychain 按迁移合同保持 closed/待用户重新登录；未访问真实飞书资源、真实 Base/文档、自动发布或外部写入"
+  ],
+  "updated_at": "2026-08-02T19:22+08:00",
+  "verified": [
+    "post-clean P0=0/P1=0：秘密文件已删除且精确 .gitignore 命中，插件仍在；清理边界保留 node_modules、Node24、两份 SQLite、Git、任务/报告、对话/交接",
+    "list_threads/read_thread 独立核对 F1+1 主线程及 8 部门线程 9/9；TASK_DOCTOR_OK tasks=93；7A9C48=claimed，6F7563=queued",
+    "两份 SQLite read-only integrity_check=ok、WAL、39 columns/59 rows/59 disabled；Node24.18.0/npm11.16.0、lark-cli 1.0.68、关键 checkpoint hash 和 conversations SHA256SUMS 10/10 通过",
+    "统筹 post-clean full-check 收据：Node24、32/32、lint、typecheck、build、task doctor=93；清理收据约 298.6 MiB 项目空间及约 6.6 MB Homebrew simdjson"
+  ]
+}

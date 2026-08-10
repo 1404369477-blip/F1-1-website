@@ -1,0 +1,56 @@
+{
+  "acceptance_exit": "提交开发报告与候选manifest；固定Node24只运行一次聚焦测试和一次typecheck且PASS；RAW_DOT_SEGMENT_ALIAS及编码/反斜杠变体在URL规范化前稳定拒绝，合法session/list+query保持通过；产品/正式DB/91AF6E保护字节除授权文件外零漂移，完成返回TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/evidence/TASK-20260810-875B6C/manifest.json",
+    "docs/collaboration/部门/开发部/报告/2026-08-10-875B6C-RAW_DOT_SEGMENT_ALIAS原始路径前置拒绝修复报告.md"
+  ],
+  "authorization_evidence": "用户回复继续并持续授权推进本地初版；本任务只修复独立安全首错，不外联、不触碰正式数据。",
+  "authorization_history": [
+    {
+      "at": "2026-08-10T08:11+08:00",
+      "evidence": "用户回复继续并持续授权推进本地初版；本任务只修复独立安全首错，不外联、不触碰正式数据。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/019fb374-7c86-7882-9e51-76114ce69e7f",
+  "completion_class": "standard",
+  "confirmation": "完成后只创建绑定新候选的测试/安全successor；不得直接恢复37CA8F/A5F239或宣称后端安全完成。",
+  "created_at": "2026-08-10T08:11+08:00",
+  "department": "开发部",
+  "details": "输入为blocked TASK-20260810-A5F239 evidence manifest SHA=92339f02cf0f30075e1059b8e41df0d1d0c6b60f4236119917b8d4ebc138d764及统筹后继裁决。根因位于app/src/server/source-management/security.ts：request.url先交给new URL(...).pathname，导致raw /api/admin/alias/../session被规范化为合法/api/admin/session。只允许修改security.ts与一个现有或新建的raw-target聚焦测试；在任何URL解析/body/runtime前切出raw path/query，对literal ./、../ segment、literal backslash及任意percent-encoded path字节失败关闭，随后要求解析pathname与raw path字节等价；保留合法/api/admin/session与/api/admin/sources?limit=100，query仍由现有allowlist处理。至少固定literal dot/dotdot、大小写%2e组合、encoded slash/backslash、literal backslash、absolute-form和合法query向量。禁止改session/CSRF/路由/SQL/DB/no-egress/listener/依赖/UI/Spec/ADR/package-lock；不得打开正式DB或启动产品实例，不重复91AF6E build/HTTP/closed/9/9/5/5/lint。",
+  "domain_stage": "M5-SOURCE-MGMT raw authority P1修复",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "修复需要改业务语义、现行安全合同、accepted ADR、依赖、DB或超过授权文件：立即block，只回最小差异。",
+    "聚焦测试或typecheck首错：保存实得并停止，不修改后重跑，不运行build/HTTP/DB链。",
+    "候选输入、A5F239 manifest、91AF6E报告/manifest/closed DB或非授权保护字节漂移：立即停止并block。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "在URL规范化前验证raw target；path/query分离且合法percent query不误拒；无debug route/第二数据真值；未打开DB或启动实例；未重复build/HTTP/closed/9/9/5/5/lint；未把聚焦PASS外推为后端安全完成",
+  "node": "关闭security.ts在URL规范化前未拒绝dot segment与encoded path的单一P1",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260810-A5F239.json",
+    "docs/collaboration/部门/安全部/报告/TASK-20260810-A5F239-evidence/manifest.json",
+    "docs/collaboration/部门/统筹部/报告/2026-08-10-A5F239原始路径规范化首错与后继裁决.md",
+    "docs/collaboration/tasks/TASK-20260810-91AF6E.json",
+    "app/evidence/TASK-20260810-91AF6E/manifest.json"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-10-875B6C-RAW_DOT_SEGMENT_ALIAS原始路径前置拒绝修复报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260810-875B6C",
+  "title": "RAW_DOT_SEGMENT_ALIAS原始路径前置拒绝修复",
+  "unverified": [
+    "新安全successor尚未在本精确候选重跑A5F239其余攻击向量；新测试successor尚未独立验证；真实provider、外部API、UI、部署和生产数据能力均未开启"
+  ],
+  "updated_at": "2026-08-10T08:16+08:00",
+  "verified": [
+    "A5F239 manifest、91AF6E manifest/report、closed DB/receipt固定SHA匹配；raw path在URL解析前拒绝literal dot/dotdot、反斜杠、任意percent path字节并要求parsed pathname逐字等价；合法session与list+percent query保持通过；固定Node24聚焦测试唯一一次19/19 PASS；typecheck唯一一次exit0；静态对抗审查P0=0/P1=0；未启动实例、未打开DB、externalCalls=0；授权外保护SHA与lockfile未漂移"
+  ]
+}

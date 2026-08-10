@@ -1,0 +1,42 @@
+{
+  "acceptance_exit": "安全报告固定输入SHA匹配；最小代码差异与报告唯一推荐一致；数字loopback入站监听和本机HTTP交互可达，非loopback及全部出站connect/http/https/fetch/named-host DNS/child process仍独立拒绝且externalCalls业务口径为0；启动失败与正常退出均无server/DB/guard/profile lock/WAL/SHM/端口/tmp残留。固定Node24聚焦门、typecheck、build、唯一3019 HTTP关键session/CSRF/list/add/validate/activate/stop/retire/requeue/operation正反链、closed receipt和protected after comparison均PASS；提交开发报告、机器manifest、已验证/未验证/错题自检并TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "用户持续目标授权推进本地初版；本任务严格修复已知本地synthetic启动首错，无外部I/O。",
+  "authorization_history": [
+    {
+      "at": "2026-08-10T00:07+08:00",
+      "evidence": "用户持续目标授权推进本地初版；本任务严格修复已知本地synthetic启动首错，无外部I/O。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "唯一最终链在固定Node24 typecheck首错停止；5个错误：server.ts:98与测试helper的server.close回调类型不兼容，no-egress.ts:73两项不可能literal比较，no-egress.ts:187的node:net Server缺少closeAllConnections。聚焦安全门9/9 PASS；build、3019 HTTP、closed receipt与after comparison NOT_RUN。开发部待批收口动作不再需要执行，统筹按现有静态收据先行block并将创建只修这5项的最小successor。",
+  "claimed_by": "开发部/019fb374-7c86-7882-9e51-76114ce69e7f",
+  "completion_class": "standard",
+  "confirmation": "开发完成后仅进入已排队的测试2467B0与安全59C88E同候选独立复验；不得外推UI、真实采集或整体SOURCE-MGMT完成。",
+  "created_at": "2026-08-10T00:07+08:00",
+  "department": "开发部",
+  "details": "前置条件：TASK-20260810-F213DE完成并给出安全部final诊断报告及唯一推荐；未满足时保持queued，不得领取或猜修复。固定候选从F1466E Repository SHA=741aad53d872f837afbe1d3c94bb3047deb54d711d76045f6b2e1684c4598912继续。只允许按安全报告修改no-egress精确边界和source-management启动/失败清理所需的最小文件与聚焦测试：精确允许入站数字loopback监听或报告批准的等价无DNS路径，所有出站net/http/https/fetch/named-host DNS/child process/worker继续fail closed；启动任一阶段失败必须自动关闭server、DB、runtime，restore guard并释放profile lock。禁止全局restore后长期运行、允许任意DNS/hostname或出站loopback、关闭guard、改raw authority/session/CSRF/SQL/状态机/路由合同、依赖、public/UI/data/Spec/ADR/package-lock。先静态实现和聚焦no-egress/cleanup测试，随后只执行一次固定Node24 typecheck→build→单个127.0.0.1:3019完整HTTP→closed receipt→after零漂移/清理链；引用BDBD33的5/5/lint和F1466E已PASS typecheck/build，不做无关全量重复。",
+  "domain_stage": "M5-SOURCE-MGMT启动安全整改",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "F213DE未完成、报告不是P0=0/P1=0或唯一推荐不明确：保持queued或block，不改代码。",
+    "修复需要恢复全局guard长期运行、允许任意DNS/hostname/出站loopback、弱化raw/session/CSRF或新增依赖：立即block。",
+    "聚焦安全门、typecheck、build、首个HTTP、closed receipt或清理任一失败：保存首错并停止，不重启或重复整链覆盖。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "按F213DE安全裁决修复F1466E的监听前no-egress首错，并关闭HTTP、closed receipt与清理链",
+  "pointers": [],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260810-552BF1",
+  "title": "SOURCE-MGMT启动期精确loopback监听与失败自动清理successor",
+  "unverified": [],
+  "updated_at": "2026-08-10T00:37+08:00",
+  "verified": []
+}

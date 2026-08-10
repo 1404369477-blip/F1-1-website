@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "交付唯一A或B结论，引用精确合同段落与当前任务状态；无第二实施真值；A时给出可直接派开发的后端-only边界和验收出口，B时给出唯一阻断依据；列已验证/未验证/错题自检，P0=0/P1=0，doctor通过并TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/产品部/报告/2026-08-09-SOURCE-MGMT-001后端先行与视觉门解耦裁决报告.md"
+  ],
+  "authorization_evidence": "2026-08-09持续目标为交付有前端、必要数据库和核心功能可用初版；本裁决仅决定本地后端工作排序。",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T22:52+08:00",
+      "evidence": "2026-08-09持续目标为交付有前端、必要数据库和核心功能可用初版；本裁决仅决定本地后端工作排序。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "用户持续要求推进初版；本任务只消除现有合同歧义，不授权实际实现、外部I/O或部署。",
+  "created_at": "2026-08-09T22:52+08:00",
+  "department": "产品部",
+  "details": "只读核对SOURCE-MGMT v0.2 §378/401、v0.3、开发可行性报告第7/11节、已ACK设计候选与安全PASS。当前用户视觉尚未确认，但持续要求推进有前端、数据库和核心功能可用的初版。请从最小风险与交付速度出发给出唯一裁决：A 允许现在实施独立source-management-synthetic profile、SQLite/migration/repository、raw/session/CSRF、显式Admin API、worker和golden，UI/CSS/页面保持关闭；或B 全部仍需等视觉确认。若选A，必须精确列出允许文件、Function/golden范围、禁止UI/视觉宣称、零漂移与后继用户确认门；若选B，指出不能解耦的具体事务/API依赖。只形成一份简短裁决或必要的proposed addendum，不改App/data/design/Spec/accepted ADR，不外联、不测试。",
+  "domain_stage": "M5-SOURCE-MGMT后端实施门",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "合同确实把视觉确认写成全部App开工前置且无法无歧义解耦：选择B，不用管理判断覆盖合同。",
+    "后端先行会迫使修改公开UI、根layout或发明Admin DTO/领域字段：停止A并选择B。",
+    "需要新增依赖、外部I/O、真实账号或生产入口才能裁决：保持关闭并报告Unknown。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未把安全PASS外推为实现PASS；未把设计ACK当作用户视觉确认；未把后端先行外推为Function complete；未修改App/data/design/Spec/accepted ADR；未测试、未外联、未新增系统真值",
+  "node": "消除合同中用户视觉确认究竟只阻断UI完成还是阻断全部后端开工的矛盾，确定可否立即实施纯后端纵切",
+  "pointers": [
+    "docs/spec/F1+1-SOURCE-MGMT-001本地synthetic信源管理纵切实现合同-v0.2.md",
+    "docs/spec/F1+1-SOURCE-MGMT-001本地synthetic信源管理纵切实现合同-v0.3.md",
+    "docs/collaboration/部门/开发部/报告/2026-08-09-SOURCE-MGMT-001-v0.2现有代码落点与实现可行性只读勘察报告.md"
+  ],
+  "report": "不适用",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-95A738",
+  "title": "SOURCE-MGMT-001后端先行与视觉门解耦裁决",
+  "unverified": [
+    "后端代码、SQLite、API、worker与golden的实际实现；浏览器Web Crypto、页面/CSS、双端视觉；真实平台、Base、provider、网络与部署"
+  ],
+  "updated_at": "2026-08-09T22:58+08:00",
+  "verified": [
+    "只读核对v0.2/v0.3、开发勘察、安全PASS与设计ACK时态；裁决A；固定后端可派单边界、UI持续关闭边界及整体P1状态；v0.2/v0.3 SHA实算匹配；git diff --check通过；external_calls=0；未运行测试"
+  ]
+}

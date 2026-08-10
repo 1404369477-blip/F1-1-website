@@ -1,0 +1,59 @@
+{
+  "acceptance_exit": "Spec/progress/accepted ADR现行状态一致且无node_modules不存在/C预检pending等旧叙述；逐项列D27E44/7BFD99/6F480F ACK收据与历史失败；明确VS-0可开工、其余C实现和真实外部能力关闭；提交报告和TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/spec.md",
+    "docs/progress.md",
+    "docs/decisions/system/2026-08-01-F1+1-M4本地Kickoff系统路线-accepted.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-02-M4-C层预检通过与VS-0窗口报告.md"
+  ],
+  "authorization_evidence": "用户已授权持续推进本地网站搭建；开发/安全/测试C预检任务已PASS并由统筹ACK",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T09:33+08:00",
+      "evidence": "用户已授权持续推进本地网站搭建；开发/安全/测试C预检任务已PASS并由统筹ACK",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "本任务仅同步文档实施状态并开放VS-0本地窗口，不开启真实外部能力。",
+  "created_at": "2026-08-02T09:33+08:00",
+  "department": "产品部",
+  "details": "依据已ACK的开发 TASK-20260802-D27E44、安全 TASK-20260802-7BFD99、测试 TASK-20260802-6F480F，只做现行实施状态同步：更新 docs/spec.md、docs/progress.md、accepted ADR 的实施状态/变更记录和必要handoff，明确 Node24.18.0/npm11.16.0/SQLite3.53.1/npm ci ignore-scripts/lint/typecheck/build与两份独立复验已PASS，app/node_modules当前存在且gitignored；保留开发首轮FAIL P1/P2、延迟旧清理误删node_modules及恢复/复验历史。把C层从local preflight pending改为preflight PASS/允许开始VS-0，仅开放安全地基+fixture provider本地实现；Repository正式实现、UI/API、admin安全、完整R12 deny-all、VS-1..3和任何真实外部能力仍pending/closed。不得修改accepted核心技术选择、字段/状态机/data/design/app代码，不得宣称C业务实现或生产放行。",
+  "domain_stage": "M4-C-preflight-status-sync",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 文档仍把node_modules写成不存在或C预检pending：FAIL，机械搜索并原位修正。",
+    "2) 把preflight PASS扩写成Repository/UI/API/完整安全/生产通过：FAIL，收紧到能力门禁。",
+    "3) 需要改变accepted核心、data合同或外部能力：停止并另起proposed任务，不在本任务修改。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未将 C 层 local preflight PASS 写成业务实现或生产放行；未将 node_modules 存在写成 Repository/UI/API/VS-1–3 完成；保留首轮失败和误删恢复历史；未修改 accepted 核心、data、design、app 或历史审核报告。",
+  "node": "M4/C层/状态同步与VS-0窗口",
+  "pointers": [
+    "docs/collaboration/部门/产品部/报告/2026-08-02-M4-C层预检通过与VS-0窗口报告.md"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-02-M4-C层预检通过与VS-0窗口报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-84F061",
+  "title": "同步M4 C层预检通过状态并开放VS-0窗口",
+  "unverified": [
+    "Repository/migration/CAS/lease/outbox、fixture seed、领域状态持久化、UI/API 与 admin session/Origin/CSRF",
+    "完整 R12 deny-all、VS-1/VS-2/VS-3、无障碍 AT、真实 loopback 业务端口、生产存储、多实例、容量与 RTO/RPO",
+    "SHASUMS PGP/独立回源与完整进程级 lifecycle/网络抓包，以及全部真实 Base/provider/Collector/平台/AI/媒体/发布/部署/付费/外发"
+  ],
+  "updated_at": "2026-08-02T09:42+08:00",
+  "verified": [
+    "D27E44、7BFD99、6F480F 均为 PASS/P0=0/P1=0，Node24.18.0/npm11.16.0、SQLite3.53.1、npm ci ignore-scripts、lint/typecheck/build 与两路复验收据已同步",
+    "app/node_modules 当前存在且被 gitignored，lock 未漂移，VS-0 安全地基与 fixture provider 本地开工窗口已明确",
+    "Repository/UI/API、完整 R12、VS-1–3 与真实 Base/provider/Collector/采集/表单/AI/媒体/发布/部署/外部 IO 仍明确 pending/closed",
+    "首轮 FAIL、延迟清理误删 node_modules、恢复与复验历史保留；git diff --check、agent_team_task doctor、目标状态扫描通过"
+  ]
+}

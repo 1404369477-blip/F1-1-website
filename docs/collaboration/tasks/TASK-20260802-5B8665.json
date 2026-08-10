@@ -1,0 +1,51 @@
+{
+  "acceptance_exit": "交付一份无第二真值的实现蓝图：表/字段/约束/索引/事务/迁移/seed/验收矩阵均可追溯到v0.3；明确哪些是领域、internal-only和worker运行表；列1-3失败路径及C层未知；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/数据部/报告/2026-08-02-M4-C层SQLite与Repository实现交接蓝图.md"
+  ],
+  "authorization_evidence": "用户已明确授权全员持续推进本地网站工程；A轴accepted已ACK；本任务本地只读合同转译，无外部I/O",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T03:03+08:00",
+      "evidence": "用户已明确授权全员持续推进本地网站工程；A轴accepted已ACK；本任务本地只读合同转译，无外部I/O",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "数据部/019fb371-9834-78d3-a7b3-4f4c62819520",
+  "completion_class": "standard",
+  "confirmation": "蓝图只作为开发实现交接，实际app migration由开发部创建并由数据/安全/测试复验；真实外部能力关闭。",
+  "created_at": "2026-08-02T03:03+08:00",
+  "department": "数据部",
+  "details": "只读使用accepted ADR、docs/spec.md与data/mvp-contract-v0冻结v0.3，形成开发部可直接执行的SQLite migration/repository蓝图。逐表映射13个领域实体、internal-only记录及inbox/outbox/task运行表；给出主键/唯一键/外键/check/index、只追加migration顺序、BEGIN IMMEDIATE事务边界、原子enable+queued与Publication唯一身份写序、五fence CAS、reconcile、seed/fixture导入、hash与schema验证点、回滚/失败出口。每个DDL/字段必须引用唯一JSON schema/state-machine/fixture路径，禁止另造第二字段集。仅交付报告/机器可读mapping建议，不修改data、app、Spec/ADR或运行生成器。",
+  "domain_stage": "M4-C-data-implementation-handoff",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 数据合同无法映射为SQLite约束时，精确标注JSON pointer与需新ADR/修订点，禁止自行扩展字段。",
+    "2) 同一身份/幂等/状态出现多个候选DDL时，选择能严格表达accepted invariant的最小方案并记录取舍。",
+    "3) 需要运行Node/SQLite或改app才能证实的部分标C层pending，不伪造收据。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未创建第二领域 schema、平行 Source/SummaryDraft/EventMember/Publication 实体或额外状态；runtime 表字段单独标为 accepted ADR 基础设施并逐项给出 schema/state/ADR pointer；移除过强的 bundle_hash 全局唯一；激活 SQL 保留 onboarding_operation_id 且不擅自写 lifecycle，已将冻结 fixture 与 lifecycle_rules 的语义核对列为 C 层需精确断言；未运行生成器、未改 data/app/Spec/ADR、未外连。",
+  "node": "M4/C层准备/数据实现交接",
+  "pointers": [
+    "docs/collaboration/部门/数据部/报告/2026-08-02-M4-C层SQLite与Repository实现交接蓝图.md"
+  ],
+  "report": "docs/collaboration/部门/数据部/报告/2026-08-02-M4-C层SQLite与Repository实现交接蓝图.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-5B8665",
+  "title": "生成M4 C层SQLite与Repository实现交接蓝图",
+  "unverified": [
+    "Node24 node:sqlite 实机、SQLite migration/DDL、WAL/BEGIN IMMEDIATE/CAS/lease/recovery、seed DB 导入、Repository/worker/API/UI/安全运行收据、真实 provider/Base/飞书/网络/部署均未执行，均明确标记 C 层 pending。"
+  ],
+  "updated_at": "2026-08-02T03:19+08:00",
+  "verified": [
+    "只读读取并交叉核对 accepted ADR、docs/spec.md 与冻结 data/mvp-contract-v0 v0.3；报告内机器可读 mapping 的 15 个表集合与 13 个领域 $defs、2 个 internal-only $defs 逐字段相等；JSON pointer、6/5/9、16/4/900、3 seed、11 artifact hash、M3 33/9/59、Publication identity、五 fence、strict hash、snapshot last-known-good 与零外连边界均有追溯；报告 JSON 块可解析，git diff --check 通过。"
+  ]
+}

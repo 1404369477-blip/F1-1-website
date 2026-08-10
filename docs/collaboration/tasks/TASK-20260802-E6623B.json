@@ -1,0 +1,55 @@
+{
+  "acceptance_exit": "docs/handoff.md、docs/progress.md、migration/CURRENT-HANDOFF.md及必要迁移README时态一致；所有删除/保留边界、任务状态、PASS收据和外部能力closed准确；链接不指向已删除文件作为现存产物；git diff --check与task doctor通过；提交统筹收口报告、TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "用户要求迁移后按标准流程清理并恢复推进，并于旧凭证处置问题明确回复“可以”；测试部post-clean终验已PASS并ACK。",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T19:23+08:00",
+      "evidence": "用户要求迁移后按标准流程清理并恢复推进，并于旧凭证处置问题明确回复“可以”；测试部post-clean终验已PASS并ACK。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "领取前impact声明因报告路径位于授权控制根而被拒绝；后续claim命令独立执行导致任务为claimed但impact为空，命中任务失败路径，已停止且未修改目标文档。",
+  "claimed_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "completion_class": "standard",
+  "confirmation": "用户已授权完整复验、清理并恢复任务；本任务只同步本地文档真值，不授权外部能力或业务范围变化。",
+  "created_at": "2026-08-02T19:23+08:00",
+  "department": "统筹部",
+  "details": "基于已ACK的测试任务TASK-20260802-574A6D和安全任务TASK-20260802-026EC3，只更新统筹文档真值：把docs/handoff.md从2026-07-30旧地基状态刷新为当前M4/VS-0施工断点；在docs/progress.md顶部记录M5 macOS26.6复验、旧Local REST凭证删除、约298.6MiB项目清理与6.6MB Homebrew清理、归档已删除但对话/交接保留；更新migration/CURRENT-HANDOFF.md及必要README，明确bundles/manifests/portable-assets/scripts已按授权删除，不能继续引用为现存文件；记录9/9任务同步、7A9C48继续claimed、6F7563恢复执行。不得改Spec/accepted ADR/app/data/design，不重建归档或缓存，不写凭证。",
+  "domain_stage": "project-migration-target-closure-work-resume",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 把已删除迁移归档/脚本写成仍存在，或把历史hash删除：FAIL并按终验收据修正。",
+    "2) 把7A9C48、VS-0安全、R5/R12或6F7563候选写成已完成/放行：FAIL，恢复任务与业务门禁三轴。",
+    "3) 文档更新触及Spec/ADR/app/data/design、凭证值或外部资源：停止并回报统筹。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "项目迁移/目标机终验/施工恢复",
+  "pointers": [
+    "docs/collaboration/部门/统筹部/报告/2026-08-02-新Mac迁移清理与施工恢复收口报告.md"
+  ],
+  "report": "",
+  "resolution": {
+    "evidence": "TASK_IMPACT_OK TASK-20260802-49B4AF revision:2；TASK_CLAIMED TASK-20260802-49B4AF；原统筹窗口回传blocked且未修改目标文档。",
+    "reason": "原任务领取前将受保护报告路径写入impact而失败，后续claim形成impact为空的不一致；替代任务保持相同业务范围，仅以允许的业务文档路径声明impact。",
+    "receipt_id": "RES-20260802T224253-BDCF4AE3",
+    "replacement_revision": 3,
+    "replacement_state": "claimed",
+    "replacement_task_id": "TASK-20260802-49B4AF",
+    "resolved_at": "2026-08-02T22:42+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "superseded",
+    "target_revision_before": 3
+  },
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-E6623B",
+  "title": "收口新Mac迁移清理并刷新项目交接真值",
+  "unverified": [],
+  "updated_at": "2026-08-02T22:42+08:00",
+  "verified": []
+}

@@ -1,0 +1,85 @@
+{
+  "schema_version": "mvp-local-v0.3",
+  "seed_layers_version": "seed-layers-v0.3",
+  "synthetic_only": true,
+  "external_calls": 0,
+  "layers": [
+    {
+      "layer_id": "m3-shadow-seed",
+      "kind": "upstream-shadow",
+      "source_artifact": "data/m3-base-shadow-import-v0/main-source-record-batch.json",
+      "source_sha256": "e73b8d6b8a9b1a018dc7d30c90bfe3111b10caeb6fee28486edf27f176a05de5",
+      "upstream_declared_sha256": "e73b8d6b8a9b1a018dc7d30c90bfe3111b10caeb6fee28486edf27f176a05de5",
+      "row_count": 59,
+      "field_count": 33,
+      "enabled_false_count": 59,
+      "default_policy": [
+        "unknown",
+        "pending",
+        "proposed",
+        false,
+        null
+      ],
+      "isolated_from": [
+        "synthetic-case-seed",
+        "security-error-seed"
+      ],
+      "writes_to_base": false,
+      "layer_hash": "9a179c3272e146a7eededde911634a2dae982fd77204a08cb2df283750860cf2"
+    },
+    {
+      "layer_id": "synthetic-case-seed",
+      "kind": "domain-fixture",
+      "source_artifact": "data/mvp-contract-v0/fixtures.synthetic.json",
+      "source_sha256": "e56122c0d99761df2e48bfed817c45e0e184d10130ea5bfce89e1d1be56f4abf",
+      "case_count": 22,
+      "isolated_from": [
+        "m3-shadow-seed",
+        "security-error-seed"
+      ],
+      "writes_to_base": false,
+      "subsets": [
+        {
+          "subset_id": "published-projection-seed",
+          "source_artifact": "data/mvp-contract-v0/fixtures.synthetic.json",
+          "source_artifact_sha256": "e56122c0d99761df2e48bfed817c45e0e184d10130ea5bfce89e1d1be56f4abf",
+          "selection": "published_projections",
+          "count": 3,
+          "subset_hash": "3fd27686268958435d9ed57dc606a688759bf84d22ac1aaeec992cd35590c3fc"
+        },
+        {
+          "subset_id": "snapshot-failure-seed",
+          "source_artifact": "data/mvp-contract-v0/fixtures.synthetic.json",
+          "source_artifact_sha256": "e56122c0d99761df2e48bfed817c45e0e184d10130ea5bfce89e1d1be56f4abf",
+          "selection": "snapshot_reconciliation",
+          "count": 1,
+          "subset_hash": "726be94727d77534b534447f04d38542f442061644fc0d6572fd8ad0a3e01150"
+        },
+        {
+          "subset_id": "internal-fixtures-seed",
+          "source_artifact": "data/mvp-contract-v0/internal-fixtures.synthetic.json",
+          "source_artifact_sha256": "6fa873675732a06e440d8d67923647a9938d264b1162a485d3abf02ef33f86d8",
+          "selection": "source_observations+audit_events",
+          "count": 5,
+          "subset_hash": "33a88ea7bb2872d3b800fa577555115d8c5a62b5958e56f518f66dce24fd8785"
+        }
+      ],
+      "layer_hash": "c2128c4d5c8b33c0726e7770f88b0a912903bb47dddb5d66c3bf23b0c8587344"
+    },
+    {
+      "layer_id": "security-error-seed",
+      "kind": "security-fixture",
+      "source_artifact": "data/mvp-contract-v0/security-fixtures.synthetic.json",
+      "source_sha256": "66ace7a1e1800d740f75b35fd55234c7417b9acae7ef1c0a32757eec3051db22",
+      "case_count": 16,
+      "isolated_from": [
+        "m3-shadow-seed",
+        "synthetic-case-seed"
+      ],
+      "writes_to_base": false,
+      "layer_hash": "875d6e9a519d588784fd57821b2de2ca58fc59c70a94783d478b4cb45a0276f9"
+    }
+  ],
+  "layer_count": 3,
+  "separation_rule": "Exactly three top-level seed layers; published projection, snapshot failure and internal records are synthetic-case subsets and cannot overwrite M3 shadow data."
+}

@@ -1,0 +1,78 @@
+{
+  "acceptance_exit": "形成一份单一、可引用的窄范围accepted successor或等价不可变决策入口及更新后的实施合同；逐项区分已确认、未确认、已实施、未实施；给出Mac/iPhone外出访问链、MacBook电源/休眠/更新策略、宽带与overlay故障恢复、异机备份边界和回退；公开主机与生产部署不被误批准；三路只读对抗审查P0=0/P1=0，报告列已验证/未验证和错题自检，TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/decisions/system/2026-08-09-F1+1-M5-Admin-MacBook主机落点-successor-accepted.md",
+    "docs/spec/F1+1-M5-Admin-MacBook主机补充实施合同-v0.1.md",
+    "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md",
+    "docs/spec/README.md",
+    "docs/spec.md",
+    "docs/progress.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-09-Admin-MacBook主机落点successor与实施合同报告.md"
+  ],
+  "authorization_evidence": "用户于当前会话选择B：家中或办公室的常开MacBook",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T13:58+08:00",
+      "evidence": "用户于当前会话选择B：家中或办公室的常开MacBook",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "用户明确选择B：家中或办公室常开的MacBook；只授权合同吸收，不授权真实网络、设备配置、端口、密钥、部署或付费。",
+  "created_at": "2026-08-09T13:58+08:00",
+  "department": "产品部",
+  "details": "用户已明确选择家中或办公室的常开MacBook作为独立Admin主机。基于已accepted的ADR-M5-ADMIN-DUAL-HOST-001与Admin双主机实施合同v0.2，创建窄范围successor/补充合同并同步docs/spec.md、初版全功能追踪矩阵和progress：Admin主机位于用户控制的常开MacBook；Mac/iPhone日常经私有overlay客户端访问，人在外面只要两端联网且设备健康即可访问；应急公网入口继续默认关闭。公开只读主机仍独立，供应商/地域/域名/TLS/生产manifest不由本选择批准。必须明确MacBook睡眠、重启、合盖、系统更新、断电、家庭宽带/CGNAT、overlay控制面故障、设备丢失/共用、备份同故障域的失败状态与恢复边界；RTO≤4h、RPO≤15m、加密异机备份与隔离恢复演练保持。不得把端口转发、UPnP、隐藏URL、长期公网Admin或公网隧道写成日常入口；不得修改既有accepted正文，实质变化用新successor。设备是否专用仍为唯一未决输入，写成deployment前门禁，不自行假设。",
+  "domain_stage": "M5 Admin主机落点冻结",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若需要确定专用设备还是日常共用设备，保留为唯一deployment前用户门禁，不代替用户选择。",
+    "若RTO/RPO需要依赖第二写主、数据库双活或长期公网Admin才能成立，停止该扩张并返回最小替代，不静默增加架构。",
+    "若与既有accepted ADR冲突，不原地改写旧正文；新建successor并保持历史链和回退语义。"
+  ],
+  "from_department": "统筹部",
+  "impact_declaration": {
+    "admission": "manual",
+    "base_revision": "a9691e71b1552592cc5ded8d5db66c336262301c",
+    "external_effects": [
+      "none；仅本地产品文档，不操作设备、网络、端口、密钥、资源或部署"
+    ],
+    "owner_task": "TASK-20260809-2F423C",
+    "shared_contracts": [
+      "常开MacBook作为独立Admin主机；公开只读主机继续独立；设备是否专用为唯一部署前用户门禁"
+    ],
+    "write_paths": [
+      "docs/decisions/system/2026-08-09-F1+1-M5-Admin-MacBook主机落点-successor-accepted.md",
+      "docs/spec/F1+1-M5-Admin-MacBook主机补充实施合同-v0.1.md",
+      "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md",
+      "docs/spec/README.md",
+      "docs/spec.md",
+      "docs/progress.md"
+    ]
+  },
+  "mistake_check": "未把常开写成已验证事实；未外推专用设备、Admin业务/视觉或部署批准；未开公网Admin/端口/UPnP/隧道；未把overlay替代app认证或在freshness unknown时保留远程读；未把public-host当主库/备份；未新增第二写主/schema/真值；未改旧accepted正文/app/data/design；未执行设备、网络、密钥、付费、外发或部署",
+  "node": "把用户已确认的Admin主机落点转成可实施且不误扩张的系统合同",
+  "pointers": [
+    "docs/decisions/system/2026-08-09-F1+1-M5-Admin双主机拓扑-successor-accepted.md",
+    "docs/spec/F1+1-M5-Admin双主机实施合同-v0.2.md",
+    "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-09-Admin-MacBook主机落点successor与实施合同报告.md",
+  "resolution": null,
+  "revision": 5,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-2F423C",
+  "title": "冻结家中/办公室常开MacBook的Admin主机落点合同",
+  "unverified": [
+    "MacBook专用或共用仍待用户回答；精确设备/OS/地点、供电/UPS、FileVault/R5、overlay/CGNAT、跨网双端、异机备份介质/密钥/地域、真实RPO-RTO、public-host、DNS/TLS、监控/成本、完整production manifest与部署均未实施/未验证/未授权"
+  ],
+  "updated_at": "2026-08-09T14:14+08:00",
+  "verified": [
+    "家中或办公室常开MacBook落点已形成窄范围accepted successor；公开只读主机独立、唯一写主、Mac/iPhone私有链、供电/睡眠/更新/宽带/overlay/丢失/备份/RTO-RPO与回退合同闭合；专用/共用只作为真实设备与deployment门禁；predecessor两份SHA保持不变；三路只读对抗审查最终P0=0/P1=0；diff-check、关键语义、链接存在性与doctor通过；无外部IO"
+  ]
+}

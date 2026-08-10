@@ -1,0 +1,166 @@
+{
+  "mapping_version": "public-read-v0.2-machine-allowlist",
+  "query_root": {
+    "kind": "entity",
+    "owner": "PublishedProjection",
+    "json_pointer": "/projection_status",
+    "transform": "require_published"
+  },
+  "integrity_gate": {
+    "kind": "gate",
+    "owner": "projection-chain",
+    "json_pointer": "",
+    "transform": "require_exact_approved_hash_fence_chain_before_emit"
+  },
+  "feed_item": {
+    "publicId": {
+      "kind": "field",
+      "owner": "Publication",
+      "json_pointer": "/public_id",
+      "transform": "identity_after_projection_match"
+    },
+    "contentType": {
+      "kind": "field",
+      "owner": "Content",
+      "json_pointer": "/editorial_category",
+      "transform": "identity"
+    },
+    "state": {
+      "kind": "derived",
+      "owner": "ReleaseBundle",
+      "json_pointer": "/canonical_payload",
+      "transform": "derive_state_access_then_media"
+    },
+    "titleZh": {
+      "kind": "field",
+      "owner": "Summary",
+      "json_pointer": "/title_zh",
+      "transform": "identity"
+    },
+    "summaryZh": {
+      "kind": "field",
+      "owner": "Summary",
+      "json_pointer": "/summary_zh",
+      "transform": "identity"
+    },
+    "publishedAt": {
+      "kind": "field",
+      "owner": "Publication",
+      "json_pointer": "/published_at",
+      "transform": "identity"
+    },
+    "sourcePublishedAt": {
+      "kind": "field",
+      "owner": "ReleaseBundle",
+      "json_pointer": "/canonical_payload/time_snapshot/source_published_at",
+      "transform": "identity"
+    },
+    "sourceTimeStatus": {
+      "kind": "field",
+      "owner": "ReleaseBundle",
+      "json_pointer": "/canonical_payload/time_snapshot/source_time_status",
+      "transform": "identity"
+    },
+    "source.sourceId": {
+      "kind": "field",
+      "owner": "ReleaseBundle",
+      "json_pointer": "/canonical_payload/source_snapshot/source_id",
+      "transform": "identity"
+    },
+    "source.platform": {
+      "kind": "field",
+      "owner": "ReleaseBundle",
+      "json_pointer": "/canonical_payload/source_snapshot/platform",
+      "transform": "identity"
+    },
+    "source.displayName": {
+      "kind": "field",
+      "owner": "ReleaseBundle",
+      "json_pointer": "/canonical_payload/source_snapshot/display_name",
+      "transform": "identity"
+    },
+    "source.byline": {
+      "kind": "field",
+      "owner": "ReleaseBundle",
+      "json_pointer": "/canonical_payload/source_snapshot/byline",
+      "transform": "identity"
+    },
+    "source.accessStatus": {
+      "kind": "derived",
+      "owner": "ReleaseBundle",
+      "json_pointer": "/canonical_payload/access_snapshot/content_access_status",
+      "transform": "map_available_or_restricted"
+    },
+    "media": {
+      "kind": "derived",
+      "owner": "ReleaseBundle",
+      "json_pointer": "/canonical_payload/media_presentation",
+      "transform": "allowlisted_synthetic_media_or_null"
+    },
+    "originalLink.enabled": {
+      "kind": "constant",
+      "owner": "public-synthetic",
+      "json_pointer": "/original_link",
+      "transform": "const_false"
+    },
+    "originalLink.url": {
+      "kind": "constant",
+      "owner": "public-synthetic",
+      "json_pointer": "/original_link",
+      "transform": "const_null"
+    },
+    "originalLink.reason": {
+      "kind": "field",
+      "owner": "ReleaseBundle",
+      "json_pointer": "/canonical_payload/access_snapshot/original_link_reason",
+      "transform": "allowlist_synthetic_only_or_source_restricted"
+    }
+  },
+  "detail_extension": {
+    "leadZh": {
+      "kind": "field",
+      "owner": "Summary",
+      "json_pointer": "/lead_zh",
+      "transform": "identity"
+    },
+    "bodyZh": {
+      "kind": "field",
+      "owner": "Summary",
+      "json_pointer": "/body_zh",
+      "transform": "identity"
+    },
+    "keyPointsZh": {
+      "kind": "field",
+      "owner": "Summary",
+      "json_pointer": "/key_points_zh",
+      "transform": "identity"
+    }
+  },
+  "related_items": {
+    "kind": "derived",
+    "owner": "validated-feed-set",
+    "json_pointer": "",
+    "transform": "same_category_then_global_exclude_self_unique_max3"
+  },
+  "ordering": [
+    "Publication.published_at DESC",
+    "PublishedProjection.public_id DESC"
+  ],
+  "page_size": 12,
+  "blocked_pointer_tokens": [
+    "canonical_url",
+    "external_url",
+    "source_evidence_url",
+    "original_url",
+    "hash",
+    "fence",
+    "epoch",
+    "reviewer",
+    "decision_reason",
+    "raw",
+    "internal",
+    "private",
+    "ledger",
+    "evidence_ref"
+  ]
+}

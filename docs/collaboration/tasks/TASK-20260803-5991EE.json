@@ -1,0 +1,55 @@
+{
+  "acceptance_exit": "测试部提交final审核报告，给出PASS/FAIL、P0/P1/P2、精确SHA与Node24命令收据、390/1440/深浅主题/0-1-3-12/详情44px/HTTP 200-200-404/console/外部资源结果；停止后3000/3101零监听；TASK_STATE_OK。只有P0=0且P1=0才可PASS。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-08-03-M4-VS-1公开前端P1整改独立回归报告.md"
+  ],
+  "authorization_evidence": "用户持续目标要求交付可用初版，且已授权按部门推进；公开前端复杂整改必须独立回归。",
+  "authorization_history": [
+    {
+      "at": "2026-08-03T00:40+08:00",
+      "evidence": "用户持续目标要求交付可用初版，且已授权按部门推进；公开前端复杂整改必须独立回归。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "测试部/审核成员:/root/test_frontend_p1_postfix",
+  "completion_class": "audit",
+  "confirmation": "测试完成后由统筹结合设计部独立核验决定是否ACK开发整改和前序公开前端；另案后端、Next启动安全、R5/R12不随本任务放行。",
+  "created_at": "2026-08-03T00:40+08:00",
+  "department": "测试部",
+  "details": "先核对开发报告列出的10个UI文件SHA与当前字节一致；再用固定Node24独立执行公开UI测试、lint、typecheck、build和可行的完整check。必须亲自验证原4项P1：双主题媒体标签对比度>=4.5:1；分类选中态同时具备aria-pressed、非颜色可见标记和字重；no-more与分类/关键词组合0/1/3/12数量一致；详情返回链接在390/1440均>=44x44。继续验证RootLayout共享Shell在首页/详情/段级404只有一个TopBar、导航current正确、浅色跨路由/刷新保持、无水合/控制台错误；demo-boundary不被sticky遮挡；H1/H2/H3连续；无外部HTTP(S)资源。不得修改app/Spec/ADR/data/design/lock。",
+  "domain_stage": "独立测试验收",
+  "event_receipts": [
+    "测试部独立回归PASS｜P0=0/P1=0/P2=2｜报告SHA256=2df465540913b306e47e0a15e9ebd5ed144b7f27520de29a10f942ea2d371add｜3000/3101 CLEAR"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一SHA与开发完成快照不一致或测试中发生并发修改：停止并按快照漂移FAIL，不混用证据。",
+    "原4项P1任一未闭合，或共享Shell造成404、current、主题、水合、焦点/响应式退化：P1/FAIL，只报告不修改。",
+    "浏览器或命令受宿主限制无法独立执行：明确NOT_RUN和证据缺口，清理进程后不得继承开发报告写PASS。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未继承开发报告浏览器证据；dirty工作树用10文件双重SHA复算隔离；browser不支持networkidle后改用其支持的domcontentloaded与目标状态；一次空字符串fill未清空受控输入后，使用dialog唯一清除按钮并重新取得12条证据；只提交测试报告和任务状态，未ack或改上游。",
+  "node": "对TASK-20260803-CD4228整改后快照做独立功能、响应式、主题、语义和回归测试",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260803-CD4228.json",
+    "docs/collaboration/部门/开发部/报告/2026-08-03-M4-VS-1公开前端P1整改实现报告.md",
+    "design/ui/F1+1-首批页面实现级设计合同-v0.1.md"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-08-03-M4-VS-1公开前端P1整改独立回归报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260803-5991EE",
+  "title": "独立回归公开前端P1整改快照",
+  "unverified": [
+    "VoiceOver/NVDA/TalkBack实机、完整200% zoom与forced-colors未执行；依赖SQLite/API的loading/error/partial/live-refresh/withdrawn/correction及admin/真实外部能力不由本任务覆盖。"
+  ],
+  "updated_at": "2026-08-03T12:58+08:00",
+  "verified": [
+    "固定Node24.18.0/npm11.16.0下test 51/51（公开UI 9/9）、lint、typecheck、build、完整check均exit0；10个UI文件前后SHA与开发报告完全一致；390/1440深浅主题、原4项P1、0/1/3/12、详情58.242x44、首页/详情/404单Shell与current、主题跨路由刷新、sticky锚点、H1/H2/H3、HTTP 200/200/404、console零warn/error和实际资源单一localhost origin均通过；停止后3000/3101 CLEAR。"
+  ]
+}

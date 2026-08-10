@@ -1,0 +1,404 @@
+[
+  {
+    "type": "text",
+    "name": "source_id",
+    "description": "项目内稳定主键；创建后不随 handle 改名"
+  },
+  {
+    "type": "select",
+    "name": "platform",
+    "multiple": false,
+    "options": [
+      {
+        "name": "x"
+      }
+    ]
+  },
+  {
+    "type": "text",
+    "name": "platform_account_id",
+    "description": "可靠取得前保持空值"
+  },
+  {
+    "type": "text",
+    "name": "handle"
+  },
+  {
+    "type": "text",
+    "name": "raw_url",
+    "style": {
+      "type": "url"
+    }
+  },
+  {
+    "type": "text",
+    "name": "canonical_url",
+    "style": {
+      "type": "url"
+    }
+  },
+  {
+    "type": "checkbox",
+    "name": "canonical_url_valid"
+  },
+  {
+    "type": "text",
+    "name": "normalizer_version"
+  },
+  {
+    "type": "select",
+    "name": "normalization_status",
+    "multiple": false,
+    "options": [
+      {
+        "name": "pending"
+      },
+      {
+        "name": "valid"
+      },
+      {
+        "name": "invalid"
+      },
+      {
+        "name": "needs_review"
+      }
+    ]
+  },
+  {
+    "type": "select",
+    "name": "dedup_status",
+    "multiple": false,
+    "options": [
+      {
+        "name": "pending"
+      },
+      {
+        "name": "unique"
+      },
+      {
+        "name": "linked_existing"
+      },
+      {
+        "name": "needs_review"
+      }
+    ]
+  },
+  {
+    "type": "select",
+    "name": "entity_type",
+    "multiple": false,
+    "options": [
+      {
+        "name": "official_org_team_event"
+      },
+      {
+        "name": "driver_or_manager"
+      },
+      {
+        "name": "journalist_commentator_media"
+      },
+      {
+        "name": "fan_news_aggregator"
+      },
+      {
+        "name": "image_entertainment_other"
+      }
+    ]
+  },
+  {
+    "type": "select",
+    "name": "content_focus",
+    "multiple": false,
+    "options": [
+      {
+        "name": "team_or_series_updates"
+      },
+      {
+        "name": "driver_or_manager_updates"
+      },
+      {
+        "name": "journalism_commentary"
+      },
+      {
+        "name": "fan_news_aggregation"
+      },
+      {
+        "name": "visual_entertainment_or_other"
+      }
+    ]
+  },
+  {
+    "type": "select",
+    "name": "priority",
+    "multiple": false,
+    "options": [
+      {
+        "name": "high"
+      },
+      {
+        "name": "medium"
+      },
+      {
+        "name": "low"
+      }
+    ]
+  },
+  {
+    "type": "select",
+    "name": "verification_status",
+    "multiple": false,
+    "options": [
+      {
+        "name": "pending"
+      },
+      {
+        "name": "confirmed"
+      },
+      {
+        "name": "rejected"
+      }
+    ]
+  },
+  {
+    "type": "select",
+    "name": "identity_status",
+    "multiple": false,
+    "options": [
+      {
+        "name": "unknown"
+      },
+      {
+        "name": "verified"
+      },
+      {
+        "name": "needs_review"
+      }
+    ]
+  },
+  {
+    "type": "select",
+    "name": "relevance_status",
+    "multiple": false,
+    "options": [
+      {
+        "name": "unknown"
+      },
+      {
+        "name": "qualified"
+      },
+      {
+        "name": "rejected"
+      }
+    ]
+  },
+  {
+    "type": "select",
+    "name": "monitorability",
+    "multiple": false,
+    "options": [
+      {
+        "name": "unknown"
+      },
+      {
+        "name": "monitorable"
+      },
+      {
+        "name": "restricted"
+      },
+      {
+        "name": "unavailable"
+      }
+    ]
+  },
+  {
+    "type": "select",
+    "name": "adapter_status",
+    "multiple": false,
+    "options": [
+      {
+        "name": "unchecked"
+      },
+      {
+        "name": "ready"
+      },
+      {
+        "name": "missing"
+      },
+      {
+        "name": "unavailable"
+      }
+    ]
+  },
+  {
+    "type": "select",
+    "name": "adapter_authorization_status",
+    "multiple": false,
+    "options": [
+      {
+        "name": "unknown"
+      },
+      {
+        "name": "valid"
+      },
+      {
+        "name": "invalid"
+      },
+      {
+        "name": "expired"
+      }
+    ]
+  },
+  {
+    "type": "datetime",
+    "name": "authorization_checked_at",
+    "style": {
+      "format": "yyyy-MM-dd HH:mm"
+    }
+  },
+  {
+    "type": "datetime",
+    "name": "authorization_expires_at",
+    "style": {
+      "format": "yyyy-MM-dd HH:mm"
+    }
+  },
+  {
+    "type": "select",
+    "name": "collection_onboarding_status",
+    "multiple": false,
+    "options": [
+      {
+        "name": "validating"
+      },
+      {
+        "name": "activation_pending"
+      },
+      {
+        "name": "queued"
+      },
+      {
+        "name": "collecting"
+      },
+      {
+        "name": "active"
+      },
+      {
+        "name": "normalization_failed"
+      },
+      {
+        "name": "dedup_needs_review"
+      },
+      {
+        "name": "linked_existing"
+      },
+      {
+        "name": "blocked_adapter_missing"
+      },
+      {
+        "name": "blocked_authorization"
+      },
+      {
+        "name": "blocked_platform"
+      },
+      {
+        "name": "queue_failed"
+      },
+      {
+        "name": "collection_failed"
+      }
+    ]
+  },
+  {
+    "type": "text",
+    "name": "onboarding_operation_id",
+    "description": "首次生成后不可变；重试必须复用"
+  },
+  {
+    "type": "select",
+    "name": "lifecycle_status",
+    "multiple": false,
+    "options": [
+      {
+        "name": "proposed"
+      },
+      {
+        "name": "active"
+      },
+      {
+        "name": "paused"
+      },
+      {
+        "name": "retired"
+      }
+    ]
+  },
+  {
+    "type": "checkbox",
+    "name": "enabled"
+  },
+  {
+    "type": "datetime",
+    "name": "manual_disable_at",
+    "style": {
+      "format": "yyyy-MM-dd HH:mm"
+    }
+  },
+  {
+    "type": "select",
+    "name": "source_stop_status",
+    "multiple": false,
+    "options": [
+      {
+        "name": "clear"
+      },
+      {
+        "name": "manual"
+      },
+      {
+        "name": "compliance"
+      },
+      {
+        "name": "authorization"
+      },
+      {
+        "name": "platform"
+      }
+    ]
+  },
+  {
+    "type": "number",
+    "name": "source_safety_epoch",
+    "style": {
+      "type": "plain",
+      "precision": 0,
+      "percentage": false,
+      "thousands_separator": false
+    }
+  },
+  {
+    "type": "datetime",
+    "name": "added_at",
+    "style": {
+      "format": "yyyy-MM-dd"
+    }
+  },
+  {
+    "type": "text",
+    "name": "evidence_url",
+    "style": {
+      "type": "url"
+    }
+  },
+  {
+    "type": "text",
+    "name": "notes"
+  },
+  {
+    "type": "text",
+    "name": "migration_batch_id"
+  },
+  {
+    "type": "text",
+    "name": "change_reason"
+  }
+]

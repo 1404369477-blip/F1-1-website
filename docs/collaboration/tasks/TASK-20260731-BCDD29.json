@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "提交Markdown proposed决策包；链接结构化清单、分类字典和研究报告；给出A/B/C/D的清晰选择、A/D短名单及权衡、手机最短录入流程、最小字段合同、维护/删减/溯源原则、分阶段迁移路径；列出用户下一步只需回答的一项门禁：手机新增立即采集还是先待验证；列出已验证/未验证与自检；完成TASK并输出TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/decisions/system/2026-07-31-F1+1-信源库维护决策包-proposed.md"
+  ],
+  "authorization_evidence": "主会话用户于2026-07-31明确要求整理信源并给出维护方案选择。",
+  "authorization_history": [
+    {
+      "at": "2026-07-31T19:30+08:00",
+      "evidence": "主会话用户于2026-07-31明确要求整理信源并给出维护方案选择。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "用户明确要求整理分类并比较本地、飞书等信源库维护方案，且补充单人维护和手机随时快速添加。",
+  "created_at": "2026-07-31T19:30+08:00",
+  "department": "产品部",
+  "details": "基于已核收的数据部与研究部产出，形成面向用户的 proposed 决策包：概括59条X信源的临时分类，比较A飞书单一真值、B Git JSONL单一真值、C SQLite单一真值、D飞书单一真值加本地只读快照；重点适配当前单人维护和手机随时快速添加。必须严格区分用户已确认、产品建议、unknown；候选隔离/待验证收件箱只作为待用户确认项。不得创建真实飞书资源，不冻结Spec，不替用户选择。",
+  "domain_stage": "M2风险调研",
+  "event_receipts": [
+    "MIL-20260731T195011-697DBA"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "不得把59个账号的临时分类写成身份或官方认证结论；不得把待验证收件箱写成用户已确认；不得把lark-cli已安装写成飞书资源已授权；D必须保持Base单一业务真值且仅Base到本地单向同步；评分和建议不得写成用户已批准。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已读取项目错题集，当前无历史错题条目；额外自检未把临时分类当身份、未把CLI安装当飞书授权、未把待验证事项写成用户已确认、未让D形成反向同步或双真值、未把研究评分写成用户批准，也未创建真实飞书资源、冻结Spec或初始化app。",
+  "node": "M2-信源库产品决策包",
+  "pointers": [
+    "data/x-source-inventory-v0.csv",
+    "research/x-source-classification-data-dictionary-v0.md",
+    "docs/collaboration/部门/研究部/报告/2026-07-31-飞书多维表格与本地信源库维护方案比较.md"
+  ],
+  "report": "已提交proposed信源库决策包。用户下一步唯一产品门禁为：手机提交新信源后立即进入采集集合，还是先待验证。当前未创建真实资源、未冻结Spec、未初始化app；实施级安全合同列入未验证。",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260731-BCDD29",
+  "title": "综合首批信源分类与信源库维护方案",
+  "unverified": [
+    "用户尚未选择手机新增立即采集或先待验证；真实飞书账号、租户、应用scope、Base与表单均未授权或验证；手机真机路径、59个账号身份/F1相关性/可监控性、D同步与恢复、费用容量和告警阈值均未验证；A/D的实现级一致性fencing、人工停用安全锁、硬删除tombstone强校验及变更事件可恢复payload仍须在实施前细化与测试。"
+  ],
+  "updated_at": "2026-07-31T19:50+08:00",
+  "verified": [
+    "S1-S3链接均可解析；CSV复核为59条且规范URL唯一，临时分类15/28/12/2/2、优先级15/40/4，identity与monitorability均unknown、lifecycle均proposed；决策包明确D为目标、A为前置阶段，Base为唯一业务真值且仅Base→本地单向同步；覆盖手机候选最短路径、最小字段、维护删除溯源、阶段迁移与唯一用户门禁；Markdown围栏、尾随空格、引用路径及TASK doctor校验通过；三路独立只读对抗审查已完成并回收修订。"
+  ]
+}

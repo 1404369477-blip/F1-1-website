@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "task_id": "TASK-20260801-5A90E3",
+  "mode": "offline_payload_only",
+  "external_write_performed": false,
+  "input": {
+    "path": "data/x-source-inventory-v0.csv",
+    "sha256": "bbb84a7f8f625e8106ae6e0b2714a363940dbf3f20dcbbf300fa6552de1ac01b",
+    "data_rows": 59,
+    "source_id_case_insensitive_unique": 59,
+    "canonical_url_case_insensitive_unique": 59
+  },
+  "contract": {
+    "path": "docs/collaboration/部门/产品部/报告/2026-08-01-F1+1飞书Base影子建表-M3执行包.md",
+    "sha256": "86ce6de47711ae912059a1ea4122a1885b7990385f6930cd050749feebf118c1",
+    "migration_batch_id": "M3-20260801-X59-01"
+  },
+  "payloads": [
+    {
+      "path": "data/m3-base-shadow-import-v0/main-source-fields.json",
+      "sha256": "b743abaee8ef68db586148e58afdcc9dec2b6fe07bab61ad7c779327d4076870"
+    },
+    {
+      "path": "data/m3-base-shadow-import-v0/mobile-capture-fields.json",
+      "sha256": "378b2c2b0c1369198dfa84e8961d7ad1a4aa247238a1389c213dbf7dc37ea6b6"
+    },
+    {
+      "path": "data/m3-base-shadow-import-v0/main-source-record-batch.json",
+      "sha256": "e73b8d6b8a9b1a018dc7d30c90bfe3111b10caeb6fee28486edf27f176a05de5"
+    }
+  ],
+  "counts": {
+    "main_source_field_definitions": 33,
+    "mobile_capture_field_definitions": 9,
+    "record_fields": 33,
+    "record_rows": 59,
+    "values_per_record": 33
+  },
+  "default_value_checks": {
+    "dedup_status_pending": 59,
+    "verification_status_pending": 59,
+    "identity_status_unknown": 59,
+    "relevance_status_unknown": 59,
+    "monitorability_unknown": 59,
+    "adapter_authorization_status_unknown": 59,
+    "lifecycle_status_proposed": 59,
+    "enabled_false": 59,
+    "migration_batch_id_matches": 59
+  },
+  "security": {
+    "credential_material_present": false,
+    "external_resource_identifiers_present": false,
+    "personal_identifiers_present": false
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "acceptance_exit": "交付可溯源选型报告：唯一推荐有精确版本/许可证/官方链接，列出每项安全控制由库或调用方承担；说明新增依赖必要性、风险、锁定与回退，开发可据此提出一次用户依赖确认并做纯本地spike。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/研究部/报告/2026-08-09-Node24安全RSS-XML解析器最小选型.md"
+  ],
+  "authorization_evidence": "官方资料只读调研，无安装或真实RSS I/O",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T10:16+08:00",
+      "evidence": "官方资料只读调研，无安装或真实RSS I/O",
+      "state": "none"
+    }
+  ],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "研究部/019fb36c-1f86-78d3-a6d7-f87f124bd710",
+  "completion_class": "standard",
+  "confirmation": "本任务只做官方资料调研，不授权新增依赖、安装、真实RSS请求、Source启用或生产采集。",
+  "created_at": "2026-08-09T10:16+08:00",
+  "department": "研究部",
+  "details": "截至2026-08-09只使用官方/第一方资料，核对Node24是否有可用内置XML解析器，并比较最多3个仍维护的Node XML候选（优先saxes、fast-xml-parser及一个必要替代）：当前稳定版本、发布时间、Node兼容、许可证、直接/传递依赖、DTD/DOCTYPE/外部实体/XInclude/网络schema行为、流式或有界解析、终止/超时能力、维护活跃度和官方安全公告。必须逐项映射VS-RSS-0的1MiB、10000节点、深度32、字段16384字节、20 item、完整响应拒绝与zero-network要求；区分库原生保证、需调用方实现、无法证明。输出唯一推荐+一个回退+不选理由和最小disposable spike验收；不得安装包、改lockfile、发RSS请求或以博客/聚合站替代官方证据。",
+  "domain_stage": "VS-RSS-0解析器选型",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "候选无法证明禁用DTD/实体或安全停止：淘汰并记录，不以默认安全推断。",
+    "官方资料与实现/版本元数据冲突：标Unknown并用源码/发布记录交叉核对，不能唯一推荐则提交最小二选一。",
+    "调研需要安装包或访问真实RSS：保持只读官方证据，不执行安装或真实请求。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "首轮独立审查发现保真配置、完整 validator 和 reason code 合同缺口，已补齐并经最终复核 PASS；确认没有把 processEntities:false 当 DOCTYPE 原生拒绝，没有把 engines 当 Node24 实跑，没有把 advisory 零结果当无漏洞，没有把外部调用计数0当系统级 no-egress；未安装、未执行包、未改 lockfile、未访问真实 RSS、未改 Spec/ADR/app/data；TASK_STATE_OK。",
+  "node": "解除RSS运输层实现对安全XML解析能力和新依赖选择的阻断",
+  "pointers": [
+    "docs/decisions/system/2026-08-09-F1+1-VS-RSS-0本地低频RSS试验-draft.md"
+  ],
+  "report": "docs/collaboration/部门/研究部/报告/2026-08-09-Node24安全RSS-XML解析器最小选型.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-14C467",
+  "title": "Node24安全RSS/XML解析器最小选型证据",
+  "unverified": [
+    "未安装或执行候选；Node 24 实跑、精确 lock 图、保真配置、namespace/CDATA/相邻文本、攻击 fixtures、Worker 内存/2秒阈值和系统调用级 no-egress 待用户批准后的纯本地 spike；未发真实 RSS 请求。"
+  ],
+  "updated_at": "2026-08-09T10:39+08:00",
+  "verified": [
+    "Node 24.18.0 无内置 XML/DOM parser；fast-xml-parser 5.10.1、saxes 6.0.0、@xmldom/xmldom 0.9.10 的官方版本/日期/许可证/依赖/源码行为/维护状态与 GitHub Advisory Database 当前结果；VS-RSS-0 全控制映射；独立对抗审查最终 PASS。"
+  ]
+}

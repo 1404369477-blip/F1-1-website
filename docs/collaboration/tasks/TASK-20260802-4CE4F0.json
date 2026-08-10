@@ -1,0 +1,57 @@
+{
+  "acceptance_exit": "提交安全复验报告唯一PASS/FAIL；PASS要求B层P0=0/P1=0、secret/源/版本/脚本/defaults边界通过，原生包风险明确后置C层且未执行；完成后TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-02-M4-B层依赖锁与安全默认地基复验报告.md"
+  ],
+  "authorization_evidence": "用户已授权持续推进本地网站工程；本任务纯本地只读，无外部I/O",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T03:33+08:00",
+      "evidence": "用户已授权持续推进本地网站工程；本任务纯本地只读，无外部I/O",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "安全与测试两份B层PASS后才进入C层本地实现；真实外部能力继续关闭。",
+  "created_at": "2026-08-02T03:33+08:00",
+  "department": "安全部",
+  "details": "只读复验已ACK的TASK-20260802-F8BF72与TASK-20260802-D2724D及app/静态地基。检查package/lock唯一真值、精确Node24.18.0/npm11.16.0/Next16.2.11与直接依赖一致、全部resolved官方HTTPS registry、integrity完整、无浮动/git/file/workspace/非官方源；核对hasInstallScript/optional native只为元数据且没有node_modules/或lifecycle执行。检查.npmrc engine-strict/ignore-scripts、.env.example loopback/fixture/mock/manual_only/REAL_*=false、无secret/proxy/真实provider变量，pending脚本非零拒绝，gitignore保护本地DB/env。只评B静态地基；Node24/npm ci/license/runtime/业务为C pending。禁止改文件、联网、安装依赖或运行脚本。",
+  "domain_stage": "M4-B-independent-security-review",
+  "event_receipts": [
+    "MIL-20260802T034329-FE8753"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 非官方resolved、integrity缺失、浮动依赖、secret或真实外联默认值：FAIL并定位。",
+    "2) 仅hasInstallScript/optional元数据存在且无执行证据：记录C层风险，不误报已执行；若node_modules或执行痕迹存在则FAIL。",
+    "3) Node24/npm ci/license运行证据缺失列C层pending，不用Node25替代。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已保留 F8BF72 PARTIAL 历史；未把 hasInstallScript/optional 元数据当成已执行，未用 Node25冒充Node24，未运行 npm ci、项目脚本、lifecycle、联网或安装。",
+  "node": "M4/B层/独立安全复验",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-02-M4-B层依赖锁与安全默认地基复验报告.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-02-M4-B层依赖锁与安全默认地基复验报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-4CE4F0",
+  "title": "复验M4 B层依赖锁与安全默认地基",
+  "unverified": [
+    "Node24/npm11.16.0 实机运行、npm ci、license/native/runtime、SQLite、构建、测试与 C 层业务验收仍 pending；当前 Node25/npm11.8 不替代。",
+    "真实 provider、Base/飞书、Collector、平台采集、AI/媒体、发布、部署和其他外部 IO 继续关闭。"
+  ],
+  "updated_at": "2026-08-02T03:44+08:00",
+  "verified": [
+    "package.json 与 package-lock.json 根合同、精确 Node24.18.0/npm11.16.0/Next16.2.11/React19.2.0 及全部直接依赖版本一致。",
+    "399/399 非根 resolved 均为 https://registry.npmjs.org/，399/399 integrity 均为 sha512；无浮动、git、file、workspace、非官方源。",
+    "npmrc engine-strict/ignore-scripts、env loopback/fixture/mock/manual_only/REAL=false、gitignore 敏感文件保护和 pending 非零拒绝通过；无 secret、真实 provider 或外联默认值。",
+    "hasInstallScript 仅有 sharp 0.34.5 与 unrs-resolver 1.12.2，optional 条目 64 个；node_modules、构建输出与 lifecycle 执行证据均不存在。"
+  ]
+}

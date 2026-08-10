@@ -1,0 +1,274 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:f1plus1:security-fixtures:mvp-local-v0.3",
+  "title": "F1+1 synthetic P0 security and error fixtures",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "mvp-local-v0.3"
+    },
+    "fixture_set": {
+      "const": "synthetic-security-v0-3"
+    },
+    "canonical_json_rule_version": {
+      "const": "canonical-json-v1"
+    },
+    "canonical_json_rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "const": "canonical-json-v1"
+        },
+        "encoding": {
+          "const": "UTF-8"
+        },
+        "key_order": {
+          "const": "lexicographic Unicode code-point order"
+        },
+        "whitespace": {
+          "const": "compact JSON separators comma=',' and colon=':'"
+        },
+        "numbers": {
+          "const": "finite JSON numbers only; no NaN, Infinity or exponent rewriting"
+        },
+        "nulls": {
+          "const": "preserve explicit null values; never omit a present null"
+        },
+        "unicode": {
+          "const": "preserve Unicode code points with ensure_ascii=false; no NFC/NFD normalization"
+        },
+        "hash": {
+          "const": "SHA-256 over the exact compact UTF-8 byte sequence"
+        },
+        "rfc8785": {
+          "const": "project-defined canonical JSON; not RFC 8785 JCS"
+        }
+      },
+      "required": [
+        "version",
+        "encoding",
+        "key_order",
+        "whitespace",
+        "numbers",
+        "nulls",
+        "unicode",
+        "hash",
+        "rfc8785"
+      ]
+    },
+    "synthetic_only": {
+      "const": true
+    },
+    "external_calls": {
+      "const": 0
+    },
+    "redaction_policy": {
+      "const": "synthetic-only-no-secret-no-network"
+    },
+    "categories": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "adapter_missing",
+          "authorization_invalid",
+          "platform_blocked",
+          "http_429",
+          "http_5xx",
+          "timeout",
+          "xss_html",
+          "ssrf_private_ip",
+          "open_redirect",
+          "prompt_injection",
+          "xml_entity",
+          "media_polyglot",
+          "csrf_replay",
+          "secret_leak",
+          "stale_fence",
+          "reconcile_wait"
+        ]
+      },
+      "minItems": 16,
+      "uniqueItems": true
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 16,
+      "items": {
+        "$ref": "#/$defs/SecurityCase"
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "fixture_set",
+    "canonical_json_rule_version",
+    "canonical_json_rule",
+    "synthetic_only",
+    "external_calls",
+    "redaction_policy",
+    "categories",
+    "cases"
+  ],
+  "$defs": {
+    "SecurityCase": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "fixture_id": {
+          "type": "string",
+          "pattern": "^security-[a-z0-9_-]+$"
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "adapter_missing",
+            "authorization_invalid",
+            "platform_blocked",
+            "http_429",
+            "http_5xx",
+            "timeout",
+            "xss_html",
+            "ssrf_private_ip",
+            "open_redirect",
+            "prompt_injection",
+            "xml_entity",
+            "media_polyglot",
+            "csrf_replay",
+            "secret_leak",
+            "stale_fence",
+            "reconcile_wait"
+          ]
+        },
+        "input": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "payload": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            "url": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "status_code": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 100,
+                  "maximum": 599
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "method": {
+              "type": "string",
+              "enum": [
+                "GET",
+                "POST",
+                "PUT"
+              ]
+            },
+            "epoch_value": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "current_epoch": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "payload",
+            "url",
+            "status_code",
+            "method",
+            "epoch_value",
+            "current_epoch"
+          ]
+        },
+        "expected": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "blocked",
+                "retryable_failed",
+                "reconcile_wait",
+                "stale_rejected"
+              ]
+            },
+            "error_code": {
+              "type": "string",
+              "pattern": "^[A-Z0-9_:-]{1,128}$"
+            },
+            "assertions": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 2
+            }
+          },
+          "required": [
+            "status",
+            "error_code",
+            "assertions"
+          ]
+        },
+        "payload_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "external_calls": {
+          "const": 0
+        },
+        "synthetic_only": {
+          "const": true
+        },
+        "redaction": {
+          "const": "no-secret-no-network"
+        }
+      },
+      "required": [
+        "fixture_id",
+        "category",
+        "input",
+        "expected",
+        "payload_hash",
+        "external_calls",
+        "synthetic_only",
+        "redaction"
+      ]
+    }
+  }
+}

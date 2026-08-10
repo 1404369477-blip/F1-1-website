@@ -1,0 +1,63 @@
+{
+  "acceptance_exit": "提交独立accepted系统ADR并包含上下文、决定、A阶段边界、D阶段进入条件、单一真值/同步/故障/回滚不变量、已授权与未授权事项；更新Spec、proposed包引用及2026-08-01进度；保持现有proposed包status不变；运行三路只读对抗审查、链接/Markdown/git diff --check/doctor；列出已验证/未验证与错题自检；complete并输出TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/decisions/system/2026-08-01-F1+1-信源库A到D演进路线-accepted.md",
+    "docs/spec.md",
+    "docs/decisions/system/2026-07-31-F1+1-信源库维护决策包-proposed.md",
+    "docs/progress.md"
+  ],
+  "authorization_evidence": "主会话用户于2026-08-01确认A到D演进路线。",
+  "authorization_history": [
+    {
+      "at": "2026-08-01T13:15+08:00",
+      "evidence": "主会话用户于2026-08-01确认A到D演进路线。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "用户于2026-08-01回复“可以，继续吧”，明确接受上一轮提出的先A后D推荐路线。",
+  "created_at": "2026-08-01T13:15+08:00",
+  "department": "产品部",
+  "details": "用户已明确接受“先A、后D”：先建立飞书Base单一业务真值，A阶段由采集器在线直读Base；稳定后增加Base到本地last-known-good只读快照并切换为D。请新建一份窄范围accepted系统ADR，更新Spec技术路线、现有信源库proposed决策包的交叉引用和docs/progress.md。不得把整份proposed包全部标为accepted；即时采集门禁保持已确认。accepted ADR必须明确：Base创建与账号授权仍未完成；Base业务真值切换、A采集器切换、D快照切换分别需要实现验证和用户门禁；D严格Base到本地单向只读，本地不得反写。不得创建真实飞书资源或初始化app。",
+  "domain_stage": "M2架构确认",
+  "event_receipts": [
+    "DEC-20260801T131822-A7DCDF",
+    "MIL-20260801T133205-07A22A"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "不得把“接受A到D路线”扩写成授权创建真实Base、登录/授权、导入59条、切换采集器或自动发布；不得把D写成双向同步或第二业务真值；不得原地把包含未确认细节的整份proposed包升级为accepted。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "错题集无历史条目；已确认没有把整包升级为 accepted，没有把 auth scope 等同资源存在或 API 可读，没有把路线接受扩写为资源创建、导入、切换或自动公开授权，没有让 D 成为第二真值或允许本地反写，并已消除旧的路线/授权过时时态。",
+  "node": "M2-信源库架构路线确认",
+  "pointers": [
+    "docs/spec.md",
+    "docs/decisions/system/2026-07-31-F1+1-信源库维护决策包-proposed.md",
+    "docs/progress.md"
+  ],
+  "report": "已完成窄范围 accepted ADR、Spec/proposed/progress 同步与三路只读审查；真实资源和执行切换继续受用户门禁约束。",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260801-24D860",
+  "title": "固化信源库A到D演进路线为accepted",
+  "unverified": [
+    "具体 Base 是否存在、资源级权限、表/表单状态与 API 实际读取。",
+    "A/D 实现、稳定性阈值、故障演练及三个执行切换门禁的实际通过情况。",
+    "未创建或初始化 app，未创建/访问真实飞书资源，未导入 59 条信源，未执行真值/provider 切换。"
+  ],
+  "updated_at": "2026-08-01T13:33+08:00",
+  "verified": [
+    "TASK JSON 的 user_confirmed 凭据明确记录用户于 2026-08-01 接受先 A、后 D。",
+    "独立 ADR 仅将 A→D 顺序、Base 单一业务真值、Base→本地单向只读快照、故障/回滚不变量和三次独立切换门禁标为 accepted；详细决策包仍为 proposed。",
+    "统筹部只读 auth 验证显示用户身份 verified、token valid，scopes 含 Base create/read/update；本次没有访问或创建 Base。",
+    "Spec、proposed 包、progress 与 ADR 交叉引用和时态一致；三路只读对抗审查闭环且无残留 P0/P1。",
+    "9 个本地链接目标、Markdown 围栏/尾随空白、git diff --check 与 agent_team_task.py doctor 均通过。"
+  ]
+}

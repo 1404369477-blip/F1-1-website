@@ -1,0 +1,56 @@
+{
+  "acceptance_exit": "提交测试部final独立报告与机器manifest，唯一decision=pass或fail并列P0/P1/P2；绑定精确91AF6E候选、真实loopback独立收据、closed receipt、baseline/local overlay、幂等/恢复、externalCalls=0和零残留；PASS要求P0=0且P1=0，完成返回TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-08-10-37CA8F独立HTTP与closed复验报告.md",
+    "docs/collaboration/部门/测试部/报告/TASK-20260810-37CA8F-evidence/evidence-manifest.json",
+    "docs/collaboration/部门/测试部/报告/TASK-20260810-37CA8F-evidence/raw-http-receipt.json"
+  ],
+  "authorization_evidence": "用户回复继续并持续授权推进本地初版；本任务只对已完成本地synthetic候选做无外部I/O独立复验。",
+  "authorization_history": [
+    {
+      "at": "2026-08-10T07:59+08:00",
+      "evidence": "用户回复继续并持续授权推进本地初版；本任务只对已完成本地synthetic候选做无外部I/O独立复验。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "测试部/019fb379-9212-7e80-a5df-587d339936c4",
+  "completion_class": "audit",
+  "confirmation": "本任务只验证本地synthetic后端；不外推UI、真实采集、生产或整体SOURCE-MGMT完成。",
+  "created_at": "2026-08-10T07:59+08:00",
+  "department": "测试部",
+  "details": "唯一输入为已ACK TASK-20260810-91AF6E、开发报告SHA 65d2ea230c0b78da12c0407b2a1e0fc0c84980502b6324621a33694546d99374、manifest SHA 7b0658d9972df676acec689cb3d99ea23e74bf1abc2e51f9a169a9aa49b187b3、三候选SHA 5c40918c/5f008507/7e35d4c及closed DB SHA ddf3778c。只读产品代码，使用测试部独立临时profile/DB和至多一个127.0.0.1实例，亲自构造HTTP正反请求；覆盖session create/get/refresh/destroy、CSRF一次性及重放/错method/path/body、list/get/add/validate/activate/stop/retire/requeue、operation、response-loss幂等、stale/conflict/404、59 baseline只读/local overlay、closed receipt、externalCalls=0及清理。不得复用开发HTTP断言冒充独立证据，不跑全量app测试，不改产品代码、正式DB、依赖、UI、Spec/ADR，不触发外部I/O。",
+  "domain_stage": "M5-SOURCE-MGMT后端独立测试successor",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "候选、开发报告、manifest、closed DB或精确SHA任一漂移：不启动实例，立即block并回传首个差异。",
+    "首个HTTP、closed receipt、baseline只读、幂等或恢复断言失败：保留最小复现并判FAIL或block，不重启、不重复整链覆盖首错。",
+    "出现外部I/O、正式DB/保护字节写入、残留端口/锁/WAL/SHM/临时DB：立即停止，只清理由本任务明确创建的资源并报告P0/P1。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "独立客户端误用x-f1-csrf而合同要求x-f1-csrf-token；已将其归为测试执行首错且未制造产品缺陷；遵守首错停止未修harness重跑；未跑全量/构建/静态门或修改正式资产",
+  "node": "对已ACK的91AF6E精确候选执行一次独立测试闭环，不做浏览器或UI",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260810-91AF6E.json",
+    "app/evidence/TASK-20260810-91AF6E/manifest.json",
+    "docs/collaboration/部门/开发部/报告/2026-08-10-91AF6E五项Node24静态类型收敛与SOURCE-MGMT启动闭环报告.md",
+    "app/.local/receipts/source-management-synthetic.closed.json"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-08-10-37CA8F独立HTTP与closed复验报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260810-37CA8F",
+  "title": "91AF6E冻结候选独立HTTP与closed复验",
+  "unverified": [
+    "add成功及operation/get；validate/activate/stop/retire/requeue；response-loss replay；stale/conflict/404；refresh/destroy与CSRF重放/错method/path/body；最终local overlay，均因首错停止"
+  ],
+  "updated_at": "2026-08-10T08:10+08:00",
+  "verified": [
+    "冻结报告/manifest/closed DB/三候选SHA精确命中；独立59+0临时profile完整性；唯一3019实例health/session/list/csrf前置；externalCalls=0；正式DB与保护字节零漂移；端口和临时根清理"
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "安全部报告位于本部门报告目录，YAML status=final、decision=pass|fail、P0/P1/P2明确；冻结哈希全部匹配；逐项给出代码路径、控制流、负例覆盖和残余风险；task complete、doctor通过并以TASK_STATE_OK结束。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-02-M4-VS-0启动参数与CLI脱敏整改快照独立安全复审.md"
+  ],
+  "authorization_evidence": "主任务会话019fb2b1-fb60-7792-adb4-e0e876a32947：用户要求继续推进直到初版落地。",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T23:09+08:00",
+      "evidence": "主任务会话019fb2b1-fb60-7792-adb4-e0e876a32947：用户要求继续推进直到初版落地。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "用户已明确要求持续推进初版落地；本任务为开发整改的必要独立安全复验，不扩大真实能力。",
+  "created_at": "2026-08-02T23:09+08:00",
+  "department": "安全部",
+  "details": "对TASK-20260802-7A9C48完成后的P1整改文件做独立只读安全复审。冻结哈希：serve.ts=21c251dd2c7875b46a076a586195477b4c5f3850f62ae14133b88dcba9713100；p1-acceptance.ts=eec458429735cf11d79a71b901d0d02e968151fd7f924b33a7b93da0e4942b81；security/cli.ts=1126cca2471da18160b8d870bd4a1d030610324e5b0c1e1ccbf78e4c7ce42e85；security/log.ts=f69347a4d054cb4ce05f92bd333fba4b80b00dfe21108db110da12c7e41e4b00；p1-cli.test.ts=6994365c1450998d2b1e95808a997a0dcb234242cfb9cbc2bd5533cae9cad011；package.json=cb81c6be9db1772537dfc2a53214bf03d7f92f763a701d20c68789d68d1fd452；package-lock.json=89807e33818cfb851b57da65a5675e413e5593d01d6773c3a71a6cc6ea3d85d3。必须亲自核对：dev/start任意附加argv是否在runtime/Next/socket前拒绝并保证零监听；统一CLI catch是否只输出稳定四字段allowlist JSON且无绝对路径、stack、源码行、URL、secret；测试是否覆盖真实npm子进程与失败路径；正常start固定loopback且不放宽env/no-egress。FFC67A测试报告可作证据但不得替代代码审查。只出安全报告，不改app/Spec/ADR/data/design/lockfile。R5同UID与R12系统调用级no-egress明确留作未验证，不得用本任务PASS扩大为VS-0整体PASS。",
+  "domain_stage": "M4-C-VS0-postfix-p1-security-review",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "冻结哈希漂移、前端任务触碰P1文件或审查对象不一致：立即FAIL/阻断并留证。",
+    "任一附加argv可到达Next/socket、错误输出可泄漏路径/stack/URL/secret或reasonCode非allowlist：P0/P1 FAIL。",
+    "用开发自测替代独立审查，或把P1 PASS扩大为R5/R12/真实外部能力/VS-0整体PASS：FAIL并纠正结论边界。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未把宿主EPERM误判为正常loopback功能失败，同时未忽略该分支暴露的Next原始错误输出；未用7/7 hash、10/10负例、开发报告或FFC67A happy path覆盖未测失败面；用户取消审批后未新发起或扩大权限，已返回的运行时序如实记录；未修改app/Spec/ADR/data/design/migration/lockfile，未安装、联网或调用真实外部能力。",
+  "node": "M4-VS0-P1-POSTFIX-SECURITY-REVIEW",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260802-7A9C48.json",
+    "docs/collaboration/部门/开发部/报告/2026-08-02-M4-VS-0启动参数与CLI错误泄漏整改报告.md",
+    "docs/collaboration/tasks/TASK-20260802-FFC67A.json"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-02-M4-VS-0启动参数与CLI脱敏整改快照独立安全复审.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-68F43E",
+  "title": "独立安全复审VS-0启动参数与CLI脱敏整改快照",
+  "unverified": [
+    "R5恶意同UID竞争和完整TOCTOU未验证；R12 DNS/HTTP/raw socket/subprocess/child_process/proxy的OS/系统调用级deny-all未实现/未验证；真实Base/provider/Collector/采集/AI/媒体/表单/发布/部署/付费能力及VS-0整体均未放行。"
+  ],
+  "updated_at": "2026-08-02T23:52+08:00",
+  "verified": [
+    "FAIL/P0=0/P1=1/P2=0；7个冻结SHA-256在审查前和收口前均7/7匹配；逐行审查serve/runtime导入链/cli/log/p1测试与acceptance控制流；固定Node24真实npm子进程10/10 PASS，argv六组在runtime/Next/socket前拒绝且3000/3101零监听，四类应用CLI错误仅四字段allowlist JSON；FFC67A正常loopback收据PASS；独立观察与对抗复核确认Next进入后的listen失败会直接输出原始Error/stack并绕过runSafeCli，命中任务P1失败路径。"
+  ]
+}

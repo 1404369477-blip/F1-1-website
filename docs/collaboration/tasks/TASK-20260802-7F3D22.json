@@ -1,0 +1,59 @@
+{
+  "acceptance_exit": "Spec/progress/accepted ADR所有现行实施状态与B层收据一致；rg不再命中当前app仅README、无lockfile、B未完成；B=completed、C=local preflight pending、external=closed清晰；accepted core无语义变更。提交产品时态同步报告并TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/spec.md",
+    "docs/progress.md",
+    "docs/decisions/system/2026-08-01-F1+1-M4本地Kickoff系统路线-accepted.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-02-M4-B层状态同步与C层预检窗口报告.md"
+  ],
+  "authorization_evidence": "用户已授权持续推进本地网站工程；B静态地基已通过开发/安全机械审计，当前只改本地文档状态",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T03:45+08:00",
+      "evidence": "用户已授权持续推进本地网站工程；B静态地基已通过开发/安全机械审计，当前只改本地文档状态",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "本任务只关闭B层时态P1并开启C层本地预检，不构成C层验收或真实外部能力授权；测试部聚焦PASS后才派开发执行C预检。",
+  "created_at": "2026-08-02T03:45+08:00",
+  "department": "产品部",
+  "details": "仅修正docs/spec.md、docs/progress.md与accepted ADR中的当前实施状态时态。依据已ACK的F8BF72 PARTIAL历史、D2724D B层PASS、安全4CE4F0 PASS与测试F23239 FAIL（B机器基线P0=0/结构P1=0，唯一P1为本文档时态）：把app仅README、无lockfile、B初始化收据未完成、当前无Web依赖/lock等现行旧叙述更新为B层静态初始化已完成且package-lock已审计；明确node_modules尚无、Node24/npm ci/SQLite/UI/API/build/test/security仍C层pending。当前阶段更新为C层本地工具链与能力预检窗口，只允许官方Node24本地toolchain、npm ci ignore-scripts、SQLite capability spike和本地fixture运行准备；不开放业务实现通过、真实Base/provider/平台/采集/AI/发布/部署。accepted ADR只改实施状态单元/加状态注记，不改核心决定、字段、状态机或安全门禁；历史报告与2026-08-01进度不覆写。",
+  "domain_stage": "M4-B-status-sync-C-preflight-window",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 若修订需要改变accepted技术决定或安全条件，停止并新建proposed ADR，不在本任务修改。",
+    "2) 历史F8BF72 PARTIAL与2026-08-01状态必须保留为历史，禁止改写成当时PASS。",
+    "3) Node24/npm ci/SQLite等没有运行收据，只能标C pending/preflight，不得写通过。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未将静态lockfile写成npm ci或node_modules已完成；未将Node25当作Node24；未改accepted核心、data/app或历史报告；未把C层预检写成运行验收或外部授权。",
+  "node": "M4/B层门禁/实施状态时态修订",
+  "pointers": [
+    "docs/collaboration/部门/产品部/报告/2026-08-02-M4-B层状态同步与C层预检窗口报告.md"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-02-M4-B层状态同步与C层预检窗口报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-7F3D22",
+  "title": "同步M4 B层完成状态并开启C层本地预检窗口",
+  "unverified": [
+    "Node24实机、npm ci安装、SQLite runtime/WAL/事务/recovery及node_modules",
+    "UI/API、loopback、deny-all、session/Origin/CSRF、build/test/security和业务纵向切片",
+    "真实Base/provider/Collector/采集/表单/AI/媒体/发布/部署及其他外部IO"
+  ],
+  "updated_at": "2026-08-02T03:54+08:00",
+  "verified": [
+    "B层静态初始化与package-lock审计收据已与Spec/progress/accepted ADR同步，B=completed",
+    "C层本地工具链与能力预检窗口已明确，node_modules不存在且Node24/npm ci/SQLite/UI/API/build/test/security保持pending",
+    "F8BF72 PARTIAL历史、D2724D/4CE4F0/F23239审计链与真实外部关闭边界均保留",
+    "git diff --check、目标语义rg与agent_team_task doctor通过"
+  ]
+}

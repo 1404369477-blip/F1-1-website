@@ -1,0 +1,59 @@
+{
+  "acceptance_exit": "测试部提交PASS/FAIL报告：核对两表、三业务视图加一表单视图、33/9字段、表单仅两题可见且shared=false、主表总计59且本批59、59个唯一source_id/canonical_url/record_id、59条enabled=false、关键保守状态与离线载荷逐行一致；完成任务并返回TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-08-01-M3飞书Base影子资源与59条导入-独立验收报告.md"
+  ],
+  "authorization_evidence": "用户已授权创建并导入59条影子信源，随后明确要求飞书编辑只用CLI；公开内容仍人工审核，未授权真值/provider/Collector/发布切换。",
+  "authorization_history": [
+    {
+      "at": "2026-08-01T19:38+08:00",
+      "evidence": "用户已授权创建并导入59条影子信源，随后明确要求飞书编辑只用CLI；公开内容仍人工审核，未授权真值/provider/Collector/发布切换。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "测试部/019fb379-9212-7e80-a5df-587d339936c4",
+  "completion_class": "audit",
+  "confirmation": "测试部PASS且统筹部核收后，本轮M3影子建库与导入才算完成；任何FAIL均暂停并由用户决定是否修复。",
+  "created_at": "2026-08-01T19:38+08:00",
+  "department": "测试部",
+  "details": "目标Base标题为F1+1 信源库｜M3影子，运行时解析出的Base token SHA256必须为7d6638223761b3ddfd542b36cc96177160ed72e8010e2e9cb0f1752940316122；主信源table_id=tblaUkA0PJDLvU5H，手机捕获table_id=tblThc1oQWRe96g0，form_id=veww7BZNx4。统筹部已用typed +record-batch-create首次写入批次M3-20260801-X59-01并回读59x33全等。请只用飞书CLI用户身份做只读独立验收，不修改飞书，不把base token/open_id/appId/auth原始JSON写入仓库。",
+  "domain_stage": "M3实际验收",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "Base标题解析不唯一、token哈希不匹配或身份不是user时立即FAIL，不改用bot或浏览器。",
+    "表/视图/字段/表单/share状态任一不符时FAIL；不得修改、删除或分享资源。",
+    "记录少于或多于59、出现重复/越批、任一字段与离线载荷不符或enabled=true时FAIL；只保存脱敏证据，不修复数据。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未把租户级鉴权收据或本地静态载荷误写成真实 Base 读回；未切 bot、浏览器或提权，未执行远程写入/修复，未保存敏感原始认证 JSON；FAIL 仅表示本轮证据链未闭环，不断言资源必有缺陷。",
+  "node": "只读验收真实飞书Base结构、表单边界与59条影子记录完整性",
+  "pointers": [
+    "data/m3-base-shadow-import-v0/main-source-record-batch.json",
+    "data/m3-base-shadow-import-v0/manifest.json",
+    "docs/collaboration/部门/安全部/报告/2026-08-01-M3表单官方PATCH最小白名单-审核报告.md"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-08-01-M3飞书Base影子资源与59条导入-独立验收报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260801-57E98D",
+  "title": "验收M3飞书Base影子资源与59条导入",
+  "unverified": [
+    "未独立现场读取目标 Base，标题唯一性与运行时 token hash 未验证",
+    "两表、三业务视图、一表单、33/9 真实字段及表单两题可见/shared=false 未验证",
+    "主表总计/本批59、record_id/source_id/canonical_url 唯一性、重复/越批、59行逐字段对账、enabled=false 和关键保守状态未验证",
+    "资源级 ACL 及真值/provider/Collector/采集/发布副作用未验证"
+  ],
+  "updated_at": "2026-08-02T02:12+08:00",
+  "verified": [
+    "任务 JSON、测试部收件箱、产品 M3 执行包和授权边界已读取",
+    "统筹部脱敏收据证明 lark-cli 用户身份 verified、token valid、Base scope；其资源状态边界已核对",
+    "本地离线载荷静态通过：33/9 字段、59 行×33 列、source_id/canonical_url 各59唯一、enabled=false=59、批次固定且无本地越批",
+    "非提权用户 CLI 标题解析阻断已复现，错误为 keychain Get failed: keychain not initialized；停止条件已执行"
+  ]
+}

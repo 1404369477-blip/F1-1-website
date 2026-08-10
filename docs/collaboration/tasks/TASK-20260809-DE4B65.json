@@ -1,0 +1,74 @@
+{
+  "acceptance_exit": "四份状态文档与已核收事实、任务/报告指针完全一致；后端已完成和 UI/外部能力未完成边界清楚；功能追踪矩阵不虚报；报告列出改动文件、核对依据、未验证项，doctor 通过。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/spec.md",
+    "docs/progress.md",
+    "docs/handoff.md",
+    "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-09-多媒体后端独立门禁与DEV-MM-04状态同步报告.md"
+  ],
+  "authorization_evidence": "用户要求继续推进初版网站并明确执行工作分配给对应部门；本任务仅同步已核收的项目事实。",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T18:01+08:00",
+      "evidence": "用户要求继续推进初版网站并明确执行工作分配给对应部门；本任务仅同步已核收的项目事实。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "产品部只做事实同步；任何把 DEV-MM-04、真实外部能力或部署状态提升为完成的动作均需统筹部另行授权。",
+  "created_at": "2026-08-09T18:01+08:00",
+  "department": "产品部",
+  "details": "仅更新 docs/spec.md、docs/progress.md、docs/handoff.md 与 docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md。吸收已核收的数据部 TASK-20260809-385B52、开发部 TASK-20260809-BA9999、安全部 TASK-20260809-4A5381、测试部 TASK-20260809-B98C66：准确记录 DEV-MM-01..03、多媒体独立 SQLite、0/1/4 图原子 seed、V1/V2 API 与 fail-closed 后端链路已经完成并通过独立门禁；DEV-MM-04 公开页 UI 接线仍受用户视觉确认门禁约束，不得把公开页功能标为完成。记录 P2：pre-update synthetic DB 的保留/误选风险与 Turbopack tracing/部署打包未验；真实媒体、真实 provider、飞书 Base、Admin 实现、部署及外部 I/O 均继续 closed。不得修改 app、data、design、accepted ADR 核心契约或删除任何文件。提交产品部报告与 TASK_STATE_OK。",
+  "domain_stage": "product-status-sync",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若四份文档对同一功能状态定义冲突，停止修改并以 conflict 交回统筹部。",
+    "若需要改变 accepted ADR 或公开页冻结视觉契约，禁止代决策，标记 user_required。",
+    "若发现已核收任务/报告缺失或哈希/状态无法对应，保留现场并 fail-closed 报告，不推断完成。"
+  ],
+  "from_department": "统筹部",
+  "impact_declaration": {
+    "admission": "manual",
+    "base_revision": "a9691e71b1552592cc5ded8d5db66c336262301c",
+    "external_effects": [
+      "none；仅本地产品状态同步，不修改app/data/design/accepted ADR或删除文件"
+    ],
+    "owner_task": "TASK-20260809-DE4B65",
+    "shared_contracts": [
+      "DEV-MM-01..03后端链已完成并通过独立门禁；DEV-MM-04公开UI仍受用户视觉确认门禁；真实媒体/provider/Base/Admin/部署/外部IO继续closed"
+    ],
+    "write_paths": [
+      "docs/spec.md",
+      "docs/progress.md",
+      "docs/handoff.md",
+      "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md"
+    ]
+  },
+  "mistake_check": "已检查后端PASS外推、旧34476E历史、pre-update运行时选择、Turbopack已解决假设、真实外部能力误放行和任务外文件修改；均未命中",
+  "node": "PRODUCT-MM-STATUS-01",
+  "pointers": [
+    "docs/collaboration/部门/测试部/报告/2026-08-09-B98C66多媒体profile原子seed与V1-V2-HTTP独立验收报告.md"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-09-多媒体后端独立门禁与DEV-MM-04状态同步报告.md",
+  "resolution": null,
+  "revision": 5,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-DE4B65",
+  "title": "PRODUCT-MM-STATUS：同步多媒体后端独立门禁与DEV-MM-04剩余边界",
+  "unverified": [
+    "DEV-MM-04正式前端、浏览器交互、六格视觉、辅助技术与焦点恢复未验证，继续user-gated",
+    "pre-update synthetic DB留存/备份/误取风险未处置；Turbopack tracing与最终部署包内容未验证；真实媒体/provider/飞书Base/Admin/部署/外部I/O继续closed"
+  ],
+  "updated_at": "2026-08-09T18:13+08:00",
+  "verified": [
+    "四个输入任务TASK-20260809-385B52/BA9999/4A5381/B98C66均为acknowledged且报告存在；四份产品文档已同步DEV-MM-01..03完成、DEV-MM-04受视觉确认门禁、两项P2及真实外部能力closed",
+    "矩阵Function行列数、MEDIA-DATA-002/RECOVER-MEDIA-003后端完成状态、MEDIA-NAV-003/MEDIA-LIGHTBOX-004用户门禁状态、目标关键词与git diff --check通过"
+  ]
+}

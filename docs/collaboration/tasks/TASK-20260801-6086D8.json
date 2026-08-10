@@ -1,0 +1,58 @@
+{
+  "acceptance_exit": "安全部交付补充门禁结论：PASS时明确唯一允许的路径/方法/字段/请求体和后续record-batch-create条件；FAIL时明确停止原因；任务状态持久化并返回TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-01-M3表单官方PATCH最小白名单-审核报告.md"
+  ],
+  "authorization_evidence": "用户在当前会话明确回复已授权，并随后要求飞书编辑只使用CLI；未授权真值、provider、Collector或发布切换。",
+  "authorization_history": [
+    {
+      "at": "2026-08-01T19:05+08:00",
+      "evidence": "用户在当前会话明确回复已授权，并随后要求飞书编辑只使用CLI；未授权真值、provider、Collector或发布切换。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "安全部PASS且统筹部核收后，统筹部方可继续首次59条enabled=false影子导入；任何FAIL均需用户决定。",
+  "created_at": "2026-08-01T19:05+08:00",
+  "department": "安全部",
+  "details": "现有安全报告禁止全部raw API；但飞书官方文档与CLI源码证明，保留表字段并隐藏表单题只能由lark-cli api PATCH官方Bitable v1字段端点完成。统筹部已严格锁定一个Base、一个手机捕获表、一个表单、七个字段；读回显示仅raw_url与capture_note可见且底层9字段完整，尚未导入59条记录。请只读审查证据，必要时为该精确路径和请求体补充最小白名单；不得访问或写飞书。",
+  "domain_stage": "M3影子写入",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "官方文档、CLI源码或实际回读证据无法证明字段保留时返回FAIL，继续暂停全部远程写入。",
+    "白名单无法精确限定Base、表、表单、字段或请求体时返回FAIL，不导入59条记录。",
+    "发现分享已开启、底层字段不足9个或存在未授权业务切换时返回FAIL并要求统筹部止损。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已自检：raw API 仅限固定官方字段 PATCH；未把隐藏题目写成删除字段；未把 token/open_id/appId 或认证原始 JSON写入仓库；未把脱敏回读或 dry-run 写成安全部现场执行；未扩展真值/provider/Collector/采集/发布授权。",
+  "node": "只读复核已执行的官方表单字段PATCH，并给出后续影子导入是否可继续的门禁结论",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-01-M3飞书Base外部写入安全门禁-审核报告.md",
+    "https://open.feishu.cn/document/server-docs/docs/bitable-v1/form/patch"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-01-M3表单官方PATCH最小白名单-审核报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260801-6086D8",
+  "title": "复核M3表单官方PATCH最小白名单",
+  "unverified": [
+    "本安全会话未重新访问飞书，未现场重复 PATCH；统筹部脱敏 CLI 回读仅作为带来源证据",
+    "真实运行时 Base token 哈希匹配、资源级 ACL、最终表单审计日志和平台权限细节未在本轮读取",
+    "首次 59 条真实 record-batch-create、59/59 外部对账、部分成功恢复和分页行为尚未执行",
+    "真值/provider/Collector/采集/启用/同步/发布以及真实表单提交仍未验证或授权"
+  ],
+  "updated_at": "2026-08-01T19:46+08:00",
+  "verified": [
+    "本地任务 JSON 授权、验收出口和失败路径已核对；任务仍限制为 M3 影子范围",
+    "官方表单字段 PATCH 路径/方法/body 规则与 visible=false 约束已核对，七字段和固定资源 ID 已逐项映射",
+    "本机 lark-cli 1.0.68 generic api 与 typed form 命令帮助已核对；本地离线载荷 59x33、双唯一、固定批次和 enabled=false=59 已通过静态校验",
+    "两路本地对抗复核均 PASS；报告已列出 raw API 窄例外、首次导入条件、先读回恢复和停止条件"
+  ]
+}

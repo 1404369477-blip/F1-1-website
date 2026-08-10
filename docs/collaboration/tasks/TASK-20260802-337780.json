@@ -1,0 +1,56 @@
+{
+  "acceptance_exit": "提交安全部聚焦复验报告，给唯一PASS或FAIL；PASS要求P0=0、P1=0、全部D80846现行时态一致、首轮FAIL历史未覆写、11 hashes仍匹配且无产品语义/数据产物漂移。B/C pending单列不升级为FAIL；完成后TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-02-M4-A轴v0.3时态修订后聚焦安全复验报告.md"
+  ],
+  "authorization_evidence": "用户已明确授权全员持续推进本地网站工程；本任务纯本地只读、无外部I/O",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T02:41+08:00",
+      "evidence": "用户已明确授权全员持续推进本地网站工程；本任务纯本地只读、无外部I/O",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "只有安全部与测试部均PASS且P0=0/P1=0，统筹部才派产品部执行accepted收口。",
+  "created_at": "2026-08-02T02:41+08:00",
+  "department": "安全部",
+  "details": "只读复验已ACK的TASK-20260802-BA178A与TASK-20260802-04E0A2。核对docs/spec.md、docs/progress.md、M4 proposed ADR、产品v0.3报告、数据v0.3报告与D80846任务JSON：当前状态统一为acknowledged；安全/测试首轮v0.3 FAIL历史均保留且唯一P1为已修订的时态漂移；Spec/ADR仍proposed、A仍NO-GO待本轮双审、B/C pending、外部能力关闭。再重算manifest 11个artifact SHA并确认data/mvp-contract-v0与生成器无语义漂移。仅评A层静态合同与本次P1；禁止修改文件、联网、运行生成器、安装依赖或操作外部资源。",
+  "domain_stage": "M4-A-v0.3-focused-revalidation",
+  "event_receipts": [
+    "MIL-20260802T024816-C06AA9"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 任一现行文档仍把D80846写成进行中/未交付/未ACK，FAIL并定位。",
+    "2) 任一data artifact hash或产品合同语义发生漂移，FAIL并定位，不自行修改。",
+    "3) 仅B/C运行证据缺失，列pending，不误判A轴FAIL。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已保留首轮 FAIL 历史，没有把 acknowledged 等同 accepted，没有把 B/C pending 升级为失败，没有运行生成器、联网或操作外部资源。",
+  "node": "M4/A轴定版门禁/v0.3时态修订后/安全复验",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-02-M4-A轴v0.3时态修订后聚焦安全复验报告.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-02-M4-A轴v0.3时态修订后聚焦安全复验报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-337780",
+  "title": "聚焦复验v0.3时态修订与合同冻结",
+  "unverified": [
+    "B/C 的 Node、app、SQLite/WAL/CAS、真实 lease/HTTP/CSRF/运行收据以及原生 Draft 2020-12 引擎仍未验证。",
+    "真实 provider、Collector、Base/飞书、OAuth/ACL、网络、媒体、AI、部署、发布和其他外部能力仍关闭且未验证。"
+  ],
+  "updated_at": "2026-08-02T02:49+08:00",
+  "verified": [
+    "D80846、BA178A、04E0A2 当前均为 acknowledged；Spec/ADR/progress/产品报告/数据报告的现行时态一致，首轮安全/测试 P0=0/P1=1/FAIL 历史保留。",
+    "data/mvp-contract-v0 manifest 的 11 个 artifact SHA-256 逐项匹配；mvp-local-v0.3 版本、6/5/9、3 seed、4 reconcile、16 security fixture、M3 59 disabled、internal schema SHA 与 no-egress 边界通过只读复核。",
+    "本次未发现产品语义或数据产物漂移；报告 status=final、decision=pass，P0=0、P1=0。"
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "acceptance_exit": "旧app/src/app/story目录不存在；本地Node24下 `/` 与 `/stories/[publicId]` 可运行，其他错误详情路由返回404；390/1440、深浅主题、键盘焦点、语义标题和非纯颜色状态通过；至少12条四类演示卡片、筛选、空/受限/no-more、详情404与禁用原文入口可验证；测试、lint、typecheck、build、完整check通过；P1冻结文件和lockfile哈希零漂移；提交开发报告、complete、doctor、字面TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "主任务会话019fb2b1-fb60-7792-adb4-e0e876a32947：用户要求继续推进前端；accepted Spec/ADR固定 `/stories/[publicId]`。",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T23:17+08:00",
+      "evidence": "主任务会话019fb2b1-fb60-7792-adb4-e0e876a32947：用户要求继续推进前端；accepted Spec/ADR固定 `/stories/[publicId]`。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "任务脚本拒绝对已登记successor再次串联supersede；本任务不再执行，恢复既有corrected successor C29BB8，并把旧路由删除作为前序错误任务的显式清理。",
+  "claimed_by": "开发部/019fb374-7c86-7882-9e51-76114ce69e7f",
+  "completion_class": "standard",
+  "confirmation": "用户要求继续推进前端；本任务只修正路由与清理遗漏，不扩大页面或外部能力范围。",
+  "created_at": "2026-08-02T23:17+08:00",
+  "department": "开发部",
+  "details": "最终替代TASK-1C9F71/C29BB8，页面范围不变。必须删除旧任务误建的app/src/app/story/[storyId]，唯一详情路由为accepted Spec/ADR固定的 `/stories/[publicId]`。实现公开信息流 `/`、共享F1PageShell/TopBar/主题/响应式、Featured/筛选/StoryCard/SourceMeta、默认/空/受限/no-more，以及详情页中文摘要、关键点、来源元数据、相关内容、原文入口状态和404。使用至少12条纯本地且明确标注演示的合成F1资讯，覆盖赛事新闻、车手社交、名宿/历史、趣事；不伪造真实采集、不用未授权赛车摄影、不发外部请求。原文入口在演示态禁用。不得修改P1安全文件、package.json、package-lock.json、Spec、ADR、data、design，不新增依赖，不实现admin mutation、真实provider/Base/采集/AI/媒体/发布/部署。可复用前序任务已完成的合规UI文件。",
+  "domain_stage": "M4-C-VS1-public-ui-slice-r3",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "旧 `/story/[storyId]` 仍可访问、错误目录残留、唯一详情路由偏离 `/stories/[publicId]`，或演示内容被伪装为真实/触发外部请求：FAIL并修正。",
+    "改动P1安全文件、package/lock、Spec/ADR/data/design，或破坏health/check：FAIL并停止扩范围。",
+    "390/1440横向溢出、焦点/关键信息不可达、状态只靠颜色、无演示标识或缺原文状态：FAIL后仅在本任务UI范围修正。"
+  ],
+  "from_department": "统筹部",
+  "impact_declaration": {
+    "admission": "manual",
+    "base_revision": "a9691e71b1552592cc5ded8d5db66c336262301c",
+    "external_effects": [
+      "none"
+    ],
+    "owner_task": "TASK-20260802-89A020",
+    "shared_contracts": [
+      "F1+1 public feed and content detail UI"
+    ],
+    "write_paths": [
+      "app/src/app/page.tsx",
+      "app/src/app/layout.tsx",
+      "app/src/app/globals.css",
+      "app/src/app/story",
+      "app/src/app/stories",
+      "app/src/components/f1",
+      "app/src/features/stories",
+      "app/src/tests/public-ui.test.ts"
+    ]
+  },
+  "mistake_check": "",
+  "node": "M4-VS1-PUBLIC-UI-SLICE-R3",
+  "pointers": [
+    "docs/spec.md",
+    "docs/decisions/system/2026-08-01-F1+1-M4本地Kickoff系统路线-accepted.md",
+    "design/ui/F1+1-首批页面实现级设计合同-v0.1.md",
+    "docs/collaboration/tasks/TASK-20260802-C29BB8.json"
+  ],
+  "report": "",
+  "resolution": {
+    "evidence": "agent_team_task.py supersede拒绝：任务替代证据已缺失、倒退或再次收口；89A020未执行页面写入。",
+    "reason": "取消多余第三层替代任务，恢复首个已登记successor，避免破坏supersede证据链。",
+    "receipt_id": "RES-20260802T231924-B9DA727E",
+    "resolved_at": "2026-08-02T23:19+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "abandoned",
+    "target_revision_before": 4
+  },
+  "revision": 5,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-89A020",
+  "title": "实现公开信息流与详情可体验前端并清理错误路由",
+  "unverified": [],
+  "updated_at": "2026-08-02T23:19+08:00",
+  "verified": []
+}

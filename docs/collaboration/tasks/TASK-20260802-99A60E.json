@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "交付数据映射候选报告：关闭测试缺口1和4，给可直接转测试golden的输入输出、并发/重复/乱序/空值失败路径、必要索引与查询、版本化和迁移影响；列successor数据合同最小diff但不执行；唯一proposed结论、未验证项、TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/数据部/报告/2026-08-02-M4-VS-1-Event去重与最近采集映射候选.md"
+  ],
+  "authorization_evidence": "用户授权持续推进本地初版并要求部门并行执行；本任务关闭已核收测试计划中的实现前数据缺口。",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T13:37+08:00",
+      "evidence": "用户授权持续推进本地初版并要求部门并行执行；本任务关闭已核收测试计划中的实现前数据缺口。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "数据部/019fb371-9834-78d3-a7b3-4f4c62819520",
+  "completion_class": "standard",
+  "confirmation": "只产出本地mock数据算法候选，不改冻结机器合同，不访问真实平台或Base。",
+  "created_at": "2026-08-02T13:37+08:00",
+  "department": "数据部",
+  "details": "读取测试计划TASK-28882C §16、数据v0.3及VS-1迁移蓝图，只做数据算法候选。提出通用dedup_fingerprint的精确canonical输入、算法版本、碰撞/变更策略，以及两个新Content并发归一Event时canonical_content_id的确定性tie-break；提出last_collected_at从SourceObservation只读派生的SQL/排序/null/unknown/时区/分页口径。禁止修改data冻结合同、Spec、ADR或app。",
+  "domain_stage": "M4-C-VS1-contract-gap-data",
+  "event_receipts": [
+    "DATA_EVENT_DEDUP_LAST_COLLECTED_MAPPING_PROPOSED_OFFLINE"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 冻结fixture无法支持单一通用fingerprint公式：列冲突ID/hash并保持BLOCKED，不篡改fixture。",
+    "2) tie-break依赖到达顺序/本机时钟导致不确定：FAIL并改为内容稳定字段算法候选。",
+    "3) last_collected_at需要新增Source领域字段或写回Base：拒绝扩实体，改为internal observation只读派生；无法满足则回报阻断。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已自检：未修改data/Spec/ADR/app/VS-1蓝图；未新增Source字段、第二Event schema或Base写回；未用published_at冒充采集时间；未用到达顺序、rowid、本机时钟、随机数或locale选canonical；legacy event-synth-001/002 hash与v1明确分开；successor diff仅列不执行。协议记录：claim成功；随后误在claimed状态执行declare-impact，脚本精确返回TASK_ERROR | 正式任务只能在 queued 状态声明 impact，未绕过任务真值或手工修改TASK JSON。",
+  "node": "M4/C层/VS-1实现合同缺口/数据算法",
+  "pointers": [
+    "docs/collaboration/部门/数据部/报告/2026-08-02-M4-VS-1-Event去重与最近采集映射候选.md"
+  ],
+  "report": "docs/collaboration/部门/数据部/报告/2026-08-02-M4-VS-1-Event去重与最近采集映射候选.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-99A60E",
+  "title": "冻结VS-1 Event去重与最近采集派生映射候选",
+  "unverified": [
+    "event-dedup-v1与last_collected projection仍为proposed，未写入successor data contract或fixture；Node24/SQLite Repository并发、window query计划、API DTO/UI、20路race/fault injection和动态测试未执行；真实平台/Base/provider/网络/语义召回率未验证。"
+  ],
+  "updated_at": "2026-08-02T13:51+08:00",
+  "verified": [
+    "已只读读取TASK-28882C测试计划§9/§12/§16、Spec、accepted M4 ADR、冻结v0.3 schema/state/internal fixtures与VS-1蓝图；提出event-dedup-v1精确canonical输入、canonical-json-v1 SHA256、legacy anchor兼容、并发tie-break、collision/version策略；提出SourceObservation成功谓词、UTC/null/unknown、窗口查询、稳定排序与keyset分页；离线复算proposed golden fingerprint 28e7cc3933ca7193c166016fa77a298af838c54aefbc09e964d9e653db0f86b7及日期变体；报告JSON块、冻结JSON解析、git diff --check、doctor通过；无外部IO。"
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "acceptance_exit": "开发部提交精简final报告与TASK_STATE_OK；public-synthetic临时库seed后feed返回12条public-demo、顺序/四类筛选/无更多页正确，detail 200且related 0-3；query/cursor/publicId全部正负例符合ADR reasonCode与closed Problem；单行hash/fence/ledger/状态破坏导致整个请求500且零部分DTO/零fallback；m3-shadow拒绝公开读；响应头、DTO字段和零敏感泄露通过；一次API聚焦测试与一次typecheck PASS；无DB/.next/端口/临时残留。完成后交测试部与安全部互补复验，未PASS前不得接前端。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/src/server/public/types.ts",
+    "app/src/server/public/error.ts",
+    "app/src/server/public/cursor.ts",
+    "app/src/server/public/repository.ts",
+    "app/src/server/public/http.ts",
+    "app/src/server/public/runtime.ts",
+    "app/src/app/api/public/feed/route.ts",
+    "app/src/app/api/public/stories/[publicId]/route.ts",
+    "app/src/tests/public-api.test.ts",
+    "docs/collaboration/部门/开发部/报告/2026-08-04-projection-first公开Repository与feed-detail-API实现报告.md"
+  ],
+  "authorization_evidence": "用户持续确认推进初版；SQLite双profile、启动边界和安全P1整改已于2026-08-04完成测试/安全门禁并由统筹ACK。",
+  "authorization_history": [
+    {
+      "at": "2026-08-04T15:16+08:00",
+      "evidence": "用户持续确认推进初版；SQLite双profile、启动边界和安全P1整改已于2026-08-04完成测试/安全门禁并由统筹ACK。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/019fb374-7c86-7882-9e51-76114ce69e7f",
+  "completion_class": "standard",
+  "confirmation": "开发完成后由测试部验证功能合同、安全部验证完整性与泄露；两者P0/P1=0前不ACK、不接前端。",
+  "created_at": "2026-08-04T15:16+08:00",
+  "department": "开发部",
+  "details": "严格依据accepted ADR-M4-PUBLIC-READ-001，只修改app/src/server公开读模块、app/src/app/api/public Route Handlers、必要测试和开发部报告；不得修改migration/seed/四root/data正式包/公开前端/Spec/accepted ADR/design/lockfile。实现PublicStoryRepository从published_projection起步，逐条联查并重算Publication、approved ReviewDecision、immutable ReleaseBundle、Content/Summary、hash、五fence、profile ledger/manifest/count；任一候选缺行、多行、状态/hash/fence/profile漂移时整个请求fail closed，不跳行、不部分返回、不静态fallback。实现GET /api/public/feed只接受cursorAt/cursorId/source/contentType四键，固定page size12、LIMIT13、published_at DESC + public_id DESC、canonical base64url cursor与筛选绑定；实现GET /api/public/stories/{publicId}、0到3 relatedItems、统一404不泄露内部状态。DTO与Problem JSON严格closed allowlist，成功application/json、失败application/problem+json、Cache-Control no-store、无CORS/Host信任/URL/hash/fence/reviewer/raw/SQL/stack/path泄露，Node runtime且externalCalls=0。先形成可curl的feed/detail有效产出，再只跑一次API聚焦测试与一次typecheck；不跑full check/build、不接前端。",
+  "domain_stage": "公开Repository与API实现",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "Repository绕过Projection/批准发布链、直接序列化demo-data/fixture、出现public_story第二真值、损坏行被跳过或静态fallback：P0/P1 FAIL。",
+    "cursor可跨筛选复用/非canonical/目标不存在仍通过，query重复未知超长未拒绝，或detail区分未发布/下架/不存在内部状态：P1 FAIL。",
+    "DTO/Problem泄露URL/hash/fence/reviewer/raw/SQL/stack/path/header/query，响应出现部分成功/CORS/Host信任/外部请求，或越界修改前端/data/migration/ADR/lock：P0/P1 FAIL。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "首轮聚焦唯一失败是测试泄露正则把安全Problem文案中的普通story单词误判为DTO字段；改为精确禁止JSON items/story字段后同一聚焦套件5/5 PASS。Repository先验证全图再应用筛选，防止损坏SQL列被过滤跳过；未直接序列化fixture或使用静态fallback。",
+  "node": "在已核收public-synthetic SQLite上交付可调用的公开信息流和详情后端接口",
+  "pointers": [
+    "docs/decisions/system/2026-08-03-F1+1-公开读模型与API接线-v0.4-successor-accepted.md",
+    "docs/collaboration/tasks/TASK-20260804-253A43.json",
+    "docs/collaboration/tasks/TASK-20260804-A1A095.json"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-04-projection-first公开Repository与feed-detail-API实现报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260804-AC25D4",
+  "title": "实现projection-first公开Repository与feed-detail API",
+  "unverified": [
+    "测试部/安全部尚未互补复验；按任务边界未运行full check/build/现场Next curl；固定12条profile未构造13+非正式图；前端接线与真实外部能力未实现。"
+  ],
+  "updated_at": "2026-08-04T18:55+08:00",
+  "verified": [
+    "Node24 API聚焦1文件5测试PASS，typecheck PASS；public temp seed后feed 12条public-demo精确排序/四类与source筛选/no-more，detail 12/12为200且related 0-3；query/cursor/publicId正负例closed reasonCode；hash/fence/ledger/status/缺Projection均整请求500零部分DTO；m3 public read 503；DTO/Problem/headers/零敏感泄露通过；无DB/.next/端口/临时残留。"
+  ]
+}

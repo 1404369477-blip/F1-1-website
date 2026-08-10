@@ -1,0 +1,64 @@
+{
+  "acceptance_exit": "用户能在固定路径查看动效tokens、2-3张styleframe、完整分镜表、单镜头动态样片或明确的待批准依赖申请，以及方向说明报告；全部产物绑定输入hash和素材来源。方向候选提交用户视觉确认，确认前不得进入正式成片制作。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "design/video/F1+1-launch-direction-v0.1/index.html",
+    "design/video/F1+1-launch-direction-v0.1/motion-tokens.md",
+    "design/video/F1+1-launch-direction-v0.1/storyboard.md",
+    "design/video/F1+1-launch-direction-v0.1/single-shot-validation.md",
+    "design/video/F1+1-launch-direction-v0.1/sources.md",
+    "design/video/F1+1-launch-direction-v0.1/SHA256.txt",
+    "design/video/F1+1-launch-direction-v0.1/assets/frozen-final-dark-1440.png",
+    "design/video/F1+1-launch-direction-v0.1/styleframes/F1+1-launch-styleframe-01-brand.png",
+    "design/video/F1+1-launch-direction-v0.1/styleframes/F1+1-launch-styleframe-02-product.png",
+    "design/video/F1+1-launch-direction-v0.1/styleframes/F1+1-launch-styleframe-03-close.png",
+    "design/video/F1+1-launch-direction-v0.1/styleframes/F1+1-launch-single-shot-validation.png",
+    "docs/collaboration/部门/设计部/报告/2026-08-09-F1+1发布视频方向与分镜提案报告.md"
+  ],
+  "authorization_evidence": "2026-08-09主会话：用户要求设计部跟进已落盘的launch video调研、任务文档与未决内容",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T20:05+08:00",
+      "evidence": "2026-08-09主会话：用户要求设计部跟进已落盘的launch video调研、任务文档与未决内容",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "设计部/当前正式会话",
+  "completion_class": "standard",
+  "confirmation": "用户已授权设计部跟进launch video方向；新增依赖、视觉方向定稿、正式成片和对外发布仍分别需要用户确认",
+  "created_at": "2026-08-09T20:05+08:00",
+  "department": "设计部",
+  "details": "先完整读取研究部2026-08-09发布视频方案与视频制作Skill生态调研及设计部发布视频任务建议书。以video-shotcraft的镜头法则为主，选择性吸收30x-video、LottieFiles与taste反模板标准；vibe-motion/skills和remotion-dev/skills许可证未声明，只读吸收，不安装其代码。绑定冻结设计design/ui/F1+1-v0.2-全站设计/F1+1-v0.2-final-20260808.html，SHA-256=5a84bfb27294ebd727369118a95528f5b788bfacbe2d56cc03fcb006f6168cb1。交付F1+1动效性格tokens、2-3张1920x1080 styleframe、15-40秒/16:9/30fps完整分镜表及一个隔离单镜头动态样片；产品画面只能使用冻结HTML或当前本地production站点的真实截图，数据仅限public-synthetic。不得修改app/、Spec、冻结HTML、实现级合同或当前开发候选。当前授权不包含安装Remotion/npm依赖；若现有环境无法完成动态样片，先交付无依赖可视方向与精确依赖申请，仅提出一个确认问题，获批后再安装。",
+  "domain_stage": "发布视频-方向设计",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "冻结设计资产/hash或本地production候选不一致：立即block，不手搓UI冒充真实页面",
+    "动态样片需要新增依赖或许可证/本机渲染条件不清：先交付静态方向和精确依赖申请，不静默安装或长时间重试",
+    "分镜需要未授权图片、音频、数据或产品能力：删减/替换并标Unknown，不虚构功能或素材权利"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未把方向 HTML 或单镜头落定 PNG 写成正式成片；未把内部方向确认中的截图使用外推为对外发布权利；未安装未授权依赖，未虚构指标、域名、CTA、音频或产品能力；Open Design 只使用本机预览，Kimi、成片编码和用户确认保持 Unknown；当前任务完成不授权、不领取也不启动 TASK-20260809-498590。",
+  "node": "完成工具路线收敛、动效性格tokens、styleframe、完整分镜和一个隔离单镜头动态验证；不制作正式全片",
+  "pointers": [
+    "docs/collaboration/部门/研究部/报告/2026-08-09-发布视频方案与视频制作Skill生态调研.md",
+    "docs/collaboration/部门/研究部/报告/2026-08-09-设计部发布视频任务建议书.md",
+    "design/ui/F1+1-v0.2-全站设计/F1+1-v0.2-final-20260808.html"
+  ],
+  "report": "docs/collaboration/部门/设计部/报告/2026-08-09-F1+1发布视频方向与分镜提案报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-010B9F",
+  "title": "发布视频方向设计与分镜提案(styleframe+单镜头动态验证)",
+  "unverified": [
+    "用户尚未确认整体视觉方向、27 秒时长、无旁白方案和收束标语；正式域名、CTA、独立矢量 logo 和音频策略保持 Unknown；Motorsport 图片用于正式对外发布视频的权利尚未核实；Kimi 未运行；MP4/GIF、真实 30fps 逐帧编码、Remotion 渲染链、跨浏览器、低性能设备和原生 1920 浏览器栅格未验证；单镜头初态未单独持久化 PNG。"
+  ],
+  "updated_at": "2026-08-09T21:20+08:00",
+  "verified": [
+    "冻结 SHA 5a84 输入与复制的深色 1440 截图 hash 一致；动效 tokens、3 张 1920×1080 styleframe、7 镜头 27 秒完整分镜、无依赖 4.8 秒单镜头动态验证、素材来源与权利清单均已落盘；styleframe 和验证 PNG 的尺寸、格式与可见内容可解码；当前执行会话记录了单镜头初末品牌位置及截图 opacity/transform 变化；SHA 清单 11 项逐项一致；未修改 app、Spec、accepted ADR、冻结 HTML 或公开页开发候选。"
+  ]
+}

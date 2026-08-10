@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "交付一个开发可直接引用的数据映射包，逐项说明复用哪些既有实体/字段、需要哪一个后继 migration 或新 profile、怎样保持 public-synthetic 已发布快照与 hash 不漂移，以及审核批准/拒绝/手动发布各自的原子写入与失败关闭出口。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/数据部/报告/2026-08-09-审核队列领域与SQLite最小增量映射包.md"
+  ],
+  "authorization_evidence": "本地只读分析与报告交付，无外部I/O、无schema写入",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T09:50+08:00",
+      "evidence": "本地只读分析与报告交付，无外部I/O、无schema写入",
+      "state": "none"
+    }
+  ],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "数据部/019fb371-9834-78d3-a7b3-4f4c62819520",
+  "completion_class": "standard",
+  "confirmation": "本任务是只读数据设计输入；不授权 schema 实施、真实内容导入、Base 写入、自动发布或外部 I/O。",
+  "created_at": "2026-08-09T09:50+08:00",
+  "department": "数据部",
+  "details": "只读核对 data/mvp-contract-v0、现有 accepted ADR、app/migrations/0003_public_synthetic_profile.sql、seed/repository：明确当前 public-synthetic 表只允许 published/approved/selected 的限制；给出支持本地 synthetic 待审核 Summary、immutable ReleaseBundle、approved/rejected ReviewDecision、显式手动 Publication/PublishedProjection 所需的最小数据增量。交付精确状态映射、主外键/唯一约束、版本/hash/five-fence/idempotency 规则、事务边界、迁移顺序、fixture 形态、回退和负例，不修改任何 migration、app、data frozen artifact 或 accepted ADR；优先复用现有领域实体，若确需新实体必须报告为阻断。",
+  "domain_stage": "M5人工审核纵切数据映射",
+  "event_receipts": [
+    "MIL-20260809T095902-1D0605"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "现有 v0.3 领域合同与 0003 表约束冲突：逐字列出冲突和最小 successor 选择，不原地改 frozen schema/fixture。",
+    "迁移会改变已 ACK 的 12 条公开投影或 ledger/hash：改为追加式隔离迁移/fixture，无法隔离则阻断。",
+    "批准、拒绝或发布无法在单事务内验证 bundle hash、five fences 与幂等键：标记 P1 阻断并给出所缺合同，不用临时字段绕过。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未放宽已ACK public-synthetic精确计数；未新增SummaryDraft/ReviewItem/ManualPublication等同义实体；rejected Decision保持approved hash为null且不生成public identity；手动发布不绕过Publication/Outbox/TaskEnvelope幂等和lease；明确区分数据映射完成与successor未授权实施。",
+  "node": "消除已发布合成快照与真实人工审核状态机之间的数据实现猜测",
+  "pointers": [
+    "app/migrations/0003_public_synthetic_profile.sql"
+  ],
+  "report": "docs/collaboration/部门/数据部/报告/2026-08-09-审核队列领域与SQLite最小增量映射包.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-1C2D4B",
+  "title": "审核队列领域与SQLite最小增量映射包",
+  "unverified": [
+    "未创建migration/profile/fixture，未运行SQLite/app/admin/发布事务；review-synthetic第三profile、profile-scoped migration root、Outbox/Audit持久化与通用published_version_hash需要accepted successor，当前为P1实施阻断；admin session/Origin/CSRF实现待开发和安全任务。"
+  ],
+  "updated_at": "2026-08-09T10:05+08:00",
+  "verified": [
+    "只读解析v0.3 schema/state-machine、accepted ADR、0003 SQL、seed/profile assertions和Repository；逐项确认Content/Summary/Media/Bundle/Decision/Publication/Projection约束冲突及缺少OutboxJob/TaskEnvelope/AuditEvent；复算冻结输入SHA并核对public fixture 1/12/12/12/10/12/12/12/12、12唯一public_id、12 approved/published/projection；映射未新增领域实体。"
+  ]
+}

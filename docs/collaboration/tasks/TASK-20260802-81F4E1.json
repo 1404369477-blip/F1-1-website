@@ -1,0 +1,51 @@
+{
+  "acceptance_exit": "交付设计部正式报告；至少比较8个产品/项目、覆盖桌面与移动公开视图，给出模式矩阵、3到5条高价值可借鉴模式、反模式与F1+1现有设计规范差距；截图或页面证据标注来源、日期和使用边界；明确哪些结论需等本地app预览再验证。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/设计部/报告/2026-08-02-F1资讯聚合体验与信息架构基准研究.md"
+  ],
+  "authorization_evidence": "用户于2026-08-02明确要求派部门成员开展只读深度调研并优先CLI/内置浏览器",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T00:43+08:00",
+      "evidence": "用户于2026-08-02明确要求派部门成员开展只读深度调研并优先CLI/内置浏览器",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "design",
+  "completion_class": "standard",
+  "confirmation": "用户要求深度调研同类项目并优先内置浏览器，目标是寻找可借鉴方案，不授权外部互动。",
+  "created_at": "2026-08-02T00:43+08:00",
+  "department": "设计部",
+  "details": "只读研究与F1+1相近的资讯聚合、AI资讯聚合、体育/F1资讯产品的公开界面和交互，包含用户给出的aihot公开站/仓库可见样例以及研究部发现的候选。优先内置浏览器与公开截图，禁止登录、提交、关注、评论或外部写入。围绕信息流密度、来源可信度、中文摘要、首图/无图、社交帖子嵌入、详情提炼、原链接跳转、筛选、时间线、已读、审核后台、移动端、深浅主题、性能与可访问性进行模式对比。只形成研究报告和可追溯截图索引，不改已冻结设计规范或正式应用。",
+  "domain_stage": "M4前沿调研",
+  "event_receipts": [
+    "TASK-20260802-81F4E1|DESIGN_RESEARCH_READY|artifact=docs/collaboration/部门/设计部/报告/2026-08-02-F1资讯聚合体验与信息架构基准研究.md"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 页面需登录或动态内容无法加载：只记录公开可见区域并标Unknown，不绕过；2) 截图/素材版权不明：仅作内部研究索引，不复制进产品；3) 候选界面与当前版本不一致：标记观察日期与版本，避免当成稳定合同。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查未修改docs/spec.md、accepted ADR或app；报告无尾随空格；相对链接全部存在；产品样本计数为9、借鉴模式为5；Unknown边界已显式保留；doctor返回TASK_DOCTOR_OK；未登录、未提交、未关注、未评论、未写入外部站点。",
+  "node": "M4/研究/设计基准",
+  "pointers": [
+    "docs/collaboration/部门/设计部/报告/2026-08-02-F1资讯聚合体验与信息架构基准研究.md"
+  ],
+  "report": "完成F1/体育/资讯聚合产品公开体验与信息架构基准研究，研究结论仅作为后续页面设计输入，不构成新增产品范围或实现授权。",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-81F4E1",
+  "title": "F1资讯聚合产品体验与信息架构基准研究",
+  "unverified": [
+    "RacingNews365移动正文受隐私弹窗遮挡；The Race与ESPN部分移动主feed动态加载；未进行实机VoiceOver/NVDA、真实性能计时、后台审核/权限、采集链路、评分算法、图片权利和部署安全验证；公开页面版本可能漂移。"
+  ],
+  "updated_at": "2026-08-02T01:08+08:00",
+  "verified": [
+    "已通过内置浏览器只读观察9个公开样本；覆盖桌面1280x900与手机390x844；报告包含产品比较、信息架构/体验模式矩阵、5条高价值借鉴模式、6条反模式、F1+1 Spec与设计规范差距、证据索引、来源日期与使用边界、本地预览待验证清单；本地相对链接存在；无外部写入；浏览器临时视口已重置并清理。"
+  ]
+}

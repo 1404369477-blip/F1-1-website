@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "设计部在现有草案上完成缩略图位置与前往原文排版修订，产出证据与报告；用户确认后由统筹派开发落地。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "design/ui/F1+1-v0.2-全站设计/index.html"
+  ],
+  "authorization_evidence": "用户细化缩略图位置与前往原文排版（2026-08-08）",
+  "authorization_history": [
+    {
+      "at": "2026-08-08T13:50+08:00",
+      "evidence": "用户细化缩略图位置与前往原文排版（2026-08-08）",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "设计部/统筹部并行子代理",
+  "completion_class": "standard",
+  "confirmation": "用户体验确认门。",
+  "created_at": "2026-08-08T13:50+08:00",
+  "department": "设计部",
+  "details": "用户在 6838E5+3F4C36 草案基础上再细化(2026-08-08)：①缩略图不要放在主图内部，改放内容简介（时间线条目）的右下角，与左侧来源文本（信源·作者·时间）横向对齐，可再缩小；②详情界面（展开详情/详情页）中的『前往原文』不要太大、不要单独占一行，改为与左侧来源文本对齐、字体大小与来源文本一致。修订设计草案 + 详情交互规范，产出视觉证据，停在用户体验确认门。",
+  "domain_stage": "design_direction_revision",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若与已确认布局冲突，说明取舍理由，不擅自推翻。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查错题集,无命中",
+  "node": "v0.2-media-evidence-revision",
+  "pointers": [
+    "design/ui/F1+1-v0.2-全站设计/index.html; app/src/features/stories/story-detail-experience.tsx"
+  ],
+  "report": "docs/collaboration/部门/设计部/报告/2026-08-08-缩略图与前往原文排版修订报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260808-B60726",
+  "title": "设计修订:缩略图移至条目右下角对齐来源文本 + 前往原文同排同字号",
+  "unverified": [
+    "用户尚未确认;正式app(时间线+详情页)未落地;真实设备体验待用户/测试部"
+  ],
+  "updated_at": "2026-08-08T14:00+08:00",
+  "verified": [
+    "缩略图移至条目右下角与来源文本横向对齐且缩小;前往原文在展开详情/详情页与来源文本同排同字号;滑动切图/点击/悬停/键盘保留;证据PNG与报告已产出"
+  ]
+}

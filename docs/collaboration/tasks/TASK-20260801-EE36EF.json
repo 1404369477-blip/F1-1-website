@@ -1,0 +1,57 @@
+{
+  "acceptance_exit": "安全部交付写后权限残余风险补充报告：列出过宽scope事实、当前M3白名单缓解效果、仍存风险、后续最小scope重授权/撤权需要的用户确认点，并明确本轮不影响59条影子结果、不放行真值/provider/Collector/发布；complete/TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-01-M3-OAuth过宽Scope-安全残余风险报告.md"
+  ],
+  "authorization_evidence": "用户已授权本轮M3资源和59条影子导入；权限收敛未获授权，本任务仅做只读风险复核。",
+  "authorization_history": [
+    {
+      "at": "2026-08-01T19:48+08:00",
+      "evidence": "用户已授权本轮M3资源和59条影子导入；权限收敛未获授权，本任务仅做只读风险复核。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "本任务只审查不改授权；是否执行最小scope重授权或撤销现有授权必须由用户另行确认。",
+  "created_at": "2026-08-01T19:48+08:00",
+  "department": "安全部",
+  "details": "统筹部脱敏只读检查确认当前user授权scope总数为142，其中Base域含create/read/update/delete、dashboard/field/form/record/role/table/workflow等广泛能力；本轮实际只按白名单创建资源、配置固定表单PATCH并typed导入59条。请只读输出风险等级、最小权限建议和停止条件，确认不需要立即破坏性撤权；不得访问飞书、不得修改授权、不得写token/open_id/appId。",
+  "domain_stage": "M3写后安全收口",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "无法在不暴露身份或token的前提下描述scope时，停止并只给出高层风险。",
+    "发现本轮发生权限/分享/记录删除、enabled=true或业务链路切换时返回FAIL并要求立即停止。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已自检：未把scope摘要写成资源ACL或API实读；未把任务级白名单写成token最小权限；未改写旧PATCH报告历史时态；未把测试部Keychain阻断FAIL解释成资源缺陷；未执行重授权、撤权、写入、删除、分享或真值/provider/Collector/采集/发布切换。",
+  "node": "只读复核本轮OAuth推荐授权产生的过宽scope及M3写后业务边界",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-01-M3表单官方PATCH最小白名单-审核报告.md",
+    "docs/collaboration/tasks/TASK-20260801-57E98D.json"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-01-M3-OAuth过宽Scope-安全残余风险报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260801-EE36EF",
+  "title": "复核M3写后OAuth权限残余风险",
+  "unverified": [
+    "当前142项scope完整去标识名称、颁发/过期/刷新状态及撤权状态未在本轮读取",
+    "本安全会话未访问飞书，未验证具体资源ACL、角色继承、租户高级权限或平台审计日志",
+    "M3当前真实记录数、59/59对账、表单/分享状态和导入最终平台状态继续由统筹部执行收据与测试任务证明",
+    "最小scope的具体官方名称、可拆分粒度和OAuth UI隐含依赖待用户确认，未执行重授权或撤权"
+  ],
+  "updated_at": "2026-08-01T20:01+08:00",
+  "verified": [
+    "统筹部脱敏事实已核对：identity=user、verified=true、用户scope总数142、Base域含广泛create/read/update/delete能力；本轮实际动作按精确白名单执行",
+    "报告将当前风险定为高等级/P1预防性授权风险，区分scope能力与资源ACL，明确任务级白名单可缓解和不能缓解的边界",
+    "报告列出最小权限操作类别、默认排除的role/dashboard/workflow/delete/share能力，以及重授权/撤权前必须由用户确认的事项",
+    "两路只读对抗复核均PASS；旧PATCH报告的尚未导入陈述保留为取证时点，统筹部执行陈述与测试部decision=fail证据边界已分开记录"
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "f1plus1-security-7cbd3f-evidence-v1",
+  "taskId": "TASK-20260810-7CBD3F",
+  "decision": "fail",
+  "p0": 0,
+  "p1": 1,
+  "p2": 0,
+  "candidate": {
+    "closedDbSha256": "ddf3778c62cf95f195b1f08db8b075d676069f4cc9fb39804063e1004dd2e939",
+    "canonicalRelativeDbPath": ".local/f1plus1-source-management-synthetic.sqlite",
+    "shadowProjectMode": "0700",
+    "shadowDbMode": "0600"
+  },
+  "predecessorEvidence": {
+    "taskId": "TASK-20260810-742B8D",
+    "repeated": false,
+    "rawSessionCsrfIdentity": "PASS_AS_RECORDED_BY_PREDECESSOR"
+  },
+  "firstError": {
+    "reasonCode": "INITIAL_LOCAL_ROWS",
+    "observedPhase": "after canonical shadow profile open and readiness check, before business mutation",
+    "operatorCause": "probe incorrectly required localRows=0 while the pinned closed receipt records localSourceCount=1",
+    "productDefectEstablished": false,
+    "productProfileRejection": false
+  },
+  "closedReceiptCrosscheck": {
+    "receiptSha256": "2d684ca9074c0f853bd1c03449e54b7293102c264a87d9514c5464482b806279",
+    "localSourceCount": 1,
+    "externalCalls": 0,
+    "walPresent": false,
+    "shmPresent": false
+  },
+  "effects": {
+    "formalDatabaseOpened": false,
+    "formalDatabaseModified": false,
+    "formalDatabaseHashUnchanged": true,
+    "productInstanceStarted": false,
+    "externalIo": 0,
+    "businessMutationExecuted": false,
+    "taskTemporaryRootCleaned": true
+  },
+  "notRun": [
+    "59 baseline immutability plus existing 1 local overlay cross-check",
+    "operation receipt and audit ledger cross-check",
+    "second writer and profile/path/permission denials",
+    "error and log redaction",
+    "no-egress denial probe"
+  ]
+}

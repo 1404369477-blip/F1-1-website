@@ -1,0 +1,52 @@
+{
+  "acceptance_exit": "测试部报告位于本部门报告目录，YAML status=final、decision=pass|fail、P0/P1/P2计数明确；列出实际命令级证据、预期与实得、未验证项；task complete、doctor通过并以TASK_STATE_OK结束。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-08-02-M4-VS-0启动参数与CLI错误泄漏整改-独立回归报告.md"
+  ],
+  "authorization_evidence": "主任务会话019fb2b1-fb60-7792-adb4-e0e876a32947：用户2026-08-02要求继续任务。",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T22:55+08:00",
+      "evidence": "主任务会话019fb2b1-fb60-7792-adb4-e0e876a32947：用户2026-08-02要求继续任务。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "测试部/019fb379-9212-7e80-a5df-587d339936c4",
+  "completion_class": "audit",
+  "confirmation": "用户已授权迁移后恢复并明确要求继续推进；本任务是当前开发整改的独立验收，不扩大产品或外部能力范围。",
+  "created_at": "2026-08-02T22:55+08:00",
+  "department": "测试部",
+  "details": "对TASK-20260802-7A9C48完成后的当前app快照做独立只读回归。开发报告只作线索，测试部必须亲自用固定Node24验证：dev/start六组附加argv均安全拒绝且3000/3101零监听；missing DB、禁用环境变量/secret、fixture路径、migration drift仅四字段allowlist JSON且无路径/stack/源码行/URL/secret；正常start固定127.0.0.1:3000、health ready/local-only/externalCalls=0；完整npm run check、测试数量、重复migrate/seed与projection hash零漂移；最终无残留监听或子进程。只出测试报告，不改app、Spec、ADR、data、design、lockfile。",
+  "domain_stage": "M4-C-VS0-postfix-p1-independent-test",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任何附加argv启动监听、非零退出不稳定或端口残留：P0/P1 FAIL并留证。",
+    "任何CLI负例泄漏路径、stack、源码行、URL或secret，或JSON字段超出allowlist：P1 FAIL。",
+    "完整check、正常health、重复迁移/种子/hash任一漂移，或测试需修改业务代码才能通过：FAIL并停止，不替开发部修复。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "保留隔离副本缺data、宿主listen EPERM和shell wrapper变量三条作废路径；最终收据来自物理隔离副本和独立loopback审查。未修改app/Spec/ADR/data/design/lockfile，未安装、联网或放宽门禁；结论唯一PASS。",
+  "node": "M4-VS0-P1-INDEPENDENT-REGRESSION",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260802-7A9C48.json",
+    "docs/collaboration/部门/开发部/报告/2026-08-02-M4-VS-0启动参数与CLI错误泄漏整改报告.md"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-08-02-M4-VS-0启动参数与CLI错误泄漏整改-独立回归报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-FFC67A",
+  "title": "独立复验VS-0启动参数与CLI错误泄漏整改",
+  "unverified": [
+    "R5恶意同UID竞争、R12 OS/系统调用级no-egress、真实Base/provider/Collector、平台采集、AI/媒体、发布、部署和付费能力仍未验证并保持pending/closed。"
+  ],
+  "updated_at": "2026-08-02T23:10+08:00",
+  "verified": [
+    "固定Node24隔离回归PASS：六组dev/start附加argv均exit1且3000/3101零监听；四类CLI失败仅四字段allowlist JSON且无路径/stack/源码行/URL/secret；42/42测试、lint、typecheck、build、正常loopback health、重复migration/seed与projection/source/static hash零漂移通过；临时进程与目录已清理。"
+  ]
+}

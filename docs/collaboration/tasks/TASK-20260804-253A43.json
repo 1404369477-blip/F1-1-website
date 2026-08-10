@@ -1,0 +1,65 @@
+{
+  "acceptance_exit": "开发部提交final报告与TASK_STATE_OK；Node24目标测试及完整check通过；public-synthetic临时库实体计数精确1/12/12/12/10/12/12/12/12，12条approved到published图与ledger一致；m3-shadow仍59x39、59 disabled、e7a831且没有src-active/第60行；双profile物理文件和inode隔离、ATTACH拒绝；四root pin任一漂移在写入前fail closed；迁移/seed连续两次字节或逻辑收据一致，故障注入全事务回滚且无部分写；externalCalls=0；无正式.local数据库、cache或临时残留。完成后必须交安全部与测试部独立复验，未复验前不进入Repository/API。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/.env.example",
+    "app/migrations/0003_public_synthetic_profile.sql",
+    "app/scripts/seed-fixtures.ts",
+    "app/src/server/config/env.ts",
+    "app/src/server/runtime-config.ts",
+    "app/src/server/db/database.ts",
+    "app/src/server/db/profile.ts",
+    "app/src/server/db/public-synthetic.ts",
+    "app/src/server/db/seed.ts",
+    "app/src/server/db/source.ts",
+    "app/src/tests/public-synthetic-seed.test.ts",
+    "app/src/tests/vs0.test.ts",
+    "docs/collaboration/部门/开发部/报告/2026-08-04-v0.4双profile-SQLite迁移与原子seed实现报告.md"
+  ],
+  "authorization_evidence": "用户持续确认继续推进初版并要求执行任务交由对应部门；v0.4数据合同已于2026-08-04通过安全与测试双复验并由统筹ACK。",
+  "authorization_history": [
+    {
+      "at": "2026-08-04T13:10+08:00",
+      "evidence": "用户持续确认继续推进初版并要求执行任务交由对应部门；v0.4数据合同已于2026-08-04通过安全与测试双复验并由统筹ACK。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/019fb374-7c86-7882-9e51-76114ce69e7f",
+  "completion_class": "standard",
+  "confirmation": "开发完成后由安全部与测试部各自独立复验；两者P0/P1=0前统筹不得ACK本任务，也不得派Repository/API实现。",
+  "created_at": "2026-08-04T13:10+08:00",
+  "department": "开发部",
+  "details": "只修改app内配置、数据库、追加迁移、seed命令、对应自动化测试和开发部报告；不得修改serve.ts、p1-cli.test.ts、公开页面/API、data正式包、Spec、accepted ADR、design或lockfile。实现显式canonical profile allowlist：m3-shadow固定.local/f1plus1.sqlite并继续59x39/59 disabled/e7a831；public-synthetic固定.local/f1plus1-public-synthetic.sqlite并逐项导入已核收v0.4 fixture的1/12/12/12/10/12/12/12/12图。每进程只允许一个profile，路径/profile/contract/manifest/count/capability/source混合均fail closed，运行时禁止ATTACH/DETACH。应用代码必须在任何seed/ready前独立pin并验证manifest、ledger、generator、validator四个字节根SHA：3b296868dc0c0000fb94856b334ff7d1f698e3e80d4bb02e7062142dc1a0e554、1f7719490a18a49842427907b53c3dbde5813709a2ad611f7cfaca891880caf1、34ecfa83fec1f89a22d877e554c4ce5c4d11c1bad6b7f09f123fea3ede1cb81a、058be83bdded7f5c60028f0a2e537c510e9386934284684fffb119d2e487360c；不得把包内互引当信任锚。追加迁移必须保留现有ledger与M3，public seed单事务、可重启、幂等、无部分写、无外联，fixture_profile_ledger封闭记录profile/contract/manifest/实体计数/synthetic_only/external_calls=0/writes_to_base=0/real_content_imported=false。补齐独立临时目录测试：双库不同文件且不同inode、profile/path/source混合拒绝、root或fixture任一漂移写前拒绝、迁移回滚、seed中途故障回滚、二次seed零漂移、ATTACH拒绝、M3零漂移、无缓存/临时/监听残留。开发报告列冻结代码与迁移SHA、Node24机械收据、未实现边界。",
+  "domain_stage": "SQLite双profile与seed实现",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一root只靠包内互引、被协调改写后仍能seed/ready，或先写数据库后才发现root漂移：P1 FAIL并停止。",
+    "两个profile可共享/attach/混合Source或public图，public库不是独立文件与inode，或M3出现第60行、src-active、enabled提升或hash漂移：P0/P1 FAIL并回滚。",
+    "migration/seed非幂等、故障后留下部分表/行/ledger、路径或symlink可越界、出现外部调用，或越界修改serve/public UI/API/data/ADR/lock：FAIL并停止扩大范围。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "首次check被宿主注入ANTHROPIC_AUTH_TOKEN拒绝，移除单一宿主变量后到达typecheck并发现database.location nullable，修正后最终完整check PASS；testDatabasePathOverride仅由NODE_ENV=test runtime loader开启，已列为安全部定向复验点；只读对抗子审查按统筹立即收口要求中止，未伪造结论。",
+  "node": "把已核收的v0.4公开数据机器合同落地为物理隔离的m3-shadow与public-synthetic数据库准备层",
+  "pointers": [
+    "docs/decisions/system/2026-08-03-F1+1-公开读模型与API接线-v0.4-successor-accepted.md",
+    "data/mvp-contract-v0.4-public-synthetic",
+    "docs/collaboration/tasks/TASK-20260803-D53BF3.json"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-04-v0.4双profile-SQLite迁移与原子seed实现报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260804-253A43",
+  "title": "实现v0.4双profile SQLite迁移、四根pin与原子seed",
+  "unverified": [
+    "安全部与测试部尚未对本候选做正式独立复验；PublicStoryRepository、feed/detail API、public health DTO、前端API接线及真实外部能力未实现。"
+  ],
+  "updated_at": "2026-08-04T15:15+08:00",
+  "verified": [
+    "Node24目标套件1文件3测试PASS；最终有效npm run check全链PASS，4文件57测试、lint、typecheck、build、P1均通过；双profile不同inode、public精确1/12/12/12/10/12/12/12/12、四root写前拒绝、ATTACH/cross-profile拒绝、migration/seed回滚与幂等、M3 59x39/59 disabled/e7a831零漂移均已验证；externalCalls=0；生成DB/cache已清理。"
+  ]
+}

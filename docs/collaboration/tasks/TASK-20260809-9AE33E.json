@@ -1,0 +1,73 @@
+{
+  "acceptance_exit": "交付一份proposed决策包和产品报告；三方案互斥、推荐与事实/推断/Unknown分层清楚；逐项继承公网Admin=0、writer=1、Mac/iPhone等价、RPO≤15m、RTO≤4h与专用设备合同；明确用户选择只授权下一阶段合同或受控验证，不自动授权真实安装、账号、付费或部署；三路只读对抗审查P0=0/P1=0，列已验证/未验证、错题自检并返回TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/decisions/system/2026-08-09-F1+1-M5-Admin私有访问与异机备份用户决策包-proposed.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-09-Admin私有访问与异机备份用户决策包报告.md"
+  ],
+  "authorization_evidence": "用户此前明确要求统筹拆分规划并安排对应部门直接开工；本任务仅编制本地proposed决策包，无安装、注册、付费、网络、上传或部署。真实供应商选择和实施继续待用户单独确认。",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T15:23+08:00",
+      "evidence": "供应商与真实验证路线尚待用户单独选择；本任务仅准备决策包",
+      "state": "user_required"
+    },
+    {
+      "at": "2026-08-09T15:23+08:00",
+      "evidence": "用户此前明确要求统筹拆分规划并安排对应部门直接开工；本任务仅编制本地proposed决策包，无安装、注册、付费、网络、上传或部署。真实供应商选择和实施继续待用户单独确认。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "用户已确认专用MacBook、私有客户端、RPO≤15分钟、RTO≤4小时；研究报告已ACK。本任务只准备决策包，不代替用户选择或授权实施。",
+  "created_at": "2026-08-09T15:23+08:00",
+  "department": "产品部",
+  "details": "只读吸收已ACK的研究报告TASK-20260809-B05A67与现行Admin专用MacBook合同，形成一份proposed用户决策包，不直接接受任何供应商。最多保留三套：P0托管Tailscale+restic/B2网络适配优先验证；P1 Headscale+自托管DERP；P2纯WireGuard冷备通道。明确Tailscale中国大陆稳定性、目标计划资格、B2跨境/区域和restic/Object Lock组合均为Unknown；网络适配、五分钟签名freshness和RPO/RTO备份恢复是三条独立门。给出用户下一步只需回答的单一选择问题、每项影响/成本/运维/退出条件、未来production manifest增量与Gate A-D顺序。不得修改既有accepted正文、不得把推荐写成已批准、不得安装/注册/付费/联网探针/上传数据；不修改app/data/design。",
+  "domain_stage": "M5 Admin部署候选用户决策准备",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若研究证据不足以支撑中国大陆或组合兼容性，保持Unknown并把未来受控实测写成门禁，不补造确定结论。",
+    "若任一方案需要长期公网Admin、家庭端口转发、UPnP、第二写主或数据库双活，直接排除并不得进入用户选项。",
+    "若需要修改现行accepted合同或真实资源才能完成，停止在proposed决策包边界并回统筹。"
+  ],
+  "from_department": "统筹部",
+  "impact_declaration": {
+    "admission": "manual",
+    "base_revision": "a9691e71b1552592cc5ded8d5db66c336262301c",
+    "external_effects": [
+      "none；不安装、注册、付费、联网探针、上传、部署或修改真实资源"
+    ],
+    "owner_task": "TASK-20260809-9AE33E",
+    "shared_contracts": [
+      "仅形成三方案互斥的proposed用户决策包；不接受供应商，不改变公网Admin=0、writer=1、Mac/iPhone等价、RPO≤15m、RTO≤4h与专用设备合同"
+    ],
+    "write_paths": [
+      "docs/decisions/system/2026-08-09-F1+1-M5-Admin私有访问与异机备份用户决策包-proposed.md"
+    ]
+  },
+  "mistake_check": "未选择供应商或把推荐写成批准；未把全球产品能力外推大陆可用；未让network替代freshness/backup；未外推restic与ObjectLock组合；未把ROUTE-C写成日常入口；未混淆上传凭据与恢复解密材料；未开放公网Admin/UPnP/端口/第二写主；未改accepted/Spec/app/data/design；未安装、注册、付费、联网探针、生成或上传密钥/数据、创建资源、外发或部署",
+  "node": "把已核收研究证据转换为单一待用户选择的部署候选合同入口",
+  "pointers": [
+    "docs/collaboration/部门/研究部/报告/2026-08-09-专用Admin-MacBook私有访问与异机备份候选.md",
+    "docs/decisions/system/2026-08-09-F1+1-M5-Admin专用MacBook部署边界-successor-accepted.md",
+    "docs/spec/F1+1-M5-Admin专用MacBook补充实施合同-v0.2.md"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-09-Admin私有访问与异机备份用户决策包报告.md",
+  "resolution": null,
+  "revision": 6,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-9AE33E",
+  "title": "形成Admin私有访问与异机备份用户决策包",
+  "unverified": [
+    "中国大陆目标网络稳定性、目标计划资格/价格/税费/元数据地域、Headscale-DERP-WireGuard具体资源、five-minute freshness事实源、B2跨境区域、restic-ObjectLock组合、备份介质/密钥/成本、真实设备/账号/网络/RPO-RTO/public-host/production receipt均Unknown或未验证；供应商仍未选择"
+  ],
+  "updated_at": "2026-08-09T15:37+08:00",
+  "verified": [
+    "已吸收ACK研究报告与现行专用MacBook合同；形成ROUTE-A/B/C三套互斥proposed路线且A为唯一推荐；事实/推断/Unknown、成本/运维/退出和单一用户问题闭合；公网Admin=0、writer=1、双端等价、专用设备、public只读、RPO-RTO不变；网络/freshness/backup三门和GATE-A-D机械独立；三路只读审查最终P0=0/P1=0/P2=0；关键状态、链接、Markdown与doctor通过；无外部IO"
+  ]
+}

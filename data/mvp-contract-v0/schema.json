@@ -1,0 +1,2846 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:f1plus1:mvp-local-v0.3",
+  "title": "F1+1 local MVP data contract v0.3",
+  "description": "Single local domain contract; synthetic fixture only, fail-closed, no external IO or credentials.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "mvp-local-v0.3"
+    },
+    "fixture_set": {
+      "type": "string",
+      "pattern": "^synthetic-[a-z0-9-]+$"
+    },
+    "canonical_json_rule_version": {
+      "const": "canonical-json-v1"
+    },
+    "canonical_json_rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "const": "canonical-json-v1"
+        },
+        "encoding": {
+          "const": "UTF-8"
+        },
+        "key_order": {
+          "const": "lexicographic Unicode code-point order"
+        },
+        "whitespace": {
+          "const": "compact JSON separators comma=',' and colon=':'"
+        },
+        "numbers": {
+          "const": "finite JSON numbers only; no NaN, Infinity or exponent rewriting"
+        },
+        "nulls": {
+          "const": "preserve explicit null values; never omit a present null"
+        },
+        "unicode": {
+          "const": "preserve Unicode code points with ensure_ascii=false; no NFC/NFD normalization"
+        },
+        "hash": {
+          "const": "SHA-256 over the exact compact UTF-8 byte sequence"
+        },
+        "rfc8785": {
+          "const": "project-defined canonical JSON; not RFC 8785 JCS"
+        }
+      },
+      "required": [
+        "version",
+        "encoding",
+        "key_order",
+        "whitespace",
+        "numbers",
+        "nulls",
+        "unicode",
+        "hash",
+        "rfc8785"
+      ]
+    },
+    "synthetic_only": {
+      "const": true
+    },
+    "external_calls": {
+      "const": 0
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Source"
+      },
+      "minItems": 1
+    },
+    "captured_items": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/CapturedItem"
+      },
+      "minItems": 1
+    },
+    "contents": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Content"
+      },
+      "minItems": 1
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Event"
+      },
+      "minItems": 1
+    },
+    "summaries": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Summary"
+      },
+      "minItems": 1
+    },
+    "media_candidates": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/MediaCandidate"
+      },
+      "minItems": 1
+    },
+    "release_bundles": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ReleaseBundle"
+      },
+      "minItems": 1
+    },
+    "review_decisions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ReviewDecision"
+      },
+      "minItems": 1
+    },
+    "publications": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Publication"
+      },
+      "minItems": 1
+    },
+    "outbox_jobs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/OutboxJob"
+      },
+      "minItems": 1
+    },
+    "published_projections": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/PublishedProjection"
+      },
+      "minItems": 3
+    },
+    "activation_transaction": {
+      "type": "object",
+      "description": "Fixture receipt only; ActivationTransaction is not a domain entity.",
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{1,127}$"
+        },
+        "onboarding_operation_id": {
+          "type": "string",
+          "pattern": "^op-[a-z0-9-]{6,128}$"
+        },
+        "operation_id": {
+          "type": "string",
+          "pattern": "^op-[a-z0-9-]{6,128}$"
+        },
+        "task_id": {
+          "type": "string",
+          "pattern": "^task-[a-z0-9-]{6,128}$"
+        },
+        "outbox_job_id": {
+          "type": "string",
+          "pattern": "^job-[a-z0-9-]+$"
+        },
+        "source_enabled_before": {
+          "const": false
+        },
+        "source_enabled_after": {
+          "const": true
+        },
+        "resulting_onboarding_status": {
+          "const": "queued"
+        },
+        "same_transaction": {
+          "const": true
+        },
+        "five_epochs_match": {
+          "const": true
+        },
+        "idempotency_key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "fixture_receipt": {
+          "const": true
+        },
+        "external_calls": {
+          "const": 0
+        },
+        "synthetic_only": {
+          "const": true
+        }
+      },
+      "required": [
+        "source_id",
+        "onboarding_operation_id",
+        "operation_id",
+        "task_id",
+        "outbox_job_id",
+        "source_enabled_before",
+        "source_enabled_after",
+        "resulting_onboarding_status",
+        "same_transaction",
+        "five_epochs_match",
+        "idempotency_key",
+        "fixture_receipt",
+        "external_calls",
+        "synthetic_only"
+      ]
+    },
+    "snapshot_reconciliation": {
+      "$ref": "#/$defs/SnapshotReconciliation"
+    },
+    "cases": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/FixtureCase"
+      },
+      "minItems": 16,
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "schema_version",
+    "fixture_set",
+    "canonical_json_rule_version",
+    "canonical_json_rule",
+    "synthetic_only",
+    "external_calls",
+    "sources",
+    "captured_items",
+    "contents",
+    "events",
+    "summaries",
+    "media_candidates",
+    "release_bundles",
+    "review_decisions",
+    "publications",
+    "outbox_jobs",
+    "published_projections",
+    "activation_transaction",
+    "snapshot_reconciliation",
+    "cases"
+  ],
+  "$defs": {
+    "Source": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{1,127}$"
+        },
+        "platform": {
+          "type": "string",
+          "enum": [
+            "x",
+            "instagram",
+            "reddit",
+            "website",
+            "rss"
+          ]
+        },
+        "platform_account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "handle": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "raw_url": {
+          "type": "string",
+          "pattern": "^https?://",
+          "format": "uri"
+        },
+        "canonical_url": {
+          "type": "string",
+          "pattern": "^https?://",
+          "format": "uri"
+        },
+        "canonical_url_valid": {
+          "type": "boolean"
+        },
+        "normalizer_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "normalization_status": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "valid",
+            "invalid",
+            "needs_review"
+          ]
+        },
+        "dedup_status": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "unique",
+            "linked_existing",
+            "needs_review"
+          ]
+        },
+        "entity_type": {
+          "type": "string",
+          "enum": [
+            "official_org_team_event",
+            "driver_or_manager",
+            "journalist_commentator_media",
+            "fan_news_aggregator",
+            "image_entertainment_other"
+          ]
+        },
+        "content_focus": {
+          "type": "string",
+          "enum": [
+            "team_or_series_updates",
+            "driver_or_manager_updates",
+            "journalism_commentary",
+            "fan_news_aggregation",
+            "visual_entertainment_or_other"
+          ]
+        },
+        "priority": {
+          "type": "string",
+          "enum": [
+            "high",
+            "medium",
+            "low"
+          ]
+        },
+        "verification_status": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "confirmed",
+            "rejected"
+          ]
+        },
+        "identity_status": {
+          "type": "string",
+          "enum": [
+            "unknown",
+            "verified",
+            "needs_review"
+          ]
+        },
+        "relevance_status": {
+          "type": "string",
+          "enum": [
+            "unknown",
+            "qualified",
+            "rejected"
+          ]
+        },
+        "monitorability": {
+          "type": "string",
+          "enum": [
+            "unknown",
+            "monitorable",
+            "restricted",
+            "unavailable"
+          ]
+        },
+        "adapter_status": {
+          "type": "string",
+          "enum": [
+            "unchecked",
+            "ready",
+            "missing",
+            "unavailable"
+          ]
+        },
+        "adapter_authorization_status": {
+          "type": "string",
+          "enum": [
+            "unknown",
+            "valid",
+            "invalid",
+            "expired"
+          ]
+        },
+        "platform_allowed": {
+          "type": "string",
+          "enum": [
+            "unknown",
+            "allowed",
+            "blocked"
+          ]
+        },
+        "authorization_checked_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "authorization_expires_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "collection_onboarding_status": {
+          "type": "string",
+          "enum": [
+            "validating",
+            "activation_pending",
+            "queued",
+            "collecting",
+            "active",
+            "normalization_failed",
+            "dedup_needs_review",
+            "linked_existing",
+            "blocked_adapter_missing",
+            "blocked_authorization",
+            "blocked_platform",
+            "queue_failed",
+            "collection_failed",
+            "stopped",
+            "cancelled",
+            "dead_letter"
+          ]
+        },
+        "onboarding_operation_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^op-[a-z0-9-]+$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "lifecycle_status": {
+          "type": "string",
+          "enum": [
+            "proposed",
+            "active",
+            "paused",
+            "retired"
+          ]
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "manual_disable_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source_stop_status": {
+          "type": "string",
+          "enum": [
+            "clear",
+            "manual",
+            "compliance",
+            "authorization",
+            "platform"
+          ]
+        },
+        "source_safety_epoch": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "source_config_epoch": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "added_at": {
+          "type": "string",
+          "format": "date"
+        },
+        "evidence_url": {
+          "type": "string",
+          "pattern": "^https?://",
+          "format": "uri"
+        },
+        "notes": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "migration_batch_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "change_reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "created_by_ref": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+        },
+        "updated_by_ref": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+        }
+      },
+      "required": [
+        "source_id",
+        "platform",
+        "platform_account_id",
+        "handle",
+        "raw_url",
+        "canonical_url",
+        "canonical_url_valid",
+        "normalizer_version",
+        "normalization_status",
+        "dedup_status",
+        "entity_type",
+        "content_focus",
+        "priority",
+        "verification_status",
+        "identity_status",
+        "relevance_status",
+        "monitorability",
+        "adapter_status",
+        "adapter_authorization_status",
+        "platform_allowed",
+        "authorization_checked_at",
+        "authorization_expires_at",
+        "collection_onboarding_status",
+        "onboarding_operation_id",
+        "lifecycle_status",
+        "enabled",
+        "manual_disable_at",
+        "source_stop_status",
+        "source_safety_epoch",
+        "source_config_epoch",
+        "added_at",
+        "evidence_url",
+        "notes",
+        "migration_batch_id",
+        "change_reason",
+        "created_at",
+        "updated_at",
+        "created_by_ref",
+        "updated_by_ref"
+      ]
+    },
+    "CapturedItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "capture_id": {
+          "type": "string",
+          "pattern": "^cap-[a-z0-9-]+$"
+        },
+        "raw_url": {
+          "type": "string",
+          "pattern": "^https?://",
+          "format": "uri"
+        },
+        "capture_note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "captured_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "normalization_status": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "valid",
+            "invalid",
+            "needs_review"
+          ]
+        },
+        "normalization_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "dedup_status": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "unique",
+            "linked_existing",
+            "needs_review"
+          ]
+        },
+        "dedup_match_source_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "canonical_url": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^https?://",
+              "format": "uri"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "content_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source_config_epoch": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "created_by_ref": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+        },
+        "updated_by_ref": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+        }
+      },
+      "required": [
+        "capture_id",
+        "raw_url",
+        "capture_note",
+        "captured_at",
+        "normalization_status",
+        "normalization_error",
+        "dedup_status",
+        "dedup_match_source_id",
+        "source_id",
+        "canonical_url",
+        "content_id",
+        "source_config_epoch",
+        "created_at",
+        "updated_at",
+        "created_by_ref",
+        "updated_by_ref"
+      ]
+    },
+    "Content": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "content_id": {
+          "type": "string",
+          "pattern": "^content-[a-z0-9-]+$"
+        },
+        "source_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{1,127}$"
+        },
+        "capture_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "external_content_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "external_url": {
+          "type": "string",
+          "pattern": "^https?://",
+          "format": "uri"
+        },
+        "canonical_url": {
+          "type": "string",
+          "pattern": "^https?://",
+          "format": "uri"
+        },
+        "content_kind": {
+          "type": "string",
+          "enum": [
+            "post",
+            "article",
+            "video",
+            "image",
+            "thread"
+          ]
+        },
+        "content_status": {
+          "type": "string",
+          "enum": [
+            "captured",
+            "normalized",
+            "dedup_pending",
+            "review_pending",
+            "approved",
+            "rejected",
+            "publish_queued",
+            "published",
+            "failed"
+          ]
+        },
+        "published_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "captured_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "content_version": {
+          "type": "string",
+          "pattern": "^v[1-9][0-9]*$"
+        },
+        "content_version_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "content_hash_input": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "content_id": {
+              "type": "string",
+              "pattern": "^content-[a-z0-9-]+$"
+            },
+            "source_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{1,127}$"
+            },
+            "external_content_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            },
+            "canonical_url": {
+              "type": "string",
+              "pattern": "^https?://",
+              "format": "uri"
+            },
+            "content_kind": {
+              "type": "string",
+              "enum": [
+                "post",
+                "article",
+                "video",
+                "image",
+                "thread"
+              ]
+            },
+            "content_version": {
+              "type": "string",
+              "pattern": "^v[1-9][0-9]*$"
+            },
+            "normalized_title": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512
+            },
+            "normalized_body": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 20000
+            },
+            "language": {
+              "type": "string",
+              "pattern": "^[a-z]{2}(-[A-Z]{2})?$"
+            },
+            "source_evidence_url": {
+              "type": "string",
+              "pattern": "^https?://",
+              "format": "uri"
+            },
+            "source_config_epoch": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "content_id",
+            "source_id",
+            "external_content_id",
+            "canonical_url",
+            "content_kind",
+            "content_version",
+            "normalized_title",
+            "normalized_body",
+            "language",
+            "source_evidence_url",
+            "source_config_epoch"
+          ]
+        },
+        "normalized_title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "normalized_body": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 20000
+        },
+        "language": {
+          "type": "string",
+          "pattern": "^[a-z]{2}(-[A-Z]{2})?$"
+        },
+        "source_evidence_url": {
+          "type": "string",
+          "pattern": "^https?://",
+          "format": "uri"
+        },
+        "source_config_epoch": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "created_by_ref": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+        },
+        "updated_by_ref": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+        }
+      },
+      "required": [
+        "content_id",
+        "source_id",
+        "capture_id",
+        "external_content_id",
+        "external_url",
+        "canonical_url",
+        "content_kind",
+        "content_status",
+        "published_at",
+        "captured_at",
+        "content_version",
+        "content_version_hash",
+        "content_hash_input",
+        "normalized_title",
+        "normalized_body",
+        "language",
+        "source_evidence_url",
+        "source_config_epoch",
+        "created_at",
+        "updated_at",
+        "created_by_ref",
+        "updated_by_ref"
+      ]
+    },
+    "Event": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "event_id": {
+          "type": "string",
+          "pattern": "^event-[a-z0-9-]+$"
+        },
+        "dedup_fingerprint": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "canonical_content_id": {
+          "type": "string",
+          "pattern": "^content-[a-z0-9-]+$"
+        },
+        "member_content_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^content-[a-z0-9-]+$"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "dedup_status": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "canonical",
+            "merged",
+            "needs_review"
+          ]
+        },
+        "source_config_epoch": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "created_by_ref": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+        },
+        "updated_by_ref": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+        }
+      },
+      "required": [
+        "event_id",
+        "dedup_fingerprint",
+        "canonical_content_id",
+        "member_content_ids",
+        "dedup_status",
+        "source_config_epoch",
+        "created_at",
+        "updated_at",
+        "created_by_ref",
+        "updated_by_ref"
+      ]
+    },
+    "Summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "summary_id": {
+          "type": "string",
+          "pattern": "^summary-[a-z0-9-]+$"
+        },
+        "content_id": {
+          "type": "string",
+          "pattern": "^content-[a-z0-9-]+$"
+        },
+        "summary_version": {
+          "type": "string",
+          "pattern": "^v[1-9][0-9]*$"
+        },
+        "summary_version_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "summary_hash_input": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "summary_id": {
+              "type": "string",
+              "pattern": "^summary-[a-z0-9-]+$"
+            },
+            "content_id": {
+              "type": "string",
+              "pattern": "^content-[a-z0-9-]+$"
+            },
+            "summary_version": {
+              "type": "string",
+              "pattern": "^v[1-9][0-9]*$"
+            },
+            "title_zh": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512
+            },
+            "summary_zh": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 10000
+            },
+            "language": {
+              "const": "zh-CN"
+            },
+            "source_evidence_url": {
+              "type": "string",
+              "pattern": "^https?://",
+              "format": "uri"
+            },
+            "input_content_hash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "summary_schema_version": {
+              "type": "string",
+              "pattern": "^summary-schema-v[0-9]+$"
+            },
+            "summarizer": {
+              "type": "string",
+              "pattern": "^synthetic:[a-z0-9._:-]+$"
+            },
+            "deterministic": {
+              "const": true
+            }
+          },
+          "required": [
+            "summary_id",
+            "content_id",
+            "summary_version",
+            "title_zh",
+            "summary_zh",
+            "language",
+            "source_evidence_url",
+            "input_content_hash",
+            "summary_schema_version",
+            "summarizer",
+            "deterministic"
+          ]
+        },
+        "input_content_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "summary_schema_version": {
+          "type": "string",
+          "pattern": "^summary-schema-v[0-9]+$"
+        },
+        "summarizer": {
+          "type": "string",
+          "pattern": "^synthetic:[a-z0-9._:-]+$"
+        },
+        "deterministic": {
+          "const": true
+        },
+        "title_zh": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "summary_zh": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 10000
+        },
+        "summary_status": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "ready",
+            "approved",
+            "rejected",
+            "superseded"
+          ]
+        },
+        "language": {
+          "const": "zh-CN"
+        },
+        "source_evidence_url": {
+          "type": "string",
+          "pattern": "^https?://",
+          "format": "uri"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "created_by_ref": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+        },
+        "updated_by_ref": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+        }
+      },
+      "required": [
+        "summary_id",
+        "content_id",
+        "summary_version",
+        "summary_version_hash",
+        "summary_hash_input",
+        "input_content_hash",
+        "summary_schema_version",
+        "summarizer",
+        "deterministic",
+        "title_zh",
+        "summary_zh",
+        "summary_status",
+        "language",
+        "source_evidence_url",
+        "created_at",
+        "updated_at",
+        "created_by_ref",
+        "updated_by_ref"
+      ]
+    },
+    "MediaCandidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "media_candidate_id": {
+          "type": "string",
+          "pattern": "^media-[a-z0-9-]+$"
+        },
+        "content_id": {
+          "type": "string",
+          "pattern": "^content-[a-z0-9-]+$"
+        },
+        "asset_ref": {
+          "type": "string",
+          "pattern": "^synthetic:[a-z0-9._:-]+$"
+        },
+        "media_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "mime_type": {
+          "type": "string",
+          "enum": [
+            "image/jpeg",
+            "image/png",
+            "image/webp"
+          ]
+        },
+        "license_status": {
+          "type": "string",
+          "enum": [
+            "unknown",
+            "allowed",
+            "restricted",
+            "rejected"
+          ]
+        },
+        "safety_status": {
+          "type": "string",
+          "enum": [
+            "unknown",
+            "passed",
+            "failed"
+          ]
+        },
+        "candidate_status": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "selected",
+            "rejected"
+          ]
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "created_by_ref": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+        },
+        "updated_by_ref": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+        }
+      },
+      "required": [
+        "media_candidate_id",
+        "content_id",
+        "asset_ref",
+        "media_hash",
+        "mime_type",
+        "license_status",
+        "safety_status",
+        "candidate_status",
+        "created_at",
+        "updated_at",
+        "created_by_ref",
+        "updated_by_ref"
+      ]
+    },
+    "ReleaseBundle": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "release_bundle_id": {
+          "type": "string",
+          "pattern": "^bundle-[a-z0-9-]+$"
+        },
+        "bundle_version": {
+          "type": "string",
+          "pattern": "^v[1-9][0-9]*$"
+        },
+        "content_id": {
+          "type": "string",
+          "pattern": "^content-[a-z0-9-]+$"
+        },
+        "summary_id": {
+          "type": "string",
+          "pattern": "^summary-[a-z0-9-]+$"
+        },
+        "content_version_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "summary_version_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "source_evidence_url": {
+          "type": "string",
+          "pattern": "^https?://",
+          "format": "uri"
+        },
+        "canonical_json_rule_version": {
+          "const": "canonical-json-v1"
+        },
+        "canonical_payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "release_bundle_id": {
+              "type": "string",
+              "pattern": "^bundle-[a-z0-9-]+$"
+            },
+            "content_version_hash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "summary_version_hash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "content_snapshot": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "content_id": {
+                  "type": "string",
+                  "pattern": "^content-[a-z0-9-]+$"
+                },
+                "source_id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{1,127}$"
+                },
+                "external_content_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 255
+                },
+                "canonical_url": {
+                  "type": "string",
+                  "pattern": "^https?://",
+                  "format": "uri"
+                },
+                "content_kind": {
+                  "type": "string",
+                  "enum": [
+                    "post",
+                    "article",
+                    "video",
+                    "image",
+                    "thread"
+                  ]
+                },
+                "content_version": {
+                  "type": "string",
+                  "pattern": "^v[1-9][0-9]*$"
+                },
+                "normalized_title": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 512
+                },
+                "normalized_body": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 20000
+                },
+                "language": {
+                  "type": "string",
+                  "pattern": "^[a-z]{2}(-[A-Z]{2})?$"
+                },
+                "source_evidence_url": {
+                  "type": "string",
+                  "pattern": "^https?://",
+                  "format": "uri"
+                },
+                "source_config_epoch": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "content_version_hash": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "capture_id": {
+                  "type": "string",
+                  "pattern": "^cap-[a-z0-9-]+$"
+                },
+                "external_url": {
+                  "type": "string",
+                  "pattern": "^https?://",
+                  "format": "uri"
+                },
+                "published_at": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "captured_at": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              },
+              "required": [
+                "content_id",
+                "source_id",
+                "external_content_id",
+                "canonical_url",
+                "content_kind",
+                "content_version",
+                "normalized_title",
+                "normalized_body",
+                "language",
+                "source_evidence_url",
+                "source_config_epoch",
+                "content_version_hash",
+                "capture_id",
+                "external_url",
+                "published_at",
+                "captured_at"
+              ]
+            },
+            "summary_snapshot": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "summary_id": {
+                  "type": "string",
+                  "pattern": "^summary-[a-z0-9-]+$"
+                },
+                "content_id": {
+                  "type": "string",
+                  "pattern": "^content-[a-z0-9-]+$"
+                },
+                "summary_version": {
+                  "type": "string",
+                  "pattern": "^v[1-9][0-9]*$"
+                },
+                "title_zh": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 512
+                },
+                "summary_zh": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 10000
+                },
+                "language": {
+                  "const": "zh-CN"
+                },
+                "source_evidence_url": {
+                  "type": "string",
+                  "pattern": "^https?://",
+                  "format": "uri"
+                },
+                "input_content_hash": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "summary_schema_version": {
+                  "type": "string",
+                  "pattern": "^summary-schema-v[0-9]+$"
+                },
+                "summarizer": {
+                  "type": "string",
+                  "pattern": "^synthetic:[a-z0-9._:-]+$"
+                },
+                "deterministic": {
+                  "const": true
+                },
+                "summary_version_hash": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                }
+              },
+              "required": [
+                "summary_id",
+                "content_id",
+                "summary_version",
+                "title_zh",
+                "summary_zh",
+                "language",
+                "source_evidence_url",
+                "input_content_hash",
+                "summary_schema_version",
+                "summarizer",
+                "deterministic",
+                "summary_version_hash"
+              ]
+            },
+            "source_snapshot": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "source_id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{1,127}$"
+                },
+                "canonical_url": {
+                  "type": "string",
+                  "pattern": "^https?://",
+                  "format": "uri"
+                },
+                "platform": {
+                  "type": "string",
+                  "enum": [
+                    "x",
+                    "instagram",
+                    "reddit",
+                    "website",
+                    "rss"
+                  ]
+                },
+                "identity_status": {
+                  "type": "string",
+                  "enum": [
+                    "unknown",
+                    "verified",
+                    "needs_review"
+                  ]
+                },
+                "source_config_epoch": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "source_safety_epoch": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "required": [
+                "source_id",
+                "canonical_url",
+                "platform",
+                "identity_status",
+                "source_config_epoch",
+                "source_safety_epoch"
+              ]
+            },
+            "original_url": {
+              "type": "string",
+              "pattern": "^https?://",
+              "format": "uri"
+            },
+            "rights": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "rights_status": {
+                  "type": "string",
+                  "enum": [
+                    "unknown",
+                    "allowed",
+                    "restricted"
+                  ]
+                },
+                "evidence_ref": {
+                  "type": "string",
+                  "pattern": "^synthetic:[a-z0-9._:-]+$"
+                }
+              },
+              "required": [
+                "rights_status",
+                "evidence_ref"
+              ]
+            },
+            "media": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "media_candidate_id": {
+                    "type": "string",
+                    "pattern": "^media-[a-z0-9-]+$"
+                  },
+                  "media_hash": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "license_status": {
+                    "type": "string",
+                    "enum": [
+                      "unknown",
+                      "allowed",
+                      "restricted",
+                      "rejected"
+                    ]
+                  },
+                  "safety_status": {
+                    "type": "string",
+                    "enum": [
+                      "unknown",
+                      "passed",
+                      "failed"
+                    ]
+                  }
+                },
+                "required": [
+                  "media_candidate_id",
+                  "media_hash",
+                  "license_status",
+                  "safety_status"
+                ]
+              }
+            },
+            "policy": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "policy_epoch": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "publication_mode": {
+                  "const": "manual_only"
+                },
+                "manual_review_required": {
+                  "const": true
+                },
+                "safety_rule_version": {
+                  "type": "string",
+                  "pattern": "^safety-rule-v[0-9]+$"
+                }
+              },
+              "required": [
+                "policy_epoch",
+                "publication_mode",
+                "manual_review_required",
+                "safety_rule_version"
+              ]
+            },
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "domain_schema_version": {
+                  "const": "mvp-local-v0.3"
+                },
+                "payload_schema_version": {
+                  "type": "string",
+                  "pattern": "^release-payload-v[0-9]+$"
+                },
+                "canonical_json_rule_version": {
+                  "const": "canonical-json-v1"
+                }
+              },
+              "required": [
+                "domain_schema_version",
+                "payload_schema_version",
+                "canonical_json_rule_version"
+              ]
+            },
+            "fences": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "source_config_epoch": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "source_safety_epoch": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "authorization_version": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "policy_epoch": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "recovery_epoch": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "required": [
+                "source_config_epoch",
+                "source_safety_epoch",
+                "authorization_version",
+                "policy_epoch",
+                "recovery_epoch"
+              ]
+            }
+          },
+          "required": [
+            "release_bundle_id",
+            "content_version_hash",
+            "summary_version_hash",
+            "content_snapshot",
+            "summary_snapshot",
+            "source_snapshot",
+            "original_url",
+            "rights",
+            "media",
+            "policy",
+            "schema",
+            "fences"
+          ]
+        },
+        "payload_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "bundle_hash_input": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "release_bundle_id": {
+              "type": "string",
+              "pattern": "^bundle-[a-z0-9-]+$"
+            },
+            "bundle_version": {
+              "type": "string",
+              "pattern": "^v[1-9][0-9]*$"
+            },
+            "payload_hash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "canonical_json_rule_version": {
+              "const": "canonical-json-v1"
+            },
+            "immutable": {
+              "const": true
+            }
+          },
+          "required": [
+            "release_bundle_id",
+            "bundle_version",
+            "payload_hash",
+            "canonical_json_rule_version",
+            "immutable"
+          ]
+        },
+        "bundle_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "release_status": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "ready",
+            "approved",
+            "superseded",
+            "rejected"
+          ]
+        },
+        "immutable": {
+          "const": true
+        },
+        "assembled_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "media_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^media-[a-z0-9-]+$"
+          },
+          "uniqueItems": true
+        },
+        "source_config_epoch": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "source_safety_epoch": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "authorization_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "policy_epoch": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "recovery_epoch": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "created_by_ref": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+        },
+        "updated_by_ref": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+        }
+      },
+      "required": [
+        "release_bundle_id",
+        "bundle_version",
+        "content_id",
+        "summary_id",
+        "content_version_hash",
+        "summary_version_hash",
+        "source_evidence_url",
+        "canonical_json_rule_version",
+        "canonical_payload",
+        "payload_hash",
+        "bundle_hash_input",
+        "bundle_hash",
+        "release_status",
+        "immutable",
+        "assembled_at",
+        "media_refs",
+        "source_config_epoch",
+        "source_safety_epoch",
+        "authorization_version",
+        "policy_epoch",
+        "recovery_epoch",
+        "created_at",
+        "updated_at",
+        "created_by_ref",
+        "updated_by_ref"
+      ]
+    },
+    "ReviewDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "review_decision_id": {
+          "type": "string",
+          "pattern": "^decision-[a-z0-9-]+$"
+        },
+        "content_id": {
+          "type": "string",
+          "pattern": "^content-[a-z0-9-]+$"
+        },
+        "summary_id": {
+          "type": "string",
+          "pattern": "^summary-[a-z0-9-]+$"
+        },
+        "release_bundle_id": {
+          "type": "string",
+          "pattern": "^bundle-[a-z0-9-]+$"
+        },
+        "review_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "decision": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "changes_requested",
+            "approved",
+            "rejected",
+            "superseded"
+          ]
+        },
+        "approved_bundle_hash": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reviewer_ref": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+        },
+        "reviewed_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "decision_reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        "decision_hash_input": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "review_decision_id": {
+              "type": "string",
+              "pattern": "^decision-[a-z0-9-]+$"
+            },
+            "release_bundle_id": {
+              "type": "string",
+              "pattern": "^bundle-[a-z0-9-]+$"
+            },
+            "approved_bundle_hash": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "review_version": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "decision": {
+              "type": "string",
+              "enum": [
+                "pending",
+                "changes_requested",
+                "approved",
+                "rejected",
+                "superseded"
+              ]
+            },
+            "canonical_json_rule_version": {
+              "const": "canonical-json-v1"
+            },
+            "source_config_epoch": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "source_safety_epoch": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "authorization_version": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "policy_epoch": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "recovery_epoch": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": [
+            "review_decision_id",
+            "release_bundle_id",
+            "approved_bundle_hash",
+            "review_version",
+            "decision",
+            "canonical_json_rule_version",
+            "source_config_epoch",
+            "source_safety_epoch",
+            "authorization_version",
+            "policy_epoch",
+            "recovery_epoch"
+          ]
+        },
+        "decision_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "canonical_json_rule_version": {
+          "const": "canonical-json-v1"
+        },
+        "immutable": {
+          "const": true
+        },
+        "source_config_epoch": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "source_safety_epoch": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "authorization_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "policy_epoch": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "recovery_epoch": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "created_by_ref": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+        },
+        "updated_by_ref": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+        }
+      },
+      "required": [
+        "review_decision_id",
+        "content_id",
+        "summary_id",
+        "release_bundle_id",
+        "review_version",
+        "decision",
+        "approved_bundle_hash",
+        "reviewer_ref",
+        "reviewed_at",
+        "decision_reason",
+        "decision_hash_input",
+        "decision_hash",
+        "canonical_json_rule_version",
+        "immutable",
+        "source_config_epoch",
+        "source_safety_epoch",
+        "authorization_version",
+        "policy_epoch",
+        "recovery_epoch",
+        "created_at",
+        "updated_at",
+        "created_by_ref",
+        "updated_by_ref"
+      ]
+    },
+    "Publication": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "publication_id": {
+          "type": "string",
+          "pattern": "^publication-[a-z0-9-]+$"
+        },
+        "content_id": {
+          "type": "string",
+          "pattern": "^content-[a-z0-9-]+$"
+        },
+        "summary_id": {
+          "type": "string",
+          "pattern": "^summary-[a-z0-9-]+$"
+        },
+        "release_bundle_id": {
+          "type": "string",
+          "pattern": "^bundle-[a-z0-9-]+$"
+        },
+        "public_id": {
+          "type": "string",
+          "pattern": "^public-[a-z0-9-]+$"
+        },
+        "publish_generation": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "publication_status": {
+          "type": "string",
+          "enum": [
+            "queued",
+            "publishing",
+            "published",
+            "retryable_failed",
+            "reconcile_wait",
+            "terminal_failed",
+            "blocked",
+            "emergency_stopped"
+          ]
+        },
+        "approved_bundle_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "approved_content_version_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "approved_summary_version_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "published_version_hash": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "idempotency_key": {
+          "type": "string",
+          "pattern": "^publish:[a-z0-9-]+:bundle:[a-f0-9]{64}$"
+        },
+        "reconcile_key": {
+          "type": "string",
+          "pattern": "^reconcile:[a-z0-9-]+:[a-f0-9]{64}$"
+        },
+        "reconcile_status": {
+          "type": "string",
+          "enum": [
+            "not_needed",
+            "pending",
+            "confirmed_published",
+            "confirmed_not_submitted",
+            "terminal_failed",
+            "emergency_stopped"
+          ]
+        },
+        "reconcile_attempt": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "last_query_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "emergency_stop": {
+          "type": "boolean"
+        },
+        "attempt": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "last_error_code": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Z0-9_:-]{1,128}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "published_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source_evidence_url": {
+          "type": "string",
+          "pattern": "^https?://",
+          "format": "uri"
+        },
+        "source_config_epoch": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "source_safety_epoch": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "authorization_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "policy_epoch": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "recovery_epoch": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "created_by_ref": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+        },
+        "updated_by_ref": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+        }
+      },
+      "required": [
+        "publication_id",
+        "content_id",
+        "summary_id",
+        "release_bundle_id",
+        "public_id",
+        "publish_generation",
+        "publication_status",
+        "approved_bundle_hash",
+        "approved_content_version_hash",
+        "approved_summary_version_hash",
+        "published_version_hash",
+        "idempotency_key",
+        "reconcile_key",
+        "reconcile_status",
+        "reconcile_attempt",
+        "last_query_at",
+        "emergency_stop",
+        "attempt",
+        "last_error_code",
+        "published_at",
+        "source_evidence_url",
+        "source_config_epoch",
+        "source_safety_epoch",
+        "authorization_version",
+        "policy_epoch",
+        "recovery_epoch",
+        "created_at",
+        "updated_at",
+        "created_by_ref",
+        "updated_by_ref"
+      ]
+    },
+    "OutboxJob": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "job_id": {
+          "type": "string",
+          "pattern": "^job-[a-z0-9-]+$"
+        },
+        "task_envelope": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "$id": "urn:f1plus1:runtime-envelope:mvp-local-v0.3",
+          "title": "F1+1 local TaskEnvelope",
+          "description": "Five-epoch fail-closed task fence. Live lease tokens are 128-bit opaque values; synthetic fixtures use deterministic 32-hex placeholders.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "schema_version": {
+              "const": "mvp-local-v0.3"
+            },
+            "envelope_type": {
+              "const": "TaskEnvelope"
+            },
+            "task_id": {
+              "type": "string",
+              "pattern": "^task-[a-z0-9-]{6,128}$"
+            },
+            "operation_id": {
+              "type": "string",
+              "pattern": "^op-[a-z0-9-]{6,128}$"
+            },
+            "aggregate_type": {
+              "type": "string",
+              "enum": [
+                "source",
+                "content",
+                "event",
+                "publication",
+                "snapshot"
+              ]
+            },
+            "aggregate_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            },
+            "payload_hash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "source_config_epoch": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "source_safety_epoch": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "authorization_version": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "policy_epoch": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "recovery_epoch": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "lease_token": {
+              "type": "string",
+              "pattern": "^synthetic:lease:[a-f0-9]{32}$"
+            },
+            "lease_expiry": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "deadline": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "attempt": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "idempotency_key": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            },
+            "reconcile_key": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^reconcile:[a-z0-9-]+:[a-f0-9]{64}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "schema_version",
+            "envelope_type",
+            "task_id",
+            "operation_id",
+            "aggregate_type",
+            "aggregate_id",
+            "payload_hash",
+            "source_config_epoch",
+            "source_safety_epoch",
+            "authorization_version",
+            "policy_epoch",
+            "recovery_epoch",
+            "lease_token",
+            "lease_expiry",
+            "deadline",
+            "attempt",
+            "idempotency_key",
+            "reconcile_key"
+          ]
+        },
+        "operation_id": {
+          "type": "string",
+          "pattern": "^op-[a-z0-9-]{6,128}$"
+        },
+        "operation_type": {
+          "type": "string",
+          "enum": [
+            "source_activation",
+            "content_ingest",
+            "dedup",
+            "summary",
+            "publish",
+            "snapshot_sync"
+          ]
+        },
+        "aggregate_type": {
+          "type": "string",
+          "enum": [
+            "source",
+            "content",
+            "event",
+            "publication",
+            "snapshot"
+          ]
+        },
+        "aggregate_id": {
+          "type": "string"
+        },
+        "idempotency_key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "reconcile_key": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^reconcile:[a-z0-9-]+:[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "current_source_config_epoch": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "job_status": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "leased",
+            "succeeded",
+            "retryable_failed",
+            "terminal_failed",
+            "cancelled",
+            "stale_epoch",
+            "reconcile_wait",
+            "dead_letter"
+          ]
+        },
+        "attempt": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "max_attempts": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "payload_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "last_error_code": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Z0-9_:-]{1,128}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "next_attempt_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "published_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "created_by_ref": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+        },
+        "updated_by_ref": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+        }
+      },
+      "required": [
+        "job_id",
+        "task_envelope",
+        "operation_id",
+        "operation_type",
+        "aggregate_type",
+        "aggregate_id",
+        "idempotency_key",
+        "reconcile_key",
+        "current_source_config_epoch",
+        "job_status",
+        "attempt",
+        "max_attempts",
+        "payload_hash",
+        "last_error_code",
+        "next_attempt_at",
+        "published_at",
+        "created_at",
+        "updated_at",
+        "created_by_ref",
+        "updated_by_ref"
+      ]
+    },
+    "PublishedProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "projection_id": {
+          "type": "string",
+          "pattern": "^projection-[a-z0-9-]+$"
+        },
+        "public_id": {
+          "type": "string",
+          "pattern": "^public-[a-z0-9-]+$"
+        },
+        "content_id": {
+          "type": "string",
+          "pattern": "^content-[a-z0-9-]+$"
+        },
+        "summary_id": {
+          "type": "string",
+          "pattern": "^summary-[a-z0-9-]+$"
+        },
+        "release_bundle_id": {
+          "type": "string",
+          "pattern": "^bundle-[a-z0-9-]+$"
+        },
+        "publish_generation": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "projection_status": {
+          "const": "published"
+        },
+        "published_version_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "source_evidence_url": {
+          "type": "string",
+          "pattern": "^https?://",
+          "format": "uri"
+        },
+        "synthetic_only": {
+          "const": true
+        },
+        "external_calls": {
+          "const": 0
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "created_by_ref": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+        },
+        "updated_by_ref": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+        }
+      },
+      "required": [
+        "projection_id",
+        "public_id",
+        "content_id",
+        "summary_id",
+        "release_bundle_id",
+        "publish_generation",
+        "projection_status",
+        "published_version_hash",
+        "source_evidence_url",
+        "synthetic_only",
+        "external_calls",
+        "created_at",
+        "updated_at",
+        "created_by_ref",
+        "updated_by_ref"
+      ]
+    },
+    "SnapshotReconciliation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "job_id": {
+          "type": "string",
+          "pattern": "^job-[a-z0-9-]+$"
+        },
+        "last_known_good_manifest_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "candidate_manifest_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "reconciliation_status": {
+          "const": "retained"
+        },
+        "failure_reason": {
+          "type": "string",
+          "enum": [
+            "partial_or_empty_snapshot",
+            "stale_epoch"
+          ]
+        },
+        "external_calls": {
+          "const": 0
+        },
+        "synthetic_only": {
+          "const": true
+        }
+      },
+      "required": [
+        "job_id",
+        "last_known_good_manifest_hash",
+        "candidate_manifest_hash",
+        "reconciliation_status",
+        "failure_reason",
+        "external_calls",
+        "synthetic_only"
+      ]
+    },
+    "FixtureCase": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "case_id": {
+          "type": "string",
+          "pattern": "^case-[a-z0-9-]+$"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "source_seed",
+            "source_state",
+            "capture_normalization",
+            "duplicate_ingest",
+            "idempotent_retry",
+            "stale_review",
+            "publish_retry",
+            "stale_epoch",
+            "snapshot_failure",
+            "published_happy_path",
+            "adapter_gate",
+            "authorization_gate",
+            "platform_gate",
+            "blocked_recovery",
+            "queue_retry",
+            "collection_retry",
+            "stop_resume",
+            "reconcile_wait",
+            "reconcile_outcome"
+          ]
+        },
+        "input_refs": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "source_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "capture_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "content_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "event_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "summary_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "release_bundle_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "review_decision_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "publication_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "job_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "projection_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        },
+        "expected": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "outcome": {
+              "type": "string",
+              "enum": [
+                "accept",
+                "normalize_failed",
+                "deduplicate",
+                "reuse_existing_operation",
+                "block_stale_approval",
+                "retry_same_key",
+                "stop_stale_epoch",
+                "retain_last_known_good",
+                "published_projection",
+                "blocked_adapter",
+                "blocked_authorization",
+                "blocked_platform",
+                "blocked_priority_platform",
+                "blocked_recovery",
+                "queue_retry",
+                "collection_retry",
+                "stopped",
+                "reconcile_confirmed_published",
+                "reconcile_confirmed_not_submitted",
+                "reconcile_terminal_failed",
+                "reconcile_emergency_stopped"
+              ]
+            },
+            "reason_code": {
+              "type": "string",
+              "pattern": "^[a-z0-9_:-]+$"
+            },
+            "assertions": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "outcome",
+            "reason_code",
+            "assertions"
+          ]
+        },
+        "synthetic_input": {
+          "const": true
+        },
+        "external_calls": {
+          "const": 0
+        }
+      },
+      "required": [
+        "case_id",
+        "kind",
+        "input_refs",
+        "expected",
+        "synthetic_input",
+        "external_calls"
+      ]
+    }
+  }
+}

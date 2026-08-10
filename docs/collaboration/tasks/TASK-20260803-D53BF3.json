@@ -1,0 +1,62 @@
+{
+  "acceptance_exit": "数据部提交final整改报告与新机器包；generator实际解析唯一data-native输入且删除内嵌STORIES/app运行依赖；两次生成字节一致；旧12类故障及5项新增P1探针（decision input fence、manifest/profile语义、DTO改指internal URL、输出symlink、input双源/漂移）全部reject；v0.3 11/11与M3 59x39/e7a8零漂移；无pycache/临时残留；列最终根SHA与待开发pin边界；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "data/mvp-contract-v0.4-public-synthetic/stories.input.json",
+    "data/mvp-contract-v0.4-public-synthetic/schema.json",
+    "data/mvp-contract-v0.4-public-synthetic/fixtures.public-synthetic.json",
+    "data/mvp-contract-v0.4-public-synthetic/public-dto-mapping.json",
+    "data/mvp-contract-v0.4-public-synthetic/profile-boundary.json",
+    "data/mvp-contract-v0.4-public-synthetic/manifest.json",
+    "data/mvp-contract-v0.4-public-synthetic/profile-ledger.json",
+    "data/mvp-contract-v0.4-public-synthetic/generate_public_fixture.py",
+    "data/mvp-contract-v0.4-public-synthetic/validate_public_fixture.py",
+    "docs/collaboration/部门/数据部/报告/2026-08-04-v0.4公开数据机器合同五项P1整改报告.md"
+  ],
+  "authorization_evidence": "用户已确认v0.4方向并要求遇到问题快速优化；安全/测试独立审查已给出明确FAIL与修复出口。",
+  "authorization_history": [
+    {
+      "at": "2026-08-03T13:04+08:00",
+      "evidence": "用户已确认v0.4方向并要求遇到问题快速优化；安全/测试独立审查已给出明确FAIL与修复出口。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "数据部/执行成员:/root/data_v04_p1_remediation_resume",
+  "completion_class": "standard",
+  "confirmation": "整改后必须交原安全部与测试部聚焦复验；两者P0/P1=0前不得ACK原数据任务或进入开发。",
+  "created_at": "2026-08-03T13:04+08:00",
+  "department": "数据部",
+  "details": "以TASK-20260803-8C85B4安全FAIL报告与TASK-20260803-FB0D41测试FAIL报告为唯一缺陷输入，修改data/mvp-contract-v0.4-public-synthetic候选包及数据部整改报告。1) 新建data-native封闭机器输入（建议stories.input.json），把12条内容及一次性app/demo-data.ts迁移provenance放入该输入；generator必须实际解析唯一输入，不再内嵌STORIES，也不再把app文件作为再生成依赖。2) validator从ReviewDecision顶层与五fence构造exact expected decision_hash_input，整体相等后再hash。3) 对manifest/profile/ledger的contract、fixture、source、路径、count、capability、forbidden/import preconditions做closed exact校验并彼此绑定。4) DTO mapping改为封闭机器结构，逐字段exact allowlist来源/transform，拒绝URL/hash/fence/reviewer/raw/internal/private指针。5) generator拒绝输出父链/目标symlink与越界/非regular，使用同目录私有临时文件+fsync+原子replace，不能覆写项目外sentinel。全部正式hash/manifest/ledger/report随新候选重生成；旧v0.3 11项与M3 59x39/e7a8零漂移；清理pycache/临时文件。安全P2 root-of-trust不在data包内伪装解决，明确输出最终manifest/ledger/generator/validator根SHA供后续开发代码pin。不得改app/Spec/accepted ADR/design/lock/SQLite，不启用外部IO。",
+  "domain_stage": "数据合同P1整改",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "仍保留两份可维护内容、依赖app旧文件才能再生成，或input未被generator实际解析：P1 FAIL。",
+    "任一decision hash-input、manifest/profile安全语义、DTO映射值篡改可在重算外层hash后PASS：P1 FAIL。",
+    "输出symlink/父链/非regular/越界目标可被跟随或项目外sentinel被修改，或修复改动v0.3/M3/app/accepted ADR：P0/P1 FAIL并停止。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "首次临时探针虽29项断言通过，但发现复制了正式包旧pycache，未计无残留PASS；精确清理后完整重跑取得TEMP_LEFTOVERS=0。未修改app/Spec/accepted ADR/design/lock/SQLite/v0.3/M3，未把数据自测写成审核放行，未在包内伪装解决root-of-trust。",
+  "node": "在不改v0.3/M3/accepted ADR的前提下关闭安全4项P1和测试1项P1，重生成可复验数据包",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-03-v0.4公开数据机器合同独立安全审查.md",
+    "docs/collaboration/部门/测试部/报告/2026-08-03-v0.4公开数据机器合同与12条发布图-独立测试报告.md",
+    "data/mvp-contract-v0.4-public-synthetic"
+  ],
+  "report": "docs/collaboration/部门/数据部/报告/2026-08-04-v0.4公开数据机器合同五项P1整改报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260803-D53BF3",
+  "title": "整改v0.4数据合同五项P1并冻结单一输入与安全校验",
+  "unverified": [
+    "等待安全部与测试部按新SHA聚焦复验；Draft 2020-12原生引擎、开发代码root-hash pin、SQLite双库/migration/seed/Repository/API/前端接线、真实外部能力均未验证或未实现。"
+  ],
+  "updated_at": "2026-08-04T13:09+08:00",
+  "verified": [
+    "正式generator/validator PASS；两套TemporaryDirectory各连续生成2次且9项字节与正式目录全等；旧12类、两份FAIL报告并集及新增P1共29项故障全部reject；五个decision fence逐项分裂5/5 reject；target symlink/nonregular/parent symlink拒绝且sentinel未改；v0.3 11/11、M3 59x39/59 disabled/e7a831零漂移；AST无network/shell/dynamic-exec；无pycache/pyc/tmp残留；git diff --check通过。"
+  ]
+}

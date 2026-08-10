@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "提交安全部final独立报告，唯一decision=pass或fail并列P0/P1/P2；同一冻结候选的raw authority、proxy混淆、session/CSRF重放与TTL、identity碰撞、SQL/字段注入、baseline/SQLite/profile隔离、审计收据篡改、错误脱敏与no-egress均有独立攻击证据；PASS要求P0=0且P1=0。列已验证、未验证、错题自检，完成返回TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "用户持续目标授权推进本地初版；本任务仅独立验证已授权本地synthetic后端，无外部I/O。",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T23:50+08:00",
+      "evidence": "用户持续目标授权推进本地初版；本任务仅独立验证已授权本地synthetic后端，无外部I/O。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "",
+  "completion_class": "audit",
+  "confirmation": "统筹部在开发F1466E与测试、安全三份同一候选证据齐备后决定是否核收后端；本复验不授权UI、真实采集、生产或公网Admin。",
+  "created_at": "2026-08-09T23:50+08:00",
+  "department": "安全部",
+  "details": "前置条件：TASK-20260809-F1466E完成并给出开发报告、机器manifest和精确候选hash。安全部只读产品代码，使用独立临时profile/数据库及必要的单个127.0.0.1实例，亲自构造正反请求。覆盖raw peer/request-target、Host、Origin、Forwarded/X-Forwarded与代理混淆、非loopback拒绝；单ACTIVE内存session、随机材料失败关闭、cookie/refresh/destroy/过期；一次性CSRF的TTL、重放、method/path/body绑定；source identity/canonical conflict/truncated collision、SQL/字段注入、baseline不可变、local overlay、audit/receipt/ledger篡改、并发/第二writer、DB路径/profile/权限隔离；错误脱敏、日志/响应无token/hash/path泄漏、所有非loopback外部I/O为0。禁止真实平台、飞书、AI、媒体、发布、浏览器、UI、安装、网络配置、依赖和业务代码修改。若候选身份或开发收据缺失，保持queued并通知统筹，不自行选择候选。",
+  "domain_stage": "M5-SOURCE-MGMT后端独立安全",
+  "event_receipts": [],
+  "execution_state": "queued",
+  "external_artifacts": [],
+  "failure_paths": [
+    "F1466E未完成、manifest/hash/报告缺失或候选漂移：不执行动态攻击，保留queued或按协议block并回精确缺口。",
+    "任一raw/session/CSRF/identity/SQLite/audit攻击形成未授权成功、部分写或信息泄漏：保存最小复现，立即FAIL，不用后续成功覆盖。",
+    "发现外部I/O、真实数据写入、残留实例/锁/临时DB或保护文件漂移：立即停止并报告P0/P1，清理仅限任务明确创建且可安全识别的资源。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "在F1466E候选冻结后独立攻击raw authority、session/CSRF、身份域、SQLite隔离与no-egress，不做UI或生产放行",
+  "pointers": [],
+  "report": "",
+  "resolution": {
+    "evidence": "TASK-20260810-91AF6E acknowledged；开发报告SHA=65d2ea230c0b78da12c0407b2a1e0fc0c84980502b6324621a33694546d99374；manifest SHA=7b0658d9972df676acec689cb3d99ea23e74bf1abc2e51f9a169a9aa49b187b3",
+    "reason": "原任务前置绑定blocked F1466E，现以已ACK的91AF6E同候选successor取代，避免按过期候选执行。",
+    "receipt_id": "RES-20260810T080343-C6E8711C",
+    "replacement_revision": 2,
+    "replacement_state": "claimed",
+    "replacement_task_id": "TASK-20260810-A5F239",
+    "resolved_at": "2026-08-10T08:03+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "superseded",
+    "target_revision_before": 1
+  },
+  "revision": 2,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-59C88E",
+  "title": "SOURCE-MGMT-001后端冻结候选独立安全复验",
+  "unverified": [],
+  "updated_at": "2026-08-10T08:03+08:00",
+  "verified": []
+}

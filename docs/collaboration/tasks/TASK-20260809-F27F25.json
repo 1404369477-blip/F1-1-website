@@ -1,0 +1,74 @@
+{
+  "acceptance_exit": "三份脱敏文档落盘并有hash；v0.3字节不变；明确临时阶段可以做什么、禁止什么、停止条件、回退与单一下一确认点；旧WPA绝不被写成安全或FileVault启动前可用；后继安全网络目标与验证收据清楚；真实设备配置/网络变更/服务启动/外部副作用=0。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/runbooks/F1+1-专用Admin-Mac-旧WPA临时运行与安全网络升级runbook-v0.4.md",
+    "docs/runbooks/F1+1-专用Admin-Mac-旧WPA临时运行与安全网络升级runbook-v0.4.manifest.json",
+    "docs/runbooks/F1+1-固定Admin-Mac-planning-only交接提示词-v0.4.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-09-旧WPA临时本机运行与安全网络升级-v0.4报告.md"
+  ],
+  "authorization_evidence": "2026-08-09用户截图与文字确认：当前旧WPA网络先用于运行，后续再考虑独立网络；未授权公网、网络变更、SSH/FileVault或生产部署。",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T20:42+08:00",
+      "evidence": "2026-08-09用户截图与文字确认：当前旧WPA网络先用于运行，后续再考虑独立网络；未授权公网、网络变更、SSH/FileVault或生产部署。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "2026-08-09主会话：用户确认当前Wi-Fi被macOS标为旧WPA低安全性，希望先跑起来，后续需要时再配置独立网络；本任务仅形成安全边界文档，不执行真实配置。",
+  "created_at": "2026-08-09T20:42+08:00",
+  "department": "产品部",
+  "details": "新建不可变successor，不覆盖已ACK v0.3 SHA=1bdfe81cdefeddf418bb776c2de0f9fa1131db945d15f5d6b06d55dce6c7dd6c。仅记录脱敏事实：macOS把当前Wi-Fi标记为旧WPA/低安全性；严禁抄录、散列、编码或保存截图中的Wi-Fi地址、IP、路由器地址、SSID或任何设备/网络唯一标识。Apple官方将WPA/WPA2 mixed、WPA Personal、TKIP列为应避免的弱安全协议；FileVault启动前SSH网络文档只列此前连接的开放网或WPA2-PSK。形成两阶段合同：TEMP-LOCAL允许固定Mac先运行本地synthetic初版，但只绑定loopback/现场或已解锁后UU，公网Admin/SSH/端口转发/UPnP/真实provider/真实密钥/生产数据/自动发布/对外部署=0，重启后远程FileVault与RTO≤4h保持Unknown；SECURE-NET要求至少将受控Wi-Fi升级为WPA2 Personal(AES)或WPA2/WPA3过渡，并完成此前连接、DHCP保留、网关私有VPN、蜂窝外网计划重启/FileVault演练后才重新评估远程与生产。独立网络/独立网关作为后继选项，不设为先运行的前置。交付一份v0.4 successor、closed-set manifest和一份可在固定Mac上交给Codex/DeepSeek的planning-only执行交接提示词；提示词在任何监听超出loopback、安装/登录/改网络/启用SSH/FileVault/UU或读取秘密前必须停止并提出一个精确用户问题。",
+  "domain_stage": "Admin-Mac-临时本机运行规划",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任何文档拟包含截图中的地址、SSID、MAC/IP、序列号或秘密：删除敏感内容并FAIL；临时运行需要公网入口、真实账号/生产数据或把旧WPA写成安全：FAIL并保持本机loopback-only；无法区分用户所说跑起来是本机临时预览还是公网服务：默认只形成本机临时合同，并保留一个用户确认点，禁止外推公网授权。"
+  ],
+  "from_department": "统筹部",
+  "impact_declaration": {
+    "admission": "manual",
+    "base_revision": "a9691e71b1552592cc5ded8d5db66c336262301c",
+    "external_effects": [
+      "none；只新增脱敏planning-only文档、manifest和产品报告，不读取或改动真实网络/设备"
+    ],
+    "owner_task": "TASK-20260809-F27F25",
+    "shared_contracts": [
+      "v0.3字节不变；TEMP-LOCAL只允许loopback/synthetic/现场或解锁后UU且外部副作用=0；旧WPA不构成安全或FileVault启动前网络；SECURE-NET需WPA2 Personal AES或WPA2/WPA3过渡和独立演练后再评估"
+    ],
+    "write_paths": [
+      "docs/runbooks/F1+1-专用Admin-Mac-旧WPA临时运行与安全网络升级runbook-v0.4.md",
+      "docs/runbooks/F1+1-专用Admin-Mac-旧WPA临时运行与安全网络升级runbook-v0.4.manifest.json",
+      "docs/runbooks/F1+1-固定Admin-Mac-planning-only交接提示词-v0.4.md"
+    ]
+  },
+  "mistake_check": "未把旧WPA写成安全或FileVault启动前可用；未外推TEMP-LOCAL为远程/生产；未记录或散列地址/标识；未修改v0.3/app/data/design/accepted ADR；单一下一确认点保持精确",
+  "node": "把用户已确认的旧WPA弱安全现状转化为可执行的两阶段门：先本机临时运行，后升级安全网络再开放远程/生产能力",
+  "pointers": [
+    "docs/runbooks/F1+1-专用Admin-Mac-远程恢复与跨网联动runbook-v0.3.md",
+    "https://support.apple.com/en-us/102766",
+    "https://support.apple.com/en-ca/guide/deployment/dep82064ec40/web"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-09-旧WPA临时本机运行与安全网络升级-v0.4报告.md",
+  "resolution": null,
+  "revision": 5,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-F27F25",
+  "title": "固定Mac旧WPA临时运行边界与安全网络后继交接稿",
+  "unverified": [
+    "当前旧WPA精确协议/cipher、路由器/固件/DHCP/CGNAT与安全升级能力未读取、未验证",
+    "固定Mac的应用运行、UU/SSH/FileVault、网络、蜂窝外网、现场/冷备、RPO/RTO和生产能力均未执行、未验证"
+  ],
+  "updated_at": "2026-08-09T20:51+08:00",
+  "verified": [
+    "v0.3 SHA-256复算等于1bdfe81cdefeddf418bb776c2de0f9fa1131db945d15f5d6b06d55dce6c7dd6c，未覆盖历史",
+    "v0.4 successor、planning-only提示词与closed-set manifest已落盘；manifest JSON、闭集bytes/hash/readOrder逐项通过",
+    "旧WPA仅记录为脱敏低安全性事实；TEMP-LOCAL仅loopback/synthetic/externalCalls=0，SECURE-NET目标与停止/回退清楚",
+    "IPv4、MAC、UUID和唯一标识赋值扫描为0；真实设备配置、网络变更、服务启动、外部副作用均为0"
+  ]
+}

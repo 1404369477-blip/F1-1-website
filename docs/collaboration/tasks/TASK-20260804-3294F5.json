@@ -1,0 +1,47 @@
+{
+  "acceptance_exit": "390px 下筛选弹窗不再约 340×104，不出现异常嵌套小滚动或横向溢出；全部筛选项与主要操作可达，键盘焦点和触控尺寸保持；聚焦测试通过、typecheck 通过、无越界改动并 TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/src/app/globals.css",
+    "app/src/tests/public-ui.test.ts",
+    "docs/collaboration/部门/开发部/报告/2026-08-04-390px移动筛选弹窗局部滚动P1整改报告.md"
+  ],
+  "authorization_evidence": "",
+  "authorization_history": [],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "开发部/019fb374-7c86-7882-9e51-76114ce69e7f",
+  "completion_class": "standard",
+  "confirmation": "实现完成后不自证视觉放行；设计部将基于真实 390px 页面独立复验。",
+  "created_at": "2026-08-04T19:38+08:00",
+  "department": "开发部",
+  "details": "修复设计部 TASK-20260804-897075 的 P1-02：390px 页面筛选 dialog 实测约 340×104，形成异常狭小局部滚动窗口，主筛选流程严重受损。只修改前端筛选弹窗及直接相关样式/组件；保持现有 F1+1 设计 token、四类 contentType 映射、键盘语义、焦点管理、约 44px 触控目标、深浅主题与 reduced-motion。弹窗应在 390px 视口中形成稳定可理解的区域，筛选项、确认/关闭操作可达，不产生嵌套小滚动或横向溢出。先完成实现，再只运行 1 个聚焦组件/布局测试和 1 次 typecheck；不启动网站、不运行 full check/build/browser，不修改 API、Repository、SQLite、seed、Spec 或 accepted ADR。提交开发部实现报告与 TASK_STATE_OK，后续由设计部独立复验真实 390px 出口。",
+  "domain_stage": "p1_remediation",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "长筛选标签、390px 高度受限或系统字号放大导致内容/操作不可达、横向溢出或重新形成小型嵌套滚动，视为未修复。",
+    "修复若破坏桌面布局、深浅主题、焦点管理、44px 触控或四类 contentType 映射，视为回归。",
+    "为修复布局而改动 API/数据合同、增加依赖、运行静态 fallback 或扩大到其他设计重做，视为越界。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "只改移动筛选直接相关CSS与1个聚焦布局测试；未改组件业务行为、桌面布局、API、Repository、SQLite、seed、Spec、accepted ADR、design、依赖或lockfile；未扩大PASS声明。",
+  "node": "mobile-filter-dialog-p1-fix",
+  "pointers": [
+    "TASK-20260804-897075; design/ui/F1+1-全站设计规范-v0.1.md"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-04-390px移动筛选弹窗局部滚动P1整改报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260804-3294F5",
+  "title": "修复 390px 移动筛选弹窗异常局部滚动",
+  "unverified": [
+    "未启动网站、未跑full check/build/browser；真实390px尺寸、系统字号放大、深浅主题、键盘与触控出口交设计部复验。"
+  ],
+  "updated_at": "2026-08-07T19:28+08:00",
+  "verified": [
+    "固定Node24聚焦布局测试仅1项：1/1 PASS、8 skipped、exit 0；固定Node24 typecheck仅1次：exit 0；实现消除移动工具栏backdrop-filter产生的fixed局部包含块，并保留44px控件与既有焦点语义。"
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:f1plus1:runtime-envelope:mvp-local-v0.3",
+  "title": "F1+1 local TaskEnvelope",
+  "description": "Five-epoch fail-closed task fence. Live lease tokens are 128-bit opaque values; synthetic fixtures use deterministic 32-hex placeholders.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "mvp-local-v0.3"
+    },
+    "envelope_type": {
+      "const": "TaskEnvelope"
+    },
+    "task_id": {
+      "type": "string",
+      "pattern": "^task-[a-z0-9-]{6,128}$"
+    },
+    "operation_id": {
+      "type": "string",
+      "pattern": "^op-[a-z0-9-]{6,128}$"
+    },
+    "aggregate_type": {
+      "type": "string",
+      "enum": [
+        "source",
+        "content",
+        "event",
+        "publication",
+        "snapshot"
+      ]
+    },
+    "aggregate_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 255
+    },
+    "payload_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "source_config_epoch": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "source_safety_epoch": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "authorization_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "policy_epoch": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "recovery_epoch": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "lease_token": {
+      "type": "string",
+      "pattern": "^synthetic:lease:[a-f0-9]{32}$"
+    },
+    "lease_expiry": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "deadline": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "attempt": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "idempotency_key": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 255
+    },
+    "reconcile_key": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^reconcile:[a-z0-9-]+:[a-f0-9]{64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "envelope_type",
+    "task_id",
+    "operation_id",
+    "aggregate_type",
+    "aggregate_id",
+    "payload_hash",
+    "source_config_epoch",
+    "source_safety_epoch",
+    "authorization_version",
+    "policy_epoch",
+    "recovery_epoch",
+    "lease_token",
+    "lease_expiry",
+    "deadline",
+    "attempt",
+    "idempotency_key",
+    "reconcile_key"
+  ]
+}

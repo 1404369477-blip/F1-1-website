@@ -1,0 +1,59 @@
+{
+  "acceptance_exit": "测试部提交PASS/FAIL后继报告：六项public permission精确命中closed/false/false/only_full_access/only_full_access/anyone_can_edit，manage_public=true；资源、表单和数据不变量通过；明确直接协作者Unknown及OAuth风险；complete并返回TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-08-01-M3影子Base-ACL收紧与写后不变量-独立复验报告.md"
+  ],
+  "authorization_evidence": "用户明确回复授权，允许仅用飞书CLI执行固定六项typed permission.public patch、--yes与写后fresh read；不授权协作者、OAuth或业务链路变更。授权日志DEC-20260801T215054-C95B18。",
+  "authorization_history": [
+    {
+      "at": "2026-08-01T22:06+08:00",
+      "evidence": "用户明确回复授权，允许仅用飞书CLI执行固定六项typed permission.public patch、--yes与写后fresh read；不授权协作者、OAuth或业务链路变更。授权日志DEC-20260801T215054-C95B18。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "测试部/019fb379-9212-7e80-a5df-587d339936c4",
+  "completion_class": "audit",
+  "confirmation": "测试部后继报告通过且统筹部核收后，公共ACL与写后不变量才完成部门闭环；旧失败任务保留历史并由后继任务取代主链。",
+  "created_at": "2026-08-01T22:06+08:00",
+  "department": "测试部",
+  "details": "用户已明确授权固定六项ACL PATCH；统筹部已仅用飞书CLI用户身份执行一次并fresh read命中目标。请只读复验：六项公共权限、manage_public、2表/33+9字段/3 grid+1 form、表单shared=false及两显五隐、主表59条与59x33离线载荷全等且enabled=false、手机捕获0条、无真值/provider/Collector/采集/发布切换。不得修改飞书，不得用浏览器，不得输出或持久化Base token/open_id/appId/auth JSON。直接协作者名单仍不可读时必须保持Unknown，不能声称仅owner访问；OAuth 142 scopes为独立残余风险。",
+  "domain_stage": "M3 ACL写后独立复验",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "Keychain或凭据不可用时不得伪装live read；可审计统筹部脱敏执行收据并明确独立现场读取限制，再按合同给出结论。",
+    "任一ACL、资源、表单或数据不变量漂移时FAIL并停止，不执行修复、重试写入或切换身份。",
+    "协作者名单仍不可读时保留Unknown；用户已接受该证据边界，它不单独推翻六项公共权限目标，但必须显式披露。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未将统筹 fresh-read 伪写成测试部再次现场读取；未将公共权限推导为协作者已清除或仅 owner 可访问；未将 form.shared=false 推导为 OAuth 已收紧；未修改飞书、未提权、未用浏览器、未改协作者/重授权/撤权，未持久化 token/open_id/appId/auth 原文，并明确保留 Unknown 与 OAuth 风险。",
+  "node": "只读复验公共ACL最小目标、资源目录、表单边界与59条影子数据写后不变量",
+  "pointers": [
+    "docs/collaboration/部门/统筹部/报告/2026-08-01-M3飞书Base影子建库与59条导入-执行收据.md",
+    "docs/collaboration/部门/安全部/报告/2026-08-01-M3影子Base最小ACL收紧方案-审核报告.md",
+    "data/m3-base-shadow-import-v0/main-source-record-batch.json"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-08-01-M3影子Base-ACL收紧与写后不变量-独立复验报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260801-508D03",
+  "title": "复验M3影子Base ACL收紧与写后不变量",
+  "unverified": [
+    "测试部当前受限环境无法再次完成用户 CLI fresh read，非提权 lark-cli 因 keychain Get failed: keychain not initialized 阻断；本结论使用统筹带来源 fresh-read 收据，独立性有限",
+    "直接协作者数量、身份、外部协作者及阅读/编辑/管理权限和前后变化不可读，保持 Unknown，不能声称仅 owner/个人维护者可访问",
+    "OAuth 142 scopes 的最小权限整改、资源级继承链及仓库外独立部署环境未验证"
+  ],
+  "updated_at": "2026-08-01T22:13+08:00",
+  "verified": [
+    "统筹部用户 CLI 一次性 PATCH 后 fresh read 证明六项 public permission 精确为 closed/false/false/only_full_access/only_full_access/anyone_can_edit，manage_public=true",
+    "fresh read 证明目标资源仍为两表33/9字段、三 grid 一表单，表单 shared=false、两显五隐、capture_id/captured_at 不在问题集合且底层9字段完整",
+    "fresh read 证明主表59条、目标批次59、其他批次0、record/source/canonical/raw 各59唯一、59x33全等、enabled=false 59/59，手机捕获0条且无真实提交证据",
+    "本地载荷独立复算通过，CLI schema/help只读核对通过，本地工作区无真值/provider/epoch/Collector/采集/同步/发布实现或切换",
+    "统筹收据明确 OAuth scopes 总数142并作为独立风险披露，未执行重授权或缩权"
+  ]
+}

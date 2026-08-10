@@ -1,0 +1,69 @@
+{
+  "acceptance_exit": "交付v0.2 successor和明确的doc-only bundle文件清单/manifest模板；目标Agent可仅凭bundle完成只读预检；v0.1保持原hash；不存在要求同步源码/整个仓库的语句；六项对抗P1进入停止线；零敏感信息、零真实配置；产品报告、diff check、doctor与TASK_STATE_OK通过。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/runbooks/F1+1-专用Admin-MacBook-配置执行交接提示词-v0.2.md",
+    "docs/runbooks/F1+1-Admin-MacBook-doc-only-coordination-bundle-v0.2.manifest.json",
+    "docs/collaboration/部门/产品部/报告/2026-08-09-Admin-MacBook-doc-only协调包-v0.2交付报告.md"
+  ],
+  "authorization_evidence": "用户明确要求把服务器配置和任务文档放入可经iCloud读取的位置，并提供目标Mac的Codex/DeepSeek执行提示词；本任务只修正交接载体，不执行设备配置。",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T19:14+08:00",
+      "evidence": "用户明确要求把服务器配置和任务文档放入可经iCloud读取的位置，并提供目标Mac的Codex/DeepSeek执行提示词；本任务只修正交接载体，不执行设备配置。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "仅新增v0.2 successor与doc-only协调包清单/校验入口；不移动或删除现有仓库，不配置目标Mac，不触发外部调用。",
+  "created_at": "2026-08-09T19:14+08:00",
+  "department": "产品部",
+  "details": "保留已ACK的v0.1字节不变，新增v0.2 successor。解决对抗审查发现的同步项目根歧义：目标Agent必须从独立doc-only coordination bundle根定位，不再要求同步整个项目根。定义可导出文件闭合集与机械拒绝规则，明确bundle不得含app、data、migration、.git、源码、构建产物、运行目录、密钥、生产DB/备份/日志；bundle中只含固定合同副本或只读导出、manifest、hash和三组提示词。说明当前仓库处于iCloud时只可作为临时开发来源，production前要用经用户批准的非破坏步骤把live Git checkout/runtime移到非同步本地路径；本任务不得移动现有文件。PROMPT-01只校验bundle内相对路径/hash，不扫描或假设源Mac绝对路径；PROMPT-02继续要求私有Git signed release与目标Mac非同步运行目录；吸收P1：FileVault/无人值守重启、现场解锁/冷备、旧主epoch fencing、SSH接口负向验证、Git/signer/供应商联合故障域均进入Unknown与manifest门。",
+  "domain_stage": "admin-macbook-cross-device-handoff",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若必须移动/删除用户现有iCloud仓库或登录外部系统才能交付，立即停止并保持planning_only。",
+    "若bundle允许源码、.git、migration、运行数据、密钥、生产DB/备份/未脱敏日志，判P1并停止。",
+    "若将FileVault意外重启、现场恢复、旧主fence或供应商联合故障默认为已解决，判P1并停止。"
+  ],
+  "from_department": "统筹部",
+  "impact_declaration": {
+    "admission": "manual",
+    "base_revision": "a9691e71b1552592cc5ded8d5db66c336262301c",
+    "external_effects": [
+      "none；只新增本地产品文档、bundle manifest和产品报告，不移动现有仓库、不执行真实配置"
+    ],
+    "owner_task": "TASK-20260809-F80FF1",
+    "shared_contracts": [
+      "v0.1固定SHA-256不变；v0.2只从独立doc-only bundle根定位；bundle闭合拒绝app/data/migration/.git/源码/构建/运行/密钥/生产DB/备份日志；六项P1保持Unknown并进入manifest门"
+    ],
+    "write_paths": [
+      "docs/runbooks/F1+1-专用Admin-MacBook-配置执行交接提示词-v0.2.md",
+      "docs/runbooks/F1+1-Admin-MacBook-doc-only-coordination-bundle-v0.2.manifest.json"
+    ]
+  },
+  "mistake_check": "已检查：未修改v0.1正文；未扫描或要求目标Agent扫描同步项目根；未纳入源码、运行数据或敏感材料；未把六项Unknown写成已解决；未移动仓库、未配置设备、未执行外部调用；无相关错题命中",
+  "node": "PRODUCT-ADMIN-MAC-HANDOFF-02",
+  "pointers": [
+    "docs/runbooks/F1+1-专用Admin-MacBook-配置执行交接提示词-v0.1.md",
+    "docs/runbooks/F1+1-专用Admin-MacBook服务器预配置手册-v0.2.md"
+  ],
+  "report": "不适用",
+  "resolution": null,
+  "revision": 5,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-F80FF1",
+  "title": "PRODUCT-ADMIN-MAC-HANDOFF-V02：拆分doc-only跨Mac协调包",
+  "unverified": [
+    "独立bundle尚未真实导出或在目标Mac读取；设备/iCloud同步/Git/signer/overlay/OpenSSH/FileVault/现场恢复/冷备/epoch fencing/供应商联合故障/RPO-RTO未做真实验证；production manifest不存在且生产未授权"
+  ],
+  "updated_at": "2026-08-09T19:27+08:00",
+  "verified": [
+    "v0.1 SHA-256保持aacdb684d70dce41c034247395329fde80e109eae390699726d5c7150c41c6be；v0.2固定独立bundle根、三组提示词、逐阶段单问与六项Unknown/manifest门；manifest JSON可解析，12项路径/角色/readOrder唯一闭合，逐项bytes/hash与导出源一致；机械拒绝源码/.git/migration/构建/运行/密钥/生产DB/备份/日志；diff check与doctor通过；external_calls=0"
+  ]
+}

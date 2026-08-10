@@ -1,0 +1,72 @@
+{
+  "acceptance_exit": "交付数据报告与机器可读映射/manifest；12条public_id唯一、所有域对象required/enum/FK/hash可机械验证，或以明确FAIL列出无法满足的合同冲突；公开DTO字段均有唯一来源/派生规则；现有59x39表行数、hash和冻结v0.3 artifact SHA零漂移；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "data/mvp-contract-v0.4-public-synthetic/schema.json",
+    "data/mvp-contract-v0.4-public-synthetic/fixtures.public-synthetic.json",
+    "data/mvp-contract-v0.4-public-synthetic/public-dto-mapping.json",
+    "data/mvp-contract-v0.4-public-synthetic/profile-boundary.json",
+    "data/mvp-contract-v0.4-public-synthetic/profile-ledger.json",
+    "data/mvp-contract-v0.4-public-synthetic/manifest.json",
+    "data/mvp-contract-v0.4-public-synthetic/generate_public_fixture.py",
+    "data/mvp-contract-v0.4-public-synthetic/validate_public_fixture.py",
+    "docs/collaboration/部门/数据部/报告/2026-08-03-公开演示资讯v0.4领域映射与隔离profile报告.md"
+  ],
+  "authorization_evidence": "用户于2026-08-03回复“可以”，确认U1物理隔离m3-shadow/public-synthetic双profile与U2最小v0.4 successor/public-demo-*。证据指向当前统筹对话及proposed ADR。",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T23:55+08:00",
+      "evidence": "用户要求持续推进到有必要后台数据库和核心功能可用的初版，并要求执行类工作分给对应部门。",
+      "state": "user_confirmed"
+    },
+    {
+      "at": "2026-08-03T12:33+08:00",
+      "evidence": "用户于2026-08-03回复“可以”，确认U1物理隔离m3-shadow/public-synthetic双profile与U2最小v0.4 successor/public-demo-*。证据指向当前统筹对话及proposed ADR。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "数据部/分析成员:/root/backend_data_gap_analysis",
+  "completion_class": "standard",
+  "confirmation": "数据部交付后由开发部按映射实现SQLite migration/seed/repository/API；测试部与安全部独立复验，统筹核收。",
+  "created_at": "2026-08-02T23:55+08:00",
+  "department": "数据部",
+  "details": "面向下一开发切片GET /api/public/feed与GET /api/public/stories/{publicId}。以当前app/src/features/stories/demo-data.ts的12条合成资讯为展示输入，以已ACK的data/mvp-contract-v0 v0.3、VS-0 59x39 Source seed和数据部SQLite蓝图为唯一领域/物理基线。产出一个机器可读的proposed fixture映射包和报告：为12条资讯确定稳定public_id、现有59行source_id引用或明确的无第二Source方案，生成/映射Content、Summary、MediaCandidate可选、ReleaseBundle、ReviewDecision、Publication、PublishedProjection的required字段、外键、canonical-json-v1 hash输入与预期hash；不得修改冻结data/mvp-contract-v0、59x39 seed或其hash，不得向source_config_fixture增加第60行。给出public feed/detail DTO逐字段派生规则：中文标题/摘要/正文/关键点、四分类、来源元数据、合成/受限/无图/原文禁用状态、排序/分页/404；持久化域字段与presentation派生字段必须分层，禁止创建public_story第二真值。若12条全部发布与59行全disabled/validating、五fence/审核发布不变量存在不可满足冲突，必须逐条定位并给出最小、合同内的解决方式，不得伪造通过。不得改app/Spec/accepted ADR或调用外部服务。",
+  "domain_stage": "数据实现蓝图",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "需要新增第二Source/public_story表、改写冻结schema/59行seed、绕过ReviewDecision/Publication/PublishedProjection或用UI字段冒充领域字段：P0/P1 FAIL并停止。",
+    "任一Content/Summary/Bundle/Decision/Publication hash不可按canonical-json-v1从声明输入复算，或public_id/FK/唯一约束冲突：FAIL并保留定位证据。",
+    "现有disabled/validating Source无法在不违反五fence和人工审核的条件下承载published synthetic投影：不得强行生成；报告阻断和最小合同内前置任务。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已纠正v0.3标题与U2决策冲突并保留旧版冻结；未新增第60个M3 Source/public_story，未遗漏CapturedItem，未绕过ReviewDecision/Publication；restricted优先级和10/2媒体分支已验证；__pycache__/pyc已精确清除；未改app/Spec/accepted ADR/SQLite或外部资源。",
+  "node": "把当前12条UI本地合成资讯映射为可由SQLite公开读模型消费的v0.3领域图与派生DTO规则，不新增第二schema",
+  "pointers": [
+    "app/src/features/stories/demo-data.ts",
+    "data/mvp-contract-v0/schema.json",
+    "data/mvp-contract-v0/fixtures.synthetic.json",
+    "data/m4-vs0-seed-enrichment-v0/source-seed-enriched.json",
+    "docs/collaboration/部门/数据部/报告/2026-08-02-M4-VS-1-SQLite迁移与fixture映射蓝图.md",
+    "docs/spec.md"
+  ],
+  "report": "docs/collaboration/部门/数据部/报告/2026-08-03-公开演示资讯v0.4领域映射与隔离profile报告.md",
+  "resolution": null,
+  "revision": 7,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-EFA8A7",
+  "title": "生成12条公开演示资讯的冻结领域映射包",
+  "unverified": [
+    "独立安全/测试静态审查、产品 accepted successor ADR/Spec 指针、SQLite migration/seed/inode 隔离、Repository/API/cursor/Problem/UI 接线、故障注入与R12无外联仍待后续部门实现和复验"
+  ],
+  "updated_at": "2026-08-07T19:28+08:00",
+  "verified": [
+    "v0.4 validator PASS：1 Source、12 CapturedItem/Content/Summary/Bundle/Decision/Publication/Projection、10 Media，required/enum/FK/canonical-json-v1 hash/fence/批准链全部机械通过",
+    "v0.3 冻结 11/11 artifact 实际 SHA 零漂移；M3 59×39、59 disabled 与 e7a8312c70a9a49922aedb3cfbeaa190db8f5dce8d4ab45db1570748fc329f17 机械复验 PASS",
+    "生成器双次运行 8 个正式 JSON/Python artifact hash 全部不变；12 public-demo-* 唯一合法；graph hash=4be9f7e868a8bf21551bdcdc05d6b0d027e1a0ea43fd16dd2c7ea2b2ff9ba526",
+    "profile/SQLite 边界、DTO 逐字段来源/派生、导入前置和禁止项均已机器可读落盘；git diff --check 与 task doctor PASS"
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "测试部final报告decision=pass|fail，列P0/P1/P2、全部正式SHA、双副本四次生成/validator和故障注入收据；单一输入/再生成、12套图、旧基线和新增五项失败路径全部通过；无缓存污染；P0=0且P1=0才PASS；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-08-04-v0.4公开数据机器合同五项P1整改-聚焦测试复验报告.md"
+  ],
+  "authorization_evidence": "用户确认继续；本任务是已授权v0.4方向的必要失败整改复验。",
+  "authorization_history": [
+    {
+      "at": "2026-08-04T12:39+08:00",
+      "evidence": "用户确认继续；本任务是已授权v0.4方向的必要失败整改复验。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "测试部/审核成员:/root/test_v04_p1_recheck",
+  "completion_class": "audit",
+  "confirmation": "安全与测试聚焦复验均PASS后统筹才核收D53BF3并派开发。",
+  "created_at": "2026-08-04T12:39+08:00",
+  "department": "测试部",
+  "details": "严格只读审查TASK-20260803-D53BF3最终产物与报告。独立双临时副本各生成两次并比较全部正式SHA；证明generator实际解析唯一data-native输入，修改输入会确定性改变对应输出且不依赖app/demo-data.ts，generator源码不存在完整STORIES副本。复验1/12/12/12/10/12/12/12/12 count、12 public-demo、required/enum/additionalProperties/FK/hash/five-fence/批准发布/DTO exact、v0.3 11项和M3 59x39/e7a8。重跑首轮12类故障与新增Decision input、manifest/profile semantic repack、DTO redirect、output symlink/parent symlink、input drift/双源探针，均须reject。只写测试final报告与任务状态。",
+  "domain_stage": "数据合同P1测试复验",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "保留双内容源、修改/删除app旧文件影响再生成、input未实际驱动输出或两次生成不确定：P1 FAIL。",
+    "首轮或新增任一篡改漏检，或schema/hash/FK/fence/DTO/root receipt不能复算：P1 FAIL。",
+    "无法在临时副本独立运行或审核污染正式产物：明确NOT_RUN/FAIL，不继承数据部自测。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未继承数据部自测作为审核证据；每项故障使用新临时副本并重绑非目标外层收据；区分“改input后再生成PASS”与“仅改input不重生成reject”；只证明demo-data非运行依赖，未误报源码无provenance路径；临时脚本已删除，正式包9项SHA未变且无pycache/pyc/tmp；未ACK数据任务或扩张到SQLite/API/UI/外部能力放行。",
+  "node": "独立复验D53BF3的确定性、单一内容输入、完整发布图和所有修订失败路径",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260803-D53BF3.json",
+    "docs/collaboration/部门/安全部/报告/2026-08-03-v0.4公开数据机器合同独立安全审查.md",
+    "docs/collaboration/部门/测试部/报告/2026-08-03-v0.4公开数据机器合同与12条发布图-独立测试报告.md"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-08-04-v0.4公开数据机器合同五项P1整改-聚焦测试复验报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260804-00972D",
+  "title": "聚焦回归v0.4数据单一输入与五项P1整改",
+  "unverified": [
+    "原生Draft 2020-12引擎仍未安装；应用代码root hash pin、双SQLite/inode/ATTACH、migration/seed、Repository/API/cursor/Problem/DB busy、前端API接线与真实外部能力均未实现或未验证。"
+  ],
+  "updated_at": "2026-08-04T13:09+08:00",
+  "verified": [
+    "两套TemporaryDirectory（一套修改app/demo-data，一套无app）各连续2次generator+2次validator，四轮9项SHA与正式包全等；唯一input修改确定性改变input/fixture/manifest/ledger并精确投影；AST无STORIES完整副本/UI_INPUT；1/12/12/12/10/12/12/12/12、12 public-demo、schema/FK/hash/五fence/approved-published/DTO exact通过；v0.3 11/11、M3 59x39/59 disabled/e7a8通过；首轮12类与新增decision五fence、语义重打包、DTO redirect、input双源/漂移、symlink/nonregular等合计32类全部reject；正式9项SHA未变、缓存临时残留0；P0=0/P1=0/P2=1，decision=pass。"
+  ]
+}

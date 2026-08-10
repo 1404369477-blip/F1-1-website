@@ -1,0 +1,70 @@
+{
+  "acceptance_exit": "开发部无需解释Demo源码即可逐项实现，合同逐条映射最终设计和用户可见验收出口；Spec与Roadmap准确区分已完成的早期快照、待落地最终设计和真实采集缺口。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/spec/F1+1-v0.2-最终实现级产品合同.md",
+    "docs/spec.md",
+    "docs/roadmap.md",
+    "docs/spec/README.md",
+    "docs/collaboration/部门/产品部/交接班文档.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-08-v0.2最终实现级合同与产品真值同步报告.md"
+  ],
+  "authorization_evidence": "当前主会话 2026-08-08：用户确认将 8 月 8 日最新视觉 Demo 作为本轮正式落地基准并要求继续推进",
+  "authorization_history": [
+    {
+      "at": "2026-08-08T21:57+08:00",
+      "evidence": "当前主会话 2026-08-08：用户确认将 8 月 8 日最新视觉 Demo 作为本轮正式落地基准并要求继续推进",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "用户已确认视觉基准；任何新增功能或系统路线变化仍需另行确认。",
+  "created_at": "2026-08-08T21:57+08:00",
+  "department": "产品部",
+  "details": "先盘点旧合同与当前Demo差异；待设计部不可变快照与hash产生后，以该快照为唯一设计输入；新建最终版实现级合同并保留旧合同，更新 docs/spec.md 与 docs/roadmap.md 的当前状态、页面行为、响应式、Dock、设置面板、多图、状态、可访问性、验收出口和回退边界；不得写app代码，不得修改accepted ADR正文，不得扩大MVP。",
+  "domain_stage": "产品合同同步",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "设计冻结hash尚未产生：可以完成差异盘点，但不得提交最终合同或完成任务。",
+    "Demo存在互相冲突或无法定义的行为：列出最小问题清单并回统筹部，不自行裁决。",
+    "发现涉及新增主流程、外部付费、隐私或accepted ADR变化：停止相关条目并标记用户门禁。"
+  ],
+  "from_department": "统筹部",
+  "impact_declaration": {
+    "admission": "manual",
+    "base_revision": "TASK-20260808-00A9C9@rev1",
+    "external_effects": [
+      "none"
+    ],
+    "owner_task": "TASK-20260808-00A9C9",
+    "shared_contracts": [
+      "TASK-20260808-00A9C9-product-truth"
+    ],
+    "write_paths": [
+      "docs"
+    ]
+  },
+  "mistake_check": "已吸收三路对抗审查：修正冻结 text-shadow 与完整 hash、Repository/API 旧时态和更新时间、不可机械证明的回退快照表述、客户端搜索继承边界；未修改 design/app/data/accepted ADR 核心，未新增实体/DTO/第二真值或外部能力",
+  "node": "把已确认设计转换为开发可执行且无歧义的合同",
+  "pointers": [
+    "design/ui/F1+1-v0.2-全站设计/index.html"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-08-v0.2最终实现级合同与产品真值同步报告.md",
+  "resolution": null,
+  "revision": 7,
+  "schema_version": 1,
+  "task_id": "TASK-20260808-00A9C9",
+  "title": "同步最终v0.2实现级合同与产品真值",
+  "unverified": [
+    "最终冻结 UI 尚未在 app 落地；API 单一数据源接线、真实触控板/触摸全部组合、lightbox 全交互、实体安全区、读屏、forced-colors、200% 缩放、低性能、远程媒体/字体失败及生产策略仍待后续定向复验；admin、真实采集、Base/provider 切换、部署和自动发布继续关闭"
+  ],
+  "updated_at": "2026-08-08T22:28+08:00",
+  "verified": [
+    "设计冻结 TASK-20260808-54BB47 已 ACK；固定 HTML SHA-256 本地复算为 5a84bfb27294ebd727369118a95528f5b788bfacbe2d56cc03fcb006f6168cb1，与任务、报告、清单一致；六张证据齐备；早期 v0.2 与 Repository/API 开发/测试/安全任务状态均核为 acknowledged；三路只读对抗复验 P0=0/P1=0；目标文档 diff-check、链接与旧时态 rg 通过"
+  ]
+}

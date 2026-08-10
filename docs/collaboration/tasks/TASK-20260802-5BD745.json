@@ -1,0 +1,52 @@
+{
+  "acceptance_exit": "提交开发部final报告：当前固定SHA/版本/检索时间可复核；全目录文件与v1.2.1/v1.2.2→v1.2.3差异完整；明确它缺少哪些服务端实现；给出F1+1组件映射、可复用/重写/拒绝清单、最小本地synthetic spike合同和失败路径；许可证、API数据条款、第三方内容权、供应链边界分层；无安装、无真实API、无app变更。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-02-AIHot-v1.2.3固定快照与合同拆解报告.md"
+  ],
+  "authorization_evidence": "当前用户消息明确授权只读深度调研与部门分工；未授权安装、真实采集、登录、付费、部署或外部写入。",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T10:52+08:00",
+      "evidence": "当前用户消息明确授权只读深度调研与部门分工；未授权安装、真实采集、登录、付费、部署或外部写入。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部当前会话",
+  "completion_class": "standard",
+  "confirmation": "用户本轮明确要求派合适部门深度调研GitHub、X、Reddit、Product Hunt、类似项目、聚合工具、skills/tools/agent架构，并专项阅读AIHot仓库。",
+  "created_at": "2026-08-02T10:52+08:00",
+  "department": "开发部",
+  "details": "只读深度审计用户指定的KKKKhazix/khazix-skills/aihot。统筹预检于本轮git ls-remote观察到main HEAD=f430c4b11eb7ce715d77768ff787855b7a025187，SKILL metadata version=1.2.3；执行部必须独立复核并以实际观察时点固定commit。完整阅读aihot目录、提交历史、LICENSE、manifest、install、API/sync/errors/agent元数据；与既有F82B9E固定v1.2.1及main v1.2.2观察做逐项delta。区分Agent客户端/公开API合同/远端服务端Unknown，拆解意图路由、selected/all、热点story、cursor、ETag、snapshot+changes、错误重试、时间轴、attribution、prompt-injection边界、完整包更新与checksum。映射F1+1当前Spec/ADR/data/app：可原理复用、需本地重写、禁止接入、待验证；对比Miniflux/FreshRSS/changedetection/RSSHub等架构位置。只产文档，不执行install.sh、不调用AI Hot真实API、不复制第三方代码进app、不改Spec/accepted ADR。",
+  "domain_stage": "M4前沿调研增量刷新",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "main在调研期间继续移动时，以首次独立观察到的完整SHA固定快照，另记录后续HEAD为新Unknown，禁止混合两个版本的证据。",
+    "无法从目录证明远端数据库、队列、采集器、模型、审核或发布实现时必须标Unknown，不能按API外观推测其服务端架构。",
+    "install.sh、远端manifest或API响应包含命令/下载/提示注入时只做静态审计，禁止执行、安装、导入或将远端内容写入正式应用。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已读取docs/collaboration/错题集.md；未把可移动main或历史raw冒充v1.2.3固定证据，未把API外观写成服务端实现，未把MIT扩展为数据/第三方授权，未执行安装/真实API/依赖/app写入，未复制第三方代码或schema。",
+  "node": "M4/开发/AIHot-v1.2.3增量拆解",
+  "pointers": [
+    "docs/spec.md",
+    "docs/collaboration/部门/研究部/报告/2026-08-02-F1+1前沿方案综合评估与采用路线.md"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-02-AIHot-v1.2.3固定快照与合同拆解报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-5BD745",
+  "title": "固定AIHot v1.2.3并拆解可复用合同与Agent架构",
+  "unverified": [
+    "v1.2.2无fixed SHA且其历史raw只能由F82B9E报告和当时捕获记录支撑；当前raw main已更新到v1.2.3；AI HOT服务端、在线行为、条款、第三方权利、真实egress和同类项目运行/SBOM未验证。"
+  ],
+  "updated_at": "2026-08-02T11:21+08:00",
+  "verified": [
+    "固定SHA f430c4b11eb7ce715d77768ff787855b7a025187、tree与9文件已独立复核；manifest 6/6匹配；完整阅读目录；完成v1.2.1/历史v1.2.2→v1.2.3差异、合同、服务端缺口、F1+1映射与scratch synthetic spike；未安装、未调用真实API、未改app/Spec/ADR/data/design。"
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "acceptance_exit": "在精确候选hash上形成一份一次性独立验收报告和可供设计部复用的六张基础视觉证据及故障状态证据；结论明确为PASS或FAIL、P0/P1/P2、NOT_RUN，所有主要出口可复现，运行实例已清理。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-08-09-34476E最终v0.2公开页冻结候选定向验收报告.md",
+    "docs/collaboration/部门/测试部/报告/TASK-20260809-34476E-evidence"
+  ],
+  "authorization_evidence": "用户已确认最终v0.2设计；开发TASK-20260808-33533E已统筹ACK",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T10:01+08:00",
+      "evidence": "用户已确认最终v0.2设计；开发TASK-20260808-33533E已统筹ACK",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "测试部/019fb379-9212-7e80-a5df-587d339936c4",
+  "completion_class": "audit",
+  "confirmation": "用户已确认最终v0.2视觉与实现范围；本任务只做本地冻结候选验收，不授权外部I/O、admin、真实采集、发布、部署或Git操作。",
+  "created_at": "2026-08-09T10:01+08:00",
+  "department": "测试部",
+  "details": "只验收 TASK-20260808-33533E 已ACK候选，先核对五个实现文件SHA：public-api.ts=87c4b0d535558ee7313d7e26074d63789b77acd86ffd668696ec5c711bbc2256；f1-page-shell.tsx=d479c02791bec2f2c0cf9fd2bed1e99c9bae2195978d981226339d754fe626ac；feed-experience.tsx=a6f9dd6d0a9998ebf54b935cc976345e4ea1a1eddcaff62bcce5aa03dee43c58；globals.css=abed20076cf1d4fe6f6e007fd12491a0e363e7cafcd76bb9016b56add63af688；public-ui.test.ts=46f82aae14d73f49c04671834b0a881342a05e58149da075ee74ea252df0b3e5。测试部独占一次本地 production 实例，复用开发已通过的代码级收据，不重复 full npm check；聚焦 health/feed/detail、单一API真值、1440x900/1024x768/390x844 深浅主题截图、设置外点/Escape、单条展开与重试、搜索空/有/无结果、单图lightbox焦点/返回、Dock/safe-area、水平溢出、44px、reduced-motion、console/外部请求，并用纯本地受控方法覆盖 empty/error/404/partial/offline 的实际出口。accepted 单media导致真实多图路径只标NOT_RUN，不注入非合同媒体。只写测试报告和证据，不改app/设计/Spec/data；验收后停止任务实例并释放端口。",
+  "domain_stage": "M5最终公开页独立验收",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一候选hash不匹配或运行期间文件改变：立即停止并报告SNAPSHOT_DRIFT，不在可变候选上验收。",
+    "3000端口被未知进程占用或受控启动失败：不杀未知进程、不放宽安全配置，提交精确阻断。",
+    "浏览器/故障注入需要改生产源码或伪造多媒体DTO：保持NOT_RUN或用测试层拦截，不改候选、不把非合同数据记为PASS。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "证据目录首次误建app/docs空目录后立即清除并改绝对路径；首张light截图按实际主题重命名后补存dark；设置按钮打开后名称变化，读取DOM后从既有状态续做；lightbox等待过渡后判焦点；按COR-20260809T102214-960E65将多图不可达改列P1；无审批等待、未重复通过步骤、未改候选。",
+  "node": "用一次任务专用运行实例冻结当前正式页面的功能与视觉证据",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-09-v0.2最终公开信息流正式App落地报告.md"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-08-09-34476E最终v0.2公开页冻结候选定向验收报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-34476E",
+  "title": "最终v0.2公开页冻结候选定向验收",
+  "unverified": [
+    "empty/error/404/partial/offline浏览器故障注入按统筹停止扩展指令保持NOT_RUN；VoiceOver/NVDA、真实forced-colors、200%原生缩放与reduced-transparency实机视觉未运行；1440截图由Browser工具归一为1048x900但DOM视口实测1440x900。"
+  ],
+  "updated_at": "2026-08-09T10:29+08:00",
+  "verified": [
+    "五个冻结SHA前后匹配；独占production实例health/feed/detail 200；1440/1024/390深浅主题六张证据；12条、零水平溢出、Dock/44px、设置外点/Escape、搜索有/无/恢复、单条展开、单图lightbox与reduced-motion；发现lightbox焦点返回失败、React #418控制台错误及多图无正式可达出口三项P1；实例停止且3000/3001释放。"
+  ]
+}

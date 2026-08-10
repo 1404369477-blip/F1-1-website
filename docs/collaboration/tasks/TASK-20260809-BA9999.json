@@ -1,0 +1,65 @@
+{
+  "acceptance_exit": "DEV-MM-01..03全部具有运行证据：新profile selector只含exact三条migration且user_version=3；三个SQLite路径物理隔离、单进程单handle、ATTACH/跨profile拒绝；一个事务seed后0/1/4三条唯一Projection可读、总媒体5、4可写第5拒绝、故障注入零部分提交、重复seed根和行数不变；ledger/root/schema/health可复算且无绝对路径泄露；无Accept/*/*/application-json返回V1，精确vendor Accept返回V2，其余含多值/参数化/非法值返回406，坏hash/rights/safety/order/第五图整请求500；feed/detail/related同版本；旧M3/v0.4/public-synthetic的DB、migration、root和App行为零漂移；externalCalls=0、realMedia=0、writesToBase=false。目标测试、typecheck和必要build通过，P0=0/P1=0后complete。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/migrations/profiles/public-multimedia-synthetic/0003_public_multimedia_synthetic_profile.sql",
+    "app/src/server/db/public-multimedia-synthetic.ts",
+    "app/src/server/public/repository.ts",
+    "app/src/tests/public-multimedia-backend.test.ts",
+    "app/.local/f1plus1-public-multimedia-synthetic.sqlite",
+    "docs/collaboration/部门/开发部/报告/2026-08-09-DEV-MM-BACKEND多媒体独立profile与V1-V2-API完成报告.md"
+  ],
+  "authorization_evidence": "用户持续开工授权；COR-20260809T102214-960E65；TASK-20260809-55302B accepted；TASK-20260809-5E97E0与TASK-20260809-5A9316已ACK",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T15:56+08:00",
+      "evidence": "用户持续开工授权；COR-20260809T102214-960E65；TASK-20260809-55302B accepted；TASK-20260809-5E97E0与TASK-20260809-5A9316已ACK",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/019fb374-7c86-7882-9e51-76114ce69e7f",
+  "completion_class": "standard",
+  "confirmation": "用户已明确要求持续推进到前端、必要数据库和核心功能可用；COR-20260809T102214-960E65要求落实全部已确认功能。本任务仅实施已accepted的纯本地synthetic后端，不触发真实外部能力。",
+  "created_at": "2026-08-09T15:56+08:00",
+  "department": "开发部",
+  "details": "按accepted ADR-M5-PUBLIC-MULTIMEDIA-RUNTIME-001与本地运行实施合同一次完成DEV-MM-01..03，严格引用MEDIA-DATA-002与RECOVER-MEDIA-003。只扩展现有closed profile selector，新增public-multimedia-synthetic独立SQLite路径、exact 0001/0002/scoped-0003 migration、schema fingerprint与唯一fixture_profile_ledger；从已ACK runtime graph以一个BEGIN IMMEDIATE原子seed完整0/1/4闭图，验证同Content 4媒体可写和第5个由DB拒绝；实现受控migrate/seed/reset/start/health；Repository从唯一PublishedProjection反查完整链，feed/detail/related共用版本选择器，默认V1、仅精确Accept启用V2，其余406，完整性失败整请求500。不得修改旧migration/旧DB/旧profile数据，不得引入外部I/O、真实媒体、Base、Admin、RSS、部署或新依赖。只运行针对本任务的精确测试、typecheck与必要build，避免整站冗余回归；交付代码ADR或实现报告、候选hash/root、已验证/未验证与TASK_STATE_OK。正式前端样式和交互不在本任务。",
+  "domain_stage": "M5公开多媒体本地后端实现",
+  "event_receipts": [
+    "report_sha256=053ce45f0814ed39907c34db1c39ef3fca04937562038f7f329937075f68a2cc"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一DATA-MM-01图谱、旧closed receipt、冻结hash或migration root缺失/漂移：写前停止，禁止创建SQLite、修改App或从旧DB猜字段。",
+    "selector/schema/seed/ledger任一失配或故障注入出现部分写：ready=false并回滚，只清理由收据证明属于本任务的临时候选；禁止覆盖canonical或旧库。",
+    "V1兼容、V2协商、完整性或no-egress任一失败：阻断候选并报告精确reasonCode；禁止混版、partial gallery、静态fallback或自动降级构造四图。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查profile/路径隔离、exact selector、ledger/schema/root、旧closed receipt、single handle、ATTACH、原子seed/rollback、第五图、Repository闭链、Accept/no-store、错误泄露、hard-link恢复/symlink、sidecar/进程清理、依赖/Git/外部能力边界；一次错误vendor Accept探针已作废并在报告保留，最终精确media type收据通过。",
+  "node": "把已核收0/1/4图runtime graph接入独立SQLite并形成可由正式前端消费的V2公开API",
+  "pointers": [
+    "docs/decisions/system/2026-08-09-F1+1-public-multimedia-synthetic运行profile与V2接线-successor-accepted.md",
+    "docs/spec/F1+1-public-multimedia-synthetic本地运行实施合同-v0.1.md"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-09-DEV-MM-BACKEND多媒体独立profile与V1-V2-API完成报告.md",
+  "resolution": null,
+  "revision": 6,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-BA9999",
+  "title": "DEV-MM-BACKEND：实现多媒体独立profile、原子seed与V1/V2 API",
+  "unverified": [
+    "正式前端DEV-MM-04、真实视觉与交互、独立测试部/安全部复验由后继任务负责",
+    "Turbopack NFT动态本地文件跟踪warning待部署打包任务收敛；当前未部署且外部能力保持关闭",
+    "真实媒体、真实provider/Base、Admin、RSS、发布、部署和任何外部I/O未授权且未执行"
+  ],
+  "updated_at": "2026-08-09T17:27+08:00",
+  "verified": [
+    "exact 0001/0002/scoped-0003 selector，user_version=3，0/1/4三条PublishedProjection与5个synthetic media，schema/ledger/root可复算",
+    "单事务seed、28写点故障注入零部分提交、重复migrate/seed零漂移、INSERT/UPDATE第五图拒绝、单进程单handle与ATTACH/profile隔离",
+    "Repository从SQLite闭链构造DTO；V1/V2精确Accept、feed/detail/related、406与完整性500；production loopback HTTP全为no-store",
+    "项目Node24目标测试5/5、typecheck、必要build通过；旧M3/public-synthetic DB与旧migration SHA零漂移；P0=0/P1=0",
+    "externalCalls=0、realMedia=0、writesToBase=false；任务进程已停止，3000无监听，第三DB无WAL/SHM/candidate残留"
+  ]
+}

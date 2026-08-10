@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "4cbfa7-successor-test-v1",
+  "taskId": "TASK-20260810-4CBFA7",
+  "decision": "fail",
+  "p0": 0,
+  "p1": 1,
+  "p2": 0,
+  "candidate": {
+    "developmentReportSha256": "022e1d2db619494b60d0d5c6190946f0a453953ec5b878885d5ce3cc9f4e910f",
+    "developmentManifestSha256": "1d402722e2139fd5fbab0de791e691939273e0a534672aba71a629b45486519e",
+    "securitySha256": "a455df964f86045ff4157142a7cd378f2f64a12bb46a54661daa711d0750f965",
+    "closedDbSha256": "ddf3778c62cf95f195b1f08db8b075d676069f4cc9fb39804063e1004dd2e939"
+  },
+  "preflight": {
+    "expectedOrigin": "local_synthetic",
+    "csrfHeader": "x-f1-csrf-token",
+    "harnessSha256": "241d41f22da9480b884925879b754e9d7804e0da56431957ae3b27e1bab5427f",
+    "closedDbCopySha256": "ddf3778c62cf95f195b1f08db8b075d676069f4cc9fb39804063e1004dd2e939",
+    "result": "PASS"
+  },
+  "execution": {
+    "startupAttempts": 1,
+    "readyReached": false,
+    "listenerReached": false,
+    "startupReceipt": {
+      "stage": "readiness",
+      "normalizedExitCode": "unavailable",
+      "allowlistedSignal": "none",
+      "elapsedBucket": "lt_1s",
+      "readyReached": false,
+      "profileLabel": "unknown"
+    },
+    "cliFailure": {
+      "event": "cli_failure",
+      "status": "rejected",
+      "reasonCode": "FIXTURE_PATH",
+      "externalCalls": 0
+    },
+    "firstErrorPolicy": "STOPPED_WITHOUT_RETRY"
+  },
+  "verified": {
+    "candidateHashesMatched": true,
+    "closedDbPhysicalCopyMatched": true,
+    "localSyntheticStaticContractMatched": true,
+    "exactCsrfHeaderStaticContractMatched": true,
+    "externalCalls": 0,
+    "formalAssetsDrifted": false,
+    "port3019ListenerObserved": false
+  },
+  "unverified": [
+    "HTTP health",
+    "59 baseline plus 1 local_synthetic list",
+    "retired/stopped/disabled HTTP projection",
+    "session destroy 204",
+    "destroyed session list 401"
+  ],
+  "classification": "INDEPENDENT_TEMP_PROFILE_READINESS_FAILURE_NO_PRODUCT_DEFECT_ESTABLISHED"
+}

@@ -1,0 +1,67 @@
+{
+  "acceptance_exit": "交付单一入口文档，三组提示词均可独立复制运行且包含目标、必读文件、hash校验、逐阶段用户门、允许/禁止动作、失败路径、证据与回传格式；路径差异和iCloud同步风险处理清楚；零敏感信息；继承v0.2与后继安全PASS；报告、diff check、doctor与TASK_STATE_OK通过。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/runbooks/F1+1-专用Admin-MacBook-配置执行交接提示词-v0.1.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-09-专用Admin-MacBook跨Mac配置执行提示词包报告.md"
+  ],
+  "authorization_evidence": "用户当前明确要求在同步项目文件夹保存配置/任务文档，并提供具体提示词供另一台MacBook的Codex或DeepSeek执行配置。",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T18:34+08:00",
+      "evidence": "用户当前明确要求在同步项目文件夹保存配置/任务文档，并提供具体提示词供另一台MacBook的Codex或DeepSeek执行配置。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "用户明确要求把服务器配置与任务文档保存在当前iCloud同步文件夹，并提供给另一台Mac上的Codex或DeepSeek执行；这只授权生成交接提示词，不授权本机或目标机执行真实配置。",
+  "created_at": "2026-08-09T18:34+08:00",
+  "department": "产品部",
+  "details": "在 TASK-20260809-D6C29A 的 v0.2 successor 完成并由统筹核收后，新增 docs/runbooks/F1+1-专用Admin-MacBook-配置执行交接提示词-v0.1.md，作为iCloud同步到目标MacBook后的单一执行入口。文档面向Codex或DeepSeek，必须包含三组可直接复制的完整提示词：一，只读预检与参数采集；二，绑定已确认不可变production manifest/hash后的分阶段真实配置；三，独立安全验收、故障注入和恢复演练。提示词要求目标Agent先定位同步项目根、读取AGENTS.md/docs/agent-guide.md、现行v0.2手册、accepted双主机/专用MacBook合同及最终安全PASS报告，并校验文件hash；不得假设两台Mac绝对路径相同。明确iCloud目录只同步文档/非敏感清单，不得保存FileVault恢复材料、密码/token、设备序列号、真实账号/IP、私有overlay设备ID、签名/备份密钥、生产SQLite/DB-WAL-SHM、真实备份或未脱敏日志；敏感值只存目标Mac受限本地目录/Keychain/获批托管系统，并在同步目录仅写无敏感值的引用或hash。提示词必须逐阶段要求用户显式确认，禁止未确认抹盘、删除、账号/权限变更、FileVault、网络/防火墙/路由器、安装/登录/付费、密钥、备份上传、launchd或部署；每阶段先只读解析精确目标、回退和证据，再执行，失败即停。双主机、公网Admin=0、writer=1、RPO_BREACH、RTO最早可证起点、break-glass、public-host负向隔离、Mac/iPhone等价必须逐字继承v0.2。提供用户在目标Mac上的最短启动步骤和回传格式。不得把iCloud当生产运行目录、数据库目录或合格异机备份。只新增提示词文档和产品报告，不执行真实配置。",
+  "domain_stage": "admin-macbook-cross-device-handoff",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若v0.2尚未完成或安全复验未PASS，任务不得把执行提示词标为可用于真实配置；只能等待对应任务核收。",
+    "若提示词会把iCloud目录当服务/数据库/备份/密钥位置，或允许在同步目录写敏感数据，判P1并停止交付。",
+    "若任何破坏性或高风险步骤没有精确目标、恢复方案和逐阶段用户确认，停止并退回修订，不得提供一键全自动执行提示词。"
+  ],
+  "from_department": "统筹部",
+  "impact_declaration": {
+    "admission": "manual",
+    "base_revision": "a9691e71b1552592cc5ded8d5db66c336262301c",
+    "external_effects": [
+      "none；只新增本地提示词文档和产品报告，不执行目标机或外部操作"
+    ],
+    "owner_task": "TASK-20260809-E915E4",
+    "shared_contracts": [
+      "唯一推荐为职责隔离三通道+Admin server pull；iCloud仅工作侧低风险文档；私有Git/签名release传版本；overlay+Admin UI/按需传统OpenSSH传操作；恢复点age绑定本次source state cut/snapshot完成时间；所有真实实施继续逐阶段用户门"
+    ],
+    "write_paths": [
+      "docs/runbooks/F1+1-专用Admin-MacBook-配置执行交接提示词-v0.1.md"
+    ]
+  },
+  "mistake_check": "未把iCloud当代码/服务/数据库/备份/密钥或部署真值；未让工作Mac/Git/iCloud/public-host持有主库/恢复点/生产密钥或成为第二writer；未把普通Tailscale macOS写成Tailscale SSH服务端；恢复点age使用本次sourceStateCutCompletedAt并绑定DB身份/ledger/snapshot/远端回读；无无确认一键执行；验收PASS不自动生产提升；未改accepted ADR/Spec/app/data/design或真实资源",
+  "node": "PRODUCT-ADMIN-MAC-HANDOFF-01",
+  "pointers": [
+    "docs/runbooks/F1+1-专用Admin-MacBook服务器预配置手册-v0.1.md",
+    "docs/collaboration/部门/安全部/报告/2026-08-09-专用Admin-MacBook预配置手册独立安全复核报告.md"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-09-专用Admin-MacBook跨Mac配置执行提示词包报告.md",
+  "resolution": null,
+  "revision": 5,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-E915E4",
+  "title": "PRODUCT-ADMIN-MAC-HANDOFF：编写跨Mac的Codex/DeepSeek配置执行提示词包",
+  "unverified": [
+    "目标Mac路径/iCloud同步状态/Codex或DeepSeek工具能力、production manifest、真实MacBook/OS/账号/FileVault/网络/overlay/Git/signer/OpenSSH/SQLite/备份/public-host及所有真实配置、故障注入、RPO/RTO和部署收据均未验证并保持closed"
+  ],
+  "updated_at": "2026-08-09T19:07+08:00",
+  "verified": [
+    "D6C29A、ECEC1F、CE1771均acknowledged；三组PROMPT-01..03各有唯一START/END且Markdown fence闭合；固定10项输入hash当前全部匹配；提示词SHA-256=aacdb684d70dce41c034247395329fde80e109eae390699726d5c7150c41c6be；三通道+Admin server pull、逐阶段用户门、iCloud/生产数据禁区、普通Tailscale非SSH服务端、恢复点source state cut age与标准回传均可机械检索；无绝对源路径/IP；git diff --check和doctor通过；external_calls=0"
+  ]
+}

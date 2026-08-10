@@ -1,0 +1,66 @@
+{
+  "acceptance_exit": "提交安全部status=final且decision=pass|fail的独立报告：逐候选A/B/C准入矩阵、Green/Yellow/Red/Unknown、官方证据链接与检索日期、商业化差异、生产硬阻断、synthetic/真实spike所需收据、停止与回滚条件；明确代码许可证不能替代平台内容权；无真实外部写入或凭证操作。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-02-M4前沿候选许可平台条款与供应链增量准入复核.md"
+  ],
+  "authorization_evidence": "当前用户消息明确授权只读深度调研与部门分工；未授权安装、真实采集、登录、付费、部署或外部写入。",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T10:52+08:00",
+      "evidence": "当前用户消息明确授权只读深度调研与部门分工；未授权安装、真实采集、登录、付费、部署或外部写入。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "用户本轮明确要求派合适部门深度调研GitHub、X、Reddit、Product Hunt、类似项目、聚合工具、skills/tools/agent架构，并专项阅读AIHot仓库。",
+  "created_at": "2026-08-02T10:52+08:00",
+  "department": "安全部",
+  "details": "基于已核收4D3684、D11DCA、D9DA43和用户本轮指定平台做只读增量复核。对AI Hot v1.2.3、X、Reddit、Instagram、RSS/Atom/WebSub、RSSHub、Miniflux、FreshRSS、changedetection.io、Crawl4AI/Firecrawl、n8n/Huginn、OpenF1/Jolpica以及新高优先候选，分别核验代码许可证、API/平台条款、内容/图片/视频/摘要翻译与商业再展示权、归因、删除/编辑/撤权、缓存TTL、账号/scope/secret、SSRF/redirect/prompt injection、供应链/SBOM/安装脚本、跨境与中国大陆部署风险。商业可用是否为用户硬门槛尚待回复，因此先分别给出个人非商业、可能商业化两套判定，Unknown保持fail-closed。不得创建账号、触发OAuth、执行安装器、调用真实平台API或修改生产配置。",
+  "domain_stage": "M4前沿调研增量刷新",
+  "event_receipts": [
+    "MIL-20260802T105957-0C3E4B",
+    "COR-20260802T111340-A743B8",
+    "CHG-20260802T111507-6662C0",
+    "INC-20260802T111626-AAB081"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "只能找到博客、搜索摘要、社区帖或营销页时不得据此放行，记录证据不足并标Unknown。",
+    "仓库许可证与插件、云服务、路由上游或内容权不一致时分别列层级，不用一个MIT/Apache标签覆盖整条链。",
+    "任何候选要求Cookie、私有API、验证码绕过、代理轮换、宽scope、自动发布或自治Agent持有secret+network+publish时标Red/blocked，并给出安全替代路径。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已纠正 v1.2.1/v1.2.2/v1.2.3 版本边界；未把静态 MIT、manifest、安装器或 attribution/terms 文字推导为平台内容权、真实 API 能力或商业权利；未把个人非商业推断为自动获准；未安装、登录、OAuth、调用真实 API 或外部写入；A 层 Green 与 B/C fail-closed 保持分层。",
+  "node": "M4/安全/前沿候选准入增量复核",
+  "pointers": [
+    "docs/spec.md",
+    "docs/collaboration/部门/研究部/报告/2026-08-02-F1+1前沿方案综合评估与采用路线.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-02-M4前沿候选许可平台条款与供应链增量准入复核.md",
+  "resolution": null,
+  "revision": 8,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-780373",
+  "title": "复核前沿候选许可平台条款与供应链准入",
+  "unverified": [
+    "AI Hot v1.2.3 完整 terms 页面、远端 API/服务端行为、可用性/配额/删除执行、第三方内容/媒体/地域/商业权利、独立发布签名或下载信任根仍未验证；静态文件与 manifest 已核对。",
+    "AI Hot v1.2.2 的完整 HEAD 与逐文件固定快照仍未取得，只保留为历史 raw 观察，不能作为 v1.2.3 的中间证据。",
+    "未执行任何真实平台、安装、更新、凭证、媒体、AI、浏览器或自动发布 spike；其他候选的 exact commit/transitive license/SBOM/漏洞/商业 DPA 与 SLA 仍待独立任务。",
+    "Meta/Instagram 当前条款、字段、区域、App Review、媒体和删除语义；Reddit 商业合同、X 账户级价格/权利、逐 feed 条款尚未确认。"
+  ],
+  "updated_at": "2026-08-02T11:18+08:00",
+  "verified": [
+    "已读取安全部四文档、任务 JSON、Spec、D11DCA、D9DA43、4D3684 和 F82B9E。",
+    "已按版本时态区分 AI Hot v1.2.1 固定历史 fcba3adcf5def1ccd4bb688de93060227471b129、v1.2.2 未固定历史观察、v1.2.3 当前固定 main f430c4b11eb7ce715d77768ff787855b7a025187 与 SKILL metadata v1.2.3。",
+    "已在同源 sparse clone 只读核对 v1.2.3 commit/tree：aihot/ 9 文件；LICENSE 为 MIT；manifest 6 个 runtime 文件的 SHA-256 重算全部匹配。",
+    "已静态核对 v1.2.3 install.sh 的显式 target/dir、路径拒绝、manifest allowlist、身份/license 校验、临时目录、单目录替换和失败恢复；无独立 update.sh，README 更新路径为重新运行原 --target/--dir 命令；未执行脚本。",
+    "已核对 v1.2.3 README/SKILL/API 的 attribution/terms 边界：API 匿名只读且不得使用 key/cookie；公开产品在可发现位置标注数据来源 AI HOT 并链接本站，私人/内部使用无需界面署名，第三方原文权利独立。",
+    "已复核原矩阵 25 个候选/能力项并新增 AIH 版本专项行，保持 A 层 synthetic Green、B/C 逐平台和商业门禁。",
+    "未创建账号、未登录、未触发 OAuth、未安装或执行候选工具、未调用真实平台 API、未进行外部写入、未修改 Spec/ADR/app/data。"
+  ]
+}

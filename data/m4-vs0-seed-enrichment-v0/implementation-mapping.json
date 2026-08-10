@@ -1,0 +1,201 @@
+{
+  "mapping_version": "m4-vs0-seed-enrichment-v0.3",
+  "mapping_kind": "implementation_mapping",
+  "contract_version": "mvp-local-v0.3",
+  "accepted_decision": {
+    "decision_id": "ADR-M4-VS0-SEED-002",
+    "task_id": "TASK-20260802-E1CFC2",
+    "status": "accepted",
+    "path": "docs/decisions/system/2026-08-02-F1+1-VS0-M3种子投影-successor-accepted.md",
+    "sha256": "1b1fbceeecbfd5c97fdb2da91cdee12eb4fe6a032aec3463179964aab31e6db6",
+    "scope": "VS-0 M3 shadow seed projection 的 source_id 排序与 canonical hash 收据纠错",
+    "predecessor": "ADR-M4-VS0-SEED-001",
+    "predecessor_path": "docs/decisions/system/2026-08-02-F1+1-VS0-M3种子投影-accepted.md"
+  },
+  "authoritative_domain_schema": "data/mvp-contract-v0/schema.json",
+  "authoritative_domain_schema_sha256": "de6c6c07a33589106ebb93496ad10ae3b06ab1c7845e4e0e91888ca0b17ae5a4",
+  "authoritative_base_mapping": "data/mvp-contract-v0/base-mapping.json",
+  "authoritative_base_mapping_sha256": "f0a086099d0f4ce9bbcd1afb0533aef90ec8d4f00b1618cc5114bebe40601f9d",
+  "source_artifact": "data/m3-base-shadow-import-v0/main-source-record-batch.json",
+  "source_artifact_sha256": "e73b8d6b8a9b1a018dc7d30c90bfe3111b10caeb6fee28486edf27f176a05de5",
+  "source_fields_artifact": "data/m3-base-shadow-import-v0/main-source-fields.json",
+  "source_fields_artifact_sha256": "b743abaee8ef68db586148e58afdcc9dec2b6fe07bab61ad7c779327d4076870",
+  "source_manifest": "data/m3-base-shadow-import-v0/manifest.json",
+  "source_manifest_sha256": "c6d681ba9428107801e7077a65e265176d684575d8d2e16c6958d19722791e29",
+  "non_authoritative": true,
+  "second_domain_schema": false,
+  "writes_to_base": false,
+  "external_calls": 0,
+  "real_ids_or_credentials": false,
+  "field_map_precedence": [
+    {
+      "priority": 1,
+      "rule": "source_schema_required_properties_and_target_types",
+      "pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/required"
+    },
+    {
+      "priority": 2,
+      "rule": "M3 direct field ownership and value provenance",
+      "pointer": "data/mvp-contract-v0/base-mapping.json#/source_table/field_map"
+    },
+    {
+      "priority": 3,
+      "rule": "derived implementation values only for Source required fields absent from the M3 header",
+      "pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/required"
+    },
+    {
+      "priority": 4,
+      "rule": "base_mapping.local_only_fields is an annotation and cannot override a direct M3 field",
+      "pointer": "data/mvp-contract-v0/base-mapping.json#/local_only_fields/Source"
+    }
+  ],
+  "m3_direct_fields": [
+    "source_id",
+    "platform",
+    "platform_account_id",
+    "handle",
+    "raw_url",
+    "canonical_url",
+    "canonical_url_valid",
+    "normalizer_version",
+    "normalization_status",
+    "dedup_status",
+    "entity_type",
+    "content_focus",
+    "priority",
+    "verification_status",
+    "identity_status",
+    "relevance_status",
+    "monitorability",
+    "adapter_status",
+    "adapter_authorization_status",
+    "authorization_checked_at",
+    "authorization_expires_at",
+    "collection_onboarding_status",
+    "onboarding_operation_id",
+    "lifecycle_status",
+    "enabled",
+    "manual_disable_at",
+    "source_stop_status",
+    "source_safety_epoch",
+    "added_at",
+    "evidence_url",
+    "notes",
+    "migration_batch_id",
+    "change_reason"
+  ],
+  "derived_fields": [
+    "platform_allowed",
+    "source_config_epoch",
+    "created_at",
+    "updated_at",
+    "created_by_ref",
+    "updated_by_ref"
+  ],
+  "source_required_fields_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/required",
+  "source_required_field_count": 39,
+  "m3_direct_field_count": 33,
+  "derived_field_count": 6,
+  "source_safety_epoch_correction": {
+    "field": "source_safety_epoch",
+    "source_pointer": "data/m3-base-shadow-import-v0/main-source-record-batch.json#/fields/27",
+    "target_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/source_safety_epoch",
+    "rule": "copy the M3 numeric value verbatim; do not derive, reset, or classify as local-only",
+    "m3_value_count": 59,
+    "m3_value_set": [1],
+    "base_mapping_annotation": "data/mvp-contract-v0/base-mapping.json#/local_only_fields/Source/2 is stale for this bridge and is not authoritative"
+  },
+  "derived_field_rules": {
+    "platform_allowed": {
+      "target_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/platform_allowed",
+      "value": "unknown",
+      "type": "enum",
+      "source": "No M3 column; no platform policy, rate-limit, or compliance evidence is present in the frozen input.",
+      "semantic_guard": "unknown remains unknown; this value cannot satisfy the activation gate"
+    },
+    "source_config_epoch": {
+      "target_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/source_config_epoch",
+      "value": 1,
+      "type": "integer",
+      "source": "Initial local fixture/provider epoch; no provider switch or epoch increment occurs during M3 seed import.",
+      "semantic_guard": "minimum=1; the bridge never increments or infers a production provider epoch"
+    },
+    "created_at": {
+      "target_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/created_at",
+      "value_rule": "normalized_added_at + 'T00:00:00Z'",
+      "type": "date-time",
+      "timezone": "UTC",
+      "source": "the canonical date produced by the explicit added_at normalization rule below",
+      "semantic_guard": "seed creation time is deterministic and has no wall-clock dependency"
+    },
+    "updated_at": {
+      "target_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/updated_at",
+      "value_rule": "created_at",
+      "type": "date-time",
+      "timezone": "UTC",
+      "source": "M3 is a creation-only shadow import and contains no update event",
+      "semantic_guard": "updated_at cannot be later than or differ from created_at in this seed"
+    },
+    "created_by_ref": {
+      "target_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/created_by_ref",
+      "value": "synthetic:seed-m3-v0",
+      "type": "synthetic actor reference",
+      "source": "implementation seed actor; no human, platform account, token, or credential is represented",
+      "semantic_guard": "matches Source pattern and is local-only"
+    },
+    "updated_by_ref": {
+      "target_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/updated_by_ref",
+      "value": "synthetic:seed-m3-v0",
+      "type": "synthetic actor reference",
+      "source": "same creation-only seed event as created_by_ref",
+      "semantic_guard": "matches Source pattern and is local-only"
+    }
+  },
+  "added_at_conflict": {
+    "source_pointer": "data/m3-base-shadow-import-v0/main-source-record-batch.json#/rows/*/28",
+    "source_field_type": "M3 datetime transport value formatted as YYYY-MM-DD HH:mm:ss",
+    "source_values": {
+      "row_count": 59,
+      "distinct_values": ["2026-07-31 00:00:00"]
+    },
+    "target_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/added_at",
+    "target_format": "date / YYYY-MM-DD",
+    "recommended_rule": "parse exactly YYYY-MM-DD HH:mm:ss, require 00:00:00, and project the calendar date YYYY-MM-DD",
+    "preservation_semantics": "preserve the M3 calendar date; do not claim byte-for-byte preservation of the transport timestamp",
+    "forbidden_rules": ["silent string truncation", "RFC3339 conversion into the date field", "local timezone inference", "adding a second raw_added_at field"],
+    "product_decision_required": false,
+    "accepted_rule": "ADR-M4-VS0-SEED-002 inherits ADR-M4-VS0-SEED-001 §2.2: keep the v0.3 Source schema unchanged and treat the M3 timestamp as a transport representation of the M3 date field.",
+    "accepted_decision_pointer": "docs/decisions/system/2026-08-02-F1+1-VS0-M3种子投影-successor-accepted.md#4-前任ADR回退与后续门禁"
+  },
+  "output_projection": {
+    "path": "data/m4-vs0-seed-enrichment-v0/source-seed-enriched.json",
+    "row_count": 59,
+    "field_count": 39,
+    "row_order": "source_id Unicode code point ascending",
+    "fields_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/required",
+    "hash_scope": "canonical-json-v1({fields: Source.required, rows: enriched_rows})",
+    "canonical_projection_hash": "e7a8312c70a9a49922aedb3cfbeaa190db8f5dce8d4ab45db1570748fc329f17",
+    "pre_decision_unsorted_candidate_hash": "96d5caf625f62d059cc51a41d7c3b6a1db623d07cea00c4d256e2d841c693aa2",
+    "pre_decision_candidate_note": "The 96d5... value was produced before ADR-M4-VS0-SEED-002 sorting was enforced and is historical only; it is superseded by the accepted sorted projection.",
+    "hash_pointer": "data/m4-vs0-seed-enrichment-v0/manifest.json#/canonical_projection_hash"
+  },
+  "validation_contract": {
+    "validator": "data/m4-vs0-seed-enrichment-v0/seed-enrichment-validator.py",
+    "checks": [
+      "frozen source/schema/base-mapping/contract-manifest SHA-256 including 11/11 artifact checks",
+      "M3 header exact 33 and Source required exact 39",
+      "derived difference exact six fields",
+      "mapping self-declared 33/6/39 counts, six rules, row order, accepted002 reference, and e7a8 hash",
+      "source_safety_epoch direct equality",
+      "Source required/type/enum/pattern/format/min/max core validation",
+      "59 rows and source_id/canonical_url casefold uniqueness",
+      "59/59 enabled=false and conservative defaults unchanged",
+      "canonical projection hash and independent reload repeat=2 byte equality",
+      "fields key matches Source.required canonical projection object",
+      "external_calls=0, writes_to_base=false, no network operation"
+    ]
+  },
+  "status": "PASS",
+  "status_reason": "Current accepted ADR-M4-VS0-SEED-002 authorizes the source_id-sorted canonical projection and inherits the explicit midnight calendar-date projection; the local fixture is structurally valid without changing the frozen v0.3 contract.",
+  "single_product_decision": "ADR-M4-VS0-SEED-002 is the current accepted entry; it inherits the added_at calendar-date rule and fixes the authoritative sorted projection hash."
+}

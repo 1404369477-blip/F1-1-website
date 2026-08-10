@@ -1,0 +1,46 @@
+{
+  "acceptance_exit": "五个Function ID均有真实路由/操作入口、正常/失败/恢复证据；四类筛选切换不串cursor；至少24条fixture下两页各12 append且无重排重复，page2故障形成partial并同cursor恢复；七状态可由真实local fixture/浏览器条件触发且页面无调试入口；键盘/200%/forced-colors/reduced-motion/reduced-transparency和safe-area关键路径可用；候选代码/数据/build与六格视觉证据同hash；聚焦测试、lint、typecheck、build通过，报告列未验证项和TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "用户已明确要求持续推进网站至有前端、数据库和核心功能可用的初版；本任务仅在LOCAL-CONFIRMED范围内完善本地公开App。",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T19:20+08:00",
+      "evidence": "用户已明确要求持续推进网站至有前端、数据库和核心功能可用的初版；本任务仅在LOCAL-CONFIRMED范围内完善本地公开App。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "P1-01：当前源码聚合SHA=7b1e8977c3e7296f4e5cf165b106bc322c2ef19dbd5e506f51e2c4ec92465281、build-manifest SHA=b8c57b58a1f524871415bd233871800d9608e35f2f4f188b2d58675e38f0881c；离线恢复清空内容缺口已修复并通过Node24 19/19、lint、typecheck、build，但六格及page2/七态/a11y/safe-area浏览器收据属于修复前候选，未与当前hash绑定。P1-02：此前Chrome/CDP harness记录GCM/updater后台外联尝试且未持久化精确目的地/时间，无法形成clean-room/no-egress证据。遵守用户指令不重试浏览器；等待隔离浏览器对当前候选做一次同hash复验。App真实外部能力仍关闭。",
+  "claimed_by": "开发部/019fb374-7c86-7882-9e51-76114ce69e7f",
+  "completion_class": "standard",
+  "confirmation": "B级用户可感知实现；精确绑定冻结设计，不触碰Admin、真实信源、真实媒体、外部I/O或生产部署。DATA-PUBLIC-PAGE2 successor未到位时可先实现其余项，但不得用测试注入或单页数据宣称分页完成。",
+  "created_at": "2026-08-09T19:20+08:00",
+  "department": "开发部",
+  "details": "冻结设计身份：design/ui/F1+1-v0.2-全站设计/F1+1-v0.2-final-20260808.html，SHA-256=5a84bfb27294ebd727369118a95528f5b788bfacbe2d56cc03fcb006f6168cb1；最终产品合同docs/spec/F1+1-v0.2-最终实现级产品合同.md，当前SHA-256=b07a07f80b9857c2172da3334a97673570e2344fa2f6fba72497e3dcbe9da79c；功能矩阵docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md，当前SHA-256=2cdd7b06cc2f04b2be053c73ae98b5b618552547956df6144c4878adcfcdb4cb。实现并逐项绑定：PUB-FEED-003（/ 四类赛事新闻/车手社交/名宿历史/赛场趣事正式筛选，scope不串）、PUB-FEED-004（/ 对真实API/浏览器条件可达loading/empty/error/404/nomore/partial/offline，每态唯一说明与恢复动作，无DRAFT/隐藏调试控件）、PUB-FEED-005（page size 12，两页append、失败保留已有条目并同cursor重试；接入数据部PAGE2 successor后才可完成）、UI-A11Y-001（键盘/读屏语义/焦点、200%缩放、forced-colors、reduced-motion与reduced-transparency恢复链）、UI-RESP-002（safe-area下Dock和末条均可达）。状态失败必须保留已加载内容和继续阅读位置；组件存在或测试专用入口不算出口。不得实施仍受MEDIA-APP-VISUAL门禁的多图DEV-MM-04。若冻结设计缺锚点或必须改变已确认视觉，block退设计部。完成候选必须冻结App/source/data/build身份并提交1440/1024/390×深浅六格真实页面证据，映射V-PUB-SEARCH/V-PUB-STATE/V-PUB-SHELL/V-PUB-TOOLS/V-PUB-LIGHTBOX及五个Function ID。",
+  "domain_stage": "m5-local-public-core-closure",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若数据部successor未完成或真实两页数据不可达，PUB-FEED-005保持P1并block/等待，禁止降低page size、复制静态条目或用人工注入完成。",
+    "若任一状态只能通过隐藏debug/DRAFT控件、测试组件或静态分支展示，相关Function ID不得完成。",
+    "若实现偏离冻结设计、缺六格同候选证据、出现React/hydration error或破坏旧V1/V2/API安全合同，立即停止并回退本任务改动。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "DEV-PUBLIC-CORE-WAVE2-01",
+  "pointers": [
+    "design/ui/F1+1-v0.2-全站设计/F1+1-v0.2-final-20260808.html",
+    "docs/spec/F1+1-v0.2-最终实现级产品合同.md",
+    "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-F67080",
+  "title": "DEV-PUBLIC-CORE-WAVE2：筛选分页七状态与无障碍核心闭环",
+  "unverified": [],
+  "updated_at": "2026-08-09T20:13+08:00",
+  "verified": []
+}

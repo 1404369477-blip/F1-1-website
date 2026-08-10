@@ -1,0 +1,47 @@
+{
+  "acceptance_exit": "提交安全部successor final报告与manifest；742B8D已验证证据与本任务组合覆盖875B6C完整安全出口；canonical shadow profile、SQLite/audit/no-egress、脱敏、externalCalls=0与零残留均PASS，P0=0/P1=0时完成TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "用户已批准安全部任务专属临时验证；本后继修正临时profile拓扑后仅完成同一授权内剩余本地安全检查。",
+  "authorization_history": [
+    {
+      "at": "2026-08-10T09:22+08:00",
+      "evidence": "用户已批准安全部任务专属临时验证；本后继修正临时profile拓扑后仅完成同一授权内剩余本地安全检查。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "唯一shadow探针已在打开closed DB物理副本后、任何业务写入前因harness错误假设initial localRows=0触发INITIAL_LOCAL_ROWS；冻结closed DB权威值本来就是59 baseline + 1 local synthetic，故未建立产品缺陷。按首错停止，SQLite/audit/no-egress剩余NOT_RUN；正式DB SHA保持ddf3778c…e939，externalCalls=0，3019/lock/WAL/SHM/tmp无残留。来源线程turn=019fe944-1b9b-7cf3-9d97-3a49b81665a1。",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "本任务只补742B8D未运行的后半安全出口；不得覆盖A5F239/742B8D历史或重复已PASS阶段。",
+  "created_at": "2026-08-10T09:22+08:00",
+  "department": "安全部",
+  "details": "承接blocked 742B8D已验证raw危险路径18项、合法session/list+query、Host/Origin/peer、内存session/CSRF与identity；首错仅为安全探针把临时DB放在非canonical profile路径，产品正确返回PROFILE_PATH_MIX，未建立产品缺陷。唯一候选仍为ACK 875B6C。执行前必须建立任务0700 shadow project/app根，物理复制必要源码/迁移/fixtures/closed DB到shadow app/.local/f1plus1-source-management-synthetic.sqlite，F1_DB_PATH保持精确canonical相对路径；依赖只读链接，不得把任意临时绝对路径伪装成profile。只验证剩余SQLite/audit/no-egress：closed DB副本完整性、59 baseline不可变+1 local overlay、receipt/operation/audit ledger交叉、第二writer/profile/path/权限拒绝、错误脱敏、guard对非loopback/DNS/出站保持externalCalls=0以及任务资源清理。不得重复742B8D已PASS的raw/session/CSRF/identity阶段，不启动正式DB/公网/真实provider，不改产品代码/依赖/UI/Spec/ADR。",
+  "domain_stage": "M5-SOURCE-MGMT修复后安全缺口successor",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "shadow root不满足canonical app/.local/profile路径、依赖只读或输入SHA门：不打开DB，立即block。",
+    "任一SQLite/audit/no-egress/脱敏不变量失败：首错停止，保存实得，不修改探针重跑。",
+    "出现正式DB/保护字节写入、外联、残留进程/端口/lock/WAL/SHM/tmp：立即停止，只清理由任务创建的资源并报告P0/P1。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "只关闭742B8D因临时DB路径错误未运行的SQLite/audit/no-egress出口",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260810-742B8D.json",
+    "docs/collaboration/tasks/TASK-20260810-875B6C.json",
+    "app/evidence/TASK-20260810-875B6C/manifest.json",
+    "docs/collaboration/部门/测试部/报告/2026-08-10-A3293F修复后独立HTTP恢复矩阵报告.md"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260810-7CBD3F",
+  "title": "742B8D后继：canonical shadow profile剩余安全不变量",
+  "unverified": [],
+  "updated_at": "2026-08-10T09:38+08:00",
+  "verified": []
+}

@@ -1,0 +1,56 @@
+{
+  "acceptance_exit": "Spec/ADR/progress对上述基线唯一且无旧时态/第二实体/五层seed/epoch0例外；状态、操作ID、hash、publication、internal-only映射和R9/R10/R13均有精确静态合同；旧名publish_unknown/source_config_version/jcs-v1、未定义SourceObservation/SummaryDraft/AuditEvent作为领域实体均零命中（允许internal contract名称时必须标internal-only）；数据v0.3未完成前标并行候选，保持proposed；git diff检查和链接检查通过，提交产品部报告或task receipt并TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/spec.md",
+    "docs/decisions/system/2026-08-01-F1+1-M4本地Kickoff系统路线-proposed.md",
+    "docs/progress.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-02-M4-A轴第二轮产品合同修订报告.md"
+  ],
+  "authorization_evidence": "用户已授权本地工程继续推进；A轴独立复验已FAIL并要求先修合同再开始app",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T01:13+08:00",
+      "evidence": "用户已授权本地工程继续推进；A轴独立复验已FAIL并要求先修合同再开始app",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "用户已授权本地工程继续推进；当前是A轴合同修订，不触发任何外部资源或真实采集。",
+  "created_at": "2026-08-02T01:13+08:00",
+  "department": "产品部",
+  "details": "读取测试部TASK-20260802-5809E0报告、安全部TASK-20260802-A7BA84报告及统筹临时对抗审查结论，只改docs/spec.md、M4 proposed ADR、docs/progress.md，保持proposed，不改data/app/accepted ADR。与数据部并行采用唯一基线：data/mvp-contract-v0原位升级mvp-local-v0.3且仍是唯一机器合同；新信源validating→activation_pending必须canonical_url_valid=true、normalization=valid、dedup=unique，blocked优先级固定platform>authorization>adapter；activation事务在三门通过、stop清除、五fence当前时原子写enabled=true、queued、唯一onboarding operation和唯一outbox，Source/TaskEnvelope/Outbox复用operation_id，worker lease后才collecting；blocked/retry/stop/resume/dead-letter出口明确，paused只属于lifecycle_status。Publication一个逻辑公开身份只保留一个稳定public_id；publish Outbox/Envelope key等于Publication idempotency_key，reconcile query才使用同一Publication.reconcile_key；timeout在同一记录进入reconcile_wait。固定hash边界：content_version_hash与summary_version_hash各自从明确定义的不可变字段对象复算；release canonical payload冻结content/summary hashes、source snapshot、original_url、rights snapshot、media hash/license/safety snapshot、policy/schema版本和五fence，payload_hash只hash该payload；bundle_hash=hash(release_bundle_id,bundle_version,payload_hash,canonical rule,immutable)，approved_bundle_hash等于bundle_hash，任何冻结字段变化产生新Bundle并使旧审核supersede。SummaryDraft收敛为Summary(summary_status=draft)；source_observation与audit_event明确为internal-only，不是领域/Base真值，并引用data v0.3的internal-contract.schema.json；AuditEvent最小字段/append-only/seq/clock/redaction/retention边界写清。seed固定三层m3-shadow/synthetic-case/security-error，published projection与snapshot reconciliation为synthetic层子集。live epoch从1且0永远schema拒绝；lease结构至少承载128-bit。同步数据任务已ACK但复验FAIL的时态；明确B/C仍未验证。不得把research候选扩展成新MVP功能。",
+  "domain_stage": "M4 A轴第二轮修订",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 产品语义与data v0.3字段无法一一映射：保持proposed并报告精确冲突，不在文档另造字段；2) hash边界仍需关联可变记录才能复算，或同一bundle可生成第二public_id：停止定版并回退到冻结payload/单一Publication设计；3) 修订触及app、accepted ADR、真实平台/飞书/发布/部署或研究新增功能：立即停止越界变更并保留现有门禁。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未把v0.2 ACK写成v0.3 ACK；未把Summary草稿创建为第二实体；未扩成五层seed；未把epoch=0当有效envelope；未触碰data/app/accepted ADR或外部资源。",
+  "node": "M4/A轴第二轮修订/产品合同",
+  "pointers": [
+    "docs/collaboration/部门/产品部/报告/2026-08-02-M4-A轴第二轮产品合同修订报告.md"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-02-M4-A轴第二轮产品合同修订报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-5BAF26",
+  "title": "修订M4 A轴合同闭合第二轮P0 P1",
+  "unverified": [
+    "TASK-20260802-D80846的v0.3最终交付、ACK、机械复验及字段对齐",
+    "B/C运行收据、Node24/SQLite/UI/API/安全/deny-all/build/test、真实端口和生产存储",
+    "真实Base/provider/Collector/采集/表单/AI/媒体/发布/部署/付费/外发能力"
+  ],
+  "updated_at": "2026-08-02T01:46+08:00",
+  "verified": [
+    "Spec、M4 proposed ADR、progress和产品报告已统一v0.3候选合同：原子enable+queued、operation_id、唯一Publication/public_id/key、可重建hash、三层seed、internal-only边界、epoch=0 schema拒绝",
+    "此前mvp-local-v0.2数据任务已交付并ACK；第二轮测试/安全复验FAIL；当前TASK-20260802-D80846仍进行中，尚未交付/ACK",
+    "git diff --check、目标文档链接存在性、JSON解析、Markdown fence和agent_team_task doctor均通过；未修改data/app/accepted ADR或执行外部IO"
+  ]
+}

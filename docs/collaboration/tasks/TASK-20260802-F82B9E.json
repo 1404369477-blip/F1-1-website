@@ -1,0 +1,54 @@
+{
+  "acceptance_exit": "交付开发部正式架构报告；逐层给出证据链接或仓库路径/提交SHA，形成F1+1映射表和至少一张数据流/故障流图；明确许可证、依赖锁定、最近维护证据、运行前提、Secrets与外连位置；给出可直接借鉴、概念借鉴、需重写、暂不采用四类决策及优先级；不得修改app、Spec、accepted ADR或引入依赖。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-02-aihot与同类开源架构深度拆解.md"
+  ],
+  "authorization_evidence": "用户于2026-08-02明确要求派部门成员开展只读深度调研并优先CLI/内置浏览器",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T00:43+08:00",
+      "evidence": "用户于2026-08-02明确要求派部门成员开展只读深度调研并优先CLI/内置浏览器",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部当前会话",
+  "completion_class": "standard",
+  "confirmation": "用户点名要求专门详细阅读aihot并学习其架构设计与信息源系统，本轮仅授权只读研究。",
+  "created_at": "2026-08-02T00:43+08:00",
+  "department": "开发部",
+  "details": "只读深度阅读 https://github.com/KKKKhazix/khazix-skills/tree/main/aihot 及其可追溯依赖、文档、提交历史和许可证；必要时对比2至4个相近开源聚合项目。优先git/gh/API/本地临时只读检出，禁止把外部代码复制进app或修改正式Spec/ADR。拆解目录、技术栈、运行拓扑、数据源注册、采集/调度、去重、摘要、媒体、审核、发布、缓存、搜索、可观测性、安全、失败恢复、部署与成本；区分仓库可证事实、运行行为推断和Unknown。结合F1+1现有Spec/ADR/data v0.2产出组件映射、可复用/需重写/禁用清单、许可证与供应链核查入口、最小spike建议。与研究部市场清单、设计部视觉比较、安全部独立风险判定去重。",
+  "domain_stage": "M4前沿调研",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 仓库分支/目录变动或不可访问：固定可获得的commit SHA并记录时间，无法核验项标Unknown；2) 缺少许可证或关键服务端代码：不得推定可复制/可商用，只能做概念分析；3) 动态服务行为与源码不一致或需要密钥：不运行真实外连，记录为待离线spike或后续授权验证。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已复核版本不混用、未把远端服务能力当仓库事实、未把许可证当法务结论、未执行真实外连/安装，报告只新增一个只读研究产物",
+  "node": "M4/研究/架构与工程",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-02-aihot与同类开源架构深度拆解.md"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-02-aihot与同类开源架构深度拆解.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-F82B9E",
+  "title": "aihot仓库与同类开源架构深度拆解",
+  "unverified": [
+    "aihot服务端源码、当前main完整HEAD SHA、在线API行为/可达性/配额/条款和中国大陆网络路径未知",
+    "三项目固定SHA的完整源码运行、性能、安全和C层Node24/SQLite验证未执行；aighot当前main内容与固定v1.2.1快照存在版本边界",
+    "真实provider、媒体/权利、外部发布、部署、费用和生产容量仍需独立门禁"
+  ],
+  "updated_at": "2026-08-02T00:57+08:00",
+  "verified": [
+    "aihot目录树、SKILL/API/sync/errors/install/manifest/LICENSE及官方历史已只读核对；固定提交fcba3adcf5def1ccd4bb688de93060227471b129（v1.2.1）",
+    "Miniflux固定提交070bc9ef3d0a5849792883a3f7f017a5b6f8e0b4与FreshRSS固定提交ad78838ffc01059c2d1f20bf8204b21070e925bf的官方README、许可证、依赖和维护证据已纳入对照",
+    "已映射F1+1 Spec/提议ADR/data/mvp-contract-v0，含领域/内部表、复用分类、数据流与故障流图",
+    "本轮无依赖安装、无app/Spec/accepted ADR修改、无真实API/第三方来源访问；现有dirty worktree已保留"
+  ]
+}

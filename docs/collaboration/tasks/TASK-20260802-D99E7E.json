@@ -1,0 +1,72 @@
+{
+  "acceptance_exit": "交付一个portable主归档、一个可选ARM64 warm-layer归档、迁移说明、恢复/校验脚本、当前断点与续接提示、文件/环境/排除manifest及SHA256SUMS；在隔离目录试解包，验证归档无绝对symlink/凭证命中，task doctor通过，warm Node24/npm可运行，项目check入口可恢复（不得把当前中断的7A9C48误报PASS）。所有产物路径可点击，TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "migration/bundles/F1+1-portable-M5-macOS26.6-20260802.tar.gz",
+    "migration/bundles/F1+1-warm-arm64-node24-M5-macOS26.6-20260802.tar.gz",
+    "migration/bundles/SHA256SUMS",
+    "migration/README-M5-macOS26.6.md",
+    "migration/CURRENT-HANDOFF.md",
+    "migration/RESUME-PROMPT.md",
+    "migration/DEPARTMENT-HANDOFF-PROMPTS.md",
+    "migration/conversations/INDEX.md",
+    "migration/scripts/restore-on-new-mac.sh",
+    "migration/scripts/verify-restored-project.sh"
+  ],
+  "authorization_evidence": "用户明确要求打包全部项目、环境、工具、skills和迁移说明，使任务在新Mac无缝继续；目标机已确认M5、macOS26.6。",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T14:02+08:00",
+      "evidence": "用户明确要求打包全部项目、环境、工具、skills和迁移说明，使任务在新Mac无缝继续；目标机已确认M5、macOS26.6。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "completion_class": "standard",
+  "confirmation": "用户已明确要求暂停并完整迁移到M5 macOS26.6；本轮只生成本地迁移产物，不上传、不发送、不写外部服务。",
+  "created_at": "2026-08-02T14:02+08:00",
+  "department": "统筹部",
+  "details": "暂停网站施工，冻结当前dirty worktree与任务控制面。制作不含凭证的完整迁移交付：项目源码/文档/data/design/research/.git/未完成app差异；agent-team与vibe-project-foundation等直接相关skills；Codex/部门thread映射与续接提示；Node24/npm11.16/现有node_modules和本地SQLite的ARM64温启动可选层；lark-cli/Homebrew/系统工具版本与重装/重新授权清单；可执行恢复/验证脚本；SHA-256 manifest。不得复制Codex/飞书OAuth、浏览器会话、SSH/GPG私钥、Keychain、真实.env或其他凭证。目标为M5 arm64、macOS26.6。",
+  "domain_stage": "project-migration-m5-macos26.6",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 扫描发现疑似token/cookie/private key/真实.env：停止打包该文件，记录排除并人工检查，不把敏感值写入报告。",
+    "2) ARM64二进制在macOS26.6兼容性无法本机证明：warm层标optional并提供lockfile重装路径，不虚构兼容PASS。",
+    "3) 归档过大、symlink越界或解包后doctor/hash失败：FAIL并重建，不交付不可验证包。"
+  ],
+  "from_department": "统筹部",
+  "impact_declaration": {
+    "admission": "manual",
+    "base_revision": "a9691e71b1552592cc5ded8d5db66c336262301c",
+    "external_effects": [
+      "none"
+    ],
+    "owner_task": "TASK-20260802-D99E7E",
+    "shared_contracts": [],
+    "write_paths": [
+      "migration"
+    ]
+  },
+  "mistake_check": "已核对未覆盖源文件、未复制Codex/飞书/浏览器/Keychain凭证、未把check成功写成7A9C48或VS-0安全PASS、未把对话导出置于Spec/task/ADR之上、warm层保持optional并提供lockfile回退、全部部门均有对话和专用接班提示词",
+  "node": "项目迁移/M5-macOS26.6/完整断点续接",
+  "pointers": [
+    "migration/README-M5-macOS26.6.md"
+  ],
+  "report": "migration/README-M5-macOS26.6.md",
+  "resolution": null,
+  "revision": 5,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-D99E7E",
+  "title": "制作F1+1到M5 macOS26.6的完整迁移包",
+  "unverified": [
+    "目标M5 macOS26.6实际原生兼容、Codex原任务账号同步、飞书CLI重新登录后的scope/Base资源可读性只能在新Mac验证；TASK-20260802-7A9C48仍claimed且负例/报告/独立安全复验未完成，R5和R12仍pending"
+  ],
+  "updated_at": "2026-08-02T14:45+08:00",
+  "verified": [
+    "portable 3700 members与warm 29157 members路径校验通过；SHA sidecars通过；隔离解包task doctor=91通过；symlink边界通过；Node24.18.0/npm11.16.0可运行；最小环境npm run check 32/32、lint、typecheck、Next build全部exit0；9个Codex任务共190 turns/312用户输入/185 final answers已分页导出；项目和对话凭证模式扫描0命中，Local REST secret明确排除"
+  ]
+}

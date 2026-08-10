@@ -1,0 +1,52 @@
+{
+  "acceptance_exit": "报告status=final、decision=pass|fail，逐项绑定候选SHA；证明旧两库/receipt零漂移，新DB 0600 regular nlink=1且无WAL/SHM/candidate运行残留，exact migration/ledger/schema/0-1-4/五图/第六张拒绝、原子安装与恢复、单profile/ATTACH、闭链/hash/rights/safety/order、V1/V2/406/500/no-store、错误脱敏与no-egress均有独立证据；开发报告保留的pre-update备份文件给出隔离/权限/清理风险结论；externalCalls=0。P0=0/P1=0才PASS；列已验证/未验证、错题自检并TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-09-多媒体profile与V1-V2-API独立安全复验报告.md"
+  ],
+  "authorization_evidence": "TASK-20260809-BA9999已ACK；本地独立审查",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T17:28+08:00",
+      "evidence": "TASK-20260809-BA9999已ACK；本地独立审查",
+      "state": "none"
+    }
+  ],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "本任务为已授权纯本地synthetic后端的独立只读安全复验，不触发真实外部能力。",
+  "created_at": "2026-08-09T17:28+08:00",
+  "department": "安全部",
+  "details": "只读/受控临时副本审查TASK-20260809-BA9999当前固定候选。先冻结开发报告impact清单全部源码、scoped migration、新SQLite、旧两库与三closed receipt的当前SHA/权限/sidecar状态，审查期间任一漂移即失败。独立检查第三profile固定路径与exact selector、旧receipt运行时绑定、候选原子安装/no-replace/crash recovery、symlink/hardlink/owner/mode/TOCTOU、单handle/ATTACH/跨profile拒绝、INSERT与UPDATE第五图限制、seed事务/篡改/读取fail-closed、Repository仅由SQLite闭链构造且无expected DTO第二真值、V1/V2精确Accept与406/500/no-store、路径与错误脱敏、no-egress/realMedia=0/writesToBase=false、构建tracing warning风险等级。canonical旧库不得打开SQLite或改receipt；新canonical如需SQL仅用可证明无副作用的私有副本。只提交安全部final报告，不修实现。",
+  "domain_stage": "M5公开多媒体后端独立安全门",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一旧DB/receipt/旧migration漂移或审查可能触碰canonical：立即停止，decision=fail并保留现场，不重生成receipt或checkpoint旧库。",
+    "发现第二DTO真值、partial gallery/fallback、Accept混版、第五图可写、路径/链接/候选恢复绕过或secret/绝对路径泄露：给精确P0/P1与最小复现，不修改代码。",
+    "仅有开发自测或无法把报告hash绑定当前源码/DB：保持Unknown或FAIL，不继承开发部PASS。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未继承开发PASS；未打开canonical旧DB或重生成receipt；目标测试仅一次；未运行build/check/full suite；私有副本SQL为immutable只读；进程级与OS级no-egress分层；pre-update留存风险列P2；临时根已清理",
+  "node": "对已ACK的DEV-MM-01..03最终候选做独立安全门禁",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260809-BA9999.json",
+    "docs/collaboration/部门/开发部/报告/2026-08-09-DEV-MM-BACKEND多媒体独立profile与V1-V2-API完成报告.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-09-多媒体profile与V1-V2-API独立安全复验报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-4A5381",
+  "title": "SEC-MM-BACKEND：独立安全复验多媒体profile与V1/V2 API",
+  "unverified": [
+    "OS/生产级no-egress；真实HTTP/代理/公网行为；真实媒体与外部能力；build tracing与部署产物；物理断电故障注入"
+  ],
+  "updated_at": "2026-08-09T17:39+08:00",
+  "verified": [
+    "固定候选与旧两库/三receipt/旧migration测试前后SHA零漂移；新DB 0600 regular nlink=1且无WAL/SHM/candidate；exact migration/ledger/schema/0-1-4/第五图拒绝；原子安装恢复、单profile/ATTACH；SQLite闭链/hash/rights/safety/order；V1/V2/406/500/no-store；应用错误脱敏；唯一目标测试5/5通过且externalCalls=0；临时根已精确清理"
+  ]
+}

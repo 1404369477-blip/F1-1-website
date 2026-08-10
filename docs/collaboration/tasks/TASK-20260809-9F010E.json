@@ -1,0 +1,51 @@
+{
+  "acceptance_exit": "安全部提交final独立复核报告；同一冻结候选hash一致；P0=0且无未处置P1才能pass；已验证、未验证、推断和真实配置门清楚分层；任务完成后等待统筹核收，不自动授权配置。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-09-Admin-Mac-Wi-Fi-only远程恢复runbook-v0.3独立安全复核报告.md"
+  ],
+  "authorization_evidence": "2026-08-09主会话：用户确认固定M1 MacBook可长期接电、Wi-Fi-only，并要求继续规划；未授权真实配置。",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T20:35+08:00",
+      "evidence": "2026-08-09主会话：用户确认固定M1 MacBook可长期接电、Wi-Fi-only，并要求继续规划；未授权真实配置。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "用户已授权形成服务器规划和两机联动文档；本任务仅对已ACK文档做零副作用只读安全复核。",
+  "created_at": "2026-08-09T20:35+08:00",
+  "department": "安全部",
+  "details": "冻结审查对象为v0.3 runbook SHA-256 1bdfe81cdefeddf418bb776c2de0f9fa1131db945d15f5d6b06d55dce6c7dd6c、manifest SHA-256 23aa5a33ba456f9a56b3a860247262bd14b0d6606ac709e3a925223324b417a6、v0.2 predecessor SHA-256 97b0dbdf452d7200d4165d8e1629b6424e8ffcdea0aba8237e46c764e428527e。只读审查，不运行设备命令、不登录、不探测、不改网络、不启用SSH/FileVault/UU、不联网补证。检查：三通道职责是否互斥；Wi-Fi-only启动前前提是否保守；公网入口是否始终关闭；UU是否严格限于解锁后；唯一标识和秘密是否被禁止；RTO/RPO是否保持Unknown；8GB与长期接电是否被错误外推；manifest是否闭集和授权false。输出安全部final报告，明确P0/P1/P2及pass/fail；不得把规划文档当成已配置能力。",
+  "domain_stage": "Admin-Mac-规划安全复核",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "hash漂移或对象不一致：立即block，不审查替代文件；发现唯一标识、恢复秘密、公网SSH/Admin或宿主UU被写成启动前证据：P1/FAIL并给精确位置；证据不足以证明真实设备能力：保留Unknown，不把文档设计判为生产PASS。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未记录或散列网络/设备标识；文档/真实环境/loopback开发分开定级；未因WPA2能力接受低安全Wi-Fi；未把弱Wi-Fi扩大为loopback P1；UU不作启动前路径；8GB/接电/SSH/FileVault/文档PASS不外推生产；未改文档或真实配置",
+  "node": "只读复核已ACK的v0.3 successor与closed-set manifest，确认远程管理、FileVault启动前路径、隐私和授权边界",
+  "pointers": [
+    "docs/runbooks/F1+1-专用Admin-Mac-远程恢复与跨网联动runbook-v0.3.md",
+    "docs/runbooks/F1+1-专用Admin-Mac-远程恢复与跨网联动runbook-v0.3.manifest.json",
+    "docs/collaboration/部门/产品部/报告/2026-08-09-M1固定Admin-Mac远程恢复与跨网联动runbook-v0.3报告.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-09-Admin-Mac-Wi-Fi-only远程恢复runbook-v0.3独立安全复核报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-9F010E",
+  "title": "Admin Mac Wi-Fi-only远程恢复runbook v0.3独立安全复核",
+  "unverified": [
+    "当前Wi-Fi精确认证/cipher；FileVault/Remote Login/SSH/Firewall/Sharing/UU/DHCP/启动前重连；网关VPN/CGNAT/蜂窝/现场/冷备/备份/fence/RPO/RTO；资源与长稳；未运行任何设备或网络命令"
+  ],
+  "updated_at": "2026-08-09T20:45+08:00",
+  "verified": [
+    "v0.3 runbook/manifest/精确v0.2 predecessor双时点hash；三通道互斥与UU解锁后边界；公网Admin/SSH=0、唯一writer/epoch fence；唯一标识与秘密禁区；closed-set及全部授权false；RPO/RTO/8GB/长期接电不外推；脱敏低安全Wi-Fi事实分层定级"
+  ]
+}

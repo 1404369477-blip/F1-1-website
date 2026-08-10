@@ -1,0 +1,55 @@
+{
+  "acceptance_exit": "安全部提交YAML final审核报告，decision=pass|fail，列P0/P1/P2、8项SHA与独立命令收据；验证profile混行、hash/FK/fence篡改、公开字段泄露、外联/路径/执行面四类失败均fail closed；v0.3 11项与M3 59x39/e7a8零漂移；P0=0且P1=0才PASS；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-03-v0.4公开数据机器合同独立安全审查.md"
+  ],
+  "authorization_evidence": "用户确认双profile与v0.4 successor，并要求持续按部门推进可用初版。",
+  "authorization_history": [
+    {
+      "at": "2026-08-03T12:50+08:00",
+      "evidence": "用户确认双profile与v0.4 successor，并要求持续按部门推进可用初版。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/审核成员:/root/security_v04_data_review",
+  "completion_class": "audit",
+  "confirmation": "安全与测试都PASS后统筹才核收数据任务并派开发；本任务不开放外部能力、部署或真实发布。",
+  "created_at": "2026-08-03T12:50+08:00",
+  "department": "安全部",
+  "details": "只读审查ADR-M4-PUBLIC-READ-001 accepted、data/mvp-contract-v0.4-public-synthetic八项机器产物与数据部final报告。独立检查：m3-shadow/public-synthetic物理边界和Source delta=0；不得出现59行与src-active混用；fixture/profile ledger/manifest的synthetic_only、external_calls=0、writes_to_base=false、real_content_imported=false；12套projection-first批准链与五fence；canonical-json-v1 hash可重算且篡改失败关闭；公开DTO mapping只引用批准snapshot，不包含URL/hash/fence/reviewer/raw/路径/密钥/真实身份；generator/validator不执行网络、shell、动态代码或越界写入；synthetic.invalid与本地占位符不得变成可请求URL。只写安全部final报告，不修改产品/data/app/设计/lock。",
+  "domain_stage": "数据合同独立安全门禁",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "发现public-synthetic可与m3-shadow混库/attach/反写，或绑定59个真实Source：P0 FAIL并停止开发。",
+    "任一公开DTO可泄露URL、hash/fence/reviewer/raw/internal/private数据，或generator/validator有外联、shell、动态执行、越界写风险：P0/P1 FAIL。",
+    "任一hash/FK/fence/批准链/manifest篡改未被拒绝，或v0.3/M3收据漂移：P1 FAIL；只报告不返工。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已区分当前正常fixture快照PASS与失败路径安全门禁FAIL；未把synthetic.invalid内部值误判为当前DTO泄露；所有篡改仅在系统临时影子副本执行；未修改data/app/product/design/lock/accepted ADR；P1存在所以未放行",
+  "node": "验证public-synthetic数据包在进入SQLite/API开发前满足隔离、最小公开面、hash/fence和无外联安全门禁",
+  "pointers": [
+    "docs/decisions/system/2026-08-03-F1+1-公开读模型与API接线-v0.4-successor-accepted.md",
+    "data/mvp-contract-v0.4-public-synthetic",
+    "docs/collaboration/tasks/TASK-20260802-EFA8A7.json"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-03-v0.4公开数据机器合同独立安全审查.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260803-8C85B4",
+  "title": "独立安全审查v0.4公开数据机器合同与profile隔离",
+  "unverified": [
+    "SQLite双文件/inode/启动profile pin、migration/seed事务、Repository/API/cursor/Problem/HTTP公开出口、运行时no-egress尚未实现，不能由本数据合同审查推导为已通过"
+  ],
+  "updated_at": "2026-08-03T13:05+08:00",
+  "verified": [
+    "8项正式产物SHA与数据部报告一致；当前v0.4 validator基线PASS；独立重算12套projection-first批准发布链、5 fence、公开DTO零URL/internal泄露、graph hash均PASS",
+    "v0.3冻结11/11 artifact SHA零漂移；M3独立重算59×39、59 enabled=false、canonical projection hash=e7a8312c70a9a49922aedb3cfbeaa190db8f5dce8d4ab45db1570748fc329f17",
+    "影子副本完成混行、hash、FK、fence、ledger、manifest、profile、DTO泄露、URL占位符、外联/执行面和symlink越界写安全探针；确认P0=0、P1=4、P2=1，decision=fail"
+  ]
+}

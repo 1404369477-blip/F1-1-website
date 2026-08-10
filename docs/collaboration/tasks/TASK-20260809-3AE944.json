@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "交付安全裁决报告：P0/P1/P2、A/B/C三层归因规则、历史GCM/updater事件定级、最小可执行浏览器隔离合同、必要证据与不必要证据、失败路径；明确是否允许在sandbox阻断外网且页面/CDP全loopback、进程树无已建立外联的条件下完成五Function验收。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-09-公开前端浏览器A-B-C分层与localhost-only验收合同安全裁决.md"
+  ],
+  "authorization_evidence": "持续推进初版目标；开发与测试两任务因浏览器辅助进程外联可证明性被阻断，需安全部独立确定正确门禁边界",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T20:27+08:00",
+      "evidence": "持续推进初版目标；开发与测试两任务因浏览器辅助进程外联可证明性被阻断，需安全部独立确定正确门禁边界",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "用户授权持续推进本地初版；本任务纯只读安全裁决，不授权运行浏览器、外部I/O、依赖安装、设计/实现修改或部署",
+  "created_at": "2026-08-09T20:27+08:00",
+  "department": "安全部",
+  "details": "只读审查TASK-20260809-F67080与TASK-20260809-8B5FF9报告/任务证据，精确绑定当前source聚合SHA=7b1e8977c3e7296f4e5cf165b106bc322c2ef19dbd5e506f51e2c4ec92465281、DB=eb2d7ad2787a290f7a13adcb063215d58654bc9f66d1d8ff60b98f14592b9551、build-manifest=b8c57b58a1f524871415bd233871800d9608e35f2f4f188b2d58675e38f0881c。区分三层：A App页面/worker/server发出的网络；B浏览器页面进程因页面触发的网络；C Chrome/Google updater/GCM等与页面无关的辅助进程。判断C层背景尝试是否应阻断五个本地Function ID；禁止用浏览器自身行为虚构App数据外发，也禁止忽略真实页面外联。评估本机现有sandbox-exec、ms-playwright chrome-headless-shell、playwright-core、CDP请求日志、进程树+lsof等能否提供一次仅允许localhost的机械隔离；给出精确PASS/FAIL证据集合和负例，不运行浏览器/服务、不改文件、不安装、不外联。",
+  "domain_stage": "公开前端-安全门禁裁决",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "证据无法把历史外联归因到具体层：保持Unknown但只阻断对应证据声明，不扩大为App泄露结论",
+    "现有本机工具无法形成机械隔离：给出最小替代和需用户授权的唯一增量，不要求重复页面测试",
+    "发现App源码或页面确有外部资源/请求：给首个路径与候选hash，立即定P1/P0并停止合同放宽"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未把C层行为写成App泄漏；未忽略未来B层外联；未把tab CDP外推全浏览器；未要求PF/DTrace证明从未产生意图；环境BLOCKED不计Function P1；固定独立headless-shell；未运行浏览器/服务/外联或改候选",
+  "node": "独立裁决Chrome/GCM/updater背景流量是否构成App候选P1，并给出一次可机械验证的最小真实浏览器no-egress合同",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260809-F67080.json",
+    "docs/collaboration/tasks/TASK-20260809-8B5FF9.json",
+    "docs/collaboration/部门/开发部/报告/2026-08-09-筛选分页七状态与无障碍核心闭环实现报告.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-09-公开前端浏览器A-B-C分层与localhost-only验收合同安全裁决.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-3AE944",
+  "title": "公开前端浏览器辅助进程外联门禁裁决与最小验收合同",
+  "unverified": [
+    "当前候选五Function真实浏览器矩阵；A/B实际请求与连接；C层成功连接或意图；Seatbelt完整后代覆盖运行收据；当前候选六格/七态/分页/a11y/safe-area；本任务未运行浏览器或服务"
+  ],
+  "updated_at": "2026-08-09T20:38+08:00",
+  "verified": [
+    "历史F67080/8B5FF9证据与manifest；A App/server、B页面触发、C浏览器辅助三层归因；历史GCM/updater仅C层Unknown且不构成App P1；sandbox-exec、Playwright1.58.2、revision1208独立headless-shell及精确loopback SBPL可行性；一次localhost-only合同的PASS/FAIL/BLOCKED条件"
+  ]
+}

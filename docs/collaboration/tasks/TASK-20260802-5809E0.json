@@ -1,0 +1,54 @@
+{
+  "acceptance_exit": "提交测试部正式复验报告并给唯一结论PASS或FAIL；所有JSON可解析、manifest artifact hashes只读匹配、旧命名零命中、枚举可达性/引用/计数/独立fixture机械证据齐全；逐项记录P0-01至P0-09、P1、B/C遗留。PASS须P0=0且A轴无未闭合矛盾；完成后TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-08-02-M4-A轴跨合同定版复验报告.md"
+  ],
+  "authorization_evidence": "用户已授权本地工程合同持续推进；2026-08-02产品与数据A轴候选已由统筹核收",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T00:48+08:00",
+      "evidence": "用户已授权本地工程合同持续推进；2026-08-02产品与数据A轴候选已由统筹核收",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "测试部/019fb379-9212-7e80-a5df-587d339936c4",
+  "completion_class": "audit",
+  "confirmation": "用户已授权本地工程合同推进；本任务只读复验，不触发app实现、外部IO或真实资源。",
+  "created_at": "2026-08-02T00:48+08:00",
+  "department": "测试部",
+  "details": "只读复验已ACK的产品任务TASK-20260802-131D64与数据任务TASK-20260802-90B1C2。目标文件限定docs/spec.md、M4 proposed ADR、docs/progress.md、data/mvp-contract-v0全部v0.2生成物及三方前序报告。按既有P0-01至P0-09重跑跨合同验收：三门入队顺序/阻断态可达、reconcile_wait唯一命名及四路出口、source_config_epoch唯一命名、TaskEnvelope五fence/lease/deadline/attempt、ReleaseBundle/ReviewDecision/Publication/PublishedProjection单一hash链和稳定public_id、物理表/领域对象唯一映射、13主fixture/16安全fixture/3公开投影、snapshot failure与stale epoch独立、R1-R13引用、四条路由、A/B/C分层。只评A轴静态合同；Node24/package/app/SQLite/UI运行收据属于B/C后置，不得误判为A阻断。不得改文件；发现问题给精确文件/行/证据和最小修订建议。",
+  "domain_stage": "M4 A轴定版复验",
+  "event_receipts": [
+    "TASK-20260802-5809E0-TEST-20260802-AAX-FAIL"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 任一P0跨合同冲突、hash不匹配、fixture不可达或第二真值残留：结论FAIL并定位，不自行修改；2) 仅Node/app/SQLite运行证据缺失：记录为B/C pending，不升级为A轴FAIL；3) 历史报告与当前文件不一致：以当前ACK产物和task receipt为准，并列明漂移。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未把Node25、缺失app或B/C运行收据当作A轴阻断；未把state-machine枚举BFS可达当作schema/fixture/API/UI全覆盖；已识别ADR未定义SourceObservation/SummaryDraft/AuditEvent与data schema/base-mapping不一致及paused enum缺失；已识别Spec/ADR五层seed与manifest三层不一致；未修改上游文件、未访问真实外部资源、未引入旧命名",
+  "node": "M4/A轴定版门禁/测试复验",
+  "pointers": [
+    "docs/collaboration/部门/测试部/报告/2026-08-02-M4-A轴跨合同定版复验报告.md"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-08-02-M4-A轴跨合同定版复验报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-5809E0",
+  "title": "复验M4 A轴Spec ADR与数据v0.2跨合同一致性",
+  "unverified": [
+    "P0-02四个reconcile查询结果未各自形成独立fixture；P0-07缺少11个Source onboarding状态fixture且collection_onboarding_status enum缺少paused；API/UI/真实路由/AT仍待B/C",
+    "第三方JSON Schema引擎、Node24、package/lockfile、SQLite WAL/事务/recovery、deny-all/CSRF/Origin、build/test、真实Base/provider/Collector/平台/部署/自动发布均未验证"
+  ],
+  "updated_at": "2026-08-02T01:04+08:00",
+  "verified": [
+    "已独立复验9个v0.2 JSON解析、主/安全/TaskEnvelope只读schema约束、生成器内存确定性、manifest 9项artifact hash、13/16/3 fixture计数、实体ID唯一、引用闭合、Bundle-Review-Publication-Projection hash链",
+    "M3 33/9字段、59行、每行33值、59/59 enabled=false、source_id/canonical_url唯一；reconcile_wait canonical及四状态机出口；五fence/stale 1→current 2；R1-R13静态条款与四条候选路由",
+    "已分别判定P0-01至P0-09并严格隔离A/B/C；P0-01、P0-04、P0-05、P0-07定位为A轴未闭合；P0-06 Node24/app/lock运行缺失仅记B/C pending"
+  ]
+}

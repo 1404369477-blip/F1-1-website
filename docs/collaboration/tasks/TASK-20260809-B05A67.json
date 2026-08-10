@@ -1,0 +1,52 @@
+{
+  "acceptance_exit": "提交研究部final报告：每项结论就近引用官方来源与访问日期，区分已证实、推断、Unknown和需国内双端实测；形成不超过3个组合方案的对比矩阵、推荐验证顺序、成本与单点故障、退出/回退；列出production manifest仍需用户确认的字段；P0=0/P1=0，报告含已验证、未验证、错题自检并返回TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/研究部/报告/2026-08-09-专用Admin-MacBook私有访问与异机备份候选.md"
+  ],
+  "authorization_evidence": "用户已确认专用MacBook、私有客户端、RPO≤15分钟与RTO≤4小时",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T14:54+08:00",
+      "evidence": "用户已确认专用MacBook、私有客户端、RPO≤15分钟与RTO≤4小时",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "研究部/019fb36c-1f86-78d3-a6d7-f87f124bd710",
+  "completion_class": "standard",
+  "confirmation": "用户已选择专用常开MacBook、接受Mac与iPhone安装私有网络客户端，并确认RPO≤15分钟、RTO≤4小时；本任务只读调研，不授权安装或付费。",
+  "created_at": "2026-08-09T14:54+08:00",
+  "department": "研究部",
+  "details": "只读调研截至2026-08-09可用于专用Admin MacBook、Mac与iPhone全功能访问的私有overlay，以及满足RPO不超过15分钟、RTO不超过4小时的异机加密备份候选。优先官方文档、官方状态页、官方定价与官方安全说明；不使用百度，不登录、不注册、不安装、不购买、不运行网络探针。至少比较托管overlay、可自托管WireGuard/Headscale类方案和一项最小替代；逐项核对Mac/iPhone客户端、NAT/CGNAT、控制面/relay故障、密钥与设备撤销、国内网络可达性证据强度、运维复杂度、费用、数据/日志地域和退出/恢复路径。备份候选逐项核对SQLite一致性快照、加密、异机故障域、15分钟恢复点证明、hash/manifest、保留与隔离恢复。结论只形成候选与选择门禁，不把宣传资料或境外可用性外推为中国大陆实测可用，不批准供应商或部署。",
+  "domain_stage": "M5 Admin部署候选研究",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若官方资料无法证明中国大陆稳定可达，必须标记Unknown并给出未来受控双端试验，不用社区传言补证。",
+    "若候选要求长期公网Admin、端口转发、UPnP、数据库双活或公开控制面凭据，判为不符合当前合同并排除。",
+    "若需要登录、安装、开通付费、修改网络或真实上传数据，立即停止在只读研究边界并回报所需授权。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "没有把官方客户端或全球能力外推为中国大陆可用；没有把overlay替代应用认证；没有把公网overlay基础设施写成公网Admin；没有把restic/B2分别成立外推为组合兼容或防删PASS；没有用网络连通性替代freshness；未登录、安装、购买、改网络、运行真实探针或上传数据。独立对抗复核P0=0/P1=0。TASK_STATE_OK。",
+  "node": "为后续production manifest提供可溯源的私有访问与RPO/RTO候选证据",
+  "pointers": [
+    "docs/decisions/system/2026-08-09-F1+1-M5-Admin专用MacBook部署边界-successor-accepted.md",
+    "docs/spec/F1+1-M5-Admin专用MacBook补充实施合同-v0.2.md"
+  ],
+  "report": "docs/collaboration/部门/研究部/报告/2026-08-09-专用Admin-MacBook私有访问与异机备份候选.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-B05A67",
+  "title": "调研专用Admin MacBook的中国大陆私有访问与异机备份候选",
+  "unverified": [
+    "中国大陆目标宽带/蜂窝/跨运营商的真实可达性与稳定性；目标套餐、价格/税费、元数据地域；Tailscale五分钟签名freshness实现；Headscale/DERP/WireGuard具体部署；restic与B2 Object Lock组合兼容、远端认证回读、完整恢复、RPO≤15m/RTO≤4h均待获批production manifest后的受控实测。"
+  ],
+  "updated_at": "2026-08-09T15:10+08:00",
+  "verified": [
+    "仅用官方/第一方资料核验 Tailscale、Headscale v0.28.0、WireGuard 的 Mac/iPhone、NAT/relay、控制面/撤权；核验 SQLite/Node Online Backup、restic 0.19.1、B2 Object Lock/区域/价格和 Time Machine 官方语义；形成3套候选、成本/SPOF/退出矩阵、独立 freshness 门、RPO/RTO管线与production manifest增量；独立对抗复核 PASS/P0=0/P1=0。"
+  ]
+}

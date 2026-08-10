@@ -1,0 +1,71 @@
+{
+  "acceptance_exit": "交付可运行VS-0：conventions填实；package/lock精确且安全审计通过；verify:env错误配置全拒绝；只追加migration和fixture seed可重复执行；59条M3影子59/59 enabled=false且无外联/写回；health页面/DTO仅安全local状态；Vitest覆盖主要失败路径；Node24下verify-env、migrate、seed、test、lint、typecheck、build、check均exit0，重复执行和前后hash零漂移。提交开发报告，唯一PASS/FAIL、首轮问题/修复/未验证项、TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/README.md",
+    "app/package.json",
+    "app/src/server/config/env.ts",
+    "app/src/server/db/database.ts",
+    "app/src/server/db/seed.ts",
+    "app/src/server/db/source.ts",
+    "app/src/server/providers/fixture.ts",
+    "app/src/server/providers/source-fixture.ts",
+    "app/src/server/health.ts",
+    "app/src/server/security/log.ts",
+    "app/src/server/runtime-config.ts",
+    "app/scripts/runtime-bootstrap.ts",
+    "app/src/tests/vs0.test.ts",
+    "docs/collaboration/部门/开发部/报告/2026-08-02-M4-VS-0安全地基与fixture-provider实现报告.md"
+  ],
+  "authorization_evidence": "用户已明确要求持续推进网站各环节并优先由部门执行；84F061已ACK开放VS-0窗口",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T09:44+08:00",
+      "evidence": "用户已明确要求持续推进网站各环节并优先由部门执行；84F061已ACK开放VS-0窗口",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部当前会话",
+  "completion_class": "standard",
+  "confirmation": "仅VS-0本地/合成安全地基，真实外部能力和VS-1至VS-3持续关闭。",
+  "created_at": "2026-08-02T09:44+08:00",
+  "department": "开发部",
+  "details": "只实现accepted ADR §7 VS-0，严格按Spec、data/mvp-contract-v0冻结合同、数据部TASK-5B8665蓝图与设计部TASK-2437C9交接。先把docs/conventions.md中accepted app布局原位填实：源码app/src、测试app/tests或共置*.test、配置app/.env.example/tsconfig/Next、验证命令。依赖仅新增官方registry精确 zod@4.4.3（runtime）和 vitest@4.1.10（dev），已由统筹用npm view核对MIT，Vitest engines含>=24；必须使用本地Node24/npm11.16、--save-exact、--ignore-scripts/no-audit/no-fund，审计lock/registry/integrity/license/hasInstallScript，禁止其他依赖、latest、镜像和全局安装。实现server-only配置/能力registry的fail-closed校验（canonical allowlist，REAL_*仅字面false，fixture/mock/manual_only，错误Node/端口/origin/provider/secret/proxy/Node注入/旧别名/未知能力变量拒绝）；安全fixture路径realpath/允许根/文件类型/权限/symlink-hardlink-TOCTOU/schema/hash拒绝；脱敏结构化日志不含secret/原始私密payload。实现Node node:sqlite只追加migration地基、WAL/FULL/busy_timeout/user_version/BEGIN IMMEDIATE/权限与本地路径门禁，以及最小repository/seed ledger以幂等加载离线M3 59x33，逐行保持enabled=false、无Base写回/真实I/O；物理字段和默认值必须从冻结data合同/5B8665蓝图映射，不另造业务schema。实现fixture provider与基础health页面/本地health DTO，明确local-only/fixture、Node/SQLite/migration/seed状态，不暴露绝对路径或内部secret；当前首页可作为VS-0健康占位，VS-3再替换为公开feed。把verify:env、db:migrate、seed:fixtures、test、check从pending接通；worker:mock/test:contract可继续明确pending非零，禁止假PASS。测试覆盖错误Node/路径/开关、59x33/59 disabled、重复migration/seed、数据库权限/WAL、日志脱敏、no-egress和health安全DTO；用临时DB，不删共享node_modules/.local。运行Node24下verify:env→db:migrate→seed:fixtures、test、lint、typecheck、build、check；build前后tracked candidates/lock零漂移。禁止真实Base/provider/Collector/平台/AI/媒体/表单/发布/部署/付费/跨网络端口，不改Spec/accepted ADR/data/design。若冻结合同映射不清，停下报告数据修订需求，不自行造字段。",
+  "domain_stage": "M4-C-VS0-local-foundation",
+  "event_receipts": [
+    "FINAL_SECOND_CHECK_SNAPSHOT_OK node=24.18.0 npm=11.16.0 files=58 tests=32",
+    "fresh DB: migrate applied=[0001,0002], seed inserted=true 59x39/59 disabled; repeat applied=[]/inserted=false",
+    "live start: bootstrap ready before Next; GET /api/health HTTP 200; missing DB and port drift exit 1"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) zod/vitest需要额外禁止依赖、lifecycle、lock漂移、非官方源或license Unknown：停止安装，FAIL并请求统筹审查；不得放宽ignore-scripts/engine。",
+    "2) data v0.3/5B8665无法无歧义映射59x33到Source/seed或需要新业务字段：停止该部分并提交数据部修订需求，禁止第二schema。",
+    "3) 任一真实外联、secret泄露、错误配置未拒绝、seed启用信源、migration不幂等/权限不安全或测试/build失败：FAIL并停止VS-1，不以文档声明替代机械证据。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已核对：未把 32/32 tests、两轮 check、/dev/fd identity 增量或 loopback health 扩写成强 TOCTOU、完整 R12 或生产放行；未修改 Spec/accepted ADR/data/design，未安装依赖或修改 lockfile，报告唯一结论保持 FAIL。",
+  "node": "M4/C层/VS-0安全地基与fixture provider",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-02-M4-VS-0安全地基与fixture-provider实现报告.md"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-02-M4-VS-0安全地基与fixture-provider实现报告.md",
+  "resolution": null,
+  "revision": 6,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-158240",
+  "title": "实现M4 VS-0安全地基与fixture provider",
+  "unverified": [
+    "恶意同 UID 进程针对 SQLite pathname/sidecar 的瞬时 TOCTOU 无法由当前纯 node:sqlite 实现强证明排除；accepted R5 仍阻断，等待用户威胁模型决策及当前 SHA 的独立安全复验。",
+    "完整 R12 OS/系统调用级网络与 subprocess deny-all、VS-1至VS-3、真实 provider/Base/Collector、生产与跨平台运行未实现或未验证。"
+  ],
+  "updated_at": "2026-08-02T13:34+08:00",
+  "verified": [
+    "Node 24.18.0/npm 11.16.0 下 npm run check 连续两轮 exit 0；Vitest 32/32、lint、typecheck、Next build 全部通过，58 个非生成 app 文件 SHA-256 清单零漂移。",
+    "隔离新 DB 首次 migration 应用 v1/v2，首次 seed 为 59x39、59/59 disabled、externalCalls=0；重复 migration/seed 为 applied=[]/inserted=false；runtime readiness 通过。",
+    "loopback start 与 /api/health 通过；missing DB 和 local 端口漂移均 fail closed；git diff --check 通过且 3000 端口无残留监听。"
+  ]
+}

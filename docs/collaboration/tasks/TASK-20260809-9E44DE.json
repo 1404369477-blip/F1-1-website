@@ -1,0 +1,75 @@
+{
+  "acceptance_exit": "后续产品、设计、开发任务都能从项目协作入口读取到同一硬门：Mac+iPhone完整功能等价、可布局适配/高风险再认证但不得删功能；日常私有客户端入口+C受控应急入口；每份合同含冗余/恢复；RTO未确认前禁双活数据库和长期公网备用入口。用户决定已写入事实日志，doctor与diff-check通过。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/agent-guide.md",
+    "docs/progress.md"
+  ],
+  "authorization_evidence": "2026-08-09用户决策：Mac+iPhone两端完整后台操作；接受私有网络客户端；采用C；合同含冗余/恢复；RTO未确认前禁止双活数据库和长期公网备用入口。",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T11:51+08:00",
+      "evidence": "2026-08-09用户决策：Mac+iPhone两端完整后台操作；接受私有网络客户端；采用C；合同含冗余/恢复；RTO未确认前禁止双活数据库和长期公网备用入口。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "completion_class": "standard",
+  "confirmation": "用户已明确确认Mac与iPhone安装私有网络客户端、两端完整操作、C私有日常入口加默认关闭受控应急入口，并明确RTO前的禁止事项；无需再次确认该决策，不包含实施授权。",
+  "created_at": "2026-08-09T11:51+08:00",
+  "department": "统筹部",
+  "details": "记录用户确认：Admin在Mac与iPhone必须具备全部后台操作能力，允许布局适配和高风险操作再认证，禁止移动端功能删减；日常采用私有网络入口，用户接受Mac+iPhone安装私有网络客户端；保留默认关闭的受控应急入口。后续产品、设计、开发合同必须包含冗余/恢复，但在用户确认RTO前不得擅自引入双活数据库或长期公网备用入口。只更新项目级协作入口与进度真值，不实施网络、认证、数据库、Admin功能或部署，不新建部门会话。",
+  "domain_stage": "M5 Admin产品与协作治理",
+  "event_receipts": [
+    "DEC-20260809T115258-4B74F9",
+    "DEC-20260809T115450-C16621"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若与在办安全任务19F245的方案事实冲突，保留用户最新决策为上位输入，停止猜测具体供应商或实现并等待安全报告吸收。",
+    "若需要修改受管协作模板，停止该写入，只使用项目级覆盖规则，不破坏受管协议。",
+    "若并行部门已修改同一段落，停止覆盖并报告冲突；不得回滚他人改动。"
+  ],
+  "from_department": "统筹部",
+  "impact_declaration": {
+    "admission": "manual",
+    "base_revision": "a9691e71b1552592cc5ded8d5db66c336262301c",
+    "external_effects": [
+      "none"
+    ],
+    "owner_task": "TASK-20260809-9E44DE",
+    "shared_contracts": [
+      "docs/spec.md",
+      "docs/collaboration/tasks/TASK-20260809-19F245.json"
+    ],
+    "write_paths": [
+      "docs/agent-guide.md",
+      "docs/progress.md"
+    ]
+  },
+  "mistake_check": "已按两条用户决策的时间顺序核对，未把RTO≤4小时、标准级冗余或安全方案报告写成已实现/放行，未擅自推定RPO或具体供应商；未新建会话，未触碰受管协作协议，未覆盖并行部门改动，并已修正19F245从claimed到completed待ACK的时态。",
+  "node": "把用户确认的Admin Mac+iPhone能力及C入口决策写入全局派单规则",
+  "pointers": [
+    "docs/agent-guide.md"
+  ],
+  "report": "不适用",
+  "resolution": null,
+  "revision": 5,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-9E44DE",
+  "title": "固化Admin双端全能力与私有入口恢复硬门",
+  "unverified": [
+    "RPO、标准级冗余的具体构成、供应商/协议、身份/会话/设备准入、Mac与iPhone实机、DNS/TLS/源站ACL、不可变审计、应急自动失效、恢复演练及部署均未验证。",
+    "未修改Spec、ADR、app、data或design；未实施Admin、私有网络、应急入口、数据库冗余、生产认证、跨网络访问或任何真实外部能力。"
+  ],
+  "updated_at": "2026-08-09T12:00+08:00",
+  "verified": [
+    "项目级协作入口已固化Admin双端功能等价：Mac与iPhone均覆盖全部已确认Admin Function ID及真实入口、状态链、失败恢复和完成证据；允许布局/导航/手势适配和高风险fresh re-auth，禁止移动端删减、隐藏或永久降级功能。",
+    "方案C已作为后续合同硬门：两端安装私有网络客户端作为日常入口，受控应急入口默认关闭并须具备开启授权、强认证、时限、最小暴露、审计、撤销和关闭后验证；隐藏URL、robots.txt、前端路由或仅登录页不算网络隔离。",
+    "第二条用户决策收据把恢复门更新为RTO暂定≤4小时、标准级冗余、RPO尚未确认；未经用户另行确认，禁止数据库双活、跨地域双活和长期公网备用入口。任务创建时“RTO未确认”的旧条件截至第二收据11:54结束。",
+    "安全任务TASK-20260809-19F245当前为completed并提交final PASS报告、待统筹ACK；文档明确具体供应商、实机、网络、恢复演练和部署未验证/未放行。两处修改位于已声明write_paths，受管协议未改，git diff --check与TASK doctor通过，沿用现有部门窗口。"
+  ]
+}

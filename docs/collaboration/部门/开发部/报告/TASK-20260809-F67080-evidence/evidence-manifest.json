@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "f67080-evidence-v1",
+  "taskId": "TASK-20260809-F67080",
+  "recordedAt": "2026-08-09T20:15:00+08:00",
+  "status": "blocked",
+  "frozenInputs": {
+    "designSha256": "5a84bfb27294ebd727369118a95528f5b788bfacbe2d56cc03fcb006f6168cb1",
+    "productContractSha256": "b07a07f80b9857c2172da3334a97673570e2344fa2f6fba72497e3dcbe9da79c",
+    "functionMatrixSha256": "2cdd7b06cc2f04b2be053c73ae98b5b618552547956df6144c4878adcfcdb4cb",
+    "dataGraphFileSha256": "1eddfe54394757ff1cf00dce12ec2409772817256fe40177bc04e5a54989608b",
+    "dataGraphCanonicalRoot": "52775a139bf8d7352cd5c751e090794a2aac878a3515d9c35fb61e3f13ffa532",
+    "dataManifestSha256": "38d51764568cc9d3943e0c31388bf125c1f3b207cde0fc2f37db22becfbed6eb"
+  },
+  "currentCandidate": {
+    "sourceListStdoutSha256": "7b1e8977c3e7296f4e5cf165b106bc322c2ef19dbd5e506f51e2c4ec92465281",
+    "canonicalDbSha256": "eb2d7ad2787a290f7a13adcb063215d58654bc9f66d1d8ff60b98f14592b9551",
+    "buildIdFileSha256": "8155e435b052ae87467671cfc0bdfc59bf931922eb55fcf16f03fc68a5efb1c5",
+    "buildManifestSha256": "b8c57b58a1f524871415bd233871800d9608e35f2f4f188b2d58675e38f0881c",
+    "middlewareManifestSha256": "3e662212864bc4c124cfc53fa5d428813c619852b447c9fd2d9926cd39d7a4a6",
+    "focusedTests": "2 files, 19/19 passed, 2.20s",
+    "lint": "exit 0; 3 existing no-img-element warnings",
+    "typecheck": "exit 0",
+    "build": "exit 0"
+  },
+  "normalVisualPredecessorCandidate": {
+    "sourceListStdoutSha256": "16ee9303ad9745545ea07c9128c317ff0525b27a0ccfd5f17c70229d76be9761",
+    "canonicalDbSha256": "eb2d7ad2787a290f7a13adcb063215d58654bc9f66d1d8ff60b98f14592b9551",
+    "buildIdFileSha256": "b37561e0bfb64e8f15cd7262ec7444cea321bdc055b5c893e0bb128dabf55351",
+    "buildManifestSha256": "bb60fce9f410c550e59c442604a45d7715c755ede2be375e454daf4643850ff6",
+    "scope": "normal first-page visual samples only",
+    "screenshots": [
+      { "path": "1440-dark.png", "sha256": "28bc5d8bae248981388f4b3e960d084885170af57ea61263404597243a55403f" },
+      { "path": "1440-light.png", "sha256": "b0a5afcc224e853f0432329e7cea1fd4c3af242293b0e511c677abdf5127df01" },
+      { "path": "1024-dark.png", "sha256": "1a861945541742d13d04f8ed4b28818df2e4b637a86081b1fbf0e1f75e3f560c" },
+      { "path": "1024-light.png", "sha256": "82c7cdf1e17aba7194a0ae9255107fcc9fd7b3ca4ce215764fe9817de0a7e342" },
+      { "path": "390-dark.png", "sha256": "7aa85ad6ac1a414a46dcb6836902682b9c6d3f3d2cf742917d788cc34bec9673" },
+      { "path": "390-light.png", "sha256": "16a1dc1e38da0687e2e634b319aedbff207d41439ee57f0f8d995dcc5c2ba923" }
+    ]
+  },
+  "predecessorBrowserOperatorReceipt": {
+    "appOrigin": "http://127.0.0.1:3000",
+    "faultProxyOrigin": "http://127.0.0.1:3012",
+    "pageCounts": [12, 12],
+    "categoryCounts": { "race_news": 6, "driver_social": 6, "legends_history": 6, "paddock_fun": 6 },
+    "observedStates": ["loading", "empty", "error", "404", "nomore", "partial", "offline"],
+    "partialRecovery": "page1 12 preserved; same cursor retry; 24 unique after recovery; focus moved to first appended item",
+    "a11y": "keyboard filter; semantic region/group/list; 200 percent; forced-colors; reduced-motion; reduced-transparency",
+    "safeArea": "34px emulation; 106px content reserve; zero horizontal overflow; final item reachable",
+    "appExternalResources": [],
+    "harnessContaminated": true,
+    "contamination": "Chrome/Google Updater logged background GCM/updater endpoint attempts; exact destinations and timestamps were not retained",
+    "rawReceiptPersisted": false
+  },
+  "blockers": [
+    "The current source/build candidate was created after the six normal screenshots and predecessor browser receipt, so same-candidate visual and interaction binding is missing.",
+    "The prior browser harness attempted Google background traffic; the App request list was loopback-only, but the acceptance environment was not clean-room and exact network receipt was not retained.",
+    "The current candidate has not repeated the real empty, 404, page2 partial recovery, accessibility media-query, 200 percent, or non-zero safe-area browser paths."
+  ]
+}

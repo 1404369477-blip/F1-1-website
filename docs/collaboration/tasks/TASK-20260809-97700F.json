@@ -1,0 +1,52 @@
+{
+  "acceptance_exit": "形成一份单一、可执行、无第二真值的 /admin/reviews 实现合同；开发可在数据映射与视觉确认完成后直接按合同实现，用户能从待审核 synthetic 候选完成编辑、批准或拒绝、显式手动发布并在公开页看到唯一投影；所有外部能力保持关闭。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/spec/F1+1-M5最小人工审核台纵切产品合同-v0.1.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-09-M5最小人工审核台纵切产品合同报告.md"
+  ],
+  "authorization_evidence": "本地文档规划，无外部I/O、无代码和系统状态变更",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T09:50+08:00",
+      "evidence": "本地文档规划，无外部I/O、无代码和系统状态变更",
+      "state": "none"
+    }
+  ],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "用户已确认初期公开内容必须人工审核；本任务只形成实现合同。最终 admin 视觉预览仍须用户确认，任何真实外部请求、生产认证、部署或自动发布均需独立授权。",
+  "created_at": "2026-08-09T09:50+08:00",
+  "department": "产品部",
+  "details": "以 docs/spec.md 与 accepted M4 Kickoff ADR 为边界，为 M5 起草一份不改 accepted ADR 的实现级产品合同：唯一范围为 loopback local-dev 的 /admin/reviews，使用本地 synthetic 候选完成待审核列表、单条证据核对、中文摘要编辑、批准或拒绝、批准后由用户显式手动发布到既有 PublishedProjection；冻结页面状态、操作顺序、最小 admin DTO/API、幂等与失败恢复、空/加载/错误/冲突状态、审核痕迹与公开页刷新出口。明确排除 /admin/sources、真实采集、外部 AI/媒体、自动发布、生产登录、跨网络 admin、Base/provider 和部署。吸收后续数据部映射包时只补字段回指，不另造领域实体；用户可见视觉仍须设计预览和用户确认后才能实现。只写 docs/spec/ 与产品部报告，不改 app/data/accepted ADR。",
+  "domain_stage": "M5人工审核纵切产品合同",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "现有 accepted 领域状态无法承载草稿、拒绝或手动发布：列出精确冲突并停在合同门，不自行新增实体或改 accepted ADR。",
+    "local-dev 会话、Origin、CSRF、hash/fence 或幂等边界不能形成闭合操作：将该操作标为阻断，不以弱校验或前端隐藏代替。",
+    "产品范围需要新增信源管理、真实内容、自动发布或生产认证：切出后续任务，本切片保持最小人工审核闭环。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已关闭Content approved→publish_queued状态分裂、Summary/Bundle虚构状态机、blocked直接发布、mutation DTO缺失、operation恢复入口缺失、publish双幂等键、reconcile_wait误用于非publish、operationId重放/CAS措辞；declare-impact因受控报告目录被工具拒绝后正常claim，未绕过或手改真值",
+  "node": "把已确认的人工审核原则收敛为可实现的本地最小闭环",
+  "pointers": [
+    "docs/spec.md"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-09-M5最小人工审核台纵切产品合同报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-97700F",
+  "title": "冻结最小人工审核台纵切产品合同",
+  "unverified": [
+    "阻断1：数据部尚未交付Admin DTO到现有领域/内部字段的一一mapping与validator；阻断2：设计部尚未提供/admin/reviews可视化预览且用户未确认；任何代码、真实运行、AT、并发/恢复与安全负例均未执行；真实外部能力继续关闭"
+  ],
+  "updated_at": "2026-08-09T10:05+08:00",
+  "verified": [
+    "只读核对 docs/spec.md、accepted M4 Kickoff ADR、accepted v0.4公开读模型ADR、现有data schema/state machine；合同覆盖/admin/reviews列表/详情/编辑/批准/拒绝/显式手动发布、closed mutation DTO、operation receipt、状态/幂等/冲突/恢复/审计/公开刷新；三路对抗复验P0=0/P1=0；目标文档diff-check与机械断言通过；未修改app/data/Spec/accepted ADR，无外部I/O"
+  ]
+}

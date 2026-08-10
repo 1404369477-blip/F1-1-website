@@ -1,0 +1,69 @@
+{
+  "acceptance_exit": "交付修订后独立安全复验报告：对当前核心SHA给出唯一PASS/FAIL和P0/P1/P2；逐项映射29333B问题；若除待用户决定的R5同UID威胁模型外P0/P1=0，明确写出conditional ready for successor ADR，不扩大为VS-0 PASS；含命令收据、未验证项、TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-02-M4-VS-0修订实现独立安全复验报告.md"
+  ],
+  "authorization_evidence": "用户已要求持续推进未完成任务，并授权各部门完成网站初版本地搭建；本任务为既有VS-0实现的独立安全复验。",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T13:31+08:00",
+      "evidence": "用户已要求持续推进未完成任务，并授权各部门完成网站初版本地搭建；本任务为既有VS-0实现的独立安全复验。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "仅只读本地修订快照；真实外部能力、写入Base、部署和发布持续关闭。",
+  "created_at": "2026-08-02T13:31+08:00",
+  "department": "安全部",
+  "details": "只读独立复验当前TASK-20260802-158240交付快照。核对旧安全报告29333B的P1是否全部关闭：schema preclaim/fingerprint与ledger逐次校验、health真实状态、fixture稳定fd与路径链、日志固定事故、lock不重放、合法WAL/SHM恢复、owner/权限/ATTACH/extension/command profile。机械运行必要Node24测试和负例；不得修改app/data/Spec/ADR。将恶意同UIDpathname/sidecar TOCTOU单列为尚待用户方案B决策的accepted合同阻断，不得用代码声称强证明；R12 no-egress也须保持pending。",
+  "domain_stage": "M4-C-VS0-postfix-security-review",
+  "event_receipts": [
+    "Node24: tests=32/32, lint=0, typecheck=0; app pre-remediation aggregate sha256=323fc9ed27140cddea761f9fd2ec512d612a7fd343f7629efbf68779ff5e469c.",
+    "Decision FAIL: P0=1 accepted R5 user gate; P1=2 command-profile and R4 CLI/logger boundary; P2=3; R12 pending."
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 任一旧P1仍可复现、健康误报、schema/ledger绕过、fixture/log/lock/sidecar负例失败：FAIL并给最短复现，不修改实现。",
+    "2) 发现新P0/P1或测试/构建漂移：FAIL，固定证据并回报统筹；不得把用户风险决策替代代码修复。",
+    "3) 无法在Node24或目标Darwin复现：标记UNVERIFIED并阻断，不用Node25/文档声明代替。"
+  ],
+  "from_department": "统筹部",
+  "impact_declaration": {
+    "admission": "manual",
+    "base_revision": "git:a9691e71b1552592cc5ded8d5db66c336262301c;task-r1;control-only-report-excluded-by-tool",
+    "external_effects": [
+      "none"
+    ],
+    "owner_task": "TASK-20260802-01D787",
+    "shared_contracts": [],
+    "write_paths": [
+      "scratch/TASK-20260802-01D787"
+    ]
+  },
+  "mistake_check": "两条无效探针已公开作废并重跑：首次工具链路径重复 app 导致 exit127；首次 ledger drift 使用错误 ID 未产生篡改。报告固定 7A9C48 写入前 SHA，后续整改字节明确排除；未修改 app/data/Spec/ADR。",
+  "node": "M4/C层/VS-0修订后安全复验",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-02-M4-VS-0修订实现独立安全复验报告.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-02-M4-VS-0修订实现独立安全复验报告.md",
+  "resolution": null,
+  "revision": 5,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-01D787",
+  "title": "复验M4 VS-0修订实现与残余安全边界",
+  "unverified": [
+    "未执行恶意同 UID filesystem race；owner-only 威胁模型尚无用户确认或 successor ADR。",
+    "R12 DNS/HTTP/raw socket/subprocess/proxy deny-all、真实 socket bind、VS-1至VS-3、真实 provider/Base、部署与生产安全未验证。"
+  ],
+  "updated_at": "2026-08-02T13:59+08:00",
+  "verified": [
+    "固定 pre-remediation 核心 SHA 上 Node24 32/32 tests、lint、typecheck 通过；migration preclaim、schema/ledger drift、真实 health、59x39 disabled seed、稳定 fixture fd、lock 不重放、合法 WAL/SHM crash recovery 均得到独立正面收据。",
+    "复现 P1=2：npm dev/start 附加 host/port 可覆盖 canonical loopback；四个 CLI 负例输出绝对路径/源码/stack，且 allowed reasonCode 仍可携带平台 ID 形态 opaque 值。",
+    "accepted R5 同 UID 强 TOCTOU 如实保持 P0 用户门禁；health 的 toctouProof=false 与 networkEnforcement=pending 未被扩大解释。"
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "acceptance_exit": "离线向量包结构校验返回无blocker的PASS；46个向量ID唯一、十项合同覆盖完整、所有拒绝例有唯一主reason code，四个修订向量与产品合同逐字一致；manifest/hash可复算，安全结论P0=0/P1=0，开发可直接消费。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/fixtures/rss-security/manifest.json",
+    "app/fixtures/rss-security/vectors.json",
+    "app/fixtures/rss-security/minimal-valid.xml",
+    "app/fixtures/rss-security/validate.py",
+    "docs/collaboration/部门/安全部/报告/2026-08-09-RSS四类原因码回填与离线向量包复验报告.md"
+  ],
+  "authorization_evidence": "产品TASK-20260809-018CA4已ACK；纯本地fixture，external_calls=0",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T10:15+08:00",
+      "evidence": "产品TASK-20260809-018CA4已ACK；纯本地fixture，external_calls=0",
+      "state": "none"
+    }
+  ],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "本任务只修复纯本地安全向量；不实现采集器、不发真实RSS请求、不启用Source/Base/provider/公开输出。",
+  "created_at": "2026-08-09T10:15+08:00",
+  "department": "安全部",
+  "details": "输入为已ACK的产品TASK-20260809-018CA4与安全TASK-20260809-88561C。只在 app/fixtures/rss-security/ 回填四个现有 null blocker：items>20→XML_ITEM_LIMIT，部分原子提交→ATOMIC_COMMIT_PARTIAL，禁止日志字段→LOG_POLICY_VIOLATION，Publication/Projection/媒体出口→EGRESS_POLICY_VIOLATION；同步manifest状态、blocker列表和产物hash，保持46个攻击输入、expected decision/reject、complete_response_rejected=true、cursor_advanced=false、data_retained=false及其余42个向量不变。运行现有validate.py与一轮独立只读检查，确认reason code唯一、优先级可判定、无blocker、external_calls=0。只写fixture包与安全部报告，不改draft/Spec/accepted ADR/app/src/data/migrations。",
+  "domain_stage": "VS-RSS-0离线安全包复验",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "四码回填导致既有向量主码冲突或优先级不唯一：保持FAIL并列精确冲突，不改攻击输入或产品合同。",
+    "validator需要真实DNS/TLS/网络或生成资源耗尽文件：继续使用描述性mock/元数据，禁止真实网络和XML bomb。",
+    "更新范围触及app/src、migration、data frozen artifact或用户授权问题：停止越界动作并报告。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未更改攻击输入或新增第五原因码；未修改draft/Spec/accepted ADR/app/src/migration/data；未执行真实网络、DNS、TLS、RSS、Base/provider或外部I/O；PASS仅关闭离线向量包，不授权真实请求",
+  "node": "把RSS安全包从带阻断的讨论产物升级为开发可执行真值",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260809-018CA4.json"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-09-RSS四类原因码回填与离线向量包复验报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-075119",
+  "title": "回填RSS四类原因码并复验离线向量包",
+  "unverified": [
+    "运输安全生产实现、具体XML库、resolver/DNS/TLS/超时、事务恢复、日志sink和pilot出口隔离未实现或运行验证；真实RSS可达性、条款、权利、来源行为和用户授权均未验证"
+  ],
+  "updated_at": "2026-08-09T10:23+08:00",
+  "verified": [
+    "四个null主码按已ACK产品合同一对一回填为XML_ITEM_LIMIT、ATOMIC_COMMIT_PARTIAL、LOG_POLICY_VIOLATION、EGRESS_POLICY_VIOLATION；46个向量ID唯一、10/10合同覆盖、四码互异；所有四个拒绝例保持reject/complete_response_rejected=true/cursor_advanced=false/data_retained=false；validator PASS且unresolved=[]；manifest状态pass、blockers=[]、三项hash复算一致；external_calls=0、writes_to_base=false"
+  ]
+}

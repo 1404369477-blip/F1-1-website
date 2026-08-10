@@ -1,0 +1,52 @@
+{
+  "acceptance_exit": "提交安全部status=final、decision=pass|fail的补充报告；六候选6/6矩阵，官方/仓库证据链接与检索日期，A/B/C或Green/Yellow/Red/Unknown，代码许可/平台内容权/商业权分层，P0/P1/P2、synthetic允许边界、生产硬阻断、停止回滚；明确未修改已ACK报告。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-02-M4增量雷达六候选许可供应链补充审核报告.md"
+  ],
+  "authorization_evidence": "只读公开研究授权；未授权安装、登录、真实采集、付费、部署或外部写入。",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T11:33+08:00",
+      "evidence": "只读公开研究授权；未授权安装、登录、真实采集、付费、部署或外部写入。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "用户明确要求对最新候选、工具和Agent方案做深度调研；本补充用于闭合并行调研形成的覆盖缺口。",
+  "created_at": "2026-08-02T11:33+08:00",
+  "department": "安全部",
+  "details": "只读补充复核研究部TASK-20260802-8FF37A新增并去重的六个候选：NewsPrism、AI News Open、OmniWire-MCP、News Digester、Perspective-AI、Product Hunt Bulletin。前一份780373与研究部并行，未逐项纳入这些新增对象；本任务不得修改已ACK的780373报告，只新增补充审核报告并引用它。逐项核对固定仓库/产品URL、许可证或Unknown、维护证据边界、外部LLM/API key/远程配置/npx/默认凭证/自动发布/数据库与browser能力、目标来源与内容权、个人非商业与未来商业化、中国大陆可达性Unknown、可做synthetic的最小边界。NewsPrism与AI News Open须单独评估为架构参考还是可引入组件；OmniWire远程配置、News Digester admin/admin、Perspective叙事偏差、Bulletin闭源与数据留存须有明确判定。无登录、安装、运行、真实API或外部写入。",
+  "domain_stage": "M4前沿调研增量复核",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "许可证、依赖、服务条款、数据留存或商业权缺一手证据时标Unknown/blocked，不用MIT、stars或README的production-ready替代。",
+    "发现默认凭证、远程配置、npx/安装脚本、外部LLM密钥或自动发布能力时列出最小隔离和拒绝条件，不得安装验证。",
+    "Product Hunt闭源产品只有营销页时只作UX/发现参考，不提升为工程或生产候选。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已分离代码许可/平台内容权/商业权；Unknown按fail-closed；未把README热度或MIT写成准入；NewsPrism与AI News Open保持架构参考；未改780373；未执行安装登录真实API或外部写入",
+  "node": "M4/安全/新候选增量准入补充",
+  "pointers": [
+    "docs/collaboration/部门/研究部/报告/2026-08-02-F1聚合竞品与前沿工具雷达增量刷新.md",
+    "docs/collaboration/部门/安全部/报告/2026-08-02-M4前沿候选许可平台条款与供应链增量准入复核.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-02-M4增量雷达六候选许可供应链补充审核报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-462E1A",
+  "title": "补充复核增量雷达六个新候选的许可与供应链",
+  "unverified": [
+    "精确LICENSE/NOTICE与SPDX、完整lock/SBOM/signature/lifecycle/vulnerability；真实运行维护SLA；各来源条款与内容/媒体/删除/保留/商业权；模型/搜索/向量供应商DPA与中国大陆可达性；无B/C运行收据"
+  ],
+  "updated_at": "2026-08-02T11:47+08:00",
+  "verified": [
+    "6/6候选矩阵与官方/仓库链接及2026-08-02检索日期；代码许可/平台内容权/商业权分层；A/B/C与Green/Yellow/Red/Unknown；P0/P1/P2、synthetic边界、生产硬阻断、停止回滚；780373报告未修改；无安装登录真实API外部写入"
+  ]
+}

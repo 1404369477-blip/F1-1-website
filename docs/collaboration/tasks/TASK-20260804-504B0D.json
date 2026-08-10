@@ -1,0 +1,47 @@
+{
+  "acceptance_exit": "得到可复核的单一责任边界结论：数据产物有效并移交开发部，或定位到具体数据生成/完整性缺陷；报告列出 canonical 命令、关键计数/哈希/路径证据、首个失败点、已验证/未验证和后续 owner；无临时 DB/sidecar 残留并 TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/数据部/报告/2026-08-04-public-synthetic运行完整性失败责任边界诊断.md"
+  ],
+  "authorization_evidence": "",
+  "authorization_history": [],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "数据部/019fb371-9834-78d3-a7b3-4f4c62819520",
+  "completion_class": "standard",
+  "confirmation": "诊断任务只确定责任边界和证据；是否修复由统筹部另行派单。只执行一次 canonical 生成与一次聚焦完整性核验。",
+  "created_at": "2026-08-04T19:38+08:00",
+  "department": "数据部",
+  "details": "针对测试部与设计部共同确认的 P1：canonical public-synthetic migration/seed 成功后，真实 /api/public/feed、有效详情及未知详情出现 closed 500 PUBLIC_READ_INTEGRITY_FAILED。数据部只做数据链诊断，不修改 API、前端、Spec 或 accepted ADR。使用 canonical 命令在隔离临时路径生成一次 public-synthetic 数据库，核对 migration/seed 收据、12 条 public-demo-* 投影、source 引用、content/related/media 字段、hash/fence/ledger/manifest 一致性、profile/root/path 绑定及 externalCalls=0；对照已核收数据合同指出首个可复现的不一致。若数据库在数据边界完全有效，报告必须明确给出证据和开发部需要检查的运行时握手项；若数据产物无效，明确字段、生成步骤和最小修复范围。完成后删除本任务临时 DB/sidecar，不启动网站、不做全量测试。提交数据部诊断报告与 TASK_STATE_OK。",
+  "domain_stage": "p1_triage",
+  "event_receipts": [
+    "MIL-20260804T195410-097268"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "canonical migration/seed 或 12 条投影自身失败、hash/fence/ledger/manifest 任一不一致时，停止扩大检查，记录首个失败点并判定数据部 owner。",
+    "数据库本身有效但运行时仍 500 时，不猜测根因；列出已排除的数据因素与开发部最小握手检查项，判定开发部 owner。",
+    "任何外部网络调用、读取非隔离生产数据、修改 API/前端/accepted ADR 或留下临时 SQLite/WAL/SHM，均视为任务失败。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "首次聚焦临时脚本用 strip-only，在业务模块加载前因 TypeScript 参数属性退出，未打开 DB、未执行核验、未写收据；改用固定 Node --experimental-transform-types 后完成唯一一次实际业务核验。未重复 seed，未修改 app/data/config/Spec/ADR，未启动网站，未将 isolated PASS 推断为真实 HTTP 已恢复。",
+  "node": "public-runtime-integrity-triage",
+  "pointers": [
+    "TASK-20260804-697D1B; TASK-20260804-897075; docs/decisions/system/2026-08-03-F1+1-公开读模型与API接线-v0.4-successor-accepted.md"
+  ],
+  "report": "docs/collaboration/部门/数据部/报告/2026-08-04-public-synthetic运行完整性失败责任边界诊断.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260804-504B0D",
+  "title": "public-synthetic 运行完整性失败责任边界诊断",
+  "unverified": [
+    "未启动真实 Next/HTTP，未取得上游 500 的进程内原始异常、DB inode 或构建 chunk；未跑全量测试/build/lint/typecheck/浏览器；本轮未重复 12/12 detail-related HTTP 矩阵。"
+  ],
+  "updated_at": "2026-08-04T19:55+08:00",
+  "verified": [
+    "单次 canonical 隔离 migration/seed PASS；1/12/12/12/10/12/12/12/12 行数、四 root、ledger/manifest、fixture graph、12 条发布链、hash/fence/profile/path 与 externalCalls=0 均通过；单次完成的聚焦完整性核验 908 断言 PASS；Repository feed=12、有效详情成功、合法未知详情=null；/tmp 任务目录与 SQLite sidecar 已清理。"
+  ]
+}

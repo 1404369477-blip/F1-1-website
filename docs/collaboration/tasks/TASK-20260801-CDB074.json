@@ -1,0 +1,60 @@
+{
+  "acceptance_exit": "提交测试部final测试策略或验收报告，列出分层测试矩阵、每项输入/步骤/预期、必须自动化项、人工体验项、P0/P1/P2阈值、Murphy失败路径、M4进入Build Loop出口和用户高风险门禁；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-08-01-M4本地Kickoff与首批纵向切片验收矩阵.md"
+  ],
+  "authorization_evidence": "用户授权全员开工及本地app搭建，要求快速发现问题并迭代。决策日志DEC-20260801T223248-7C91D6。",
+  "authorization_history": [
+    {
+      "at": "2026-08-01T22:35+08:00",
+      "evidence": "用户授权全员开工及本地app搭建，要求快速发现问题并迭代。决策日志DEC-20260801T223248-7C91D6。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "测试部/019fb379-9212-7e80-a5df-587d339936c4",
+  "completion_class": "audit",
+  "confirmation": "本任务只建立测试合同；不访问真实平台、不修改app、不部署、不发布。",
+  "created_at": "2026-08-01T22:35+08:00",
+  "department": "测试部",
+  "details": "请测试部基于当前Spec、现有系统架构proposed包、设计规范、安全基线和A→D accepted路线，先独立建立M4本地Kickoff与首批纵向切片的验收矩阵。覆盖：安装/启动/构建/lint/type/test、公开信息流/详情/审核队列/信源管理四页骨架、深浅主题与响应式、mock adapter→归一化→去重→中文摘要占位→人工审核→本地发布闭环、数据版本hash与幂等、错误/重试/限流/队列积压、XSS/SSRF/开放重定向/提示注入、无真实外部调用/无Base真值切换/无自动发布。当前只写测试合同与可执行计划，不修改产品/设计/数据产物，不写正式app测试代码；正式实现出来后续派执行回归。",
+  "domain_stage": "M4测试左移",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "Spec/ADR未冻结导致期望冲突时明确列出待产品决策项，不猜测实现合同。",
+    "某验收依赖真实平台、付费服务或部署环境时提供mock/contract-test替代，并保留生产验证门禁。",
+    "测试计划只能验证底层而未覆盖四个真实用户出口时FAIL并补齐，不提前放行。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "没有把 proposed 建议写成 accepted 技术选择或上线授权；没有把 M3 Base 写成 M4 真值；没有把 mock 通过写成真实平台采集、AI 调用、生产 SLO 或自动发布通过；没有以底层测试替代四个用户出口和可视化预览；没有擅自填技术栈/路由/容量/阈值；只写测试合同，未修改 app 或上游产物。",
+  "node": "在实现前定义最小可运行闭环、用户出口、安全与故障验收合同",
+  "pointers": [
+    "docs/spec.md",
+    "docs/decisions/system/2026-07-30-F1+1-MVP与系统架构决策包-proposed.md",
+    "design/ui/F1+1-全站设计规范-v0.1.md",
+    "docs/collaboration/部门/安全部/报告/2026-07-30-F1+1采集内容处理与发布安全基线-审核报告.md"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-08-01-M4本地Kickoff与首批纵向切片验收矩阵.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260801-CDB074",
+  "title": "建立M4本地Kickoff与首批纵向切片验收矩阵",
+  "unverified": [
+    "app 当前没有可运行实现，所有工具链、页面、pipeline、恢复和安全探针待正式实现后执行",
+    "技术栈、实际路由/命令、fixture schema、存储/队列、首批真实信源、平台/版权/AI/部署与法律证据尚未冻结或验证",
+    "VoiceOver/NVDA/TalkBack、正式浏览器矩阵、真实字体/图片裁切、外部部署和生产 15 分钟 SLO 尚未验证"
+  ],
+  "updated_at": "2026-08-01T22:45+08:00",
+  "verified": [
+    "已基于当前 Spec v0、最新 progress、MVP/架构 proposed 包、安全基线、设计规范和 A→D accepted ADR 建立统一测试边界",
+    "已覆盖安装/启动/构建/lint/type/test、四个用户出口、深浅主题、320–1600 响应式、200%缩放、键盘/可访问性和可视化预览门禁",
+    "已覆盖 mock adapter→归一化→确定性去重→中文摘要占位→人工审核→本地发布，以及版本/hash/幂等/并发和旧 epoch 围栏",
+    "已覆盖 429/5xx/超时、Retry-After、重试预算、熔断、积压、dead letter、数据库/队列恢复、reconcile_wait 和急停竞态",
+    "已覆盖 XSS、SSRF/XML、开放重定向、提示注入、恶意媒体、CSRF/越权、密钥/日志、供应链与无外连探针，并定义 P0/P1/P2、Build Loop 出口和用户高风险门禁"
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "acceptance_exit": "交付VS-1测试计划，P0/P1/P2分层、正反路径、最小fixture、命令收据格式和退出条件完整；标出最短关键路径及可自动化项，TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-08-02-M4-VS-1-mock采集链路测试计划.md"
+  ],
+  "authorization_evidence": "用户已明确要求持续推进网站并由各部门全员开工；本任务仅本地测试设计。",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T13:04+08:00",
+      "evidence": "用户已明确要求持续推进网站并由各部门全员开工；本任务仅本地测试设计。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "测试部/019fb379-9212-7e80-a5df-587d339936c4",
+  "completion_class": "audit",
+  "confirmation": "仅测试设计，不实现、不运行真实外部能力。",
+  "created_at": "2026-08-02T13:04+08:00",
+  "department": "测试部",
+  "details": "只读Spec/data v0.3/VS-0实现/设计合同，提前设计VS-1本地链路测试矩阵，不改app。覆盖synthetic Source新增与activation事务、platform>authorization>adapter阻断优先级、59条M3 seed持续disabled、mock observation唯一(source_id,external_id)、Content hash、Event确定性dedupe、lease后collect、五epoch fence、128-bit lease、deadline<=900s、inbox/CAS/outbox同事务且commit before ack、重复/锁/expired/stale/stop/429/5xx/timeout/dead-letter/有限重试、admin/sources 390与1440状态、session/Origin/CSRF、external_calls=0与不安装新依赖。输出可直接交开发的测试清单、fixture映射、命令与判定口径；不得把未实现写成PASS。",
+  "domain_stage": "M4-C-VS1-test-design",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) data v0.3字段或状态映射不唯一：列具体缺口并阻断对应测试，不自行造schema。",
+    "2) 测试需要真实网络/平台/Base/AI/媒体/发布：改为synthetic fixture或明确后置，禁止外联。",
+    "3) 测试设计需要新依赖或修改app：停止并回统筹评估，不自行安装或编辑实现。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查并修正：报告frontmatter按audit completion class使用audit_report；不得以lease长度代替系统CSPRNG及token换代；不得用content aggregate outbox冒充Source重试联动；不得禁止合同未排除的validation job；不得伪造未冻结的UI alias golden；不得用主观对比度代替4.5:1/3:1；不得把security-timeout发布语义套到collection；不得把fixture max_attempts=3升级为全局常量；不得把测试计划PASS扩大为VS-1实现或生产PASS；未修改app/data/spec/design，未外联、未安装。",
+  "node": "M4/C层/VS-1测试设计",
+  "pointers": [
+    "docs/collaboration/部门/测试部/报告/2026-08-02-M4-VS-1-mock采集链路测试计划.md"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-08-02-M4-VS-1-mock采集链路测试计划.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-28882C",
+  "title": "设计M4 VS-1 mock采集链路独立验收矩阵",
+  "unverified": [
+    "VS-1 worker/Repository/API/UI/浏览器/端口与实现测试均未运行，implementation_status=NOT_RUN；OS packet级零外联、VoiceOver/NVDA/TalkBack、真实平台/Base/provider/Collector/生产SLO均未验证；Event通用fingerprint与并发canonical tie-break、collection retry精确backoff/jitter、admin mutation DTO/route、最近采集派生、session/CSRF endpoint、validation job形态和完整canonical到UI alias/text/icon映射仍需实现合同冻结，相关测试保持BLOCKED/P1，禁止提前放行。"
+  ],
+  "updated_at": "2026-08-02T13:35+08:00",
+  "verified": [
+    "只读核对Spec、accepted M4 ADR、data v0.3 schema/state/runtime/internal/三层fixtures、设计合同与当前package命令；交付435行、88个唯一测试ID的P0/P1/P2矩阵，覆盖Source新增与activation优先级/原子事务、59条M3持续disabled、observation/inbox/CAS/outbox同事务且commit-before-ack、幂等/并发/锁/崩溃、18字段TaskEnvelope、系统CSPRNG lease换代、900秒窗口、五epoch/stop、429/503/timeout Source+Outbox联动、有限重试/dead-letter、admin session/Origin/CSRF、390/1440与4.5:1/3:1对比度、external_calls=0/no-install、命令与JSONL收据；结构化fixture事实校验、Markdown/尾随空白检查、合同链接检查通过；独立对抗审查首轮P0=1/P1=4均修正，复核REVIEW_PASS。"
+  ]
+}

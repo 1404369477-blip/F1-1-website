@@ -1,0 +1,52 @@
+{
+  "acceptance_exit": "安全部final报告decision=pass|fail并列P0/P1/P2；冻结SHA一致；静态边界、一个最高风险失败和一次signal清理收据通过；stdout/stderr零敏感泄露且四字段closed exact；共享.next不变、无残留；P0=0且P1=0才PASS；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-04-M4-VS-0-Next启动边界并发污染-NOT-RUN安全复验.md"
+  ],
+  "authorization_evidence": "用户持续确认推进，并明确要求减少冗余测试；本任务只保留能改变安全放行结论的互补检查。",
+  "authorization_history": [
+    {
+      "at": "2026-08-04T13:26+08:00",
+      "evidence": "用户持续确认推进，并明确要求减少冗余测试；本任务只保留能改变安全放行结论的互补检查。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "/root/security_next_startup_recheck",
+  "completion_class": "audit",
+  "confirmation": "安全与测试均PASS后统筹才可ACK 3760；本审查与测试任务互补，禁止重复完整套件。",
+  "created_at": "2026-08-04T13:26+08:00",
+  "department": "安全部",
+  "details": "严格只读当前冻结候选，先把app及必要只读data复制到TemporaryDirectory隔离快照；不得修改正式app/data，只写安全部final报告和任务状态。核对serve/p1-acceptance/p1-cli与保护输入SHA，静态审查父子进程stdio、signal、非零exit和错误出口；行为验证只选一个最高风险后置失败（start端口冲突）与一次SIGINT清理，不重跑测试部三类目标套件，也不执行完整npm check。确认输出closed allowlist、无原始Next diagnostics/绝对路径/URL/端口，argv/hostname/port未放宽，正式app/.next不被移动删除，临时副本及子进程无残留。明确R5同UID和R12系统调用级no-egress仍未覆盖。",
+  "domain_stage": "启动边界独立安全复验",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "child stdout/stderr可旁路runSafeCli、spawn/error/exit/signal存在原始诊断直出或安全JSON可被附加字段污染：P1 FAIL。",
+    "测试或实现会移动删除共享.next、终止错误进程组、留下监听/孤儿进程，或argv/hostname/port/runtime readiness被放宽：P0/P1 FAIL。",
+    "候选SHA受并发开发影响时立即NOT_RUN并报告；不得在正式工作树攻击或自行修复。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "没有因7个直接SHA匹配而忽略运行闭包漂移；没有把MIGRATION_SCHEMA归因为serve功能缺陷；没有重试、修改正式app/data、移动共享.next、占用端口或重复完整测试；P2只记录审查完整性缺口。",
+  "node": "对3760冻结候选做非重复的输出泄露、共享缓存和信号安全审查",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260802-3760F6.json",
+    "docs/collaboration/部门/安全部/报告/2026-08-02-M4-VS-0启动参数与CLI脱敏整改快照独立安全复审.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-04-M4-VS-0-Next启动边界并发污染-NOT-RUN安全复验.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260804-1F16EC",
+  "title": "独立安全复验Next输出脱敏与缓存进程边界",
+  "unverified": [
+    "start端口冲突、SIGINT清理及实际唯一四字段输出均因候选闭包并发污染而NOT_RUN；P0/P1不能视为已验证清零；R5、R12、VS-0整体及真实外部能力仍未验证且未放行。"
+  ],
+  "updated_at": "2026-08-04T13:37+08:00",
+  "verified": [
+    "7个任务冻结SHA在正式树和隔离副本均精确匹配；静态stdio/signal/error边界已核对；检测到3760完成后必要migration/database依赖于13:29被并发SQLite任务修改，隔离runtime以封闭MIGRATION_SCHEMA拒绝，遂按失败路径立即NOT_RUN；临时副本已清理，未运行完整check或测试部套件。"
+  ]
+}

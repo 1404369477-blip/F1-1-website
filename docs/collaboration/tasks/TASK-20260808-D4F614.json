@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "设计部完成悬浮按钮组重排与设置面板正式化，产出证据与报告；用户确认后由统筹派开发落地。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "design/ui/F1+1-v0.2-全站设计/index.html"
+  ],
+  "authorization_evidence": "用户反馈悬浮按钮组与设置面板（2026-08-08）",
+  "authorization_history": [
+    {
+      "at": "2026-08-08T16:13+08:00",
+      "evidence": "用户反馈悬浮按钮组与设置面板（2026-08-08）",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "设计部/统筹部并行子代理",
+  "completion_class": "standard",
+  "confirmation": "用户体验确认门。",
+  "created_at": "2026-08-08T16:13+08:00",
+  "department": "设计部",
+  "details": "用户反馈(2026-08-08)：①设置按钮颜色与回到顶部一致；②网页端(1440)两按钮保持视口右下角固定，不随内容列移动；③iPad/手机端(1024/390)解决与内容重叠——底部设一块『点击无效区』(除功能按钮外点击不穿透到内容)，该区域用渐变模糊呈现；④设置面板展开后点击面板外部也自动收起(不只点收起按钮)；⑤设置面板当前内容(宽度/状态等)仅为调试，正式内容不应如此(正式设置项待定义，可给占位)；⑥顶部深浅主题切换的两按钮改成一个按钮——点击一次切换深浅主题、显示当前主题，移到设置按钮右侧，字体颜色与设置/回到顶部一致。修订设计草案，产出视觉证据，停在用户体验确认门。",
+  "domain_stage": "design_direction_revision",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若与已确认布局冲突，说明取舍理由，不擅自推翻。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查错题集,无命中",
+  "node": "v0.2-fab-theme-dock-revision",
+  "pointers": [
+    "design/ui/F1+1-v0.2-全站设计/index.html"
+  ],
+  "report": "docs/collaboration/部门/设计部/报告/2026-08-08-悬浮按钮与设置面板修订报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260808-D4F614",
+  "title": "设计修订:悬浮按钮组重排(主题按钮/底部Dock/点击外部收起) + 设置面板正式内容",
+  "unverified": [
+    "用户尚未确认;正式app未落地;真实设备体验待用户/测试部"
+  ],
+  "updated_at": "2026-08-08T16:20+08:00",
+  "verified": [
+    "设置颜色与回到顶部一致;网页端视口角固定、1024/390底部渐变模糊Dock拦截点击;主题单按钮显示当前主题且置设置右侧;设置面板点击外部收起、正式内容占位;既有成果保持;证据PNG与报告已产出"
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "设计部产出修订草案 + 视觉证据 PNG + 报告；用户确认后由统筹派开发落地。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "design/ui/F1+1-v0.2-全站设计/index.html"
+  ],
+  "authorization_evidence": "用户给出单张主图+右下角缩略图方向（2026-08-08）",
+  "authorization_history": [
+    {
+      "at": "2026-08-08T13:22+08:00",
+      "evidence": "用户给出单张主图+右下角缩略图方向（2026-08-08）",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "设计部/统筹部并行子代理",
+  "completion_class": "standard",
+  "confirmation": "用户体验确认门：用户确认修订方向后才进入正式实现。",
+  "created_at": "2026-08-08T13:22+08:00",
+  "department": "设计部",
+  "details": "用户确认后的新方向,取代相册式轮播(TASK-20260807-F79058)。需求：①只显示单张主图(主图保持放大,取消两侧灰度预览/轮播/滑切)；②缩略图缩小、叠放于主图右下角(相对主图绝对定位),点击切换主图、悬停预览保留；③『前往原文』移到展开详情后才显示(折叠时不显示)；④展开详情后缩略图仍保持在主图右下角相对位置不变；⑤lightbox 保持滑动自然切图(用户先前要求,未撤回),保留 Esc/方向键/按钮/计数/焦点/reduced-motion；⑥保持 v0.2 视觉语言(深浅主题、玻璃、trace、44px 触控、reduced-transparency 降级)。产出：设计草案 + 深浅×1440/1024/390 视觉证据(折叠态/展开态/lightbox 态),停在用户体验确认门。",
+  "domain_stage": "design_direction_revision",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若与已确认 v0.2 或契约冲突,说明取舍理由,不擅自推翻。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查错题集,无命中",
+  "node": "v0.2-media-single-main-revision",
+  "pointers": [
+    "design/ui/F1+1-v0.2-全站设计/index.html; app/src/features/stories/feed-experience.tsx"
+  ],
+  "report": "docs/collaboration/部门/设计部/报告/2026-08-08-单主图右下角缩略图修订报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260808-6838E5",
+  "title": "修订媒体区:单张主图 + 右下角小缩略图 + 前往原文移入展开详情",
+  "unverified": [
+    "用户尚未确认;正式app未落地;真实设备体验待用户/测试部"
+  ],
+  "updated_at": "2026-08-08T13:33+08:00",
+  "verified": [
+    "单张主图+右下角小缩略图(叠放/可切/悬停)+前往原文移入展开详情+展开后缩略图相对主图不变+lightbox滑动自然切图;折叠/展开/lightbox态×深浅×1440/1024/390 证据PNG已产出;报告含设计决策与取舍"
+  ]
+}

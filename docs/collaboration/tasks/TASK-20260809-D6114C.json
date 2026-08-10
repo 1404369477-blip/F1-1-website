@@ -1,0 +1,70 @@
+{
+  "acceptance_exit": "全部mandatory case及固定命令通过；worker:mock/test:contract不再指向pending且check包含contract test；每次仅一个operation、最多3次、无真实sleep，18组及016A-G真实事务回滚证据齐全；三Function ID逐项有V-OP/full receipt、实体delta/hash、失败恢复、externalCalls=0；无第二DB/实体/依赖/公开或Admin能力；报告列源码hash、命令结果、未验证项和清理收据。开发完成后仍需数据/安全/测试独立ACK才可把Function ID改complete。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/package.json",
+    "app/scripts/vs1-worker.ts",
+    "app/scripts/vs1-contract.ts",
+    "app/src/server/vs1/fixture.ts",
+    "app/src/server/vs1/no-egress.ts",
+    "app/src/server/vs1/pipeline.ts",
+    "app/src/tests/vs1-contract.test.ts",
+    "app/src/tests/public-synthetic-seed.test.ts",
+    "app/fixtures/vs1-local-pipeline-v1.json",
+    "app/fixtures/vs1-local-pipeline-seed-v1.json",
+    "app/fixtures/vs1-local-pipeline-manifest-v1.json",
+    "app/migrations/vs1",
+    "docs/collaboration/部门/开发部/报告/2026-08-09-VS1本地synthetic纵切实现与最终环境阻断报告.md",
+    "docs/collaboration/部门/开发部/报告/证据/TASK-20260809-D6114C/op-vs1-vs1-happy-001.json",
+    "docs/collaboration/部门/开发部/报告/证据/TASK-20260809-D6114C/vop.jsonl"
+  ],
+  "authorization_evidence": "用户既有明确确认；TASK-20260809-3AC51E已ACK；COR-20260809T102214-960E65",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T11:49+08:00",
+      "evidence": "用户既有明确确认；TASK-20260809-3AC51E已ACK；COR-20260809T102214-960E65",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/019fb374-7c86-7882-9e51-76114ce69e7f",
+  "completion_class": "standard",
+  "confirmation": "用户已确认本地synthetic、低质量初筛、中文整理与人工审核前路线，并要求落实所有已确认功能；产品3AC51E已ACK。",
+  "created_at": "2026-08-09T11:49+08:00",
+  "department": "开发部",
+  "details": "严格实现accepted ADR-M5-VS1-LOCAL-PIPELINE-001与docs/spec/F1+1-VS1本地synthetic纵切实施合同-v0.1.md。把app/package.json的worker:mock与test:contract从pending替换为真实实现，并让check实际调用test:contract；交付固定fixture registry/seed/manifest、任务隔离SQLite迁移与seed、单job selector、live TaskEnvelope、lease与五fence、fixture adapter、normalize-text-v1、synthetic-quality-v1、content/Event dedupe CAS、deterministic Summary/immutable Bundle、retry/dead-letter、原子结果/失败结算、closed full receipt和三行V-OP JSONL。逐COLLECT-MOCK-002/CONTENT-PROCESS-003/SUMMARY-MOCK-004闭合真实operator入口、成功/失败/恢复。不得新增依赖或领域实体；不得改设计/公开UI/accepted合同/data冻结包；不得访问真实provider/RSS/Base/Admin/发布/部署/外部AI/非loopback网络。本任务必须等测试部5FBC92完成并由统筹ACK后再claim，避免修改其冻结App候选。",
+  "domain_stage": "M5本地mock采集与内容处理纵切实现",
+  "event_receipts": [
+    "VS1 worker full receipt SHA-256 d6c93b0d0ad690f7177b2e071695228d6e320743a1162d7a0722198bb31ab7a4；V-OP SHA-256 642f1576f96efcf97f05ae2613ac2432b0deffe5a5004b4a002fc547f86d2b5a"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若5FBC92未ACK或绑定App候选漂移，保持queued，不得提前claim或修改app。",
+    "若现有schema/state/SQLite能力无法按accepted合同闭合，停止冲突分支并返回唯一字段/状态/hash冲突，不新增实体或第二schema绕过。",
+    "若依赖缺失、需要install/registry/外部I/O或任何真实provider能力，立即fail closed并回统筹，不执行网络或依赖变更。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "仅按 revision 12 授权修改 vs1-contract.ts 的动态 assert 类型绑定；no-egress guard 顺序、动态导入、运行语义与测试场景未变；未新增依赖、未改 lockfile/公开UI/accepted合同/data/design；唯一完整链无重试；证据固化后清理了唯一任务专属临时根。",
+  "node": "把三个P1 Function ID落成可运行operator与合同测试",
+  "pointers": [
+    "docs/decisions/system/2026-08-09-F1+1-VS1本地synthetic纵切-accepted.md",
+    "docs/spec/F1+1-VS1本地synthetic纵切实施合同-v0.1.md",
+    "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md",
+    "docs/collaboration/tasks/TASK-20260809-5FBC92.json"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-09-VS1本地synthetic纵切实现与最终环境阻断报告.md",
+  "resolution": null,
+  "revision": 14,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-D6114C",
+  "title": "DEV-VS1：本地synthetic采集清洗去重与mock摘要纵切实现",
+  "unverified": [
+    "数据部、安全部、测试部对最终候选的独立 ACK 尚未执行；三个 Function ID 不在本任务中提前改为 complete。真实 provider/RSS/Base/外部 AI/非 loopback I/O/Admin/发布/部署保持关闭且不在授权范围。"
+  ],
+  "updated_at": "2026-08-09T13:31+08:00",
+  "verified": [
+    "固定 Node24.18.0 clean-room env-i 唯一完整链 exit 0：verify:env、db:migrate、seed:fixtures、runtime:assert-ready、worker:mock、76/76 tests、25-case test:contract、lint、typecheck、build、check 全部通过；worker 三 Function ID 均 PASS/PIPELINE_READY，externalCalls=0；receipt SHA-256=d6c93b0d0ad690f7177b2e071695228d6e320743a1162d7a0722198bb31ab7a4；任务临时根已清理。"
+  ]
+}

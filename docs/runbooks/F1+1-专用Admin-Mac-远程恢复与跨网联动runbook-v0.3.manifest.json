@@ -1,0 +1,137 @@
+{
+  "schemaVersion": "f1plus1-admin-mac-remote-recovery-runbook-v0.3",
+  "bundleId": "f1plus1-admin-mac-m1-remote-recovery-v0.3",
+  "status": "template_not_exported",
+  "taskId": "TASK-20260809-C4AA4B",
+  "rootRule": "BUNDLE_ROOT is the directory containing bundle-manifest.json; consumers read only listed relative paths",
+  "manifestSelfHash": {
+    "includedInFiles": false,
+    "rule": "transmit SHA-256 of final bundle-manifest.json out of band"
+  },
+  "closedFileSet": true,
+  "extraEntriesAllowed": false,
+  "deviceFactAllowlist": {
+    "modelFamily": "MacBook Air (M1, 2020)",
+    "memoryGB": 8,
+    "osVersion": "macOS 26.5.1",
+    "powerMode": "long_term_connected",
+    "networkPhysicalMode": "wifi_only",
+    "evidence": "user_confirmed"
+  },
+  "wifiOnlyBaseline": {
+    "previouslyConnectedRequired": true,
+    "plannedSecurityMode": "WPA2-PSK",
+    "openWifiRecommended": false,
+    "wpa3OnlyCompatibilityAssumed": false,
+    "dot1xCompatibilityAssumed": false,
+    "routerDhcpReservationRequired": true,
+    "externalCellularVpnRestartFileVaultDrillRequired": true,
+    "rtoUntilDrill": "unknown",
+    "ssidPasswordMacIpRecordingAllowed": false,
+    "hostUuOrTailscaleCountsAsPrebootEvidence": false
+  },
+  "uniqueIdentifierPolicy": {
+    "copyAllowed": false,
+    "writeAllowed": false,
+    "hashAllowed": false,
+    "encodeAllowed": false,
+    "forbiddenClasses": [
+      "serial_number",
+      "hardware_uuid",
+      "disk_identifier",
+      "network_hardware_address",
+      "device_id",
+      "apple_account",
+      "ip_address",
+      "overlay_id",
+      "recovery_secret",
+      "credential_or_token"
+    ]
+  },
+  "files": [
+    {
+      "path": "runbook/remote-recovery-v0.3.md",
+      "role": "current_runbook",
+      "bytes": 17230,
+      "sha256": "1bdfe81cdefeddf418bb776c2de0f9fa1131db945d15f5d6b06d55dce6c7dd6c"
+    },
+    {
+      "path": "history/execution-handoff-v0.2.md",
+      "role": "predecessor_readonly",
+      "bytes": 18384,
+      "sha256": "97b0dbdf452d7200d4165d8e1629b6424e8ffcdea0aba8237e46c764e428527e"
+    },
+    {
+      "path": "evidence/dual-mac-three-channel-research.md",
+      "role": "acknowledged_research_export",
+      "bytes": 26878,
+      "sha256": "70b5cc5ed9a6b0bede46dd3a0a3a4615625d63a46325950ea70b85cd0d1c9e23"
+    }
+  ],
+  "readOrder": [
+    "runbook/remote-recovery-v0.3.md",
+    "history/execution-handoff-v0.2.md",
+    "evidence/dual-mac-three-channel-research.md"
+  ],
+  "officialEvidence": [
+    {
+      "authority": "Apple",
+      "url": "https://support.apple.com/en-us/124963",
+      "assertion": "macOS 26 enterprise release notes document conditional SSH FileVault unlock after restart",
+      "verifiedAt": "2026-08-09",
+      "scope": "platform_capability_only"
+    },
+    {
+      "authority": "Apple",
+      "url": "https://support.apple.com/en-ie/guide/security/sec8447f5049/web",
+      "assertion": "Apple silicon with macOS 26 or later can conditionally unlock FileVault over SSH after restart",
+      "verifiedAt": "2026-08-09",
+      "scope": "platform_capability_only"
+    },
+    {
+      "authority": "Apple",
+      "url": "https://support.apple.com/en-il/guide/deployment/dep82064ec40/1/web/1.0",
+      "assertion": "FileVault SSH unlock requires Remote Login and boot-stage network; Apple documents previously joined open or WPA2-PSK Wi-Fi and open or unauthenticated Ethernet",
+      "verifiedAt": "2026-08-09",
+      "scope": "platform_and_network_prerequisites_only"
+    }
+  ],
+  "channels": [
+    {
+      "id": "CHANNEL-1-UU-GRAPHICAL-AFTER-UNLOCK",
+      "status": "unknown_planning_only",
+      "prebootEligible": false
+    },
+    {
+      "id": "CHANNEL-2-GATEWAY-VPN-NATIVE-SSH-PREBOOT",
+      "status": "apple_capability_documented_wifi_only_end_to_end_unknown",
+      "prebootEligible": "conditional"
+    },
+    {
+      "id": "CHANNEL-3-ONSITE-COLD-DISASTER",
+      "status": "unknown_manifest_gate",
+      "prebootEligible": "not_applicable"
+    }
+  ],
+  "hardStops": [
+    "predecessor_or_input_hash_drift",
+    "unique_identifier_or_secret_present",
+    "real_install_login_network_filevault_ssh_uu_backup_or_deployment_action_requested_without_precise_authorization",
+    "public_ssh_or_public_admin_listener_required",
+    "host_user_space_uu_or_tailscale_claimed_as_preboot_path",
+    "unknown_wifi_previous_join_wpa2_psk_dhcp_gateway_cellular_drill_onsite_cold_standby_epoch_fence_or_rpo_rto_claimed_pass"
+  ],
+  "authorization": {
+    "planningOnly": true,
+    "installationAllowed": false,
+    "loginAllowed": false,
+    "networkChangeAllowed": false,
+    "remoteLoginOrSshEnableAllowed": false,
+    "fileVaultChangeAllowed": false,
+    "uuEnableAllowed": false,
+    "backupUploadAllowed": false,
+    "deploymentAllowed": false,
+    "productionAuthorized": false
+  },
+  "nextSingleQuestion": "启动前私有 VPN 的终止点，计划使用现有路由器还是独立网关设备？本问题只授权后继文档选择。"
+}

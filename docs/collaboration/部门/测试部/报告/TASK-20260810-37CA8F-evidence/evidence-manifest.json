@@ -1,0 +1,12 @@
+{
+  "schemaVersion":"task-20260810-37ca8f-test-v1",
+  "taskId":"TASK-20260810-37CA8F",
+  "decision":"fail",
+  "p0":0,"p1":1,"p2":0,
+  "candidate":{"developmentReportSha256":"65d2ea230c0b78da12c0407b2a1e0fc0c84980502b6324621a33694546d99374","developmentManifestSha256":"7b0658d9972df676acec689cb3d99ea23e74bf1abc2e51f9a169a9aa49b187b3","closedDbSha256":"ddf3778c62cf95f195b1f08db8b075d676069f4cc9fb39804063e1004dd2e939","serverSha256":"5c40918c7ac45aa809ed106acdfa00c9b6d5c52fb90a0b9995a0a3998d83378f","guardSha256":"5f008507164f2a1b8678435ec491e31bf6235700c50844ec1dca3801ada756d2","focusedTestSha256":"7e35d4c92470ccd92d815c80437d189a64713e763af10de058bfc99ff548cabd"},
+  "isolatedProfile":{"initialBaselineRows":59,"initialLocalRows":0,"integrityCheck":"ok","finalLocalRows":0,"dbSha256":"efdc7b413776890a2f0aae231e5784db56cdd049cb55a7fdd094185ae8540836"},
+  "http":{"instanceCount":1,"origin":"http://127.0.0.1:3019","firstFailure":{"step":"add","status":403,"reasonCode":"ADMIN_CSRF_INVALID","operatorCause":"client used x-f1-csrf instead of contract header x-f1-csrf-token"},"rawReceipt":"raw-http-receipt.json","rawReceiptSha256":"996ecc7c26bf47289439dfd82b9cb1f4faa69e52a2c9ad122e2c39891d38d425","externalCalls":0},
+  "verified":["health 200","unauthenticated list 401","session create 201","session get 200","baseline list 59","csrf issue 201","all observed responses no-store","formal DB and frozen artifacts unchanged"],
+  "notRun":["add success and operation","validate/activate/stop/retire/requeue","response-loss replay","stale/conflict/404 matrix","refresh/destroy and CSRF replay/binding negative matrix"],
+  "classification":"INDEPENDENT_TEST_EXECUTION_FIRST_ERROR; no product defect established"
+}

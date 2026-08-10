@@ -1,0 +1,51 @@
+{
+  "acceptance_exit": "提交唯一PASS/FAIL安全复验报告，列P0/P1、关键hash/命令/退出码、Home边界与secret/egress/lifecycle结论；PASS要求P0=0且P1=0，任何失败阻止C业务实现。TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-02-M4-C层Node24与SQLite能力预检安全复验报告.md"
+  ],
+  "authorization_evidence": "用户已授权持续推进本地工程；本任务只做已完成预检的独立安全复验",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T04:36+08:00",
+      "evidence": "用户已授权持续推进本地工程；本任务只做已完成预检的独立安全复验",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "仅本地只读/临时安全复验；真实外部能力持续关闭。",
+  "created_at": "2026-08-02T04:36+08:00",
+  "department": "安全部",
+  "details": "只读独立复验 TASK-20260802-D27E44 的报告与当前 app。重点机械核对：官方Node归档hash/架构与隔离路径；npm ci 使用 ignore-scripts 且 lock SHA 未漂移；direct dependency license/Unknown；next.config 可移植固定 turbopack.root，不能追踪到用户Home；tsconfig/next-env/.gitignore 修复后重复build无源码漂移；.local/node_modules/.next/tsbuildinfo忽略；app/.env.example 与配置无真实secret/provider/代理/外联开关；lint/typecheck/build执行无真实provider/Base/平台/AI/发布/部署调用。允许用现成Node24和node_modules做只读/临时验证，禁止npm install/lifecycle/联网下载/业务实现/Spec/ADR修改。首轮P1历史必须保留。",
+  "domain_stage": "M4-C-local-runtime-capability-preflight-review",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 发现构建root越界、tracked漂移或Home文件追踪：FAIL，定位最小配置修复，不删除用户Home文件。",
+    "2) lock/hash/工具链来源不一致、lifecycle痕迹、license Unknown或secret/真实能力开关：FAIL并停止。",
+    "3) 复验命令需要网络/安装或可能触发真实外部能力：保持只读，改用静态证据并标Unknown，不放宽安全门。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "保留开发部首轮P1=2/P2=1及本轮延迟清理误删node_modules导致build exit1的历史；作废zsh PATH变量覆盖造成的exit127并完整重跑；没有安装/清理共享依赖、触碰Home lock、修改app/Spec/ADR/data/design，未把preflight PASS写成业务实现、完整R12或生产/外部能力放行。",
+  "node": "M4/C层/本地工具链安全复验",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-02-M4-C层Node24与SQLite能力预检安全复验报告.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-02-M4-C层Node24与SQLite能力预检安全复验报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-7BFD99",
+  "title": "独立复验M4 C层预检的安全边界与构建洁净性",
+  "unverified": [
+    "SHASUMS未独立联网回源/PGP验签；未做OS级历史lifecycle系统调用追踪；未重跑完整SQLite WAL/锁/SIGKILL探针；Repository/migration、fixture seed、CAS/lease/outbox、四页UI/API、admin session/Origin/CSRF、完整R12 deny-all、真实loopback端口、无障碍AT、生产存储/多实例/容量/RTO/RPO及真实provider/Base/平台/AI/媒体/发布/部署仍未验证或未授权。"
+  ],
+  "updated_at": "2026-08-02T09:33+08:00",
+  "verified": [
+    "PASS/P0=0/P1=0：Node24归档SHA/arm64/隔离路径、lock SHA与399/399官方registry+sha512 integrity、ignore-scripts、npm ls problems=0、9项direct license Unknown=0、三个REAL_*字面false、secret/proxy/egress/真实provider/auto-publish静态命中0、可移植Next app root、tsconfig/next-env/.gitignore、恢复后lint/typecheck/双build、37个Git-visible候选/status/lock/install-tree/config零漂移、禁止warning=0、forbidden tracked=0均独立通过；并发误删依赖树的失败历史和恢复后重跑链已保留。"
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "acceptance_exit": "交付安全部final预审报告，包含snapshot/hash边界、逐项覆盖、实际命令/exit、P0/P1/P2、可执行修正清单、已验证/未验证、decision=pass|fail（仅指预审合同），TASK_STATE_OK；任何完整VS-0放行声明均为FAIL。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-02-M4-VS-0-partial实现fail-closed安全预审报告.md"
+  ],
+  "authorization_evidence": "用户要求各部门全力开工、发现问题马上反馈并快速迭代",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T10:27+08:00",
+      "evidence": "用户要求各部门全力开工、发现问题马上反馈并快速迭代",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "用户已授权持续本地搭建与部门并行；本任务只读预审，不涉及外部资源或发布。",
+  "created_at": "2026-08-02T10:27+08:00",
+  "department": "安全部",
+  "details": "对开发部TASK-158240当前已落盘但尚blocked的partial实现做独立只读安全预审，目的为提前发现问题，不放行VS-0。只读docs/spec、accepted M4/seed ADR、data bridge当前状态和app相关代码；不得改app/data/Spec/ADR，不安装/清理依赖，不访问外部网络。覆盖env/capability deny-by-default与未知变量、Node注入/proxy/secret拒绝、fixture路径realpath/regular/nlink/owner/0644允许但group/world-write拒绝、DB根0700与DB/WAL/SHM0600、symlink/hardlink/TOCTOU、每连接WAL/FULL/FK/busy_timeout、no-egress/child_process、日志脱敏、health DTO不泄露URL/绝对路径/secret/source id。可用Node24在临时0700目录运行安全负例；禁止触碰共享.local DB。报告只给当前snapshot的P0/P1/P2与修正建议，明确不是最终PASS。",
+  "domain_stage": "M4-C-VS0-security-pre-review",
+  "event_receipts": [
+    "MIL-20260802T103623-26F132"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 发现真实外联、错误配置fail-open、secret/URL/绝对路径泄露或DB权限不安全：P0/FAIL并立即通知统筹，禁止继续运行。",
+    "2) partial代码因数据桥未完成无法执行seed：只审其余边界并列unknown，不把blocked误报成实现缺陷或完整PASS。",
+    "3) 安全验证需要改源码、npm安装、共享.local或外部I/O：停止该验证，列为未验证，不越权。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未修改源码、Spec、ADR、data、共享.local或依赖；未将数据桥接PASS误写为任务恢复；未改写既有7BFD99报告；明确本报告仅为早期预审且decision=fail。",
+  "node": "M4/C层/VS-0实现早期安全审查",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260802-158240.json",
+    "app/src"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-02-M4-VS-0-partial实现fail-closed安全预审报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-45A639",
+  "title": "预审VS-0 partial实现的fail-closed安全边界",
+  "unverified": [
+    "P0修复、稳定fd/no-follow实现及修复后完整动态矩阵尚未验证。",
+    "TASK-20260802-158240是否正式resume/accept、59行实际导入与VS-0最终运行收据未验证。"
+  ],
+  "updated_at": "2026-08-02T10:37+08:00",
+  "verified": [
+    "已核对TASK-20260802-158240 revision=3、execution_state=blocked及开发部partial实现报告。",
+    "已静态复核env/capability/fixture/log/health/no-egress边界，并确认openSafeDatabase父目录realpath与稳定打开门缺失。",
+    "独立临时目录负例复现.local symlink导致outside数据库创建，exit=0且escaped_db_exists=true；临时目录已清理。"
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "acceptance_exit": "A轴存在唯一清晰accepted入口；Spec与progress现行状态一致并可追溯到两份PASS收据；旧proposed当前入口不再构成第二真值，所有现行链接有效；明确B=可启动本地初始化、C=pending、外部能力关闭；提交产品定版报告并完成TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/spec.md",
+    "docs/progress.md",
+    "docs/decisions/system/2026-08-01-F1+1-M4本地Kickoff系统路线-accepted.md",
+    "docs/decisions/system/2026-08-01-F1+1-M4本地Kickoff系统路线-proposed.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-02-M4-A轴v0.3正式定版报告.md"
+  ],
+  "authorization_evidence": "用户已授权全员持续推进本地网站工程；双审门禁已通过并由统筹部ACK；本任务仅本地文档定版",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T02:50+08:00",
+      "evidence": "用户已授权全员持续推进本地网站工程；双审门禁已通过并由统筹部ACK；本任务仅本地文档定版",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "本任务只接受A轴静态合同并开放B层本地初始化；不构成C层通过、部署许可或任何真实外部能力授权。",
+  "created_at": "2026-08-02T02:50+08:00",
+  "department": "产品部",
+  "details": "基于已ACK的安全聚焦复验TASK-20260802-337780与测试聚焦复验TASK-20260802-ABB9F8（均PASS、P0=0、P1=0），执行A轴文档定版。按项目ADR约定建立且只保留一个当前有效的accepted M4 ADR入口，消除proposed/accepted双真值；更新docs/spec.md、docs/progress.md及必要的当前入口引用，记录数据D80846已ACK、首轮两审FAIL历史、时态修订、聚焦双审PASS与A轴accepted。B层仅获得本地app初始化许可；C层运行验收仍pending；真实Base真值/provider/Collector/平台采集/AI/自动发布/部署/付费/外部I/O全部继续关闭。不得修改data、生成器、设计资产、app代码或历史安全/测试报告。",
+  "domain_stage": "M4-A-v0.3-acceptance",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 若ADR文件重命名会造成历史审计链接不可恢复，按agent-guide采用一个canonical accepted文件并提供最小可追溯迁移说明，禁止复制第二份完整ADR。",
+    "2) 若发现任一安全/测试PASS未ACK或P0/P1非0，停止定版并回报。",
+    "3) 若收口需要改变产品语义或data合同，停止并另行派修订任务。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "没有把聚焦PASS扩大为C层或生产能力，没有覆盖首轮FAIL，没有创建第二份完整ADR，也没有改变data/app或外部授权边界。",
+  "node": "M4/A轴定版门禁/accepted收口",
+  "pointers": [
+    "docs/collaboration/部门/产品部/报告/2026-08-02-M4-A轴v0.3正式定版报告.md"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-02-M4-A轴v0.3正式定版报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-8B5DCF",
+  "title": "接受M4 A轴v0.3本地MVP合同",
+  "unverified": [
+    "B层本地初始化实际收据、C层运行验收及所有真实外部能力仍未验证/关闭。"
+  ],
+  "updated_at": "2026-08-02T03:01+08:00",
+  "verified": [
+    "A轴已按TASK-20260802-8B5DCF完成accepted收口；唯一canonical入口为M4 accepted ADR，旧proposed路径仅为redirect。",
+    "Spec/progress已同步accepted状态、B层仅开放本地初始化、C层pending及真实外部能力关闭；首轮FAIL与两份PASS审计链均已保留。",
+    "未修改data、app或历史安全/测试审核报告；正式定版报告已落盘。"
+  ]
+}

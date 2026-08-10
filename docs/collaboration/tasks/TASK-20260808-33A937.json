@@ -1,0 +1,52 @@
+{
+  "acceptance_exit": "统筹和产品获得一份 status=final 的独立安全报告，明确哪些本地低频试验在用户批准后可做、哪些生产展示必须关闭、开发必须实现的安全控制和三条候选的放行/条件放行/拒绝结论。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-08-首条RSS纵切权利与入口安全门禁报告.md",
+    "docs/collaboration/部门/安全部/交接班文档.md"
+  ],
+  "authorization_evidence": "只读审查已完成的本地产物，不进行外部I/O",
+  "authorization_history": [
+    {
+      "at": "2026-08-08T22:16+08:00",
+      "evidence": "只读审查已完成的本地产物，不进行外部I/O",
+      "state": "none"
+    }
+  ],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "本任务只形成安全门禁建议；启用新来源、真实请求、存储内容、摘要、图片、付费或生产展示均需用户和相应业务门禁另行确认。",
+  "created_at": "2026-08-08T22:16+08:00",
+  "department": "安全部",
+  "details": "独立审查研究部 TASK-20260808-493D17 官方证据报告与数据部 TASK-20260808-CAD1DB 门禁包；分别给 Motorsport F1 RSS、Formula1.com RSS、FIA RSS 的本地技术试验与生产使用结论；覆盖摘要/翻译、图片/enclosure、原链、最小存储、删除/消失语义、SSRF、HTTPS/重定向/DNS、响应大小和内容类型、超时/退避、CSP、日志脱敏；不得访问外部来源、不得写代码、不得把报告当用户采集授权。",
+  "domain_stage": "采集安全预审",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "官方条款对生产聚合、翻译或图片复用存在限制或冲突：默认失败关闭，不能用技术可达性替代权利。",
+    "外链、重定向、媒体或DNS控制不足：标为阻断，不建议真实I/O。",
+    "证据无法确认或查询日可能过时：写Unknown并要求重新核验，不推断为允许。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未把可达性当长期授权；未把用户批准当第三方权利许可；未把enclosure当图片复用权；未执行外部请求、代码/产品/数据/ADR修改、授权或Base/provider操作；declare-impact因受控报告目录被工具拒绝后未绕过，随后正常claim；FAIL仅针对真实RSS执行就绪度，不解锁外部动作",
+  "node": "在任何真实采集前审查候选RSS的合规和技术入口边界",
+  "pointers": [
+    "docs/collaboration/部门/研究部/报告/2026-08-08-首批采集路径官方证据刷新.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-08-首条RSS纵切权利与入口安全门禁报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260808-33A937",
+  "title": "首条RSS纵切的权利与入口安全门禁",
+  "unverified": [
+    "三条RSS当前可用性、长期稳定性、地域差异、GUID/ETag/Last-Modified稳定性、连续15分钟SLO和编辑删除语义；Motorsport/FIA具体公开商业形态权利；Formula1.com未来书面许可；真实Collector、运输安全控制、SQLite/Base入库、审核UI与生产出口均Unknown或未验证"
+  ],
+  "updated_at": "2026-08-08T22:26+08:00",
+  "verified": [
+    "研究部TASK-20260808-493D17与数据部TASK-20260808-CAD1DB均acknowledged；10个本地SHA-256复算一致；离线validator PASS；59个现有来源均为X、RSS=0、enabled=0；候选保持validating/proposed/enabled=false及rights/authorization/platform unknown；游标原子推进、幂等、时间、退避、媒体空值和人工审核出口fail-closed；external_calls=0、writes_to_base=false、provider_switch=false"
+  ]
+}

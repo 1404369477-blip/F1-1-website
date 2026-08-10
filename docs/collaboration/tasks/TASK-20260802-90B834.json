@@ -1,0 +1,54 @@
+{
+  "acceptance_exit": "交付测试部final预审报告，带snapshot/hash、独立命令/exit/最短复现、P0/P1/P2、修正清单、已验证/未验证、decision=pass|fail（仅针对预审），TASK_STATE_OK；不得声称VS-0完整PASS。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-08-02-M4-VS-0预审测试报告.md"
+  ],
+  "authorization_evidence": "用户要求各部门全力开工、发现问题马上反馈并快速迭代",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T10:27+08:00",
+      "evidence": "用户要求各部门全力开工、发现问题马上反馈并快速迭代",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "测试部/019fb379-9212-7e80-a5df-587d339936c4",
+  "completion_class": "audit",
+  "confirmation": "用户已授权持续本地搭建与部门并行；本任务只读/临时态预审，不涉及外部资源或发布。",
+  "created_at": "2026-08-02T10:27+08:00",
+  "department": "测试部",
+  "details": "对开发部TASK-158240当前partial实现做独立只读/临时态测试预审，提前找出阻断，不放行VS-0。读取Spec/accepted ADR/data bridge/app；使用隔离Node24和测试专用0700临时目录，禁止npm install/ci/cleanup、禁止共享.local DB、禁止外部I/O。核对package scripts不假PASS、verify:env负例、migration两次/rollback/checksum/user_version、seed在旧数据桥状态下fail closed且无半写、Vitest覆盖、health安全DTO、lint/typecheck/build配置风险；若运行build会污染共享树则只读审计并留待最终复验。报告区分代码缺陷、数据阻断和未实现范围，给P0/P1/P2与最短复现。",
+  "domain_stage": "M4-C-VS0-test-pre-review",
+  "event_receipts": [
+    "TASK-20260802-90B834-TEST-20260802-FAIL-P0-01"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 任一错误配置未拒绝、migration/seed半写或幂等破坏、测试假PASS：P0/FAIL并立即通知统筹。",
+    "2) 数据bridge正在变化导致快照不一致：固定证据时间，跳过依赖部分并标blocked，不把竞态结果当最终结论。",
+    "3) 复验需要修改共享源码/依赖/.local或网络：停止并列未验证，禁止越权。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "保留旧validator NameError历史并以当前只读render_once为最新证据；未把bridge PASS或16/16扩大为VS-0完整PASS；未改共享源码/依赖/.local/data/Spec/ADR，未联网或访问真实外部资源",
+  "node": "M4/C层/VS-0实现早期测试审查",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260802-158240.json",
+    "app/src/tests/vs0.test.ts"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-08-02-M4-VS-0预审测试报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-90B834",
+  "title": "预审VS-0 partial实现的失败路径与可测试性",
+  "unverified": [
+    "app尚未消费39字段bridge；Source seed/Repository/完整check/build、clean npm ci、双连接/恢复/安全/UI/API与真实外部能力未验证"
+  ],
+  "updated_at": "2026-08-02T12:03+08:00",
+  "verified": [
+    "claim已完成；Node24/npm、verify:env正负例、Vitest 16/16、lint、typecheck、隔离SQLite迁移/rollback/checksum/user_version探针、旧seed gate幂等、当前bridge render_once两次59x39/e7a与manifest artifacts均已验证"
+  ]
+}

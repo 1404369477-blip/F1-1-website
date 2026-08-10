@@ -1,0 +1,52 @@
+{
+  "acceptance_exit": "报告status=final、decision=pass|fail，绑定候选全量SHA；target tests、typecheck、必要build、真实CLI与loopback HTTP均有退出码/状态证据；三SQLite物理隔离，旧库/receipt/migration零漂移；新库schema/ledger/root/count/0-1-4/媒体5/第5张拒绝/故障回滚/重复幂等通过；V1/V2/406/500/feed-detail-related/no-store通过；进程停止、3000无本任务监听、新canonical无WAL/SHM/candidate残留，externalCalls=0。P0=0/P1=0才PASS；列已验证/未验证、错题自检并TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-08-09-B98C66多媒体profile原子seed与V1-V2-HTTP独立验收报告.md"
+  ],
+  "authorization_evidence": "TASK-20260809-BA9999已ACK；本地独立验收",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T17:28+08:00",
+      "evidence": "TASK-20260809-BA9999已ACK；本地独立验收",
+      "state": "none"
+    }
+  ],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "测试部/019fb379-9212-7e80-a5df-587d339936c4",
+  "completion_class": "audit",
+  "confirmation": "本任务只验证已授权本地synthetic后端与loopback出口，不触发真实外部能力。",
+  "created_at": "2026-08-09T17:28+08:00",
+  "department": "测试部",
+  "details": "独立验收TASK-20260809-BA9999当前固定候选。先冻结开发报告impact清单全量SHA与两旧DB/三receipt基线；canonical旧库不得打开SQLite。使用任务专属0700临时根/副本验证exact 0001+0002+scoped0003、user_version=3、单profile/ATTACH拒绝、0/1/4三条PublishedProjection与媒体总数5、INSERT/UPDATE第5张图拒绝、28写点或等价完整故障注入零部分提交、重复migrate/seed roots/counts零漂移、health无绝对路径。运行固定Node24定向测试、typecheck和必要build；受控新profile真实CLI及127.0.0.1 loopback HTTP验证默认V1、精确vendor V2、其余多值/参数化/非法Accept 406，feed/detail/related同版、坏hash/rights/safety/order/重复/超限整请求500、全响应no-store；旧public-synthetic V1行为不变且V2=406。实例必须精确停止并清理本实例sidecar。只提交测试部final报告，不修实现。",
+  "domain_stage": "M5公开多媒体后端独立测试门",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一旧artifact漂移、临时验收可能写canonical旧库或无法证明任务实例归属：停止并FAIL，不清理非本任务文件。",
+    "CLI/seed/rollback/第5张图/API版本协商/完整性500/no-store任一失败：保留最小复现与reasonCode，禁止改代码或用静态断言代替真实出口。",
+    "构建或HTTP服务无法在安全边界内完成：明确Unknown/FAIL及精确阶段，不以组件/单测PASS外推运行闭环。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已独立执行且未采信开发结论代替证据；故障注入仅在0700物理副本；六类完整性失败均有真实loopback 500；精确V2 vendor已核对；目标测试/typecheck/build各一次；canonical sidecar按owner/mode/nlink/无句柄精确清理并复核hash；未修改实现/合同/数据/设计/依赖/lockfile或外部资源",
+  "node": "以真实CLI与loopback HTTP复验DEV-MM-01..03候选",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260809-BA9999.json",
+    "docs/collaboration/部门/开发部/报告/2026-08-09-DEV-MM-BACKEND多媒体独立profile与V1-V2-API完成报告.md"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-08-09-B98C66多媒体profile原子seed与V1-V2-HTTP独立验收报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-B98C66",
+  "title": "TEST-MM-BACKEND：独立验收多媒体profile原子seed与V1/V2 HTTP",
+  "unverified": [
+    "正式前端多媒体UI与浏览器视觉交互;真实媒体、外部provider/Base/AI/Admin/发布与部署;部署包tracing最终内容;系统调用级全机网络抓包（由no-egress guard、最小env、loopback与externalCalls=0交叉覆盖）"
+  ],
+  "updated_at": "2026-08-09T18:00+08:00",
+  "verified": [
+    "全量impact SHA与三SQLite物理隔离/零漂移; exact 0001+0002+scoped0003/user_version=3/schema-ledger-roots-counts; 0/1/4与媒体总数5/第五图INSERT-UPDATE拒绝/28写点rollback/重复migrate-seed幂等; 固定Node24目标测试5/5、typecheck、必要build; 真实CLI与public-multimedia及legacy production loopback HTTP; V1/V2/406/400/六类完整性500/feed-detail-related/no-store; externalCalls=0; 实例停止、3000/3001无监听、canonical无WAL-SHM-candidate残留"
+  ]
+}

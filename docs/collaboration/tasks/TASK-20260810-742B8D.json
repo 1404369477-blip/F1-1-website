@@ -1,0 +1,47 @@
+{
+  "acceptance_exit": "提交安全部final报告与机器manifest，唯一decision=pass或fail并列P0/P1/P2；绑定875B6C新候选，raw-before-normalization、session/CSRF、identity、SQLite/audit/no-egress与零残留均有独立防御证据；PASS要求P0=0且P1=0，完成返回TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "用户回复继续并持续授权推进本地初版；本任务仅做本地synthetic候选的防御性安全复验。",
+  "authorization_history": [
+    {
+      "at": "2026-08-10T08:17+08:00",
+      "evidence": "用户回复继续并持续授权推进本地初版；本任务仅做本地synthetic候选的防御性安全复验。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "防御性复验的raw首组18项、合法session/list+query、Host/Origin/peer负例、内存session/CSRF及identity阶段均PASS；首个非零发生在安全部临时数据库探针使用非canonical profile路径，产品正确返回PROFILE_PATH_MIX。按任务首错停止，SQLite/audit/no-egress后续NOT_RUN。没有建立产品缺陷；正式DB未打开/修改、产品实例未启动、externalCalls=0、3019/lock/WAL/SHM/tmp均无残留。来源线程turn=019fe908-d3cc-7ef2-b211-4ab32e55e04d。",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "这是A5F239修复后的新候选复验；不得覆盖A5F239历史FAIL，不授权UI、真实采集、生产、公网Admin或部署。",
+  "created_at": "2026-08-10T08:17+08:00",
+  "department": "安全部",
+  "details": "唯一候选为已ACK TASK-20260810-875B6C：开发报告SHA=022e1d2db619494b60d0d5c6190946f0a453953ec5b878885d5ce3cc9f4e910f，manifest SHA=1d402722e2139fd5fbab0de791e691939273e0a534672aba71a629b45486519e，security.ts SHA=a455df964f86045ff4157142a7cd378f2f64a12bb46a54661daa711d0750f965，raw-target test SHA=aa30872b9a0a16696d4c42f61314efa9c340d00c5233d2e52edbd61afe4d00c9；继承91AF6E server/no-egress/repository与closed DB SHA ddf3778c。只做防御性负例和隔离不变量验证：先独立确认literal/encoded dot、slash、backslash、absolute-form、double-slash均在URL规范化前拒绝且合法session/list+query通过；通过后才可使用独立临时profile/DB和至多一个loopback实例，核对Host/Origin/Forwarded、peer、session生命周期、CSRF TTL/重放/method/path/body、identity冲突/截断碰撞、baseline/local overlay、receipt/ledger完整性、第二writer/profile/路径/权限隔离、错误脱敏和非loopback I/O=0。不得修改产品代码/正式DB/依赖/UI/Spec/ADR，不跑全量，不安装或改网络。",
+  "domain_stage": "M5-SOURCE-MGMT修复后独立安全",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "候选或保护SHA漂移：不执行动态验证，立即block并回首个差异。",
+    "raw-path首组负例仍有任何规范化后通过：保存最小实得并立即FAIL，其余NOT_RUN。",
+    "后续任一安全不变量失败、出现外联/正式数据写入/残留：立即停止，只清理由任务创建的资源并报告P0/P1。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "验证raw-before-normalization修复并完成剩余本地Admin安全不变量",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260810-875B6C.json",
+    "app/evidence/TASK-20260810-875B6C/manifest.json",
+    "docs/collaboration/部门/开发部/报告/2026-08-10-875B6C-RAW_DOT_SEGMENT_ALIAS原始路径前置拒绝修复报告.md",
+    "docs/collaboration/部门/安全部/报告/TASK-20260810-A5F239-evidence/manifest.json"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260810-742B8D",
+  "title": "875B6C新候选防御性安全复验",
+  "unverified": [],
+  "updated_at": "2026-08-10T09:22+08:00",
+  "verified": []
+}

@@ -1,0 +1,52 @@
+{
+  "acceptance_exit": "正式测试部窗口提交final PASS/FAIL、P0/P1/P2与TASK_STATE_OK；API聚焦一次PASS，独立矩阵符合accepted ADR；无DB/.next/端口/临时残留；P0=0/P1=0才PASS。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-08-04-C30FD0公开feed-detail-API正式窗口聚焦测试报告.md"
+  ],
+  "authorization_evidence": "用户明确要求任务必须发送到原有对应部门对话窗口并可见核验；内部测试通道已停止。",
+  "authorization_history": [
+    {
+      "at": "2026-08-04T15:54+08:00",
+      "evidence": "用户明确要求任务必须发送到原有对应部门对话窗口并可见核验；内部测试通道已停止。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "测试部/019fb379-9212-7e80-a5df-587d339936c4",
+  "completion_class": "audit",
+  "confirmation": "安全与测试正式窗口均PASS后统筹才ACK AC25D4并派前端接线。",
+  "created_at": "2026-08-04T15:54+08:00",
+  "department": "测试部",
+  "details": "本任务替代内部不可见执行通道TASK-20260804-D8E05D。严格只读AC25D4最终候选，只写测试部精简final报告和任务状态。冻结候选SHA；在TemporaryDirectory使用public-synthetic canonical seed，只运行一次API聚焦测试并独立最小矩阵：feed 12条/顺序/四类筛选/page，detail/related，query/cursor/publicId正负reasonCode，m3拒绝，响应头与closed DTO。不得build/full check/浏览器/改代码/重复轮次。",
+  "domain_stage": "公开API正式窗口测试",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "feed/detail/filter/cursor/problem/headers/m3拒绝任一不符：P1 FAIL。",
+    "候选SHA漂移或无法独立调用：NOT_RUN，不修代码。",
+    "运行build/full check/浏览器或修改代码/data/ADR：越界停止。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "独立入口首次被Node strip-only参数属性限制在业务调用前拦截；随后临时库basename错误被PROFILE_PATH_MIX在seed前正确拒绝。修正测试夹具后独立矩阵1/1 PASS，均不计产品缺陷；聚焦套件没有重复运行，未改共享代码且未ACK。",
+  "node": "由原测试部可见对话窗口一次性验证AC25D4功能合同",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260804-AC25D4.json",
+    "docs/collaboration/tasks/TASK-20260804-D8E05D.json"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-08-04-C30FD0公开feed-detail-API正式窗口聚焦测试报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260804-C30FD0",
+  "title": "正式测试部窗口接续公开feed-detail API验收",
+  "unverified": [
+    "按边界未运行build/full check/typecheck/浏览器/真实Next HTTP进程；未覆盖13+非正式profile、前端、生产环境、真实外部资源和系统调用级no-egress；完整性破坏与DB busy仅由唯一聚焦套件覆盖，独立矩阵未重复注入。"
+  ],
+  "updated_at": "2026-08-04T18:55+08:00",
+  "verified": [
+    "九个冻结候选SHA前后完全一致；固定Node24唯一一次API聚焦测试1文件5测试PASS；独立TemporaryDirectory最小矩阵1/1 PASS，覆盖feed 12条/排序/四类与source筛选/page/cursor、12个detail/related、query与publicId正负reasonCode、headers/no-CORS和m3-shadow拒绝；无DB/.next/3010端口/临时文件残留。"
+  ]
+}

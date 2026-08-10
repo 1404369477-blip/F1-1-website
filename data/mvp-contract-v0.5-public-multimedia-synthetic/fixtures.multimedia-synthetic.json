@@ -1,0 +1,386 @@
+{
+  "cases": [
+    {
+      "case_id": "case-zero",
+      "expected_media_v1": null,
+      "expected_media_v2": [],
+      "expected_source_access_status": "available",
+      "expected_state": "media_missing",
+      "media_candidates": [],
+      "publication": {
+        "approved_bundle_hash": "eab2389fb324bae80690da12d1fa58b981d4470e4857c8e3cdce9d099600b053",
+        "approved_content_version_hash": "08c06477a346530ab38350f5b76d32c3c1f0adb8c5ae38214b80f606975b76e9",
+        "approved_summary_version_hash": "936033ba38cbe6f4806b7f70728cbf432de7df2dc3e7df86c4dc5490c5f8dd31",
+        "public_id": "public-mm-zero",
+        "publication_status": "published",
+        "publish_generation": 1,
+        "published_version_hash": "382f7000712bbf3fadbcd868b71ffdd476cf5328cb55f8284ffe28155eb0fe02"
+      },
+      "published_projection": {
+        "projection_status": "published",
+        "public_id": "public-mm-zero",
+        "publish_generation": 1,
+        "published_version_hash": "382f7000712bbf3fadbcd868b71ffdd476cf5328cb55f8284ffe28155eb0fe02"
+      },
+      "release_bundle": {
+        "bundle_hash": "eab2389fb324bae80690da12d1fa58b981d4470e4857c8e3cdce9d099600b053",
+        "bundle_hash_input": {
+          "bundle_version": "v1",
+          "canonical_json_rule_version": "canonical-json-v1",
+          "immutable": true,
+          "payload_hash": "16da3d6966c8b2804092d347cca6cc6bc1b1af5197d04a20a12f3ce8766039cb",
+          "release_bundle_id": "bundle-mm-zero"
+        },
+        "bundle_version": "v1",
+        "canonical_json_rule_version": "canonical-json-v1",
+        "canonical_payload": {
+          "access_snapshot": {
+            "content_access_status": "available"
+          },
+          "content_id": "content-mm-zero",
+          "content_version_hash": "08c06477a346530ab38350f5b76d32c3c1f0adb8c5ae38214b80f606975b76e9",
+          "media": [],
+          "media_presentations": [],
+          "media_snapshot_hash": "a30bbd76d5b8bbf56c48db2bc6b2ce63abb8738d08f953860c3351a16a4630ca",
+          "release_bundle_id": "bundle-mm-zero",
+          "rights": {
+            "evidence_ref": "synthetic:rights-mm-zero",
+            "rights_status": "allowed"
+          },
+          "summary_id": "summary-mm-zero",
+          "summary_version_hash": "936033ba38cbe6f4806b7f70728cbf432de7df2dc3e7df86c4dc5490c5f8dd31"
+        },
+        "immutable": true,
+        "media_refs": [],
+        "payload_hash": "16da3d6966c8b2804092d347cca6cc6bc1b1af5197d04a20a12f3ce8766039cb",
+        "release_bundle_id": "bundle-mm-zero",
+        "release_status": "approved"
+      },
+      "review_decision": {
+        "approved_bundle_hash": "eab2389fb324bae80690da12d1fa58b981d4470e4857c8e3cdce9d099600b053",
+        "decision": "approved"
+      }
+    },
+    {
+      "case_id": "case-single",
+      "expected_media_v1": {
+        "altZh": "本地合成示意图：蓝色赛道节奏与单图卡片。",
+        "assetRef": "synthetic:multimedia-single-1",
+        "captionZh": null,
+        "creditDisplay": "F1+1 本地合成占位",
+        "kind": "synthetic_placeholder",
+        "tone": "blue"
+      },
+      "expected_media_v2": [
+        {
+          "altZh": "本地合成示意图：蓝色赛道节奏与单图卡片。",
+          "assetRef": "synthetic:multimedia-single-1",
+          "captionZh": null,
+          "creditDisplay": "F1+1 本地合成占位",
+          "kind": "synthetic_placeholder",
+          "mediaHash": "78245f2b42249904eb9db16ddf064a2f478719ba72a29edcd0e4a484affa5146",
+          "mediaId": "media-mm-single-1",
+          "tone": "blue"
+        }
+      ],
+      "expected_source_access_status": "available",
+      "expected_state": "available",
+      "media_candidates": [
+        {
+          "asset_ref": "synthetic:multimedia-single-1",
+          "candidate_status": "selected",
+          "content_id": "content-mm-single",
+          "license_status": "allowed",
+          "media_candidate_id": "media-mm-single-1",
+          "media_hash": "78245f2b42249904eb9db16ddf064a2f478719ba72a29edcd0e4a484affa5146",
+          "mime_type": "image/webp",
+          "safety_status": "passed"
+        }
+      ],
+      "publication": {
+        "approved_bundle_hash": "433643abc2b0b462f6d653bd7dbefd5425247547ad943e72f780335fac0beec7",
+        "approved_content_version_hash": "6d4d92c677829eede58ba68d4183b0089e00e986b0d90b068c98664c49a569b9",
+        "approved_summary_version_hash": "40b2fa093911a3f01291d99b6f4f6ef16827213c00f653eba081d4d6b167ad0b",
+        "public_id": "public-mm-single",
+        "publication_status": "published",
+        "publish_generation": 1,
+        "published_version_hash": "f67bf18332d9e904fa7f2969d61e9c95747cb53f37fee382949d1f587980d4d8"
+      },
+      "published_projection": {
+        "projection_status": "published",
+        "public_id": "public-mm-single",
+        "publish_generation": 1,
+        "published_version_hash": "f67bf18332d9e904fa7f2969d61e9c95747cb53f37fee382949d1f587980d4d8"
+      },
+      "release_bundle": {
+        "bundle_hash": "433643abc2b0b462f6d653bd7dbefd5425247547ad943e72f780335fac0beec7",
+        "bundle_hash_input": {
+          "bundle_version": "v1",
+          "canonical_json_rule_version": "canonical-json-v1",
+          "immutable": true,
+          "payload_hash": "0da06957697a5084c722545871c2db4588e9857d77bb36e11b6e250dbd9d2466",
+          "release_bundle_id": "bundle-mm-single"
+        },
+        "bundle_version": "v1",
+        "canonical_json_rule_version": "canonical-json-v1",
+        "canonical_payload": {
+          "access_snapshot": {
+            "content_access_status": "available"
+          },
+          "content_id": "content-mm-single",
+          "content_version_hash": "6d4d92c677829eede58ba68d4183b0089e00e986b0d90b068c98664c49a569b9",
+          "media": [
+            {
+              "license_status": "allowed",
+              "media_candidate_id": "media-mm-single-1",
+              "media_hash": "78245f2b42249904eb9db16ddf064a2f478719ba72a29edcd0e4a484affa5146",
+              "safety_status": "passed"
+            }
+          ],
+          "media_presentations": [
+            {
+              "alt_zh": "本地合成示意图：蓝色赛道节奏与单图卡片。",
+              "caption_zh": null,
+              "credit_display": "F1+1 本地合成占位",
+              "media_candidate_id": "media-mm-single-1",
+              "tone": "blue"
+            }
+          ],
+          "media_snapshot_hash": "f2493f43aa22487101b96a845f33c1753146e87bcbbc3f7d409aa05c02221254",
+          "release_bundle_id": "bundle-mm-single",
+          "rights": {
+            "evidence_ref": "synthetic:rights-mm-single",
+            "rights_status": "allowed"
+          },
+          "summary_id": "summary-mm-single",
+          "summary_version_hash": "40b2fa093911a3f01291d99b6f4f6ef16827213c00f653eba081d4d6b167ad0b"
+        },
+        "immutable": true,
+        "media_refs": [
+          "media-mm-single-1"
+        ],
+        "payload_hash": "0da06957697a5084c722545871c2db4588e9857d77bb36e11b6e250dbd9d2466",
+        "release_bundle_id": "bundle-mm-single",
+        "release_status": "approved"
+      },
+      "review_decision": {
+        "approved_bundle_hash": "433643abc2b0b462f6d653bd7dbefd5425247547ad943e72f780335fac0beec7",
+        "decision": "approved"
+      }
+    },
+    {
+      "case_id": "case-gallery",
+      "expected_media_v1": {
+        "altZh": "本地合成四图之一：深色赛道网格。",
+        "assetRef": "synthetic:multimedia-gallery-1",
+        "captionZh": null,
+        "creditDisplay": "F1+1 本地合成占位",
+        "kind": "synthetic_placeholder",
+        "tone": "night"
+      },
+      "expected_media_v2": [
+        {
+          "altZh": "本地合成四图之一：深色赛道网格。",
+          "assetRef": "synthetic:multimedia-gallery-1",
+          "captionZh": null,
+          "creditDisplay": "F1+1 本地合成占位",
+          "kind": "synthetic_placeholder",
+          "mediaHash": "deeb2e0164b5e708914129ba7ac4fbc09379eda8b3b8c798f990615d48f7b48c",
+          "mediaId": "media-mm-gallery-1",
+          "tone": "night"
+        },
+        {
+          "altZh": "本地合成四图之二：蓝色维修区线条。",
+          "assetRef": "synthetic:multimedia-gallery-2",
+          "captionZh": null,
+          "creditDisplay": "F1+1 本地合成占位",
+          "kind": "synthetic_placeholder",
+          "mediaHash": "c44a575e6638b5845be2cf3f862862abf6548bcbf9e35f171bc057264f6080fa",
+          "mediaId": "media-mm-gallery-2",
+          "tone": "blue"
+        },
+        {
+          "altZh": "本地合成四图之三：琥珀色计时块。",
+          "assetRef": "synthetic:multimedia-gallery-3",
+          "captionZh": null,
+          "creditDisplay": "F1+1 本地合成占位",
+          "kind": "synthetic_placeholder",
+          "mediaHash": "79d4bac4ed12aa08e43233e247d38632ac365efe8a02e9ecc1b4260d1c1cead8",
+          "mediaId": "media-mm-gallery-3",
+          "tone": "amber"
+        },
+        {
+          "altZh": "本地合成四图之四：紫色围场光带。",
+          "assetRef": "synthetic:multimedia-gallery-4",
+          "captionZh": null,
+          "creditDisplay": "F1+1 本地合成占位",
+          "kind": "synthetic_placeholder",
+          "mediaHash": "2076815a2ec9418947fc1c6199c5ebb9fae6511da6cbed3babd7439105c3bfc1",
+          "mediaId": "media-mm-gallery-4",
+          "tone": "violet"
+        }
+      ],
+      "expected_source_access_status": "available",
+      "expected_state": "available",
+      "media_candidates": [
+        {
+          "asset_ref": "synthetic:multimedia-gallery-1",
+          "candidate_status": "selected",
+          "content_id": "content-mm-gallery",
+          "license_status": "allowed",
+          "media_candidate_id": "media-mm-gallery-1",
+          "media_hash": "deeb2e0164b5e708914129ba7ac4fbc09379eda8b3b8c798f990615d48f7b48c",
+          "mime_type": "image/webp",
+          "safety_status": "passed"
+        },
+        {
+          "asset_ref": "synthetic:multimedia-gallery-2",
+          "candidate_status": "selected",
+          "content_id": "content-mm-gallery",
+          "license_status": "allowed",
+          "media_candidate_id": "media-mm-gallery-2",
+          "media_hash": "c44a575e6638b5845be2cf3f862862abf6548bcbf9e35f171bc057264f6080fa",
+          "mime_type": "image/webp",
+          "safety_status": "passed"
+        },
+        {
+          "asset_ref": "synthetic:multimedia-gallery-3",
+          "candidate_status": "selected",
+          "content_id": "content-mm-gallery",
+          "license_status": "allowed",
+          "media_candidate_id": "media-mm-gallery-3",
+          "media_hash": "79d4bac4ed12aa08e43233e247d38632ac365efe8a02e9ecc1b4260d1c1cead8",
+          "mime_type": "image/webp",
+          "safety_status": "passed"
+        },
+        {
+          "asset_ref": "synthetic:multimedia-gallery-4",
+          "candidate_status": "selected",
+          "content_id": "content-mm-gallery",
+          "license_status": "allowed",
+          "media_candidate_id": "media-mm-gallery-4",
+          "media_hash": "2076815a2ec9418947fc1c6199c5ebb9fae6511da6cbed3babd7439105c3bfc1",
+          "mime_type": "image/webp",
+          "safety_status": "passed"
+        }
+      ],
+      "publication": {
+        "approved_bundle_hash": "a5e158fc62af37af6f943b2b0785e3f8933328b882f79969573e665ab1ca7e83",
+        "approved_content_version_hash": "a9408fec40fadb81e3fc8ab7a7b8e417d6f3d64629dd6f846f8d9e0b7951088b",
+        "approved_summary_version_hash": "7393d06dce318d7b29c362cb09b51826dadeae9e85a351147d8f67dccd1311c0",
+        "public_id": "public-mm-gallery",
+        "publication_status": "published",
+        "publish_generation": 1,
+        "published_version_hash": "6e4b449367c5f1b6ed8693984c4887ba8b223bda8e0e33df97a63c2af5effe5e"
+      },
+      "published_projection": {
+        "projection_status": "published",
+        "public_id": "public-mm-gallery",
+        "publish_generation": 1,
+        "published_version_hash": "6e4b449367c5f1b6ed8693984c4887ba8b223bda8e0e33df97a63c2af5effe5e"
+      },
+      "release_bundle": {
+        "bundle_hash": "a5e158fc62af37af6f943b2b0785e3f8933328b882f79969573e665ab1ca7e83",
+        "bundle_hash_input": {
+          "bundle_version": "v1",
+          "canonical_json_rule_version": "canonical-json-v1",
+          "immutable": true,
+          "payload_hash": "e5f14ec3710e28a67364609af3e194e428727cc72b2ac5649a44082d8547e96f",
+          "release_bundle_id": "bundle-mm-gallery"
+        },
+        "bundle_version": "v1",
+        "canonical_json_rule_version": "canonical-json-v1",
+        "canonical_payload": {
+          "access_snapshot": {
+            "content_access_status": "available"
+          },
+          "content_id": "content-mm-gallery",
+          "content_version_hash": "a9408fec40fadb81e3fc8ab7a7b8e417d6f3d64629dd6f846f8d9e0b7951088b",
+          "media": [
+            {
+              "license_status": "allowed",
+              "media_candidate_id": "media-mm-gallery-1",
+              "media_hash": "deeb2e0164b5e708914129ba7ac4fbc09379eda8b3b8c798f990615d48f7b48c",
+              "safety_status": "passed"
+            },
+            {
+              "license_status": "allowed",
+              "media_candidate_id": "media-mm-gallery-2",
+              "media_hash": "c44a575e6638b5845be2cf3f862862abf6548bcbf9e35f171bc057264f6080fa",
+              "safety_status": "passed"
+            },
+            {
+              "license_status": "allowed",
+              "media_candidate_id": "media-mm-gallery-3",
+              "media_hash": "79d4bac4ed12aa08e43233e247d38632ac365efe8a02e9ecc1b4260d1c1cead8",
+              "safety_status": "passed"
+            },
+            {
+              "license_status": "allowed",
+              "media_candidate_id": "media-mm-gallery-4",
+              "media_hash": "2076815a2ec9418947fc1c6199c5ebb9fae6511da6cbed3babd7439105c3bfc1",
+              "safety_status": "passed"
+            }
+          ],
+          "media_presentations": [
+            {
+              "alt_zh": "本地合成四图之一：深色赛道网格。",
+              "caption_zh": null,
+              "credit_display": "F1+1 本地合成占位",
+              "media_candidate_id": "media-mm-gallery-1",
+              "tone": "night"
+            },
+            {
+              "alt_zh": "本地合成四图之二：蓝色维修区线条。",
+              "caption_zh": null,
+              "credit_display": "F1+1 本地合成占位",
+              "media_candidate_id": "media-mm-gallery-2",
+              "tone": "blue"
+            },
+            {
+              "alt_zh": "本地合成四图之三：琥珀色计时块。",
+              "caption_zh": null,
+              "credit_display": "F1+1 本地合成占位",
+              "media_candidate_id": "media-mm-gallery-3",
+              "tone": "amber"
+            },
+            {
+              "alt_zh": "本地合成四图之四：紫色围场光带。",
+              "caption_zh": null,
+              "credit_display": "F1+1 本地合成占位",
+              "media_candidate_id": "media-mm-gallery-4",
+              "tone": "violet"
+            }
+          ],
+          "media_snapshot_hash": "1160811bcbff0715c18603361304aafcdccaa1250a23c731918769141a930f52",
+          "release_bundle_id": "bundle-mm-gallery",
+          "rights": {
+            "evidence_ref": "synthetic:rights-mm-gallery",
+            "rights_status": "allowed"
+          },
+          "summary_id": "summary-mm-gallery",
+          "summary_version_hash": "7393d06dce318d7b29c362cb09b51826dadeae9e85a351147d8f67dccd1311c0"
+        },
+        "immutable": true,
+        "media_refs": [
+          "media-mm-gallery-1",
+          "media-mm-gallery-2",
+          "media-mm-gallery-3",
+          "media-mm-gallery-4"
+        ],
+        "payload_hash": "e5f14ec3710e28a67364609af3e194e428727cc72b2ac5649a44082d8547e96f",
+        "release_bundle_id": "bundle-mm-gallery",
+        "release_status": "approved"
+      },
+      "review_decision": {
+        "approved_bundle_hash": "a5e158fc62af37af6f943b2b0785e3f8933328b882f79969573e665ab1ca7e83",
+        "decision": "approved"
+      }
+    }
+  ],
+  "external_calls": 0,
+  "fixture_version": "public-multimedia-synthetic-v0.1",
+  "real_media": 0,
+  "synthetic_only": true,
+  "writes_to_base": false
+}

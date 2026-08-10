@@ -1,0 +1,55 @@
+{
+  "acceptance_exit": "同一未漂移production候选上输出Function ID覆盖表与视觉差异表；成功/失败/恢复、1440/1024/390深浅主题、reduced-motion、焦点/hydration/console均给出独立证据。P0/P1为0才可PASS；任何未验证项保持P1并给出最小后继出口。报告含完整源码hash、设计hash、运行进程/端口/清理收据和证据目录。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-08-09-5FBC92最终候选聚焦功能与视觉验收报告.md",
+    "docs/collaboration/部门/测试部/报告/TASK-20260809-5FBC92-evidence/README.md"
+  ],
+  "authorization_evidence": "用户2026-08-09明确要求；TASK-20260809-8FAD30已ACK",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T11:43+08:00",
+      "evidence": "用户2026-08-09明确要求；TASK-20260809-8FAD30已ACK",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "测试部/019fb379-9212-7e80-a5df-587d339936c4",
+  "completion_class": "audit",
+  "confirmation": "用户明确要求开发高度贴合视觉并落实所有功能项；统筹已核收8FAD30实现，现需独立验收。",
+  "created_at": "2026-08-09T11:43+08:00",
+  "department": "测试部",
+  "details": "只读验收TASK-20260809-8FAD30最终候选，绑定设计design/ui/F1+1-v0.2-全站设计/F1+1-v0.2-final-20260808.html SHA-256 5a84bfb27294ebd727369118a95528f5b788bfacbe2d56cc03fcb006f6168cb1；绑定源码hash layout 6aff5e..., globals b1b407..., shell 461f46..., story-parts 4210fd..., theme d2e842..., feed e069ed..., detail 2ee866..., public-api 87c4b0..., public-ui-test 6dd4fc...，领取时必须重算并记录完整hash。逐Function ID复核PUB-DETAIL-001/004/005、UI-TOP-001、UI-ACCORDION-001、UI-THEME-002；必须从正式用户入口和同源production数据/状态链验证成功、404/503、同对象恢复。覆盖1440/1024/390与深浅主题的关键几何、无横向溢出、焦点和可访问性；使用可控浏览器媒体模拟验证reduced-motion回顶/手风琴；尝试可信Storage异常模拟，若工具能力不足则明确P1。禁止改App、测试源码、设计、DTO/DB/data/依赖，禁止使用静态demo或隐藏debug入口替代。只做一次聚焦验收，不跑无关整站回归。",
+  "domain_stage": "M5公开页全功能闭环第一波独立验收",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一绑定源码或设计hash漂移：立即停止验收并回报SNAPSHOT_DRIFT，不沿用旧PASS。",
+    "无法以正式入口触发404/503或Storage异常：不得启用shipping debug；记录工具/fixture缺口并保留对应P1。",
+    "发现视觉偏差或功能缺口：冻结最小复现、Function ID、视口/主题和证据，判FAIL并交开发/设计后继。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未修改上游或实现；未把工具拒绝/NOT_RUN记完成；未把无溢出外推视觉PASS；未外推冻结hash之外；P0=0/P1=3唯一FAIL；临时脚本未启动且已删除，端口均释放",
+  "node": "关闭公开阅读第一波候选的独立验收门",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260809-8FAD30.json",
+    "docs/collaboration/部门/开发部/报告/2026-08-09-公开阅读功能闭环第一波实现报告.md",
+    "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md",
+    "design/ui/F1+1-v0.2-全站设计/F1+1-v0.2-final-20260808.html"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-08-09-5FBC92最终候选聚焦功能与视觉验收报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-5FBC92",
+  "title": "8FAD30最终候选聚焦独立功能与视觉验收",
+  "unverified": [
+    "P1：Storage getter/setter异常；冻结视觉差异关闭；390展开项整条垂直居中修复；未跑full check/build/整站回归/外部能力"
+  ],
+  "updated_at": "2026-08-09T12:06+08:00",
+  "verified": [
+    "设计与9个源码hash首尾一致；同候选成功/404/503/恢复；Function ID六项必要路径；reduced-motion回顶/互斥；主题持久化与console；1440/1024/390深浅截图及零横向溢出；进程端口清理"
+  ]
+}

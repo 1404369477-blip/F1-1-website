@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "提交安全部final裁决报告：绑定47EF67报告与manifest SHA，给出互斥A/B/C方案、推荐方案、精确前置/命令边界/证据闭包/收口动作；说明是否能在普通Terminal或固定M1实际运行、是否需要用户一次确认；列已验证/未验证/错题自检，P0=0/P1=0，按协议TASK_STATE_OK。若任何推荐仍不能证明localhost-only或需未授权提权安装，必须fail closed并给出唯一最小用户门。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-09-47EF67环境阻断后最小替代执行面安全裁决.md"
+  ],
+  "authorization_evidence": "2026-08-09主会话用户回复继续；既有范围要求持续推进初版且部门执行。",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T22:33+08:00",
+      "evidence": "2026-08-09主会话用户回复继续；既有范围要求持续推进初版且部门执行。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "用户2026-08-09明确要求继续推进初版；本任务只读裁决且不触发新的外部或系统动作。",
+  "created_at": "2026-08-09T22:33+08:00",
+  "department": "安全部",
+  "details": "基于TASK-20260809-47EF67报告中的sandbox-exec sandbox_apply Operation not permitted exit71，做只读安全裁决。至少比较：普通Terminal或固定M1在Codex沙箱外运行同一双Seatbelt脚本；固定M1通过预生成自包含脚本短时离线运行再回传证据；放宽为浏览器flags加Playwright路由和进程账本。逐项判断能否证明App与Browser仅loopback、能否记录外联连接和尝试、是否需要用户手动动作/提权/安装/断网、对唯一一次矩阵计数的影响。优先给出一个不安装、不付费、不访问外网、不改候选、无需系统提权的推荐后继；如做不到，明确最小用户门。当前只形成裁决与精确可执行合同，禁止启动App/浏览器、修改候选、安装、提权、访问外部网络或改变47EF67历史结论。",
+  "domain_stage": "公开前端-浏览器终验解阻",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "无法证明普通Terminal环境可应用双Seatbelt：不得猜测，推荐离线自包含路径或BLOCKED。",
+    "所有可行路径都需要提权、安装或外部服务：停止，写明唯一最小用户授权门，不执行。",
+    "裁决依赖候选修改、外网或重复功能矩阵：判越界并移除该方案。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未把exit71归因候选P1；未假定普通Terminal已可行；未以flags/Playwright/lsof替代强制隔离；未安排同任务A失败后切B/C；未启动服务/浏览器、未联网、未安装、未提权、未改候选；功能矩阵次数保持0，报告含TASK_STATE_OK。",
+  "node": "在不降低localhost-only与候选冻结边界的前提下，为47EF67确定一条可实际执行的最小后继路径",
+  "pointers": [
+    "docs/collaboration/部门/测试部/报告/2026-08-09-47EF67-localhost浏览器终验环境阻断报告.md",
+    "docs/collaboration/部门/测试部/报告/TASK-20260809-47EF67-evidence/evidence-manifest.json",
+    "docs/collaboration/部门/安全部/报告/2026-08-09-公开前端浏览器A-B-C分层与localhost-only验收合同安全裁决.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-09-47EF67环境阻断后最小替代执行面安全裁决.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-43AE8C",
+  "title": "公开前端终验Seatbelt环境阻断后的最小替代执行面安全裁决",
+  "unverified": [
+    "普通Terminal能否成功apply两份Seatbelt仍为P2/Unknown，唯一收敛出口为不启动App/浏览器的Phase0；五Function、A/B请求、C实际行为和视觉/a11y均未运行；PF/DTrace从未产生外联意图不可证明；B离线runner未获执行授权。"
+  ],
+  "updated_at": "2026-08-09T22:38+08:00",
+  "verified": [
+    "47EF67报告SHA=a5d267d60dac6f024914b13d21a6dfb7a7c5825599bd62f46b653205bf6f1b60；manifest SHA=233990a997171e883d33cae31e374358b47f511b58923d80135e6ffc01cb434d；既有A/B/C裁决SHA=2a2b326c99ded98d04ec57f54a3960f2bed6227867f3444e29a3fe41a7f80f82；browserRunStarted=false、functionMatrixRunCount=0；三路互斥比较完成，推荐固定M1普通Terminal双Seatbelt方案A；P0=0/P1=0/P2=1。"
+  ]
+}

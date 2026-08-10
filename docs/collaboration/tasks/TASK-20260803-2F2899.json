@@ -1,0 +1,56 @@
+{
+  "acceptance_exit": "三份当前真值文档时态一致；不再声称前端独立核收pending；准确保留两个P2与后端新快照重验；数据审核与开发门禁不前置；链接和git diff --check、task doctor通过；产品报告与TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/spec.md",
+    "docs/progress.md",
+    "docs/handoff.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-04-M4公开前端PASS与v0.4数据门禁状态同步报告.md"
+  ],
+  "authorization_evidence": "用户要求持续推进并保持部门真值清晰；两份独立前端审核已PASS并由统筹ACK。",
+  "authorization_history": [
+    {
+      "at": "2026-08-03T12:58+08:00",
+      "evidence": "用户要求持续推进并保持部门真值清晰；两份独立前端审核已PASS并由统筹ACK。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/执行成员:/root/product_frontend_pass_sync",
+  "completion_class": "standard",
+  "confirmation": "仅同步已发生里程碑，不新增产品决定或用户门禁。",
+  "created_at": "2026-08-03T12:58+08:00",
+  "department": "产品部",
+  "details": "根据TASK-20260803-5991EE与TASK-20260803-8C9709两份final报告及统筹ACK，只更新docs/spec.md、docs/progress.md、docs/handoff.md的实施时态：公开前端精确快照已获测试/设计PASS，P0=0/P1=0/P2=2；AT实机/200%/forced-colors和public-demo+SQLite/API接线后的新快照仍需重验。同步数据v0.4包已完成但正处安全/测试独立审查、开发接线未开放。不得改accepted ADR核心、app/data/design/lock或扩大真实外部能力。",
+  "domain_stage": "产品实施状态同步",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "把当前前端PASS扩大为SQLite/API、真实数据、生产或完整可访问性放行：FAIL并纠正。",
+    "修改accepted ADR正文或覆盖数据/开发未验证边界：越界FAIL。",
+    "三份文档出现不同任务状态或链接失效：停止完成并修正。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "对抗审查发现handoff误写C29BB8/CD4228为completed及D53BF3并发从claimed变completed；已按任务JSON改为前两项acknowledged、D53BF3 completed待聚焦复验，并清理progress旧审核排队/claimed时态。未改accepted ADR、app、data、design或lock，未把数据部自验写成独立PASS。",
+  "node": "把已ACK的前端测试/设计PASS同步到Spec、progress、handoff，不改变accepted合同",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260803-5991EE.json",
+    "docs/collaboration/tasks/TASK-20260803-8C9709.json",
+    "docs/spec.md"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-04-M4公开前端PASS与v0.4数据门禁状态同步报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260803-2F2899",
+  "title": "同步公开前端独立PASS与后端门禁现状",
+  "unverified": [
+    "D53BF3整改包尚未取得安全部与测试部聚焦复验PASS；SQLite双库/migration/seed/Repository/API/前端接线、AT实机、原生200%缩放、真实forced-colors、真实外部能力均未验证或未实现。"
+  ],
+  "updated_at": "2026-08-04T13:01+08:00",
+  "verified": [
+    "三份真值文档与产品final报告已同步：公开前端测试/设计PASS P0=0/P1=0/P2=2且已ACK；AT/200%/forced-colors与public-demo+SQLite/API新快照待重验；v0.4首轮安全FAIL 0/4/1、测试FAIL 0/1/1且已ACK；D53BF3已completed、待安全/测试按新SHA聚焦复验，开发接线关闭。Markdown链接49项全部存在；git diff --check exit0；TASK_DOCTOR_OK tasks=114 full_history_validated=true。"
+  ]
+}

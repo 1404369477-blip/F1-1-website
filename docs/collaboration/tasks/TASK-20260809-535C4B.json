@@ -1,0 +1,58 @@
+{
+  "acceptance_exit": "交付机器可校验、P0/P1=0的Admin映射包：每个DTO槽位都有唯一现有字段或internal receipt来源；approve与manual publish的Publication/Outbox时序唯一且使{publicId}路由可达；validator证明无新增领域实体、无public-synthetic hash/count漂移、external_calls=0。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "data/admin-review-mapping-v0.1/admin-review-mapping.json",
+    "data/admin-review-mapping-v0.1/mapping.schema.json",
+    "data/admin-review-mapping-v0.1/fixtures.synthetic.json",
+    "data/admin-review-mapping-v0.1/validate_mapping.py",
+    "data/admin-review-mapping-v0.1/manifest.json",
+    "docs/collaboration/部门/数据部/报告/2026-08-09-Admin DTO与Publication预留时序机器映射报告.md"
+  ],
+  "authorization_evidence": "本地proposed mapping/validator，external_calls=0",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T10:05+08:00",
+      "evidence": "本地proposed mapping/validator，external_calls=0",
+      "state": "none"
+    }
+  ],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "019fb371-9834-78d3-a7b3-4f4c62819520",
+  "completion_class": "standard",
+  "confirmation": "本任务只产出proposed机器映射与报告；第三profile、migration、app实现、真实内容、Base/provider、自动发布和外部I/O仍未授权。",
+  "created_at": "2026-08-09T10:05+08:00",
+  "department": "数据部",
+  "details": "吸收已ACK的产品TASK-20260809-97700F、数据TASK-20260809-1C2D4B以及accepted路由 POST /api/admin/publications/{publicId}/publish。当前冲突：产品合同在approve时创建唯一queued Publication并返回publicId，数据报告在manual publish时才创建Publication，导致路径参数在操作前不存在。请以accepted state machine和唯一Publication/key不变量复核，形成版本化机器映射包和validator：逐项把Admin列表/详情/operation/revision/approve/reject/publish DTO槽位回指到v0.3领域/internal字段；冻结approve是否在同一事务预留Publication/publicId/idempotency/reconcile identity、此时严禁Outbox dispatch，manual publish何时创建/复用Outbox/TaskEnvelope并推进queued→publishing→published；给出CAS、事务、重复操作和失败恢复。允许新增 data/admin-review-mapping-v0.1/ proposed mapping/schema/fixtures/validator 与数据部报告；不得改frozen v0.3/v0.4、app、migration、Spec或accepted ADR，不运行外部I/O。若现有合同不能唯一决定时序，提交最小二选一及推荐，不自行绕过路由。",
+  "domain_stage": "M5人工审核数据合同闭合",
+  "event_receipts": [
+    "MIL-20260809T101609-76AC46"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "accepted route/state-machine/product合同无法同时满足：输出唯一冲突与最小successor选择，保持P1，不制造临时publicId或第二Publication。",
+    "DTO槽位没有既有字段来源：标为阻断并回产品删减或提出internal映射，不用payload_json猜字段。",
+    "validator需要写SQLite、重生成frozen fixture或访问外部：停止该动作，仅做离线schema/mapping校验。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已纠正前序manual publish才创建Publication的过时时序；区分approve后admin publish路径可寻址与Projection成功后公开故事可读；未创建第二Publication/publicId/schema或跨profile copy；首轮validator组合owner白名单遗漏已fail closed修正并重跑全部验证；无审批/提权等待",
+  "node": "消除审核合同和SQLite映射对Publication创建时点的冲突",
+  "pointers": [
+    "docs/spec/F1+1-M5最小人工审核台纵切产品合同-v0.1.md"
+  ],
+  "report": "docs/collaboration/部门/数据部/报告/2026-08-09-Admin DTO与Publication预留时序机器映射报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-535C4B",
+  "title": "闭合Admin DTO映射与Publication预留时序",
+  "unverified": [
+    "未实现或运行SQLite/migration/Repository/API/Admin UI/worker/session/CSRF/真实发布事务；第三profile及app配置仍需后继授权；未访问Base/provider/Collector、未导入真实内容、未启动网站或执行外部I/O"
+  ],
+  "updated_at": "2026-08-09T10:18+08:00",
+  "verified": [
+    "11类Admin DTO共111槽位逐项唯一映射；approve同事务预留1个queued Publication/publicId且Outbox=0/TaskEnvelope=0/Projection=0；manual publish才建立同key Outbox/TaskEnvelope，成功后唯一Projection使同profile stories/{publicId}可读，unknown保持同一identity进入reconcile_wait；validator连续两次独立reload PASS且三项聚焦负例拒绝；v0.3 manifest 11/11、v0.4全artifact hash与public-synthetic精确1/12/12/12/10/12/12/12/12零漂移；external_calls=0，git diff check通过，无pycache残留"
+  ]
+}

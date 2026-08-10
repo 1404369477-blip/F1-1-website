@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "统筹部获得可直接执行的白名单式Git基线方案，每个后验改动都有保留/待合同/未知分类，清理目标精确到路径且不会误删用户成果。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-08-前端验收后改动溯源与安全Git基线报告.md",
+    "docs/collaboration/部门/开发部/报告/2026-08-08-TASK-20260808-9EE352-Git基线白名单.md",
+    "docs/collaboration/部门/开发部/报告/2026-08-08-TASK-20260808-9EE352-Git基线路径清单.tsv"
+  ],
+  "authorization_evidence": "当前主会话 2026-08-08：用户确认将 8 月 8 日最新视觉 Demo 作为本轮正式落地基准并要求继续推进",
+  "authorization_history": [
+    {
+      "at": "2026-08-08T21:57+08:00",
+      "evidence": "当前主会话 2026-08-08：用户确认将 8 月 8 日最新视觉 Demo 作为本轮正式落地基准并要求继续推进",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/019fb374-7c86-7882-9e51-76114ce69e7f",
+  "completion_class": "standard",
+  "confirmation": "本任务只产出清单；任何删除、Git提交或正式代码改动需后续独立任务和对应门禁。",
+  "created_at": "2026-08-08T21:57+08:00",
+  "department": "开发部",
+  "details": "只读核对测试/安全报告完成后发生变化的 public-api.ts、f1-page-shell.tsx、public-ui.test.ts、globals.css、feed-experience.tsx；逐项判断与最终设计的关系、是否应保留、需补合同还是疑似杂项；生成精确Git纳入/排除清单、迁移归档与本机残留清理清单、潜在敏感文件检查结果和安全建基线步骤；不得修改app、删除文件、暂存、提交或运行全量测试。",
+  "domain_stage": "开发开工复核",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "无法确认某项改动来源：标记unknown并保留，不回滚不删除。",
+    "发现密钥、个人信息或生产凭据：停止扩散，只报告脱敏路径和处置建议。",
+    "清理候选与正式产物或迁移证据重叠：从自动清理清单移除并请求统筹裁决。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查错题集与任务边界；未把mtime当作者证明，未把最终Demo写成已实现app，未扩张测试/安全PASS到后验修改，未删除未知文件或扩散敏感值；未修改app/Spec/ADR/data/design，未暂存、提交、重置、回滚、删除或运行全量测试；交接文档已同步，3AF992/C25855旧JSON未手改",
+  "node": "先识别当前代码来源和可保留范围，不继续叠加实现",
+  "pointers": [
+    "docs/collaboration/部门/测试部/报告/2026-08-07-v0.2时间线前端独立验收报告.md"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-08-前端验收后改动溯源与安全Git基线报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260808-9EE352",
+  "title": "前端验收后改动溯源与安全Git基线清单",
+  "unverified": [
+    "五目标文件在2026-08-07 20:20验收时的逐字节blob；三个后验文件的作者归属；TASK-20260808-54BB47冻结完成与最终清单；中间设计PNG长期归档策略；冲突迁移目录恢复来源与保留价值；实际staged blob扫描（本任务禁止暂存）"
+  ],
+  "updated_at": "2026-08-08T22:13+08:00",
+  "verified": [
+    "HEAD/两次Git历史/无remote/11个tracked修改与765个untracked快照；五目标文件均无Git blob历史；两文件合同语义相符但归属证据不完整，三文件为验收后中间方案并待合同；迁移四目录与post-clean真值冲突且已排除自动清理；逐文件Git分类清单与敏感路径扫描完成；只读对抗审查P0=0/P1=6/P2=4并已吸收"
+  ]
+}

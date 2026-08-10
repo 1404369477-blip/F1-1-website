@@ -1,0 +1,54 @@
+{
+  "acceptance_exit": "提交唯一A/B/C裁决和可直接派给开发部的实现级页面服务合同候选；逐项证明单进程、单profile、单DB、单writer、exact loopback、no-egress、raw authority/session/CSRF、真实/admin/sources入口与同源API成立；绑定v2冻结视觉manifest及其用户确认门；列出Function ID、文件边界、正常/错误/恢复、1440/1024/390深浅证据和测试/安全门；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/decisions/system/2026-08-10-F1+1-SOURCE-MGMT-001真实Admin页面服务模型-proposed.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-10-SOURCE-MGMT-001真实Admin页面服务模型唯一裁决报告.md"
+  ],
+  "authorization_evidence": "用户持续目标要求推进有前端、必要数据库和核心功能可用初版，并明确要求把规划与执行分配给对应部门；本任务仅做无外部I/O的产品架构裁决。",
+  "authorization_history": [
+    {
+      "at": "2026-08-10T01:04+08:00",
+      "evidence": "用户持续目标要求推进有前端、必要数据库和核心功能可用初版，并明确要求把规划与执行分配给对应部门；本任务仅做无外部I/O的产品架构裁决。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "本任务只裁决页面服务模型和生成候选合同；正式UI实现仍需用户确认SOURCE-MGMT v2视觉且91AF6E及独立测试/安全闭环。",
+  "created_at": "2026-08-10T01:04+08:00",
+  "department": "产品部",
+  "details": "完整读取SOURCE-MGMT v0.3合同与安全复验、TASK-20260809-08CCEF冻结manifest、BDBD33/F213DE/91AF6E当前实现和app/src/server/source-management、serve.ts、现有Next公开App结构。只做产品/架构裁决，不改app、design、data、Spec或accepted ADR。必须在A=raw source server同进程直接提供构建后的自包含Admin shell并同源调用API、B=把Admin API与页面统一纳入受控Next进程且继续满足raw authority/session/CSRF/no-egress/single profile/writer、C=其他可证明满足全部约束的最小模型中给出唯一推荐；不得采用额外sidecar/第二端口/第二进程/第二writer、孤立不可达Next页面、静态假数据页或绕过raw gate。输出精确启动拓扑、route/asset/API同源关系、session/CSRF/bootstrap、CSP/cache、Mac/iPhone功能等价、状态/恢复、build与运行边界、现有文件落点、最小开发切片、独立测试/安全/设计出口。若推荐需要改变accepted ADR或安全合同，只提交差异与唯一用户确认点，不自行接受。",
+  "domain_stage": "M5-SOURCE-MGMT Admin页面架构前置",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "无法在现有约束下形成单进程真实页面入口：block并列出最小冲突，不以sidecar或第二端口绕过。",
+    "推荐需要修改accepted ADR、安全合同、依赖或新增外部能力：停止在候选层，列唯一用户确认点，不改正式合同。",
+    "视觉v2尚未用户确认或91AF6E后端未闭环：明确保持implementation closed，不把合同候选写成实现授权或完成。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查未把孤立Next页面或静态Demo写成运行出口，未采用sidecar/第二进程/第二端口/第二writer，未把proposed或设计冻结外推为实现完成，未修改app/data/design/Spec/accepted ADR，未开放provider/Base/真实数据/部署/外部I/O。",
+  "node": "为/admin/sources确定在source-management-synthetic约束下真实可达的唯一页面服务模型",
+  "pointers": [
+    "docs/spec/F1+1-M5-SOURCE-MGMT-001本地信源管理纵切产品合同-v0.3.md",
+    "docs/collaboration/部门/统筹部/报告/2026-08-09-SOURCE-MGMT-001视觉候选统筹冻结manifest.json",
+    "docs/collaboration/tasks/TASK-20260810-91AF6E.json"
+  ],
+  "report": "不适用",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260810-8A055D",
+  "title": "SOURCE-MGMT-001真实Admin页面服务模型唯一裁决",
+  "unverified": [
+    "TASK-20260810-91AF6E仍queued；v2视觉尚未用户确认；同进程Next production handler在no-egress下的实际进程/网络行为、CSP nonce、真实页面、1440/1024/390深浅运行证据和物理iPhone可达均未验证，implementation保持closed。"
+  ],
+  "updated_at": "2026-08-10T01:20+08:00",
+  "verified": [
+    "唯一推荐B已冻结；同进程/单listener/单profile/单DB/单writer、raw-before-Next、exact loopback、no-egress、真实/admin/sources与同源API、session/CSRF、CSP/cache、文件边界、状态恢复、六格证据门和三条失败路径均已形成可直接派开发的closed候选；输入hash、任务时态、当前代码落点、Markdown链接与task doctor已机械核对。"
+  ]
+}

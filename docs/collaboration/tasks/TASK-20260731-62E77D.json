@@ -1,0 +1,59 @@
+{
+  "acceptance_exit": "输出可机器读取且59个唯一URL一一覆盖的CSV，以及说明分类口径、未知项、重复/格式问题和后续复核队列的Markdown报告；原始文件哈希前后不变；CSV主键唯一、canonical_url唯一、枚举合法；列出已验证/未验证和错题自检；完成TASK并输出TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "data/x-source-inventory-v0.csv",
+    "research/x-source-classification-data-dictionary-v0.md"
+  ],
+  "authorization_evidence": "主会话用户于2026-07-31明确要求整理分类文件中的信源。",
+  "authorization_history": [
+    {
+      "at": "2026-07-31T19:00+08:00",
+      "evidence": "主会话用户于2026-07-31明确要求整理分类文件中的信源。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "数据部/019fb371-9834-78d3-a7b3-4f4c62819520",
+  "completion_class": "standard",
+  "confirmation": "用户明确要求查看文件、整理分类信源并考虑信源库长期维护。",
+  "created_at": "2026-07-31T19:00+08:00",
+  "department": "数据部",
+  "details": "读取用户新增的 F1+1信源.md。保留原文件不修改，识别其实际为RTF内容且扩展名错误。提取并规范化全部X链接，去除追踪参数，大小写去重，建立结构化信源清单v0并分类：官方组织/车队/赛事、现役或退役车手及管理者、记者评论员及媒体、车迷资讯聚合、图片娱乐或其他。每条记录至少包含稳定source_id、platform、handle、canonical_url、entity_type、content_focus、identity_status、monitorability、priority、lifecycle_status、added_at、evidence_url、notes。无法可靠确认身份时标unknown，不得凭账号名猜成官方。另写简短数据字典与维护规则建议，输出CSV和Markdown报告。用户已确认X首版收原创帖和引用帖、排除回复与纯转帖，将其记为proposed采集规则，不等于平台授权。",
+  "domain_stage": "M2风险调研",
+  "event_receipts": [
+    "MIL-20260731T191209-8665B6"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "发现账号不存在、改名或身份冲突时保留原handle并标identity_status=needs_review，不擅自删除或替换。",
+    "公开页面或搜索无法核验时保持unknown并记录证据缺口，不使用第三方聚合页作为官方身份的唯一证明。",
+    "RTF解析、换行或大小写导致数量不等于59时停止完成，给出差异清单并修正提取逻辑。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已读取错题集；当前没有正式错题条目。额外自检了RTF扩展名错配、追踪参数、大小写去重、59条集合相等、未核验身份不得标verified及原文件哈希保护，均未命中遗漏。",
+  "node": "M2-信源库数据建模",
+  "pointers": [
+    "F1+1信源.md"
+  ],
+  "report": "完成X信源清单v0：59条唯一X链接逐条写入CSV，并提交分类口径、数据字典、未知项、格式/重复问题、复核队列与维护规则报告。所有身份和监控结论保持保守unknown；用户确认的原创帖/引用帖纳入、回复/纯转帖排除仅记录为proposed采集规则。",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260731-62E77D",
+  "title": "整理首批X信源并建立结构化信源清单v0",
+  "unverified": [
+    "59个账号的实时存活、当前handle、身份及官方性尚未逐项核验，identity_status统一为unknown。",
+    "内容样本、F1相关性、原创/引用/回复/纯转帖结构尚未抽样统计。",
+    "X平台合规接口权限、可监控性及15分钟发现目标尚未实测，monitorability统一为unknown。"
+  ],
+  "updated_at": "2026-07-31T19:13+08:00",
+  "verified": [
+    "输入文件处理前后SHA-256均为135e9bcae84124a57d1599a9a1cb85ca0a08be1cccda3e54a3d118391a2b074d，原文件未改。",
+    "输入抽取59个URL且大小写无关规范化后仍为59个唯一URL；CSV含59条数据，canonical_url集合与输入严格相等，缺失0、额外0。",
+    "source_id与canonical_url各59个唯一值；字段齐全，entity_type、content_focus、identity_status、monitorability、priority、lifecycle_status枚举均合法。",
+    "只读对抗审查PASS，未发现阻断、重要或一般问题；git diff --check通过。"
+  ]
+}

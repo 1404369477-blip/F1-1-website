@@ -1,0 +1,57 @@
+{
+  "acceptance_exit": "交付不可歧义的accepted successor ADR与v0.2实施合同；两个hash由至少两种独立实现复算一致；fixture closed条件可机械表达且仅012例外，其他case零漂移；逐项给开发实现/测试断言/失败恢复和回退；三路产品/领域/安全对抗审查P0=0/P1=0；开发无需再次做产品选择即可resume D6114C。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/decisions/system/2026-08-09-F1+1-VS1本地synthetic纵切-successor-accepted.md",
+    "docs/spec/F1+1-VS1本地synthetic纵切实施合同-v0.2.md",
+    "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md",
+    "docs/spec/README.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-09-VS1事件golden与Summary缺失条件successor报告.md"
+  ],
+  "authorization_evidence": "既有VS1用户确认；TASK-20260809-D6114C阻断证据；统筹独立hash复算",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T12:13+08:00",
+      "evidence": "既有VS1用户确认；TASK-20260809-D6114C阻断证据；统筹独立hash复算",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "用户要求先完成再完美并落实全部功能；开发D6114C按合同发现两处机械矛盾后正确停止，统筹依据固定公式作最小技术裁决。",
+  "created_at": "2026-08-09T12:13+08:00",
+  "department": "产品部",
+  "details": "以TASK-20260809-D6114C开发阻断证据为输入，只发布VS1本地synthetic纵切的最小accepted successor，不改写旧accepted历史。裁决1：event-dedup-v1公式和HAPPY固定英文article/en输入保持不变，VS1-EVENT-DAY-005 golden更新为独立复算值：2026-08-09=4fbc236a8b27e1f1f45b7165ed5a2374ba35730aaa49f860a2ff94c46874c6b1，2026-08-10=11aef98ca09276504ed792c50ace95f8d072d0a53bdfd0e2d756e3e12c8c8301；不得改用旧中文候选输入。裁决2：保留SUMMARY_FIXTURE_NOT_ALLOWLISTED真实Summary阶段失败覆盖；将VS1-SUMMARY-MISSING-012定义为closed schema中唯一显式条件分支：该case adapter_outcome=candidate时candidate必需、mock_summary必须缺失/禁止，其余candidate case仍必须含mock_summary；parser按case_id条件闭合，adapter产出候选，Summary allowlist lookup失败，结果事务回滚并terminal/dead-letter。不得用一般额外字段、运行时任意注入、第二schema或把预期降为INVALID_FIXTURE绕过。同步v0.2 successor合同、ADR入口、Spec索引和矩阵指针/时态；不改App/data/design/依赖/旧accepted字节。",
+  "domain_stage": "M5 VS1实施合同P1纠错",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若canonical-json-v1独立实现复算不一致，停止accepted并提交精确字节/编码差异，不选择任一hash。",
+    "若单一条件分支无法由现有fixture parser/schema表达，停止并提出一个最小字段级裁决，不新增领域实体或第二schema。",
+    "若修订影响两处之外的case/state/hash，保持旧合同有效并把扩张项另拆，不在本successor混入。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未原地修改旧accepted/v0.1；未改变event算法或英文输入迁就旧hash；未把012降为INVALID_FIXTURE；未扩例外到其他case；未改app/data/design/依赖或开启外部能力",
+  "node": "解除DEV-VS1两处accepted合同机械矛盾",
+  "pointers": [
+    "docs/spec/F1+1-VS1本地synthetic纵切实施合同-v0.1.md",
+    "docs/collaboration/tasks/TASK-20260809-D6114C.json",
+    "docs/decisions/system/2026-08-09-F1+1-VS1本地synthetic纵切-accepted.md"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-09-VS1事件golden与Summary缺失条件successor报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-5708AA",
+  "title": "修订VS1事件golden与Summary缺失fixture冲突",
+  "unverified": [
+    "D6114C app实现、fixture parser运行、012事务、mandatory suite和测试/安全正式运行ACK尚未发生；须待统筹ACK后恢复；061961保持queued且仍等待本任务与1D7401 ACK"
+  ],
+  "updated_at": "2026-08-09T12:25+08:00",
+  "verified": [
+    "两个exact canonical bytes由Python与Node独立复算一致为4fbc236a...c6b1/11aef98c...8301；012是全registry唯一candidate缺mock_summary例外并到达SUMMARY_FIXTURE_NOT_ALLOWLISTED后全回滚/terminal/dead-letter；predecessor ADR/v0.1 SHA逐字未变；产品/领域/安全三路P0=0/P1=0；diff/链接/doctor通过"
+  ]
+}

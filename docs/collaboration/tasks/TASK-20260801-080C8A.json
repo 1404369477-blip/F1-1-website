@@ -1,0 +1,56 @@
+{
+  "acceptance_exit": "提交开发交接文档和机器可读token/映射，覆盖四页、核心组件、全部关键状态、响应式、无障碍、深浅主题与素材许可边界；复用现有可视化样板并说明差异为0或列明差异，不需重新让用户选择视觉方向；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "design/ui/F1+1-首批页面实现级设计合同-v0.1.md",
+    "design/ui/F1+1-首批页面token-map-v0.1.json"
+  ],
+  "authorization_evidence": "用户授权全员开工及本地app搭建；设计方向已在前序任务确认。决策日志DEC-20260801T223248-7C91D6。",
+  "authorization_history": [
+    {
+      "at": "2026-08-01T22:35+08:00",
+      "evidence": "用户授权全员开工及本地app搭建；设计方向已在前序任务确认。决策日志DEC-20260801T223248-7C91D6。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "design",
+  "completion_class": "standard",
+  "confirmation": "本任务执行已确认视觉方向的开发交接，不包含新视觉方向、正式app实现或外部发布。",
+  "created_at": "2026-08-01T22:35+08:00",
+  "department": "设计部",
+  "details": "以design/ui/F1+1-全站设计规范-v0.1.md及深浅主题样板为已确认视觉方向，不重开风格探索。请设计部拆出首批本地闭环页面：公开信息流、内容详情、审核队列、信源管理；定义组件清单、栅格/断点、深浅主题token、卡片/图片/来源/状态标签、加载/空/错误/无更多、审核动作、键盘/焦点/对比度/减少动画规则，并给开发可消费的token文件或明确映射。只使用本地设计资源和已批准参考；不引入未授权图片、付费字体、F1商标素材或外部发布。不得改Spec/accepted ADR/app正式代码。",
+  "domain_stage": "M4设计开发交接",
+  "event_receipts": [
+    "jq empty + schema/page/state assertions; git diff --check; local-link file tests; file PNG/HTML/MD/JSON; three read-only adversarial passes: completeness, token consistency, scope/licensing/app isolation."
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "现有规范无法支撑某交互时只提出最小补充并标明需产品吸收，不静默改变视觉方向或产品流程。",
+    "素材版权、F1商标或外部字体许可不明时使用中性占位和系统字体，不下载或嵌入。",
+    "token与样板出现冲突时以已确认规范为准，记录冲突并停止交付不一致值。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "确认视觉方向差异为0；没有新增业务主状态；Appica 仅作组件行为与语义参考；未引入未授权素材、付费资源、F1/BMW/Apple 商标或专有字体；没有改 Spec/accepted ADR/app。",
+  "node": "把已确认全站规范转成开发可直接使用的页面、组件、状态与token交接包",
+  "pointers": [
+    "design/ui/F1+1-全站设计规范-v0.1.md",
+    "design/ui/F1+1-全站视觉样板-v0.1.html",
+    "docs/spec.md"
+  ],
+  "report": "交付开发交接文档与机器可读 Token/映射，四页、核心组件、状态、响应式、无障碍、深浅主题和素材边界均已覆盖；复用既有视觉样板，差异为0。",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260801-080C8A",
+  "title": "交付F1+1首批页面实现级设计合同",
+  "unverified": [
+    "真实应用代码接入、生产字体与新闻摄影、Logo/商标授权、VoiceOver/NVDA/TalkBack 实机、SSR/RSC 与实际页面截图尚未验证；任务明确禁止在本任务修改 app。"
+  ],
+  "updated_at": "2026-08-01T22:45+08:00",
+  "verified": [
+    "JSON 解析与结构断言通过；四页均含 layout/components/states/a11y；深浅主题 canvas/action/signal 与全站规范一致；覆盖 7 个响应式宽度、减少动效、强制色、焦点、对比度、空/加载/错误/部分成功/受限/无更多状态；本地链接存在；既有深浅 PNG 均为 1440x5397；git diff --check 通过；未写入 app/、Spec 或 ADR。"
+  ]
+}

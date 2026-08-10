@@ -1,0 +1,78 @@
+{
+  "acceptance_exit": "目标交接文档时态一致；删除与保留边界、任务状态、PASS收据和外部能力closed准确；链接不把已删除文件描述为现存；git diff --check与task doctor通过；提交统筹部收口报告并以TASK_STATE_OK结束。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/handoff.md",
+    "docs/progress.md",
+    "migration/CURRENT-HANDOFF.md",
+    "migration/README-FIRST.md",
+    "migration/README-M5-macOS26.6.md",
+    "docs/collaboration/部门/统筹部/报告/2026-08-02-新Mac迁移清理与施工恢复收口报告.md"
+  ],
+  "authorization_evidence": "主任务会话019fb2b1-fb60-7792-adb4-e0e876a32947：用户2026-08-02要求继续任务并整合部门窗口。",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T22:41+08:00",
+      "evidence": "主任务会话019fb2b1-fb60-7792-adb4-e0e876a32947：用户2026-08-02要求继续任务并整合部门窗口。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "completion_class": "standard",
+  "confirmation": "用户已授权完整复验、清理、恢复并在2026-08-02明确要求继续任务；本任务只同步本地文档真值。",
+  "created_at": "2026-08-02T22:41+08:00",
+  "department": "统筹部",
+  "details": "替代因impact声明路径错误而blocked的TASK-20260802-E6623B。基于已ACK的测试任务TASK-20260802-574A6D和安全任务TASK-20260802-026EC3，只更新docs/handoff.md、docs/progress.md、migration/CURRENT-HANDOFF.md及必要迁移README；记录M5 macOS26.6终验、清理边界、9/9任务同步及当前7A9C48与6F7563状态。不得改Spec、accepted ADR、app、data、design，不重建归档或缓存，不写凭证。",
+  "domain_stage": "M4-migration-cleanup-closure",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "把已删除迁移归档或脚本写成仍存在，或删除历史hash：FAIL并按终验收据修正。",
+    "把7A9C48、VS-0安全、R5、R12或6F7563候选写成已完成或放行：FAIL并恢复三轴门禁。",
+    "写入触及Spec、ADR、app、data、design、凭证值或外部资源：立即停止并回报。"
+  ],
+  "from_department": "统筹部",
+  "impact_declaration": {
+    "admission": "manual",
+    "base_revision": "a9691e71b1552592cc5ded8d5db66c336262301c",
+    "external_effects": [
+      "none"
+    ],
+    "owner_task": "TASK-20260802-49B4AF",
+    "shared_contracts": [
+      "M4 migration cleanup and resume truth"
+    ],
+    "write_paths": [
+      "docs/handoff.md",
+      "docs/progress.md",
+      "migration/CURRENT-HANDOFF.md",
+      "migration/README-FIRST.md",
+      "migration/README-M5-macOS26.6.md"
+    ]
+  },
+  "mistake_check": "已区分迁移PASS、开发任务PASS、测试/安全独立结论、业务阶段与用户授权；保留026EC3 FAIL和历史hash；未把7A9C48/FFC67A/VS-0/R5/R12/6F7563或真实外部能力误写为放行；未改Spec/ADR/app/data/design，未重建归档或缓存，未记录凭证值。",
+  "node": "M4-MIGRATION-CLEANUP-CLOSURE-R2",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260802-E6623B.json"
+  ],
+  "report": "docs/collaboration/部门/统筹部/报告/2026-08-02-新Mac迁移清理与施工恢复收口报告.md",
+  "resolution": null,
+  "revision": 5,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-49B4AF",
+  "title": "收口新Mac迁移清理并刷新项目交接真值（替代）",
+  "unverified": [
+    "测试部FFC67A与安全部6F7563仍在执行，7A9C48尚未统筹ACK，后继独立安全复验尚未完成。",
+    "飞书OAuth/Keychain重新登录后的auth、scope、具体资源ACL与真实资源可读性未验证；真实Base/provider/Collector、平台采集、AI/媒体、发布、部署、付费和外部I/O继续closed/Unknown。",
+    "Local REST新凭证重生成、客户端重配、证书信任与实际监听状态未验证；测试部进程枚举受sysmond限制的P2 Unknown继续保留。"
+  ],
+  "updated_at": "2026-08-02T23:09+08:00",
+  "verified": [
+    "已依据ACK的574A6D与026EC3刷新五份交接真值，准确记录M5/macOS26.6终验、298.6MiB项目与6.6MB Homebrew清理、删除/保留边界、9/9任务同步和凭证处置时态。",
+    "git diff --check、尾随空白检查、Markdown链接检查、删除/保留路径检查、conversations SHA256SUMS 10/10与两路只读对抗审查均通过。",
+    "完成前实时任务真值：7A9C48=completed待统筹ACK，FFC67A=claimed独立测试中，6F7563=claimed候选合同中；VS-0仍FAIL，R5待用户门禁，R12 pending，真实外部能力closed/Unknown。"
+  ]
+}

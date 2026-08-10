@@ -1,0 +1,50 @@
+{
+  "acceptance_exit": "唯一差异为5项严格类型收敛且安全报告SHA与Repository SHA仍匹配；typecheck、build、单个3019 HTTP关键session/CSRF/list/add/validate/activate/stop/retire/requeue/operation正反链、closed receipt和protected after comparison均PASS；exact loopback实际地址、all-aware/wildcard负例和所有出站拒绝语义不漂移；server/DB/guard/profile lock/WAL/SHM/端口/tmp完整清理。提交successor开发报告、机器manifest、已验证/未验证/错题自检并TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/evidence/TASK-20260810-91AF6E/manifest.json",
+    "docs/collaboration/部门/开发部/报告/2026-08-10-91AF6E五项Node24静态类型收敛与SOURCE-MGMT启动闭环报告.md"
+  ],
+  "authorization_evidence": "用户持续目标授权推进本地初版；本任务仅关闭已知静态类型点并完成既有本地synthetic验收链。",
+  "authorization_history": [
+    {
+      "at": "2026-08-10T00:37+08:00",
+      "evidence": "用户持续目标授权推进本地初版；本任务仅关闭已知静态类型点并完成既有本地synthetic验收链。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/019fb374-7c86-7882-9e51-76114ce69e7f",
+  "completion_class": "standard",
+  "confirmation": "完成后只唤醒既有测试2467B0与安全59C88E做同候选独立复验；不得外推UI、真实采集或整体SOURCE-MGMT完成。",
+  "created_at": "2026-08-10T00:37+08:00",
+  "department": "开发部",
+  "details": "承接blocked TASK-20260810-552BF1当前候选；聚焦安全门9/9已PASS，不重复。固定Node24 typecheck精确报5项：server.ts:98和src/tests/source-management-no-egress.test.ts:29的server.close callback必须显式处理可选Error；no-egress.ts:73两项wildcard比较被前置exact-host类型收窄为无交集，须保留显式wildcard拒绝但调整比较顺序或unknown/string局部变量，禁止删除实际地址复核；no-egress.ts:187的node:net Server类型没有closeAllConnections，须用安全报告允许的精确HTTP-server结构类型或显式能力窄化，禁止any/断言绕过/ts-ignore。只允许修改server.ts、no-egress.ts和该聚焦测试中的同根类型点；不改安全语义、测试向量、业务路由/SQL/session/CSRF、依赖、public/UI/data/Spec/ADR/package-lock。静态修改后只执行一次typecheck；PASS后沿用552BF1最终runner继续build→单个127.0.0.1:3019完整HTTP→closed receipt→protected after comparison→清理，不重复9/9、BDBD33 5/5或lint。",
+  "domain_stage": "M5-SOURCE-MGMT静态类型后继",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "typecheck仍有任何错误或需要any/断言绕过/删除wildcard复核/放宽Server能力：立即block，不运行build或HTTP。",
+    "build、首个HTTP、closed receipt、after comparison或清理任一失败：保存首错并停止，不重启或重复整链。",
+    "候选、安全报告、Repository、package-lock/public/旧profile任一hash漂移：停止并block，不自动吸收其他改动。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "保留552BF1 typecheck FAIL历史；未把cwd路径文本差异当源码漂移；未重复typecheck/build/9/9/5/5/lint；HTTP仅启动一次；未造requeue状态或绕过profile lock；未外推整体SOURCE-MGMT完成",
+  "node": "只关闭no-egress/listener候选的5个固定TypeScript错误，再运行此前未运行的build、3019 HTTP、closed receipt和清理链",
+  "pointers": [],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-10-91AF6E五项Node24静态类型收敛与SOURCE-MGMT启动闭环报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260810-91AF6E",
+  "title": "552BF1后继：五项Node24静态类型收敛与未运行链闭合",
+  "unverified": [
+    "测试部TASK-20260810-2467B0与安全部TASK-20260810-59C88E尚未对本精确候选独立复验；真实provider、外部API、public/Admin UI、部署与生产数据能力均未开启"
+  ],
+  "updated_at": "2026-08-10T07:58+08:00",
+  "verified": [
+    "固定Node24 typecheck唯一一次exit0；production build唯一一次exit0；精确三文件SHA与Repository/安全报告/package-lock匹配；对抗静态复核P0=0/P1=0；唯一127.0.0.1:3019 HTTP链PASS且externalCalls=0；closed receipt PASS；candidate/protected内容聚合前后一致；PID/端口/lock/WAL/SHM/tmp清理PASS"
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "提交安全部final报告，decision=pass或fail；逐项证明双主机故障域、公开站无法路由Admin、Admin无公网监听、应用层强认证、两端全功能、单写者与一致性备份、异故障域加密副本、≤15分钟恢复点、≤4小时恢复步骤、break-glass自动失效和可审计回退；列出尚待用户选择与部署实测项；独立威胁审查P0=0/P1=0才可PASS。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-09-M5-Admin双主机安全与四小时恢复基线审核报告.md"
+  ],
+  "authorization_evidence": "用户2026-08-09回复：A. 独立小型服务器",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T12:19+08:00",
+      "evidence": "用户2026-08-09回复：A. 独立小型服务器",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "用户明确选择A：独立小型服务器；此前已确认Mac+iPhone全功能、C方案、标准冗余、RTO≤4小时、RPO≤15分钟。",
+  "created_at": "2026-08-09T12:19+08:00",
+  "department": "安全部",
+  "details": "以用户已确认的独立小型服务器为唯一主机拓扑：公开站与Admin运行在不同主机、不同公网入口/网络策略、服务身份、会话/密钥域和最小权限边界；Admin日常仅经Mac/iPhone私有网络客户端访问，公网无Admin路由，break-glass默认关闭。结合既有C方案、RTO≤4小时、RPO≤15分钟和标准级冗余，交付独立主机的最小网络、身份、源站、数据、备份、监控、补丁、审计、故障切换与回退合同；明确公开站主机失陷、Admin主机失陷、私有通道故障、唯一写主故障和备份超龄时的隔离/恢复链。只设计与审查，不选供应商、不开通主机/DNS/TLS/账号/端口、不部署、不写真实凭据。涉及现行事实仅用官方或第一方权威资料，不用百度。",
+  "domain_stage": "M5 Admin独立主机安全架构",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若所谓独立主机仍共享反向代理Admin upstream、生产凭据、可写数据库身份或同一备份故障域，立即FAIL并给出最小拆分。",
+    "若备份频率、manifest/hash、异机保存或恢复演练无法机械证明RPO≤15分钟/RTO≤4小时，保持未达标，禁止以命令成功或活跃SQLite复制代替。",
+    "若中国大陆网络、具体私有通道、证书或设备兼容性缺少实测，标记Unknown并保留部署门禁，不推断可用性。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查：未把物理分机或私网当充分鉴权；未让公开主机持有主库凭据/共享挂载/Admin mutation；未形成第二真值或双向同步；未复制活动SQLite文件冒充一致性备份；未用数据库双活、跨地域双活、长期公网入口或命令成功冒充RPO/RTO；未实施外部动作；TASK_STATE_OK",
+  "node": "把独立小型Admin服务器选择转成可审核的安全与恢复基线",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-09-M5-Admin私有访问与Break-glass安全架构候选.md",
+    "docs/collaboration/部门/安全部/报告/2026-08-09-M5-Admin-RPO15分钟后继安全决策记录.md",
+    "docs/agent-guide.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-09-M5-Admin双主机安全与四小时恢复基线审核报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-1D7401",
+  "title": "Admin独立主机安全边界与四小时恢复基线",
+  "unverified": [
+    "具体主机/系统/供应商；真实监听/DNS/TLS/ACL；Mac/iPhone私有客户端和WebAuthn；SQLite参数与在线备份实现；投影传输机制；加密异故障域介质；备份保留期；告警和恢复演练；中国大陆三网、证书和平台能力"
+  ],
+  "updated_at": "2026-08-09T12:25+08:00",
+  "verified": [
+    "已核对TASK JSON、已ACK C方案报告和RPO后继决策记录；已把Admin独立主机承载应用/处理链/唯一写SQLite主库、公开主机仅持最小可重建只读投影写为硬边界；已覆盖双主机故障域、无公开Admin路由、Admin无公网监听、应用层强认证、Mac+iPhone完整能力、单向幂等可校验投影、单写者与SQLite一致性在线备份、异故障域加密副本、RPO不超过15分钟、RTO不超过4小时、break-glass自动失效、监控审计和回退；完成独立静态对抗审查P0=0/P1=0；未部署、未选供应商、未修改app/Spec/ADR/data/design或外部资源"
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "产出实现级设计合同 v0.2 文档：token、组件、状态、交互、响应式、可访问降级均可实施映射；指向现有草案文件；产品部提交报告与 TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "design/ui/F1+1-v0.2-实现级设计合同.md"
+  ],
+  "authorization_evidence": "用户要求推进各部门工作流（2026-08-07）",
+  "authorization_history": [
+    {
+      "at": "2026-08-07T14:06+08:00",
+      "evidence": "用户要求推进各部门工作流（2026-08-07）",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/统筹部并行子代理",
+  "completion_class": "standard",
+  "confirmation": "无需额外确认",
+  "created_at": "2026-08-07T14:06+08:00",
+  "department": "产品部",
+  "details": "用户已确认 v0.2 版面方向（时间线优先、单张主图+缩略图导航、展开交互）。将 design/ui/F1+1-v0.2-全站设计/ 下的 design-system.md 与 brand-spec.md 的 token/组件/状态/交互/响应式/可访问映射整理为可实施的设计合同 v0.2（含 URL 参数、lightbox、悬停预览等交互契约），供开发部落地；不修改 v0.1、不扩产品范围、不新增后端实体。",
+  "domain_stage": "design_contract_sync",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若发现草案缺交互细节，回指设计部补齐，不得自行改草案或扩大范围。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查错题集,无命中",
+  "node": "design-system-v0.2-contract",
+  "pointers": [
+    "design/ui/F1+1-v0.2-全站设计/design-system.md; design/ui/F1+1-v0.2-全站设计/brand-spec.md"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-07-实现级设计合同v0.2同步报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260807-EA00A8",
+  "title": "将 v0.2 收敛方向同步为实现级设计合同 v0.2",
+  "unverified": [
+    "开发部 6CD2FB 落地后按合同验收交互/视觉;真实设备可访问复验待测试部"
+  ],
+  "updated_at": "2026-08-07T19:43+08:00",
+  "verified": [
+    "合同提供可实施 token/组件/状态/交互/响应式/可访问映射;与 token-map/design-system/brand-spec/对比度验证一致"
+  ]
+}

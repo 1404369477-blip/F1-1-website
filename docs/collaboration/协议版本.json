@@ -1,0 +1,116 @@
+{
+  "generated_on": "2026-07-30",
+  "generator": "agent-team",
+  "managed_files": {
+    "README.md": {
+      "mode": "0600",
+      "sha256": "70e3f482b9bb53fba7b560055a337e685845c47391db3135f421283c6f974e6b"
+    },
+    "scripts/agent_team_log.py": {
+      "mode": "0755",
+      "sha256": "b006dddce48aa4e5bc2cb33260a62d95e60240d179dea506e71d4409763e62bf"
+    },
+    "scripts/agent_team_session.py": {
+      "mode": "0755",
+      "sha256": "7253ce1d034c98d2a7f52df7f9b41d18a3c870226aede0228fb5db687c8a989f"
+    },
+    "scripts/agent_team_task.py": {
+      "mode": "0755",
+      "sha256": "bb8b4242bfa5570830b7fce221069eade9cf989fc06296ac805788e58195a616"
+    },
+    "scripts/agent_team_temporary.py": {
+      "mode": "0755",
+      "sha256": "b1fb0300a7137c18bd5664e338e67107536df9bf44327f82c31f5156e1814812"
+    },
+    "任务交接模板.md": {
+      "mode": "0600",
+      "sha256": "ac84f23e4a5864e4aebf82407a8acc3cddd85ec7b4b12ea530b264d4b71a3ea4"
+    },
+    "会话启动清单.md": {
+      "mode": "0600",
+      "sha256": "5f2fd1d2f9e120a8652e666c359c20983e7947a2e60502e25085a0d7690dc9e5"
+    },
+    "模板/专项结论.md": {
+      "mode": "0600",
+      "sha256": "507ad5eeb9758246b20a8c2f0b8d88ec1b570732215487d749b00c98ae4ce442"
+    },
+    "模板/审核报告.md": {
+      "mode": "0600",
+      "sha256": "3fb70781f1616e7d3eaa1de748a0901ef34e98f923394505d942aee452b17bc8"
+    },
+    "模板/工作报告.md": {
+      "mode": "0600",
+      "sha256": "a94eebd7e11346e6e63dc59df745a32f6526cc9eec3a73e1c49f2b23cf020bab"
+    },
+    "路由表.md": {
+      "mode": "0600",
+      "sha256": "70f3544e54dea912727e008ca93a1ee2ee80866840722217a514b1ae954d271a"
+    },
+    "部门/产品部/上岗引导.md": {
+      "mode": "0600",
+      "sha256": "91959edc182a73e9272438463ca5612ac30e5139ad134fcef39704c71c10b3cf"
+    },
+    "部门/产品部/岗位说明.md": {
+      "mode": "0600",
+      "sha256": "6de9929c628a34dcb3c339ae46a56fce0a39bf062199965849c3a80f16669996"
+    },
+    "部门/安全部/上岗引导.md": {
+      "mode": "0600",
+      "sha256": "e2b06988877fcacad7d334dc5a02e21e67dded33ec3a6c8f8bd1f967ac92bbc0"
+    },
+    "部门/安全部/岗位说明.md": {
+      "mode": "0600",
+      "sha256": "7968f7a39e5d39666787e5524e8c463b8fe46c006d9e7c700e0576b1f57e8d9e"
+    },
+    "部门/开发部/上岗引导.md": {
+      "mode": "0600",
+      "sha256": "2e7e8cf0041dae34c72e11ffc1e046478bffa345a1e004cdf82ceac1cdc42803"
+    },
+    "部门/开发部/岗位说明.md": {
+      "mode": "0600",
+      "sha256": "2f8cc47c7de6c3ecf6a43913fca3c5d5b35ac2dc44b653f411654d6311562538"
+    },
+    "部门/数据部/上岗引导.md": {
+      "mode": "0600",
+      "sha256": "4409f199f153a556c51d22ad4cb8d1798d1108f96e1fcbe045c5d3963e906438"
+    },
+    "部门/数据部/岗位说明.md": {
+      "mode": "0600",
+      "sha256": "8a3b8e3c466e2ee337a4229b1e1518871f466475e13129d9fad8795cddcb7b14"
+    },
+    "部门/测试部/上岗引导.md": {
+      "mode": "0600",
+      "sha256": "9bb43d28c5f5b90896d550ca392b44b6f1c2719942ca705c6c7ecb22c2d01562"
+    },
+    "部门/测试部/岗位说明.md": {
+      "mode": "0600",
+      "sha256": "335c2d7da6c98d393352c9343cc67c93574a237cc0065ef9cc40fbfd1d0e1e77"
+    },
+    "部门/研究部/上岗引导.md": {
+      "mode": "0600",
+      "sha256": "2cb0dbd035b9b151a295217af3b72701bae6e6fbf7300f809e86049929cbea68"
+    },
+    "部门/研究部/岗位说明.md": {
+      "mode": "0600",
+      "sha256": "824c1320833c78253d1b5859ab126b773ccc7ce5c7c452a0dfab64f0bf847427"
+    },
+    "部门/统筹部/上岗引导.md": {
+      "mode": "0600",
+      "sha256": "4f9ecb070dfc0ea5072d207f5c1fbb2af2ab0305fd5d5d902866e44ba7e4ec29"
+    },
+    "部门/统筹部/岗位说明.md": {
+      "mode": "0600",
+      "sha256": "8e15542046b012781dbcb99609c7f7c54f8500241de1a50e03cdfefd0cd5f589"
+    },
+    "部门/设计部/上岗引导.md": {
+      "mode": "0600",
+      "sha256": "b3f516d319fd88489b049fad484a36a4111f01a2c04c255ec1647455e306e3a7"
+    },
+    "部门/设计部/岗位说明.md": {
+      "mode": "0600",
+      "sha256": "d40a8379b81fff80b454c217f0b2d1dbc8467b7004084a96701ec8577f493af1"
+    }
+  },
+  "protocol_version": "1.4.10",
+  "role_policy_overlays": {}
+}

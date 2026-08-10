@@ -1,0 +1,66 @@
+{
+  "acceptance_exit": "交付版本化mapping+manifest/hash+只读validator+数据部解阻报告；明确6个derived字段逐项唯一规则，source_safety_epoch直读M3，59行完整Source校验/唯一性/59 disabled/连续两次确定性PASS；5B8665计数修正并只引用该桥接，冻结v0.3字节与hash不变；唯一PASS/FAIL和TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "data/m4-vs0-seed-enrichment-v0/implementation-mapping.json",
+    "data/m4-vs0-seed-enrichment-v0/source-seed-enriched.json",
+    "data/m4-vs0-seed-enrichment-v0/manifest.json",
+    "data/m4-vs0-seed-enrichment-v0/seed-enrichment-validator.py",
+    "docs/collaboration/部门/数据部/报告/2026-08-02-M4-VS-0-seed-enrichment解阻报告.md",
+    "docs/collaboration/部门/数据部/报告/2026-08-02-M4-C层SQLite与Repository实现交接蓝图.md"
+  ],
+  "authorization_evidence": "用户已授权持续推进本地网站搭建；VS-0已开放，当前仅解决冻结数据到本地fixture seed的实现阻断",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T09:59+08:00",
+      "evidence": "用户已授权持续推进本地网站搭建；VS-0已开放，当前仅解决冻结数据到本地fixture seed的实现阻断",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "数据部/019fb371-9834-78d3-a7b3-4f4c62819520",
+  "completion_class": "standard",
+  "confirmation": "仅补VS-0本地seed实现映射，不改业务真值，不启用外部能力。",
+  "created_at": "2026-08-02T09:59+08:00",
+  "department": "数据部",
+  "details": "为正在执行的TASK-20260802-158240关闭数据映射阻断。冻结M3 batch为33列，Source schema required为39列，差集为platform_allowed、source_config_epoch、created_at、updated_at、created_by_ref、updated_by_ref；base-mapping local_only_fields又误列已在M3 33列中的source_safety_epoch，5B8665 migration 0002文字写13/9与实际Source39/CapturedItem16冲突。不得修改/覆盖data/mvp-contract-v0冻结v0.3的domain schema/state machine/fixtures/manifest，不原地改accepted合同。请在data下建立最小、版本化、机器可读的VS-0 seed-enrichment桥接artifact（明确它是implementation mapping而非第二domain schema/Base truth），逐字引用并hash冻结M3 batch、schema、base-mapping；列33个direct fields与6个derived fields的唯一确定性规则、类型/时区/actor/epoch来源、field_map优先级和source_safety_epoch从M3直读；保证unknown/pending/proposed/false不升级、59/59 enabled=false、无外联/写回/真实ID。配套只读validator验证59行生成后完整39字段通过Source schema核心required/enum/format/hash/唯一性，连续两次输出确定，且输出只在临时目录或桥接fixture中；更新5B8665蓝图以引用桥接artifact并修正39/16（M3映射33/9）计数。若无法从现有accepted语义无歧义选择6字段值，报告必须给单一推荐并标需产品决策，禁止替开发默认。",
+  "domain_stage": "M4-C-VS0-data-seed-enrichment",
+  "event_receipts": [
+    "validator-run-1: exit=0 result=PASS rows=59 fields=39 hash=e7a8312c70a9a49922aedb3cfbeaa190db8d5dce8d4ab45db1570748fc329f17 independent_reload=true",
+    "validator-run-2: exit=0 result=PASS rows=59 fields=39 hash=e7a8312c70a9a49922aedb3cfbeaa190db8d4ab45db1570748fc329f17 independent_reload=true",
+    "final-readonly-audit: frozen_contract_manifest=11/11 data_cache_count=0 git_diff_check=PASS"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 六字段存在需要产品语义选择或时区不可证：FAIL/blocked-by-decision，给一个推荐与影响，不自行写成合同。",
+    "2) 需要修改冻结v0.3领域schema/state/fixture/hash：停止，另建v0.4 proposed数据任务并通知产品/安全/测试。",
+    "3) 生成后任一required/enum/唯一性/59 disabled/确定性/hash失败：FAIL，禁止开发部插库或继续VS-1。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已核对并修正排序P0、旧96d5历史candidate误作PASS、validator旧001引用、独立reload repeat、11/11冻结manifest、decision flag、fields键、任意root写入、validator mode和自产data pycache；未改Spec/ADR/app/Base，未产生真实外连或状态升级。",
+  "node": "M4/C层/VS-0数据映射解阻",
+  "pointers": [
+    "docs/collaboration/部门/数据部/报告/2026-08-02-M4-VS-0-seed-enrichment解阻报告.md",
+    "data/m4-vs0-seed-enrichment-v0/manifest.json"
+  ],
+  "report": "docs/collaboration/部门/数据部/报告/2026-08-02-M4-VS-0-seed-enrichment解阻报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-6DAEAE",
+  "title": "补齐VS-0 M3到Source的canonical seed enrichment",
+  "unverified": [
+    "Node/SQLite/Repository/app seed runtime, Base/provider/Collector and all external I/O remain outside this offline bridge task and were not executed"
+  ],
+  "updated_at": "2026-08-02T12:03+08:00",
+  "verified": [
+    "successor ADR-M4-VS0-SEED-002 ID/path/SHA and predecessor chain verified",
+    "mapping self-declared 33/6/39 counts, six derived rules, fields pointer, sorted row order and e7a8 hash verified",
+    "59 rows x 39 fields, source_id/canonical_url uniqueness, source_safety_epoch direct copy, 59 disabled, conservative defaults and added_at rule verified",
+    "two consecutive validator PASS with independent reload; fixture/projection bytes equal; --require-product-decision exits 0 when flag is false",
+    "frozen contract manifest 11/11 artifact hashes and all bridge artifact hashes self-consistent; frozen v0.3 bytes unchanged",
+    "fields canonical key, offline_local_generator_validator mode, fixed output root, symlink/regular-file rejection, atomic write, and data pycache cleanup verified"
+  ]
+}

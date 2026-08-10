@@ -1,0 +1,52 @@
+{
+  "acceptance_exit": "提交安全部final报告，绑定最终三个hash；证明25-case正式入口一次exit0、externalCalls=0、收据closed且脱敏、core hash可回算、保护生产hash零漂移、临时根为空；列P0/P1/P2和已验证/未验证。P0=0/P1=0方可pass，TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-09-VS1-00591f-contract恢复链候选独立安全复验报告.md"
+  ],
+  "authorization_evidence": "TASK-20260809-3A8C0E已ACK；用户既有本地synthetic授权",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T14:05+08:00",
+      "evidence": "TASK-20260809-3A8C0E已ACK；用户既有本地synthetic授权",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "只读独立审核已ACK本地synthetic整改；无外部能力或生产变更。",
+  "created_at": "2026-08-09T14:05+08:00",
+  "department": "安全部",
+  "details": "仅审核TASK-20260809-3A8C0E最终候选：app/scripts/vs1-contract.ts SHA-256=00591f56b1d148113259bfb21d227138fc7b177a25240befcc1391dcdc73b1e4；assertion receipt文件SHA-256=2fcaefd2998ad9b5c4885c5d7b64a1ee290be4c9cf898b98a19f85c99ce08750；内嵌core hash=98258fe9591688216707afc16dc7a84c8b1a6d370cd9851c275ee3a0e5992e85。冻结设计5a84bfb2…8cb1及三个Function ID COLLECT-MOCK-002/CONTENT-PROCESS-003/SUMMARY-MOCK-004保持。旧安全PASS覆盖的worker/pipeline/fixture/migrations/package-lock哈希均应零漂移；本任务只读diff+固定Node24 clean-room运行一次npm run test:contract，核对no-egress、externalCalls=0、closed JSON、路径/URL/token/secret/stack泄露、receipt hash与临时根。不得运行worker/build/check/浏览器，不改任何候选。",
+  "domain_stage": "M5 VS1最终候选安全门禁",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一hash漂移、外联尝试、secret/绝对路径/URL/stack泄露或收据不可回算，立即fail并停止扩展。",
+    "若需要修改代码/fixture、安装依赖、提权或真实外部能力，fail closed回统筹。",
+    "若首次目标命令非零，保留首错，不重复运行或用静态判断覆盖。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查：目标动态命令仅运行一次；未运行其他npm script；未修改/清理候选；未联网安装提权或用真实凭据；一次只读jq汇总表达式错误后仅修正只读查询，未重跑动态命令；未把externalCalls=0外推OS/生产；未覆盖历史失败或提前改变Function ID；TASK_STATE_OK",
+  "node": "证明最终00591f候选未引入外联、泄露或安全语义回退",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260809-3A8C0E.json",
+    "docs/collaboration/部门/开发部/报告/2026-08-09-VS1-P1-01-contract恢复链断言整改完成报告.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-09-VS1-00591f-contract恢复链候选独立安全复验报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-BCF8B1",
+  "title": "独立安全复验VS1最终contract恢复链候选",
+  "unverified": [
+    "worker真实入口、普通测试、typecheck、build、check、浏览器；OS/系统调用级no-egress；同UID路径TOCTOU；真实provider/RSS/Base/AI/Admin/发布/部署/生产能力"
+  ],
+  "updated_at": "2026-08-09T14:10+08:00",
+  "verified": [
+    "最终contract SHA=00591f56...b1e4、assertion receipt文件SHA=2fcaefd2...8750、内嵌core hash=98258fe9...2e85独立回算全部匹配；唯一固定Node24 env-i npm run test:contract exit0，25个caseId唯一且25/25 assertionResult=PASS、逐case与顶层externalCalls=0；014为HTTP_503/1s到COLLECTION_TIMEOUT/3s到PIPELINE_READY/0s，015三次HTTP_503且deadLetterDelta=1，012/016A-G/017回滚9项为true，replay/no-work PASS；receipt closed且无绝对路径/URL/token/secret/password/stack/源码行；worker/pipeline/fixture/no-egress/registry/seed/manifest/package/lock/设计/migrations 0001..0006命令前后hash零漂移；精确BCF8B1/3A8C0E/D6114C临时根、DB/SQLite/receipt/WAL/SHM均为0"
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "交付final测试报告：snapshot/hash、命令与exit、18项及新增失败路径覆盖、P0/P1/P2、首轮失败和修复复验、已验证/未验证，唯一decision=PASS仅当P0=0且P1=0且全套命令exit0、59x39/幂等/零漂移成立。完成formal task并回TASK_STATE_OK；不得宣称四页UI、VS-1或生产通过。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-08-02-M4-VS-0迁移seed独立终验报告.md"
+  ],
+  "authorization_evidence": "用户已要求各部门全力开工并在断网恢复后继续未完成任务；本任务只做本地独立测试",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T12:26+08:00",
+      "evidence": "用户已要求各部门全力开工并在断网恢复后继续未完成任务；本任务只做本地独立测试",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "测试部/019fb379-9212-7e80-a5df-587d339936c4",
+  "completion_class": "audit",
+  "confirmation": "用户授权本地持续搭建与独立测试；真实外部能力、自动发布、部署仍关闭。",
+  "created_at": "2026-08-02T12:26+08:00",
+  "department": "测试部",
+  "details": "独立复验TASK-20260802-158240当前代码，不采信开发或统筹转述。固定Node24.18/npm11.16，在独立临时0700 DB与受控最小env中运行verify:env、migrate、seed、test、lint、typecheck、build、check；核对有效Node路径，保留任何误用Node25为作废收据。覆盖全新DB migration user_version=2、重复applied=[]、ledger缺失/记录/hash漂移/user_version ahead负例、39列Source、59行/59 disabled/双唯一/projection e7a831...9f17、重复seed不增行、bridge漂移整事务回滚、health DTO、legacy 33列拒绝、symlink/hardlink/parent swap负例、build前后Git-visible/lock/data零漂移。只用临时目录；读取共享.local仅限只读核对，禁止删除/重建node_modules或联网安装。",
+  "domain_stage": "M4-C-VS0-final-test-review",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 精确Node24链任一命令失败、package/lock/data自动漂移或脚本因PATH误用Node25：FAIL；区分无效环境收据后以精确Node重跑，禁止掩盖。",
+    "2) 全新/重复/损坏DB或fixture任一产生半写、重复行、旧33列成功、59 enabled、ledger/hash不一致：P0/P1 FAIL，保留最小复现，不改实现。",
+    "3) 测试需要联网、安装包、真实provider/Base、删除共享node_modules/.local或修改源码：停止列unknown并通知统筹，禁止越权。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查错题集（当前无具体条目）及审核岗位纪律；未采信开发转述，未把18/18或check成功扩大成VS-0 PASS，保留早期FAIL与三条无效harness历史，未把既有dirty状态写成clean，未安装/联网/修改app或共享node_modules/.local。",
+  "node": "M4/C层/VS-0最终测试复验",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260802-158240.json",
+    "app/src/tests/vs0.test.ts",
+    "data/m4-vs0-seed-enrichment-v0/implementation-mapping.json"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-08-02-M4-VS-0迁移seed独立终验报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-14FE35",
+  "title": "独立终验M4 VS-0迁移seed与可复现命令",
+  "unverified": [
+    "两项P1修复后拒绝行为；真实HTTP health/503与dev/start；强并发TOCTOU、业务crash/checkpoint矩阵、显式有限lock retry、OS级deny-all/封包；clean npm ci、四页UI、VS-1至VS-3、完整R12、生产及一切真实外部能力。"
+  ],
+  "updated_at": "2026-08-02T13:03+08:00",
+  "verified": [
+    "固定Node24.18.0/npm11.16.0与SQLite3.53.1；独立0700副本内v1→v2与重复migration、59x39/59 disabled/双distinct/hash/ledger与重复seed、主要drift/legacy/link/lock失败路径、health DTO、Vitest 18/18、lint/typecheck/build/check全链exit0；原app 56个Git-visible candidate/status/package-lock前后hash相等；当前FAIL，P0=0、P1=2。"
+  ]
+}

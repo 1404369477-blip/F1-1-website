@@ -1,0 +1,62 @@
+{
+  "acceptance_exit": "在同一production实例上，1440与390至少各验证一次：lightbox三种关闭路径的activeElement均回到精确触发按钮、inert清除、键盘可继续；深浅主题首载/切换/刷新及核心展开搜索过程中console error/warning中React#418为0；视觉关键尺寸无偏差，聚焦测试、lint/typecheck/build按改动范围通过。报告明确P1-01/P1-02关闭，P1-03仍是独立阻断，不把本任务写成公开页整体PASS。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/src/app/layout.tsx",
+    "app/src/components/f1/theme-preference.ts",
+    "app/src/components/f1/f1-page-shell.tsx",
+    "app/src/features/stories/feed-experience.tsx",
+    "app/src/tests/public-ui.test.ts",
+    "docs/collaboration/部门/开发部/报告/TASK-20260809-4C59A9-evidence/README.md",
+    "docs/collaboration/部门/开发部/报告/TASK-20260809-4C59A9-evidence/01-1440x900-dark.jpg",
+    "docs/collaboration/部门/开发部/报告/TASK-20260809-4C59A9-evidence/02-1440x900-light.jpg",
+    "docs/collaboration/部门/开发部/报告/TASK-20260809-4C59A9-evidence/03-390x844-dark.jpg",
+    "docs/collaboration/部门/开发部/报告/TASK-20260809-4C59A9-evidence/04-390x844-light.jpg",
+    "docs/collaboration/部门/开发部/报告/2026-08-09-lightbox焦点返回与hydration-P1整改报告.md",
+    "docs/collaboration/部门/开发部/交接班文档.md"
+  ],
+  "authorization_evidence": "COR-20260809T102214-960E65；用户确认最终v0.2视觉",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T10:28+08:00",
+      "evidence": "COR-20260809T102214-960E65；用户确认最终v0.2视觉",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/019fb374-7c86-7882-9e51-76114ce69e7f",
+  "completion_class": "standard",
+  "confirmation": "用户已明确要求视觉高保真与全部功能；本任务获准修复两个公开页P1。多图DTO/data、真实外部能力、Admin、部署和Git操作仍属独立任务。",
+  "created_at": "2026-08-09T10:28+08:00",
+  "department": "开发部",
+  "details": "以测试部final报告 docs/collaboration/部门/测试部/报告/2026-08-09-34476E最终v0.2公开页冻结候选定向验收报告.md 和用户纠偏 COR-20260809T102214-960E65 为输入，只修复P1-01/P1-02：任何主图/缩略图触发lightbox后，通过Escape、关闭按钮或外点关闭均移除inert并把焦点精确返回原触发元素，元素消失时使用合同定义的最近安全焦点；定位并消除production控制台重复React minified error #418，确保SSR/客户端初始主题、localStorage、媒体查询、时间/日期与条件DOM不产生hydration不一致。高度保持已确认v0.2视觉、布局、动效、响应式和现有API单一真值；只改必要app源码/聚焦测试，不改设计、Spec、DTO、DB/data、lockfile。真实多图P1-03不得在本任务复制单图或造静态数据，保留给全功能successor后继任务。代码无变化的既有测试不重复全跑。",
+  "domain_stage": "M5最终公开页P1整改",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "hydration错误来自服务端/客户端无法共享的环境值：改为确定性首屏或挂载后无结构差异更新，不用suppressHydrationWarning掩盖。",
+    "焦点触发元素在关闭时已卸载：使用保存的稳定ref/数据身份恢复到同条媒体或该条展开按钮，并提交精确降级证据，不落body。",
+    "修复需要改变DTO、媒体数量、设计方向或新增依赖：停止越界部分并报告，不以静态多图或suppress绕过。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已显式引用COR-20260809T102214-960E65；未用suppressHydrationWarning、伪造多图、扩DTO/DB/data/spec/design、增加依赖、Git写入、外部I/O或部署；cookie仅dark/light非敏感显示偏好，Path=/、SameSite=Strict、Max-Age，动态SSR影响与本地无Secure/HttpOnly原因已报告；未把NOT_RUN写成完成",
+  "node": "关闭最终公开页冻结候选中无需系统successor即可修复的两项运行缺陷",
+  "pointers": [
+    "docs/collaboration/部门/测试部/报告/2026-08-09-34476E最终v0.2公开页冻结候选定向验收报告.md"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-09-lightbox焦点返回与hydration-P1整改报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-4C59A9",
+  "title": "修复公开页焦点返回与React hydration P1",
+  "unverified": [
+    "公开页整体未PASS：P1-03真实多图继续由successor处理；触发元素真实卸载故障注入、cookie拒写/localStorage异常/legacy仅localStorage无cookie的首帧无闪烁未实机证明，交P1 successor；未运行full check、辅助技术或其他非本任务出口"
+  ],
+  "updated_at": "2026-08-09T11:05+08:00",
+  "verified": [
+    "SCOPED PASS：Node24 public-ui 聚焦测试 12/12、lint 0 errors（3 warnings）、typecheck、build 均通过；同一production实例1440/390深浅刷新console=[]且React#418=0；两视口Escape/关闭按钮/背景外点均focus=true、inert=null、dialog=0、keyboardContinues=true；SSR cookie dark/light分别返回同值html/body主题与按钮；CSS/API hash零漂移；独立对抗复核P0=0/P1=0；端口3000/3001已释放"
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "decision": "fail",
+  "error": "Error: add:403:ADMIN_CSRF_INVALID",
+  "steps": [
+    {
+      "name": "health",
+      "method": "GET",
+      "path": "/api/health",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "name": "unauth_list",
+      "method": "GET",
+      "path": "/api/admin/sources",
+      "status": 401,
+      "reasonCode": "ADMIN_SESSION_REQUIRED",
+      "noStore": true
+    },
+    {
+      "name": "session_create",
+      "method": "POST",
+      "path": "/api/admin/session",
+      "status": 201,
+      "noStore": true
+    },
+    {
+      "name": "session_get",
+      "method": "GET",
+      "path": "/api/admin/session",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "name": "list_before",
+      "method": "GET",
+      "path": "/api/admin/sources?limit=100",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "name": "csrf_5",
+      "method": "POST",
+      "path": "/api/admin/csrf",
+      "status": 201,
+      "noStore": true
+    },
+    {
+      "name": "add",
+      "method": "POST",
+      "path": "/api/admin/sources",
+      "status": 403,
+      "reasonCode": "ADMIN_CSRF_INVALID",
+      "noStore": true
+    }
+  ]
+}

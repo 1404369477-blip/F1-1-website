@@ -1,0 +1,2 @@
+fa0ef6e31fe889abea39e6bbcb3a9d7c5764a17f364e1d409bc4defce879113e  index.html
+cd95e2a64d9c4807eb64ddb1cdbfd48247bfa3daf13c28ecd14ff3ef52cf5fc2  design-notes.md

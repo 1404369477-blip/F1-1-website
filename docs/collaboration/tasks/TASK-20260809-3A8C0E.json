@@ -1,0 +1,58 @@
+{
+  "acceptance_exit": "新的精确候选在固定Node24 clean-room一次通过npm run test:contract；25个case均有caseId、reasonCode、exitCode、recoveryAction、assertion结果与externalCalls=0的确定性收据；014证明1s/3s、最多3次及attempt history，015证明dead-letter/attempt history，012与016A-G证明rollback，replay/no-work保持；三个Function ID真实operator及状态/恢复映射未被删减；冻结设计hash、worker/pipeline/fixture/migration/package-lock等非目标hash明确复算不变；报告列新旧hash、已验证/未验证、临时根清理和错题自检，TASK_STATE_OK。开发完成后仍须数据/安全/测试对新候选独立门禁，不得把Function ID提前改complete。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/scripts/vs1-contract.ts",
+    "docs/collaboration/部门/开发部/报告/证据/TASK-20260809-3A8C0E/vs1-contract-assertion-receipt-v1.json",
+    "docs/collaboration/部门/开发部/报告/2026-08-09-VS1-P1-01-contract恢复链断言整改完成报告.md",
+    "docs/collaboration/部门/开发部/报告/2026-08-09-VS1-P1-01-contract恢复链断言首错阻断报告.md"
+  ],
+  "authorization_evidence": "持续推进初版目标；TASK-20260809-C66A73已ACK的P1-01",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T13:53+08:00",
+      "evidence": "持续推进初版目标；TASK-20260809-C66A73已ACK的P1-01",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/019fb374-7c86-7882-9e51-76114ce69e7f",
+  "completion_class": "standard",
+  "confirmation": "用户已授权持续推进本地初版与VS1 synthetic链；本任务只关闭已核收P1，不触发外部能力、部署、Admin业务或视觉变更。",
+  "created_at": "2026-08-09T13:53+08:00",
+  "department": "开发部",
+  "details": "以已ACK的TASK-20260809-C66A73 FAIL为唯一缺口输入。公开视觉基线固定为design/ui/F1+1-v0.2-全站设计/F1+1-v0.2-final-20260808.html，SHA-256=5a84bfb27294ebd727369118a95528f5b788bfacbe2d56cc03fcb006f6168cb1；本任务不得修改UI/CSS/路由，六格视觉证据沿用且不在本任务宣称更新。Function ID及矩阵精确行为docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md:109 COLLECT-MOCK-002、:110 CONTENT-PROCESS-003、:111 SUMMARY-MOCK-004，真实operator出口保持npm run worker:mock -- --once与npm run test:contract。只在现有正式test:contract执行链内补足：每个非happy case expected recoveryAction的显式断言；VS1-RETRY-014的fixture clock 1s/3s、最多3次与attempt history精确断言；VS1-DEAD-015的dead-letter与attempt history精确断言；输出一个确定性、脱敏、可回算的case assertion receipt，使独立审核无需自制runner即可核对。normal、retry、dead_letter、rollback、replay、no-work、stale fence等现有语义不得改变；worker/pipeline/fixture/seed/manifest/migrations/package-lock与公开/Admin能力保持字节不变，若实现本身与v0.2合同冲突则停止并报告，不得用放宽断言绕过。只做目标test:contract与必要typecheck，禁止整站build/浏览器回归/真实外联。",
+  "domain_stage": "M5 VS1 P1整改",
+  "event_receipts": [
+    "vs1-contract-assertion-receipt-v1 core SHA-256 98258fe9591688216707afc16dc7a84c8b1a6d370cd9851c275ee3a0e5992e85；evidence file SHA-256 2fcaefd2998ad9b5c4885c5d7b64a1ee290be4c9cf898b98a19f85c99ce08750"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若任一非目标生产/fixture/设计/公开/Admin文件需要改变，立即停止并返回合同冲突，不扩大范围。",
+    "若新增断言暴露实现与v0.2合同不符，保留首个失败证据并报告，禁止降低expected值、跳过case或重复运行至通过。",
+    "若需要安装依赖、网络、真实provider/AI/Base或外部I/O，fail closed并回统筹；不得请求或使用额外能力。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "首轮把014 attempt2冻结outcome误录为HTTP_503并保留了exit1历史；统筹resume后只将该一个expected精确修正为COLLECTION_TIMEOUT；未改其他断言、生产逻辑、fixture、package/lock、UI/Admin，未降低expected或跳过case；恢复后只运行一次目标test:contract和一次typecheck；收据脱敏扫描及hash回算通过。",
+  "node": "关闭VS1独立测试P1-01并生成新的精确候选",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260809-C66A73.json",
+    "docs/spec/F1+1-VS1本地synthetic纵切实施合同-v0.2.md",
+    "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-09-VS1-P1-01-contract恢复链断言整改完成报告.md",
+  "resolution": null,
+  "revision": 6,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-3A8C0E",
+  "title": "DEV-VS1-P1：补齐正式contract恢复链断言与可审计收据",
+  "unverified": [
+    "数据部、安全部、测试部尚未对最终contract-entry SHA-256 00591f56b1d148113259bfb21d227138fc7b177a25240befcc1391dcdc73b1e4及新收据完成独立门禁；三个Function ID未在本任务中提前改为complete。普通测试、worker、build、check、浏览器与整站回归按任务上限未运行。"
+  ],
+  "updated_at": "2026-08-09T14:04+08:00",
+  "verified": [
+    "固定Node24 clean-room恢复后唯一一次npm run test:contract exit0；正式收据含25个case的caseId/reasonCode/exitCode/recoveryAction/assertionResult/externalCalls=0，014精确证明HTTP_503/1s→COLLECTION_TIMEOUT/3s→PIPELINE_READY/0s和最多3次，015证明三次HTTP_503、deadLetterDelta=1，012/016A-G/approved回滚、replay/no-work均PASS；assertionReceiptHash=98258fe9591688216707afc16dc7a84c8b1a6d370cd9851c275ee3a0e5992e85且独立回算一致；随后唯一一次typecheck exit0；保护hash零漂移；临时根为空。"
+  ]
+}

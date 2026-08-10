@@ -1,0 +1,98 @@
+{
+  "schema_version": "mvp-local-v0.3",
+  "contract_version": "mvp-local-v0.3",
+  "source_task": "TASK-20260802-D80846",
+  "upgrade_from": "mvp-local-v0.2",
+  "unique_contract_path": "data/mvp-contract-v0",
+  "canonical_json_rule_version": "canonical-json-v1",
+  "canonical_json_rule": {
+    "version": "canonical-json-v1",
+    "encoding": "UTF-8",
+    "key_order": "lexicographic Unicode code-point order",
+    "whitespace": "compact JSON separators comma=',' and colon=':'",
+    "numbers": "finite JSON numbers only; no NaN, Infinity or exponent rewriting",
+    "nulls": "preserve explicit null values; never omit a present null",
+    "unicode": "preserve Unicode code points with ensure_ascii=false; no NFC/NFD normalization",
+    "hash": "SHA-256 over the exact compact UTF-8 byte sequence",
+    "rfc8785": "project-defined canonical JSON; not RFC 8785 JCS"
+  },
+  "artifact_paths": [
+    "data/mvp-contract-v0/schema.json",
+    "data/mvp-contract-v0/base-mapping.json",
+    "data/mvp-contract-v0/state-machine.json",
+    "data/mvp-contract-v0/fixtures.synthetic.json",
+    "data/mvp-contract-v0/runtime-envelope.schema.json",
+    "data/mvp-contract-v0/security-fixtures.schema.json",
+    "data/mvp-contract-v0/security-fixtures.synthetic.json",
+    "data/mvp-contract-v0/internal-contract.schema.json",
+    "data/mvp-contract-v0/internal-fixtures.synthetic.json",
+    "data/mvp-contract-v0/seed-layers.json",
+    "data/mvp-contract-v0/generate_contract.py"
+  ],
+  "artifact_hashes": {
+    "data/mvp-contract-v0/schema.json": "de6c6c07a33589106ebb93496ad10ae3b06ab1c7845e4e0e91888ca0b17ae5a4",
+    "data/mvp-contract-v0/base-mapping.json": "f0a086099d0f4ce9bbcd1afb0533aef90ec8d4f00b1618cc5114bebe40601f9d",
+    "data/mvp-contract-v0/state-machine.json": "d5ca45fd60c2ad08c60929abd714f6e80c43c20f561be0c0a18e3baa17c7c120",
+    "data/mvp-contract-v0/fixtures.synthetic.json": "e56122c0d99761df2e48bfed817c45e0e184d10130ea5bfce89e1d1be56f4abf",
+    "data/mvp-contract-v0/runtime-envelope.schema.json": "15d398cbaaefa37dabfa6af9b7b9c3cc8b207922ef67b0889329366f8336b30d",
+    "data/mvp-contract-v0/security-fixtures.schema.json": "3a8dcd859f48edcd65ab6a05a4b34280f3629f7c879236dbab3ce83e61b78d0a",
+    "data/mvp-contract-v0/security-fixtures.synthetic.json": "66ace7a1e1800d740f75b35fd55234c7417b9acae7ef1c0a32757eec3051db22",
+    "data/mvp-contract-v0/internal-contract.schema.json": "462605a2258d2922d9b982f490aeda3a1395f9e1dcf718fb8745e49db2afade8",
+    "data/mvp-contract-v0/internal-fixtures.synthetic.json": "6fa873675732a06e440d8d67923647a9938d264b1162a485d3abf02ef33f86d8",
+    "data/mvp-contract-v0/seed-layers.json": "d8a9d5cbfb8f3b209557ef7c6ef904e8c63b03d577b461d4f2ecb2aae7b40459",
+    "data/mvp-contract-v0/generate_contract.py": "3f62c2eabdbd95c4b26bb878028481695aed5ab93173d3cba608acd1e6bf3841"
+  },
+  "internal_artifact_paths": [
+    "data/mvp-contract-v0/internal-contract.schema.json",
+    "data/mvp-contract-v0/internal-fixtures.synthetic.json"
+  ],
+  "upstream_m3": {
+    "manifest_path": "data/m3-base-shadow-import-v0/manifest.json",
+    "input_sha256": "bbb84a7f8f625e8106ae6e0b2714a363940dbf3f20dcbbf300fa6552de1ac01b",
+    "row_count": 59,
+    "source_field_count": 33,
+    "capture_field_count": 9,
+    "all_enabled_false": true
+  },
+  "fixture_case_count": 22,
+  "reconcile_outcome_case_count": 4,
+  "security_fixture_count": 16,
+  "published_projection_count": 3,
+  "source_onboarding_fixture_count": 18,
+  "source_onboarding_state_count": 16,
+  "internal_source_observation_count": 2,
+  "internal_audit_event_count": 3,
+  "state_machine_count": 6,
+  "idempotency_key_count": 5,
+  "invariant_count": 9,
+  "max_task_window_seconds": 900,
+  "seed_layer_count": 3,
+  "entity_counts": {
+    "sources": 18,
+    "captured_items": 8,
+    "contents": 7,
+    "events": 2,
+    "summaries": 7,
+    "media_candidates": 5,
+    "release_bundles": 5,
+    "review_decisions": 5,
+    "publications": 5,
+    "outbox_jobs": 11,
+    "published_projections": 3
+  },
+  "seed_layers": [
+    "m3-shadow-seed",
+    "synthetic-case-seed",
+    "security-error-seed"
+  ],
+  "seed_subsets": [
+    "published-projection-seed",
+    "snapshot-failure-seed",
+    "internal-fixtures-seed"
+  ],
+  "external_calls": 0,
+  "external_write_performed": false,
+  "real_content_imported": false,
+  "credential_material_present": false,
+  "manifest_hash_scope": "artifact_hashes excludes this manifest.json to avoid self-hash recursion"
+}

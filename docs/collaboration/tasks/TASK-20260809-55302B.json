@@ -1,0 +1,60 @@
+{
+  "acceptance_exit": "交付accepted窄范围successor及实施任务合同：profile路径、migration selector、fixture/manifest/root/ledger、启动与回退顺序、V1/V2 API协商、前端请求、0/1/4正式可达性、旧三根零漂移和分部门验收精确可执行；不夹带Admin/RSS/真实媒体/外部能力授权；P0=0/P1=0对抗审查并由统筹可直接派开发实施。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/decisions/system/2026-08-09-F1+1-public-multimedia-synthetic运行profile与V2接线-successor-accepted.md",
+    "docs/spec/F1+1-public-multimedia-synthetic本地运行实施合同-v0.1.md",
+    "docs/decisions/system/2026-08-09-F1+1-公开多媒体数组successor实施合同-draft.md",
+    "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md",
+    "docs/spec.md",
+    "docs/spec/F1+1-v0.2-最终实现级产品合同.md",
+    "docs/spec/README.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-09-public-multimedia-synthetic运行profile与V2接线successor报告.md"
+  ],
+  "authorization_evidence": "COR-20260809T102214-960E65；最终v0.2多图设计用户确认；TASK-20260809-33B8F5已ACK",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T10:53+08:00",
+      "evidence": "COR-20260809T102214-960E65；最终v0.2多图设计用户确认；TASK-20260809-33B8F5已ACK",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "用户已确认最终v0.2多图视觉与交互，并明确要求开发高度贴合视觉、落实所有功能项；本任务只将该已确认本地synthetic功能固化为隔离运行profile和实现合同。",
+  "created_at": "2026-08-09T10:53+08:00",
+  "department": "产品部",
+  "details": "吸收已ACK TASK-20260809-33B8F5、COR-20260809T102214-960E65、最终v0.2视觉合同和现有双profile accepted ADR；形成最小系统successor并在用户既有确认范围内固化为accepted：新增物理隔离的public-multimedia-synthetic本地profile，复用canonical 0001/0002并使用profile-scoped 0003/fixture/ledger/root pins，只承载v0.5 0/1/4图synthetic公开发布闭图；m3-shadow、public-synthetic、v0.3/v0.4字节与运行收据全部冻结。固定App profile selector、V2 Accept协商、Repository V2与V1首图降级、前端正式V2单一数据源、原子seed/start/read、失败回v0.4、零混跑和逐阶段开发/测试/安全/设计门禁；不新增领域实体、真实媒体、外部I/O、Admin、RSS、部署或付费。若accepted ADR需要补充用户确认依据，直接引用最终v0.2多图确认与COR，不再扩大问题。只改产品/系统文档，不改app/data/migration/DB/lockfile。",
+  "domain_stage": "M5公开多媒体运行系统successor",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若需修改或覆盖public-synthetic/v0.4冻结字节、混跑两个profile或跨库copy/ATTACH：拒绝该路径，改用独立物理profile与明确selector。",
+    "若V2只能靠前端静态注入、复制首图、DTO混合或弱化rights/hash/order：保持P1阻断并退回数据/产品修订。",
+    "若现有用户确认不足以授权纯本地隔离profile，或方案夹带真实媒体/外部请求/部署：停在draft并提交单一最小问题，不自行扩权。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已避免把33B8F5 partial DTO/delta fixture外推为可seed完整图；拒绝复用旧0003、全局0004、跨库复制和前端静态补图；审查后补齐MediaCandidate一对多及第5行拒绝、manifest自哈希消除、ledger物理列/root唯一公式、Accept全域、每请求单版本、旧库closed receipt与当前DB字节绑定；没有修改app/data/migration/DB/design或外部资源。",
+  "node": "把已ACK的0/1/4图机器合同转为可实施、可回退的本地运行系统合同",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260809-33B8F5.json",
+    "data/mvp-contract-v0.5-public-multimedia-synthetic",
+    "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-09-public-multimedia-synthetic运行profile与V2接线successor报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-55302B",
+  "title": "固化public-multimedia-synthetic运行profile与V2接线successor",
+  "unverified": [
+    "DATA-MM-01完整runtime graph尚未生成；新profile SQLite、scoped 0003、selector/schema root、seed/ledger、Repository/API/App V2接线和浏览器0/1/4交互尚未实现或运行；测试/安全/设计实现候选复验未执行；真实媒体、Base/provider、Admin、RSS、自动发布、部署和生产能力继续关闭。"
+  ],
+  "updated_at": "2026-08-09T11:21+08:00",
+  "verified": [
+    "唯一canonical accepted入口ADR-M5-PUBLIC-MULTIMEDIA-RUNTIME-001已建立；独立profile/path/scoped-0003、Content到MediaCandidate一对多与0到4数据库约束、DATA-MM-01四个固定文件、migration/fixture ledger与root公式、默认V1和精确V2协商、App单一数据源、失败关闭及完整组合回退已闭合；v0.5五项artifact与0001/0002 SHA复算匹配；50项矩阵及12/18/20三态不变；本地链接和git diff check通过；产品/领域/安全三路聚焦复验均P0=0/P1=0。"
+  ]
+}

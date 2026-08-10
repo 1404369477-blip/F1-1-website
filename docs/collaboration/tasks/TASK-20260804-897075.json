@@ -1,0 +1,46 @@
+{
+  "acceptance_exit": "390/1440、深浅主题与关键成功/失败状态在真实用户出口可用；无阻断性溢出、不可读、焦点丢失或误导状态；P0=0、P1=0；设计部报告 status=final、decision=pass 并 TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/设计部/报告/2026-08-04-公开前端API接线独立体验与视觉验收报告.md",
+    "docs/collaboration/部门/设计部/报告/证据/TASK-20260804-897075"
+  ],
+  "authorization_evidence": "",
+  "authorization_history": [],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "design",
+  "completion_class": "standard",
+  "confirmation": "审核结论只回 pass/fail 与证据；不改实现、不扩展设计范围，发现问题由统筹部决定退回。",
+  "created_at": "2026-08-04T19:18+08:00",
+  "department": "设计部",
+  "details": "独立审核 TASK-20260804-538692 的真实页面体验，只读验收，不修改实现。以已固定的 F1+1 全站设计规范 v0.1 为准，用一次聚焦可视验收覆盖 390px 与 1440px、深色与浅色主题、首页/筛选/加载更多/详情/related，以及 loading、empty、error、retry、404、无媒体、图片失败、无更多状态。检查信息层级、可读性、卡片与详情一致性、布局溢出、键盘焦点、触控目标约 44px、颜色对比和 reduced-motion 兼容。严格控制验证量，不做新方案或实现；提交设计部 final 审核报告，给出代表性截图或可复核证据、P0/P1/P2、已验证/未验证和 decision。",
+  "domain_stage": "independent_review",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "窄屏或桌面出现关键内容截断、横向溢出、主要操作不可达/小于可接受触控范围或键盘焦点不可见，判 fail。",
+    "深浅主题、空/错/404/重试/无媒体状态若不可读、混淆成功内容、布局破裂或违背已固定设计规范，判 fail。",
+    "图片加载失败、长标题/摘要或 related 内容导致卡片、详情或操作区错位，记录严重度；达到 P0/P1 则判 fail。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "只写设计部final报告与截图证据；未改app/design/data/Spec/ADR；区分已验证、未验证和根因未知；未关闭测试部唯一3000服务；未扩大PASS声明",
+  "node": "frontend-api-wiring-design-review",
+  "pointers": [
+    "TASK-20260804-538692; design/ui/F1+1-全站设计规范-v0.1.md"
+  ],
+  "report": "docs/collaboration/部门/设计部/报告/2026-08-04-公开前端API接线独立体验与视觉验收报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260804-897075",
+  "title": "公开前端 API 接线独立体验与视觉验收",
+  "unverified": [
+    "feed/detail/related成功态、loading稳定截图、empty/no-more/load-more、restricted/media-missing/image failure、404、成功态长中英文/读屏/forced-colors；因PUBLIC_READ_INTEGRITY_FAILED与统筹收口约束停止枚举"
+  ],
+  "updated_at": "2026-08-04T19:34+08:00",
+  "verified": [
+    "内置浏览器一次聚焦验收：390/1440、深浅主题、首页与详情closed 500错误出口、重试、移动筛选、无横向溢出、44px触控、3px焦点、减少动效；P0=0、P1=2，decision=fail"
+  ]
+}

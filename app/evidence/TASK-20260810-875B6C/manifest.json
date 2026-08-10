@@ -1,0 +1,81 @@
+{
+  "schemaVersion": "f1plus1-source-management-raw-target-successor-evidence-v1",
+  "taskId": "TASK-20260810-875B6C",
+  "status": "PASS",
+  "input": {
+    "a5f239ManifestSha256": "92339f02cf0f30075e1059b8e41df0d1d0c6b60f4236119917b8d4ebc138d764",
+    "predecessorDevelopmentManifestSha256": "7b0658d9972df676acec689cb3d99ea23e74bf1abc2e51f9a169a9aa49b187b3",
+    "predecessorDevelopmentReportSha256": "65d2ea230c0b78da12c0407b2a1e0fc0c84980502b6324621a33694546d99374",
+    "closedDbSha256": "ddf3778c62cf95f195b1f08db8b075d676069f4cc9fb39804063e1004dd2e939",
+    "closedReceiptFileSha256": "fda5bc8727f1b39bbeaca99857d9baf248e3791f7075ea611aa2d86eb97732a1"
+  },
+  "candidate": {
+    "securityBeforeSha256": "af0ce2df1b77279ad784676939ff9df1d29d828390a94983e3ecff776eb16779",
+    "securityAfterSha256": "a455df964f86045ff4157142a7cd378f2f64a12bb46a54661daa711d0750f965",
+    "focusedTestSha256": "aa30872b9a0a16696d4c42f61314efa9c340d00c5233d2e52edbd61afe4d00c9",
+    "authorizedFiles": [
+      "app/src/server/source-management/security.ts",
+      "app/src/tests/source-management-raw-target.test.ts"
+    ]
+  },
+  "verification": {
+    "nodeVersion": "24.18.0",
+    "focusedTest": {
+      "commandCount": 1,
+      "fileCount": 1,
+      "testsPassed": 19,
+      "testsFailed": 0,
+      "durationMs": 96,
+      "result": "PASS"
+    },
+    "typecheck": {
+      "commandCount": 1,
+      "exitCode": 0,
+      "diagnostics": 0,
+      "result": "PASS"
+    },
+    "staticAdversarialReview": "P0_0_P1_0",
+    "rawGate": {
+      "literalDotSegment": "DENIED",
+      "literalDotDotSegment": "DENIED",
+      "encodedDotMixedCase": "DENIED",
+      "encodedSlash": "DENIED",
+      "encodedBackslash": "DENIED",
+      "literalBackslash": "DENIED",
+      "arbitraryPercentEncodedPathByte": "DENIED",
+      "absoluteForm": "DENIED",
+      "leadingDoubleSlash": "DENIED",
+      "legalSession": "PASS",
+      "legalListWithPercentEncodedQuery": "PASS"
+    },
+    "externalCalls": 0,
+    "productInstanceStarted": false,
+    "databaseOpened": false
+  },
+  "protected": {
+    "serverSha256": "5c40918c7ac45aa809ed106acdfa00c9b6d5c52fb90a0b9995a0a3998d83378f",
+    "guardSha256": "5f008507164f2a1b8678435ec491e31bf6235700c50844ec1dca3801ada756d2",
+    "repositorySha256": "741aad53d872f837afbe1d3c94bb3047deb54d711d76045f6b2e1684c4598912",
+    "sourceManagementGoldenTestSha256": "cbeab917a8e5ac447a7117b65bde5d2a266b56adc1d20d01e7765aaa2d492e25",
+    "packageLockSha256": "89807e33818cfb851b57da65a5675e413e5593d01d6773c3a71a6cc6ea3d85d3",
+    "profileLockPresent": false,
+    "walPresent": false,
+    "shmPresent": false
+  },
+  "notRun": [
+    "production build",
+    "product HTTP instance",
+    "formal database migration or read",
+    "closed receipt regeneration",
+    "91AF6E full chain",
+    "9/9 no-egress gate",
+    "5/5 source-management golden",
+    "lint",
+    "A5F239 remaining independent security vectors"
+  ],
+  "unverified": [
+    "A new independent security successor has not yet rerun the A5F239 vectors on this exact candidate.",
+    "A new independent testing successor has not yet validated this exact candidate.",
+    "No real provider, external API, UI, deployment or production data capability was enabled."
+  ]
+}

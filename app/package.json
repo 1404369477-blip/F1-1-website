@@ -1,0 +1,47 @@
+{
+  "name": "f1-plus-1-app",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": "24.18.0",
+    "npm": "11.16.0"
+  },
+  "packageManager": "npm@11.16.0",
+  "scripts": {
+    "dev": "node --experimental-strip-types scripts/serve.ts dev",
+    "build": "next build",
+    "start": "node --experimental-strip-types scripts/serve.ts start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "verify:env": "node --experimental-strip-types scripts/verify-env.ts",
+    "db:migrate": "node --experimental-strip-types scripts/db-migrate.ts",
+    "seed:fixtures": "node --experimental-strip-types scripts/seed-fixtures.ts",
+    "runtime:assert-ready": "node --experimental-strip-types scripts/runtime-bootstrap.ts",
+    "worker:mock": "node --experimental-strip-types scripts/vs1-worker.ts",
+    "worker:source-mock": "node --experimental-strip-types scripts/source-management-worker.ts",
+    "test": "vitest run --config vitest.config.ts",
+    "test:p1": "node --experimental-strip-types scripts/p1-acceptance.ts",
+    "test:public-http": "node --experimental-strip-types scripts/public-http-acceptance.ts",
+    "test:contract": "node --experimental-strip-types scripts/vs1-contract.ts",
+    "test:source-management": "vitest run src/tests/source-management-backend.test.ts --config vitest.config.ts",
+    "profile:closed-receipt": "node --experimental-strip-types scripts/profile-closed-receipt.ts",
+    "check": "npm run verify:env && npm run db:migrate && npm run seed:fixtures && npm run runtime:assert-ready && npm run test && npm run test:contract && npm run lint && npm run typecheck && npm run build && npm run test:p1"
+  },
+  "dependencies": {
+    "next": "16.2.11",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "24.0.0",
+    "@types/react": "19.0.8",
+    "@types/react-dom": "19.0.3",
+    "eslint": "9.39.4",
+    "eslint-config-next": "16.2.11",
+    "typescript": "5.9.3",
+    "vitest": "4.1.10"
+  }
+}

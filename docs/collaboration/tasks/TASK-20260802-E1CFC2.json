@@ -1,0 +1,55 @@
+{
+  "acceptance_exit": "交付新accepted successor ADR与产品报告；新ADR逐字冻结source_id Unicode升序、canonical-json-v1对象和e7a8... hash，旧ADR按协议superseded且96d5只作历史unsorted候选；Spec只引用新ADR；git diff/JSON/doctor通过；唯一PASS/FAIL、TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/decisions/system/2026-08-02-F1+1-VS0-M3种子投影-successor-accepted.md",
+    "docs/decisions/system/2026-08-02-F1+1-VS0-M3种子投影-accepted.md",
+    "docs/spec.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-02-VS0-M3种子投影排序与hash纠错报告.md"
+  ],
+  "authorization_evidence": "用户明确要求统筹拆解、规划、分配并推进实现决策；当前为已开放VS-0内的机械纠错",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T10:25+08:00",
+      "evidence": "用户明确要求统筹拆解、规划、分配并推进实现决策；当前为已开放VS-0内的机械纠错",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "用户已授权统筹进行局部实现决策与持续推进；本任务仅纠正本地fixture hash收据，不涉及用户体验、外部资源或生产门禁。",
+  "created_at": "2026-08-02T10:25+08:00",
+  "department": "产品部",
+  "details": "独立只读守门在数据部complete前发现 accepted ADR-M4-VS0-SEED-001 内部机械冲突：§2.4明确 enriched_rows 按 source_id Unicode code point 升序后计算 canonical-json-v1 hash，但先前候选96d5caf6来自M3原行序（first=x_formula24hrs,last=x_autosport，sorted=false）；对同一59x39按accepted排序重算为e7a8312c70a9a49922aedb3cfbeaa190db8f5dce8d4ab45db1570748fc329f17。不得原地修改accepted正文。请建立最小 successor ADR：以算法/排序规则为权威，明确sorted projection hash=e7a8...，把96d5标为决策前unsorted candidate且不得作为PASS；按协议把旧ADR标为superseded，仅允许最小状态/指针更新，不改其历史正文。Spec仅更新引用/变更记录。不得改data/app/Base或扩大VS-0。报告写明根因、机械复算、旧/新收据、影响和回退。",
+  "domain_stage": "M4-C-VS0-seed-projection-correction",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) e7a8...无法由冻结59x39重复复算或排序定义仍有歧义：FAIL并保留数据任务阻断，不接受任一hash。",
+    "2) 修正需要改冻结v0.3 schema/mapping或M3原始字节：停止，另起数据v0.4 proposed，禁止本任务修改。",
+    "3) 通过原地改accepted正文、删历史或让实现跳过排序来命中96d5：验收FAIL。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "发现并纠正算法与历史 hash 冲突：96d5 仅为 unsorted historical candidate，不作为 PASS 或当前 seed 输入；新 ADR 以 source_id Unicode code point 升序和 e7a8 有效收据为唯一权威；未改 data/app/Base",
+  "node": "M4/C层/VS-0种子投影决策纠错",
+  "pointers": [
+    "docs/decisions/system/2026-08-02-F1+1-VS0-M3种子投影-accepted.md",
+    "data/m4-vs0-seed-enrichment-v0/manifest.json"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-02-VS0-M3种子投影排序与hash纠错报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-E1CFC2",
+  "title": "修正VS-0种子投影排序与hash收据冲突",
+  "unverified": [
+    "数据部 manifest/validator 尚未因本任务更新；seed import、Repository/UI/API、Base/provider 与真实外部链路仍未验证且保持关闭"
+  ],
+  "updated_at": "2026-08-02T10:32+08:00",
+  "verified": [
+    "只读机械复算 rows=59, fields=39; 原序 96d5...（first=x_formula24hrs,last=x_autosport,sorted=false）; Unicode code point sorted 后 e7a8312c70a9a49922aedb3cfbeaa190db8f5dce8d4ab45db1570748fc329f17；旧 ADR 正文 body sha256 保持 c769abc768196297dea3556bb519bd472e5436534863547fcff07bc387cc731f；git diff --check、JSON、doctor 通过"
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "acceptance_exit": "app/.local/f1plus1.sqlite真实存在且由现有accepted迁移/seed重建为m3-shadow：59条Source、全部disabled、公开领域图0，ledger/fixture graph精确匹配；现有public-synthetic仍为1/12/12/12/10/12/12/12/12且逻辑内容/root零漂移。三份0600原子receipt可由代码重生成，均只含项目相对路径；两个profile receipt绑定checkpoint后DB SHA、无WAL/SHM、schema fingerprint、migration/profile ledger roots、精确counts、artifact revision、validator SHA、validatedAt，v0.4 data receipt绑定同一revision与当前manifest/fixture/generator/validator SHA。每个validator进程只有单一SQLite handle，ATTACH/跨profile/符号链接/路径逃逸/旧字节漂移/receipt篡改均拒绝；重复运行只更新validatedAt与相应receipt hash，不改变DB逻辑内容。任务专属测试与typecheck通过，externalCalls=0，第三SQLite仍不存在，P0=0/P1=0后complete。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/src/server/db/closed-receipt.ts",
+    "app/scripts/profile-closed-receipt.ts",
+    "app/src/tests/profile-closed-receipt.test.ts",
+    "app/.local/f1plus1.sqlite",
+    "app/.local/receipts/m3-shadow.closed.json",
+    "app/.local/receipts/public-synthetic.closed.json",
+    "app/.local/receipts/public-synthetic.data.closed.json",
+    "docs/collaboration/部门/开发部/报告/2026-08-09-旧profile封闭收据代码ADR.md",
+    "docs/collaboration/部门/开发部/报告/2026-08-09-M3恢复与旧profile封闭收据完成报告.md"
+  ],
+  "authorization_evidence": "用户持续开工授权；ADR-M5-PUBLIC-MULTIMEDIA-RUNTIME-001 accepted；TASK-20260809-BA9999写前阻断证据",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T16:04+08:00",
+      "evidence": "用户持续开工授权；ADR-M5-PUBLIC-MULTIMEDIA-RUNTIME-001 accepted；TASK-20260809-BA9999写前阻断证据",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/019fb374-7c86-7882-9e51-76114ce69e7f",
+  "completion_class": "standard",
+  "confirmation": "用户已授权持续完成本地初版；本任务是已accepted多媒体运行合同的必要前置恢复，仅作用于纯本地synthetic数据库与可重建运行收据。",
+  "created_at": "2026-08-09T16:04+08:00",
+  "department": "开发部",
+  "details": "只实现accepted ADR所要求的旧profile preflight，不实施第三SQLite、scoped-0003、Repository、API或前端。新增最小可复用的profile-scoped closed-receipt validator和受控命令/代码ADR：每个独立进程只打开m3-shadow或public-synthetic自己的SQLite，校验精确profile、schema fingerprint、migration ledger/root、profile ledger、fixture/manifest/graph、row counts和冻结artifact revision；checkpoint(TRUNCATE)后关闭唯一handle，确认无WAL/SHM，再绑定closed DB SHA、validator artifact SHA和RFC3339 validatedAt。canonical receipts落在app/.local/receipts/受控目录，文件名固定m3-shadow.closed.json、public-synthetic.closed.json，并为v0.4 data pins提供同revision的public-synthetic.data.closed.json；目录0700、文件0600、原子写且不含绝对路径。当前M3 canonical缺失时，仅允许使用现有accepted migration/seed和冻结59条fixture在受控临时路径重建、完整验证后原子安装；目标若出现或归属不明立即拒绝，禁止覆盖。现有public-synthetic只验证和checkpoint，不改逻辑行。保护旧migration/data/package/lock/VS1/Admin/design；无新依赖、无外部I/O。交付代码ADR、目标测试、typecheck、三份真实receipt与报告；完成后由数据部独立复验，再恢复BA9999。",
+  "domain_stage": "M5公开多媒体旧基线恢复门",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "M3冻结fixture、migration、ledger或59条projection hash任一无法精确复算：停止且不安装canonical M3，不从public-synthetic或前端补数据。",
+    "现有public-synthetic schema/ledger/count/root与冻结v0.4任一不一致：保持数据库字节和业务行不动，输出阻断报告，禁止修表或覆盖。",
+    "checkpoint/close/hash/权限/单handle/原子写任一步无法证明：不生成PASS receipt，清理仅属于本任务的临时receipt或临时M3候选并保留可恢复证据。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已核对BA9999阻断、accepted migration/data/package/lock零漂移、sidecar事故恢复、非零WAL打开前拒绝、receipt/validator symlink与canonical bytes、hard-link崩溃恢复、跨profile/ATTACH/path escape/tamper禁区；无已知P0/P1",
+  "node": "补齐public-multimedia-synthetic开工前置的M3数据库与两套旧profile closed receipts",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260809-BA9999.json",
+    "docs/spec/F1+1-public-multimedia-synthetic本地运行实施合同-v0.1.md"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-09-M3恢复与旧profile封闭收据完成报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-8DB77E",
+  "title": "DEV-MM-PREFLIGHT：恢复M3基线并生成旧profile封闭收据",
+  "unverified": [
+    "数据部尚未独立复验三份receipt与两旧profile；BA9999继续blocked直至统筹ACK；第三数据库、Repository/API/前端及真实外部能力均未实施"
+  ],
+  "updated_at": "2026-08-09T16:31+08:00",
+  "verified": [
+    "固定Node24目标测试2/2与typecheck exit0；M3 canonical为59x39、59/59 disabled、公开图0、projection=e7a8312c70a9a49922aedb3cfbeaa190db8f5dce8d4ab45db1570748fc329f17；public-synthetic counts=1/12/12/12/10/12/12/12/12且DB SHA=24536392e0ca00524010ba70ff55f754cd892e3f3f4652eb69ae6a182deaf041零漂移；三份0600 canonical receipts、目录0700、两库无WAL/SHM、第三DB不存在、externalCalls=0；对抗审查P0=0/P1=0"
+  ]
+}

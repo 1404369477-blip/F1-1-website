@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "设计部完成移动端摘要完整显示、悬浮按钮同行同形式、缩略图底部对齐，产出证据与报告；用户确认后由统筹派开发落地。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "design/ui/F1+1-v0.2-全站设计/index.html"
+  ],
+  "authorization_evidence": "用户反馈移动端摘要、悬浮按钮、缩略图对齐（2026-08-08）",
+  "authorization_history": [
+    {
+      "at": "2026-08-08T14:54+08:00",
+      "evidence": "用户反馈移动端摘要、悬浮按钮、缩略图对齐（2026-08-08）",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "设计部/统筹部并行子代理",
+  "completion_class": "standard",
+  "confirmation": "用户体验确认门。",
+  "created_at": "2026-08-08T14:54+08:00",
+  "department": "设计部",
+  "details": "用户反馈(2026-08-08)：①手机端主标题下的简要内容（摘要）较长时未完整显示，应完整显示而不是省略；②右下角『回到顶部』可跟『设置』同一行排列；③『设置』也要隐性显示，与『回到顶部』同形式（无外框文字+阴影、默认隐形、悬停/聚焦高亮）；④缩略图可与左侧文本底部对齐。修订设计草案，产出视觉证据，停在用户体验确认门。",
+  "domain_stage": "design_direction_revision",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若与已确认布局冲突，说明取舍理由，不擅自推翻。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查错题集,无命中",
+  "node": "v0.2-mobile-summary-fab-thumb-alignment",
+  "pointers": [
+    "design/ui/F1+1-v0.2-全站设计/index.html"
+  ],
+  "report": "docs/collaboration/部门/设计部/报告/2026-08-08-摘要与按钮对齐修订报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260808-365A70",
+  "title": "设计修订:移动端摘要完整显示 + 悬浮按钮同行 + 缩略图底部对齐",
+  "unverified": [
+    "用户尚未确认;正式app未落地;真实设备体验待用户/测试部"
+  ],
+  "updated_at": "2026-08-08T15:01+08:00",
+  "verified": [
+    "移动端摘要完整显示不省略;回到顶部与设置同一行、设置同形式隐形+悬停高亮;缩略图与左侧文本底部对齐;证据PNG与报告已产出;既有成果保持"
+  ]
+}

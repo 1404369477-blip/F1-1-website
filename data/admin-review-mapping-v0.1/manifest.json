@@ -1,0 +1,46 @@
+{
+  "artifact_hashes": {
+    "data/admin-review-mapping-v0.1/admin-review-mapping.json": "96d4f7a3db5d17d5575447ec299513ec830779e302f1d7d69665a563c40552ef",
+    "data/admin-review-mapping-v0.1/fixtures.synthetic.json": "d2a06ef4644ed47867631bd4f1f653f9daf2fb0a52e86041595e2bf44ad0294e",
+    "data/admin-review-mapping-v0.1/mapping.schema.json": "80ed33137c5e76024305bd3619d856907f7ff472837b614c9706c04c3bbed4f1",
+    "data/admin-review-mapping-v0.1/validate_mapping.py": "3d8a587d10a9f432a379529d756603ff20d0807e809f654eb073488c3a30503d"
+  },
+  "classification": "offline_local_mapping_validator_not_domain_schema",
+  "counts": {
+    "approve_outbox_count": 0,
+    "approve_publication_count": 1,
+    "approve_task_envelope_count": 0,
+    "domain_entity_additions": 0,
+    "dto_count": 11,
+    "dto_slot_count": 111,
+    "internal_entity_additions": 0,
+    "publish_outbox_count": 1,
+    "publish_projection_count": 1,
+    "publish_task_envelope_count": 1,
+    "transaction_count": 3
+  },
+  "external_calls": 0,
+  "frozen_input_hashes": {
+    "data/mvp-contract-v0.4-public-synthetic/fixtures.public-synthetic.json": "c7d9d88b170214b283a214625d6fd2028fd8eb3a6a2701c556cb2364eb9941e4",
+    "data/mvp-contract-v0.4-public-synthetic/manifest.json": "3b296868dc0c0000fb94856b334ff7d1f698e3e80d4bb02e7062142dc1a0e554",
+    "data/mvp-contract-v0/manifest.json": "8a371102c28eaa557d33df8672338cb3aba7b7ae1fe75c0c357c8edaa23b2cde",
+    "data/mvp-contract-v0/schema.json": "de6c6c07a33589106ebb93496ad10ae3b06ab1c7845e4e0e91888ca0b17ae5a4",
+    "data/mvp-contract-v0/state-machine.json": "d5ca45fd60c2ad08c60929abd714f6e80c43c20f561be0c0a18e3baa17c7c120"
+  },
+  "manifest_version": "admin-review-mapping-manifest-v0.1",
+  "mapping_canonical_sha256": "6bce7514386dfcdd6a592100c371ddc2fc2b48e19090f23ea7bb982eb600cbc4",
+  "mapping_version": "admin-review-mapping-v0.1",
+  "public_synthetic_counts": {
+    "captured_items": 12,
+    "contents": 12,
+    "media_candidates": 10,
+    "publications": 12,
+    "published_projections": 12,
+    "release_bundles": 12,
+    "review_decisions": 12,
+    "sources": 1,
+    "summaries": 12
+  },
+  "real_content_imported": false,
+  "writes_to_base": false
+}

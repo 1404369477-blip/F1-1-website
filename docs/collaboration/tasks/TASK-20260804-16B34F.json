@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "真实 Next 进程使用 canonical public-synthetic 时：feed 稳定 200 且 12 条，已知详情 200，合法未知 publicId 明确 404；完整性校验仍启用，closed Problem/no-store/零泄露/无 fallback/无外部 IO 保持；一次聚焦 HTTP 验收与一次 typecheck 通过；端口和临时产物清理完成并 TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "",
+  "authorization_history": [],
+  "authorization_state": "none",
+  "block_reason": "两次授权启动均在监听前结束；已修复首错health profile握手且内部readiness通过，但唯一纠正性重启仅留NEXT_CLI_SESSION_STOPPED，安全包装器无更细本地错误阶段；HTTP验收NOT_RUN。已清理任务进程、端口、/tmp、DB/sidecar/.next/收据。报告：docs/collaboration/部门/开发部/报告/2026-08-04-真实Next公开读完整性握手P1诊断阻断报告.md",
+  "claimed_by": "开发部/019fb374-7c86-7882-9e51-76114ce69e7f",
+  "completion_class": "standard",
+  "confirmation": "该任务仅修复 P1-01；390px 筛选 P1-02 已由 TASK-20260804-3294F5 单独实现，两个修复将合并进入一次后续测试部+设计部真实页面验收。",
+  "created_at": "2026-08-04T19:55+08:00",
+  "department": "开发部",
+  "details": "依据数据部 TASK-20260804-504B0D：canonical public-synthetic 数据边界、SQLite 发布图、hash/fence、ledger/manifest、profile/path 绑定以及 PublicStoryRepository 直接读取均通过；feed=12、有效详情成功、合法未知详情=null。修复真实 Next 进程中 /api/public/feed、有效详情和未知详情持续或不稳定返回 500 PUBLIC_READ_INTEGRITY_FAILED 的 P1。开发部负责在单一受控真实进程会话内定位数据库实际路径/inode、环境配置快照、profile/root 解析、migration/seed 与启动时序、Repository 实例化、Next 构建产物/缓存握手和首个内部异常；内部诊断不得暴露到 HTTP 响应。实施最小修复，保持 projection-first、closed integrity、无 demo/fixture/静态 fallback、无外部 IO、accepted DTO 与 Problem 合同不变；禁止通过关闭/放宽完整性校验解决。修复后只做 1 次真实 HTTP 聚焦验收，覆盖 feed 200 且 12 条、有效详情 200、合法未知 publicId 404、malformed 输入闭合、500/Problem no-store 与无泄露；再做 1 次 typecheck。不要运行 full check/build 或额外浏览器验证。完成后关闭端口并清理本任务临时 DB/sidecar、.next 和收据，提交开发部报告与 TASK_STATE_OK。",
+  "domain_stage": "p1_remediation",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若真实进程读取了错误 DB inode/path、错误 profile/root 或 seed 前启动，必须修复启动握手并用进程内证据证明读取对象与 canonical 收据一致。",
+    "若 Next 缓存/构建 chunk、模块单例或环境快照导致旧配置或旧 Repository 状态，修复失效边界；不得以禁用 integrity、吞掉异常或 fallback 绕过。",
+    "若单一诊断会话无法复现或无法确定首个失败点，停止扩大实验并 block，提交真实进程路径/配置/首错证据和最小下一步，不重复 seed、测试或端口启动。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "public-runtime-integrity-p1-fix",
+  "pointers": [
+    "TASK-20260804-504B0D; TASK-20260804-697D1B; TASK-20260804-897075; docs/decisions/system/2026-08-03-F1+1-公开读模型与API接线-v0.4-successor-accepted.md"
+  ],
+  "report": "",
+  "resolution": {
+    "evidence": "docs/collaboration/部门/开发部/报告/2026-08-04-真实Next公开读完整性握手P1诊断阻断报告.md",
+    "reason": "原任务已定位并修复 profile-aware readiness 首错，但受启动包装器脱敏信息不足与启动预算耗尽阻断；新任务以安全收据和新的受控预算继续主链。",
+    "receipt_id": "RES-20260804T202246-B535B673",
+    "replacement_revision": 2,
+    "replacement_state": "claimed",
+    "replacement_task_id": "TASK-20260804-C25855",
+    "resolved_at": "2026-08-04T20:22+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "superseded",
+    "target_revision_before": 3
+  },
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260804-16B34F",
+  "title": "修复真实 Next 进程公开读完整性握手失败",
+  "unverified": [],
+  "updated_at": "2026-08-04T20:22+08:00",
+  "verified": []
+}

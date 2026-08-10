@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "生产构建验证通过（npm run build + npm run start）；部署准备文档产出（配置要点 + 门禁清单 + 静态预览部署说明）；未触发真实外网部署；开发部提交报告与 TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/DEPLOYMENT-PREP.md"
+  ],
+  "authorization_evidence": "用户要求搭建部署网页前的准备（2026-08-07）",
+  "authorization_history": [
+    {
+      "at": "2026-08-07T14:06+08:00",
+      "evidence": "用户要求搭建部署网页前的准备（2026-08-07）",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/统筹部并行子代理",
+  "completion_class": "standard",
+  "confirmation": "正式部署（外网上线）仍需用户另行确认运营主体/地域/数据区域/平台条款/容量；本任务只做本地准备。",
+  "created_at": "2026-08-07T14:06+08:00",
+  "department": "开发部",
+  "details": "在 M4 本地边界内做部署前准备：验证 npm run build / npm run start 生产构建与启动闭环；整理部署所需配置（环境变量、Next standalone 输出、CSP/缓存/外链跳转/图片代理要点）；产出部署准备文档，列出正式部署前必须由用户确认的门禁（运营主体、部署地域、数据区域、平台条款、容量、无外联验证 external_calls=0）；不进行真实外网部署。设计草稿 index.html 为静态文件，可作独立预览部署。",
+  "domain_stage": "deployment_prep",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若构建或配置与 M4 安全门禁冲突（R12/R6 无外联、REAL_* fail-closed），停止并回报，不绕过。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查错题集,无命中",
+  "node": "deployment-prep",
+  "pointers": [
+    "app/; docs/spec.md §7 技术路线; design/ui/F1+1-v0.2-全站设计/index.html"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-07-部署前准备收口报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260807-A55149",
+  "title": "搭建部署网页前的准备（构建验证与部署配置）",
+  "unverified": [
+    "真实外网部署未执行;上线前 8 项门禁待用户逐项确认"
+  ],
+  "updated_at": "2026-08-07T19:43+08:00",
+  "verified": [
+    "DEPLOYMENT-PREP.md 覆盖门禁/构建/配置/R2R5R12R13/静态预览/检查清单;构建链全绿事实已由 progress.md 收据支撑"
+  ]
+}

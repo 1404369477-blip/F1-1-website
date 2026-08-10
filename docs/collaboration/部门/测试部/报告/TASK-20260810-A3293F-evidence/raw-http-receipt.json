@@ -1,0 +1,340 @@
+{
+  "decision": "fail",
+  "error": "Error: OVERLAY_INVARIANT",
+  "externalCalls": 0,
+  "steps": [
+    {
+      "name": "health",
+      "method": "GET",
+      "path": "/api/health",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "name": "unauth_list",
+      "method": "GET",
+      "path": "/api/admin/sources",
+      "status": 401,
+      "reasonCode": "ADMIN_SESSION_REQUIRED",
+      "noStore": true
+    },
+    {
+      "name": "session_create",
+      "method": "POST",
+      "path": "/api/admin/session",
+      "status": 201,
+      "noStore": true
+    },
+    {
+      "name": "session_get",
+      "method": "GET",
+      "path": "/api/admin/session",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "name": "list_before",
+      "method": "GET",
+      "path": "/api/admin/sources?limit=100",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "name": "csrf_5",
+      "method": "POST",
+      "path": "/api/admin/csrf",
+      "status": 201,
+      "noStore": true
+    },
+    {
+      "name": "refresh",
+      "method": "POST",
+      "path": "/api/admin/session/refresh",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "name": "refresh_replay",
+      "method": "POST",
+      "path": "/api/admin/session/refresh",
+      "status": 403,
+      "reasonCode": "ADMIN_CSRF_INVALID",
+      "noStore": true
+    },
+    {
+      "name": "csrf_8",
+      "method": "POST",
+      "path": "/api/admin/csrf",
+      "status": 201,
+      "noStore": true
+    },
+    {
+      "name": "csrf_wrong_path",
+      "method": "POST",
+      "path": "/api/admin/session/refresh",
+      "status": 403,
+      "reasonCode": "ADMIN_CSRF_BINDING_MISMATCH",
+      "noStore": true
+    },
+    {
+      "name": "csrf_10",
+      "method": "POST",
+      "path": "/api/admin/csrf",
+      "status": 201,
+      "noStore": true
+    },
+    {
+      "name": "csrf_wrong_method",
+      "method": "DELETE",
+      "path": "/api/admin/session",
+      "status": 403,
+      "reasonCode": "ADMIN_CSRF_BINDING_MISMATCH",
+      "noStore": true
+    },
+    {
+      "name": "csrf_12",
+      "method": "POST",
+      "path": "/api/admin/csrf",
+      "status": 201,
+      "noStore": true
+    },
+    {
+      "name": "csrf_wrong_body",
+      "method": "POST",
+      "path": "/api/admin/sources",
+      "status": 403,
+      "reasonCode": "ADMIN_CSRF_BINDING_MISMATCH",
+      "noStore": true
+    },
+    {
+      "name": "csrf_14",
+      "method": "POST",
+      "path": "/api/admin/csrf",
+      "status": 201,
+      "noStore": true
+    },
+    {
+      "name": "add",
+      "method": "POST",
+      "path": "/api/admin/sources",
+      "status": 202,
+      "noStore": true
+    },
+    {
+      "name": "csrf_add_replay",
+      "method": "POST",
+      "path": "/api/admin/sources",
+      "status": 403,
+      "reasonCode": "ADMIN_CSRF_REPLAY",
+      "noStore": true
+    },
+    {
+      "name": "csrf_17",
+      "method": "POST",
+      "path": "/api/admin/csrf",
+      "status": 201,
+      "noStore": true
+    },
+    {
+      "name": "add_response_loss_replay",
+      "method": "POST",
+      "path": "/api/admin/sources",
+      "status": 202,
+      "noStore": true
+    },
+    {
+      "name": "operation_add",
+      "method": "GET",
+      "path": "/api/admin/operations/op-cmd-0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "name": "detail_added",
+      "method": "GET",
+      "path": "/api/admin/sources/src-local-7c2695705bcd84e46f70f7f1",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "name": "get_validate",
+      "method": "GET",
+      "path": "/api/admin/sources/src-local-7c2695705bcd84e46f70f7f1",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "name": "csrf_22",
+      "method": "POST",
+      "path": "/api/admin/csrf",
+      "status": 201,
+      "noStore": true
+    },
+    {
+      "name": "validate",
+      "method": "POST",
+      "path": "/api/admin/sources/src-local-7c2695705bcd84e46f70f7f1/validate",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "name": "csrf_24",
+      "method": "POST",
+      "path": "/api/admin/csrf",
+      "status": 201,
+      "noStore": true
+    },
+    {
+      "name": "stale",
+      "method": "POST",
+      "path": "/api/admin/sources/src-local-7c2695705bcd84e46f70f7f1/validate",
+      "status": 412,
+      "reasonCode": "ADMIN_SOURCE_STALE",
+      "noStore": true
+    },
+    {
+      "name": "get_activate",
+      "method": "GET",
+      "path": "/api/admin/sources/src-local-7c2695705bcd84e46f70f7f1",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "name": "csrf_27",
+      "method": "POST",
+      "path": "/api/admin/csrf",
+      "status": 201,
+      "noStore": true
+    },
+    {
+      "name": "activate",
+      "method": "POST",
+      "path": "/api/admin/sources/src-local-7c2695705bcd84e46f70f7f1/activate",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "name": "csrf_29",
+      "method": "POST",
+      "path": "/api/admin/csrf",
+      "status": 201,
+      "noStore": true
+    },
+    {
+      "name": "activate_response_loss_replay",
+      "method": "POST",
+      "path": "/api/admin/sources/src-local-7c2695705bcd84e46f70f7f1/activate",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "name": "operation_activate",
+      "method": "GET",
+      "path": "/api/admin/operations/op-cmd-0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "name": "csrf_32",
+      "method": "POST",
+      "path": "/api/admin/csrf",
+      "status": 201,
+      "noStore": true
+    },
+    {
+      "name": "identity_conflict",
+      "method": "POST",
+      "path": "/api/admin/sources",
+      "status": 409,
+      "reasonCode": "ADMIN_COMMAND_IDENTITY_CONFLICT",
+      "noStore": true
+    },
+    {
+      "name": "get_stop",
+      "method": "GET",
+      "path": "/api/admin/sources/src-local-7c2695705bcd84e46f70f7f1",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "name": "csrf_35",
+      "method": "POST",
+      "path": "/api/admin/csrf",
+      "status": 201,
+      "noStore": true
+    },
+    {
+      "name": "stop",
+      "method": "POST",
+      "path": "/api/admin/sources/src-local-7c2695705bcd84e46f70f7f1/stop",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "name": "get_retire",
+      "method": "GET",
+      "path": "/api/admin/sources/src-local-7c2695705bcd84e46f70f7f1",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "name": "csrf_38",
+      "method": "POST",
+      "path": "/api/admin/csrf",
+      "status": 201,
+      "noStore": true
+    },
+    {
+      "name": "retire",
+      "method": "POST",
+      "path": "/api/admin/sources/src-local-7c2695705bcd84e46f70f7f1/retire",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "name": "get_requeue_conflict",
+      "method": "GET",
+      "path": "/api/admin/sources/src-local-7c2695705bcd84e46f70f7f1",
+      "status": 200,
+      "noStore": true
+    },
+    {
+      "name": "csrf_41",
+      "method": "POST",
+      "path": "/api/admin/csrf",
+      "status": 201,
+      "noStore": true
+    },
+    {
+      "name": "requeue_conflict",
+      "method": "POST",
+      "path": "/api/admin/sources/src-local-7c2695705bcd84e46f70f7f1/requeue",
+      "status": 409,
+      "reasonCode": "ADMIN_REQUEUE_CONFLICT",
+      "noStore": true
+    },
+    {
+      "name": "source_404",
+      "method": "GET",
+      "path": "/api/admin/sources/src-local-ffffffffffffffffffffffff",
+      "status": 404,
+      "reasonCode": "ADMIN_SOURCE_NOT_FOUND",
+      "noStore": true
+    },
+    {
+      "name": "operation_404",
+      "method": "GET",
+      "path": "/api/admin/operations/op-cmd-6363636363636363636363636363636363636363636363636363636363636363",
+      "status": 404,
+      "reasonCode": "ADMIN_SOURCE_NOT_FOUND",
+      "noStore": true
+    },
+    {
+      "name": "list_after",
+      "method": "GET",
+      "path": "/api/admin/sources?limit=100",
+      "status": 200,
+      "noStore": true
+    }
+  ]
+}

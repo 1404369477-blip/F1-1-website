@@ -1,0 +1,51 @@
+{
+  "acceptance_exit": "app/具备唯一package/lock与精确版本栅栏、canonical目录、安全.env.example默认值及最小Next App Router scaffold；lockfile无浮动latest/canary、依赖解析来源可追溯、无install script执行证据；现有README不再宣称app未初始化；git diff --check/JSON解析/路径检查通过。明确B层completed与C层Node24运行、SQLite、业务切片、build/test/security收据pending；提交开发报告并TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-02-M4-B层本地Web工程初始化报告.md"
+  ],
+  "authorization_evidence": "用户已明确授权全员持续推进本地网站工程；A轴accepted任务TASK-20260802-8B5DCF已由统筹部ACK；允许本地工程初始化与必要依赖解析",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T03:02+08:00",
+      "evidence": "用户已明确授权全员持续推进本地网站工程；A轴accepted任务TASK-20260802-8B5DCF已由统筹部ACK；允许本地工程初始化与必要依赖解析",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部当前会话",
+  "completion_class": "standard",
+  "confirmation": "本任务只执行B层本地初始化；C层业务实现与运行验收仍需后继任务，真实Base/provider/Collector/采集/发布/部署继续关闭。",
+  "created_at": "2026-08-02T03:02+08:00",
+  "department": "开发部",
+  "details": "依据accepted ADR-M4-KICKOFF-001与Spec，原位把app/README地基升级为单包Next.js App Router工程。必须固定Node 24.18.0、npm 11.16.0、next 16.2.11并建立package.json/package-lock.json/.nvmrc/.node-version/.npmrc(engine-strict=true)/tsconfig/Next与ESLint配置/.gitignore/.env.example；创建accepted canonical目录src/app、src/modules、src/server、src/styles、src/tests、migrations、fixtures、scripts及最小可启动scaffold，不写真实业务逻辑。依赖版本与Node发行物只用官方nodejs.org/npm registry通过CLI只读核对；允许为生成lockfile进行仓库内依赖bootstrap，禁止全局改系统、执行第三方lifecycle script、使用latest/canary、写凭证或调用任何真实provider/Base/Collector/平台/AI/媒体/发布/部署。若Node24本机不可用，B层仍可交付版本与lock/scaffold，但必须把Node24执行验证留C层，不得用Node25冒充。保留app/README并更新为当前入口或在无信息损失时迁移其内容，避免旧地基说明误导。",
+  "domain_stage": "M4-B-local-app-initialization",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 官方registry不存在任一精确候选或peer依赖冲突：停止该依赖解析，提交精确证据与最小替代建议，禁止自行改accepted版本。",
+    "2) 本机只有Node25或缺Node24：不得伪造通过；完成静态B层可交付部分并把运行验证列C层blocked/pending。",
+    "3) 依赖安装要求lifecycle脚本、凭证、代理注入或外部服务：fail closed，禁止执行并报告。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "保留dirty worktree并只改本任务app、docs/progress和开发报告；未使用Node25冒充C层；未使用latest/canary、镜像、unpkg或伪造integrity；.npmrc与命令均ignore-scripts且无package lifecycle hook；未写凭证或调用真实外部能力",
+  "node": "M4/B层/app初始化",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-02-M4-B层本地Web工程初始化报告.md"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-02-M4-B层本地Web工程初始化报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-F8BF72",
+  "title": "初始化M4 B层本地Web工程与可复现依赖基线",
+  "unverified": [
+    "官方npm registry DNS不可达，package-lock.json未生成；本机无Node24，Node24/npm ci、SQLite、业务切片、build/test/lint/typecheck/security、真实127.0.0.1端口仍属C层pending"
+  ],
+  "updated_at": "2026-08-02T03:28+08:00",
+  "verified": [
+    "B层静态app scaffold、精确Node24.18.0/npm11.16.0/Next16.2.11栅栏、canonical目录、安全.env.example、Next/ESLint/TypeScript配置、README更新、JSON/路径/浮动tag/lifecycle/空白检查及git diff --check通过；无真实provider/Base/平台/外发/部署/系统安装"
+  ]
+}

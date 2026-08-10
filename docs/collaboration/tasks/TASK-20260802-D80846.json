@@ -1,0 +1,66 @@
+{
+  "acceptance_exit": "唯一目录内所有现行artifact为mvp-local-v0.3且旧v0.2生成标签零残留（upgrade_from历史字段除外）；JSON/schema/引用/hash复算/manifest hashes/枚举与fixture覆盖/幂等与跨对象唯一性全部机械通过；所有onboarding状态有Source fixture，paused仅lifecycle；同bundle/hash绝无第二public_id，Publication/Outbox/Envelope key规则通过；4种reconcile出口有独立case；content/summary/payload/bundle hash可从字段重算；lease满足128-bit形状、epoch0拒绝；internal schema/fixture闭合且不进入domain/Base；seed三层、M3 33/9与59 disabled、synthetic_only/external_calls=0保持；提交数据部报告并TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "data/mvp-contract-v0/schema.json",
+    "data/mvp-contract-v0/base-mapping.json",
+    "data/mvp-contract-v0/state-machine.json",
+    "data/mvp-contract-v0/fixtures.synthetic.json",
+    "data/mvp-contract-v0/runtime-envelope.schema.json",
+    "data/mvp-contract-v0/security-fixtures.schema.json",
+    "data/mvp-contract-v0/security-fixtures.synthetic.json",
+    "data/mvp-contract-v0/internal-contract.schema.json",
+    "data/mvp-contract-v0/internal-fixtures.synthetic.json",
+    "data/mvp-contract-v0/seed-layers.json",
+    "data/mvp-contract-v0/manifest.json",
+    "data/mvp-contract-v0/generate_contract.py",
+    "docs/collaboration/部门/数据部/报告/2026-08-02-本地MVP数据合同v0.3-A轴阻断闭合.md"
+  ],
+  "authorization_evidence": "用户已授权本地工程继续推进；A轴独立复验已FAIL并要求先修合同再开始app",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T01:13+08:00",
+      "evidence": "用户已授权本地工程继续推进；A轴独立复验已FAIL并要求先修合同再开始app",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "数据部/019fb371-9834-78d3-a7b3-4f4c62819520",
+  "completion_class": "standard",
+  "confirmation": "用户已授权本地工程与数据合同修订；本任务不授权app、Base、真实provider、平台采集或发布。",
+  "created_at": "2026-08-02T01:13+08:00",
+  "department": "数据部",
+  "details": "读取测试部TASK-20260802-5809E0、安全部TASK-20260802-A7BA84及统筹临时对抗审查证据，在唯一目录data/mvp-contract-v0原位升级到mvp-local-v0.3；不创建平行目录/备份/旧版生成物，不改Spec/ADR/app/Base。与产品部共享唯一语义：Source入队validating→activation_pending严格要求canonical_url_valid、normalization=valid、dedup=unique；blocked状态安全优先级platform>authorization>adapter；三门/stop/five fence通过后同一激活事务设置enabled=true+queued并写唯一OutboxJob/TaskEnvelope，Source.onboarding_operation_id、TaskEnvelope.operation_id、Outbox操作ID一致；queued后lease才collecting。paused仅lifecycle；补blocked恢复、queue/collection有界重试、stop/resume、publication/outbox retryable_failed出口；所有Source onboarding enum各有合法synthetic Source fixture。修复同bundle/hash双public_id：reconcile_wait改用尚未发布的独立Bundle/Review或同一Publication状态，不得复用已published bundle生成第二public_id；publish job/envelope idempotency_key等于Publication.idempotency_key，reconcile query使用该Publication.reconcile_key；增加跨对象唯一性断言和4个reconcile outcome case。实现可重建hash：Content/Summary version hash从明确定义字段对象计算；ReleaseBundle新增strict canonical_payload，冻结content/summary hash、source snapshot、original_url、rights、media hash/license/safety、policy/schema和五fence；payload_hash仅hashpayload，bundle_hash按release_bundle_id+bundle_version+payload_hash+rule+immutable计算；ReviewDecision批准bundle_hash。SummaryDraft映射为Summary(draft)并补input content hash/schema/summarizer/deterministic字段；新增internal-contract.schema.json和internal-fixtures.synthetic.json定义internal-only SourceObservation与AuditEvent，additionalProperties=false、唯一键/owner/epoch/hash、Audit append-only monotonic_seq/clock/redaction/retention，绝不进入domain_only/Base。seed仍精确3层，projection/snapshot/internal fixtures是synthetic子集并有计数/hash引用。runtime lease token使用可承载128-bit的synthetic格式（建议synthetic:lease:32 hex），epoch0永远schema reject。最终manifest含全部artifact hashes/计数/upgrade_from v0.2；M3 33/9、59行、59 disabled不回归；生成器最终连续两次确定性生成并运行语义断言。",
+  "domain_stage": "M4 A轴第二轮修订",
+  "event_receipts": [
+    "docs/collaboration/部门/数据部/日志/2026-W31.md#MIL-20260802T020014-9F4C4E"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) v0.3修订破坏M3 mapping/59 disabled或产生真实URL/secret/network：停止，恢复一致性并只用synthetic数据；2) internal对象无法与domain彻底隔离或hash仍依赖可变外部记录：停止完成并报告具体schema冲突；3)生成器/manifest非确定、同bundle双publicId、operation/key不一致或任一状态无fixture：保持任务未完成，不用平行目录绕过。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已修正6/7机器与14/9不变量漂移、observation字段过严、AuditEvent命名和实际schema SHA、TaskEnvelope后缀碰撞、strict release snapshot漏字段、stop字段不统一、seed子集hash/内部count、Activation receipt、reconcile_key和max_task_window；未改Spec/ADR/app/Base，未使用平行目录或真实外连。",
+  "node": "M4/A轴第二轮修订/机器合同",
+  "pointers": [
+    "docs/collaboration/部门/数据部/报告/2026-08-02-本地MVP数据合同v0.3-A轴阻断闭合.md"
+  ],
+  "report": "docs/collaboration/部门/数据部/报告/2026-08-02-本地MVP数据合同v0.3-A轴阻断闭合.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-D80846",
+  "title": "原位升级数据合同v0.3闭合A轴复验阻断",
+  "unverified": [
+    "真实JSON Schema引擎、SQLite/worker/UI/provider/Base/飞书、真实平台授权、部署、发布和外部网络运行行为未验证。"
+  ],
+  "updated_at": "2026-08-02T02:09+08:00",
+  "verified": [
+    "generator内置validate_semantics通过：6组状态机/5类幂等键/9条不变量/16 onboarding状态/4 reconcile case/900秒窗口。",
+    "JSON schema、runtime envelope、引用闭合、内容摘要Bundle审核hash、Publication-Outbox-Envelope key和task/lease/payload全局唯一性通过。",
+    "internal schema/fixture字段、实际schema SHA、SummaryDraft映射、Activation fixture receipt、三层seed子集hash/count和M3 33/9/59 disabled通过。",
+    "manifest 11项artifact hash匹配；当前生成器连续两次确定性生成无差异；external_calls=0且无外部写入。"
+  ]
+}

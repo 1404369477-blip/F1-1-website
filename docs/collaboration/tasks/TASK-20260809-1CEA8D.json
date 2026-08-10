@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "提交安全部报告目录下final报告，status=final、decision=pass|fail、P0/P1/P2逐项明确；若pass必须P0=0/P1=0并明确v0.3可作为开发实施输入；若fail必须给出精确条款、攻击/失败路径和唯一successor整改出口；报告绑定四份输入完整SHA，externalCalls=0，doctor通过并返回TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-09-SOURCE-MGMT-001-v0.3实施前独立安全复验报告.md"
+  ],
+  "authorization_evidence": "2026-08-09主会话持续推进；用户要求先跑本地初版，安全复验属于既定实施前门禁。",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T21:51+08:00",
+      "evidence": "2026-08-09主会话持续推进；用户要求先跑本地初版，安全复验属于既定实施前门禁。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "用户已持续授权推进本地初版；本任务为只读独立安全复验，不实施、不外联、不开放生产。",
+  "created_at": "2026-08-09T21:51+08:00",
+  "department": "安全部",
+  "details": "只读冻结候选 docs/spec/F1+1-SOURCE-MGMT-001本地synthetic信源管理纵切实现合同-v0.3.md，SHA-256=90ee4ed30d325b7b2833582cc0ac8134aefc7fbc2dcd43ec9d20c0f726b2f1fe；同时pin v0.2=a4b7230c89b0083f6d3f412d2c3f3f767c7f131d4ea422f85fe5721f75df686b、安全候选=e043705915c4c2489cdf3cb178677b4d5dc753781c98e8c10e7886d2a5462218、96AF52 FAIL=3055ff0fc81cfa471f14e32d5f333bee2c275783ed1df862781bda134097248e。逐条检查raw authority/peer/origin、session与CSRF原子语义、zero-delta、command/business/job/task/lease身份owner/codec/长度/碰撞/复用、source_id完整hash分流、11项mandatory golden是否可机械实现且互不矛盾。只提交安全部final审查报告，不改Spec、app、data、design、ADR、数据库或任务输入，不联网。",
+  "domain_stage": "M5-SOURCE-MGMT-v0.3安全复验",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一固定SHA漂移、任务输入缺失或v0.3被并发修改：立即block，不对可变候选给结论。",
+    "发现raw/session/CSRF或identity存在循环、歧义、不可实现或零业务增量无法证明：decision=fail并给出P1及最小successor出口，不替产品改合同。",
+    "发现需要真实网络、生产身份、新依赖、设备配置或代码运行才能回答：保持Unknown并限制结论，不扩大授权。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已重算四份输入而非沿用产品结论；复算identity随机字节/prefix/hex/exact长度与schema；区分合同PASS、开发开工和运行/生产放行；保留同UID与实现可行性Unknown；未修改固定候选、未联网、未运行服务/DB、未替用户授权；报告含字面TASK_STATE_OK。",
+  "node": "复核v0.3是否逐项关闭96AF52的两项P1与source_id碰撞P2，并给出唯一实施门结论",
+  "pointers": [
+    "docs/spec/F1+1-SOURCE-MGMT-001本地synthetic信源管理纵切实现合同-v0.3.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-09-SOURCE-MGMT-001-v0.3安全合同整改报告.md",
+    "docs/collaboration/部门/安全部/报告/2026-08-09-SOURCE-MGMT-001-v0.2实施前独立安全审查报告.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-09-SOURCE-MGMT-001-v0.3实施前独立安全复验报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-1CEA8D",
+  "title": "SOURCE-MGMT-001 v0.3实施前独立安全复验",
+  "unverified": [
+    "HTTP raw adapter、session/nonce store、constant-time compare、SQLite transaction/UNIQUE、worker/lease CAS、并发、UI/浏览器、11+16项golden、真实端口/进程/WAL/断电恢复、OS级no-egress与生产部署均未运行；真实外部能力继续关闭。"
+  ],
+  "updated_at": "2026-08-09T21:56+08:00",
+  "verified": [
+    "四份固定输入SHA精确匹配；v0.3逐项关闭raw authority/session/CSRF与identity两项P1及source_id碰撞P2；七个identity owner/codec/长度/schema兼容/碰撞/复用已独立复算；11项mandatory golden无循环或宽松回退；合同层P0=0/P1=0/P2=0，可作为开发实施输入；externalCalls=0。"
+  ]
+}

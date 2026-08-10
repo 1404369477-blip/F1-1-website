@@ -1,0 +1,57 @@
+{
+  "acceptance_exit": "提交数据部 final 报告并绑定上述全部候选 hash；decision=pass|fail，列 P0/P1/P2；所有 mandatory 领域/事务/hash 不变量有独立证据，P0=0/P1=0 方可 pass；清楚列出已验证/未验证和错题自检，TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "TASK-20260809-D6114C 已 acknowledged；用户既有本地 synthetic 授权",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T13:33+08:00",
+      "evidence": "TASK-20260809-D6114C 已 acknowledged；用户既有本地 synthetic 授权",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "",
+  "completion_class": "standard",
+  "confirmation": "用户已确认本地 synthetic 采集、低质量初筛、中文整理与人工审核前路线；本任务只读审核，无外部能力。",
+  "created_at": "2026-08-09T13:33+08:00",
+  "department": "数据部",
+  "details": "候选精确身份：ADR 95421002e6b5b52061d6d41b6342f92bb919bfdf937ca00ab69fc9f9a2cc5612；合同 2913bc78bd43969f8354b63d9906b346839102d76f05702d6c41f54145c4ed6c；package e39a413a0ae2000b781433e983a9df48c26b0f5c1db1ce950e2b0b6dd6be7752；lock 89807e33818cfb851b57da65a5675e413e5593d01d6773c3a71a6cc6ea3d85d3；worker 57fcea6ac269daccce8a21072198b4ccc3f0529823a79383a97d0a3af67de814；contract-entry 7f52c992ffdd3a92c06d3c87aa0babcce83e4fa12c55f3933968e246a0f40297；fixture-loader 7c21bf9e3e0c38a166a831613118daf0f3fcf837d08ca6723553e732133326e9；no-egress a8c117708d31fb236e059183c9b08c6a56ab091ac38bde121ef0234e85a22d2d；pipeline a74240b8d479cfec2fd0e83bc6146fd05ab6b85e12e7149d4b016dc1b92cf806；vs1-test d43658bd81f20e42691256430dd036e329853c7759af595494d5d86c933862cf；registry/seed/manifest 21347151fbc69de403dd4d7b7aec3f315e2d8de4646f622d8b5377924f610ee1 / 4ab8a3bab537c82e43612fa11b81cdacea2043d4027bd09fcf91b04f5677a648 / 7343f8bc76d68b7993b29ed5232e3487621effb3a27518e0f754a5dd07fef39e；migrations 0001..0006 = dc235534c492b9c763f63e2752bd4d78cc4f05ecf8e3600a3a906c3d0aae029b,3c96d4be93ebbc3dcc56bbb1780bec7f65c76f9c9ae1a7a391d3895d10f5c748,f1014f95dea2d556ea632493448b6db98350b89baea55f018a1975c9baec7460,276e31b466eda82ec5076307f4bab62b37b1ef496146e555edbae5f7a6408696,f5a8e18f1d437cdca18990d27d15be06c12b08efda771e12f903600bb7bc9a6a,c27b9c0274605db15ad91462f6752637ae35c54b7632920718229f06dda7c17e；开发 receipt/VOP d6c93b0d0ad690f7177b2e071695228d6e320743a1162d7a0722198bb31ab7a4 / 642f1576f96efcf97f05ae2613ac2432b0deffe5a5004b4a002fc547f86d2b5a。 在完成当前 DATA-MM-01 后领取。只读审查 migration/fixture/pipeline/receipt；逐 COLLECT-MOCK-002、CONTENT-PROCESS-003、SUMMARY-MOCK-004 验证 observation→capture→content→event→summary→bundle 的实体 delta、Content/Event 去重、insert-or-return、CAS、016A-G 回滚、retry/dead-letter、approved chain、Event golden 及 replay；确认没有第二 DB、第二实体、第二业务真值或 data 冻结包漂移。可运行必要的聚焦机器校验，不修改 app/data/合同。",
+  "domain_stage": "M5 VS1 最终候选独立门禁",
+  "event_receipts": [],
+  "execution_state": "queued",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一候选 hash 漂移、manifest/migration/hash 不一致或无法复算，立即 fail，不审核可变候选。",
+    "任一失败路径产生部分领域写、旧批准链漂移、重复 Content/Event/Summary/Bundle 或新实体/第二 DB，判 P1/P0 并 fail。",
+    "当前 DATA-MM-01 尚未收口时保持 queued，不抢占或并发修改共享数据文件。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "确认采集清洗去重摘要纵切只使用冻结领域实体并保持原子性",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260809-D6114C.json",
+    "docs/decisions/system/2026-08-09-F1+1-VS1本地synthetic纵切-successor-accepted.md",
+    "docs/spec/F1+1-VS1本地synthetic纵切实施合同-v0.2.md"
+  ],
+  "report": "",
+  "resolution": {
+    "evidence": "TASK-20260809-5E97E0已ACK，TASK-20260809-5A9316已由数据部领取",
+    "reason": "旧版VS1数据复验任务已被覆盖范围更完整的最终数据门禁替代",
+    "receipt_id": "RES-20260809T153908-0AE995AC",
+    "replacement_revision": 2,
+    "replacement_state": "claimed",
+    "replacement_task_id": "TASK-20260809-5A9316",
+    "resolved_at": "2026-08-09T15:39+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "superseded",
+    "target_revision_before": 1
+  },
+  "revision": 2,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-3E8EDB",
+  "title": "独立复验 VS1 领域图、事务与哈希不变量",
+  "unverified": [],
+  "updated_at": "2026-08-09T15:39+08:00",
+  "verified": []
+}

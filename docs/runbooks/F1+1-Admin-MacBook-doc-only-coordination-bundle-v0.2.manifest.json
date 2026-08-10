@@ -1,0 +1,189 @@
+{
+  "schemaVersion": "f1plus1-doc-only-coordination-bundle-v0.2",
+  "bundleId": "f1plus1-admin-macbook-coordination-v0.2",
+  "status": "template_not_exported",
+  "rootRule": "BUNDLE_ROOT is the directory containing bundle-manifest.json; consumers MUST NOT traverse above it or resolve any project/source/runtime root",
+  "manifestFileName": "bundle-manifest.json",
+  "manifestSelfHash": {
+    "includedInFiles": false,
+    "rule": "SHA-256 of the final bundle-manifest.json bytes is transmitted out of band and verified before any listed document is read"
+  },
+  "closedFileSet": true,
+  "extraEntriesAllowed": false,
+  "allowedEntryType": "regular_file_single_link_only",
+  "allowedDocumentExtensions": [
+    ".md"
+  ],
+  "forbiddenPathSegments": [
+    "app",
+    "data",
+    "migration",
+    "migrations",
+    ".git",
+    "src",
+    "source",
+    "node_modules",
+    ".next",
+    "dist",
+    "build",
+    "runtime",
+    "service",
+    "logs",
+    "backup",
+    "backups",
+    "staging",
+    ".env"
+  ],
+  "forbiddenExtensions": [
+    ".db",
+    ".sqlite",
+    ".sqlite3",
+    ".wal",
+    ".shm",
+    ".journal",
+    ".key",
+    ".pem",
+    ".p12",
+    ".pfx",
+    ".der",
+    ".crt",
+    ".cer",
+    ".mobileconfig",
+    ".log",
+    ".zip",
+    ".tar",
+    ".gz",
+    ".dmg",
+    ".pkg",
+    ".js",
+    ".jsx",
+    ".ts",
+    ".tsx",
+    ".py",
+    ".sh",
+    ".zsh",
+    ".sql"
+  ],
+  "forbiddenContentClasses": [
+    "source_code_or_build_output",
+    "runtime_or_service_directory",
+    "credential_secret_or_recovery_material",
+    "production_database_or_sqlite_file_family",
+    "backup_payload_or_recovery_archive",
+    "unsanitized_log",
+    "real_account_ip_or_device_identifier"
+  ],
+  "files": [
+    {
+      "path": "prompts/execution-handoff-v0.2.md",
+      "role": "prompt",
+      "bytes": 18384,
+      "sha256": "97b0dbdf452d7200d4165d8e1629b6424e8ffcdea0aba8237e46c764e428527e"
+    },
+    {
+      "path": "history/execution-handoff-v0.1.md",
+      "role": "historical_prompt",
+      "bytes": 31400,
+      "sha256": "aacdb684d70dce41c034247395329fde80e109eae390699726d5c7150c41c6be"
+    },
+    {
+      "path": "guides/agent-entry.md",
+      "role": "guide_export",
+      "bytes": 446,
+      "sha256": "ab371c0b898fa0d6b0c56e284581cd3882e7983b1135f75c6404a7ea19a42442"
+    },
+    {
+      "path": "guides/agent-guide.md",
+      "role": "guide_export",
+      "bytes": 13346,
+      "sha256": "32ff792c51fe13687d80c7029e4c9e175e04bc76e3b358912b06cbf9ea93d17f"
+    },
+    {
+      "path": "contracts/product-spec.md",
+      "role": "contract_export",
+      "bytes": 58075,
+      "sha256": "027089a890df409bcfd3c68cd44e8040cbf356c95dca574b7238adcbd824827b"
+    },
+    {
+      "path": "contracts/admin-preconfiguration-v0.2.md",
+      "role": "contract_export",
+      "bytes": 15073,
+      "sha256": "c33ec34a656996812e0c301458b043938ce4245d792738f15536d7c12648d8e8"
+    },
+    {
+      "path": "contracts/admin-dual-host-adr.md",
+      "role": "contract_export",
+      "bytes": 10865,
+      "sha256": "f214bede47428ea297bd95bae350c21cac0d6f675f8e1ac76c938f9d5f706e89"
+    },
+    {
+      "path": "contracts/admin-dual-host-contract-v0.2.md",
+      "role": "contract_export",
+      "bytes": 25773,
+      "sha256": "b30994d509d78c018be29399e2ca52959efa49937727331fa4729b37366189bb"
+    },
+    {
+      "path": "contracts/admin-dedicated-macbook-adr.md",
+      "role": "contract_export",
+      "bytes": 6337,
+      "sha256": "56018d7ed39d429d66ee3d1155d64d0612dfc2f096ef0e6d87ad165704145242"
+    },
+    {
+      "path": "contracts/admin-dedicated-macbook-contract-v0.2.md",
+      "role": "contract_export",
+      "bytes": 8492,
+      "sha256": "8c54ceec1f29720881db7e3b627c04216856ea9888abfcf585649ff7db8beb35"
+    },
+    {
+      "path": "evidence/admin-preconfiguration-security-pass.md",
+      "role": "evidence_export",
+      "bytes": 9684,
+      "sha256": "adf4048f83d5e3d3c07c3e2e23a1e0b70532182d9d68a85f42ee29391022d0d2"
+    },
+    {
+      "path": "evidence/dual-mac-three-channel-research.md",
+      "role": "evidence_export",
+      "bytes": 26878,
+      "sha256": "70b5cc5ed9a6b0bede46dd3a0a3a4615625d63a46325950ea70b85cd0d1c9e23"
+    }
+  ],
+  "readOrder": [
+    "prompts/execution-handoff-v0.2.md",
+    "guides/agent-entry.md",
+    "guides/agent-guide.md",
+    "contracts/product-spec.md",
+    "contracts/admin-preconfiguration-v0.2.md",
+    "contracts/admin-dual-host-adr.md",
+    "contracts/admin-dual-host-contract-v0.2.md",
+    "contracts/admin-dedicated-macbook-adr.md",
+    "contracts/admin-dedicated-macbook-contract-v0.2.md",
+    "evidence/admin-preconfiguration-security-pass.md",
+    "evidence/dual-mac-three-channel-research.md",
+    "history/execution-handoff-v0.1.md"
+  ],
+  "verificationAlgorithm": [
+    "verify the out-of-band SHA-256 of bundle-manifest.json",
+    "reject absolute paths, dot-dot paths, links, special files, mounts, forbidden path segments and forbidden extensions",
+    "require the actual regular-file set to equal files[].path plus bundle-manifest.json exactly",
+    "verify each listed byte count and SHA-256 before reading document content",
+    "read only files in readOrder; never inspect a parent, sibling, project, source or runtime directory",
+    "return fail-closed on any missing, extra, changed, unsafe, unknown or unverified input"
+  ],
+  "unknownManifestGates": [
+    "MANIFEST-P1-01-FILEVAULT-UNATTENDED-REBOOT",
+    "MANIFEST-P1-02-ONSITE-UNLOCK",
+    "MANIFEST-P1-03-COLD-STANDBY",
+    "MANIFEST-P1-04-OLD-PRIMARY-EPOCH-FENCE",
+    "MANIFEST-P1-05-SSH-INTERFACE-NEGATIVE",
+    "MANIFEST-P1-06-GIT-SIGNER-PROVIDER-FAILURE-DOMAIN"
+  ],
+  "authorization": {
+    "documentPreparationOnly": true,
+    "bundleExportPerformed": false,
+    "externalCalls": 0,
+    "realConfigurationPerformed": false,
+    "installationRegistrationPaymentNetworkProbeUploadDeploymentAllowed": false,
+    "sourceOrRuntimeMoveAllowed": false,
+    "productionAuthorized": false
+  }
+}

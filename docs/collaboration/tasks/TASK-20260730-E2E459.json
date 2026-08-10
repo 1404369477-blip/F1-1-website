@@ -1,0 +1,57 @@
+{
+  "acceptance_exit": "每个平台至少覆盖官方路径和可行替代；矩阵包含稳定性、时效、成本、密钥或登录、维护状态、许可证、合规风险与推荐级别；仓库信号和关键事实带直链及查询日期；给出可验证15分钟目标的最小试验。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "research/multi-platform-source-collection-2026-07-30.md"
+  ],
+  "authorization_evidence": "当前主会话用户消息：派Agent寻找稳定采集方案并继续推进。",
+  "authorization_history": [
+    {
+      "at": "2026-07-30T22:45+08:00",
+      "evidence": "当前主会话用户消息：派Agent寻找稳定采集方案并继续推进。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "数据部/019fb371-9834-78d3-a7b3-4f4c62819520",
+  "completion_class": "standard",
+  "confirmation": "用户明确要求到GitHub、X、Reddit寻找稳定采集方案。",
+  "created_at": "2026-07-30T22:45+08:00",
+  "department": "数据部",
+  "details": "面向指定白名单信源和正常情况下15分钟内采集目标，调研 X、Instagram、Reddit、新闻网站与RSS。先核查当前官方API、嵌入、RSS、费用、权限、速率限制和政策，再检索GitHub维护活跃的开源组件，并将X与Reddit社区经验仅作线索、用官方文档或仓库交叉验证。产出候选方案矩阵、归一化字段与首版技术小实验建议；不得推荐绕过登录、验证码、封禁或平台访问控制的路径。",
+  "domain_stage": "M2风险调研",
+  "event_receipts": [
+    "MIL-20260730T230838-913AEC"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "无法访问X或Reddit时使用官方文档、搜索索引和仓库证据替代；仓库停更或许可证不清时降级；官方价格无法确认时明确未知且不估算。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已读取 docs/collaboration/错题集.md，当前无正式错题条目；对抗审查命中并修正 X 公开价、Instagram Login、RSS 复合键、自控试验、可观察字段和 GitHub 维护信号；未采用社区报价或未授权采集",
+  "node": "M2-采集可行性",
+  "pointers": [
+    "docs/spec.md"
+  ],
+  "report": "完成多平台白名单信源采集方案、归一化字段、维护证据和15分钟可重复最小试验设计",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260730-E2E459",
+  "title": "调研多平台白名单信源稳定采集方案",
+  "unverified": [
+    "未使用 X、Meta、Reddit 凭据，未执行付费 API 或外部发帖，15 分钟受控平台试验尚未运行",
+    "Reddit RSS 在当前本地网络的一次探测超时，Web 工具仅识别 Atom 类型，生产稳定性未验证",
+    "首批 Instagram 账号类型、Reddit 商业许可、新闻和用户内容摘要与图片版权仍需统筹、安全或法务确认"
+  ],
+  "updated_at": "2026-07-30T23:11+08:00",
+  "verified": [
+    "已用查询日官方资料核查 X、Meta/Instagram、Reddit、W3C/IETF 的接口、价格、权限、限流和合规边界",
+    "X、Instagram、Reddit、新闻网站、RSS/Atom 均覆盖官方路径与可行替代，矩阵包含稳定性、时效、成本、密钥或登录、维护和许可证、合规风险与推荐级别",
+    "GitHub Repository API 与 Releases API 已核查候选仓库的 pushed_at、归档状态、最新 Release、open issues/PRs 和许可证",
+    "Formula 1 第一方 RSS 已做无凭据连通和结构预检，确认 200、text/xml、缓存头、GUID 字段和文章 JSON-LD 发布时间补全路径",
+    "只读对抗审查提出的 X 价格、Instagram Login、RSS 唯一键、自控试验、可观察字段和维护信号六项问题均已修正；git diff --check 与任务 doctor 通过"
+  ]
+}

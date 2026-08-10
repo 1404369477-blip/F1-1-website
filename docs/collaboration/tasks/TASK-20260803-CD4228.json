@@ -1,0 +1,68 @@
+{
+  "acceptance_exit": "开发报告冻结修改后哈希；固定Node24下公开UI测试、lint、typecheck、build通过；新增自动测试能捕获no-more组合数量、选中态非纯颜色/aria、主题持久化和关键语义；本地浏览器在390/1440及深浅主题验证媒体标签对比度>=4.5:1、详情返回链接实际>=44×44、筛选0/1/3/12文案一致、跨首页详情和刷新主题保持、锚点不被sticky导航遮挡、标题层级正确；控制台零error/warn、无外部HTTP(S)资源，停止后3000/3101零监听。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/src/app/globals.css",
+    "app/src/app/layout.tsx",
+    "app/src/app/page.tsx",
+    "app/src/app/stories/[publicId]/page.tsx",
+    "app/src/app/stories/[publicId]/not-found.tsx",
+    "app/src/components/f1/f1-page-shell.tsx",
+    "app/src/components/f1/story-parts.tsx",
+    "app/src/components/f1/theme-preference.ts",
+    "app/src/features/stories/feed-experience.tsx",
+    "app/src/tests/public-ui.test.ts",
+    "docs/collaboration/部门/开发部/报告/2026-08-03-M4-VS-1公开前端P1整改实现报告.md"
+  ],
+  "authorization_evidence": "用户持续目标要求推进到有前端、必要数据库和核心功能可用的初版，并已要求执行工作分配给对应部门；本整改属于已完成前端切片的必要验收修复。",
+  "authorization_history": [
+    {
+      "at": "2026-08-03T00:13+08:00",
+      "evidence": "用户持续目标要求推进到有前端、必要数据库和核心功能可用的初版，并已要求执行工作分配给对应部门；本整改属于已完成前端切片的必要验收修复。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/执行成员:/root/development_frontend_p1_fix",
+  "completion_class": "standard",
+  "confirmation": "完成后必须交原测试部和原设计部独立复验；两者均无P0/P1后，统筹部才核收本整改与前序C29BB8。",
+  "created_at": "2026-08-03T00:13+08:00",
+  "department": "开发部",
+  "details": "独立只读审查确认当前快照构建稳定但P0=0、P1=4：①浅色主题媒体标签白字与半透明浅背景对比度仅约1.21–1.89:1，须使用双主题均可机械验证达到4.5:1的实色保护层；②分类筛选选中态当前只靠颜色，须同时提供字重和非颜色可见标记，并保留aria-pressed；③分类/关键词与no-more组合后固定宣称12条，须按当前筛选结果输出准确数量并覆盖0/1/3/12；④详情面包屑返回链接触控目标不足44×44，须在390和1440实测通过。同时在同一小切片补齐组件/输出级自动回归、主题跨路由与刷新持久化、demo-boundary锚点scroll-margin、精选区正确标题层级。loading/error/partial/live-refresh、withdrawn/correction随SQLite/API切片实现，本任务不得伪造后端状态。不得接外部资源、启用原文URL、改Spec/accepted ADR/data冻结合同或新增依赖。",
+  "domain_stage": "开发实现",
+  "event_receipts": [
+    "TASK-20260803-CD4228｜开发执行成员完成P1整改；统筹独立Node24完整check=0、51/51、hash匹配、3000/3101 CLEAR；待设计/测试独立复验。"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一浅色/深色媒体标签对比度低于4.5:1、筛选选中态仍只依赖颜色、no-more数量仍与可见结果不一致或详情返回链接不足44×44：P1 FAIL并继续在本任务修正。",
+    "修正造成390/1440横向溢出、焦点/键盘退化、主题水合错误、404失效、原文入口启用或出现外部HTTP(S)请求：P0/P1 FAIL，恢复到C29BB8快照后重新实现。",
+    "通过改设计合同、删除测试、硬编码仅覆盖单一happy path、引入新依赖或伪造后端状态规避验收：越界FAIL。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "首次npm子脚本误用宿主Node26.5.1导致版本失败，已用固定Node24最小PATH重跑并如实保留；共享RootLayout Shell已覆盖详情、404、导航current与主题水合失败面；未修改Spec/accepted ADR/data/dependency或外部能力。",
+  "node": "在C29BB8完成快照上修正独立审查发现的四项P1及直接相关P2，不改变已确认信息架构和演示数据边界",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260802-C29BB8.json",
+    "app/src/app/globals.css",
+    "app/src/features/stories/feed-experience.tsx",
+    "app/src/components/f1/f1-page-shell.tsx",
+    "design/ui/F1+1-首批页面实现级设计合同-v0.1.md",
+    "design/ui/F1+1-全站设计规范-v0.1.md"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-03-M4-VS-1公开前端P1整改实现报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260803-CD4228",
+  "title": "整改公开前端独立审查P1并补齐关键回归",
+  "unverified": [
+    "仍待独立设计部与测试部复验；VoiceOver/NVDA/TalkBack、200% zoom、完整forced-colors以及依赖SQLite/API的loading/error/partial/live-refresh/withdrawn/correction不由本任务放行。"
+  ],
+  "updated_at": "2026-08-03T12:58+08:00",
+  "verified": [
+    "四项P1均有代码、固定Node24 51/51、lint/typecheck/build、完整check和真实浏览器证据；统筹复算10个文件及报告SHA均匹配，独立重跑npm --silent run check exit 0；3000/3101零监听，git diff --check和task doctor通过。"
+  ]
+}

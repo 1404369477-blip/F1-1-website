@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "f1plus1-source-management-successor-evidence-v1",
+  "taskId": "TASK-20260809-F1466E",
+  "status": "blocked",
+  "candidate": {
+    "repositorySha256": "741aad53d872f837afbe1d3c94bb3047deb54d711d76045f6b2e1684c4598912",
+    "candidateManifestSha256": "145c5fac8ce29532c77199d7df4fc8f5183c67e79fb80186415b59f0e062f58d",
+    "protectedManifestSha256": "c94ed2cc0bdf5d6a0a80da9769de7a6b331586e9b8ff94129fe4901cc7964b6c",
+    "packageLockSha256": "89807e33818cfb851b57da65a5675e413e5593d01d6773c3a71a6cc6ea3d85d3"
+  },
+  "verification": {
+    "nodeVersion": "24.18.0",
+    "typecheck": "PASS",
+    "build": "PASS_WITH_ONE_EXISTING_NFT_WARNING",
+    "priorFocusedTests": "BDBD33_5_OF_5_PASS_NOT_REPEATED",
+    "priorLint": "BDBD33_EXIT_0_NOT_REPEATED",
+    "loopback": {
+      "bindHost": "127.0.0.1",
+      "port": 3019,
+      "serverPid": 55614,
+      "readyReached": false,
+      "httpResult": "ECONNREFUSED",
+      "startupReasonCode": "EXTERNAL_IO_FORBIDDEN",
+      "successfulExternalCalls": 0
+    },
+    "closedReceipt": "NOT_RUN",
+    "protectedAfterComparison": "NOT_RUN_AFTER_HTTP_FIRST_FAILURE"
+  },
+  "cleanup": {
+    "serverProcessPresent": false,
+    "profileLockPresent": false,
+    "walPresent": false,
+    "shmPresent": false,
+    "taskTempPresent": false
+  }
+}

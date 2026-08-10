@@ -1,0 +1,58 @@
+{
+  "acceptance_exit": "开发报告给出Node24机械收据：两类Next后置失败均exit非零且应用stdout/stderr合并后只有一条四字段JSON、无Next banner/URL/Error/stack/path/address/port；正常start固定127.0.0.1:3000、health ready/local-only/externalCalls=0，SIGINT后3000/3101无残留；既有负例与完整check通过，随后可供测试/安全独立复验。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/scripts/serve.ts",
+    "app/scripts/p1-acceptance.ts",
+    "app/src/tests/p1-cli.test.ts",
+    "docs/collaboration/部门/开发部/报告/2026-08-04-M4-VS-0-Next启动错误输出边界整改报告.md"
+  ],
+  "authorization_evidence": "用户已授权持续推进网站初版并要求执行工作分配对应部门；当前目标续跑指令要求继续实施。",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T23:31+08:00",
+      "evidence": "用户已授权持续推进网站初版并要求执行工作分配对应部门；当前目标续跑指令要求继续实施。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/执行成员:/root/development_next_startup_sanitization",
+  "completion_class": "standard",
+  "confirmation": "开发部完成后由测试部与安全部各自独立复验；统筹部只在两者均PASS后核收，R5/R12与VS-0整体仍不随本任务自动放行。",
+  "created_at": "2026-08-02T23:31+08:00",
+  "department": "开发部",
+  "details": "独立安全复审TASK-20260802-68F43E确认P0=0、P1=1、FAIL：serve.ts把空argv合法启动交给Next CLI后，端口占用、缺失.next或import/listen失败会由Next直接输出Error、stack、绝对路径、address/port并绕过四字段JSON。请在不新增依赖、不放宽127.0.0.1:3000、runtime readiness、env/no-egress、不改Spec/accepted ADR/data/design的前提下，重构dev/start受控输出边界；错误路径只能输出一条包含event/status/reasonCode/externalCalls且无额外键的allowlist JSON。测试必须亲自覆盖npm --silent run dev/start空argv后的端口占用、缺失构建产物/导入失败、正常start/health、信号停止和无残留监听；并保留既有六组argv前置拒绝、四类应用CLI脱敏、Node24完整check。区分npm自身未加--silent的脚本preamble与应用输出，报告不得将npm外壳行为伪装成应用可控。完成后提交开发报告与冻结哈希，交测试部和安全部独立复验。",
+  "domain_stage": "开发实现",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一合法空argv的Next后置失败仍出现banner、URL、Error、stack、绝对路径、address/port或四字段外键：P1 FAIL，停止核收并继续在本任务范围修正。",
+    "重构造成正常dev/start不可用、监听放宽到非127.0.0.1、health不ready、出现残留进程/监听或env/no-egress退化：P0/P1 FAIL并回退到最近安全快照后重新设计。",
+    "修改当前公开前端页面、Spec/accepted ADR/data/design，或新增依赖/外部请求：越界FAIL，保留证据并停止扩大范围。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "首轮隔离副本遗漏三个项目级冻结data依赖而被FIXTURE_PATH拒绝，未计入PASS；对抗审查发现共享.next并发风险、缺dev后置负例和SIGINT收据早于清理，均已最小修正并清理失败轮次精确临时目录；未放宽argv、loopback、runtime/env/no-egress或修改Spec/data/design/lock。",
+  "node": "在公开前端任务收口后，修复合法dev/start进入Next运行阶段后的错误输出旁路，只处理启动CLI安全边界",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260802-68F43E.json",
+    "docs/collaboration/部门/安全部/报告/2026-08-02-M4-VS-0启动参数与CLI脱敏整改快照独立安全复审.md",
+    "app/scripts/serve.ts",
+    "app/src/server/security/cli.ts",
+    "app/src/tests/p1-cli.test.ts"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-04-M4-VS-0-Next启动错误输出边界整改报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-3760F6",
+  "title": "修复Next启动阶段错误输出绕过CLI脱敏",
+  "unverified": [
+    "正常dev HMR长时间体验未另开轮次；R5同UID/完整TOCTOU、R12系统调用级no-egress、SQLite公开API/admin/真实外部能力/部署仍未验证且关闭；仍需测试部和安全部按冻结SHA独立复验。"
+  ],
+  "updated_at": "2026-08-04T15:15+08:00",
+  "verified": [
+    "Node24目标测试13/13与最终完整check 54/54 PASS；dev/start真实端口占用及start缺失.next均只输出一条exact四字段JSON；六组argv与四类CLI回归通过；正常start health ready/local-only/externalCalls=0，SIGINT后stopped/3000和3101/process-group清理同一收据通过；共享app/.next未移动删除，临时副本与DB无残留，git diff --check通过。"
+  ]
+}

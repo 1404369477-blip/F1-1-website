@@ -1,0 +1,42 @@
+{
+  "fixture_version": "vs1-local-pipeline-v1",
+  "registry": {
+    "path": "app/fixtures/vs1-local-pipeline-v1.json",
+    "sha256": "21347151fbc69de403dd4d7b7aec3f315e2d8de4646f622d8b5377924f610ee1"
+  },
+  "seed": {
+    "path": "app/fixtures/vs1-local-pipeline-seed-v1.json",
+    "sha256": "4ab8a3bab537c82e43612fa11b81cdacea2043d4027bd09fcf91b04f5677a648"
+  },
+  "contracts": {
+    "schema": {
+      "path": "data/mvp-contract-v0/schema.json",
+      "sha256": "de6c6c07a33589106ebb93496ad10ae3b06ab1c7845e4e0e91888ca0b17ae5a4"
+    },
+    "state_machine": {
+      "path": "data/mvp-contract-v0/state-machine.json",
+      "sha256": "d5ca45fd60c2ad08c60929abd714f6e80c43c20f561be0c0a18e3baa17c7c120"
+    },
+    "runtime_envelope": {
+      "path": "data/mvp-contract-v0/runtime-envelope.schema.json",
+      "sha256": "15d398cbaaefa37dabfa6af9b7b9c3cc8b207922ef67b0889329366f8336b30d"
+    },
+    "internal_contract": {
+      "path": "data/mvp-contract-v0/internal-contract.schema.json",
+      "sha256": "462605a2258d2922d9b982f490aeda3a1395f9e1dcf718fb8745e49db2afade8"
+    }
+  },
+  "migrations": [
+    { "path": "app/migrations/vs1/0001_runtime_source_outbox.sql", "sha256": "dc235534c492b9c763f63e2752bd4d78cc4f05ecf8e3600a3a906c3d0aae029b" },
+    { "path": "app/migrations/vs1/0002_runtime_delivery.sql", "sha256": "3c96d4be93ebbc3dcc56bbb1780bec7f65c76f9c9ae1a7a391d3895d10f5c748" },
+    { "path": "app/migrations/vs1/0003_observation_capture.sql", "sha256": "f1014f95dea2d556ea632493448b6db98350b89baea55f018a1975c9baec7460" },
+    { "path": "app/migrations/vs1/0004_content_event.sql", "sha256": "276e31b466eda82ec5076307f4bab62b37b1ef496146e555edbae5f7a6408696" },
+    { "path": "app/migrations/vs1/0005_summary_bundle_guards.sql", "sha256": "f5a8e18f1d437cdca18990d27d15be06c12b08efda771e12f903600bb7bc9a6a" },
+    { "path": "app/migrations/vs1/0006_audit_receipt.sql", "sha256": "c27b9c0274605db15ad91462f6752637ae35c54b7632920718229f06dda7c17e" }
+  ],
+  "validator_receipt": {
+    "candidate_case_count": 23,
+    "missing_summary_exception_case_ids": ["VS1-SUMMARY-MISSING-012"],
+    "missing_summary_exception_count": 1
+  }
+}

@@ -1,0 +1,9 @@
+5a84bfb27294ebd727369118a95528f5b788bfacbe2d56cc03fcb006f6168cb1  ../F1+1-v0.2-全站设计/F1+1-v0.2-final-20260808.html
+371d42e54870bce60d5a4d394d15f008e55ce35947c5e3891392914b343535bb  F1+1-v0.2-taste-successor-candidate-20260809.html
+2c4e4db49a60524ba6bb2c1184eb3051285d632e8006be1183ad6c0dc59fbbd4  pixel-review-and-design-delta.md
+36d0a8206a7a041828c5e11a6e16d991d764350c7036a145691c7964c207b84c  evidence/F1+1-v0.2-taste-successor-dark-1024.png
+b9e2661a64a6a6c06b4821defb3b2824649ec6f3bb1878c1a20998a2be590f6c  evidence/F1+1-v0.2-taste-successor-dark-1440.png
+d9d04fafd6066437c5ecee00a6aa47c52df5e0752362ae40780f4829f747b86e  evidence/F1+1-v0.2-taste-successor-dark-390.png
+8a5e5e48c177a8aae659d0460caf276d60dea7c10e8f5aee2d5bf1541ad63291  evidence/F1+1-v0.2-taste-successor-light-1024.png
+65240e314edd1c482d7645d6158cf25a06b2dfb3ba8b8388eabf13b554179de5  evidence/F1+1-v0.2-taste-successor-light-1440.png
+ff496665a2d375cb8f9a9dafc05f2278287496473a5febd0eccfdf2ff5a93aba  evidence/F1+1-v0.2-taste-successor-light-390.png

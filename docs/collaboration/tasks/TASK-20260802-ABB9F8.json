@@ -1,0 +1,54 @@
+{
+  "acceptance_exit": "提交测试部聚焦复验报告，给唯一PASS或FAIL；PASS要求P0=0、P1=0、现行时态一致、首轮FAIL历史未覆写、11 hashes与关键计数仍通过且无产品语义/数据产物漂移。B/C pending单列不升级为FAIL；完成后TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-08-02-M4-A轴v0.3时态修订后聚焦测试复验报告.md"
+  ],
+  "authorization_evidence": "用户已明确授权全员持续推进本地网站工程；本任务纯本地只读、无外部I/O",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T02:41+08:00",
+      "evidence": "用户已明确授权全员持续推进本地网站工程；本任务纯本地只读、无外部I/O",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "测试部/019fb379-9212-7e80-a5df-587d339936c4",
+  "completion_class": "audit",
+  "confirmation": "只有测试部与安全部均PASS且P0=0/P1=0，统筹部才派产品部执行accepted收口。",
+  "created_at": "2026-08-02T02:41+08:00",
+  "department": "测试部",
+  "details": "只读复验已ACK的TASK-20260802-BA178A与TASK-20260802-04E0A2。核对docs/spec.md、docs/progress.md、M4 proposed ADR、产品v0.3报告、数据v0.3报告与D80846任务JSON：当前状态统一为acknowledged；安全/测试首轮v0.3 FAIL历史均保留且唯一P1为已修订的时态漂移；Spec/ADR仍proposed、A仍NO-GO待本轮双审、B/C pending、外部能力关闭。机械重算manifest 11个artifact SHA及6/5/9/3、16/4、M3 33/9/59/59关键计数，确认data与生成器冻结。只评A层静态合同与本次P1；禁止修改文件、联网、运行生成器、安装依赖或操作外部资源。",
+  "domain_stage": "M4-A-v0.3-focused-revalidation",
+  "event_receipts": [
+    "TASK-20260802-ABB9F8-TEST-20260802-PASS"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 任一现行文档仍把D80846写成进行中/未交付/未ACK，FAIL并定位。",
+    "2) 任一artifact hash、关键计数或合同语义漂移，FAIL并定位，不自行修改。",
+    "3) 仅原生schema引擎或B/C运行证据缺失，列验证边界，不误判本次A轴FAIL。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已复核 snapshot/internal seed subset 是 object hash；未把历史 FAIL、proposed/NO-GO/B-C pending 或 Node24 运行证据误计为当前 A 轴 P1/P0；未运行生成器、联网或修改上游。",
+  "node": "M4/A轴定版门禁/v0.3时态修订后/测试复验",
+  "pointers": [
+    "docs/collaboration/部门/测试部/报告/2026-08-02-M4-A轴v0.3时态修订后聚焦测试复验报告.md"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-08-02-M4-A轴v0.3时态修订后聚焦测试复验报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-ABB9F8",
+  "title": "聚焦复验v0.3时态修订与机器基线",
+  "unverified": [
+    "B/C 安装、Node24、app/运行时/UI/API/构建/恢复/安全收据、原生 schema 引擎及真实 Base/provider/Collector/外部资源保持 pending/Unknown。"
+  ],
+  "updated_at": "2026-08-02T02:49+08:00",
+  "verified": [
+    "D80846/BA178A/04E0A2 当前均为 acknowledged，现行 Spec/progress/ADR/产品/数据时态一致；首轮 FAIL 历史保留；Spec/ADR proposed、A NO-GO、B/C pending、外部能力关闭。",
+    "11 个 artifact SHA、6/5/9/3、16/4、M3 33/9/59/59、task/lease/operation 唯一性、strict release hash、Publication/key、internal schema SHA、seed subset hash、no-egress=0 全部独立重算通过。"
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "acceptance_exit": "交付设计增量合同报告或在原设计交接目录新增独立映射文档：16/16 canonical state一一对应、machine key可追溯、中文文案唯一、icon/token/contrast/aria/390/1440规则完整；列组件消费接口和失败路径；独立自检无缺失/重复；唯一proposed结论、TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "design/ui/F1+1-VS-1-16状态UI映射-v0.1.md"
+  ],
+  "authorization_evidence": "用户授权持续推进本地初版并要求部门并行执行；本任务关闭已核收测试计划中的UI映射缺口。",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T13:37+08:00",
+      "evidence": "用户授权持续推进本地初版并要求部门并行执行；本任务关闭已核收测试计划中的UI映射缺口。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "design",
+  "completion_class": "standard",
+  "confirmation": "只产出VS-1 UI状态映射候选，不改应用与accepted真值。",
+  "created_at": "2026-08-02T13:37+08:00",
+  "department": "设计部",
+  "details": "读取测试计划TASK-28882C §16、已交付全站设计规范及admin sources实现合同。为16个canonical collection_onboarding_status逐一给出中文label、短alias、icon token、色彩/语义层级、可操作项、禁止操作、空/unknown/paused边界；alias只作展示不能形成第二枚举。补齐390/1440状态呈现与键盘/读屏文本映射。禁止修改app、Spec、accepted ADR或data。",
+  "domain_stage": "M4-C-VS1-contract-gap-design",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 现有设计token无法满足4.5:1/3:1或状态只靠颜色：保留阻断并提出最小token修订，不伪造通过。",
+    "2) canonical状态与现有文案/alias冲突或重复：以data machine key为准，报告冲突，不另造状态。",
+    "3) 390宽度出现横滚、操作不可达或触控小于44px：修订候选合同后再完成，不扩大到已实现页面PASS。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未修改app/Spec/accepted ADR/data或既有设计合同/token-map；未新增canonical state或把alias写成第二枚举；未把unknown渲染为正常；paused只属于lifecycle；未把静态候选扩大为VS-1 PASS。流程偏差：先claim后调用declare-impact，协议工具因impact仅允许queued而拒绝，未手改任务JSON；实际写入范围仍严格只有指定候选文档与任务状态。",
+  "node": "M4/C层/VS-1实现合同缺口/UI状态映射",
+  "pointers": [
+    "design/ui/F1+1-VS-1-16状态UI映射-v0.1.md"
+  ],
+  "report": "design/ui/F1+1-VS-1-16状态UI映射-v0.1.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-89CC34",
+  "title": "补齐VS-1 16状态UI映射与响应式验收合同",
+  "unverified": [
+    "admin/sources页面/API/Repository/worker/浏览器尚未实现；390/1440四张主题截图与computed style未产生；VoiceOver/NVDA/TalkBack、Windows/Android、真实200%缩放未走查；admin mutation DTO/route、生产角色、retry/backoff与validation job由其他合同决定"
+  ],
+  "updated_at": "2026-08-02T13:52+08:00",
+  "verified": [
+    "独立proposed候选文档已生成；data schema/state-machine canonical key 16/16逐字匹配；主中文label 16/16唯一；主UI alias 16/16唯一；ARIA 16/16；每项包含icon/token/操作/禁止操作/390/1440；unknown/paused/empty边界与组件消费接口/失败路径完整；6个本地链接有效；JSON输入可解析；现有前景token在surface.1/.2机械计算最差文字对比度4.63:1；完成前TASK_DOCTOR_OK"
+  ]
+}

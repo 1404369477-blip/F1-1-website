@@ -1,0 +1,57 @@
+{
+  "acceptance_exit": "安全部提交只读报告：给出typed CLI最小ACL目标字段/枚举、写前与写后只读核验、1–3条失败路径、协作者清单不可读的残余边界，并明确任何ACL写入都要用户另行确认；complete/TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-01-M3影子Base最小ACL收紧方案-审核报告.md"
+  ],
+  "authorization_evidence": "用户要求继续项目并明确飞书编辑只用CLI；该授权不包含ACL写入，本任务仅做只读方案复核。",
+  "authorization_history": [
+    {
+      "at": "2026-08-01T20:05+08:00",
+      "evidence": "用户要求继续项目并明确飞书编辑只用CLI；该授权不包含ACL写入，本任务仅做只读方案复核。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "本任务只读出方案，不执行权限写入；实际收紧ACL必须由用户确认精确目标。",
+  "created_at": "2026-08-01T20:05+08:00",
+  "department": "安全部",
+  "details": "已知typed CLI只读结果：link_share_entity=tenant_readable、external_access=true、invite_external=true、share_entity=anyone、security_entity=anyone_can_view、comment_entity=anyone_can_view；表单shared=false；协作者清单因当前授权无法读取。请只使用本地lark-cli help/schema/embedded skill和仓库证据，复核typed permission.public patch可写字段与枚举，提出个人维护、未公开、最小共享面的精确目标；不得访问或修改飞书，不得用浏览器，不得记录token/open_id/appId/auth JSON。",
+  "domain_stage": "M3 ACL安全收口",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "CLI schema无法证明字段或枚举时停止，不猜请求体。",
+    "方案需要raw API、浏览器、删除资源或扩张权限时返回FAIL。",
+    "无法处理协作者清单不可读的证据边界时返回FAIL，不声称Base已私有。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查：未猜测 lock_switch 或 raw API；未把 form.shared=false、external_access=true 或方案/dry-run 写成 Base 已私有或 ACL 已修改；明确 comment_entity=anyone_can_edit 仍允许现有编辑者评论并保留协作者 Unknown；未扩展真值/provider/Collector/采集/同步/启用/发布范围。",
+  "node": "只读形成个人维护场景的ACL目标、CLI写入白名单与用户确认点",
+  "pointers": [
+    "docs/collaboration/部门/统筹部/报告/2026-08-01-M3飞书Base影子建库与59条导入-执行收据.md",
+    "docs/collaboration/部门/安全部/报告/2026-08-01-M3-OAuth过宽Scope-安全残余风险报告.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-01-M3影子Base最小ACL收紧方案-审核报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260801-812839",
+  "title": "复核M3影子Base最小ACL收紧方案",
+  "unverified": [
+    "本安全会话未访问或修改飞书，未执行 permission.public get、permission.members auth、dry-run、patch 或 --yes；当前值来自统筹部脱敏执行收据。",
+    "协作者数量、身份、外部协作者及权限继承链不可读；实际六字段写入能力、写后状态、manage_public 和租户策略未在本轮验证。",
+    "本报告不证明 Base 已私有或仅个人维护者可访问；后续真实 ACL 状态需受控执行收据与 fresh read 证明。"
+  ],
+  "updated_at": "2026-08-01T20:12+08:00",
+  "verified": [
+    "本机 lark-cli help/schema 已证明 drive permission.public patch 为 high-risk-write，type=bitable，支持六个请求体字段及精确枚举；lock_switch 未列为可写字段。",
+    "统筹部脱敏执行收据提供当前六项公共权限、form.shared=false 和协作者清单不可读边界；报告未把能力开启推导成已泄露。",
+    "报告给出六字段最小目标、dry-run 与真实写入的独立命令边界、写前 schema/fresh-get/manage_public/协作者边界核验、写后 fresh read 与失败先读回。",
+    "本地 ACL_REPORT_LOCAL_OK、git diff --check、TASK_DOCTOR_OK 均通过；对抗审查结论 PASS（条件式）。"
+  ]
+}

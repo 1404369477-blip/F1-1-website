@@ -1,0 +1,56 @@
+{
+  "acceptance_exit": "安全部final报告decision、P0/P1/P2；冻结SHA稳定；projection-first与批准发布链完整校验静态成立；三项最小探针fail closed；DTO/Problem/headers零敏感泄露、无fallback/外联/CORS/Host信任；m3/profile/manifest/root边界未放宽；无DB/.next/端口/临时残留；P0=0/P1=0才PASS；TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "用户持续确认推进并要求减少冗余；AC25D4已形成可用候选，当前只做互补高风险探针。",
+  "authorization_history": [
+    {
+      "at": "2026-08-04T15:36+08:00",
+      "evidence": "用户持续确认推进并要求减少冗余；AC25D4已形成可用候选，当前只做互补高风险探针。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "用户要求停止内部subagent执行并迁移到原有可见部门对话窗口",
+  "claimed_by": "/root/security_runtime_override_final",
+  "completion_class": "audit",
+  "confirmation": "安全与测试均PASS后统筹才ACK AC25D4并派前端API接线。",
+  "created_at": "2026-08-04T15:36+08:00",
+  "department": "安全部",
+  "details": "严格只读TASK-20260804-AC25D4最终候选，只写安全部精简final报告与任务状态。冻结开发报告列SHA及SQLite/data保护输入；静态确认Repository从PublishedProjection起步、无demo-data/static fallback/public_story/外部IO，Route不信任Host/Forwarded且无CORS。行为只做三个最小探针各一次：A破坏一条fence/hash/ledger后feed整个500且零部分DTO/零fallback；B noncanonical或跨筛选cursor拒绝；C恶意query/publicId不回显，Problem exact closed且无URL/hash/fence/reviewer/raw/SQL/stack/path/header泄露。可复用临时public DB；不运行测试部套件、不build/full check/浏览器、不扩同质攻击。",
+  "domain_stage": "公开API独立安全复验",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "损坏候选被跳过/替换/部分返回、静态demo fallback或绕过Projection/批准链：P0/P1 FAIL。",
+    "cursor可跨scope/非canonical通过，Problem/DTO泄露内部值或信任Host/Forwarded/CORS：P1 FAIL。",
+    "需要修改代码、运行build/full check/测试部套件或扩大攻击轮次才能判断：NOT_RUN并停止。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "聚焦审查projection-first fail-closed、cursor绑定和DTO-Problem安全边界",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260804-AC25D4.json",
+    "docs/collaboration/tasks/TASK-20260804-A1A095.json"
+  ],
+  "report": "",
+  "resolution": {
+    "evidence": "正式测试部窗口C30FD0与正式安全部窗口000EA6均已完成并TASK_STATE_OK",
+    "reason": "用户要求由原有可见部门对话窗口执行，内部subagent审核停止",
+    "receipt_id": "RES-20260804T185534-7EF1C1EB",
+    "replacement_revision": 3,
+    "replacement_state": "completed",
+    "replacement_task_id": "TASK-20260804-000EA6",
+    "resolved_at": "2026-08-04T18:55+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "superseded",
+    "target_revision_before": 3
+  },
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260804-63D5A3",
+  "title": "独立安全复验公开API完整性与零泄露",
+  "unverified": [],
+  "updated_at": "2026-08-04T18:55+08:00",
+  "verified": []
+}

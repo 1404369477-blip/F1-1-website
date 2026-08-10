@@ -1,0 +1,74 @@
+{
+  "acceptance_exit": "形成status=draft的successor与单一用户决策包；用户只需批准或拒绝一次，即可决定是否允许开发实施review-synthetic本地数据库与Admin后端；机器映射、hash公式、事务时序、迁移/回退、安全边界和仍需独立视觉确认的前端门禁均明确。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/decisions/system/2026-08-09-F1+1-M5-review-synthetic本地审核profile-successor-draft.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-09-review-synthetic-successor与单一用户决策包报告.md"
+  ],
+  "authorization_evidence": "本地系统合同draft，无代码、schema或外部I/O",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T10:17+08:00",
+      "evidence": "本地系统合同draft，无代码、schema或外部I/O",
+      "state": "none"
+    }
+  ],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "本任务只交付draft和决策问题；用户明确批准后才能实施第三profile/migration。Admin视觉仍需独立预览确认；真实采集、Base/provider、自动发布和部署不在授权内。",
+  "created_at": "2026-08-09T10:17+08:00",
+  "department": "产品部",
+  "details": "吸收已ACK的产品TASK-20260809-97700F、数据TASK-20260809-1C2D4B，并在数据TASK-20260809-535C4B completed且统筹ACK后以其机器映射为最终输入；依赖未满足时用任务工具waiting_input。起草不改accepted正文的successor draft：第三个物理review-synthetic SQLite profile、profile-scoped migration root、独立ledger/root pin、0003_review_synthetic_workflow、通用published_version_hash公式、approve事务预留唯一queued Publication/publicId/key但0 Outbox/Envelope/Projection、manual publish才创建/复用同key Outbox/TaskEnvelope并生成唯一Projection；固定回退、零public-synthetic漂移、no ATTACH/双写、local-dev session/Origin/CSRF和manual_only。输出一个推荐方案、拒绝回退和唯一用户批准问题；不得改Spec/accepted ADR/app/data/migrations。",
+  "domain_stage": "M5人工审核系统决策",
+  "event_receipts": [
+    "adversarial_review=PASS;P0=0;P1=0;tracks=product-system,security-authorization,data-domain"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "数据TASK-20260809-535C4B未completed/ACK或validator仍有P1：进入waiting_input，不用未核收映射冻结系统合同。",
+    "第三profile会污染public-synthetic、需要ATTACH/双写或产生第二领域schema：保持拒绝并提出更窄替代，不修改accepted核心。",
+    "无法压缩为一个用户问题，或实现范围夹带真实内容/外部能力：列冲突并停在draft，不散发多个模糊授权。"
+  ],
+  "from_department": "统筹部",
+  "impact_declaration": {
+    "admission": "manual",
+    "base_revision": "TASK-20260809-0DEB27@rev1",
+    "external_effects": [
+      "none"
+    ],
+    "owner_task": "TASK-20260809-0DEB27",
+    "shared_contracts": [
+      "TASK-20260809-0DEB27-review-synthetic-successor"
+    ],
+    "write_paths": [
+      "docs"
+    ]
+  },
+  "mistake_check": "已检查未写public-synthetic/m3-shadow、未新增领域实体/第二schema/第二Publication或key、未沿用manual publish才创建Publication旧时序、未用ATTACH/双写/copy/static fallback/payload_json、unknown保持同key对账、每结果事务一条AuditEvent、唯一问题无隐含UI或外部授权；本任务只改draft与产品报告，external_calls=0。",
+  "node": "把人工审核数据库实现边界压缩为用户可一次确认的系统决策",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260809-535C4B.json"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-09-review-synthetic-successor与单一用户决策包报告.md",
+  "resolution": null,
+  "revision": 7,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-0DEB27",
+  "title": "Admin review-synthetic系统successor与单一决策包",
+  "unverified": [
+    "用户尚未回答唯一问题，draft尚未accepted；第三profile、migration、Admin后端、mock worker与任何新增运行能力均未授权实施。",
+    "review migration/fixture/manifest/ledger/root最终SHA、v0.4 review graph、companion transition successor validator、SQLite/API/session/CSRF/worker/故障恢复及测试安全运行收据尚未生成。",
+    "Admin前端可视化预览与用户视觉确认尚未完成；真实外部能力持续关闭。"
+  ],
+  "updated_at": "2026-08-09T10:37+08:00",
+  "verified": [
+    "数据TASK-20260809-535C4B已统筹ACK；Admin mapping validator只读运行PASS，receipt=17021c9f7a52074e2685675eedff0e9a53bca62542ffce9248bf81727c0ae79b，11类DTO/111槽位/3阶段事务保持唯一映射。",
+    "successor draft固定第三个review-synthetic物理profile、profile-scoped 0001/0002/0003 selector、独立validator closed receipts、ledger/root pins、完整v0.4公开图与review-synthetic published_version_hash v1。",
+    "approve精确1 Publication/0 Outbox/0 TaskEnvelope/0 Projection；首次manual publish创建同key intent，retry复用原Outbox/Envelope；completion/reconcile/terminal/emergency以枚举companion transitions配对收口。",
+    "全文只有一个用户批准/拒绝问题且默认拒绝；Admin前端视觉保持独立门禁，真实内容/Base/provider/自动或外部发布/部署/非loopback外部I/O继续关闭。",
+    "三路只读对抗审查最终均为P0=0/P1=0；public-synthetic与m3-shadow的文件、hash、count、manifest及业务边界保持冻结。"
+  ]
+}

@@ -1,0 +1,10 @@
+a4b7230c89b0083f6d3f412d2c3f3f767c7f131d4ea422f85fe5721f75df686b  docs/spec/F1+1-SOURCE-MGMT-001本地synthetic信源管理纵切实现合同-v0.2.md
+5a84bfb27294ebd727369118a95528f5b788bfacbe2d56cc03fcb006f6168cb1  design/ui/F1+1-v0.2-全站设计/F1+1-v0.2-final-20260808.html
+d4da9fc24c792c0471bcd24c525a46dcef1e521b36a870fd111e7310243888b2  data/m4-vs0-seed-enrichment-v0/source-seed-enriched.json
+90ee4ed30d325b7b2833582cc0ac8134aefc7fbc2dcd43ec9d20c0f726b2f1fe  docs/spec/F1+1-SOURCE-MGMT-001本地synthetic信源管理纵切实现合同-v0.3.md
+0d73ea294972627a7a832b42d999381da1fc4c8ea602b9fdbd04b11985156d68  design/ui/F1+1-M5-admin-sources-preview-v0.1/index.html
+9d9d6f39cfc028e50acbdacecdfc21c2e4096133e08ee542986fe88174fd1b5a  design/ui/F1+1-M5-admin-sources-preview-v0.1/design-notes.md
+78b9947339e8409c6f31b945b77394b1d81c653bcb31ecd287a78a2dd2ccf248  design/ui/F1+1-M5-admin-sources-preview-v0.1/evidence/F1+1-admin-sources-iphone-390-dark.png
+71cb4fe78171dcd95a4a3f3c10110b34e6e4c53a45d80cc87d4d7a870a85078b  design/ui/F1+1-M5-admin-sources-preview-v0.1/evidence/F1+1-admin-sources-iphone-390-light.png
+a8bcd2272e5575bf92891fabc29b088f8aec3e0ca225456ed5b59475fee5e556  design/ui/F1+1-M5-admin-sources-preview-v0.1/evidence/F1+1-admin-sources-mac-1440-dark.png
+fe4e2199af79af96be1edf3fca2ae1d5b4ee72227c340d874aee83b19463f5a6  design/ui/F1+1-M5-admin-sources-preview-v0.1/evidence/F1+1-admin-sources-mac-1440-light.png

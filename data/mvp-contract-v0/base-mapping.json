@@ -1,0 +1,435 @@
+{
+  "contract_version": "mvp-local-v0.3",
+  "mapping_version": "base-mapping-v0.3",
+  "m3_source_field_count": 33,
+  "m3_capture_field_count": 9,
+  "source_table": {
+    "base_role": "M3 shadow source configuration",
+    "domain_entity": "Source",
+    "field_map": [
+      {
+        "base_field": "source_id",
+        "domain_path": "Source.source_id",
+        "direction": "base_shadow_to_local_seed",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "M3 字段原值保留；不在映射层做身份或启用推断。"
+      },
+      {
+        "base_field": "platform",
+        "domain_path": "Source.platform",
+        "direction": "base_shadow_to_local_seed",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "M3 字段原值保留；不在映射层做身份或启用推断。"
+      },
+      {
+        "base_field": "platform_account_id",
+        "domain_path": "Source.platform_account_id",
+        "direction": "base_shadow_to_local_seed",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "保留空值；取得平台稳定 ID 前不猜测。"
+      },
+      {
+        "base_field": "handle",
+        "domain_path": "Source.handle",
+        "direction": "base_shadow_to_local_seed",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "M3 字段原值保留；不在映射层做身份或启用推断。"
+      },
+      {
+        "base_field": "raw_url",
+        "domain_path": "Source.raw_url",
+        "direction": "base_shadow_to_local_seed",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "M3 字段原值保留；不在映射层做身份或启用推断。"
+      },
+      {
+        "base_field": "canonical_url",
+        "domain_path": "Source.canonical_url",
+        "direction": "base_shadow_to_local_seed",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "M3 字段原值保留；不在映射层做身份或启用推断。"
+      },
+      {
+        "base_field": "canonical_url_valid",
+        "domain_path": "Source.canonical_url_valid",
+        "direction": "base_shadow_to_local_seed",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "M3 字段原值保留；不在映射层做身份或启用推断。"
+      },
+      {
+        "base_field": "normalizer_version",
+        "domain_path": "Source.normalizer_version",
+        "direction": "base_shadow_to_local_seed",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "M3 字段原值保留；不在映射层做身份或启用推断。"
+      },
+      {
+        "base_field": "normalization_status",
+        "domain_path": "Source.normalization_status",
+        "direction": "base_shadow_to_local_seed",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "M3 字段原值保留；不在映射层做身份或启用推断。"
+      },
+      {
+        "base_field": "dedup_status",
+        "domain_path": "Source.dedup_status",
+        "direction": "base_shadow_to_local_seed",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "M3 批次内待查重；不得冒充跨批次唯一。"
+      },
+      {
+        "base_field": "entity_type",
+        "domain_path": "Source.entity_type",
+        "direction": "base_shadow_to_local_seed",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "M3 字段原值保留；不在映射层做身份或启用推断。"
+      },
+      {
+        "base_field": "content_focus",
+        "domain_path": "Source.content_focus",
+        "direction": "base_shadow_to_local_seed",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "M3 字段原值保留；不在映射层做身份或启用推断。"
+      },
+      {
+        "base_field": "priority",
+        "domain_path": "Source.priority",
+        "direction": "base_shadow_to_local_seed",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "M3 字段原值保留；不在映射层做身份或启用推断。"
+      },
+      {
+        "base_field": "verification_status",
+        "domain_path": "Source.verification_status",
+        "direction": "base_shadow_to_local_seed",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "M3 字段原值保留；不在映射层做身份或启用推断。"
+      },
+      {
+        "base_field": "identity_status",
+        "domain_path": "Source.identity_status",
+        "direction": "base_shadow_to_local_seed",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "保留 unknown；临时分类不构成身份事实。"
+      },
+      {
+        "base_field": "relevance_status",
+        "domain_path": "Source.relevance_status",
+        "direction": "base_shadow_to_local_seed",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "M3 字段原值保留；不在映射层做身份或启用推断。"
+      },
+      {
+        "base_field": "monitorability",
+        "domain_path": "Source.monitorability",
+        "direction": "base_shadow_to_local_seed",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "保留 unknown；不由页面可见性推导。"
+      },
+      {
+        "base_field": "adapter_status",
+        "domain_path": "Source.adapter_status",
+        "direction": "base_shadow_to_local_seed",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "M3 字段原值保留；不在映射层做身份或启用推断。"
+      },
+      {
+        "base_field": "adapter_authorization_status",
+        "domain_path": "Source.adapter_authorization_status",
+        "direction": "base_shadow_to_local_seed",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "M3 字段原值保留；不在映射层做身份或启用推断。"
+      },
+      {
+        "base_field": "authorization_checked_at",
+        "domain_path": "Source.authorization_checked_at",
+        "direction": "base_shadow_to_local_seed",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "M3 字段原值保留；不在映射层做身份或启用推断。"
+      },
+      {
+        "base_field": "authorization_expires_at",
+        "domain_path": "Source.authorization_expires_at",
+        "direction": "base_shadow_to_local_seed",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "M3 字段原值保留；不在映射层做身份或启用推断。"
+      },
+      {
+        "base_field": "collection_onboarding_status",
+        "domain_path": "Source.collection_onboarding_status",
+        "direction": "base_shadow_to_local_seed",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "M3 字段原值保留；不在映射层做身份或启用推断。"
+      },
+      {
+        "base_field": "onboarding_operation_id",
+        "domain_path": "Source.onboarding_operation_id",
+        "direction": "base_shadow_to_local_seed",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "M3 字段原值保留；不在映射层做身份或启用推断。"
+      },
+      {
+        "base_field": "lifecycle_status",
+        "domain_path": "Source.lifecycle_status",
+        "direction": "base_shadow_to_local_seed",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "M3 字段原值保留；不在映射层做身份或启用推断。"
+      },
+      {
+        "base_field": "enabled",
+        "domain_path": "Source.enabled",
+        "direction": "base_shadow_to_local_seed",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "M3 影子默认 false；本地合同不产生启用动作。"
+      },
+      {
+        "base_field": "manual_disable_at",
+        "domain_path": "Source.manual_disable_at",
+        "direction": "base_shadow_to_local_seed",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "M3 字段原值保留；不在映射层做身份或启用推断。"
+      },
+      {
+        "base_field": "source_stop_status",
+        "domain_path": "Source.source_stop_status",
+        "direction": "base_shadow_to_local_seed",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "M3 字段原值保留；不在映射层做身份或启用推断。"
+      },
+      {
+        "base_field": "source_safety_epoch",
+        "domain_path": "Source.source_safety_epoch",
+        "direction": "base_shadow_to_local_seed",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "M3 字段原值保留；不在映射层做身份或启用推断。"
+      },
+      {
+        "base_field": "added_at",
+        "domain_path": "Source.added_at",
+        "direction": "base_shadow_to_local_seed",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "M3 字段原值保留；不在映射层做身份或启用推断。"
+      },
+      {
+        "base_field": "evidence_url",
+        "domain_path": "Source.evidence_url",
+        "direction": "base_shadow_to_local_seed",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "M3 字段原值保留；不在映射层做身份或启用推断。"
+      },
+      {
+        "base_field": "notes",
+        "domain_path": "Source.notes",
+        "direction": "base_shadow_to_local_seed",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "M3 字段原值保留；不在映射层做身份或启用推断。"
+      },
+      {
+        "base_field": "migration_batch_id",
+        "domain_path": "Source.migration_batch_id",
+        "direction": "base_shadow_to_local_seed",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "保留批次追踪，便于对账和回滚。"
+      },
+      {
+        "base_field": "change_reason",
+        "domain_path": "Source.change_reason",
+        "direction": "base_shadow_to_local_seed",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "M3 字段原值保留；不在映射层做身份或启用推断。"
+      }
+    ]
+  },
+  "capture_table": {
+    "base_role": "mobile candidate capture",
+    "domain_entity": "CapturedItem",
+    "field_map": [
+      {
+        "base_field": "capture_id",
+        "domain_path": "CapturedItem.capture_id",
+        "direction": "base_shadow_to_local_candidate",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "手机捕获表只承载候选输入和规范化/查重处理字段。"
+      },
+      {
+        "base_field": "raw_url",
+        "domain_path": "CapturedItem.raw_url",
+        "direction": "base_shadow_to_local_candidate",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "手机捕获表只承载候选输入和规范化/查重处理字段。"
+      },
+      {
+        "base_field": "capture_note",
+        "domain_path": "CapturedItem.capture_note",
+        "direction": "base_shadow_to_local_candidate",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "手机捕获表只承载候选输入和规范化/查重处理字段。"
+      },
+      {
+        "base_field": "captured_at",
+        "domain_path": "CapturedItem.captured_at",
+        "direction": "base_shadow_to_local_candidate",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "手机捕获表只承载候选输入和规范化/查重处理字段。"
+      },
+      {
+        "base_field": "normalization_status",
+        "domain_path": "CapturedItem.normalization_status",
+        "direction": "base_shadow_to_local_candidate",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "手机捕获表只承载候选输入和规范化/查重处理字段。"
+      },
+      {
+        "base_field": "normalization_error",
+        "domain_path": "CapturedItem.normalization_error",
+        "direction": "base_shadow_to_local_candidate",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "手机捕获表只承载候选输入和规范化/查重处理字段。"
+      },
+      {
+        "base_field": "dedup_status",
+        "domain_path": "CapturedItem.dedup_status",
+        "direction": "base_shadow_to_local_candidate",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "手机捕获表只承载候选输入和规范化/查重处理字段。"
+      },
+      {
+        "base_field": "dedup_match_source_id",
+        "domain_path": "CapturedItem.dedup_match_source_id",
+        "direction": "base_shadow_to_local_candidate",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "手机捕获表只承载候选输入和规范化/查重处理字段。"
+      },
+      {
+        "base_field": "source_id",
+        "domain_path": "CapturedItem.source_id",
+        "direction": "base_shadow_to_local_candidate",
+        "cardinality": "1:1",
+        "preserve_value": true,
+        "notes": "手机捕获表只承载候选输入和规范化/查重处理字段。"
+      }
+    ]
+  },
+  "base_mapped_entities": [
+    "Source",
+    "CapturedItem"
+  ],
+  "domain_only_entities": [
+    "Content",
+    "Event",
+    "Summary",
+    "MediaCandidate",
+    "ReleaseBundle",
+    "ReviewDecision",
+    "Publication",
+    "OutboxJob",
+    "PublishedProjection"
+  ],
+  "internal_only_entities": [
+    "SourceObservation",
+    "AuditEvent"
+  ],
+  "summary_draft_mapping": {
+    "source_name": "SummaryDraft",
+    "target_entity": "Summary",
+    "target_condition": "summary_status=draft",
+    "persisted_as_new_entity": false,
+    "provenance_fields": [
+      "input_content_hash",
+      "summary_schema_version",
+      "summarizer",
+      "deterministic"
+    ]
+  },
+  "local_only_fields": {
+    "Source": [
+      "platform_allowed",
+      "source_config_epoch",
+      "source_safety_epoch",
+      "created_at",
+      "updated_at",
+      "created_by_ref",
+      "updated_by_ref"
+    ],
+    "CapturedItem": [
+      "canonical_url",
+      "content_id",
+      "source_config_epoch",
+      "created_at",
+      "updated_at",
+      "created_by_ref",
+      "updated_by_ref"
+    ]
+  },
+  "boundary_rules": [
+    {
+      "id": "MAP-BOUNDARY-001",
+      "rule": "M3 shadow data seeds Source/CapturedItem only; it never creates Content, ReleaseBundle, ReviewDecision or Publication facts."
+    },
+    {
+      "id": "MAP-BOUNDARY-002",
+      "rule": "Base remains the accepted A/D business truth; this local mapping does not authorize provider switching."
+    },
+    {
+      "id": "MAP-BOUNDARY-003",
+      "rule": "unknown, pending, proposed and false values are preserved; mapping never promotes a status."
+    },
+    {
+      "id": "MAP-BOUNDARY-004",
+      "rule": "No external platform IDs, credentials, private content or real media are synthesized by this mapping."
+    },
+    {
+      "id": "MAP-BOUNDARY-005",
+      "rule": "ReleaseBundle and ReviewDecision are the single immutable approval chain; one bundle/hash has one Publication/public_id."
+    },
+    {
+      "id": "MAP-BOUNDARY-006",
+      "rule": "SourceObservation and AuditEvent are internal-only records with no domain truth, Base mapping, public DTO or write-back path; SummaryDraft maps to Summary(summary_status=draft) and is not a new entity."
+    },
+    {
+      "id": "MAP-BOUNDARY-007",
+      "rule": "Internal observation uniqueness is source_id + external_id; audit is append-only with monotonic sequence and redaction/retention fields."
+    }
+  ]
+}

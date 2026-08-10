@@ -1,0 +1,52 @@
+{
+  "acceptance_exit": "独立报告给出两库和三receipt当前精确SHA、schema/ledger/logical/graph/count/revision/validator绑定；M3 59条且全disabled、公开域0，public固定九项counts；receipt canonical bytes/envelope hash/v0.4同revision全部复算一致；权限、nlink、相对路径、无sidecar与第三DB absent通过；受控临时副本复算未触及canonical；审查前后canonical DB/receipt/validator SHA零漂移，externalCalls=0。代码路径门禁与任务指定负例静态/受控复核无P0/P1，列已验证/未验证、错题自检并TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/数据部/报告/2026-08-09-M3与public-synthetic数据库及closed-receipt独立复验报告.md"
+  ],
+  "authorization_evidence": "本地只读独立复验；TASK-20260809-8DB77E已ACK",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T16:31+08:00",
+      "evidence": "本地只读独立复验；TASK-20260809-8DB77E已ACK",
+      "state": "none"
+    }
+  ],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "019fb371-9834-78d3-a7b3-4f4c62819520",
+  "completion_class": "standard",
+  "confirmation": "本任务只做本地无副作用独立数据复验，作为恢复BA9999的必要审查门；不触发真实外部能力。",
+  "created_at": "2026-08-09T16:31+08:00",
+  "department": "数据部",
+  "details": "只读审查已ACK的TASK-20260809-8DB77E固定候选。禁止运行会更新canonical receipt或修改canonical SQLite的生成命令；先固定两库、三receipt、validator/CLI/测试/ADR的当前SHA与权限。逐字验证receipt为canonical JSON、无重复键、envelope hash/validator artifact/artifact revision/v0.4 data pins可独立复算；以每库单独的受控/tmp私有副本或等价无副作用方法核对schema fingerprint、migration ledger root、profile ledger/stored root、logical root、row counts、M3 59×39且59 disabled/e7a8 projection、public 1/12/12/12/10/12/12/12/12与4be9 graph。canonical原件全过程不得打开SQLite handle；复验前后DB/receipt SHA逐字相同、无WAL/SHM/journal、目录0700、文件0600 regular single-link。聚焦代码审计path/no-follow/symlink/ATTACH/cross-profile/nonzero-WAL/canonical-byte/tamper/M3 no-clobber崩溃恢复，不修改实现。只提交数据部独立报告和任务状态；P0=0/P1=0才PASS。",
+  "domain_stage": "M5公开多媒体旧基线独立数据门",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一DB/receipt/hash/root/count/revision/权限或无sidecar不匹配：结论FAIL并保留现场，禁止重生成receipt、checkpoint canonical或修数据库。",
+    "独立复算工具可能在canonical旁生成sidecar或写元数据：立即停止，改用0700临时副本；若仍不能无副作用证明则保持Unknown/P1。",
+    "发现需要修改validator、ADR或恢复语义才能通过：只报告精确缺口并退回开发部，不在数据部直接修实现。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "canonical DB仅做lstat/字节hash/复制，所有SQL只在0700临时副本；区分文件SHA、schema、ledger、logical、graph与envelope hash scope；未checkpoint canonical、未重生成receipt、未修实现；临时根已清理；P0=0/P1=0；TASK_STATE_OK",
+  "node": "独立确认第三多媒体profile开工所依赖的M3/public-synthetic数据库与三份closed receipt真实闭合",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260809-8DB77E.json",
+    "docs/collaboration/部门/开发部/报告/2026-08-09-M3恢复与旧profile封闭收据完成报告.md"
+  ],
+  "report": "docs/collaboration/部门/数据部/报告/2026-08-09-M3与public-synthetic数据库及closed-receipt独立复验报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-385B52",
+  "title": "DATA-MM-PREFLIGHT-AUDIT：独立复验M3与旧profile封闭收据",
+  "unverified": [
+    "第三public-multimedia-synthetic profile、scoped migration、Repository/API/前端、多媒体运行链及真实外部能力未实施或不在范围；为遵守不得重生成receipt边界，本次未执行会生成临时receipt的目标测试，也未运行generator/CLI/typecheck"
+  ],
+  "updated_at": "2026-08-09T16:39+08:00",
+  "verified": [
+    "两canonical DB与三closed receipt精确SHA/0600 regular nlink=1、目录0700、无sidecar及第三DB absent；canonical数据库全过程未打开SQLite handle；0700临时副本mode=ro&immutable=1独立复算M3 schema/ledger/logical/counts/59x39/59 disabled/e7a8和public 1/12/12/12/10/12/12/12/12/4be9全部匹配；三receipt canonical bytes/closed keys/无重复键/相对路径/self-hash/revision/validator绑定及v0.4六pins匹配；path/no-follow/symlink/ATTACH/cross-profile/nonzero-WAL/tamper/no-clobber恢复静态门闭合；前后DB/receipt/validator SHA零漂移；externalCalls=0；P0=0/P1=0"
+  ]
+}

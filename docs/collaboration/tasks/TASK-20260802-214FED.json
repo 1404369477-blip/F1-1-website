@@ -1,0 +1,52 @@
+{
+  "acceptance_exit": "交付产品决策包，精确引用当前R5与安全证据，三方案可比较，给唯一推荐与需要用户确认的一句话；明确选择前VS0/VS1状态和选择后验收出口，TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/产品部/报告/2026-08-02-M4-SQLite同UID威胁模型与R5收口决策包.md"
+  ],
+  "authorization_evidence": "用户已明确要求持续推进网站并由各部门拆解分析，当前只做本地决策包且不改变accepted真值。",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T13:01+08:00",
+      "evidence": "用户已明确要求持续推进网站并由各部门拆解分析，当前只做本地决策包且不改变accepted真值。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "仅分析与决策包；不改accepted真值或实现。",
+  "created_at": "2026-08-02T13:01+08:00",
+  "department": "产品部",
+  "details": "安全终审29333B判定：Node24 node:sqlite DatabaseSync仅接受路径，主DB由O_NOFOLLOW guard后仍二次pathname open，WAL/SHM sidecar也由SQLite按路径管理；若威胁模型包含恶意同UID进程的瞬时目录替换，纯Node core难以证明强TOCTOU关闭。请只读核对Spec R5、accepted ADR、29333B与开发最大缓解方案，形成三选一决策包：A维持强R5并引入broker/VFS或OS隔离；B本地MVP明确排除恶意同UID并用0700/0600、单层路径、全祖先inode、pre/post sidecar与location复核作为门禁；C暂缓VS1。逐项给用户价值、实现成本、迁移影响、残余风险、回滚和推荐。不得修改accepted ADR/Spec/app，不得替用户接受决策。",
+  "domain_stage": "M4-C-VS0-threat-model",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 若官方/本地证据不足以证明fd/VFS能力，保持Unknown，不把推测写成能力。",
+    "2) 若方案需要新依赖、守护进程、容器或accepted ADR变更，明确列为用户门禁，不自行实施。",
+    "3) 若窄威胁模型会掩盖真实外部输入或多用户部署风险，直接判不适用于生产并保留VS1停止条件。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未把 Node24 SQLite能力探针扩大为TOCTOU安全证明，未把开发缓解写成强R5 PASS，未替用户接受方案，未修改 accepted ADR、Spec、app、data或外部资源",
+  "node": "M4/C层/VS-0安全边界决策",
+  "pointers": [
+    "docs/collaboration/部门/产品部/报告/2026-08-02-M4-SQLite同UID威胁模型与R5收口决策包.md"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-02-M4-SQLite同UID威胁模型与R5收口决策包.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-214FED",
+  "title": "提出M4本地SQLite同UID威胁模型与R5收口决策包",
+  "unverified": [
+    "用户尚未接受 A/B/C；broker/VFS/OS 隔离无当前选型或运行收据；安全终审未执行竞争式同UID替换探针；多用户、共享文件系统、生产存储、VS-1与真实外部能力均未验证"
+  ],
+  "updated_at": "2026-08-02T13:09+08:00",
+  "verified": [
+    "已只读核对 docs/spec.md R5、accepted M4 ADR §4.7、安全 TASK-20260802-29333B final report 与当前 app/src/server/db/database.ts；确认 C local preflight PASS 与安全终审 FAIL/P0=1 的门禁差异；报告给出 A/B/C 三方案、唯一推荐、选择前后 VS-0/VS-1 状态、验收出口与用户确认点",
+    "安全报告事实已逐项引用：DatabaseSync 按路径二次打开、guard fd 与 SQLite 实际对象未由稳定句柄绑定、sidecar 由 SQLite 派生路径处理；开发缓解的 umask、0700/0600、O_NOFOLLOW、inode/location、pre/post sidecar 检查已记录"
+  ]
+}

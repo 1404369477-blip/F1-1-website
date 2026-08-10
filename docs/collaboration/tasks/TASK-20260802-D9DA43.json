@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "提交研究部跨报告综合报告；至少含aihot专项结论、Top 12交叉矩阵、四档采用路线、3个近期本地spike建议、X/Reddit/Instagram/RSS/OpenF1等后续独立门禁、明确拒绝清单和部门owner；每个结论回链四份原报告，不把Unknown/营销/许可推断成通过；不改Spec/ADR/app/data，不执行外部IO；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/研究部/报告/2026-08-02-F1+1前沿方案综合评估与采用路线.md"
+  ],
+  "authorization_evidence": "用户于2026-08-02明确授权多平台前沿调研；四份部门报告均已完成并由统筹核收",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T01:14+08:00",
+      "evidence": "用户于2026-08-02明确授权多平台前沿调研；四份部门报告均已完成并由统筹核收",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "研究部/019fb36c-1f86-78d3-a6d7-f87f124bd710",
+  "completion_class": "standard",
+  "confirmation": "用户明确要求深度调研并寻找能快速推进的项目、资源、工具、skills和agent架构；本任务只做已完成报告的内部综合。",
+  "created_at": "2026-08-02T01:14+08:00",
+  "department": "研究部",
+  "details": "只读综合已ACK的四份报告：研究部F1资讯聚合竞品与生态全景、开发部aihot与同类开源架构拆解、设计部体验与信息架构基准、安全部许可平台条款与安全风险。不要新增大范围外部搜索；以报告原始证据为准，对候选去重并交叉研究适配度、工程可复用度、体验价值、安全/许可准入和证据强度。明确核心结论：aihot仓库是Agent客户端/API合同包而非服务端；研究高分不等于安全可用；没有单一现成项目替代F1+1治理链。输出四档路线：现在可吸收的模式（无依赖/无外连）、A轴accepted后可做的本地synthetic spike、需要逐平台用户确认的只读真实spike、当前拒绝/仅观察。形成Top候选总表、差异、借鉴、不可照搬、前置门禁、失败出口、建议owner和里程碑；把精选/全量、赛事上下文、评分、收藏、社交嵌入标为产品待决，不扩MVP。",
+  "domain_stage": "M4前沿调研综合",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 四报告结论冲突：优先保留安全门禁和一手证据，列冲突不强行平均；2) 候选许可证/当前状态Unknown：降级为观察或待验证，不列立即采用；3) 综合结论会扩大当前MVP或触发安装/真实采集：只列候选backlog与用户gate，不执行。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已区分研究适配与安全/许可准入；未将 Unknown、营销指标、社区热度、评分或代码许可证写成生产通过；已将 AI Hot 远端、全站抓取、绕过、自动发布、外部 AI/自治 Agent列入拒绝或观察；已将单人维护与手机快速新增作为用户事实，将待验证收件箱明确降级为建议；已确认三处 synthetic spike 均 external_calls=0；已确认四源回链、失败出口和产品TBD边界；独立复核无阻断。",
+  "node": "M4/研究/跨报告综合",
+  "pointers": [
+    "docs/collaboration/部门/研究部/报告/2026-08-02-F1+1前沿方案综合评估与采用路线.md"
+  ],
+  "report": "docs/collaboration/部门/研究部/报告/2026-08-02-F1+1前沿方案综合评估与采用路线.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-D9DA43",
+  "title": "综合前沿调研形成F1+1采用与验证路线",
+  "unverified": [
+    "aihot 服务端实现、当前 main full HEAD、真实 API 可达性/配额/条款/运行行为未验证；Top 12 各目标站具体 Terms/robots/数据与媒体权利、区域/留存/商业再展示和长期 SLA 未验证；X 真实项目权限/价格/合规收据、Reddit Data API Terms 正文/商业许可、Instagram 当前 Meta 文档/App Review/字段/区域、OpenF1/Jolpica SLA/商业使用未验证；具体依赖版本、SBOM、漏洞/供应链、安装脚本和真实 provider 运行收据未验证；产品精选/全量、赛事上下文、评分、收藏、社交嵌入及新增项待验证收件箱仍为产品待决/研究建议。"
+  ],
+  "updated_at": "2026-08-02T01:29+08:00",
+  "verified": [
+    "已只读核对研究部、开发部、设计部、安全部四份已核收报告；已形成 Top 12 交叉矩阵并逐行回链四源；已明确 aihot 固定快照是客户端合同模式，禁止当服务端/业务真值；已形成 T0-T3 四档路线、3 个本地 synthetic spike、X/Reddit/Instagram/RSS/OpenF1 独立门禁、拒绝清单与 owner；已完成独立对抗复核 REVIEW_PASS；已运行 agent_team_task.py doctor 与 git diff --check；未修改 Spec、ADR、app、data，未执行外部 IO。"
+  ]
+}

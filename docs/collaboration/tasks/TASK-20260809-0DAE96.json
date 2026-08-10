@@ -1,0 +1,51 @@
+{
+  "acceptance_exit": "提交独立final报告，列出绑定hash、两视口三关闭路径activeElement证据、dark/light SSR与刷新证据、console收据、P0/P1及未验证项；若两项均通过则scoped PASS，任何缺证据保持P1。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-08-09-0DAE96焦点返回与主题hydration独立复核报告.md"
+  ],
+  "authorization_evidence": "COR-20260809T102214-960E65；TASK-20260809-4C59A9已ACK",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T11:06+08:00",
+      "evidence": "COR-20260809T102214-960E65；TASK-20260809-4C59A9已ACK",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "测试部/019fb379-9212-7e80-a5df-587d339936c4",
+  "completion_class": "audit",
+  "confirmation": "用户已确认本地高保真与全部功能闭环；本任务仅做既有修复的独立必要复核。",
+  "created_at": "2026-08-09T11:06+08:00",
+  "department": "测试部",
+  "details": "绑定TASK-20260809-4C59A9当前源码与报告，只独立验证Function IDs MEDIA-LIGHTBOX-004焦点返回子项、UI-RUNTIME-001、UI-THEME-002正常持久化子项：同一production实例1440与390，Escape/关闭按钮/背景外点均精确回原触发元素、inert清除、键盘可继续；深浅主题切换与刷新、SSR cookie和客户端首帧一致、React#418为0。只跑一次必要聚焦矩阵，不跑全量回归，不把多图、异常存储或公开页整体写为PASS。",
+  "domain_stage": "M5公开页P1独立复核",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "production端口被占用或源码hash漂移：停止并报告精确占用/漂移，不复用旧收据。",
+    "任一关闭路径焦点落body、inert残留或键盘中断：判P1并给最短复现。",
+    "SSR cookie、客户端主题或console出现hydration差异：判P1；不使用suppress或静态截图替代。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "390首次段在打开lightbox前locator超时且results为空，读取DOM后续接；Escape 220ms为关闭动画中间态，等待dialog卸载后确认原IMG精确回焦；未重复已通过路径；严格区分旧build scoped PASS与当前后继候选未验证，未改实现且未外推整站。",
+  "node": "核收TASK-20260809-4C59A9两个已修P1，不扩展为全站验收",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260809-4C59A9.json"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-08-09-0DAE96焦点返回与主题hydration独立复核报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-0DAE96",
+  "title": "独立复核公开页焦点返回与主题hydration修复",
+  "unverified": [
+    "结束时f1-page-shell.tsx、feed-experience.tsx、public-ui.test.ts、globals.css因后继任务发生SNAPSHOT_DRIFT，当前工作树及其build未验证；P1-03真实多图、异常存储、触发元素卸载、整站和全量回归均未验证。"
+  ],
+  "updated_at": "2026-08-09T11:23+08:00",
+  "verified": [
+    "启动时七个SHA已绑定；同一旧production build在1440/390均通过Escape、关闭按钮、背景外点三路径的精确焦点返回、inert清除、dialog=0和Tab继续；dark/light切换刷新与SSR cookie一致；两视口console=[]、React#418=0；实例停止且3000/3001释放。"
+  ]
+}

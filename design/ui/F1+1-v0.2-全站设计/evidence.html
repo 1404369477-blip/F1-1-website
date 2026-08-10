@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F1+1 · v0.2-draft · 时间线视觉证据墙</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 40px 32px 64px;
+    background: oklch(0.145 0.008 252); color: oklch(0.94 0.006 252);
+    font-family: "Inter", "Source Han Sans CN", "PingFang SC", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .head { max-width: 1600px; margin: 0 auto 32px; display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .head h1 { font-family: "Barlow Condensed", sans-serif; font-size: 40px; font-weight: 800; margin: 0; letter-spacing: .01em; }
+  .head .sub { color: oklch(0.68 0.012 252); font-size: 13px; letter-spacing: .12em; }
+  .grid { max-width: 1600px; margin: 0 auto; display: grid; gap: 32px; }
+  .panel {
+    border: 1px solid oklch(0.285 0.012 252); border-radius: 16px; overflow: hidden; background: oklch(0.172 0.01 252);
+  }
+  .panel-head {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    padding: 12px 18px; border-bottom: 1px solid oklch(0.285 0.012 252);
+    font-size: 13px; color: oklch(0.68 0.012 252);
+  }
+  .panel-head b { font-family: "Barlow Condensed", sans-serif; font-size: 17px; font-weight: 700; color: oklch(0.94 0.006 252); letter-spacing: .02em; }
+  .panel-head .tag { font-size: 11px; color: oklch(0.55 0.012 252); letter-spacing: .08em; }
+  .panel-body { padding: 0; }
+  iframe { display: block; width: 100%; border: 0; background: #fff; }
+  .panel-body img { display: block; width: 100%; height: auto; }
+  .section-tag { max-width: 1600px; margin: 8px auto 0; font-family: "Barlow Condensed", sans-serif; font-size: 15px; font-weight: 700; letter-spacing: .06em; color: oklch(0.78 0.012 252); }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+  .foot { max-width: 1600px; margin: 32px auto 0; font-size: 12px; color: oklch(0.55 0.012 252); line-height: 1.7; }
+  .foot code { color: oklch(0.68 0.012 252); }
+</style>
+</head>
+<body>
+  <div class="head">
+    <h1>F1+1 · v0.2-draft 时间线视觉证据墙</h1>
+    <span class="sub">Timeline Evidence · 深浅主题 × 1440 / 1024 / 390 · 已导出 PNG</span>
+  </div>
+
+  <div class="grid">
+    <p class="section-tag" style="margin:0 0 -16px">已导出 PNG 证据（evidence/）</p>
+
+    <div class="panel">
+      <div class="panel-head"><b>时间线 · 深色 · 1440</b><span class="tag">低对比常驻 · 10 条 · 主图+缩略图</span></div>
+      <div class="panel-body"><img src="evidence/v0.2-dark-1440.png" alt="深色 1440 时间线 PNG 证据"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><b>时间线 · 浅色 · 1440</b><span class="tag">完整浅色主题 · 10 条</span></div>
+      <div class="panel-body"><img src="evidence/v0.2-light-1440.png" alt="浅色 1440 时间线 PNG 证据"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><b>时间线 · 深色 · 1024 · 就地展开</b><span class="tag">#theme=dark&amp;width=1024&amp;open=r1 · r1 汉密尔顿（4 图）展开：中文提炼 + 证据行</span></div>
+      <div class="panel-body"><img src="evidence/v0.2-dark-1024.png" alt="深色 1024 时间线就地展开 PNG 证据"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><b>时间线 · 浅色 · 1024</b><span class="tag">单列 / 宽屏保持极简 · 10 条</span></div>
+      <div class="panel-body"><img src="evidence/v0.2-light-1024.png" alt="浅色 1024 时间线 PNG 证据"></div>
+    </div>
+
+    <div class="row2">
+      <div class="panel">
+        <div class="panel-head"><b>时间线 · 深色 · 390</b><span class="tag">移动单列重排 / 时间上移 / 44px 触控</span></div>
+        <div class="panel-body"><img src="evidence/v0.2-dark-390.png" alt="深色 390 时间线 PNG 证据"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><b>时间线 · 浅色 · 390</b><span class="tag">移动单列 / 触控目标 44px</span></div>
+        <div class="panel-body"><img src="evidence/v0.2-light-390.png" alt="浅色 390 时间线 PNG 证据"></div>
+      </div>
+    </div>
+
+    <p class="section-tag">v0.2b 修订 · 媒体区主图放大 + 右侧竖向缩略图 · lightbox 打开态</p>
+
+    <div class="row2">
+      <div class="panel">
+        <div class="panel-head"><b>媒体区 · 深色 · 1440</b><span class="tag">主图限高 360px · 右列缩略图 88px 竖向</span></div>
+        <div class="panel-body"><img src="evidence/v0.2b-dark-1440.png" alt="v0.2b 深色 1440 媒体区证据"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><b>媒体区 · 浅色 · 1440</b><span class="tag">同主图限高 360px</span></div>
+        <div class="panel-body"><img src="evidence/v0.2b-light-1440.png" alt="v0.2b 浅色 1440 媒体区证据"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><b>媒体区 · 深色 · 1024</b><span class="tag">右列缩略图 88px</span></div>
+        <div class="panel-body"><img src="evidence/v0.2b-dark-1024.png" alt="v0.2b 深色 1024 媒体区证据"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><b>媒体区 · 浅色 · 1024</b><span class="tag">右列缩略图 88px</span></div>
+        <div class="panel-body"><img src="evidence/v0.2b-light-1024.png" alt="v0.2b 浅色 1024 媒体区证据"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><b>媒体区 · 深色 · 390</b><span class="tag">主图限高 280px · 右列缩略图 64px</span></div>
+        <div class="panel-body"><img src="evidence/v0.2b-dark-390.png" alt="v0.2b 深色 390 媒体区证据"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><b>媒体区 · 浅色 · 390</b><span class="tag">右列缩略图 64px</span></div>
+        <div class="panel-body"><img src="evidence/v0.2b-light-390.png" alt="v0.2b 浅色 390 媒体区证据"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><b>lightbox 打开态 · 深色 · 1440</b><span class="tag">居中全彩放大 · ‹› 翻页 / 计数 1/4</span></div>
+        <div class="panel-body"><img src="evidence/v0.2b-lb-dark-1440.png" alt="v0.2b 深色 1440 lightbox 打开态"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><b>lightbox 打开态 · 浅色 · 1440</b><span class="tag">支持触摸/鼠标横向滑动翻页</span></div>
+        <div class="panel-body"><img src="evidence/v0.2b-lb-light-1440.png" alt="v0.2b 浅色 1440 lightbox 打开态"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><b>lightbox 打开态 · 深色 · 1024</b><span class="tag">滑动翻页：左滑下一张 / 右滑上一张</span></div>
+        <div class="panel-body"><img src="evidence/v0.2b-lb-dark-1024.png" alt="v0.2b 深色 1024 lightbox 打开态"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><b>lightbox 打开态 · 浅色 · 1024</b><span class="tag">Esc / 方向键 / 按钮 / 点击关闭均保留</span></div>
+        <div class="panel-body"><img src="evidence/v0.2b-lb-light-1024.png" alt="v0.2b 浅色 1024 lightbox 打开态"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><b>lightbox 打开态 · 深色 · 390</b><span class="tag">触屏滑动优先 · 48px 横滑阈值</span></div>
+        <div class="panel-body"><img src="evidence/v0.2b-lb-dark-390.png" alt="v0.2b 深色 390 lightbox 打开态"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><b>lightbox 打开态 · 浅色 · 390</b><span class="tag">44px 触控目标</span></div>
+        <div class="panel-body"><img src="evidence/v0.2b-lb-light-390.png" alt="v0.2b 浅色 390 lightbox 打开态"></div>
+      </div>
+    </div>
+
+    <p class="section-tag">交互态 / 状态补充预览（同源 iframe 实况）</p>
+
+    <div class="panel">
+      <div class="panel-head"><b>悬停浮现态 · 深色 · 1440 · #reveal=1</b><span class="tag">全部 UI 痕迹全对比（评审「浮现」态）</span></div>
+      <div class="panel-body"><iframe src="index.html#theme=dark&width=1440&reveal=1" title="深色 1440 浮现态" style="height:1660px"></iframe></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><b>搜索过滤 · 深色 · 1440 · #search=地效</b><span class="tag">轻量客户端过滤，命中 2 条</span></div>
+      <div class="panel-body"><iframe src="index.html#theme=dark&width=1440&search=%E5%9C%B0%E6%95%88&reveal=1" title="深色 1440 搜索过滤" style="height:760px"></iframe></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><b>状态 · 浅色 · 390 · 错误</b><span class="tag">loading / empty / error / 404 / nomore / partial / offline 轻呈现</span></div>
+      <div class="panel-body"><iframe src="index.html#theme=light&width=390&state=error" title="浅色 390 状态" style="height:460px"></iframe></div>
+    </div>
+  </div>
+
+  <div class="foot">
+    F1+1 v0.2-draft 时间线草案 · 示例内容与原创占位影像 · 未接入正式产品。
+    上方 6 张 PNG（<code>evidence/v0.2-{dark,light}-{1440,1024,390}.png</code>）为最终导出证据；
+    「交互态 / 状态」为 <code>index.html</code> 的同源 iframe 实况预览，URL 参数 <code>#theme / #width / #state / #open / #search / #reveal</code> 驱动渲染，也可直接用浏览器打开并导出 PNG。
+    悬停浮现态 / 搜索 / 状态 / 就地展开的历史导出另存于顶层 <code>timeline-*.png</code>（1440/1024/390）。
+    v0.2b 修订证据（媒体区 + lightbox 打开态，12 张）见上方 <code>evidence/v0.2b-*.png</code> 与 <code>evidence/v0.2b-lb-*.png</code>；
+    修订点为：主图限高 255px → 360px（移动 280px）、缩略图改到主图右侧竖向列（桌面 88px / 移动 64px 固定宽）、lightbox 新增触摸/鼠标横向滑动翻页（左滑下一张 / 右滑上一张，48px 阈值），保留 Esc / 方向键 / ‹› 按钮 / 计数 / 点击关闭。
+    「悬停浮现」：低对比常驻 → hover/focus 全对比 + 微放大 1.04（150ms ease-out）；触屏提升基准对比；reduced-motion 取消放大。
+  </div>
+</body>
+</html>

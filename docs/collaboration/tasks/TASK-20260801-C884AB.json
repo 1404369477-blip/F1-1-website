@@ -1,0 +1,67 @@
+{
+  "acceptance_exit": "提交最小数据合同、Base→领域映射、状态机与不变量、5–10条脱敏fixture、去重/幂等/审核版本/发布重试失败样例和数据迁移边界；schema可机械校验、fixture通过校验、无凭证/私密内容；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "data/mvp-contract-v0/schema.json",
+    "data/mvp-contract-v0/base-mapping.json",
+    "data/mvp-contract-v0/state-machine.json",
+    "data/mvp-contract-v0/fixtures.synthetic.json",
+    "data/mvp-contract-v0/manifest.json",
+    "data/mvp-contract-v0/generate_contract.py",
+    "docs/collaboration/部门/数据部/报告/2026-08-01-本地MVP数据合同与安全样例.md"
+  ],
+  "authorization_evidence": "用户授权全员开工及本地app搭建；外部系统与业务切换仍设独立门禁。决策日志DEC-20260801T223248-7C91D6。",
+  "authorization_history": [
+    {
+      "at": "2026-08-01T22:35+08:00",
+      "evidence": "用户授权全员开工及本地app搭建；外部系统与业务切换仍设独立门禁。决策日志DEC-20260801T223248-7C91D6。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "数据部/019fb371-9834-78d3-a7b3-4f4c62819520",
+  "completion_class": "standard",
+  "confirmation": "本任务只建立本地数据合同与合成样例，不切Base真值、不连接Collector、不执行真实采集或发布。",
+  "created_at": "2026-08-01T22:35+08:00",
+  "department": "数据部",
+  "details": "请数据部基于docs/spec.md、M3主信源33字段/手机捕获9字段、59条影子载荷与accepted A→D路线，按最少实体原则定义本地MVP数据合同：Source、CapturedItem/Content、Event/去重、Summary、MediaCandidate、Review、Publication、Outbox/Job及审计字段；明确外部ID、canonical URL、内容版本hash、人工批准hash、source_config_epoch、安全停止状态、幂等键和状态转换。交付机器可读JSON Schema或等价合同、少量脱敏fixture和Base字段映射；不得访问/修改飞书，不把Base设真值，不导入真实内容，不在app目录写业务实现。",
+  "domain_stage": "M4数据合同准备",
+  "event_receipts": [
+    "MIL-20260801T225332-845C8F"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "实体或状态无法由现有Spec/ADR证明必要时不新增，列入未来扩展而非首版合同。",
+    "Base字段与领域合同一对多或语义冲突时保留映射层和Unknown，不改写锁定M3载荷。",
+    "任何fixture含真实token、用户标识、未授权媒体或真实采集正文时立即移除并用合成数据替代。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已读取错题集，当前没有正式错题条目。额外检查了M3影子误当真值、批次内唯一性误当跨批查重、unknown升级、旧审核hash发布新版本、过期epoch继续写入、部分快照覆盖last-known-good以及fixture敏感信息泄漏，均未命中。",
+  "node": "为信源、内容、审核、发布和幂等任务建立最小可运行数据合同",
+  "pointers": [
+    "data/m3-base-shadow-import-v0/main-source-fields.json",
+    "data/m3-base-shadow-import-v0/mobile-capture-fields.json",
+    "docs/decisions/system/2026-08-01-F1+1-信源库A到D演进路线-accepted.md",
+    "docs/spec.md"
+  ],
+  "report": "完成本地MVP数据合同与安全样例：交付schema、Base映射、状态机/幂等/审核版本不变量、8个合成fixture、manifest和确定性生成器。全程只写本地合同文件，不访问飞书、不切Base真值、不导入真实内容、不写app业务实现。",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260801-C884AB",
+  "title": "建立本地MVP数据合同与安全样例",
+  "unverified": [
+    "真实数据库/飞书Base对schema落地行为、运行时服务故障演练、外部平台授权/API限流/媒体授权与生产规模性能未验证。",
+    "A/D provider切换、Collector接入、真实采集和真实内容发布仍需独立实现门禁与用户确认。"
+  ],
+  "updated_at": "2026-08-01T22:54+08:00",
+  "verified": [
+    "JSON schema、Base映射、状态机、fixture、manifest均可被标准JSON解析；schema机械校验通过。",
+    "M3主信源33字段与手机捕获9字段逐项映射准确；domain-only实体与迁移边界明确，unknown/pending/proposed/false/null不被升级。",
+    "8个synthetic-only fixture案例通过关系引用、版本hash、epoch、状态与幂等语义校验；覆盖规范化失败、重复摄取、幂等重试、过期审核、发布重试、过期epoch和快照失败。",
+    "9条不变量、5类幂等键、6组状态机覆盖单一真值、禁止反写、人工审核版本绑定、发布重试和last-known-good；敏感模式扫描0命中；git diff --check通过。",
+    "只读对抗审查PASS：阻断0、重要0、一般0；未修改文件、未访问飞书。"
+  ]
+}

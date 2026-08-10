@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "f1plus1-source-management-successor-evidence-v1",
+  "taskId": "TASK-20260810-91AF6E",
+  "status": "PASS",
+  "candidate": {
+    "serverSha256": "5c40918c7ac45aa809ed106acdfa00c9b6d5c52fb90a0b9995a0a3998d83378f",
+    "guardSha256": "5f008507164f2a1b8678435ec491e31bf6235700c50844ec1dca3801ada756d2",
+    "focusedTestSha256": "7e35d4c92470ccd92d815c80437d189a64713e763af10de058bfc99ff548cabd",
+    "candidateManifestBefore": "41e15f1cc6c9162512ea7d4d47acf72769a83fbe57dbc69f8907942935a971e3",
+    "candidateManifestAfter": "41e15f1cc6c9162512ea7d4d47acf72769a83fbe57dbc69f8907942935a971e3",
+    "repositorySha256": "741aad53d872f837afbe1d3c94bb3047deb54d711d76045f6b2e1684c4598912",
+    "packageLockSha256": "89807e33818cfb851b57da65a5675e413e5593d01d6773c3a71a6cc6ea3d85d3",
+    "securityReportSha256": "745ddde6a5d5da108d9a3ef80eb689946a094cb3ab48ef6e591d47a2f7b2757f"
+  },
+  "verification": {
+    "nodeVersion": "24.18.0",
+    "focusedNoEgressGate": "PASS_9_OF_9_IN_PREDECESSOR_NOT_REPEATED",
+    "sourceManagementGolden": "PASS_5_OF_5_IN_BDBD33_NOT_REPEATED",
+    "lint": "PASS_IN_BDBD33_NOT_REPEATED",
+    "typecheck": "PASS_EXIT_0_SINGLE_RUN_BY_COORDINATION_SUPPORT",
+    "build": "PASS_EXIT_0_SINGLE_RUN_BY_COORDINATION_SUPPORT_WITH_EXISTING_NEXT_NFT_WARNING",
+    "staticAdversarialReview": "P0_0_P1_0",
+    "http": {
+      "receiptSha256": "cb9843fa4189952d5754722671cf7d4c85f3d7fa6ba0cb97123500e9c0c8e847",
+      "bindHost": "127.0.0.1",
+      "port": 3019,
+      "serverPid": 67196,
+      "externalCalls": 0,
+      "baselineRows": 59,
+      "localRows": 1,
+      "totalRows": 60,
+      "sourceId": "src-local-14ae0ef1ac47d753a1994519",
+      "activateReplayIdentical": true,
+      "requeuePositiveEvidence": "BDBD33_target_test_5_of_5",
+      "requeueHttpNegativeReason": "ADMIN_REQUEUE_CONFLICT",
+      "statuses": [
+        ["health", 200],
+        ["unauthenticated_list", 401],
+        ["session_create", 201],
+        ["session_get", 200],
+        ["list_before", 200],
+        ["add", 202],
+        ["operation_add", 200],
+        ["detail_added", 200],
+        ["validate", 200],
+        ["activate", 200],
+        ["activate_replay", 200],
+        ["operation_activate", 200],
+        ["stop", 200],
+        ["retire", 200],
+        ["requeue_conflict", 409],
+        ["delete_denied", 405],
+        ["origin_denied", 403],
+        ["list_after", 200],
+        ["session_destroy", 204],
+        ["session_after_destroy", 401]
+      ]
+    },
+    "closedReceipt": {
+      "commandReceiptSha256": "341fe281eb1df81a73d00caa7444b38ad894cf0a47e34e4db8ab848daab960c1",
+      "receiptFileSha256": "fda5bc8727f1b39bbeaca99857d9baf248e3791f7075ea611aa2d86eb97732a1",
+      "closedDbSha256": "ddf3778c62cf95f195b1f08db8b075d676069f4cc9fb39804063e1004dd2e939",
+      "logicalContentRootSha256": "7cae9bb8767a259086920190f65485800bb6008e3dc294fba893d1b0b8156e6a",
+      "receiptSha256": "2d684ca9074c0f853bd1c03449e54b7293102c264a87d9514c5464482b806279",
+      "externalCalls": 0
+    },
+    "protectedManifestBefore": "c92cc7e79a24aa67002c6f374cc53b0fe0445377abd6acb71031c4c78ee62e14",
+    "protectedManifestAfter": "c92cc7e79a24aa67002c6f374cc53b0fe0445377abd6acb71031c4c78ee62e14"
+  },
+  "cleanup": {
+    "serverProcessPresent": false,
+    "port3019Available": true,
+    "profileLockPresent": false,
+    "walPresent": false,
+    "shmPresent": false,
+    "serverStdoutBytes": 0,
+    "serverStderrBytes": 0,
+    "forcedKill": false
+  },
+  "history": {
+    "predecessor552BF1": "BLOCKED_ON_FIXED_NODE24_TYPECHECK",
+    "assistInputRecheck": "INVALID_CWD_PATH_TEXT_AGGREGATE_FALSE_DRIFT_HTTP_INVOCATIONS_0",
+    "currentHttpInvocations": 1
+  },
+  "unverified": [
+    "Independent testing task TASK-20260810-2467B0 has not yet revalidated this exact candidate.",
+    "Independent security task TASK-20260810-59C88E has not yet revalidated this exact candidate.",
+    "No real provider, external API, public UI, Admin UI, deployment or production data capability was enabled."
+  ]
+}

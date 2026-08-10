@@ -1,0 +1,52 @@
+{
+  "acceptance_exit": "提交数据部final合同/报告：唯一推荐profile/DB拓扑；现有39字段逐项保持；所需新表/索引/约束/事务和迁移回退清楚；seed lineage、单writer、五fence与public隔离可机械验证；P0/P1/P2及未决点明确；零代码/DB变更、零外部。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/数据部/报告/2026-08-09-SOURCE-MGMT-001-SQLite-profile-mutation-successor数据合同.md"
+  ],
+  "authorization_evidence": "主会话持续推进初版；SOURCE-MGMT-001为LOCAL-CONFIRMED，本任务无真实外部能力。",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T20:55+08:00",
+      "evidence": "主会话持续推进初版；SOURCE-MGMT-001为LOCAL-CONFIRMED，本任务无真实外部能力。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "019fb371-9834-78d3-a7b3-4f4c62819520",
+  "completion_class": "standard",
+  "confirmation": "用户已确认本地synthetic信源库维护与人工审核方向；本任务只形成数据合同，不执行迁移或真实采集。",
+  "created_at": "2026-08-09T20:55+08:00",
+  "department": "数据部",
+  "details": "不得改app/data/migration/accepted ADR或canonical DB。读取0001/0002、profiles、VS1 migrations、source.ts/runtime profile和accepted M4/M5双主机合同，回答：1. 现有m3-shadow source_config_fixture与public-multimedia-synthetic DB能否在同一Admin app安全并存；2. /admin/sources写操作需要独立source-management-synthetic profile/DB还是可接受的同DB successor；3. Source新增、validation intent、activation operation/outbox、stop/fence、dead-letter retry、append-only audit需要哪些现有表复用或最小新表；4. 59条seed不可变基线如何在可变source successor中溯源且不双写；5. 单writer、BEGIN IMMEDIATE、idempotency、CAS/five-fence、WAL/SHM、迁移/回退和公开投影隔离。输出唯一推荐拓扑、字段/表/API DTO一一映射、最小migration草案、validator/hash/ledger、失败注入和后继开发输入。全部fixture/mock，externalCalls=0；不得启用任何真实Source、Base/provider或网络。若accepted合同确有未决冲突，精确列一个需统筹/产品拍板的问题，不自行实现。",
+  "domain_stage": "M5-本地synthetic信源管理数据合同",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "现有accepted合同禁止所选拓扑：停止并给首个冲突，不通过新表绕开；需要复制59条形成第二真值或让public DB可写：FAIL；字段/状态/operation身份不能一一映射：保持Unknown并给最小缺口，禁止猜测或实现。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "初稿曾允许M3 baseline稀疏overlay、异步source_validation Outbox、缺retire且混用command/business identity；一次只读对抗审查与统筹聚焦复核发现后已全部删除/分域。最终59 baseline只读且mutation全403，operation enum固定source_add/source_validate/source_activate/source_stop/source_retire/source_requeue，receipt status固定pending/succeeded/failed，Add/Validate零Outbox，只有Activate创建或复用source_activation，P0=0/P1=0/P2=0。",
+  "node": "只读核对现有Source 59x39、VS1表和多profile边界，给/admin/sources本地synthetic纵切的唯一数据落点与最小迁移合同",
+  "pointers": [
+    "app/migrations/0002_source_fixture.sql",
+    "app/src/server/db/source.ts",
+    "app/migrations/vs1",
+    "docs/decisions/system/2026-08-01-F1+1-M4本地Kickoff系统路线-accepted.md"
+  ],
+  "report": "docs/collaboration/部门/数据部/报告/2026-08-09-SOURCE-MGMT-001-SQLite-profile-mutation-successor数据合同.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-8F382B",
+  "title": "SOURCE-MGMT-001现有SQLite拓扑与mutation successor数据合同",
+  "unverified": [
+    "未实现或运行source-management-synthetic profile、migration、repository、API、worker、validator、closed receipt或UI；未打开任何SQLite handle；未运行真实session/CSRF、Mac/iPhone、双主机、备份/RPO/RTO或生产；未调用Base/provider/Collector/网络。"
+  ],
+  "updated_at": "2026-08-09T21:18+08:00",
+  "verified": [
+    "SOURCE_MGMT_DATA_CONTRACT_VALIDATION_OK：Source required=39；baseline=59且59 disabled；e7a8 canonical root匹配；VS1 6文件逐hash与ordered root匹配；三旧DB文件hash/无WAL-SHM；source.ts/profile.ts零漂移；产品候选hash匹配；source_validation零命中；六个source_* operation enum闭合；Add/Validate Outbox=0且仅Activate使用source_activation；baseline mutation 403；public mode=ro/query_only/写失败探针；diff check与doctor通过；external_calls=0、database_handles_opened=0。"
+  ]
+}

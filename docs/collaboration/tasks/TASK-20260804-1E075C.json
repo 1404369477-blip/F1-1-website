@@ -1,0 +1,52 @@
+{
+  "acceptance_exit": "测试部final报告decision=pass|fail并列P0/P1/P2；冻结SHA一致；一次目标套件全部通过；三类Next后置失败exact安全JSON，正常start/health/SIGINT与端口/进程清理通过；正式app/.next未改、无临时残留；P0=0且P1=0才PASS；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-08-04-Next启动受控输出候选闭包污染-NOT-RUN报告.md"
+  ],
+  "authorization_evidence": "用户持续确认推进，并明确要求有效产出后只做高性价比必要测试；3760已形成冻结候选。",
+  "authorization_history": [
+    {
+      "at": "2026-08-04T13:26+08:00",
+      "evidence": "用户持续确认推进，并明确要求有效产出后只做高性价比必要测试；3760已形成冻结候选。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "测试部/独立审核成员:/root/test_next_startup_recheck",
+  "completion_class": "audit",
+  "confirmation": "测试与安全均PASS后统筹才可ACK 3760；本测试不重复完整check，也不放行R5/R12/VS-0整体。",
+  "created_at": "2026-08-04T13:26+08:00",
+  "department": "测试部",
+  "details": "严格只读当前冻结候选，开始时将app及必要只读data复制到TemporaryDirectory隔离快照，避免后续SQLite开发改动影响结论；不得修改正式app/data/文档，只可写测试部final报告和任务状态。先核对serve/p1-acceptance/p1-cli三SHA与开发报告；只运行一次p1-cli目标套件和一次正常start-health-SIGINT收据，不执行完整npm check，不重复六组同质轮次。验证dev端口冲突、start端口冲突、start缺失.next均真实空argv、exit非零、stdout空、stderr exact四字段JSON；正常start固定127.0.0.1:3000，health ready/local-only/externalCalls=0，SIGINT后3000/3101与进程组清理。检查共享正式app/.next字节/目录未被移动删除，隔离副本和测试DB清理。",
+  "domain_stage": "启动边界独立测试",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一后置失败泄露Next banner/URL/Error/stack/path/address/port、输出多于一条或多于四键：P1 FAIL。",
+    "正常start不可用、监听非127.0.0.1:3000、SIGINT后端口/进程残留或正式.next被移动删除：P0/P1 FAIL。",
+    "因后续开发并发漂移导致SHA不一致时立即NOT_RUN并报告，不在活跃工作树重复测试或自行修代码。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "没有把并发污染写成3760功能FAIL；第一次缺有效cwd且无测试输出的启动器调用未计入验收，随后只执行一次有效目标套件；发现污染后未重试、未跑happy path/完整check、未修代码、未ACK或扩大放行。",
+  "node": "在隔离快照中复验3760候选的三类真实后置失败和正常start闭环",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260802-3760F6.json",
+    "docs/collaboration/部门/开发部/报告/2026-08-04-M4-VS-0-Next启动错误输出边界整改报告.md"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-08-04-Next启动受控输出候选闭包污染-NOT-RUN报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260804-1E075C",
+  "title": "独立验收Next启动受控输出与正常停止",
+  "unverified": [
+    "候选闭包污染使三类Next后置失败未到达目标出口；正常start/health/SIGINT与3760最终功能PASS/FAIL均未验证，须待完整传递闭包稳定后重派一次窄验收。"
+  ],
+  "updated_at": "2026-08-04T13:37+08:00",
+  "verified": [
+    "三个目标文件在正式工作树与隔离副本中的SHA均与开发报告一致；一次有效目标套件为7/13 PASS、6项在runtime准备阶段因并发SQLite未完成占位值失真失败；发现污染后未运行happy path或完整check；正式.next逐文件未改，3000/3101、临时目录与测试DB均无残留，精确隔离副本已清理。"
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "acceptance_exit": "交付不可变v0.3 proposed合同与final报告；两项P1逐条有规范性MUST和mandatory golden，安全候选/FAIL报告/v0.2均精确pin；command/business/task/lease identity的生成方、域、随机字节、编码、长度、唯一冲突与恢复全部唯一；source_id碰撞有闭合失败出口；v0.2及核心代码/数据/设计/ADR零改动，doctor通过，并可直接触发安全复验。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/spec/F1+1-SOURCE-MGMT-001本地synthetic信源管理纵切实现合同-v0.3.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-09-SOURCE-MGMT-001-v0.3安全合同整改报告.md"
+  ],
+  "authorization_evidence": "2026-08-09主会话持续推进；安全TASK-20260809-96AF52 FAIL已ACK并给出v0.3整改出口。",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T21:36+08:00",
+      "evidence": "2026-08-09主会话持续推进；安全TASK-20260809-96AF52 FAIL已ACK并给出v0.3整改出口。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "用户持续授权推进本地初版；本任务仅修订proposed合同，不实现、不外联、不开放生产。",
+  "created_at": "2026-08-09T21:36+08:00",
+  "department": "产品部",
+  "details": "前序v0.2 SHA-256=a4b7230c89b0083f6d3f412d2c3f3f767c7f131d4ea422f85fe5721f75df686b保持字节不变。只新增v0.3 proposed合同与产品final报告，不改app/data/design/accepted ADR/v0.2。必须精确pin安全候选TASK-20260802-6F7563路径docs/collaboration/部门/安全部/报告/2026-08-02-M4-VS-1本地管理API会话与CSRF安全合同候选.md、SHA-256=e043705915c4c2489cdf3cb178677b4d5dc753781c98e8c10e7886d2a5462218，以及安全FAIL报告SHA-256=3055ff0fc81cfa471f14e32d5f333bee2c275783ed1df862781bda134097248e。逐项冻结raw HTTP authority/Host/origin、peer loopback/proxy header、single in-memory session及cookie/TTL/rotation、CSRF 32-byte CSPRNG与session+method+exact path+canonical body hash绑定、issued→consumed原子一次消费/并发/回滚不恢复、拒绝零业务增量。关闭identity合同：可信UI在首次发送前用Web Crypto生成command operation/key，固定域前缀、32随机字节、canonical lowercase hex与长度；服务端只接受精确codec但不声称验证熵；首次activation事务内由服务端Node crypto生成business operation/key，固定域/32字节/编码；task/lease生成责任、位数、prefix和schema兼容；碰撞、并发、response-loss、resume/requeue复用规则和测试向量固定。source_id 96-bit碰撞固定reason、零写和恢复。功能仍P1-blocker，externalCalls=0。",
+  "domain_stage": "M5-SOURCE-MGMT安全P1合同整改",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "安全候选hash或v0.2漂移：立即block；identity规则与现有Source/TaskEnvelope schema不兼容：只给首个冲突并停止，不改schema或另造identity；需要新依赖、真实外联、生产身份或把客户端熵当可验证事实：保持closed并不完成。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已纠正command pair位于body导致的hash顺序循环；未只写继承安全候选，未把客户端codec写成熵证明，未让客户端生成server-owned identity，未跨域复用随机bytes，未自动修复identity/source_id碰撞，未修改v0.2/app/data/design/accepted ADR或扩大外部/生产授权。",
+  "node": "吸收安全部96AF52的两项P1与一项P2，生成不可变v0.3 successor并恢复实施前安全复验入口",
+  "pointers": [
+    "docs/spec/F1+1-SOURCE-MGMT-001本地synthetic信源管理纵切实现合同-v0.2.md",
+    "docs/collaboration/部门/安全部/报告/2026-08-09-SOURCE-MGMT-001-v0.2实施前独立安全审查报告.md",
+    "docs/collaboration/部门/安全部/报告/2026-08-02-M4-VS-1本地管理API会话与CSRF安全合同候选.md"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-09-SOURCE-MGMT-001-v0.3安全合同整改报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-A4392B",
+  "title": "SOURCE-MGMT-001关闭安全P1并生成唯一合同v0.3",
+  "unverified": [
+    "HTTP raw adapter、内存session/nonce store、CSPRNG注入、constant-time compare、SQLite transaction/UNIQUE、lease CAS和source_id碰撞分支尚未实现或运行。",
+    "v0.3十一项安全golden与v0.2十六项主体golden尚未绑定同一候选执行；安全部尚未对v0.3固定SHA独立复验，功能继续P1-blocker。"
+  ],
+  "updated_at": "2026-08-09T21:51+08:00",
+  "verified": [
+    "v0.2 SHA-256保持a4b7230c89b0083f6d3f412d2c3f3f767c7f131d4ea422f85fe5721f75df686b；local Admin安全候选与96AF52 FAIL报告SHA分别匹配e0437059…462218和3055ff0f…7248e。",
+    "v0.3 SHA-256=90ee4ed30d325b7b2833582cc0ac8134aefc7fbc2dcd43ec9d20c0f726b2f1fe；raw authority/session/CSRF所有关键predicate为MUST且有5项zero-delta mandatory。",
+    "command请求顺序唯一为冻结command-independent输入→独立生成pair→完整DTO→canonical bytes/hash→申请CSRF→提交同bytes；任何输入/identity/serialization变化丢弃nonce并全链重走，旧循环顺序零命中。",
+    "command/business/job/task/lease七类identity owner、随机bytes、prefix、lowercase-hex、exact长度71/72/74/75/75/76/48、字段绑定、碰撞与恢复闭合；fixture vectors 7/7，安全golden共11项。",
+    "source_id 96-bit碰撞已区分same full hash、truncated collision与canonical URL conflict并固定reason/零写/唯一恢复；externalCalls=0。"
+  ]
+}

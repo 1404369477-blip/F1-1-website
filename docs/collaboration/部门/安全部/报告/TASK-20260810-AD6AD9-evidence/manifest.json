@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "f1plus1-security-ad6ad9-evidence-v1",
+  "taskId": "TASK-20260810-AD6AD9",
+  "decision": "fail",
+  "p0": 0,
+  "p1": 1,
+  "p2": 0,
+  "harness": {
+    "commandCount": 1,
+    "exitCode": 1,
+    "nodeVersion": "24.18.0",
+    "firstError": {
+      "vector": "WEAK_DB_PERMISSIONS",
+      "actualCode": "DB_PATH",
+      "actualMessageAllowlist": "database guard is not a private regular file",
+      "expectedByHarness": "DB_PERMISSIONS",
+      "securityOutcome": "FAIL_CLOSED",
+      "operatorAssertionError": true,
+      "productDefectEstablished": false
+    }
+  },
+  "completedBeforeFirstError": {
+    "physicalCopyThenChmod0600": true,
+    "copySha256Matched": true,
+    "weakPermissionCopyCreated": true,
+    "weakPermissionOpenDenied": true
+  },
+  "notRun": [
+    "wrong basename profile denial",
+    "main/temp single database assertion",
+    "59+1 and local_synthetic state",
+    "profile/operation/audit ledger counts",
+    "audit chain and logical content root",
+    "second writer denial"
+  ],
+  "frozenEvidence": {
+    "closedDbSha256": "ddf3778c62cf95f195b1f08db8b075d676069f4cc9fb39804063e1004dd2e939",
+    "guardSha256": "5f008507164f2a1b8678435ec491e31bf6235700c50844ec1dca3801ada756d2",
+    "serverSha256": "5c40918c7ac45aa809ed106acdfa00c9b6d5c52fb90a0b9995a0a3998d83378f",
+    "task91af6eManifestSha256": "7b0658d9972df676acec689cb3d99ea23e74bf1abc2e51f9a169a9aa49b187b3",
+    "f213deReportSha256": "745ddde6a5d5da108d9a3ef80eb689946a094cb3ab48ef6e591d47a2f7b2757f"
+  },
+  "effects": {
+    "formalDatabaseOpened": false,
+    "formalDatabaseModified": false,
+    "formalDatabaseHashUnchanged": true,
+    "serverStarted": false,
+    "readinessCalled": false,
+    "fixtureInitialized": false,
+    "dynamicNetworkCalled": false,
+    "externalCalls": 0,
+    "taskTemporaryResourcesCleaned": true
+  },
+  "final875b6cSecurityDecision": "NOT_CLOSED"
+}

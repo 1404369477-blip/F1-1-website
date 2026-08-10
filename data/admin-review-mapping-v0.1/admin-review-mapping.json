@@ -1,0 +1,178 @@
+{
+  "mapping_version": "admin-review-mapping-v0.1",
+  "classification": "proposed_implementation_mapping_not_domain_schema",
+  "contract_refs": {
+    "product_contract": "docs/spec/F1+1-M5最小人工审核台纵切产品合同-v0.1.md",
+    "domain_schema": "data/mvp-contract-v0/schema.json",
+    "state_machine": "data/mvp-contract-v0/state-machine.json",
+    "internal_schema": "data/mvp-contract-v0/internal-contract.schema.json",
+    "runtime_envelope": "data/mvp-contract-v0/runtime-envelope.schema.json",
+    "public_profile_manifest": "data/mvp-contract-v0.4-public-synthetic/manifest.json",
+    "prior_data_report": "docs/collaboration/部门/数据部/报告/2026-08-09-审核队列领域与SQLite最小增量映射包.md"
+  },
+  "source_registry": {
+    "schema_version": {"kind": "constant", "owner": "product_contract", "json_pointers": [], "transform": "literal_admin-review-v0.1_or_admin-operation-v0.1_by_dto"},
+    "items": {"kind": "derived", "owner": "ReleaseBundle", "json_pointers": ["/release_status"], "transform": "ordered_allowlisted_rows_release_status_ready_and_integrity_current"},
+    "page": {"kind": "derived", "owner": "ReleaseBundle", "json_pointers": ["/release_bundle_id", "/updated_at"], "transform": "opaque_cursor_over_stable_order_no_persistence"},
+    "bundle_id": {"kind": "field", "owner": "ReleaseBundle", "json_pointers": ["/release_bundle_id"], "transform": "identity"},
+    "bundle_version": {"kind": "field", "owner": "ReleaseBundle", "json_pointers": ["/bundle_version"], "transform": "identity"},
+    "bundle_hash": {"kind": "field", "owner": "ReleaseBundle", "json_pointers": ["/bundle_hash"], "transform": "identity"},
+    "content_id": {"kind": "field", "owner": "Content", "json_pointers": ["/content_id"], "transform": "identity"},
+    "content_status": {"kind": "field", "owner": "Content", "json_pointers": ["/content_status"], "transform": "identity"},
+    "summary_id": {"kind": "field", "owner": "Summary", "json_pointers": ["/summary_id"], "transform": "identity"},
+    "summary_version": {"kind": "field", "owner": "Summary", "json_pointers": ["/summary_version"], "transform": "identity"},
+    "summary_version_hash": {"kind": "field", "owner": "Summary", "json_pointers": ["/summary_version_hash"], "transform": "identity"},
+    "summary_status": {"kind": "field", "owner": "Summary", "json_pointers": ["/summary_status"], "transform": "identity"},
+    "title_zh": {"kind": "field", "owner": "Summary", "json_pointers": ["/title_zh"], "transform": "identity"},
+    "summary_zh": {"kind": "field", "owner": "Summary", "json_pointers": ["/summary_zh"], "transform": "identity"},
+    "source_display": {"kind": "field", "owner": "ReleaseBundle", "json_pointers": ["/canonical_payload/source_snapshot/display_name"], "transform": "identity_from_immutable_snapshot"},
+    "source_time": {"kind": "field", "owner": "ReleaseBundle", "json_pointers": ["/canonical_payload/time_snapshot/source_published_at"], "transform": "nullable_identity_from_immutable_snapshot"},
+    "media_state": {"kind": "derived", "owner": "ReleaseBundle", "json_pointers": ["/canonical_payload/media_presentation"], "transform": "allowlisted_selected_or_none"},
+    "review_state": {"kind": "derived", "owner": "ReviewDecision+Publication", "json_pointers": ["ReviewDecision:/decision", "Publication:/publication_status"], "transform": "product_state_precedence"},
+    "updated_at": {"kind": "field", "owner": "ReleaseBundle", "json_pointers": ["/updated_at"], "transform": "identity"},
+    "evidence": {"kind": "derived", "owner": "ReleaseBundle", "json_pointers": ["/canonical_payload/source_snapshot", "/canonical_payload/time_snapshot", "/canonical_payload/access_snapshot", "/canonical_payload/media_presentation"], "transform": "closed_evidence_allowlist"},
+    "editable_summary": {"kind": "derived", "owner": "Summary", "json_pointers": ["/title_zh", "/summary_zh"], "transform": "closed_editable_pair"},
+    "decision_view": {"kind": "derived", "owner": "ReviewDecision", "json_pointers": ["/review_decision_id", "/decision", "/release_bundle_id", "/reviewed_at"], "transform": "nullable_current_terminal_decision_allowlist"},
+    "publication_view": {"kind": "derived", "owner": "Publication", "json_pointers": ["/public_id", "/publish_generation", "/publication_status", "/published_at"], "transform": "nullable_current_unique_publication_allowlist"},
+    "integrity": {"kind": "internal_receipt", "owner": "hash_fence_verifier", "json_pointers": ["Content:/content_version_hash", "Summary:/summary_version_hash", "ReleaseBundle:/payload_hash", "ReleaseBundle:/bundle_hash", "ReleaseBundle:/source_config_epoch", "ReleaseBundle:/source_safety_epoch", "ReleaseBundle:/authorization_version", "ReleaseBundle:/policy_epoch", "ReleaseBundle:/recovery_epoch"], "transform": "closed_pass_or_reason_code"},
+    "allowed_actions": {"kind": "derived", "owner": "Content+ReviewDecision+Publication", "json_pointers": ["Content:/content_status", "ReviewDecision:/decision", "Publication:/publication_status"], "transform": "server_state_allowlist_hint_only"},
+    "operation_id": {"kind": "internal_receipt", "owner": "AuditEvent", "json_pointers": ["/operation_id"], "transform": "identity_non_authoritative_for_publish"},
+    "operation_type": {"kind": "internal_receipt", "owner": "AuditEvent+OutboxJob", "json_pointers": ["AuditEvent:/reason_code", "OutboxJob:/operation_type"], "transform": "revision_approve_reject_from_allowlisted_reason_code_publish_from_publish"},
+    "operation_status": {"kind": "internal_receipt", "owner": "AuditEvent+OutboxJob+Publication", "json_pointers": ["AuditEvent:/reason_code", "OutboxJob:/job_status", "Publication:/publication_status"], "transform": "pending_succeeded_failed_or_publish_only_reconcile_wait"},
+    "original_bundle_id": {"kind": "field", "owner": "ReviewDecision", "json_pointers": ["/release_bundle_id"], "transform": "identity_or_revision_input_bundle"},
+    "current_bundle_id": {"kind": "field", "owner": "ReleaseBundle", "json_pointers": ["/release_bundle_id"], "transform": "nullable_revision_success_identity"},
+    "public_id": {"kind": "field", "owner": "Publication", "json_pointers": ["/public_id"], "transform": "nullable_until_approve_commits"},
+    "decision_id": {"kind": "field", "owner": "ReviewDecision", "json_pointers": ["/review_decision_id"], "transform": "identity"},
+    "decision": {"kind": "field", "owner": "ReviewDecision", "json_pointers": ["/decision"], "transform": "identity"},
+    "publication_status": {"kind": "field", "owner": "Publication", "json_pointers": ["/publication_status"], "transform": "identity"},
+    "publish_generation": {"kind": "field", "owner": "Publication", "json_pointers": ["/publish_generation"], "transform": "identity"},
+    "projection_id": {"kind": "field", "owner": "PublishedProjection", "json_pointers": ["/projection_id"], "transform": "nullable_until_publish_commit"},
+    "projection_status": {"kind": "field", "owner": "PublishedProjection", "json_pointers": ["/projection_status"], "transform": "identity"},
+    "published_at": {"kind": "field", "owner": "Publication", "json_pointers": ["/published_at"], "transform": "identity"},
+    "reason_code": {"kind": "internal_receipt", "owner": "AuditEvent+Publication+OutboxJob", "json_pointers": ["AuditEvent:/reason_code", "Publication:/last_error_code", "OutboxJob:/last_error_code"], "transform": "nullable_fixed_allowlist_no_sensitive_detail"},
+    "receipt_updated_at": {"kind": "derived", "owner": "AuditEvent+OutboxJob+Publication", "json_pointers": ["AuditEvent:/occurred_at", "OutboxJob:/updated_at", "Publication:/updated_at"], "transform": "latest_authoritative_receipt_timestamp"},
+    "operation_succeeded": {"kind": "constant", "owner": "product_contract", "json_pointers": [], "transform": "literal_succeeded_after_transaction_commit"},
+    "review_pending": {"kind": "constant", "owner": "product_contract", "json_pointers": [], "transform": "literal_pending"},
+    "release_status": {"kind": "field", "owner": "ReleaseBundle", "json_pointers": ["/release_status"], "transform": "identity"},
+    "reason_input": {"kind": "field", "owner": "ReviewDecision", "json_pointers": ["/decision_reason"], "transform": "trim_then_validate_1_to_500_before_hash"},
+    "approved_bundle_hash": {"kind": "field", "owner": "Publication", "json_pointers": ["/approved_bundle_hash"], "transform": "identity_and_equal_release_bundle_hash"},
+    "public_path": {"kind": "derived", "owner": "PublishedProjection", "json_pointers": ["/public_id", "/projection_status"], "transform": "emit_stories_path_only_when_published"}
+  },
+  "dto_slots": {
+    "ReviewList": {
+      "schemaVersion": "schema_version", "items": "items", "page": "page",
+      "items[].bundleId": "bundle_id", "items[].bundleVersion": "bundle_version", "items[].bundleHash": "bundle_hash",
+      "items[].contentId": "content_id", "items[].summaryId": "summary_id", "items[].summaryVersionHash": "summary_version_hash",
+      "items[].titleZh": "title_zh", "items[].summaryZh": "summary_zh", "items[].sourceDisplay": "source_display",
+      "items[].sourceTime": "source_time", "items[].mediaState": "media_state", "items[].reviewState": "review_state", "items[].updatedAt": "updated_at"
+    },
+    "ReviewDetailExtension": {
+      "evidence": "evidence", "editableSummary": "editable_summary", "decision": "decision_view", "publication": "publication_view",
+      "integrity": "integrity", "allowedActions": "allowed_actions"
+    },
+    "OperationReceipt": {
+      "schemaVersion": "schema_version", "operationId": "operation_id", "operationType": "operation_type", "status": "operation_status",
+      "target.originalBundleId": "original_bundle_id", "target.currentBundleId": "current_bundle_id", "target.publicId": "public_id",
+      "result.summaryId": "summary_id", "result.summaryVersionHash": "summary_version_hash", "result.bundleId": "bundle_id",
+      "result.bundleVersion": "bundle_version", "result.bundleHash": "bundle_hash", "result.decisionId": "decision_id",
+      "result.decision": "decision", "result.publicationStatus": "publication_status", "result.publishGeneration": "publish_generation",
+      "result.projectionId": "projection_id", "reasonCode": "reason_code", "updatedAt": "receipt_updated_at"
+    },
+    "RevisionRequest": {
+      "schemaVersion": "schema_version", "operationId": "operation_id", "expected.bundleId": "bundle_id", "expected.bundleVersion": "bundle_version",
+      "expected.bundleHash": "bundle_hash", "expected.summaryId": "summary_id", "expected.summaryVersionHash": "summary_version_hash",
+      "editableSummary.titleZh": "title_zh", "editableSummary.summaryZh": "summary_zh"
+    },
+    "RevisionSuccess": {
+      "schemaVersion": "schema_version", "operation.operationId": "operation_id", "operation.status": "operation_succeeded",
+      "summary.summaryId": "summary_id", "summary.summaryVersion": "summary_version", "summary.summaryVersionHash": "summary_version_hash", "summary.summaryStatus": "summary_status",
+      "bundle.bundleId": "bundle_id", "bundle.bundleVersion": "bundle_version", "bundle.bundleHash": "bundle_hash", "bundle.releaseStatus": "release_status",
+      "reviewState": "review_pending"
+    },
+    "ApproveRequest": {
+      "schemaVersion": "schema_version", "operationId": "operation_id", "expected.bundleId": "bundle_id", "expected.bundleVersion": "bundle_version",
+      "expected.bundleHash": "bundle_hash", "expected.summaryVersionHash": "summary_version_hash"
+    },
+    "ApproveSuccess": {
+      "schemaVersion": "schema_version", "operation.operationId": "operation_id", "operation.status": "operation_succeeded",
+      "decision.decisionId": "decision_id", "decision.decision": "decision", "decision.bundleId": "bundle_id", "contentStatus": "content_status",
+      "publication.publicId": "public_id", "publication.publishGeneration": "publish_generation", "publication.publicationStatus": "publication_status"
+    },
+    "RejectRequest": {
+      "schemaVersion": "schema_version", "operationId": "operation_id", "expected.bundleId": "bundle_id", "expected.bundleVersion": "bundle_version",
+      "expected.bundleHash": "bundle_hash", "expected.summaryVersionHash": "summary_version_hash", "reason": "reason_input"
+    },
+    "RejectSuccess": {
+      "schemaVersion": "schema_version", "operation.operationId": "operation_id", "operation.status": "operation_succeeded",
+      "decision.decisionId": "decision_id", "decision.decision": "decision", "decision.bundleId": "bundle_id", "contentStatus": "content_status",
+      "publication": "publication_view"
+    },
+    "PublishRequest": {
+      "schemaVersion": "schema_version", "operationId": "operation_id", "expected.publicId": "public_id", "expected.publishGeneration": "publish_generation",
+      "expected.approvedBundleHash": "approved_bundle_hash", "expected.publicationStatus": "publication_status"
+    },
+    "PublishSuccess": {
+      "schemaVersion": "schema_version", "operation.operationId": "operation_id", "operation.status": "operation_succeeded",
+      "publication.publicId": "public_id", "publication.publishGeneration": "publish_generation", "publication.publicationStatus": "publication_status", "publication.publishedAt": "published_at",
+      "projection.projectionId": "projection_id", "projection.publicId": "public_id", "projection.publishGeneration": "publish_generation", "projection.projectionStatus": "projection_status",
+      "publicPath": "public_path"
+    }
+  },
+  "transaction_protocol": {
+    "approve_reservation": {
+      "trigger": "POST /api/admin/reviews/{bundleId}/approve",
+      "preconditions": ["current bundle/hash/summary/five-fence/manual_only/session/origin/csrf/CAS pass", "no conflicting terminal ReviewDecision", "unique publication aggregate is absent or byte-equivalent"],
+      "writes": ["insert immutable ReviewDecision(approved)", "CAS Summary ready->approved", "CAS ReleaseBundle ready->approved", "CAS Content review_pending->approved->publish_queued in one unobservable transaction", "get-or-create exactly one Publication(queued) with stable publication_id/public_id/generation/idempotency_key/reconcile_key", "append redacted AuditEvent for operation receipt"],
+      "forbidden_writes": ["OutboxJob", "TaskEnvelope", "PublishedProjection", "public-synthetic profile"],
+      "commit_result": "ApproveSuccess exposes reserved Publication.public_id; admin publish route is now addressable; public story remains fail-closed",
+      "failure_exit": "rollback all writes; return fixed conflict/stale/storage reason; do not reserve partial identity"
+    },
+    "manual_publish_enqueue": {
+      "trigger": "POST /api/admin/publications/{publicId}/publish",
+      "preconditions": ["resolve publicId to the single queued Publication", "Decision approved and bundle/hash/generation/five-fence/current guards pass", "same Publication.idempotency_key and reconcile_key"],
+      "writes": ["get-or-create one OutboxJob(pending, operation_type=publish)", "embed one TaskEnvelope using Publication identity/key/five fences", "append redacted AuditEvent correlated to client operationId"],
+      "forbidden_writes": ["new Publication", "new public_id", "PublishedProjection before confirmed publish", "public-synthetic profile"],
+      "commit_result": "queued Publication has exactly one dispatch intent; repeated identical request returns same intent",
+      "failure_exit": "rollback enqueue or return existing receipt; key/hash mismatch fails closed"
+    },
+    "manual_publish_completion": {
+      "trigger": "leased publish worker completion or same-key reconciliation confirmation",
+      "preconditions": ["fresh lease/deadline/attempt and current five fences", "Outbox/TaskEnvelope keys equal Publication keys", "approved hash and stable identity unchanged"],
+      "writes": ["CAS Publication queued|retryable_failed->publishing when lease starts", "CAS Publication publishing|reconcile_wait->published on confirmed success", "CAS Content publish_queued->published", "insert exactly one PublishedProjection with same public_id/generation/published_version_hash", "mark OutboxJob succeeded and append redacted AuditEvent atomically with visible result"],
+      "forbidden_writes": ["second Publication", "second public_id", "projection for non-published Publication", "cross-profile copy or ATTACH"],
+      "commit_result": "same-profile projection-first GET /stories/{publicId} becomes readable only after full chain validation",
+      "failure_exit": "unknown enters same Publication reconcile_wait; retry/terminal/stop preserve identity and keys"
+    }
+  },
+  "reachability": {
+    "admin_publish_path": {"becomes_addressable_after": "approve_reservation commit", "lookup": "Publication.public_id UNIQUE", "allowed_statuses": ["queued", "retryable_failed", "blocked", "reconcile_wait", "published"], "mutation_guard": "only queued or guarded retryable_failed may dispatch"},
+    "public_story_path": {"before_projection": "404/fail_closed", "after_projection": "read PublishedProjection by public_id in the same selected physical profile", "cross_profile_copy": false, "static_fallback": false},
+    "profile_constraint": "review write and its published projection must be read through one explicitly selected successor profile; this mapping does not authorize the profile, migration, or app change"
+  },
+  "invariants": [
+    "approve commits exactly one ReviewDecision and exactly one queued Publication while OutboxJob=0 TaskEnvelope=0 PublishedProjection=0",
+    "reject commits no Publication public_id OutboxJob TaskEnvelope or PublishedProjection",
+    "manual publish reuses Publication.idempotency_key and reconcile_key byte-for-byte in OutboxJob and TaskEnvelope",
+    "one release_bundle_id plus approved_bundle_hash has one Publication public_id publish_generation",
+    "public story is unreadable until the matching PublishedProjection exists and the full approved hash/fence chain validates",
+    "unknown publish result uses the same Publication reconcile_wait and never reserves another identity",
+    "all DTO leaves resolve to exactly one source_registry rule",
+    "mapping package adds no domain or internal persisted entity",
+    "public-synthetic frozen manifest and exact 1/12/12/12/10/12/12/12/12 graph remain unchanged",
+    "external_calls=0 and no Base/provider/Collector access"
+  ],
+  "expected_counts": {
+    "dto_count": 11,
+    "dto_slot_count": 111,
+    "transaction_count": 3,
+    "domain_entity_additions": 0,
+    "internal_entity_additions": 0,
+    "approve_outbox_count": 0,
+    "approve_task_envelope_count": 0,
+    "approve_publication_count": 1,
+    "publish_outbox_count": 1,
+    "publish_task_envelope_count": 1,
+    "publish_projection_count": 1
+  },
+  "external_calls": 0
+}

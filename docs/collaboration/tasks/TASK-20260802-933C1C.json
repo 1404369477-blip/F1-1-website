@@ -1,0 +1,65 @@
+{
+  "acceptance_exit": "交付单一产品决策候选报告：消除测试缺口2和6，给状态转移表、重试预算/等待表、validation job时序/幂等/失败路径；说明对现有合同影响、successor ADR/Spec/data所需最小更新、1-3个确认点；唯一proposed结论、未验证项、TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/产品部/报告/2026-08-02-M4-VS-1重试与validation-job决策候选.md"
+  ],
+  "authorization_evidence": "用户授权持续推进本地初版并要求部门并行执行；本任务关闭已核收测试计划中的实现前产品缺口。",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T13:36+08:00",
+      "evidence": "用户授权持续推进本地初版并要求部门并行执行；本任务关闭已核收测试计划中的实现前产品缺口。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "只产出本地mock产品候选，不开放真实采集/发布，不修改accepted真值。",
+  "created_at": "2026-08-02T13:36+08:00",
+  "department": "产品部",
+  "details": "读取测试计划TASK-28882C §16及冻结Spec/data合同，只做产品决策包。精确提出collection 429/503/timeout/lock的retryable分类、max attempts、确定性本地backoff与dead-letter/manual recovery；精确决定新Source validating是否创建独立validation job、何时创建、operation/idempotency、与activation/collection任务隔离。同步列出admin mutation HTTP合同需要的产品行为但不擅自规定安全实现。禁止修改accepted ADR/Spec/data/app/design。",
+  "domain_stage": "M4-C-VS1-contract-gap-product",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 冻结状态机与fixture互相冲突：保持proposed，列精确冲突pointer并请求数据修订。",
+    "2) retry策略会造成无限重试、operation换代歧义或把publication reconcile套到collection：FAIL并停止写入正式真值。",
+    "3) 需要真实平台SLO/付费能力才能决定：给local mock确定性默认与外部Unknown分层，不虚构真实平台指标。"
+  ],
+  "from_department": "统筹部",
+  "impact_declaration": {
+    "admission": "manual",
+    "base_revision": "TASK-20260802-933C1C@rev1",
+    "external_effects": [
+      "none"
+    ],
+    "owner_task": "TASK-20260802-933C1C",
+    "shared_contracts": [
+      "TASK-20260802-933C1C-product-report-only"
+    ],
+    "write_paths": [
+      "docs"
+    ]
+  },
+  "mistake_check": "仅写产品proposed报告；未改accepted ADR/Spec/data/app/design/测试报告；未创建domain实体或Publication reconcile_wait；自动重试有界同key，人工重排新key，validation不触发activation/collection/provider",
+  "node": "M4/C层/VS-1实现合同缺口/产品语义",
+  "pointers": [
+    "docs/collaboration/部门/产品部/报告/2026-08-02-M4-VS-1重试与validation-job决策候选.md"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-02-M4-VS-1重试与validation-job决策候选.md",
+  "resolution": null,
+  "revision": 5,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-933C1C",
+  "title": "冻结VS-1重试策略与validation job产品语义",
+  "unverified": [
+    "Node24/SQLite运行与锁竞争、真实平台Retry-After/5xx/timeout语义、source_validation operation_type与terminal guard的数据successor、admin DTO/安全实现及VS-1完整测试均未验证"
+  ],
+  "updated_at": "2026-08-02T13:50+08:00",
+  "verified": [
+    "已只读核对测试计划§16、Spec、accepted M4 ADR、v0.3 schema/state/runtime/fixtures；报告明确429/500/502/503/504/collection timeout/DB lock分类、3次预算、1s/3s等待、same key/fresh fence、validation exactly-one lane、HTTP候选与外部关闭边界"
+  ]
+}

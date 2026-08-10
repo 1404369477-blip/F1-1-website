@@ -1,0 +1,56 @@
+{
+  "acceptance_exit": "交付一份研究部正式报告；至少覆盖4个指定平台且每个平台有可追溯证据，列出不少于15个经过筛选的高相关候选，其中至少5个开源/可自托管项目、3个F1或体育信息产品、3个采集/聚合工具、2个agent/skill生态候选；提供Top 10量化评分矩阵与3档采用建议；全部关键事实附原始链接和检索日期，明确许可/活跃度Unknown，不执行任何外部写操作。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/研究部/报告/2026-08-02-F1资讯聚合竞品与生态全景调研.md"
+  ],
+  "authorization_evidence": "用户于2026-08-02明确要求派部门成员开展只读深度调研并优先CLI/内置浏览器",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T00:43+08:00",
+      "evidence": "用户于2026-08-02明确要求派部门成员开展只读深度调研并优先CLI/内置浏览器",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "研究部/019fb36c-1f86-78d3-a6d7-f87f124bd710",
+  "completion_class": "standard",
+  "confirmation": "用户已明确要求派部门调研GitHub、X、Reddit、Product Hunt及相关生态，优先CLI和内置浏览器，且点名aihot为高参考对象。",
+  "created_at": "2026-08-02T00:43+08:00",
+  "department": "研究部",
+  "details": "只读深度调研与F1+1相近的资讯聚合产品、开源项目、服务、资源、工具、skills、tools与agent架构。目标平台至少覆盖GitHub、X、Reddit、Product Hunt，并补充官方项目站、官方文档和包/插件市场；不得引用百度。优先CLI、公开API、Web检索与内置浏览器，禁止登录、发帖、私信、点赞、关注、提交表单或规避平台限制。每个候选记录名称、URL、平台、解决问题、核心能力、数据源/采集方式、更新活跃度、许可/商业边界、证据日期、与F1+1差异、可借鉴点、不可照搬点、证据强度；把已验证、合理推断、Unknown分开。输出全景清单、Top候选、能力缺口矩阵和下一步验证建议；与开发部的aihot代码拆解、设计部的界面模式、安全部的风险审查去重，不评价实现细节。",
+  "domain_stage": "M4前沿调研",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) X/Reddit/Product Hunt因反爬或登录墙无法深读：保留Unknown并用官方公开页面、RSS、GitHub或项目官网交叉验证，不绕过访问控制；2) 候选许可、活跃度或采集方式不明：不得推断可商用或稳定，降级为待验证；3) 发现项目与F1+1边界不匹配或已停更：保留负面样本及排除理由，不强行推荐。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "独立复核通过；未登录、未调用需凭证 API、未发帖/点赞/关注、未提交表单、未绕过登录墙或反爬、未执行任何外部写操作；未把 stars、followers、upvotes、评论或营销文案当作质量/许可证证明；未把公开可见推断为可商用再分发权；对许可证、活跃度、API、条款、稳定性和权利边界不明项保留 Unknown。",
+  "node": "M4/研究/竞品与生态",
+  "pointers": [
+    "docs/collaboration/部门/研究部/报告/2026-08-02-F1资讯聚合竞品与生态全景调研.md"
+  ],
+  "report": "docs/collaboration/部门/研究部/报告/2026-08-02-F1资讯聚合竞品与生态全景调研.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-D11DCA",
+  "title": "前沿F1资讯聚合竞品与生态全景调研",
+  "unverified": [
+    "X/Reddit/Product Hunt 真实 API 配额、授权、删除/缓存义务、长期稳定性和商业再分发边界仍需实施前复核",
+    "Toopost、Browser Use、OpenClaw Skills 的许可证、数据保留、云端处理和版本稳定性未完全核验",
+    "OpenF1 当前 GitHub 活跃度与 live tier、Jolpica 2026 运行稳定性/配额/Terms of Use 未实测",
+    "各 F1 媒体、社媒、RSS/bridge 对每个具体 URL 的 robots/ToS、结构变更可用率、内容权利和全文/图片/视频再分发权未逐项核准",
+    "未执行真实外部 API、账号、采集器或第三方项目安装，故没有真实抓取延迟、重复率、失败率或 15 分钟目标的运行证据"
+  ],
+  "updated_at": "2026-08-02T00:58+08:00",
+  "verified": [
+    "只读覆盖 GitHub、X、Reddit、Product Hunt，并补充 Formula1/FIA 官方站、官方文档、RSS、App Store/Google Play；每个平台均记录证据与访问/条款边界",
+    "清单按重复能力合并为 25 个产品/项目候选 + 1 个 Product Hunt 官方 RSS 来源模式；满足至少 5 个开源/可自托管、3 个 F1/体育、3 个采集/聚合、2 个 Agent/Skill 生态候选",
+    "完成 Top 10 七维度加权评分矩阵（权重 25/20/15/15/10/10/5）、三档采用建议和能力缺口矩阵；总分已按公式复算一致",
+    "关键事实附原始链接和 2026-08-02 检索日期，并区分已验证、合理推断与 Unknown；独立只读复核返回 REVIEW_PASS"
+  ]
+}

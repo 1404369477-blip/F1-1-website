@@ -1,0 +1,76 @@
+{
+  "schema_version": "f1plus1-design-candidate-freeze-v2",
+  "date": "2026-08-09",
+  "function_id": "SOURCE-MGMT-001",
+  "candidate_status": "user_confirmation_ready",
+  "implementation_authorized": false,
+  "source_design_task": {
+    "task_id": "TASK-20260809-08CCEF",
+    "execution_state": "acknowledged",
+    "task_json_sha256": "bd70a1673cec458b9ed42da461391366bd29bdbf581539b317a7058f4f5ca885",
+    "reason": "department_resumed_in_same_thread_and_completed_with_unknowns_preserved"
+  },
+  "normative_inputs": [
+    {
+      "path": "docs/spec/F1+1-SOURCE-MGMT-001本地synthetic信源管理纵切实现合同-v0.3.md",
+      "sha256": "90ee4ed30d325b7b2833582cc0ac8134aefc7fbc2dcd43ec9d20c0f726b2f1fe"
+    },
+    {
+      "path": "docs/collaboration/部门/安全部/报告/2026-08-09-SOURCE-MGMT-001-v0.3实施前独立安全复验报告.md",
+      "sha256": "495bcf8a670cf275c88a67056370e62ec238fc5b38e3a3165dfbb82f3c8ebc6d",
+      "decision": "pass",
+      "severity_count": { "P0": 0, "P1": 0, "P2": 0 }
+    }
+  ],
+  "candidate_files": [
+    {
+      "path": "design/ui/F1+1-M5-admin-sources-preview-v0.1/index.html",
+      "sha256": "0d73ea294972627a7a832b42d999381da1fc4c8ea602b9fdbd04b11985156d68"
+    },
+    {
+      "path": "design/ui/F1+1-M5-admin-sources-preview-v0.1/design-notes.md",
+      "sha256": "9d9d6f39cfc028e50acbdacecdfc21c2e4096133e08ee542986fe88174fd1b5a"
+    },
+    {
+      "path": "design/ui/F1+1-M5-admin-sources-preview-v0.1/SHA256.txt",
+      "sha256": "6d7b2bbe5087a7c59ef3c6fc968b8b35e07df5bef0015020352c8ec396719f95"
+    },
+    {
+      "path": "design/ui/F1+1-M5-admin-sources-preview-v0.1/evidence/F1+1-admin-sources-mac-1440-dark.png",
+      "sha256": "a8bcd2272e5575bf92891fabc29b088f8aec3e0ca225456ed5b59475fee5e556"
+    },
+    {
+      "path": "design/ui/F1+1-M5-admin-sources-preview-v0.1/evidence/F1+1-admin-sources-mac-1440-light.png",
+      "sha256": "fe4e2199af79af96be1edf3fca2ae1d5b4ee72227c340d874aee83b19463f5a6"
+    },
+    {
+      "path": "design/ui/F1+1-M5-admin-sources-preview-v0.1/evidence/F1+1-admin-sources-iphone-390-dark.png",
+      "sha256": "78b9947339e8409c6f31b945b77394b1d81c653bcb31ecd287a78a2dd2ccf248"
+    },
+    {
+      "path": "design/ui/F1+1-M5-admin-sources-preview-v0.1/evidence/F1+1-admin-sources-iphone-390-light.png",
+      "sha256": "71cb4fe78171dcd95a4a3f3c10110b34e6e4c53a45d80cc87d4d7a870a85078b"
+    },
+    {
+      "path": "docs/collaboration/部门/设计部/报告/2026-08-09-SOURCE-MGMT-001双端信源管理可视化候选报告.md",
+      "sha256": "4352804a7601f2c71e4b68325737b0008a117319990c21a8cdf922e2988728a9"
+    }
+  ],
+  "historical_recovery_note": "An earlier recovery snapshot excluded stale SHA/report bytes after the design thread hit its usage limit. The same department thread later resumed, completed and preserved the remaining runtime Unknowns; v2 pins the acknowledged task and current bytes above.",
+  "verified_static_anchors": {
+    "mac_table_horizontal_region_focusable": true,
+    "mac_horizontal_controls_present": true,
+    "mac_last_action_column_sticky": true,
+    "iphone_card_detail_action_present": true,
+    "six_operation_paths_present": true,
+    "credential_edit_fields_present": false,
+    "page_level_horizontal_overflow_in_evidence": false
+  },
+  "remaining_user_gate": "visual_direction_confirmation",
+  "post_confirmation_required": [
+    "product implementation contract binds this exact manifest and candidate hashes",
+    "development implements the real route and all SOURCE-MGMT-001 states",
+    "design and test independently verify the running candidate",
+    "implementation uses this v2 manifest as the closed identity list; candidate-local SHA256.txt and design report remain supporting evidence"
+  ]
+}

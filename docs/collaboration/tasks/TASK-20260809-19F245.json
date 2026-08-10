@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "交付可决策对比表、推荐架构图、进入流程、攻击面与控制映射、最小实施阶段、回退方案及待用户单一决策；明确普通访客即使获知后台地址时各方案的实际阻断点；区分已验证、推断与待部署验证。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-09-M5-Admin私有访问与Break-glass安全架构候选.md"
+  ],
+  "authorization_evidence": "用户当前明确请求管理后台设计和安全入口方案",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T11:41+08:00",
+      "evidence": "用户当前明确请求管理后台设计和安全入口方案",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "用户2026-08-09明确要求设计网站管理后台及安全进入方式，避免观众访问；当前仅授权方案设计，未授权部署或开放入口。",
+  "created_at": "2026-08-09T11:41+08:00",
+  "department": "安全部",
+  "details": "基于当前F1+1本地架构、用户个人维护、中国大陆首发和公开资讯站边界，设计A仅授权设备、B任意设备公网强认证、C日常私有通道+受控应急入口三种候选。对比独立域名/路径、DNS与源站暴露、VPN或零信任接入、账号与MFA/passkey、会话与CSRF、限流、审计、备份恢复、break-glass、部署复杂度与大陆可用性。优先引用权威安全标准和官方文档。只做方案与威胁模型，不改App、DNS、基础设施、依赖、密钥或用户门禁；不得以仅隐藏URL、robots.txt或前端路由作为安全控制。",
+  "domain_stage": "M5 Admin安全架构候选",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若当前部署供应商或域名条件未知，提供供应商无关基线并列出唯一待确认项，不猜测现网能力。",
+    "若某候选依赖中国大陆可用性或合规条件尚未验证，标为条件性方案并给出本地替代，不作可用承诺。",
+    "若发现现有App把Admin与公开路由共享暴露，记录精确风险和最小隔离改造，不自行实施。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查：未把隐藏URL、私有网络、设备归属或公开DNS缺记录当唯一安全控制；未把passkey同步当设备授权；未把移动端风险控制写成功能降级；未承诺大陆可用性或合规；未实施或放行网络、域名、认证、代码、生产及真实能力；TASK_STATE_OK",
+  "node": "冻结Admin入口、身份与网络边界候选",
+  "pointers": [
+    "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md",
+    "docs/decisions/system",
+    "app"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-09-M5-Admin私有访问与Break-glass安全架构候选.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-19F245",
+  "title": "管理后台入口隔离与个人运营访问安全方案",
+  "unverified": [
+    "具体供应商与现网条件；中国大陆三网和目标地域合规；Mac/iPhone实机登记撤销及双端完整功能矩阵；iPhone切后台换网与高风险确认；DNS/TLS/源站ACL；不可变审计；break-glass自动失效；全部应用实现和运行收据"
+  ],
+  "updated_at": "2026-08-09T11:55+08:00",
+  "verified": [
+    "已核对当前公开/Admin路由与loopback local_dev_only静态合同；已形成A/B/C唯一决策矩阵与C方案供应商无关架构；已覆盖公开站/Admin网络与源站隔离、私有DNS、PEP/PDP、设备授权、passkey、会话、Origin、一次性CSRF、限流、审计和break-glass状态机；已把Mac与iPhone双端完整Admin能力写为硬约束，移动端仅增加风险验证不删减功能；已列攻击面控制映射、实施阶段、回退和单一用户决策；未修改app/Spec/ADR/data/design或任何外部资源"
+  ]
+}

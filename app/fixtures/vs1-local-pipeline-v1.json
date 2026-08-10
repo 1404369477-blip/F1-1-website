@@ -1,0 +1,414 @@
+{
+  "fixture_version": "vs1-local-pipeline-v1",
+  "cases": [
+    {
+      "fixture_version": "vs1-local-pipeline-v1",
+      "case_id": "VS1-HAPPY-001",
+      "precondition": "empty",
+      "attempts": [{
+        "attempt": 1,
+        "adapter_outcome": "candidate",
+        "fault_injection": "none",
+        "candidate": {
+          "external_id": "synthetic-external-happy-001",
+          "external_url": "https://synthetic.invalid/vs1/happy-001",
+          "content_kind": "article",
+          "language": "en",
+          "title": "SYNTHETIC_ONLY:F1: Synthetic race result",
+          "body": "SYNTHETIC_ONLY:F1: Driver A wins.",
+          "published_at": "2026-08-09T00:00:00Z"
+        },
+        "mock_summary": { "title_zh": "合成赛果", "summary_zh": "车手A赢得本地合成比赛。" }
+      }]
+    },
+    {
+      "fixture_version": "vs1-local-pipeline-v1",
+      "case_id": "VS1-REPLAY-002",
+      "precondition": "same_content",
+      "attempts": [{
+        "attempt": 1,
+        "adapter_outcome": "candidate",
+        "fault_injection": "none",
+        "candidate": {
+          "external_id": "synthetic-external-happy-001",
+          "external_url": "https://synthetic.invalid/vs1/happy-001",
+          "content_kind": "article",
+          "language": "en",
+          "title": "SYNTHETIC_ONLY:F1: Synthetic race result",
+          "body": "SYNTHETIC_ONLY:F1: Driver A wins.",
+          "published_at": "2026-08-09T00:00:00Z"
+        },
+        "mock_summary": { "title_zh": "合成赛果", "summary_zh": "车手A赢得本地合成比赛。" }
+      }]
+    },
+    {
+      "fixture_version": "vs1-local-pipeline-v1",
+      "case_id": "VS1-CONTENT-DUP-003",
+      "precondition": "same_content",
+      "attempts": [{
+        "attempt": 1,
+        "adapter_outcome": "candidate",
+        "fault_injection": "none",
+        "candidate": {
+          "external_id": "synthetic-external-happy-001",
+          "external_url": "https://synthetic.invalid/vs1/happy-001",
+          "content_kind": "article",
+          "language": "en",
+          "title": "SYNTHETIC_ONLY:F1: Synthetic race result",
+          "body": "SYNTHETIC_ONLY:F1: Driver A wins.",
+          "published_at": "2026-08-09T00:00:00Z"
+        },
+        "mock_summary": { "title_zh": "合成赛果", "summary_zh": "车手A赢得本地合成比赛。" }
+      }]
+    },
+    {
+      "fixture_version": "vs1-local-pipeline-v1",
+      "case_id": "VS1-EVENT-MERGE-004",
+      "precondition": "same_event",
+      "attempts": [{
+        "attempt": 1,
+        "adapter_outcome": "candidate",
+        "fault_injection": "none",
+        "candidate": {
+          "external_id": "synthetic-external-event-merge-004",
+          "external_url": "https://synthetic.invalid/vs1/event-merge-004",
+          "content_kind": "article",
+          "language": "en",
+          "title": "SYNTHETIC_ONLY:F1: Synthetic race result",
+          "body": "SYNTHETIC_ONLY:F1: Driver A wins.",
+          "published_at": "2026-08-09T08:00:00+08:00"
+        },
+        "mock_summary": { "title_zh": "合成赛果", "summary_zh": "车手A赢得本地合成比赛。" }
+      }]
+    },
+    {
+      "fixture_version": "vs1-local-pipeline-v1",
+      "case_id": "VS1-EVENT-DAY-005",
+      "precondition": "different_day",
+      "attempts": [{
+        "attempt": 1,
+        "adapter_outcome": "candidate",
+        "fault_injection": "none",
+        "candidate": {
+          "external_id": "synthetic-external-event-day-005",
+          "external_url": "https://synthetic.invalid/vs1/event-day-005",
+          "content_kind": "article",
+          "language": "en",
+          "title": "SYNTHETIC_ONLY:F1: Synthetic race result",
+          "body": "SYNTHETIC_ONLY:F1: Driver A wins.",
+          "published_at": "2026-08-10T00:00:00Z"
+        },
+        "mock_summary": { "title_zh": "次日合成赛果", "summary_zh": "同一合成文本位于下一UTC日。" }
+      }]
+    },
+    {
+      "fixture_version": "vs1-local-pipeline-v1",
+      "case_id": "VS1-NORMALIZE-006A",
+      "precondition": "empty",
+      "attempts": [{
+        "attempt": 1,
+        "adapter_outcome": "candidate",
+        "fault_injection": "none",
+        "candidate": {
+          "external_id": "synthetic-external-normalize-006a",
+          "external_url": "https://synthetic.invalid/vs1/normalize-006a",
+          "content_kind": "article",
+          "language": "en",
+          "title": "SYNTHETIC_ONLY:F1: Invalid\u0000 title",
+          "body": "SYNTHETIC_ONLY:F1: Body remains synthetic.",
+          "published_at": "2026-08-09T00:00:00Z"
+        },
+        "mock_summary": { "title_zh": "不会使用", "summary_zh": "规范化必须先失败。" }
+      }]
+    },
+    {
+      "fixture_version": "vs1-local-pipeline-v1",
+      "case_id": "VS1-EMPTY-006B",
+      "precondition": "empty",
+      "attempts": [{
+        "attempt": 1,
+        "adapter_outcome": "candidate",
+        "fault_injection": "none",
+        "candidate": {
+          "external_id": "synthetic-external-empty-006b",
+          "external_url": "https://synthetic.invalid/vs1/empty-006b",
+          "content_kind": "article",
+          "language": "en",
+          "title": " \t ",
+          "body": " \n \t ",
+          "published_at": "2026-08-09T00:00:00Z"
+        },
+        "mock_summary": { "title_zh": "不会使用", "summary_zh": "空内容必须先失败。" }
+      }]
+    },
+    {
+      "fixture_version": "vs1-local-pipeline-v1",
+      "case_id": "VS1-AD-007",
+      "precondition": "empty",
+      "attempts": [{
+        "attempt": 1,
+        "adapter_outcome": "candidate",
+        "fault_injection": "none",
+        "candidate": {
+          "external_id": "synthetic-external-ad-007",
+          "external_url": "https://synthetic.invalid/vs1/ad-007",
+          "content_kind": "article",
+          "language": "en",
+          "title": "SYNTHETIC_ONLY:AD: Buy synthetic tyres",
+          "body": "SYNTHETIC_ONLY:F1: Advertising fixture.",
+          "published_at": "2026-08-09T00:00:00Z"
+        },
+        "mock_summary": { "title_zh": "不会使用", "summary_zh": "广告内容被过滤。" }
+      }]
+    },
+    {
+      "fixture_version": "vs1-local-pipeline-v1",
+      "case_id": "VS1-SPAM-008",
+      "precondition": "empty",
+      "attempts": [{
+        "attempt": 1,
+        "adapter_outcome": "candidate",
+        "fault_injection": "none",
+        "candidate": {
+          "external_id": "synthetic-external-spam-008",
+          "external_url": "https://synthetic.invalid/vs1/spam-008",
+          "content_kind": "article",
+          "language": "en",
+          "title": "SYNTHETIC_ONLY:F1: Synthetic spam fixture",
+          "body": "SYNTHETIC_ONLY:SPAM: repeated synthetic text",
+          "published_at": "2026-08-09T00:00:00Z"
+        },
+        "mock_summary": { "title_zh": "不会使用", "summary_zh": "垃圾内容被过滤。" }
+      }]
+    },
+    {
+      "fixture_version": "vs1-local-pipeline-v1",
+      "case_id": "VS1-OFFTOPIC-009",
+      "precondition": "empty",
+      "attempts": [{
+        "attempt": 1,
+        "adapter_outcome": "candidate",
+        "fault_injection": "none",
+        "candidate": {
+          "external_id": "synthetic-external-offtopic-009",
+          "external_url": "https://synthetic.invalid/vs1/offtopic-009",
+          "content_kind": "article",
+          "language": "en",
+          "title": "SYNTHETIC_ONLY:OFF_TOPIC: Synthetic cooking",
+          "body": "SYNTHETIC_ONLY:F1: Off topic fixture.",
+          "published_at": "2026-08-09T00:00:00Z"
+        },
+        "mock_summary": { "title_zh": "不会使用", "summary_zh": "离题内容被过滤。" }
+      }]
+    },
+    {
+      "fixture_version": "vs1-local-pipeline-v1",
+      "case_id": "VS1-UNKNOWN-010",
+      "precondition": "empty",
+      "attempts": [{
+        "attempt": 1,
+        "adapter_outcome": "candidate",
+        "fault_injection": "none",
+        "candidate": {
+          "external_id": "synthetic-external-unknown-010",
+          "external_url": "https://synthetic.invalid/vs1/unknown-010",
+          "content_kind": "article",
+          "language": "en",
+          "title": "Synthetic unknown relevance",
+          "body": "No allowlisted relevance marker is present.",
+          "published_at": "2026-08-09T00:00:00Z"
+        },
+        "mock_summary": { "title_zh": "不会使用", "summary_zh": "未知相关性不升级。" }
+      }]
+    },
+    {
+      "fixture_version": "vs1-local-pipeline-v1",
+      "case_id": "VS1-HASH-COLLISION-011",
+      "precondition": "fingerprint_collision",
+      "attempts": [{
+        "attempt": 1,
+        "adapter_outcome": "candidate",
+        "fault_injection": "none",
+        "candidate": {
+          "external_id": "synthetic-external-collision-011",
+          "external_url": "https://synthetic.invalid/vs1/collision-011",
+          "content_kind": "article",
+          "language": "en",
+          "title": "SYNTHETIC_ONLY:F1: Collision fixture",
+          "body": "SYNTHETIC_ONLY:F1: Collision fixture body.",
+          "published_at": "2026-08-09T00:00:00Z"
+        },
+        "mock_summary": { "title_zh": "不会使用", "summary_zh": "碰撞必须等待人工处理。" }
+      }]
+    },
+    {
+      "fixture_version": "vs1-local-pipeline-v1",
+      "case_id": "VS1-SUMMARY-MISSING-012",
+      "precondition": "empty",
+      "attempts": [{
+        "attempt": 1,
+        "adapter_outcome": "candidate",
+        "fault_injection": "none",
+        "candidate": {
+          "external_id": "synthetic-summary-missing-012",
+          "external_url": "https://synthetic.invalid/vs1/summary-missing-012",
+          "content_kind": "article",
+          "language": "en",
+          "title": "SYNTHETIC_ONLY:F1: Summary missing case",
+          "body": "SYNTHETIC_ONLY:F1: This candidate intentionally has no mock summary.",
+          "published_at": "2026-08-09T00:00:00Z"
+        }
+      }]
+    },
+    {
+      "fixture_version": "vs1-local-pipeline-v1",
+      "case_id": "VS1-STALE-FENCE-013",
+      "precondition": "stale_fence",
+      "attempts": [{
+        "attempt": 1,
+        "adapter_outcome": "candidate",
+        "fault_injection": "none",
+        "candidate": {
+          "external_id": "synthetic-external-stale-013",
+          "external_url": "https://synthetic.invalid/vs1/stale-013",
+          "content_kind": "article",
+          "language": "en",
+          "title": "SYNTHETIC_ONLY:F1: Stale fence fixture",
+          "body": "SYNTHETIC_ONLY:F1: Fence changes before result commit.",
+          "published_at": "2026-08-09T00:00:00Z"
+        },
+        "mock_summary": { "title_zh": "不会使用", "summary_zh": "旧租约不得完成。" }
+      }]
+    },
+    {
+      "fixture_version": "vs1-local-pipeline-v1",
+      "case_id": "VS1-RETRY-014",
+      "precondition": "empty",
+      "attempts": [
+        { "attempt": 1, "adapter_outcome": "HTTP_503", "fault_injection": "none" },
+        { "attempt": 2, "adapter_outcome": "COLLECTION_TIMEOUT", "fault_injection": "none" },
+        {
+          "attempt": 3,
+          "adapter_outcome": "candidate",
+          "fault_injection": "none",
+          "candidate": {
+            "external_id": "synthetic-external-retry-014",
+            "external_url": "https://synthetic.invalid/vs1/retry-014",
+            "content_kind": "article",
+            "language": "en",
+            "title": "SYNTHETIC_ONLY:F1: Retry succeeds",
+            "body": "SYNTHETIC_ONLY:F1: Third synthetic attempt succeeds.",
+            "published_at": "2026-08-09T00:00:00Z"
+          },
+          "mock_summary": { "title_zh": "重试成功", "summary_zh": "第三次本地合成尝试成功。" }
+        }
+      ]
+    },
+    {
+      "fixture_version": "vs1-local-pipeline-v1",
+      "case_id": "VS1-DEAD-015",
+      "precondition": "empty",
+      "attempts": [
+        { "attempt": 1, "adapter_outcome": "HTTP_503", "fault_injection": "none" },
+        { "attempt": 2, "adapter_outcome": "HTTP_503", "fault_injection": "none" },
+        { "attempt": 3, "adapter_outcome": "HTTP_503", "fault_injection": "none" }
+      ]
+    },
+    {
+      "fixture_version": "vs1-local-pipeline-v1",
+      "case_id": "VS1-PARTIAL-016A",
+      "precondition": "empty",
+      "attempts": [{
+        "attempt": 1, "adapter_outcome": "candidate", "fault_injection": "after_capture",
+        "candidate": { "external_id": "synthetic-external-partial-016a", "external_url": "https://synthetic.invalid/vs1/partial-016a", "content_kind": "article", "language": "en", "title": "SYNTHETIC_ONLY:F1: Partial A", "body": "SYNTHETIC_ONLY:F1: Roll back after capture.", "published_at": "2026-08-09T00:00:00Z" },
+        "mock_summary": { "title_zh": "部分A", "summary_zh": "捕获后回滚。" }
+      }]
+    },
+    {
+      "fixture_version": "vs1-local-pipeline-v1",
+      "case_id": "VS1-PARTIAL-016B",
+      "precondition": "empty",
+      "attempts": [{
+        "attempt": 1, "adapter_outcome": "candidate", "fault_injection": "after_content",
+        "candidate": { "external_id": "synthetic-external-partial-016b", "external_url": "https://synthetic.invalid/vs1/partial-016b", "content_kind": "article", "language": "en", "title": "SYNTHETIC_ONLY:F1: Partial B", "body": "SYNTHETIC_ONLY:F1: Roll back after content.", "published_at": "2026-08-09T00:00:00Z" },
+        "mock_summary": { "title_zh": "部分B", "summary_zh": "内容后回滚。" }
+      }]
+    },
+    {
+      "fixture_version": "vs1-local-pipeline-v1",
+      "case_id": "VS1-PARTIAL-016C",
+      "precondition": "empty",
+      "attempts": [{
+        "attempt": 1, "adapter_outcome": "candidate", "fault_injection": "after_event",
+        "candidate": { "external_id": "synthetic-external-partial-016c", "external_url": "https://synthetic.invalid/vs1/partial-016c", "content_kind": "article", "language": "en", "title": "SYNTHETIC_ONLY:F1: Partial C", "body": "SYNTHETIC_ONLY:F1: Roll back after event.", "published_at": "2026-08-09T00:00:00Z" },
+        "mock_summary": { "title_zh": "部分C", "summary_zh": "事件后回滚。" }
+      }]
+    },
+    {
+      "fixture_version": "vs1-local-pipeline-v1",
+      "case_id": "VS1-PARTIAL-016D",
+      "precondition": "empty",
+      "attempts": [{
+        "attempt": 1, "adapter_outcome": "candidate", "fault_injection": "after_summary",
+        "candidate": { "external_id": "synthetic-external-partial-016d", "external_url": "https://synthetic.invalid/vs1/partial-016d", "content_kind": "article", "language": "en", "title": "SYNTHETIC_ONLY:F1: Partial D", "body": "SYNTHETIC_ONLY:F1: Roll back after summary.", "published_at": "2026-08-09T00:00:00Z" },
+        "mock_summary": { "title_zh": "部分D", "summary_zh": "摘要后回滚。" }
+      }]
+    },
+    {
+      "fixture_version": "vs1-local-pipeline-v1",
+      "case_id": "VS1-PARTIAL-016E",
+      "precondition": "empty",
+      "attempts": [{
+        "attempt": 1, "adapter_outcome": "candidate", "fault_injection": "after_bundle",
+        "candidate": { "external_id": "synthetic-external-partial-016e", "external_url": "https://synthetic.invalid/vs1/partial-016e", "content_kind": "article", "language": "en", "title": "SYNTHETIC_ONLY:F1: Partial E", "body": "SYNTHETIC_ONLY:F1: Roll back after bundle.", "published_at": "2026-08-09T00:00:00Z" },
+        "mock_summary": { "title_zh": "部分E", "summary_zh": "Bundle后回滚。" }
+      }]
+    },
+    {
+      "fixture_version": "vs1-local-pipeline-v1",
+      "case_id": "VS1-PARTIAL-016F",
+      "precondition": "empty",
+      "attempts": [{
+        "attempt": 1, "adapter_outcome": "candidate", "fault_injection": "before_ack_cas",
+        "candidate": { "external_id": "synthetic-external-partial-016f", "external_url": "https://synthetic.invalid/vs1/partial-016f", "content_kind": "article", "language": "en", "title": "SYNTHETIC_ONLY:F1: Partial F", "body": "SYNTHETIC_ONLY:F1: Roll back before ACK.", "published_at": "2026-08-09T00:00:00Z" },
+        "mock_summary": { "title_zh": "部分F", "summary_zh": "ACK前回滚。" }
+      }]
+    },
+    {
+      "fixture_version": "vs1-local-pipeline-v1",
+      "case_id": "VS1-PARTIAL-016G",
+      "precondition": "empty",
+      "attempts": [{
+        "attempt": 1, "adapter_outcome": "candidate", "fault_injection": "before_audit",
+        "candidate": { "external_id": "synthetic-external-partial-016g", "external_url": "https://synthetic.invalid/vs1/partial-016g", "content_kind": "article", "language": "en", "title": "SYNTHETIC_ONLY:F1: Partial G", "body": "SYNTHETIC_ONLY:F1: Roll back before audit.", "published_at": "2026-08-09T00:00:00Z" },
+        "mock_summary": { "title_zh": "部分G", "summary_zh": "审计前回滚。" }
+      }]
+    },
+    {
+      "fixture_version": "vs1-local-pipeline-v1",
+      "case_id": "VS1-APPROVED-017",
+      "precondition": "approved_chain",
+      "attempts": [{
+        "attempt": 1,
+        "adapter_outcome": "candidate",
+        "fault_injection": "none",
+        "candidate": {
+          "external_id": "synthetic-external-approved-017",
+          "external_url": "https://synthetic.invalid/vs1/approved-017",
+          "content_kind": "article",
+          "language": "en",
+          "title": "SYNTHETIC_ONLY:F1: Synthetic race result",
+          "body": "SYNTHETIC_ONLY:F1: Driver A wins.",
+          "published_at": "2026-08-09T00:00:00Z"
+        },
+        "mock_summary": { "title_zh": "禁止改写", "summary_zh": "已批准链必须失败关闭。" }
+      }]
+    },
+    {
+      "fixture_version": "vs1-local-pipeline-v1",
+      "case_id": "VS1-NO-WORK-018",
+      "precondition": "no_work",
+      "attempts": [{ "attempt": 1, "adapter_outcome": "HTTP_503", "fault_injection": "none" }]
+    }
+  ]
+}

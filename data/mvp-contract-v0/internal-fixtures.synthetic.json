@@ -1,0 +1,172 @@
+{
+  "schema_version": "mvp-local-v0.3",
+  "contract_scope": "internal-only",
+  "synthetic_only": true,
+  "external_calls": 0,
+  "source_observations": [
+    {
+      "observation_id": "observation-synth-001",
+      "unique_key": "source-observation:src-active:synthetic-external-content-synth-003",
+      "owner_ref": "synthetic:owner-adapter",
+      "source_id": "src-active",
+      "external_id": "synthetic-external-content-synth-003",
+      "observed_at": "2026-08-02T00:00:00Z",
+      "discovered_at": "2026-08-02T00:00:00Z",
+      "published_at": "2026-08-02T00:00:00Z",
+      "cursor_ref": "synthetic:cursor-001",
+      "response_hash": "7bf67958cac7e2459eebedaa6477b9c5c89482a51a539356db2afe0ef9142130",
+      "error_class": "none",
+      "source_config_epoch": 1,
+      "source_safety_epoch": 1,
+      "operation_id": "op-observation-001",
+      "idempotency_key": "observe:src-active:synthetic-external-content-synth-003",
+      "payload_hash": "862a9faf2b205faad4e4f6369215565ae3fa5e9ac2da9ebfb450a53917e25ced",
+      "internal_only": true
+    },
+    {
+      "observation_id": "observation-synth-002",
+      "unique_key": "source-observation:src-active:synthetic-external-content-synth-004",
+      "owner_ref": "synthetic:owner-adapter",
+      "source_id": "src-active",
+      "external_id": "synthetic-external-content-synth-004",
+      "observed_at": "2026-08-02T00:00:00Z",
+      "discovered_at": "2026-08-02T00:00:00Z",
+      "published_at": null,
+      "cursor_ref": "synthetic:cursor-002",
+      "response_hash": "9a77d5e316d244ad9ab5465358c2699591a7204a594aca33aeb6d7a15abb81bb",
+      "error_class": "none",
+      "source_config_epoch": 1,
+      "source_safety_epoch": 1,
+      "operation_id": null,
+      "idempotency_key": null,
+      "payload_hash": "c0111d5a7249ba77bd1e0e58da97484df10ebfb75617e65e18bd85a3a2d78315",
+      "internal_only": true
+    }
+  ],
+  "audit_events": [
+    {
+      "event_id": "event-audit-001",
+      "monotonic_seq": 1,
+      "occurred_at": "2026-08-02T00:00:00Z",
+      "clock_status": "trusted_synthetic",
+      "trace_ref": "synthetic:trace-001",
+      "session_hash": "ed0113a4efdc6605a301cedce3f7db977baf2ba6672e33a46898d597bb969caa",
+      "reason_code": "STALE_EPOCH",
+      "owner": "synthetic:owner-audit",
+      "operation_id": "op-audit-001",
+      "task_id": "task-audit-001",
+      "source_config_epoch": 1,
+      "source_safety_epoch": 1,
+      "authorization_version": 1,
+      "policy_epoch": 1,
+      "recovery_epoch": 1,
+      "attempt": 1,
+      "payload_hash": "38108bbed0af8ac3b03f6d8f654a93f56184fc7dc6287edbf153775adb1782cd",
+      "fixture_hash": "d0e513127e223db1647debb47727ef3840a61e7bfee1cb5affea6b7086786f05",
+      "schema_hash": "462605a2258d2922d9b982f490aeda3a1395f9e1dcf718fb8745e49db2afade8",
+      "redaction_version": "redaction-v1",
+      "retention": "audit_synthetic",
+      "cleanup_after": "2026-08-09T00:00:00Z",
+      "append_only": true,
+      "internal_only": true,
+      "external_calls": 0
+    },
+    {
+      "event_id": "event-audit-002",
+      "monotonic_seq": 2,
+      "occurred_at": "2026-08-02T00:00:00Z",
+      "clock_status": "trusted_synthetic",
+      "trace_ref": "synthetic:trace-002",
+      "session_hash": "d47aa80e186d46404c6ea10968bea18ecf3557c0a908b639093adfa9fc520147",
+      "reason_code": "HASH_MISMATCH",
+      "owner": "synthetic:owner-audit",
+      "operation_id": "op-audit-002",
+      "task_id": "task-audit-002",
+      "source_config_epoch": 1,
+      "source_safety_epoch": 1,
+      "authorization_version": 1,
+      "policy_epoch": 1,
+      "recovery_epoch": 1,
+      "attempt": 1,
+      "payload_hash": "3dcee86cb2511644d89798605b07bb58d24c82bd0609f42c8448a17a041b7e96",
+      "fixture_hash": "b80c55ffd772a9325921964a8b123d962459a22abfcdd34623120c016ea06cf1",
+      "schema_hash": "462605a2258d2922d9b982f490aeda3a1395f9e1dcf718fb8745e49db2afade8",
+      "redaction_version": "redaction-v1",
+      "retention": "audit_synthetic",
+      "cleanup_after": "2026-08-09T00:00:00Z",
+      "append_only": true,
+      "internal_only": true,
+      "external_calls": 0
+    },
+    {
+      "event_id": "event-audit-003",
+      "monotonic_seq": 3,
+      "occurred_at": "2026-08-02T00:00:00Z",
+      "clock_status": "trusted_synthetic",
+      "trace_ref": "synthetic:trace-003",
+      "session_hash": "0f84c4c51b99992c543f05dd6e00acb6ce2e782e6de8e11826d26e5a454b5fa2",
+      "reason_code": "CSRF_REPLAY",
+      "owner": "synthetic:owner-audit",
+      "operation_id": "op-audit-003",
+      "task_id": "task-audit-003",
+      "source_config_epoch": 1,
+      "source_safety_epoch": 1,
+      "authorization_version": 1,
+      "policy_epoch": 1,
+      "recovery_epoch": 1,
+      "attempt": 1,
+      "payload_hash": "dc818842c82b19b845750380b7b18f70939a834c1de8befd09a2d9759a8baf2e",
+      "fixture_hash": "53e1bc0b3628590b93e5e3bb8d11417868781011630a9b8ec54c016ad221b1ca",
+      "schema_hash": "462605a2258d2922d9b982f490aeda3a1395f9e1dcf718fb8745e49db2afade8",
+      "redaction_version": "redaction-v1",
+      "retention": "audit_synthetic",
+      "cleanup_after": "2026-08-09T00:00:00Z",
+      "append_only": true,
+      "internal_only": true,
+      "external_calls": 0
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "internal-case-unique-observation",
+      "kind": "unique_observation",
+      "expected": {
+        "outcome": "dedupe_by_unique_key",
+        "assertions": [
+          "source_id plus external_id is unique",
+          "duplicate observation cannot create second Content"
+        ]
+      },
+      "synthetic_input": true,
+      "external_calls": 0
+    },
+    {
+      "case_id": "internal-case-audit-monotonic",
+      "kind": "audit_monotonic",
+      "expected": {
+        "outcome": "append_only_sequence",
+        "assertions": [
+          "monotonic_seq increases",
+          "events are redacted"
+        ]
+      },
+      "synthetic_input": true,
+      "external_calls": 0
+    },
+    {
+      "case_id": "internal-case-not-domain",
+      "kind": "internal_not_domain",
+      "expected": {
+        "outcome": "never_enters_domain",
+        "assertions": [
+          "internal records have no Base mapping",
+          "internal records are not public DTOs"
+        ]
+      },
+      "synthetic_input": true,
+      "external_calls": 0
+    }
+  ],
+  "domain_refs": [],
+  "base_mapping_refs": []
+}

@@ -1,0 +1,40 @@
+{
+  "acceptance_exit": "用户在固定路径看到最终MP4、竖屏候选、海报帧、逐镜头QA、判例自检报告与素材来源/许可证清单，并明确确认其可作为正式发布候选；成片不含未授权素材、敏感数据或未实现能力。",
+  "artifacts": [],
+  "authorization_evidence": "",
+  "authorization_history": [],
+  "authorization_state": "user_required",
+  "block_reason": "",
+  "claimed_by": "",
+  "completion_class": "standard",
+  "confirmation": "成片制作需TASK-20260809-010B9F方向获用户确认后由统筹另行authorize；对外发布和任何付费采购不在本任务授权内",
+  "created_at": "2026-08-09T20:06+08:00",
+  "department": "设计部",
+  "details": "严格前置：TASK-20260809-010B9F完成、由统筹ACK，且用户对其视觉方向、动效风格和分镜给出明确确认；未满足时不得领取。获批后按video-shotcraft流水线执行真实截图素材采集、逐镜头实现、静帧QA、整片渲染、声音设计与判例法则终检。交付1920x1080/30fps/15-40秒主片、9:16竖屏裁剪候选、海报帧、逐镜头QA、素材及许可证清单。禁止手搓仿真UI、虚构产品能力、使用未授权媒体或敏感数据；对外发布、渠道投放和付费素材采购另行授权。",
+  "domain_stage": "发布视频-成片制作",
+  "event_receipts": [],
+  "execution_state": "queued",
+  "external_artifacts": [],
+  "failure_paths": [
+    "已确认方向无法由真实产品画面表达或需改冻结设计：block并退回方向任务，不自行补画或偏离",
+    "文字模糊、意外抖动、节奏或可读性未达门：按逐镜头QA修复并重渲，不带病交付",
+    "音频/第三方素材权利无法验证：换为已验证素材或静默版本，并保留Unknown与出处"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "在方向候选获用户确认后，按确认分镜逐镜头制作、完成声音与终检并交付多版本成片",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260809-010B9F.json",
+    "docs/collaboration/部门/研究部/报告/2026-08-09-发布视频方案与视频制作Skill生态调研.md",
+    "design/ui/F1+1-v0.2-全站设计/F1+1-v0.2-final-20260808.html"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 1,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-498590",
+  "title": "F1+1发布视频正式成片制作与终检交付",
+  "unverified": [],
+  "updated_at": "2026-08-09T20:06+08:00",
+  "verified": []
+}

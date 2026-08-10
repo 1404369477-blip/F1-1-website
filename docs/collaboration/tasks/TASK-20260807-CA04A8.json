@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "深浅×1440/1024/390 证据 PNG 重导完成、evidence.html 同步、报告提交与 TASK_STATE_OK；停在用户确认门，未确认前不得进入正式合同或应用实现。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "design/ui/F1+1-v0.2-全站设计/evidence/v0.2-dark-1024.png"
+  ],
+  "authorization_evidence": "用户要求推进各部门工作流（2026-08-07）",
+  "authorization_history": [
+    {
+      "at": "2026-08-07T14:06+08:00",
+      "evidence": "用户要求推进各部门工作流（2026-08-07）",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "设计部/统筹部并行子代理",
+  "completion_class": "standard",
+  "confirmation": "用户先体验 v0.2 预览确认方向；只有明确认可后统筹才派产品部正式合同、开发部落地。",
+  "created_at": "2026-08-07T14:06+08:00",
+  "department": "设计部",
+  "details": "在已收敛的 v0.2 草案（design/ui/F1+1-v0.2-全站设计/）基础上：重导深浅主题×1440/1024/390 的代表性 PNG 证据（主图+缩略图、就地展开、lightbox、状态），同步 evidence.html；design-system.md 与 brand-spec.md 已更新为最终方向，复核一致；提交设计部报告并停在用户体验确认门，等待用户确认 v0.2 方向后由统筹派正式合同。",
+  "domain_stage": "design_direction_draft",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "导出工具不可用时用可打开截图兜底并注明；不得改动已确认的 v0.1、正式 app、Spec/ADR。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查错题集,无命中",
+  "node": "design-system-v0.2-draft-evidence",
+  "pointers": [
+    "design/ui/F1+1-v0.2-全站设计/; TASK-20260804-795FB0"
+  ],
+  "report": "docs/collaboration/部门/设计部/报告/2026-08-07-v0.2草案证据收尾报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260807-CA04A8",
+  "title": "收尾 v0.2 草案证据并提交确认门",
+  "unverified": [
+    "真实设备 1024 视觉与交互细节由测试部/用户复核;正式合同与实现未启动"
+  ],
+  "updated_at": "2026-08-07T19:43+08:00",
+  "verified": [
+    "深浅×1440/1024/390 证据 PNG 齐备;evidence.html 已同步;design-system/brand-spec 与最终方向一致"
+  ]
+}

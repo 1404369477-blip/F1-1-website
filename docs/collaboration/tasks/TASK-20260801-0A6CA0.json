@@ -1,0 +1,59 @@
+{
+  "acceptance_exit": "提交安全部final报告并decision=pass|fail：列出当前scope总量与脱敏分类、精确scope名称证据或明确Unknown、M3只读档与A/base_direct档的最小scope候选、排除项、CLI支持的轮换步骤、验证矩阵、1–3条失败路径、回退及用户确认点；不执行任何认证状态变更；complete/TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-01-OAuth142scopes最小化与无损轮换执行包-审核报告.md"
+  ],
+  "authorization_evidence": "统筹部提出只做OAuth 142 scopes只读梳理与撤权影响分析、暂不重授权或撤权；用户回复继续，并要求执行类工作交对应部门。",
+  "authorization_history": [
+    {
+      "at": "2026-08-01T22:22+08:00",
+      "evidence": "统筹部提出只做OAuth 142 scopes只读梳理与撤权影响分析、暂不重授权或撤权；用户回复继续，并要求执行类工作交对应部门。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "本任务只形成可执行包；任何login、重新授权、logout、服务端撤权、token替换或业务切换均需用户看到精确diff后另行确认。",
+  "created_at": "2026-08-01T22:22+08:00",
+  "department": "安全部",
+  "details": "用户已同意先做OAuth 142 scopes的只读最小化分析，并明确要求执行工作交给对应部门。请安全部只用本机官方lark-cli及其embedded skills/help/schema做当前授权取证：在不触发login/logout/revoke/重新授权、token刷新或任何飞书资源写入的前提下，输出脱敏scope清单与危险能力分类；若任何命令可能改变认证状态则停止。设计至少两个最小档位：当前M3只读审计档、下一阶段A/base_direct所需档；维护性写入、权限管理和delete必须单列临时例外，不得默认保留。形成新旧token无损轮换、验证、失败回退与旧token撤销前确认门禁。不得保存token/refresh token/open_id/appId/auth原始JSON/完整Base URL，不得用浏览器。",
+  "domain_stage": "M2权限风险收口",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "CLI取证可能刷新token、改变认证状态或输出无法安全脱敏的凭证时立即停止，改用既有脱敏证据并标明Unknown。",
+    "无法证明某scope的精确官方名称、粒度或依赖时不得猜测，标为待研究部证据补齐。",
+    "任何方案需要先撤旧token、删除资源、切换业务真值/provider/Collector或扩大权限时FAIL并回统筹部，不执行。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已自检：未把 142 总量补写成完整 scope 清单；未把租户 scope 写成资源 ACL；未把五项 read 候选写成已证明绝对最小或已重授权；未把 login/logout/revoke/refresh、旧 token 撤销、无损轮换或 provider 切换写成已发生；未猜测 form/role/dashboard/workflow/ACL 名称、并行 token、refresh 或服务端撤权语义；未执行认证状态变更、飞书资源读取/写入、delete、权限管理或业务链路切换。",
+  "node": "只读取证当前用户scope并形成最小权限档位、轮换门禁和回退方案",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-01-M3-OAuth过宽Scope-安全残余风险报告.md",
+    "docs/collaboration/部门/统筹部/报告/2026-08-01-M3飞书Base影子建库与59条导入-执行收据.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-01-OAuth142scopes最小化与无损轮换执行包-审核报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260801-0A6CA0",
+  "title": "形成OAuth 142 scopes最小化与无损轮换执行包",
+  "unverified": [
+    "142 项完整精确 scope 名称、非 Base scope 清单、应用已开通与用户实际 grant 完整交集、form/role/dashboard/workflow/ACL 精确名称与依赖尚未取得。",
+    "auth login --scope/--exclude 的替换或累积语义、新旧 token 并存与凭证存储能力、refresh token 生命周期及服务端撤权入口/失效时序尚未验证。",
+    "新 token 身份与 scope、M3 固定资源只读 canary、A/base_direct 完整读取和 provider 门禁未执行；本轮未访问飞书或改变认证状态。",
+    "当前仓库没有 app/Collector 运行实现；任何真值、provider、Collector、采集、同步、启用、发布或资源 ACL 变化仍需独立授权与验证。"
+  ],
+  "updated_at": "2026-08-01T22:36+08:00",
+  "verified": [
+    "仓库脱敏收据逐字提供 15 个 base:* scope 名称；142 总量来自当前任务/统筹部脱敏事实，报告已分开记录两者来源与取证时点，不将其余名称猜成非 Base。",
+    "本机 lark-cli auth/login/logout/config help 与 lark-shared embedded skill 已核对：read/write 风险、scope 指定与累积、logout 仅清本机、CLI 不支持单 scope 撤销及高风险确认门禁。",
+    "报告形成 M3 只读审计档与 A/base_direct 运行时只读候选五项 read scope；维护写入、权限管理和 delete 已单列例外或默认排除。",
+    "报告覆盖 scope 分类、排除项、阶段化无损轮换、验证矩阵、旧 token 保留、失败回退、停止条件与用户精确确认点。",
+    "本机 auth scopes 只读尝试仅因 keychain 未初始化失败，未进入授权流程、未改变认证状态、未输出凭证；本地报告检查、git diff --check、TASK_DOCTOR_OK 和两路只读对抗复核均通过。"
+  ]
+}

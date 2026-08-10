@@ -1,0 +1,54 @@
+{
+  "acceptance_exit": "交付项目内data-native successor、canonical manifest/hash和数据报告；exact 24或更多且page1/page2各12可达、四类筛选稳定、无重复/重排、0/1/4媒体合同成立、旧三profile冻结输入零漂移；报告列已验证/未验证/错题自检，diff check、必要数据验证与TASK_STATE_OK通过。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "data/mvp-contract-v0.6-public-multimedia-pagination-synthetic/runtime-graph.public-multimedia-pagination-synthetic.json",
+    "data/mvp-contract-v0.6-public-multimedia-pagination-synthetic/manifest.json",
+    "docs/collaboration/部门/数据部/报告/2026-08-09-public-multimedia-pagination-data-successor报告.md"
+  ],
+  "authorization_evidence": "用户已确认继续本地初版搭建；LOCAL-CONFIRMED允许零外部I/O的synthetic数据与公开页面闭环。",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T19:20+08:00",
+      "evidence": "用户已确认继续本地初版搭建；LOCAL-CONFIRMED允许零外部I/O的synthetic数据与公开页面闭环。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "019fb371-9834-78d3-a7b3-4f4c62819520",
+  "completion_class": "standard",
+  "confirmation": "只生成本地synthetic候选、机器manifest与报告；不写飞书Base，不访问真实信源，不修改accepted ADR/Spec，不替换旧profile数据库。",
+  "created_at": "2026-08-09T19:20+08:00",
+  "department": "数据部",
+  "details": "以初版矩阵PUB-FEED-003/PUB-FEED-005及已ACK的MEDIA-DATA-002为约束，为public-multimedia-synthetic生成可供正式App使用的后继数据候选：至少24条唯一PublishedProjection，page size固定12，四类contentType均有稳定可筛选样本，排序/cursor作用域/去重可机械复算；每条保持0..4有序synthetic媒体，整体继续覆盖0图、1图、4图且不得出现第五图；所有rights/safety/hash/order闭合，original URL继续disabled/null；保留旧m3-shadow与public-synthetic以及当前public-multimedia-synthetic的冻结hash，只新增successor数据包/manifest/迁移映射建议，供开发部后继原子seed，不直接改App实现。输出旧/新根、精确条数、类别分布、媒体分布、第一页/第二页期望publicId、cursor scope与回滚边界。",
+  "domain_stage": "m5-local-public-pagination-data",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若必须修改旧冻结profile/accepted ADR/Spec或反写飞书Base，立即停止并报告阻断。",
+    "若cursor跨contentType串页、两页重复/漏项、排序不确定或根无法复算，判P1并停止交付。",
+    "若出现真实媒体/外部URL可用化、第五图或rights/hash/safety任一不闭合，整体候选fail closed。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "初版期望分页沿用生成顺序，漏做同时间public_id DESC；已在complete前按Repository复合排序修正分页、筛选、cursor并重算所有根，最终逐并列对断言通过。任务查询曾误用不存在的show/list参数，均只读失败且未改变任务真值。P0=0，P1=0。",
+  "node": "DATA-PUBLIC-PAGE2-01",
+  "pointers": [
+    "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md",
+    "docs/spec/F1+1-public-multimedia-synthetic本地运行实施合同-v0.1.md"
+  ],
+  "report": "docs/collaboration/部门/数据部/报告/2026-08-09-public-multimedia-pagination-data-successor报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-12798F",
+  "title": "DATA-PUBLIC-PAGE2：生成两页多媒体synthetic公开数据successor",
+  "unverified": [
+    "未seed SQLite、未启动网站、未调用Repository/API、未访问真实provider/媒体/飞书Base；这些操作超出本数据候选任务授权，留给后继开发与测试任务。"
+  ],
+  "updated_at": "2026-08-09T19:33+08:00",
+  "verified": [
+    "TASK_12798F_VALIDATION_OK：24 PublishedProjection；page1/page2各12且无重复漏项；四类各6；0/1/4媒体各8、每类各2；24组领域/hash/DTO链逐条复算；29/29冻结输入SHA匹配；两次独立reload同根；JSON解析与任务范围diff check通过。"
+  ]
+}

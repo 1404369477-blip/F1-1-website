@@ -1,0 +1,59 @@
+{
+  "acceptance_exit": "提交开发部审核报告，明确能否接受为M4本地工程合同、正式初始化前必须固化的精确版本与运行时门禁、每个风险的验证出口，并完成任务返回TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-01-M4工程路线运行时可行性审核报告.md"
+  ],
+  "authorization_evidence": "用户已授权本地技术选型与app开工；当前为定版前只读复核，DEC-20260801T223248-7C91D6。",
+  "authorization_history": [
+    {
+      "at": "2026-08-01T23:46+08:00",
+      "evidence": "用户已授权本地技术选型与app开工；当前为定版前只读复核，DEC-20260801T223248-7C91D6。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部当前会话",
+  "completion_class": "standard",
+  "confirmation": "复核通过后由统筹部组织安全与测试合并评审，再交产品部定版；本任务不授权实现。",
+  "created_at": "2026-08-01T23:46+08:00",
+  "department": "开发部",
+  "details": "读取Spec v1候选、ADR-M4-KICKOFF-001、开发预检、数据合同和设计实现合同。独立核验Next.js App Router与Node 24的兼容和精确版本钉住策略、npm lockfile与本地脚本合同、node:sqlite当前稳定性及repository隔离、Web与独立worker跨进程SQLite并发、WAL或busy_timeout或事务边界、migration与恢复、当前Node 25环境到项目Node 24门禁的无系统级副作用方案。给出PASS或CONDITIONAL PASS或FAIL、P0/P1/P2、最小修订清单与官方一手证据。本任务只读，不修改Spec、ADR、app，不安装依赖，不访问真实外部业务资源。",
+  "domain_stage": "M4系统路线复核",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "Node 24在当前项目环境不可获得或Next目标版本不兼容时，保持ADR proposed，给出项目级版本管理替代和阻断条件，不做系统级安装。",
+    "node:sqlite跨进程并发或事务/恢复无法满足首切片时，提出最小本地替代或降级为单进程worker的明确合同，不静默改栈。",
+    "依赖官方证据不足或中国大陆安装可达性未验证时，标为Unknown并给后续spike，不写成已验证。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "区分 Node 25 实测与 Node 24 结论；记录 process.versions.sqlite 与 SQL 查询版本差异；未把 busy_timeout 当成功保证；未把 registry、候选 ADR 或本地 SQLite 写成 accepted/生产通过。",
+  "node": "在正式app初始化前完成工程可行性只读复核",
+  "pointers": [
+    "docs/spec.md",
+    "docs/decisions/system/2026-08-01-F1+1-M4本地Kickoff系统路线-proposed.md",
+    "docs/collaboration/部门/开发部/报告/2026-08-01-M4工程开工预检报告.md",
+    "data/mvp-contract-v0/manifest.json"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-01-M4工程路线运行时可行性审核报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260801-2AA8FC",
+  "title": "复核M4工程路线与运行时可行性",
+  "unverified": [
+    "Node 24 目标 patch 上的 node:sqlite、Next 构建、React peer 组合和正式 app 测试",
+    "中国大陆 registry/镜像可达性、无缓存 npm ci、许可证、漏洞、native build 与离线恢复",
+    "真实 HTTP server、浏览器、长时间 checkpoint、断电耐久性、生产存储/部署/容量/多实例"
+  ],
+  "updated_at": "2026-08-02T00:11+08:00",
+  "verified": [
+    "已读取 Spec v1 候选、ADR-M4-KICKOFF-001、M4 预检、数据合同与设计实现合同，并完成交叉核对",
+    "data/mvp-contract-v0 JSON、manifest 数量、fixture case、M3 payload SHA-256 与安全标记通过只读检查",
+    "Node 25.5.0 临时 SQLite 矩阵覆盖 WAL、四进程写入、busy_timeout 锁耗尽、SIGKILL 恢复和 migration rollback/retry",
+    "dirty worktree 保留；未修改 Spec、ADR、app，未安装依赖、连真实 Base 或监听端口"
+  ]
+}

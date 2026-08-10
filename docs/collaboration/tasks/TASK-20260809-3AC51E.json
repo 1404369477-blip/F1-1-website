@@ -1,0 +1,58 @@
+{
+  "acceptance_exit": "交付accepted窄范围实施合同与报告，逐Function ID给正式operator入口、精确数据表/状态/事务顺序、成功/失败/恢复、固定fixture案例、验收命令和Owner；开发无需再做产品判断即可拆成一个实施任务。机械核对没有pending脚本被误写完成、没有第二领域实体/外部能力、P0=0/P1=0对抗审查。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/decisions/system/2026-08-09-F1+1-VS1本地synthetic纵切-accepted.md",
+    "docs/spec/F1+1-VS1本地synthetic纵切实施合同-v0.1.md",
+    "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md",
+    "docs/spec/README.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-09-VS1本地synthetic纵切实施合同报告.md"
+  ],
+  "authorization_evidence": "docs/spec.md既有用户确认；COR-20260809T102214-960E65；TASK-20260809-B10D8D已ACK",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T11:25+08:00",
+      "evidence": "docs/spec.md既有用户确认；COR-20260809T102214-960E65；TASK-20260809-B10D8D已ACK",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "用户已确认本地synthetic、白名单、低质量初筛、中文整理与人工审核路线，并要求落实所有已确认功能；本任务不触发任何外部能力。",
+  "created_at": "2026-08-09T11:25+08:00",
+  "department": "产品部",
+  "details": "只整合既有accepted Spec、VS-1测试计划、数据SQLite/fixture蓝图、重试/安全合同与全功能矩阵，形成单一最小实施合同：operator运行npm run worker:mock -- --once，fixture adapter产生至多一个observation/candidate；normalization、确定性dedupe、明显低质量/F1无关过滤；合格唯一Content生成deterministic中文Summary与immutable ReleaseBundle收据。复用Source/CapturedItem/Content/Event/Summary/ReleaseBundle/TaskEnvelope/Outbox/AuditEvent既有定义，不新增领域实体。固定命令输入输出、事务/CAS、幂等key、lease/five-fence、retry/dead-letter、质量样本、reasonCode、清理恢复和V-OP-RECEIPT字段。只做纯本地synthetic、externalCalls=0；Admin可见、真实provider、RSS、自动发布和部署保持关闭。发现通用dedup fingerprint/tie-break或状态映射仍不唯一时必须在本合同内从现有canonical规则选择唯一值并给迁移兼容依据，不能让开发猜。",
+  "domain_stage": "M5本地mock采集与内容处理纵切",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "现有accepted合同之间存在无法兼容的字段/状态/hash冲突：停止冲突项并提交一个最小统筹决策点，不用新实体绕过。",
+    "实现必须依赖Admin两门、真实provider/RSS/网络或生产权限：保持对应出口user-gated，将本地operator纵切与其隔离。",
+    "无法给出确定性dedupe/低质样本/receipt或失败恢复：保持Function ID为P1并报告唯一缺口，禁止把pending脚本或测试计划写完成。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "自检未把pending/NOT_RUN写成完成；未新增领域实体/第二schema/collection状态；未使用Publication reconcile_wait；未开启外部能力；三个Function ID保持P1-blocker直到实现和独立证据齐全",
+  "node": "把COLLECT-MOCK-002、CONTENT-PROCESS-003、SUMMARY-MOCK-004现有分散合同收敛为可直接开发的单一纵切",
+  "pointers": [
+    "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md",
+    "docs/collaboration/部门/测试部/报告/2026-08-02-M4-VS-1-mock采集链路测试计划.md",
+    "docs/collaboration/部门/数据部/报告/2026-08-02-M4-VS-1-SQLite迁移与fixture映射蓝图.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-02-M4-SQLite方案B适用范围澄清附录.md"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-09-VS1本地synthetic纵切实施合同报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-3AC51E",
+  "title": "冻结本地synthetic采集清洗去重与mock摘要纵切实施包",
+  "unverified": [
+    "app实现、mandatory fixture运行、正式测试/安全运行ACK尚不存在；worker:mock与test:contract仍pending且check未包含contract test；Admin、真实provider、RSS、Base、发布、部署持续关闭"
+  ],
+  "updated_at": "2026-08-09T11:48+08:00",
+  "verified": [
+    "accepted窄范围决策与实施合同已落盘；operator/seed/live TaskEnvelope/状态/CAS/事务/retry/fixture/receipt/Owner/验收闭合；产品、领域、安全三路聚焦复验P0=0/P1=0；链接/UTF-8/边界/任务doctor通过"
+  ]
+}

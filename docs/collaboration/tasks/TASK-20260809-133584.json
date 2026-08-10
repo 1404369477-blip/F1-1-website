@@ -1,0 +1,46 @@
+{
+  "acceptance_exit": "独立版本目录含8张与现行候选hash绑定的可见PNG、机器可读manifest和用户确认说明；1440/390尺寸、深浅主题、候选hash、页面级零横溢/局部横滚或卡片替代、关键操作可见性均有收据；只给一个可回答的合并视觉确认问题；P0=0/P1=0，列已验证/未验证/错题自检，doctor通过并TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "2026-08-09主会话持续推进网站初版；此前已明确要求设计Admin并让设计部跟进，Mac/iPhone功能等价。",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T22:45+08:00",
+      "evidence": "2026-08-09主会话持续推进网站初版；此前已明确要求设计Admin并让设计部跟进，Mac/iPhone功能等价。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "首选本地Chrome无头渲染批次对8个file://候选均未写出截图文件或输出；唯一允许的本地Quick Look兜底在sandbox初始化阶段返回Operation not permitted。未安装、未外联、未提权、未启动正式App，也未修改两个候选。缺少与当前候选hash绑定的8张PNG，不能用静态说明或旧图代替，故按任务失败路径阻断。",
+  "claimed_by": "设计部/当前正式会话",
+  "completion_class": "standard",
+  "confirmation": "用户持续要求推进初版并要求设计部跟进；本任务只生成本地视觉确认证据，不改变已确认设计方向或实施授权。",
+  "created_at": "2026-08-09T22:45+08:00",
+  "department": "设计部",
+  "details": "只读取已ACK的SOURCE-MGMT-001候选与Admin Reviews候选，绑定各自当前HTML/说明/合同/统筹冻结manifest。使用本地静态文件和本地浏览器或现有无外联渲染能力，各生成1440x900深浅与390x844深浅四图，共8图；SOURCE截图必须对应现行index字节并可见固定actions、横向浏览提示、卡片和全屏层，Reviews截图必须覆盖队列+详情、批准/拒绝/显式手动发布及390单列。另交付一个只读确认包manifest和一页确认说明，清楚分开已验证、Unknown与正式实现后门禁。不得改两个候选、App、Spec、ADR、合同或任务历史；不得外联、安装、打开真实URL、启动正式App或生成新视觉方向。只允许一次首选本地渲染批次；首选能力不可用时允许一次本地兜底，仍失败即诚实block，不重复长测。",
+  "domain_stage": "M5-Admin双候选用户视觉确认",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "SOURCE或Reviews候选hash在渲染前后漂移：停止并block，不覆盖或猜测。",
+    "本地渲染需要外网、安装、真实App或系统提权：拒绝该路径，只允许一次本地兜底；仍失败则精确block。",
+    "任一端关键操作、状态或390无横溢无法从当前候选呈现：标P1并停止，不用静态说明冒充图片证据。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "把两个已完成交互候选整理成同一套可直接向用户确认的当前字节视觉证据，不改变设计方向",
+  "pointers": [
+    "docs/collaboration/部门/统筹部/报告/2026-08-09-SOURCE-MGMT-001视觉候选统筹冻结manifest.json",
+    "design/ui/F1+1-M5-admin-reviews-preview-v0.1/index.html",
+    "docs/collaboration/tasks/TASK-20260809-69BC5A.json"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-133584",
+  "title": "Admin信源管理与人工审核台双候选本地视觉确认包",
+  "unverified": [],
+  "updated_at": "2026-08-09T22:48+08:00",
+  "verified": []
+}

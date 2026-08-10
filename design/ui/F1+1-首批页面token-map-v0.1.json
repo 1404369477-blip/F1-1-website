@@ -1,0 +1,219 @@
+{
+  "schema_version": "f1-plus-one.page-design-contract.v0.1",
+  "status": "design-handoff",
+  "task_id": "TASK-20260801-080C8A",
+  "source": {
+    "global_spec": "design/ui/F1+1-全站设计规范-v0.1.md",
+    "visual_sample": "design/ui/F1+1-全站视觉样板-v0.1.html",
+    "visual_diff": 0,
+    "app_implementation": false,
+    "route_names_are_hints": true
+  },
+  "themes": {
+    "dark": {
+      "color.canvas": "#0B0B0D",
+      "color.surface.1": "#141417",
+      "color.surface.2": "#1B1B1F",
+      "color.surface.3": "#242429",
+      "color.text.primary": "#F5F5F7",
+      "color.text.secondary": "#B8B8C0",
+      "color.text.tertiary": "#8C8C96",
+      "color.border": "rgba(255,255,255,.14)",
+      "color.border.strong": "rgba(255,255,255,.36)",
+      "color.action": "#6EA8FE",
+      "color.action.fill": "#2F6FE4",
+      "color.signal": "#FF7658",
+      "color.success": "#4CC38A",
+      "color.warning": "#F5C451",
+      "color.danger": "#FF6B6B",
+      "color.on-action": "#FFFFFF",
+      "color.on-signal": "#0B0B0D"
+    },
+    "light": {
+      "color.canvas": "#F5F5F7",
+      "color.surface.1": "#FFFFFF",
+      "color.surface.2": "#ECECF0",
+      "color.surface.3": "#E3E3E8",
+      "color.text.primary": "#1D1D1F",
+      "color.text.secondary": "#55555D",
+      "color.text.tertiary": "#6E6E78",
+      "color.border": "#D2D2D7",
+      "color.border.strong": "#85858C",
+      "color.action": "#0B5BD3",
+      "color.action.fill": "#0B5BD3",
+      "color.signal": "#C43E2B",
+      "color.success": "#16784A",
+      "color.warning": "#8A5A00",
+      "color.danger": "#C92A2A",
+      "color.on-action": "#FFFFFF",
+      "color.on-signal": "#FFFFFF"
+    }
+  },
+  "typography": {
+    "font.ui": "Inter, Source Han Sans CN, PingFang SC, Microsoft YaHei, system-ui, sans-serif",
+    "font.cjk": "Source Han Sans CN, PingFang SC, Microsoft YaHei, sans-serif",
+    "font.display": "Barlow Condensed, Inter, Source Han Sans CN, PingFang SC, sans-serif",
+    "font.numeric": "tabular-nums",
+    "type.display.1": { "desktop": "72px", "mobile": "44px", "weight": 700, "line_height": 1.0 },
+    "type.display.2": { "desktop": "56px", "mobile": "38px", "weight": 700, "line_height": 1.05 },
+    "type.heading.1": { "desktop": "40px", "mobile": "32px", "weight": 700, "line_height": 1.15 },
+    "type.heading.2": { "desktop": "32px", "mobile": "26px", "weight": 700, "line_height": 1.2 },
+    "type.heading.3": { "desktop": "24px", "mobile": "22px", "weight": 600, "line_height": 1.3 },
+    "type.lead": { "desktop": "20px", "mobile": "18px", "weight": 400, "line_height": 1.55 },
+    "type.body": { "desktop": "17px", "mobile": "16px", "weight": 400, "line_height": 1.65 },
+    "type.body.compact": { "desktop": "15px", "mobile": "15px", "weight": 400, "line_height": 1.55 },
+    "type.label": { "desktop": "13px", "mobile": "13px", "weight": 600, "line_height": 1.35 },
+    "type.caption": { "desktop": "12px", "mobile": "12px", "weight": 400, "line_height": 1.5 }
+  },
+  "space": {
+    "1": "4px",
+    "2": "8px",
+    "3": "12px",
+    "4": "16px",
+    "5": "24px",
+    "6": "32px",
+    "7": "48px",
+    "8": "64px",
+    "9": "96px"
+  },
+  "radius": {
+    "editorial": "4px",
+    "field": "10px",
+    "control": "12px",
+    "glass": "16px",
+    "dialog": "20px",
+    "pill": "999px"
+  },
+  "layout": {
+    "breakpoints": {
+      "mobile.max": "767px",
+      "tablet.min": "768px",
+      "tablet.max": "1199px",
+      "desktop.min": "1200px",
+      "wide.min": "1600px"
+    },
+    "columns": { "mobile": 4, "tablet": 8, "desktop": 12, "wide": 12 },
+    "gutter": { "mobile": "16px", "tablet": "20px", "desktop": "24px", "wide": "24px" },
+    "page_padding": { "mobile": "16px", "tablet": "24px", "desktop": "32px", "wide": "48px" },
+    "max_width": { "content": "1440px", "detail_body": "680px", "detail_media": "960px", "admin_table": "1440px" },
+    "header_height": { "mobile": "56px", "tablet": "60px", "desktop": "64px" },
+    "touch_target": "44px"
+  },
+  "elevation": {
+    "base": { "surface": "color.canvas", "shadow": "none" },
+    "content": { "surface": "color.surface.1", "border": "color.border", "shadow": "none" },
+    "glass.control": { "surface_alpha": 0.72, "backdrop_blur": "24px", "saturation": "140%", "fallback": "color.surface.1" },
+    "glass.popover": { "surface_alpha": 0.84, "backdrop_blur": "32px", "border": "color.border", "fallback": "color.surface.1" }
+  },
+  "motion": {
+    "instant": { "duration": "120ms", "easing": "ease-out" },
+    "control": { "duration": "180ms", "easing": "cubic-bezier(.2,.8,.2,1)" },
+    "system": { "duration": "240ms", "easing": "cubic-bezier(.2,.8,.2,1)" },
+    "race": { "duration": "320ms", "easing": "cubic-bezier(.16,1,.3,1)" },
+    "exit": { "duration": "160ms", "easing": "ease-in" },
+    "reduced_motion": { "disable": ["transform", "scale", "autoplay", "skeleton-shimmer"], "keep": ["instant-state-change"] }
+  },
+  "status": {
+    "unknown": { "role": "neutral", "icon": "circle-question", "label_examples": ["未核验", "未知"] },
+    "queued": { "role": "action", "icon": "loader", "label_examples": ["已入队", "处理中"] },
+    "pending-review": { "role": "warning", "icon": "clock", "label_examples": ["待审核"] },
+    "success": { "role": "success", "icon": "check", "label_examples": ["已发布", "正常"] },
+    "disabled": { "role": "neutral-strong", "icon": "ban", "label_examples": ["已停用", "已拒绝"] },
+    "failed": { "role": "danger", "icon": "triangle-alert", "label_examples": ["失败", "处理失败"] },
+    "blocked": { "role": "warning-or-danger", "icon": "lock", "label_examples": ["受限", "阻断"] }
+  },
+  "components": {
+    "F1TopBar": { "appica_reference": ["Navigation", "NavigationMenu"], "variants": ["desktop", "tablet", "mobile"], "states": ["default", "scrolled", "menu-closed", "menu-open", "theme-switching", "reduced-motion"] },
+    "F1Button": { "appica_reference": ["Button", "ButtonGroup"], "variants": ["primary", "secondary", "ghost", "destructive", "icon"], "states": ["default", "hover", "focus-visible", "pressed", "disabled", "loading"] },
+    "F1StoryCard": { "appica_reference": ["Card-like composition"], "variants": ["featured", "standard", "compact", "media-missing"], "states": ["default", "hover", "focus-visible", "loading", "error"] },
+    "F1StatusBadge": { "appica_reference": ["Badge", "Chip"], "variants": ["unknown", "queued", "pending-review", "success", "disabled", "failed", "blocked"] },
+    "F1DataTable": { "appica_reference": ["Table", "ScrollArea"], "variants": ["desktop", "tablet", "mobile-row"], "states": ["loading", "empty", "error", "sorted", "selected", "expanded"] },
+    "F1Dialog": { "appica_reference": ["Dialog", "AlertDialog"], "variants": ["confirm", "danger", "evidence"], "states": ["closed", "open", "submitting", "error"] },
+    "F1Drawer": { "appica_reference": ["Drawer"], "variants": ["detail", "filter", "form"], "states": ["closed", "open", "submitting", "error"] },
+    "F1Field": { "appica_reference": ["Field", "Form", "Input"], "variants": ["text", "url", "textarea", "select"], "states": ["default", "focus", "filled", "readonly", "disabled", "invalid", "loading"] },
+    "F1Toast": { "appica_reference": ["Toast"], "variants": ["success", "warning", "error", "info"], "states": ["enter", "visible", "exit", "reduced-motion"] }
+  },
+  "pages": {
+    "public-feed": {
+      "route_hint": "/ or /feed",
+      "audience": "public",
+      "layout": { "desktop": "featured 8+4 columns; story grid 3 columns", "tablet": "featured 5+3 columns; story grid 2 columns", "mobile": "single column; filters in drawer" },
+      "components": ["F1TopBar", "F1PageHeader", "F1FeaturedStory", "F1StoryCard", "F1SourceMeta", "F1FilterBar", "F1FilterDrawer", "F1StatusBadge", "F1SkeletonCard", "F1EmptyState", "F1ErrorState", "F1NoMore", "F1Toast"],
+      "states": ["loading", "empty", "error", "partial", "offline/restricted", "no-more", "live-refresh"],
+      "a11y": ["main landmark", "feed list semantics", "polite new-content live region", "filter dialog focus return", "alt text"]
+    },
+    "content-detail": {
+      "route_hint": "/story/:storyId",
+      "audience": "public",
+      "layout": { "desktop": "article body max 680px; evidence 4 columns; media max 960px", "tablet": "article 5 columns + evidence 3 columns", "mobile": "single column; evidence collapsible but source link visible" },
+      "components": ["F1TopBar", "F1Breadcrumb", "F1ArticleMeta", "F1ArticleHeader", "F1LeadMedia", "F1ArticleBody", "F1KeyFacts", "F1SourceEvidence", "F1ExternalLink", "F1CorrectionBanner", "F1RelatedStoryList", "F1SkeletonArticle", "F1ErrorState", "F1NotFoundState"],
+      "states": ["loading", "not-found", "error", "withdrawn", "media-missing", "source-restricted", "correction"],
+      "a11y": ["article semantics", "breadcrumb aria-current", "heading hierarchy", "media-caption association", "source-link accessible name"]
+    },
+    "review-queue": {
+      "route_hint": "/admin/review",
+      "audience": "reviewer",
+      "layout": { "desktop": "filter full width; list 4 columns + detail 8 columns", "tablet": "list 3 columns + detail 5 columns", "mobile": "list and detail sequential; detail/action drawer" },
+      "components": ["F1TopBar", "F1AdminPageHeader", "F1ReviewFilterBar", "F1ReviewList", "F1ReviewListItem", "F1ReviewDetail", "F1EvidenceBlock", "F1OriginalTextPanel", "F1DraftEditor", "F1MediaCandidate", "F1VersionMeta", "F1ReviewActionBar", "F1ConfirmDialog", "F1ReviewEmptyState", "F1ReviewErrorState", "F1ReviewSkeleton"],
+      "states": ["loading-list", "empty", "loading-detail", "pending-review", "saving", "saved-needs-review", "approve-confirm", "reject-confirm", "stale-version", "error", "partial"],
+      "actions": ["save-draft", "approve", "reject"],
+      "a11y": ["queue selection semantics", "label-help-error association", "dialog focus trap", "polite stale/save announcements", "keyboard action completion"]
+    },
+    "source-management": {
+      "route_hint": "/admin/sources",
+      "audience": "admin",
+      "layout": { "desktop": "filter full width; table 12 columns; detail drawer", "tablet": "key columns + expandable row", "mobile": "card detail row + full-screen detail/form drawer" },
+      "components": ["F1TopBar", "F1AdminPageHeader", "F1SourceFilterBar", "F1DataTable", "F1SourceRow", "F1SourceStatusBadge", "F1LastCollected", "F1ErrorDisclosure", "F1SourceDetailDrawer", "F1AddSourceForm", "F1UrlField", "F1CapabilityList", "F1SourceEmptyState", "F1SourceSkeleton", "F1SourceErrorState"],
+      "states": ["proposed", "normalization_pending", "dedupe_pending", "adapter_check_pending", "enqueued", "enabled", "manual_only", "restricted", "failed", "disabled", "unknown"],
+      "a11y": ["semantic table", "aria-sort", "expanded row controls", "URL label/error/copy", "confirmation dialog for destructive actions"]
+    }
+  },
+  "business_state_aliases": {
+    "source": {
+      "proposed": "unknown",
+      "normalization_pending": "pending-review",
+      "dedupe_pending": "pending-review",
+      "adapter_check_pending": "pending-review",
+      "enqueued": "queued",
+      "enabled": "success",
+      "manual_only": "blocked",
+      "restricted": "blocked",
+      "failed": "failed",
+      "disabled": "disabled",
+      "unknown": "unknown"
+    },
+    "content": {
+      "pending_collection": "queued",
+      "filtered": "disabled",
+      "pending_summary": "queued",
+      "pending_review": "pending-review",
+      "published": "success",
+      "rejected": "disabled",
+      "processing_failed": "failed"
+    }
+  },
+  "accessibility": {
+    "contrast": { "text_min": "4.5:1", "large_text_min": "3:1", "non_text_min": "3:1" },
+    "focus": { "style": "3px solid color.action", "offset": "2px", "must_survive_overflow": true },
+    "touch_target": "44px",
+    "reduced_motion": true,
+    "forced_colors": true,
+    "zoom": "200%",
+    "color_only_status": false,
+    "live_region": "polite unless urgent safety/error announcement is required"
+  },
+  "assets": {
+    "allowed": ["local F1+1 sample placeholders", "Inter with license record", "Source Han Sans CN with license record", "Barlow with license record", "system UI fallback"],
+    "forbidden": ["F1 or Formula 1 marks", "BMW or BMW M marks", "Apple marks or SF Pro files", "unlicensed photography", "paid fonts/assets", "copied Appica demo assets"],
+    "fallback": "neutral placeholder + source link + explicit missing/unknown state"
+  },
+  "validation": {
+    "viewports": [320, 390, 768, 1024, 1200, 1440, 1600],
+    "themes": ["dark", "light"],
+    "modes": ["default", "prefers-reduced-motion", "forced-colors", "200-percent-zoom"],
+    "route_code": false,
+    "voiceover_nvda_talkback": "unverified",
+    "production_fonts": "unverified",
+    "production_media": "unverified"
+  }
+}

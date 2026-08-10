@@ -1,0 +1,74 @@
+{
+  "acceptance_exit": "后续任何开发派单和开发会话从项目协作入口读取时，都能看到不可删减的七项硬门；缺任一绑定或证据时任务不得领取为可完成出口、不得complete，且缺视觉锚点明确退回设计部。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/agent-guide.md",
+    "docs/conventions.md",
+    "docs/progress.md"
+  ],
+  "authorization_evidence": "2026-08-09主会话用户要求落账：开发部必须高度贴合冻结视觉设计，并落实所有已确认Function ID；沿用现有部门窗口。",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T11:43+08:00",
+      "evidence": "2026-08-09主会话用户要求落账：开发部必须高度贴合冻结视觉设计，并落实所有已确认Function ID；沿用现有部门窗口。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "completion_class": "standard",
+  "confirmation": "用户已明确确认该规则为后续开发派单全局验收硬门；本任务完成后无需再次确认，不授权新建会话或业务功能实现。",
+  "created_at": "2026-08-09T11:43+08:00",
+  "department": "统筹部",
+  "details": "在不新建会话、不修改业务实现的边界内，把所有后续开发任务必须高度贴合冻结视觉设计并落实全部已确认Function ID的规则写入项目级Agent协作入口和开发前检查入口；任务必须绑定设计版本及SHA、功能矩阵行、真实入口/状态链/失败恢复、1440/1024/390及深浅主题证据；占位、隐藏调试或NOT_RUN不得完成；缺视觉锚点必须block并退回设计部。同步progress并记录用户决定。",
+  "domain_stage": "协作治理",
+  "event_receipts": [
+    "DEC-20260809T114642-7E1339"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "现有受管协作模板不能安全修改：停止修改受管文件，改在项目级覆盖规则落账并保持doctor通过。",
+    "规则与Spec或初版全功能追踪矩阵冲突：以Spec和矩阵为产品真值，停止软化或扩张功能范围，只记录派单证据门。",
+    "发现会覆盖并行部门改动：停止该文件写入并报告冲突，不回滚他人修改。"
+  ],
+  "from_department": "统筹部",
+  "impact_declaration": {
+    "admission": "manual",
+    "base_revision": "a9691e71b1552592cc5ded8d5db66c336262301c",
+    "external_effects": [
+      "none"
+    ],
+    "owner_task": "TASK-20260809-06A08F",
+    "shared_contracts": [
+      "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md"
+    ],
+    "write_paths": [
+      "docs/agent-guide.md",
+      "docs/conventions.md",
+      "docs/progress.md"
+    ]
+  },
+  "mistake_check": "已对照用户原话和初版全功能矩阵自审，并采纳对抗审查P1：删除“当前开发波次”收窄条件；未触碰受管协作模板/脚本，未把占位、隐藏调试或NOT_RUN当完成，未新建部门窗口，未覆盖并行部门改动。",
+  "node": "把用户确认的开发派单验收规则写入项目协作入口",
+  "pointers": [
+    "docs/agent-guide.md"
+  ],
+  "report": "不适用",
+  "resolution": null,
+  "revision": 5,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-06A08F",
+  "title": "固化后续开发派单的视觉与Function ID全局硬门",
+  "unverified": [
+    "未追溯改写历史任务或历史验收结论；新规则只约束后续开发派单、complete与ACK。",
+    "未修改Spec、功能矩阵业务状态、app、data或design；未实施或放行任何Function ID、Admin、真实外部能力、部署或生产能力。"
+  ],
+  "updated_at": "2026-08-09T11:57+08:00",
+  "verified": [
+    "项目级协作入口已逐项固化七项硬门：冻结设计版本/固定路径/完整SHA-256、全部已确认Function ID及精确矩阵行、真实入口、完整状态/失败/恢复、1440/1024/390×深浅主题六格证据、完成禁区、缺视觉锚点退回设计部。",
+    "统筹部须跨开发任务保证全部已确认Function ID均有实施或明确阻断归属；占位、隐藏调试、DRAFT、静态复制、人工注入、组件预留、NOT_RUN、SKIPPED、TODO和只有开发自测均不得complete或ACK。",
+    "三处修改均位于已声明write_paths；功能矩阵保持只读；链接存在；git diff --check通过；受管协议文件未修改；沿用现有部门窗口，未新建会话。"
+  ]
+}

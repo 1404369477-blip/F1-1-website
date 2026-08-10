@@ -1,0 +1,57 @@
+{
+  "acceptance_exit": "交付final安全报告：固定snapshot/hash、实际命令/exit、P0/P1/P2、首轮发现与复验、已验证/未验证、decision=PASS仅当P0=0且P1=0；若FAIL给最小可执行修正和精确文件/行。完成formal task并回TASK_STATE_OK；不得把VS-0 PASS扩大为VS-1、真实provider或生产放行。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-02-M4-VS-0安全地基与59x39-seed独立终审报告.md"
+  ],
+  "authorization_evidence": "用户已要求各部门全力开工并在断网恢复后继续未完成任务；本任务仅本地只读/临时目录安全复验",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T12:25+08:00",
+      "evidence": "用户已要求各部门全力开工并在断网恢复后继续未完成任务；本任务仅本地只读/临时目录安全复验",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "用户授权本地持续搭建与部门审查；真实外部能力、自动发布、部署仍关闭。",
+  "created_at": "2026-08-02T12:25+08:00",
+  "department": "安全部",
+  "details": "对TASK-20260802-158240当前落盘snapshot做独立终审。只读Spec、accepted M4/VS0 seed ADR、bridge v0.3、app源码/SQL/测试；可用固定Node24在独立0700临时目录运行负例，禁止改app/data/Spec/ADR、禁止真实网络/依赖安装/共享.local破坏。重点逐项验证：DB根/父目录/final file symlink、hardlink、O_NOFOLLOW、identity/parent swap/TOCTOU和0600/0700；migration contiguous、ledger缺失/record/hash漂移/user_version ahead均fail closed；39字段bridge hash/manifest/schema/59行/59 disabled/双唯一/重复seed/半写回滚；env/capability/secret/proxy/Node注入；health/log不泄露；Next telemetry和runtime no-egress边界如实区分已验证与unknown。独立复跑有效命令，不采信开发报告结论。",
+  "domain_stage": "M4-C-VS0-final-security-review",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 任一symlink/parent swap/TOCTOU可逃逸、路径/权限fail-open或打开外部DB：P0/FAIL，立即停止高风险探针并给可复现最小案例。",
+    "2) migration ledger/user_version/hash、bridge schema/hash/59 disabled/幂等或事务半写任一不守恒：P0或P1/FAIL，保留临时证据，不修源码。",
+    "3) 验证需要联网、真实Base/provider、共享.local破坏、安装依赖或修改实现：停止该项列unknown并通知统筹，禁止越权。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未修改app/data/Spec/ADR/design、共享.local或node_modules；未把hash/59 disabled扩大为schema安全，未把network=disabled常量扩大为运行隔离，未借用测试部未来收据；已显式区分VS-0必修与可留到R12/VS-1或VS-3的边界。",
+  "node": "M4/C层/VS-0最终安全复验",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260802-158240.json",
+    "app/src/server/db/database.ts",
+    "data/m4-vs0-seed-enrichment-v0/manifest.json"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-02-M4-VS-0安全地基与59x39-seed独立终审报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-29333B",
+  "title": "独立终审M4 VS-0安全地基与59x39本地seed",
+  "unverified": [
+    "未执行竞争式root/parent/final/sidecar动态替换探针；P0依据DatabaseSync二次path open与后验sidecar检查的结构性缺口判定。",
+    "未重跑npm test/check/build、真实HTTP bind或Next telemetry；未验证OS no-egress、VS-1 worker、admin session/CSRF、真实provider/Base/采集/发布/部署。"
+  ],
+  "updated_at": "2026-08-02T12:55+08:00",
+  "verified": [
+    "已固定TASK-20260802-158240 revision=4的当前app/migration/data snapshot及核心SHA-256；冻结bridge为59x39、59 disabled、排序和accepted projection e7a8312c...9f17一致。",
+    "已独立复现migration预占伪schema仍登记0001/0002成功：userVersion=2但实际40列、含额外列且无CHECK；判P1。",
+    "已静态复核DB/parent/final/sidecar两次独立path open、health启动门、fixture重读、日志R4和no-egress边界；最终FAIL/P0=1/P1=5/P2=4。",
+    "已确认seed的59行与ledger同处BEGIN IMMEDIATE、重复seed复核projection且不增行；当前业务源码静态扫描未发现主动外联调用。"
+  ]
+}

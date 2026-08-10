@@ -1,0 +1,55 @@
+{
+  "acceptance_exit": "开发部报告给出精确现有文件/模块映射、最小新增/修改文件清单、profile/migration/repository/API/session/UI/test实施顺序、16项mandatory golden的代码证据出口、public零漂移和回退策略；无第二Source schema/profile handle/writer/依赖；明确ready或首个blocker；工作树核心零修改，doctor通过。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-09-SOURCE-MGMT-001-v0.2现有代码落点与实现可行性只读勘察报告.md"
+  ],
+  "authorization_evidence": "2026-08-09主会话持续推进；产品v0.2与数据合同已ACK，正式实现仍受安全/视觉门。",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T21:30+08:00",
+      "evidence": "2026-08-09主会话持续推进；产品v0.2与数据合同已ACK，正式实现仍受安全/视觉门。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/019fb374-7c86-7882-9e51-76114ce69e7f",
+  "completion_class": "standard",
+  "confirmation": "用户已持续授权推进本地初版；本任务仅只读可行性勘察，符合视觉确认前允许的技术评估边界。",
+  "created_at": "2026-08-09T21:30+08:00",
+  "department": "开发部",
+  "details": "Function ID=SOURCE-MGMT-001。绑定唯一产品合同docs/spec/F1+1-SOURCE-MGMT-001本地synthetic信源管理纵切实现合同-v0.2.md，SHA-256=a4b7230c89b0083f6d3f412d2c3f3f767c7f131d4ea422f85fe5721f75df686b；绑定数据报告SHA-256=4498eea95e8d2461bd3c4bbb1e3ff67de2247a65c0da99951a194b2b9e9d3d95。只读检查现有env/profile/launcher/migration selector/source 39列/VS1 Outbox-Inbox-Attempt-DeadLetter-Audit/session-CSRF/API route/UI shell/tests和public zero-drift边界。输出最小实现切片、逐文件职责、可复用与需新增部分、无新依赖方案、迁移/回退顺序、测试钩子、设计候选接入点及一个首要阻断。不得改app/data/design/Spec/ADR/DB/package/lock，不运行build/全量测试/服务/浏览器/网络，不创建spike。正式开发必须等待安全PASS、设计候选与用户视觉确认。",
+  "domain_stage": "M5-SOURCE-MGMT开发开工前可行性",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "发现v0.2与当前代码结构不可一一映射：只报首个P1并停止，不改合同或造第二实现；需要新依赖、真实外联/DB写入或改变public候选：保持Unknown并交统筹；设计锚点尚未冻结的UI文件只列接入点，不猜布局或开始实现。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "客观判定FEASIBLE_WITH_SUCCESSOR/FORMAL_IMPLEMENTATION_BLOCKED；P0=0，正式实现前P1=2。未按v0.2猜raw authority/session/CSRF/identity；未重复Source schema、handle、writer或依赖；并发出现未ACK v0.3已披露且未采用。",
+  "node": "在视觉确认前完成代码级只读勘察，冻结可复用模块、最小文件影响面、实施顺序和首个真实阻断，不编写正式实现",
+  "pointers": [
+    "docs/spec/F1+1-SOURCE-MGMT-001本地synthetic信源管理纵切实现合同-v0.2.md",
+    "app/src/server/db/profile.ts"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-09-SOURCE-MGMT-001-v0.2现有代码落点与实现可行性只读勘察报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-2406DD",
+  "title": "SOURCE-MGMT-001现有代码落点与实现可行性只读勘察",
+  "unverified": [
+    "产品TASK-20260809-A4392B仍claimed，现场v0.3未ACK且未作为实施权威；须待v0.3 ACK和安全部exact复审PASS",
+    "设计TASK-20260809-08CCEF仍claimed，Admin候选SHA与用户视觉确认未完成；根F1PageShell是否适配Admin保持Unknown",
+    "正式实现、数据库字节、HTTP、浏览器、构建和测试均按任务边界NOT_RUN；本报告不构成开工许可"
+  ],
+  "updated_at": "2026-08-09T21:51+08:00",
+  "verified": [
+    "冻结v0.2合同SHA=a4b7230c89b0083f6d3f412d2c3f3f767c7f131d4ea422f85fe5721f75df686b、ACK数据报告SHA=4498eea95e8d2461bd3c4bbb1e3ff67de2247a65c0da99951a194b2b9e9d3d95、ACK安全FAIL报告SHA=3055ff0fc81cfa471f14e32d5f333bee2c275783ed1df862781bda134097248e",
+    "逐文件静态映射env/profile/database/migration/39列Source/VS1状态机/launcher/no-egress/public边界/Admin空缺，并给出最小新增修改清单、实施顺序、16项mandatory golden证据出口、回退与public逐文件零漂移策略",
+    "相关source/package聚合SHA=f50c7fed93e8afe5a3aa1fa6d1727d4c7bacbacf7dd9914dba39cb71a9f4ffc4；root+VS1 migration聚合SHA=589abead672f474d7c4cd85c316fce8c7a82253c5b0fb52bdcaea2821b950226；报告SHA=6a437f3c5b5fb8b10687c11276b72f4e015681d2c6cf0ca8e73f2aacda0fdb5c",
+    "独立只读对抗复核P0=0；发现的单handle/writer门错误外推与globals.css/PUBLIC-16矛盾均已修订，未运行代码、DB、服务或网络"
+  ]
+}

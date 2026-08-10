@@ -1,0 +1,57 @@
+{
+  "acceptance_exit": "提交安全部正式复验报告并给A轴PASS或FAIL；R1至R13逐项列证据位置、默认值、拒绝条件、B/C后置收据；证明无单env值可启用真实外连、真实provider/Collector/发布器默认不存在或deny、所有安全fixture为synthetic且零外连。PASS须A层P0=0/P1=0；完成后TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-02-M4-A轴安全合同定版复验报告.md"
+  ],
+  "authorization_evidence": "用户已授权本地工程合同持续推进；2026-08-02产品与数据A轴候选已由统筹核收",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T00:48+08:00",
+      "evidence": "用户已授权本地工程合同持续推进；2026-08-02产品与数据A轴候选已由统筹核收",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "用户已授权本地系统合同推进；本任务只读安全复验，所有真实采集、认证、发布和部署门仍关闭。",
+  "created_at": "2026-08-02T00:48+08:00",
+  "department": "安全部",
+  "details": "只读复验已ACK的产品任务TASK-20260802-131D64与数据任务TASK-20260802-90B1C2，检查Spec、M4 proposed ADR、data/mvp-contract-v0及前序安全报告。逐项重跑R1至R13 A层静态合同：capability double gate与明确env allowlist且单一开关不能启用真实IO；loopback/canonical Origin/session/CSRF；URL/SSRF/DNS rebinding/redirect；XSS/XML/media；prompt与summary worker无网络/工具/secret；日志/secret/SQLite权限与恢复；TaskEnvelope五fence/lease/deadline/attempt/CAS；ReleaseBundle/ReviewDecision/hash；reconcile_wait同key；急停/epoch单调；no-egress/supply-chain/deny-all。核对16类synthetic安全fixture和external_calls=0。只判断A层静态可定版性；B层代码fixture与C层运行/渗透证据保持后置。不得改文件、运行真实网络采集、安装依赖或操作外部资源。",
+  "domain_stage": "M4 A轴定版复验",
+  "event_receipts": [
+    "COR-20260802T011029-483694",
+    "MIL-20260208T011206-B80B40"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) A层门禁可被单一配置绕过、Origin/CSRF/fence/hash/SSRF等缺少静态拒绝语义：FAIL并定位，禁止自行补丁；2) 仅app代码或运行收据尚不存在：列B/C pending，不误判A层；3) 平台许可/真实token/部署相关：保持Unknown且不扩大本任务到外部调查或授权。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已区分 A 静态合同与 B/C 实现运行门禁，未以 fixture/no-egress 推断真实安全；复核并保留 R9 lease 长度、R10 hash/public_id/key、enabled/dedup/operation、状态恢复、三实体映射、数据任务时态和 epoch0 边界；早期只读脚本误用 security fixture 的 case_id（实际字段为 fixture_id）已纠正且无文件影响；历史 M3/前序报告事实未改写。",
+  "node": "M4/A轴定版门禁/安全复验",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-02-M4-A轴安全合同定版复验报告.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-02-M4-A轴安全合同定版复验报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-A7BA84",
+  "title": "复验M4 A轴R1至R13与数据v0.2安全合同",
+  "unverified": [
+    "B/C 尚无 app 实现、Node24/SQLite/deny-all 探针、运行/渗透/并发/恢复/真实收据；这些后置门禁未执行。",
+    "未访问外部账号、OAuth、飞书、provider、Collector、媒体/AI、发布或部署；未验证真实平台权限、网络出口和生产运行。",
+    "SourceObservation、SummaryDraft、AuditEvent 的最终内部 schema/owner/retention 方案及 P0 修订尚待产品/数据/开发处理；本报告不修改 Spec、ADR 或 data。"
+  ],
+  "updated_at": "2026-08-02T01:15+08:00",
+  "verified": [
+    "只读读取并核对 ADR/Spec、data v0.2 schema/state-machine/runtime、fixtures、manifest、M4 security fixtures 与任务收据；未访问飞书、浏览器、外部网络或执行 auth/采集/写入。",
+    "R1-R13 已逐项复验；R9 因 lease regex 允许 synthetic:lease-003 且 epoch0 文案无证据判 FAIL/P0，R10 因 hash 输入过窄、重复 public_id 与 Publication/Outbox key 分裂判 FAIL/P0，R13 为 AuditEvent 映射缺口 P1。",
+    "补充对抗证据按文件行号核对：五项 P0（入队 enabled/dedup/operation、恢复出口、幂等/public identity、hash、lease）与三项 P1（SourceObservation/SummaryDraft/AuditEvent、数据任务时态、epoch0）已并入摘要、计数、结论和错题自检。",
+    "13 个主合成案例、16 个安全 fixture 均 synthetic_only=true 且 external_calls=0；manifest 标示 external_write_performed=false、real_content_imported=false、credential_material_present=false；app 仅 README。git diff --check 与 agent_team_task.py doctor 均通过。"
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "公开信息流呈现 v0.2 时间线设计；token/交互/响应式/可访问降级按合同实现；npm run check 全绿；开发部报告与 TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/src/features/stories/feed-experience.tsx"
+  ],
+  "authorization_evidence": "用户要求推进各部门工作流（2026-08-07）",
+  "authorization_history": [
+    {
+      "at": "2026-08-07T14:06+08:00",
+      "evidence": "用户要求推进各部门工作流（2026-08-07）",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/统筹部并行子代理",
+  "completion_class": "standard",
+  "confirmation": "前置：用户确认 v0.2 方向 + 产品部合同就绪后启动实现。",
+  "created_at": "2026-08-07T14:06+08:00",
+  "department": "开发部",
+  "details": "在用户确认 v0.2 方向、产品部产出实现级设计合同后，将 v0.2 时间线优先设计落地到 app 公开信息流：时间线条目（时间左列/主图+缩略图/就地展开/证据行）、token（颜色/圆角/间距）、主图 lightbox、悬停预览等交互；保留现有公开 feed/detail DTO 与 M4 安全门禁（无外联、REAL_* fail-closed），不新增后端实体。本任务依赖 TASK-20260807-EA00A8 产品合同。",
+  "domain_stage": "implementation",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若设计合同未就绪或与 M4 数据/安全边界冲突，停下等待或回指，不绕过门禁、不新增实体。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查错题集,无命中",
+  "node": "v0.2-frontend-implementation",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260807-EA00A8.json; design/ui/F1+1-v0.2-全站设计/design-system.md; app/src/app"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-07-v0.2时间线落地公开信息流实现报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260807-6CD2FB",
+  "title": "将 v0.2 时间线设计落地到公开信息流前端",
+  "unverified": [
+    "真实浏览器 1440/1024/390 视觉与交互体验由设计部/测试部验收;VoiceOver/NVDA 实机可访问待测试部"
+  ],
+  "updated_at": "2026-08-07T20:07+08:00",
+  "verified": [
+    "v0.2 时间线/主图+缩略图/lightbox/状态按合同落地;npm run check 全绿(列 node 版本与 clean env 方式);无外联、externalCalls=0、DTO 未改"
+  ]
+}

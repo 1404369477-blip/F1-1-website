@@ -1,0 +1,52 @@
+{
+  "acceptance_exit": "提交安全部final报告，decision=pass或fail，明确P0/P1/P2；核对固定hash未漂移；逐项覆盖双主机、设备、账号、网络、进程、数据库、备份、恢复和双端边界；所有问题给出可操作修订建议、失败关闭和恢复证据；区分已验证/未验证；doctor通过并TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-09-专用Admin-MacBook预配置手册独立安全复核报告.md"
+  ],
+  "authorization_evidence": "用户要求提前规划服务器MacBook并确认继续双主机方案；安全复核属于规划交付必要门禁，不产生真实外部效果。",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T18:27+08:00",
+      "evidence": "用户要求提前规划服务器MacBook并确认继续双主机方案；安全复核属于规划交付必要门禁，不产生真实外部效果。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "本任务只做独立安全审查；任何真实MacBook配置、安装、账号、网络、付费、密钥、备份上传和部署仍需用户另行授权。",
+  "created_at": "2026-08-09T18:27+08:00",
+  "department": "安全部",
+  "details": "独立只读复核固定候选 docs/runbooks/F1+1-专用Admin-MacBook服务器预配置手册-v0.1.md，完整 SHA-256=cf87d710fe47b0778c96e82fbf7ff862aac9519568c9de4a433a88cb6973f8c0。逐项检查：Admin/public-host隔离、公网Admin=0、writer=1、具名运营账号与无sudo非交互服务账号、个人iCloud/同步/profile禁区、FileVault/自动登录/恢复材料、Sharing/Firewall/路由器端口/UPnP、供电/散热/睡眠/合盖/重启、私有overlay与应用认证/freshness分层、Node/launchd最小环境、目录和SQLite文件族权限、每≤5m Online Backup封闭快照、manifest/hash/异机加密、10m预警/15m关闭、替代Mac隔离恢复、RPO≤15m/RTO≤4h、Mac/iPhone等价。核对每个真实动作是否明确停在AUTH、是否存在会导致用户误操作的不可逆或猜测性命令、官方事实是否被过度外推。只提交安全部final报告和P0/P1/P2，不改手册、accepted ADR、Spec、app、data、design，不执行安装/账号/网络/密钥/探针/上传/部署。",
+  "domain_stage": "admin-macbook-preconfiguration-security-review",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若候选hash漂移或任务期间文件被修改，立即fail-closed，不审查可变候选。",
+    "若手册允许公网Admin、第二写主、同机备份/解密材料、复制活跃DB/WAL/SHM、个人账号/同步或私网连通替代强认证/freshness，判P1或更高并禁止用于实施。",
+    "若官方来源无法支持版本相关操作或手册可能诱导未授权真实配置，标记P1并要求退回产品部修订；不得自行改产品文档。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未继承产品结论；固定SHA后复核且未改手册；RPO超龄部分写入与RTO起点矛盾按P1；私网不替代认证；备份成功不替代恢复；Mac/iPhone全功能不降级；无真实设备或外部动作",
+  "node": "SEC-ADMIN-MAC-RUNBOOK-01",
+  "pointers": [
+    "docs/runbooks/F1+1-专用Admin-MacBook服务器预配置手册-v0.1.md",
+    "docs/spec/F1+1-M5-Admin专用MacBook补充实施合同-v0.2.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-09-专用Admin-MacBook预配置手册独立安全复核报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-48792F",
+  "title": "SEC-ADMIN-MAC-RUNBOOK：独立安全复核专用MacBook预配置手册",
+  "unverified": [
+    "真实Mac/iPhone/OS/账号/FileVault/网络/overlay/认证；public-host/DNS/TLS/投影；生产SQLite/备份/异机存储/恢复；真实RPO/RTO；官方页面现时版本细节"
+  ],
+  "updated_at": "2026-08-09T18:31+08:00",
+  "verified": [
+    "固定手册SHA审查前后零漂移；双主机、公网Admin=0、专用账号设备、FileVault/自动登录、Sharing/Firewall/路由器、Node/launchd、SQLite唯一写主与文件族、Online Backup/manifest/hash/signature/异机加密、Mac/iPhone等价、AUTH停止线静态核对"
+  ]
+}

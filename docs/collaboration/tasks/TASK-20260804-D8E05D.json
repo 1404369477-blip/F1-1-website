@@ -1,0 +1,56 @@
+{
+  "acceptance_exit": "测试部final报告decision、P0/P1/P2；冻结SHA稳定；API聚焦套件一次PASS；独立矩阵覆盖feed/detail/filter/cursor/problem/headers/m3拒绝并符合accepted ADR；公开DTO字段closed且12个public-demo顺序正确；无正式DB/.next/端口/临时残留；P0=0/P1=0才PASS；TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "用户持续确认推进且要求执行交由部门；AC25D4已有可调用API候选。",
+  "authorization_history": [
+    {
+      "at": "2026-08-04T15:36+08:00",
+      "evidence": "用户持续确认推进且要求执行交由部门；AC25D4已有可调用API候选。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "用户要求停止内部subagent执行并迁移到原有可见部门对话窗口",
+  "claimed_by": "测试部/独立审核成员:/root/test_next_startup_recheck",
+  "completion_class": "audit",
+  "confirmation": "测试与安全均PASS后统筹才ACK AC25D4并派前端API接线。",
+  "created_at": "2026-08-04T15:36+08:00",
+  "department": "测试部",
+  "details": "严格只读TASK-20260804-AC25D4最终候选，只写测试部精简final报告与任务状态。冻结开发报告列改动SHA及SQLite/data保护输入；在TemporaryDirectory使用public-synthetic canonical seed。只运行一次API聚焦测试文件，并独立直接调用Route Handler或Repository完成最小矩阵：feed 12条顺序与四类筛选、pageSize/hasMore/nextCursor；detail 200与related 0-3；未知/重复/空query、cursor pair/noncanonical/scope mismatch、非法与不存在publicId对应reasonCode；m3-shadow公开读拒绝。核对content-type/cache-control/no CORS；不build、不full check、不浏览器、不接前端、不重复测试。",
+  "domain_stage": "公开API独立功能测试",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "feed/detail数量、顺序、筛选、related、cursor或reasonCode任一违反ADR，或m3-shadow可公开读：P1 FAIL。",
+    "Route与Repository只能靠开发测试自证、无法在临时库独立调用，或正式候选SHA漂移：NOT_RUN/FAIL，不修代码。",
+    "运行build/full check/浏览器或修改代码/data/ADR/前端：越界停止。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "在稳定候选上验证12条feed、detail、筛选、cursor与Problem功能行为",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260804-AC25D4.json",
+    "docs/decisions/system/2026-08-03-F1+1-公开读模型与API接线-v0.4-successor-accepted.md"
+  ],
+  "report": "",
+  "resolution": {
+    "evidence": "正式测试部窗口C30FD0与正式安全部窗口000EA6均已完成并TASK_STATE_OK",
+    "reason": "用户要求由原有可见部门对话窗口执行，内部subagent审核停止",
+    "receipt_id": "RES-20260804T185534-F6FD08DF",
+    "replacement_revision": 3,
+    "replacement_state": "completed",
+    "replacement_task_id": "TASK-20260804-C30FD0",
+    "resolved_at": "2026-08-04T18:55+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "superseded",
+    "target_revision_before": 3
+  },
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260804-D8E05D",
+  "title": "独立验收公开feed-detail API功能合同",
+  "unverified": [],
+  "updated_at": "2026-08-04T18:55+08:00",
+  "verified": []
+}

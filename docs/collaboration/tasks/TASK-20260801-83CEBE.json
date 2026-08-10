@@ -1,0 +1,59 @@
+{
+  "acceptance_exit": "给出明确 PASS/FAIL 与证据；列出写前、写中、写后安全检查表；确认使用 --as user、资源精确解析、防重复创建、超时先读回再重试、59条 batch 以 migration_batch_id 对账、无公开分享、无凭证持久化、无真值或发布切换；标注残余风险及停止条件；报告落安全部目录并按协议 complete/TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-01-M3飞书Base外部写入安全门禁-审核报告.md"
+  ],
+  "authorization_evidence": "用户已授权 M3 真实 Base 资源创建和59条影子导入，范围明确排除真值/provider/采集/公开发布切换。",
+  "authorization_history": [
+    {
+      "at": "2026-08-01T15:04+08:00",
+      "evidence": "用户已授权 M3 真实 Base 资源创建和59条影子导入，范围明确排除真值/provider/采集/公开发布切换。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "确认点：安全部只做只读门禁复核；通过后由统筹部单线执行外部写入，测试部再独立只读验收。",
+  "created_at": "2026-08-01T15:04+08:00",
+  "department": "安全部",
+  "details": "对产品部 M3 执行包和计划中的 lark-cli 用户态外部写入做只读安全复核。重点检查最小权限、敏感信息不落库不入报告、Base不公开分享、手机表单数据边界、部分成功/超时后的幂等与止损、禁止真值/provider/采集/发布切换。不得执行飞书写入，不得修改执行包或 accepted ADR。",
+  "domain_stage": "M3-资源创建门禁",
+  "event_receipts": [
+    "source_thread=019fb2b1-fb60-7792-adb4-e0e876a32947; 2026-08-01统筹部脱敏只读证据：auth verified=true、identity=user，目标Base精确标题与关键词检索均无匹配；安全部按指令未执行live auth。"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "发现权限范围超过必要且无法隔离时 FAIL/blocked，禁止继续真实写入。",
+    "发现执行包会持久化凭证、PII、运行时遥测或造成公开分享时 FAIL/blocked，回传最小修改要求。",
+    "网络超时、部分成功或资源解析歧义必须先读回；不得盲目重放59条，不得删除部分成功资源。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查错题集与审核模板：未把执行部门陈述当独立验证，未把URL批次唯一性冒充平台稳定ID查重，未把临时分类/handle当身份事实，未把本地合同验证写成真实资源已完成，未扩写真值/provider/采集/发布授权，未持久化或披露token/用户/租户/资源私密标识。",
+  "node": "M3-Base安全预检",
+  "pointers": [
+    "docs/collaboration/部门/产品部/报告/2026-08-01-F1+1飞书Base影子建表-M3执行包.md",
+    "docs/decisions/system/2026-08-01-F1+1-信源库A到D演进路线-accepted.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-01-M3飞书Base外部写入安全门禁-审核报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260801-83CEBE",
+  "title": "复核M3飞书Base外部写入安全门禁",
+  "unverified": [
+    "真实Base、ACL、表/字段/视图/表单、默认分享与手机端渲染尚未执行或回查；M3明确禁止真实表单提交。",
+    "最终59行真实写入、分页59/59对账、超时/部分成功真实演练与无重复/越批仍待统筹部单线执行后提供脱敏证据。",
+    "当前token含超出本次必要的update/delete scopes，令牌级最小权限未收敛；本次PASS依赖精确白名单，且真值/provider/Collector/采集/发布均未验证或放行。"
+  ],
+  "updated_at": "2026-08-01T20:01+08:00",
+  "verified": [
+    "独立重算CSV SHA-256，验证59行、source_id/canonical_url各59唯一且无重复，并解析确认M3映射为33个唯一字段、每行33列、enabled=false、固定migration_batch_id。",
+    "完整核对M3执行包、accepted ADR及lark-cli内嵌Base/鉴权规则；报告覆盖--as user、精确资源解析、命令白名单、ACL/分享前置、重复创建预防、超时/部分成功先读回、59/59分页对账和全部停止条件。",
+    "统筹部本轮脱敏只读证据确认verified=true、identity=user，目标Base精确标题与关键词检索均无匹配；安全部未重复执行live auth或任何飞书写入。",
+    "两路独立对抗复核发现的view/form命令边界、手机表单真实提交、ACL时序、TOCTOU与分页异常问题均已修订；修订后两路复查均PASS，无残留P0/P1。"
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "acceptance_exit": "真实 Next 公开 feed/detail 及所有4xx/5xx Problem 最终 Cache-Control 精确为 no-store；feed=200/12、有效详情=200、合法未知详情=404、malformed=400，closed Problem/零泄露/integrity/无fallback/无外部IO保持；一次 seed、一次启动、一次 HTTP 验收和一次 typecheck 通过，管道正确传播失败；端口及临时产物清理完成并 TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "用户于2026-08-04明确要求继续推进",
+  "authorization_history": [
+    {
+      "at": "2026-08-04T20:40+08:00",
+      "evidence": "用户于2026-08-04明确要求继续推进",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "唯一HTTP验收首个feed已通过精确no-store断言，随后body零泄露禁词检查失败并立即停止；响应正文未回显，命中类别Unknown，其余HTTP矩阵NOT_RUN。唯一typecheck exit2：serve.ts删除x-forwarded-*窄headers触发TS7053。按合同未修改后重跑。一次seed/启动/HTTP/typecheck；进程、3000/3001、/tmp/DB/sidecar/.next/收据已清理。报告：docs/collaboration/部门/开发部/报告/2026-08-04-公开API-no-store最终响应层整改阻断报告.md",
+  "claimed_by": "开发部/019fb374-7c86-7882-9e51-76114ce69e7f",
+  "completion_class": "standard",
+  "confirmation": "本任务成功后由安全部独立审核脱敏收据与缓存边界；再与390px筛选修复合并进入一次真实页面验收。新版v0.2视觉仍停在用户确认门，不与本任务耦合。",
+  "created_at": "2026-08-04T20:40+08:00",
+  "department": "开发部",
+  "details": "承接 blocked TASK-20260804-C25855 的有效产出：profile-aware readiness 与六字段脱敏启动收据已完成，真实 Next 已成功监听，首个 feed 请求为 HTTP 200；唯一确定阻断是 route 代码期望 Cache-Control:no-store，而 Next 16.2.11 dev 实际响应 no-cache, must-revalidate。开发部先基于本地 Next 官方实现/官方文档和现有代码定位覆盖层级，实施保证公开 feed、详情、404/400/500 Problem 最终 HTTP 响应均为精确 no-store 的最小修复；不得放宽合同为 no-cache，不得在客户端伪造头，不得改 accepted DTO/ADR、关闭 integrity、增加 fallback 或外部 IO。任务临时目录使用 /tmp 下与本任务 ID 完全一致的专属目录；只执行一次 canonical public-synthetic seed、一次受控包装器启动和一次带正确失败传播的 HTTP 聚焦验收，命令不得使用无 pipefail 的 tee 管道。该验收依次覆盖 feed 200且12条、筛选/游标基本合同、有效详情200、合法未知详情404、malformed400、Problem字段、所有响应no-store与零泄露；再做1次typecheck。若首个断言失败立即停止，不修改后重跑；关闭端口并清理专属DB/sidecar/.next/收据。提交开发部报告与 TASK_STATE_OK，失败则按首错block。",
+  "domain_stage": "p1_remediation",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若 Next dev 在 route 之后覆盖 Cache-Control，必须在服务端最靠近最终响应且受控的层级修复；禁止把 no-cache 解释为等价通过或仅修改测试预期。",
+    "若修复影响静态资源、页面缓存、DTO/Problem、integrity 或造成路径/环境/响应正文泄露，立即停止并block，记录首个越界点。",
+    "唯一 HTTP 验收任一断言失败即停止并block；禁止修改后重跑、重复seed/启动、使用无pipefail管道或绕过安全包装器。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "public-api-no-store-p1-fix",
+  "pointers": [
+    "TASK-20260804-C25855; TASK-20260804-16B34F; TASK-20260804-504B0D; docs/decisions/system/2026-08-03-F1+1-公开读模型与API接线-v0.4-successor-accepted.md"
+  ],
+  "report": "",
+  "resolution": {
+    "evidence": "TASK-20260807-4451C2 已 ACK；其正式报告记录 npm run start 经 scripts/serve.ts 启动，test:public-http 全绿，feed/detail/4xx 均 Cache-Control:no-store，泄露分类器全 0。",
+    "reason": "后继独立生产 HTTP 验收已覆盖并通过旧任务唯一未闭合的 no-store、零泄露与完整 feed/detail 矩阵；旧的一次性阻断记录保留为历史。",
+    "receipt_id": "RES-20260808T220201-CE89F61D",
+    "replacement_revision": 4,
+    "replacement_state": "acknowledged",
+    "replacement_task_id": "TASK-20260807-4451C2",
+    "resolved_at": "2026-08-08T22:02+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "superseded",
+    "target_revision_before": 3
+  },
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260804-3AF992",
+  "title": "修复公开 API no-store 响应头并完成 HTTP 闭环",
+  "unverified": [],
+  "updated_at": "2026-08-08T22:02+08:00",
+  "verified": []
+}

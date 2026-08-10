@@ -1,0 +1,56 @@
+{
+  "acceptance_exit": "交付安全部正式报告；针对至少10类候选能力给出绿/黄/红/Unknown矩阵、证据链接和日期；逐项标明许可证、账号/API/速率限制、数据保存/再展示、媒体权利、密钥与外连风险；为M4本地mock、后续授权spike、生产启用分别给出准入门，明确任何真实采集仍需独立用户确认。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-02-聚合采集工具许可平台条款与安全风险研究.md"
+  ],
+  "authorization_evidence": "用户于2026-08-02明确要求派部门成员开展只读深度调研并优先CLI/内置浏览器",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T00:43+08:00",
+      "evidence": "用户于2026-08-02明确要求派部门成员开展只读深度调研并优先CLI/内置浏览器",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "用户要求调研可用于项目的资源、工具、skill、agent架构；本任务只做只读风险研究，未授权安装或真实采集。",
+  "created_at": "2026-08-02T00:43+08:00",
+  "department": "安全部",
+  "details": "对研究部与开发部候选做独立只读安全/许可/合规审查，重点覆盖GitHub许可证与供应链、X/Reddit/Instagram等平台官方API和开发者条款、RSS/网页抓取边界、robots和限流、媒体热链/缓存、个人数据与中国大陆部署、Secrets/OAuth、SSRF/XSS/prompt injection、插件/skill/agent供应链和自动发布门禁。只引用官方条款、官方文档、仓库许可证/安全策略及权威一手材料；不得访问真实账户、申请token、运行采集器或执行外部写入。给出技术可行与获准可用的分离判定。",
+  "domain_stage": "M4前沿调研",
+  "event_receipts": [
+    "MIL-20260802T005436-99E3BD"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 条款地区化或版本不清：记录具体Unknown和需法律/平台确认点，不给合规结论；2) 仓库无许可证、依赖来源不明或skill可执行任意命令：默认红/隔离，不安装；3) 官方文档需登录或账户权限：不创建账户、不授权，使用公开官方材料并保留证据缺口。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已核对技术可行不等于获准使用、代码许可证不等于平台/内容权利、robots不等于授权、历史Meta证据与当前证据分日期、M4 mock不等于生产；Unknown均保持关闭，未把无收据写成通过",
+  "node": "M4/研究/安全与合规",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-02-聚合采集工具许可平台条款与安全风险研究.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-02-聚合采集工具许可平台条款与安全风险研究.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-4D3684",
+  "title": "聚合采集工具许可平台条款与安全风险研究",
+  "unverified": [
+    "真实账号、OAuth、App Review、价格/配额、区域、商业许可、删除/撤权、媒体权利、15分钟时效和生产运行均未验证",
+    "Meta当前条款页面部分受登录/429/超时阻断；具体依赖lockfile/SBOM/漏洞、skills/plugins许可证与执行能力、Node24/Next/SQLite运行仍未验证",
+    "没有任何真实采集、安装、媒体/AI外连、Feishu provider或自动发布授权"
+  ],
+  "updated_at": "2026-08-02T00:55+08:00",
+  "verified": [
+    "已读取任务 JSON、Spec/ADR、研究与开发候选证据；未执行真实平台或外部写入",
+    "已覆盖20类候选能力，逐项记录颜色、许可证或条款证据与日期、账号/API/速率、留存/再展示/媒体、secret/外连/供应链风险",
+    "已拆分M4本地mock、未来授权spike、生产启用三层门禁，保留真实采集需独立用户确认",
+    "已完成两路只读对抗复核、git diff --check 与 agent_team doctor"
+  ]
+}

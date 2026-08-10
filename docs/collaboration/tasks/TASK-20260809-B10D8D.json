@@ -1,0 +1,71 @@
+{
+  "acceptance_exit": "形成一张覆盖公开信息流、详情、主题/响应式/媒体、人工审核、编辑、批准/拒绝、手动发布、必要SQLite/API、RSS本地安全层和主要恢复出口的无遗漏矩阵；每项只有完成、明确用户门禁或P1阻断三种状态，禁止含糊NOT_RUN；Spec和MVP与矩阵一致，开发与测试可按功能ID逐项交付和验收。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md",
+    "docs/decisions/system/2026-08-09-F1+1-公开多媒体数组successor实施合同-draft.md",
+    "docs/mvp.md",
+    "docs/spec.md",
+    "docs/spec/F1+1-v0.2-最终实现级产品合同.md",
+    "docs/spec/README.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-09-初版全功能追踪矩阵与零缺项实现合同报告.md"
+  ],
+  "authorization_evidence": "COR-20260809T102214-960E65 用户明确开发高保真与全部功能要求",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T10:23+08:00",
+      "evidence": "COR-20260809T102214-960E65 用户明确开发高保真与全部功能要求",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "用户已明确要求开发高度贴合视觉设计并落实当前初版全部功能。外部请求、生产发布、付费和部署仍需各自明确授权。",
+  "created_at": "2026-08-09T10:23+08:00",
+  "department": "产品部",
+  "details": "在完成当前TASK-20260809-0DEB27后领取。吸收用户纠偏事件 COR-20260809T102214-960E65、docs/spec.md、空白/过时的docs/mvp.md、最终v0.2设计/产品合同、Admin合同与机器映射、RSS合同。更新Spec/MVP并新增一份初版功能追踪矩阵：逐项列功能ID、用户出口、确认视觉状态/视口、所需DTO/领域/DB/API、实现文件Owner、成功/失败/恢复、独立验收证据和授权轴。当前已确认切片内任何功能不得以组件预留、静态分支、测试注入、单媒体DTO冲突或NOT_RUN收口；例如最终设计确认的真实多图交互若仍在初版范围，必须提出最小media数组DTO/data successor并实现可达样本。未授权的真实平台请求、自动发布、生产部署单列为用户门禁，不得偷开，也不能被误写为开发已完成。只改产品文档/Spec/MVP与系统draft，不写app代码。",
+  "domain_stage": "M5初版全功能实现合同",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "视觉确认稿与现有DTO/数据合同冲突：保留功能，提出最小successor与迁移/回退，不用删功能换PASS。",
+    "某项属于真实外部请求、自动发布、生产权限或部署：保持用户门禁并写清开发可先完成的本地部分，不越权执行。",
+    "现有Spec、MVP、设计和实现对同一功能定义不一致：列唯一冲突和权威修订，不复制多套真值。"
+  ],
+  "from_department": "统筹部",
+  "impact_declaration": {
+    "admission": "manual",
+    "base_revision": "TASK-20260809-B10D8D@rev1",
+    "external_effects": [
+      "none"
+    ],
+    "owner_task": "TASK-20260809-B10D8D",
+    "shared_contracts": [
+      "TASK-20260809-B10D8D-function-traceability"
+    ],
+    "write_paths": [
+      "docs"
+    ]
+  },
+  "mistake_check": "已纠正API证据外推浏览器完成、搜索与四类筛选合并、inline正常展开与手风琴/错误恢复合并、API fail-closed外推UI恢复、数据机器PASS外推运行完成；补齐回到顶部、内容处理、固定operator收据、三态转移、RSS精确依赖问题、Admin视觉冻结前置与媒体状态优先级；未修改app/data/design/accepted ADR。",
+  "node": "把用户新增的视觉高保真与全部功能要求转成可机械验收的开发真值",
+  "pointers": [
+    "docs/collaboration/部门/统筹部/日志/2026-W32.md"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-09-初版全功能追踪矩阵与零缺项实现合同报告.md",
+  "resolution": null,
+  "revision": 5,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-B10D8D",
+  "title": "初版全功能追踪矩阵与零缺项实现合同",
+  "unverified": [
+    "矩阵20项P1仍需后继实现与独立收据；public-multimedia-synthetic运行profile、Repository/API/App V2接线与浏览器多图未验证；Admin系统与视觉门禁未获用户批准；RSS依赖与真实请求均未获批准；真实来源、真实媒体、Base/provider/Collector、自动发布、部署、付费与生产权限继续关闭。"
+  ],
+  "updated_at": "2026-08-09T11:01+08:00",
+  "verified": [
+    "机械解析50个唯一Function ID、每行9列且无空列；状态仅complete/user-gated/P1-blocker，分布12/18/20；冻结HTML SHA-256复算匹配5a84bfb27294ebd727369118a95528f5b788bfacbe2d56cc03fcb006f6168cb1；33B8F5 ACK/PASS只关闭机器前置，55302B承接独立运行profile与V2接线；三路聚焦对抗复验均P0=0/P1=0；目标文档git diff --check通过。"
+  ]
+}

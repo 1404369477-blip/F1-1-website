@@ -1,0 +1,590 @@
+{
+  "package_version": "real-collection-slice-input-gate-v0.1",
+  "task_id": "TASK-20260808-CAD1DB",
+  "status": "gate_closed_user_approval_required",
+  "artifact_role": "implementation input mapping and gate receipt; not a domain schema, authorization record, provider configuration, or executable collection instruction",
+  "authority": {
+    "source_contract": "data/mvp-contract-v0/schema.json#/$defs/Source",
+    "capture_contract": "data/mvp-contract-v0/schema.json#/$defs/CapturedItem",
+    "content_contract": "data/mvp-contract-v0/schema.json#/$defs/Content",
+    "media_contract": "data/mvp-contract-v0/schema.json#/$defs/MediaCandidate",
+    "observation_contract": "data/mvp-contract-v0/internal-contract.schema.json#/$defs/SourceObservation",
+    "accepted_route": "docs/decisions/system/2026-08-01-F1+1-信源库A到D演进路线-accepted.md",
+    "local_research": "research/multi-platform-source-collection-2026-07-30.md#6.1"
+  },
+  "external_effects": {
+    "external_calls": 0,
+    "writes_to_base": false,
+    "provider_switch": false,
+    "new_source_access": false,
+    "real_content_imported": false
+  },
+  "current_inventory_facts": {
+    "artifact": "data/m4-vs0-seed-enrichment-v0/source-seed-enriched.json",
+    "total_sources": 59,
+    "x_sources": 59,
+    "rss_sources": 0,
+    "enabled_sources": 0,
+    "automatically_authorized_sources": 0,
+    "conclusion": "no existing authorized and enabled source can execute the first real collection slice"
+  },
+  "candidate": {
+    "candidate_id": "candidate_rss_formula1_latest_all",
+    "feed_url": "https://www.formula1.com/en/latest/all.xml",
+    "recommendation_rank": 1,
+    "evidence_state": "historical_local_observation_only",
+    "observed_date": "2026-07-30",
+    "locally_recorded_observation": {
+      "http_status": 200,
+      "content_type": "text/xml",
+      "cache_control": "s-maxage=60",
+      "fields_seen": [
+        "title",
+        "description",
+        "link",
+        "author",
+        "guid"
+      ],
+      "pub_date_seen": false
+    },
+    "limitations": [
+      "not present in the authorized 59-source inventory",
+      "not re-fetched or revalidated in this task",
+      "feed entries were locally recorded without pubDate",
+      "article metadata fetch for datePublished would be a second external read and remains unauthorized",
+      "feed availability, terms, GUID stability, ETag and Last-Modified are current unknowns"
+    ],
+    "activation_decision": "deny_until_user_approval_and_fresh_preflight"
+  },
+  "user_decision_gate": {
+    "decision_id": "U-CAD1DB-001",
+    "single_recommendation": "approve a bounded Formula 1 first-party RSS pilot for feed metadata only, with no media download, no full-text storage, no Base write, manual review required, and a separately explicit choice on article-metadata second-hop reads",
+    "required_confirmations": [
+      {
+        "id": "source_allowlist",
+        "question": "May https://www.formula1.com/en/latest/all.xml be added as a proposed RSS source for a bounded pilot?",
+        "default": "deny"
+      },
+      {
+        "id": "content_rights_scope",
+        "question": "May the pilot retain GUID, title, short feed description, author, canonical link and fetch metadata while keeping media/full text disabled?",
+        "default": "link_only_and_review_required"
+      },
+      {
+        "id": "article_metadata_second_hop",
+        "question": "May the adapter fetch the linked article's allowed metadata solely to read datePublished/dateModified when the feed omits pubDate?",
+        "default": "deny"
+      }
+    ],
+    "until_confirmed": {
+      "enabled": false,
+      "collection_onboarding_status": "validating",
+      "adapter_authorization_status": "unknown",
+      "platform_allowed": "unknown",
+      "monitorability": "unknown",
+      "provider_switch": false
+    }
+  },
+  "source_field_mapping": {
+    "source_id": {
+      "input_pointer": "/candidate_source/source_id",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/source_id",
+      "mode": "direct_fixture_value"
+    },
+    "platform": {
+      "input_pointer": "/candidate_source/platform",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/platform",
+      "mode": "direct_fixture_value"
+    },
+    "platform_account_id": {
+      "input_pointer": "/candidate_source/platform_account_id",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/platform_account_id",
+      "mode": "direct_fixture_value"
+    },
+    "handle": {
+      "input_pointer": "/candidate_source/handle",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/handle",
+      "mode": "direct_fixture_value"
+    },
+    "raw_url": {
+      "input_pointer": "/candidate_source/raw_url",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/raw_url",
+      "mode": "direct_fixture_value"
+    },
+    "canonical_url": {
+      "input_pointer": "/candidate_source/canonical_url",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/canonical_url",
+      "mode": "direct_fixture_value"
+    },
+    "canonical_url_valid": {
+      "input_pointer": "/candidate_source/canonical_url_valid",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/canonical_url_valid",
+      "mode": "direct_fixture_value"
+    },
+    "normalizer_version": {
+      "input_pointer": "/candidate_source/normalizer_version",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/normalizer_version",
+      "mode": "direct_fixture_value"
+    },
+    "normalization_status": {
+      "input_pointer": "/candidate_source/normalization_status",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/normalization_status",
+      "mode": "direct_fixture_value"
+    },
+    "dedup_status": {
+      "input_pointer": "/candidate_source/dedup_status",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/dedup_status",
+      "mode": "direct_fixture_value"
+    },
+    "entity_type": {
+      "input_pointer": "/candidate_source/entity_type",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/entity_type",
+      "mode": "direct_fixture_value"
+    },
+    "content_focus": {
+      "input_pointer": "/candidate_source/content_focus",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/content_focus",
+      "mode": "direct_fixture_value"
+    },
+    "priority": {
+      "input_pointer": "/candidate_source/priority",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/priority",
+      "mode": "direct_fixture_value"
+    },
+    "verification_status": {
+      "input_pointer": "/candidate_source/verification_status",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/verification_status",
+      "mode": "direct_fixture_value"
+    },
+    "identity_status": {
+      "input_pointer": "/candidate_source/identity_status",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/identity_status",
+      "mode": "direct_fixture_value"
+    },
+    "relevance_status": {
+      "input_pointer": "/candidate_source/relevance_status",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/relevance_status",
+      "mode": "direct_fixture_value"
+    },
+    "monitorability": {
+      "input_pointer": "/candidate_source/monitorability",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/monitorability",
+      "mode": "direct_fixture_value"
+    },
+    "adapter_status": {
+      "input_pointer": "/candidate_source/adapter_status",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/adapter_status",
+      "mode": "direct_fixture_value"
+    },
+    "adapter_authorization_status": {
+      "input_pointer": "/candidate_source/adapter_authorization_status",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/adapter_authorization_status",
+      "mode": "direct_fixture_value"
+    },
+    "platform_allowed": {
+      "input_pointer": "/candidate_source/platform_allowed",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/platform_allowed",
+      "mode": "direct_fixture_value"
+    },
+    "authorization_checked_at": {
+      "input_pointer": "/candidate_source/authorization_checked_at",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/authorization_checked_at",
+      "mode": "direct_fixture_value"
+    },
+    "authorization_expires_at": {
+      "input_pointer": "/candidate_source/authorization_expires_at",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/authorization_expires_at",
+      "mode": "direct_fixture_value"
+    },
+    "collection_onboarding_status": {
+      "input_pointer": "/candidate_source/collection_onboarding_status",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/collection_onboarding_status",
+      "mode": "direct_fixture_value"
+    },
+    "onboarding_operation_id": {
+      "input_pointer": "/candidate_source/onboarding_operation_id",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/onboarding_operation_id",
+      "mode": "direct_fixture_value"
+    },
+    "lifecycle_status": {
+      "input_pointer": "/candidate_source/lifecycle_status",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/lifecycle_status",
+      "mode": "direct_fixture_value"
+    },
+    "enabled": {
+      "input_pointer": "/candidate_source/enabled",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/enabled",
+      "mode": "direct_fixture_value"
+    },
+    "manual_disable_at": {
+      "input_pointer": "/candidate_source/manual_disable_at",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/manual_disable_at",
+      "mode": "direct_fixture_value"
+    },
+    "source_stop_status": {
+      "input_pointer": "/candidate_source/source_stop_status",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/source_stop_status",
+      "mode": "direct_fixture_value"
+    },
+    "source_safety_epoch": {
+      "input_pointer": "/candidate_source/source_safety_epoch",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/source_safety_epoch",
+      "mode": "direct_fixture_value"
+    },
+    "source_config_epoch": {
+      "input_pointer": "/candidate_source/source_config_epoch",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/source_config_epoch",
+      "mode": "direct_fixture_value"
+    },
+    "added_at": {
+      "input_pointer": "/candidate_source/added_at",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/added_at",
+      "mode": "direct_fixture_value"
+    },
+    "evidence_url": {
+      "input_pointer": "/candidate_source/evidence_url",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/evidence_url",
+      "mode": "direct_fixture_value"
+    },
+    "notes": {
+      "input_pointer": "/candidate_source/notes",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/notes",
+      "mode": "direct_fixture_value"
+    },
+    "migration_batch_id": {
+      "input_pointer": "/candidate_source/migration_batch_id",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/migration_batch_id",
+      "mode": "direct_fixture_value"
+    },
+    "change_reason": {
+      "input_pointer": "/candidate_source/change_reason",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/change_reason",
+      "mode": "direct_fixture_value"
+    },
+    "created_at": {
+      "input_pointer": "/candidate_source/created_at",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/created_at",
+      "mode": "direct_fixture_value"
+    },
+    "updated_at": {
+      "input_pointer": "/candidate_source/updated_at",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/updated_at",
+      "mode": "direct_fixture_value"
+    },
+    "created_by_ref": {
+      "input_pointer": "/candidate_source/created_by_ref",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/created_by_ref",
+      "mode": "direct_fixture_value"
+    },
+    "updated_by_ref": {
+      "input_pointer": "/candidate_source/updated_by_ref",
+      "contract_pointer": "data/mvp-contract-v0/schema.json#/$defs/Source/properties/updated_by_ref",
+      "mode": "direct_fixture_value"
+    }
+  },
+  "source_field_rules": {
+    "initial_state": "Use the existing Spec initial defaults. canonical_url_valid/normalization_status/dedup_status remain pending until a fresh authorized preflight; identity/relevance/monitorability remain unknown; enabled=false.",
+    "authorization": "User approval does not itself make adapter_authorization_status=valid. A fresh terms/rights check must produce an evidence pointer and checked_at before activation.",
+    "activation": "Only canonical valid + normalization valid + dedup unique + platform allowed + authorization valid + adapter ready + stop clear + current fences may transition activation_pending to queued atomically.",
+    "source_epochs": "Candidate fixture uses epoch 1 only as a nonzero synthetic/proposed fence. A real activation transaction must read the current authoritative epochs."
+  },
+  "source_item_field_mapping": {
+    "source_id": {
+      "input_pointer": "/source_item/source_id",
+      "targets": [
+        "data/mvp-contract-v0/internal-contract.schema.json#/$defs/SourceObservation/properties/source_id",
+        "data/mvp-contract-v0/schema.json#/$defs/CapturedItem/properties/source_id",
+        "data/mvp-contract-v0/schema.json#/$defs/Content/properties/source_id"
+      ]
+    },
+    "external_id": {
+      "input_pointer": "/source_item/external_id",
+      "targets": [
+        "data/mvp-contract-v0/internal-contract.schema.json#/$defs/SourceObservation/properties/external_id",
+        "data/mvp-contract-v0/schema.json#/$defs/Content/properties/external_content_id"
+      ]
+    },
+    "guid": {
+      "input_pointer": "/source_item/guid",
+      "targets": [
+        "/source_item/external_id"
+      ],
+      "rule": "GUID/Atom ID is source-scoped; if missing, use the normalized canonical entry URL; if both are absent, reject the item"
+    },
+    "canonical_url": {
+      "input_pointer": "/source_item/canonical_url",
+      "targets": [
+        "data/mvp-contract-v0/schema.json#/$defs/CapturedItem/properties/canonical_url",
+        "data/mvp-contract-v0/schema.json#/$defs/Content/properties/canonical_url"
+      ]
+    },
+    "title": {
+      "input_pointer": "/source_item/title",
+      "targets": [
+        "data/mvp-contract-v0/schema.json#/$defs/Content/properties/normalized_title"
+      ],
+      "rule": "only after normalization; missing remains empty only if Content schema and normalizer explicitly allow it"
+    },
+    "body_text": {
+      "input_pointer": "/source_item/body_text",
+      "targets": [
+        "data/mvp-contract-v0/schema.json#/$defs/Content/properties/normalized_body"
+      ],
+      "rule": "feed description only; no linked-page full text in the current gate"
+    },
+    "author": {
+      "input_pointer": "/source_item/author",
+      "targets": [
+        "data/mvp-contract-v0/schema.json#/$defs/Content/properties/source_evidence_url"
+      ],
+      "rule": "author is retained in the input receipt; frozen Content has no author field, so do not silently persist it as another field"
+    },
+    "published_at": {
+      "input_pointer": "/source_item/published_at",
+      "targets": [
+        "data/mvp-contract-v0/internal-contract.schema.json#/$defs/SourceObservation/properties/published_at",
+        "data/mvp-contract-v0/schema.json#/$defs/Content/properties/published_at"
+      ],
+      "rule": "preserve null; never substitute observed_at"
+    },
+    "observed_at": {
+      "input_pointer": "/source_item/observed_at",
+      "targets": [
+        "data/mvp-contract-v0/internal-contract.schema.json#/$defs/SourceObservation/properties/observed_at",
+        "data/mvp-contract-v0/schema.json#/$defs/CapturedItem/properties/captured_at"
+      ]
+    },
+    "discovered_at": {
+      "input_pointer": "/source_item/discovered_at",
+      "targets": [
+        "data/mvp-contract-v0/internal-contract.schema.json#/$defs/SourceObservation/properties/discovered_at"
+      ]
+    },
+    "response_hash": {
+      "input_pointer": "/source_item/response_hash",
+      "targets": [
+        "data/mvp-contract-v0/internal-contract.schema.json#/$defs/SourceObservation/properties/response_hash"
+      ]
+    },
+    "cursor_ref": {
+      "input_pointer": "/source_item/cursor_ref",
+      "targets": [
+        "data/mvp-contract-v0/internal-contract.schema.json#/$defs/SourceObservation/properties/cursor_ref"
+      ],
+      "rule": "opaque reference to canonical cursor receipt; domain Source/Base receives no ETag or Last-Modified column"
+    },
+    "content_hash": {
+      "input_pointer": "/source_item/content_hash",
+      "targets": [
+        "data/mvp-contract-v0/schema.json#/$defs/Content/properties/content_version_hash"
+      ],
+      "rule": "not copied; Content version hash must be recomputed from the accepted Content hash input"
+    },
+    "dedupe_key": {
+      "input_pointer": "/source_item/dedupe_key",
+      "targets": [
+        "data/mvp-contract-v0/state-machine.json#/idempotency_keys/content_ingest"
+      ],
+      "rule": "source_id + U+001F + external_id, UTF-8, then lowercase SHA-256; collision requires byte comparison and review"
+    },
+    "timestamp_confidence": {
+      "input_pointer": "/source_item/timestamp_confidence",
+      "targets": [
+        "/metrics/slo_eligible"
+      ],
+      "rule": "source or page_metadata may be eligible; inferred/unknown is excluded"
+    },
+    "media": {
+      "input_pointer": "/source_item/media",
+      "targets": [
+        "data/mvp-contract-v0/schema.json#/$defs/MediaCandidate"
+      ],
+      "rule": "no MediaCandidate when empty or rights_status=unknown; no download/proxy"
+    },
+    "rights_status": {
+      "input_pointer": "/source_item/rights_status",
+      "targets": [
+        "/gate/media_policy"
+      ],
+      "rule": "unknown/link_only remains review_required and cannot authorize media persistence"
+    },
+    "pre_review_status": {
+      "input_pointer": "/source_item/pre_review_status",
+      "targets": [
+        "data/mvp-contract-v0/schema.json#/$defs/Content/properties/content_status"
+      ],
+      "rule": "review_pending only after normalization/dedup success; publication remains impossible before ReviewDecision"
+    }
+  },
+  "cursor_contract": {
+    "role": "adapter runtime receipt referenced by SourceObservation.cursor_ref; not a domain/Base field set",
+    "fields": [
+      "etag",
+      "last_modified",
+      "last_seen_external_id",
+      "response_hash",
+      "committed_at"
+    ],
+    "canonical_rule": "canonical-json-v1; cursor_ref = cursor:sha256:<lowercase hex>",
+    "commit_rule": "advance only in the same successful transaction that persists all validated new observations and inbox intent",
+    "no_advance_on": [
+      "timeout",
+      "network_error",
+      "http_429",
+      "http_5xx",
+      "invalid_xml",
+      "partial_parse",
+      "schema_error",
+      "stale_source_epoch",
+      "authorization_or_stop_gate"
+    ],
+    "http_304": "record successful poll health but do not create a SourceObservation or change last_collected_at"
+  },
+  "dedupe_contract": {
+    "primary_identity": [
+      "source_id",
+      "external_id"
+    ],
+    "external_id_precedence": [
+      "non-empty GUID or Atom ID",
+      "normalized canonical entry URL"
+    ],
+    "hard_failure": "missing both stable external ID and canonical URL",
+    "idempotency_encoding": "sha256(UTF8(source_id + U+001F + external_id))",
+    "content_update_detection": "recompute Content content_version_hash; same external identity with changed accepted content hash creates a new Content version, not a second source identity",
+    "cross_source_event": "use proposed event-dedup-v1 only after Content normalization; do not overwrite source-scoped identity"
+  },
+  "time_contract": {
+    "published_at": "source-provided RFC3339 or authorized page metadata; otherwise null",
+    "observed_at": "collector clock at first successful observation",
+    "timestamp_confidence": [
+      "source",
+      "page_metadata",
+      "inferred",
+      "unknown"
+    ],
+    "discovery_latency_ms": "observed_at - published_at",
+    "slo_target_ms": 900000,
+    "slo_eligible": "published_at != null and timestamp_confidence in [source,page_metadata]",
+    "current_candidate": "not eligible from feed-only historical evidence because pubDate was absent"
+  },
+  "media_policy": {
+    "default_rights_status": "unknown",
+    "permitted_current_action": "retain zero media objects and the original content link only",
+    "forbidden_until_authorized": [
+      "download",
+      "proxy",
+      "permanent_store",
+      "derive_license",
+      "treat enclosure presence as permission"
+    ],
+    "review_exit": "rights evidence must name owner, scope, checked_at and evidence pointer before MediaCandidate can leave rights_unknown/review"
+  },
+  "retry_contract": {
+    "retryable": {
+      "network_timeout": [
+        60,
+        300,
+        900
+      ],
+      "http_500_599": [
+        60,
+        300,
+        900
+      ],
+      "http_429": "honor valid Retry-After; clamp to 60..3600 seconds"
+    },
+    "non_retryable_until_change": [
+      "http_401",
+      "http_403",
+      "invalid_authorization",
+      "blocked_platform",
+      "compliance_stop"
+    ],
+    "parse_failure": {
+      "cursor_advance": false,
+      "delays_seconds": [
+        300,
+        900,
+        1800
+      ],
+      "after_attempts": 3,
+      "terminal": "dead_letter_and_manual_review"
+    },
+    "fence_rule": "every retry reloads authorization, stop status, source_config_epoch, source_safety_epoch and task-envelope fences"
+  },
+  "fifteen_minute_metrics": {
+    "window_seconds": 900,
+    "counters": [
+      "poll_attempt_count",
+      "poll_success_count",
+      "items_seen_count",
+      "new_identity_count",
+      "duplicate_identity_count",
+      "review_pending_count",
+      "error_count"
+    ],
+    "per_item": [
+      "published_at",
+      "observed_at",
+      "timestamp_confidence",
+      "slo_eligible",
+      "discovery_latency_ms",
+      "within_15_minutes"
+    ],
+    "denominator": "only slo_eligible=true items",
+    "empty_denominator": "unknown/not_measurable; never PASS",
+    "current_candidate_expected": "not_measurable until an approved reliable publication timestamp path exists"
+  },
+  "pre_review_exit": {
+    "required": [
+      "authorized source active at current fences",
+      "valid parse",
+      "stable external identity",
+      "normalization_status=valid",
+      "dedup_status=unique or linked to existing",
+      "rights_status retained without escalation",
+      "Content.content_status=review_pending"
+    ],
+    "prohibited": [
+      "automatic publication",
+      "public projection",
+      "Base write",
+      "media fetch with unknown rights",
+      "invented published_at"
+    ]
+  },
+  "failure_exits": [
+    {
+      "condition": "no authorized automatic source",
+      "state": "gate_closed_user_approval_required",
+      "side_effects": "none"
+    },
+    {
+      "condition": "missing GUID and canonical URL",
+      "state": "item_rejected_unstable_identity",
+      "cursor_advance": false
+    },
+    {
+      "condition": "missing publication time",
+      "state": "accepted_with_published_at_null",
+      "slo_eligible": false
+    },
+    {
+      "condition": "unknown media rights",
+      "state": "link_only_review_required",
+      "media_persisted": false
+    },
+    {
+      "condition": "inventory/Base shadow mismatch",
+      "state": "stop_and_reconcile",
+      "provider_switch": false
+    },
+    {
+      "condition": "authorization/platform/adapter/fence failure",
+      "state": "blocked_or_stopped_per_existing_state_machine",
+      "enabled": false
+    }
+  ]
+}
+

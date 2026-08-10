@@ -1,0 +1,65 @@
+{
+  "acceptance_exit": "交付一份开发可直接照做的public API v0.1合同：两端点所有字段/类型/nullable/来源、排序/cursor/分页、HTTP状态和Problem reasonCode固定；与12条演示UI、数据部映射和accepted路由无冲突；列出成功及至少非法参数、未知publicId、部分数据/DB忙三类失败用例；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/decisions/system/2026-08-03-F1+1-公开读模型与API接线-v0.4-successor-accepted.md",
+    "docs/spec.md",
+    "docs/progress.md",
+    "docs/handoff.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-03-公开读模型与API接线v0.4-accepted收口报告.md"
+  ],
+  "authorization_evidence": "用户于2026-08-03回复“可以”，确认U1物理隔离m3-shadow/public-synthetic双profile与U2最小v0.4 successor/public-demo-*。证据指向当前统筹对话及proposed ADR。",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T23:56+08:00",
+      "evidence": "用户要求持续推进到有前端、必要后台数据库和核心功能可用的初版，并已确认公开信息聚合方向。",
+      "state": "user_confirmed"
+    },
+    {
+      "at": "2026-08-03T12:33+08:00",
+      "evidence": "用户于2026-08-03回复“可以”，确认U1物理隔离m3-shadow/public-synthetic双profile与U2最小v0.4 successor/public-demo-*。证据指向当前统筹对话及proposed ADR。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/执行成员:/root/product_public_contract_successor",
+  "completion_class": "standard",
+  "confirmation": "产品部交付后由统筹核收为本地实现合同；开发部实现，数据/测试/安全独立复验；不改变真实部署或外部发布门禁。",
+  "created_at": "2026-08-02T23:56+08:00",
+  "department": "产品部",
+  "details": "仅覆盖GET /api/public/feed?cursorAt=&cursorId=&source=&contentType=与GET /api/public/stories/{publicId}，服务本地公开首页/详情的12条synthetic演示数据链路。以Spec、accepted ADR、设计视图输入、当前UI和冻结v0.3领域模型为输入，定义准确request/response DTO、字段来源与public allowlist、null/unknown/受限/无图/原文禁用语义、排序和keyset cursor绑定、首尾页/no-more、detail 404与稳定Problem JSON、最大页大小/默认值、非法参数/跨查询cursor/数据部分缺失/DB忙/内部hash或join不一致的失败出口。公开DTO不得暴露internal AuditEvent/TaskEnvelope、原始平台包、私密URL、stack、SQL、凭证、未审核Bundle或未published Projection；不得创建public_story第二真值。客户端已有分类/关键词/状态预览哪些保留本地派生、哪些进入API必须明确，避免接口无必要膨胀。只出候选实现合同和验收矩阵，不改app/data/accepted ADR，不启用外部能力。",
+  "domain_stage": "产品实现合同",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "DTO需要第二public_story真值、绕过Publication/PublishedProjection/ReviewDecision，或暴露internal/private/未审核字段：P0/P1 FAIL并停止冻结。",
+    "cursor、排序、筛选或null/unknown语义不确定，导致同一请求可重复/跳页/猜测字段：保持候选未冻结，列出唯一待决点给统筹。",
+    "数据部证明12条synthetic published映射与当前五fence/Source状态不可满足：合同不得假设数据存在，改为明确blocked/empty启动出口并等待前置数据任务。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未把59个真实Source绑定到synthetic内容；未新增第60行、public_story或第二发布真值；未改v0.3/M3 hash或既有accepted正文；未把产品accepted写成数据/代码/安全/测试/部署已通过；未暗示真实人工审核或开启任何外部I/O。",
+  "node": "把accepted公开路由、数据领域图和已完成UI输入收敛为下一开发切片可直接实现的最小只读API合同",
+  "pointers": [
+    "docs/spec.md",
+    "docs/decisions/system/2026-08-01-F1+1-M4本地Kickoff系统路线-accepted.md",
+    "design/ui/F1+1-首批页面实现级设计合同-v0.1.md",
+    "docs/collaboration/部门/设计部/报告/2026-08-02-M4-C层四页组件与状态实现交接清单.md",
+    "app/src/features/stories/demo-data.ts",
+    "docs/collaboration/tasks/TASK-20260802-EFA8A7.json"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-03-公开读模型与API接线v0.4-accepted收口报告.md",
+  "resolution": null,
+  "revision": 7,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-7AB283",
+  "title": "冻结首版公开feed与detail API实现合同",
+  "unverified": [
+    "v0.4 machine schema/generator/fixtures/manifest/hash、双库/profile ledger、migration/seed/repository/API/cursor/Problem/DB busy、前端接线及安全/测试/设计独立复验尚未实施；真实外部能力持续关闭。"
+  ],
+  "updated_at": "2026-08-03T12:45+08:00",
+  "verified": [
+    "用户U1/U2授权证据已在任务真值；新 accepted ADR 未改既有 accepted 正文；双 profile/双 SQLite、v0.4 字段与12个 public-demo-*、feed/detail DTO/cursor/Problem、迁移/回退/失败路径和外部门禁已固化；五份文档链接检查无缺失；git diff --check与任务doctor通过；external_calls=0。"
+  ]
+}

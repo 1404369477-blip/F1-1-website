@@ -1,0 +1,90 @@
+[
+  {
+    "type": "auto_number",
+    "name": "capture_id",
+    "style": {
+      "rules": [
+        {
+          "type": "text",
+          "text": "CAP-"
+        },
+        {
+          "type": "created_time",
+          "date_format": "yyyyMMdd"
+        },
+        {
+          "type": "incremental_number",
+          "length": 4
+        }
+      ]
+    }
+  },
+  {
+    "type": "text",
+    "name": "raw_url",
+    "style": {
+      "type": "url"
+    }
+  },
+  {
+    "type": "text",
+    "name": "capture_note"
+  },
+  {
+    "type": "created_at",
+    "name": "captured_at",
+    "style": {
+      "format": "yyyy-MM-dd HH:mm"
+    }
+  },
+  {
+    "type": "select",
+    "name": "normalization_status",
+    "multiple": false,
+    "options": [
+      {
+        "name": "pending"
+      },
+      {
+        "name": "valid"
+      },
+      {
+        "name": "invalid"
+      },
+      {
+        "name": "needs_review"
+      }
+    ]
+  },
+  {
+    "type": "text",
+    "name": "normalization_error"
+  },
+  {
+    "type": "select",
+    "name": "dedup_status",
+    "multiple": false,
+    "options": [
+      {
+        "name": "pending"
+      },
+      {
+        "name": "unique"
+      },
+      {
+        "name": "linked_existing"
+      },
+      {
+        "name": "needs_review"
+      }
+    ]
+  },
+  {
+    "type": "text",
+    "name": "dedup_match_source_id"
+  },
+  {
+    "type": "text",
+    "name": "source_id"
+  }
+]

@@ -1,0 +1,65 @@
+{
+  "acceptance_exit": "提交修订后的Spec v1与ADR proposed定版候选：逐项映射测试P0-01至P0-09、安全R1-R13、开发A层合同；A/B/C门禁清楚、无第二命名或第二领域真值、git diff check通过，完成任务返回TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/spec.md",
+    "docs/decisions/system/2026-08-01-F1+1-M4本地Kickoff系统路线-proposed.md",
+    "docs/progress.md"
+  ],
+  "authorization_evidence": "用户已授权本地技术选型、工程合同与app开工；当前为三方复核后的合同修订，DEC-20260801T223248-7C91D6。",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T00:14+08:00",
+      "evidence": "用户已授权本地技术选型、工程合同与app开工；当前为三方复核后的合同修订，DEC-20260801T223248-7C91D6。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "产品与数据修订完成后由安全部和测试部只读复验；两方A轴PASS后再由产品部执行accepted定版，随后开发部初始化app。",
+  "created_at": "2026-08-02T00:14+08:00",
+  "department": "产品部",
+  "details": "读取开发部M4工程路线运行时可行性报告、安全部M4本地安全门禁报告、测试部Spec-v1与M4-ADR跨合同报告。只修改docs/spec.md、ADR-M4-KICKOFF-001 proposed文件及必要progress。统筹部统一基线：source入队前必须adapter ready、authorization valid、platform allowed且各阻断态可达；发布未知结果统一为reconcile_wait；版本字段统一source_config_epoch，内部TaskEnvelope固定source_config_epoch/source_safety_epoch/authorization_version/policy_epoch/recovery_epoch及lease/deadline；领域模型采用不可变ReleaseBundle与ReviewDecision，Publication使用稳定public_id、publish_generation、approved_bundle_hash和同key对账；payload hash采用版本化canonical JSON SHA-256；物理表到领域实体映射唯一。吸收安全报告R1-R13的A层静态默认值、拒绝条件和fail-closed语义，B/C运行收据只阻断实现验收。运行时静态候选固定Node 24.18.0、Next 16.2.11、npm 11.16.0、默认单Web加0或1个同机mock worker，并写明server-only SQLite/WAL/BEGIN IMMEDIATE/busy timeout/有限重试/migration/recovery。实际路由冻结为公开流 /、详情 /stories/[publicId]、审核 /admin/reviews、信源 /admin/sources；设计route hint不再作为业务真值。仍保持fixture/mock/manual-only、真实Base/provider/Collector/采集/表单/AI/媒体抓取/外部发布/部署/付费/外发关闭。本任务形成proposed定版候选，不提前改accepted，不写app。",
+  "domain_stage": "M4 A轴合同修订",
+  "event_receipts": [
+    "MIL-20260802T004434-D8C4AF; DEC-20260801T223248-7C91D6"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若统一基线与accepted ADR-SOURCE-001或用户授权冲突，保持proposed并定位精确冲突，不修改accepted ADR。",
+    "若数据部机器合同无法承载ReleaseBundle/ReviewDecision/reconcile_wait/TaskEnvelope，先把接口写成待数据复核且阻断定版，不在Spec另造实现字段。",
+    "若官方版本候选在后续初始化时漂移，只允许B层重新核验安全patch并回写新proposed修订，不用Node25或latest替代。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已读取docs/collaboration/错题集.md；确认未创建第二领域schema或真值、未使用source_config_version或publish_unknown、未把proposed升级accepted、未把页面设计用户确认追加为开工门禁、未进行飞书写入/真实外部IO/业务代码修改；runtime envelope与PublishedProjection仅引用数据部候选并保留未核收边界。",
+  "node": "关闭A轴P0并形成可定版的Spec与系统ADR候选",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-01-M4工程路线运行时可行性审核报告.md",
+    "docs/collaboration/部门/安全部/报告/2026-08-01-M4本地安全门禁与外部IO隔离-审核报告.md",
+    "docs/collaboration/部门/测试部/报告/2026-08-01-Spec-v1与M4-ADR跨合同可验收性复核报告.md",
+    "docs/decisions/system/2026-08-01-F1+1-M4本地Kickoff系统路线-proposed.md"
+  ],
+  "report": "产品部完成TASK-20260802-131D64：形成Spec v1与M4系统ADR proposed定版候选，吸收三方复核并关闭A轴静态P0，数据v0.2与B/C继续并行未验证。",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-131D64",
+  "title": "吸收三方复核修订M4系统合同",
+  "unverified": [
+    "数据部TASK-20260802-90B1C2的v0.2 schema/fixture/hash/计数机械核验与最终核收",
+    "B层package/lock/scaffold与C层Node24安装、SQLite WAL/事务/recovery、UI/API/安全deny-all/build/test运行收据",
+    "真实本地端口、生产存储、真实Base/provider/Collector/采集/表单/AI/媒体抓取/外部发布/部署/付费/外发与生产权限"
+  ],
+  "updated_at": "2026-08-02T00:47+08:00",
+  "verified": [
+    "任务已领取，三方开发/安全/测试报告已读取并吸收",
+    "A轴P0-01至P0-09静态合同、R1至R13安全predicate和A/B/C门禁已落盘并交叉映射",
+    "canonical collection_onboarding_status、三门入队、阻断/停止/取消/dead-letter可达、四条路由、reconcile_wait/emergency_stopped已统一",
+    "ReleaseBundle、ReviewDecision、Publication、PublishedProjection派生、canonical-json-v1、TaskEnvelope完整字段与runtime-envelope.schema.json候选已对齐",
+    "设计合同已核收；Appica/Base UI仅作行为语义参考；accepted ADR未修改；未写app业务代码、未操作飞书和真实外部IO",
+    "三路只读对抗审查无新增P0/P1；git diff --check、目标JSON解析、目标链接、Markdown围栏和agent_team_task doctor通过"
+  ]
+}

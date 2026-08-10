@@ -1,0 +1,52 @@
+{
+  "acceptance_exit": "正式安全部窗口提交final PASS/FAIL、P0/P1/P2与TASK_STATE_OK；projection-first静态成立；三项探针fail closed；DTO/Problem/headers零泄露、无fallback/外联；无DB/.next/端口/临时残留；P0=0/P1=0才PASS。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-04-projection-first公开API正式窗口安全复审.md"
+  ],
+  "authorization_evidence": "用户明确要求任务必须发送到原有对应部门对话窗口并可见核验；内部安全通道已停止。",
+  "authorization_history": [
+    {
+      "at": "2026-08-04T15:54+08:00",
+      "evidence": "用户明确要求任务必须发送到原有对应部门对话窗口并可见核验；内部安全通道已停止。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "安全与测试正式窗口均PASS后统筹才ACK AC25D4并派前端接线。",
+  "created_at": "2026-08-04T15:54+08:00",
+  "department": "安全部",
+  "details": "本任务替代内部不可见执行通道TASK-20260804-63D5A3。严格只读AC25D4最终候选，只写安全部精简final报告和任务状态。冻结候选SHA；静态确认Projection起步、批准发布链、无demo fallback/public_story/外联/CORS/Host信任。行为只做三项各一次：破坏fence/hash/ledger后feed整个500且零部分/零fallback；noncanonical或跨筛选cursor拒绝；恶意query/publicId的closed Problem零敏感泄露。不得跑测试部套件/build/full check/浏览器/修改代码/同质扩展。",
+  "domain_stage": "公开API正式窗口安全复验",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "损坏候选被跳过/部分返回/静态fallback或绕过批准链：P0/P1 FAIL。",
+    "cursor跨scope通过或DTO/Problem泄露内部值、CORS/Host信任：P1 FAIL。",
+    "需要修改代码或运行build/full check/测试部套件才能判断：NOT_RUN。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未把探针夹具错误归因产品；未重跑该类别；未运行Vitest套件/build/full check/浏览器/网络；未修改app/Spec/ADR/data/design/lockfile；PASS范围限本轮P0=0/P1=0安全准入",
+  "node": "由原安全部可见对话窗口审查projection-first完整性与零泄露",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260804-AC25D4.json",
+    "docs/collaboration/tasks/TASK-20260804-63D5A3.json"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-04-projection-first公开API正式窗口安全复审.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260804-000EA6",
+  "title": "正式安全部窗口接续公开API安全复验",
+  "unverified": [
+    "cursor scope单次动态探针因fixture payload字段命名错误导致自建cursor无效，遵守一次边界未重跑；浏览器/前端、系统级no-egress、真实外部能力、生产配置与部署未验证"
+  ],
+  "updated_at": "2026-08-04T18:55+08:00",
+  "verified": [
+    "9个冻结SHA-256一致；projection-first全链先验证控制流；HTTP/Problem/cursor静态边界；完整性三损坏单次探针返回500 PUBLIC_READ_INTEGRITY_FAILED且无fallback/泄漏；恶意feed/detail输入单次探针分别返回400 PUBLIC_QUERY_INVALID/PUBLIC_ID_INVALID且无回显/CORS；临时目录无残留"
+  ]
+}

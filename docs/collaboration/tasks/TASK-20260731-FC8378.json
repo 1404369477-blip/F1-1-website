@@ -1,0 +1,51 @@
+{
+  "acceptance_exit": "提交测试部final审核报告并给出pass/fail、问题分级、失败路径与证据；检查三份文档一致性、无残留待回答措辞、Spec验收标准可测、状态/谓词/幂等与在途栅栏合同、人工审核版本绑定、A/D未越权、真实飞书未操作、Markdown/本地链接、doctor与git diff --check；列出未验证项和错题自检；complete并输出TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-07-31-即时采集门禁文档合同-复验报告.md"
+  ],
+  "authorization_evidence": "主会话用户于2026-07-31明确确认即时采集门禁。",
+  "authorization_history": [
+    {
+      "at": "2026-07-31T22:14+08:00",
+      "evidence": "主会话用户于2026-07-31明确确认即时采集门禁。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "测试部/019fb379-9212-7e80-a5df-587d339936c4",
+  "completion_class": "audit",
+  "confirmation": "用户已明确选择规范化与查重后立即采集且公开仍人工审核；复杂合同变更按项目规则独立复验。",
+  "created_at": "2026-07-31T22:14+08:00",
+  "department": "测试部",
+  "details": "独立只读复验产品部对用户即时采集决定的吸收结果。核对docs/spec.md、信源库proposed决策包和docs/progress.md：用户门禁必须从unknown转为已确认；规范化与查重后不等待身份或F1相关性核验，identity/relevance unknown可入队；适配器支持、合法授权和平台访问控制仍是技术前置；幂等入队、停用/授权失效在途栅栏、失败状态归属、人工审核绑定确定内容版本应自洽；开始采集不得等同自动公开；A/D架构、Base真值和真实飞书资源创建仍保持proposed/待授权。不得修改上游文档或访问真实飞书资源。",
+  "domain_stage": "M2需求确认",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若仍要求身份或相关性verified才能采集、仍把该门禁列为unknown、可绕过适配器/授权/访问控制、采集成功可直接公开、人工审核未绑定确定内容版本、A/D被写成用户已选择或真实飞书获授权，均至少判为重要问题；测试部不得自行修改产品文档。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已读取错题集，当前无历史条目；专项检查旧待回答门禁、身份/相关性误阻断、CLI冒充授权、重复入队、早到消费者、停用/授权失效竞态、采集等同公开、旧hash批准复用和A/D授权扩张，均未命中。子Agent只读对抗复核维持pass，并促使明确progress时态一般问题及用户确认与proposed安全映射边界。",
+  "node": "M2-信源即时采集门禁独立复验",
+  "pointers": [
+    "docs/spec.md",
+    "docs/decisions/system/2026-07-31-F1+1-信源库维护决策包-proposed.md",
+    "docs/progress.md"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-07-31-即时采集门禁文档合同-复验报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260731-FC8378",
+  "title": "复验即时采集门禁文档合同",
+  "unverified": [
+    "outbox、队列、CAS、双epoch、授权检查、内容hash和发布重试尚无运行实现；真实平台适配器、授权、15分钟目标、飞书资源和移动端均未验证；上游未操作真实飞书仅有任务自述且无独立外部操作日志；A/D和真实资源仍待授权；progress的复验前时态待统筹部在核收后同步。"
+  ],
+  "updated_at": "2026-07-31T22:27+08:00",
+  "verified": [
+    "Spec、proposed决策包与progress一致吸收2026-07-31即时采集确认；旧待回答措辞清零；identity/relevance unknown不阻断；适配器/合法授权/monitorability/停止锁技术门禁、唯一outbox操作、队列确认后启用、双epoch在途栅栏、失败状态归属、人工审核revision/hash、A/D proposed和真实飞书待授权边界均通过；本地链接、Markdown、三份上游哈希、doctor和git diff --check通过。"
+  ]
+}

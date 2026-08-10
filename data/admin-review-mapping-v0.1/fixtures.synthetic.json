@@ -1,0 +1,33 @@
+{
+  "fixture_version": "admin-review-mapping-fixtures-v0.1",
+  "synthetic_only": true,
+  "external_calls": 0,
+  "cases": [
+    {
+      "case_id": "case-approve-reserves-publication",
+      "before": {"decision_count": 0, "publication_count": 0, "outbox_count": 0, "task_envelope_count": 0, "projection_count": 0, "content_status": "review_pending"},
+      "after": {"decision_count": 1, "decision": "approved", "publication_count": 1, "publication_status": "queued", "public_id": "public-review-synth-001", "content_status": "publish_queued", "outbox_count": 0, "task_envelope_count": 0, "projection_count": 0},
+      "reachable": {"admin_publish_path": "/api/admin/publications/public-review-synth-001/publish", "public_story_status": 404}
+    },
+    {
+      "case_id": "case-manual-publish-enqueues-same-key",
+      "before": {"publication_count": 1, "publication_status": "queued", "public_id": "public-review-synth-001", "idempotency_key": "publish:publication-review-synth-001:bundle:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "reconcile_key": "reconcile:publication-review-synth-001:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "outbox_count": 0, "task_envelope_count": 0, "projection_count": 0},
+      "after": {"publication_count": 1, "publication_status": "queued", "public_id": "public-review-synth-001", "idempotency_key": "publish:publication-review-synth-001:bundle:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "reconcile_key": "reconcile:publication-review-synth-001:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "outbox_count": 1, "task_envelope_count": 1, "outbox_idempotency_key": "publish:publication-review-synth-001:bundle:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "envelope_idempotency_key": "publish:publication-review-synth-001:bundle:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "outbox_reconcile_key": "reconcile:publication-review-synth-001:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "envelope_reconcile_key": "reconcile:publication-review-synth-001:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "projection_count": 0}
+    },
+    {
+      "case_id": "case-publish-completion-enables-public-story",
+      "before": {"publication_count": 1, "publication_status": "publishing", "public_id": "public-review-synth-001", "publish_generation": 1, "projection_count": 0, "public_story_status": 404},
+      "after": {"publication_count": 1, "publication_status": "published", "public_id": "public-review-synth-001", "publish_generation": 1, "projection_count": 1, "projection_public_id": "public-review-synth-001", "projection_publish_generation": 1, "projection_status": "published", "public_story_status": 200}
+    },
+    {
+      "case_id": "case-publish-unknown-preserves-identity",
+      "before": {"publication_count": 1, "publication_status": "publishing", "public_id": "public-review-synth-001", "publish_generation": 1, "outbox_count": 1, "task_envelope_count": 1},
+      "after": {"publication_count": 1, "publication_status": "reconcile_wait", "public_id": "public-review-synth-001", "publish_generation": 1, "outbox_count": 1, "task_envelope_count": 1, "projection_count": 0, "public_story_status": 404}
+    },
+    {
+      "case_id": "case-reject-has-no-public-identity",
+      "before": {"decision_count": 0, "publication_count": 0, "outbox_count": 0, "task_envelope_count": 0, "projection_count": 0},
+      "after": {"decision_count": 1, "decision": "rejected", "publication_count": 0, "outbox_count": 0, "task_envelope_count": 0, "projection_count": 0}
+    }
+  ]
+}

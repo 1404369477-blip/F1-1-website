@@ -1,0 +1,51 @@
+{
+  "acceptance_exit": "交付独立安全处置报告：给出唯一推荐、最小必要动作、删除前后验证、回退/重新生成路径、凭证轮换影响、P0/P1/P2和未验证项；不含任何凭证值；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-02-旧机Obsidian-Local-REST凭证处置安全复核.md"
+  ],
+  "authorization_evidence": "用户已要求对新Mac迁移进行完整复验；统筹发现迁移明确排除的旧机Local REST凭证重新出现，需在清理前独立安全复核。",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T18:45+08:00",
+      "evidence": "用户已要求对新Mac迁移进行完整复验；统筹发现迁移明确排除的旧机Local REST凭证重新出现，需在清理前独立安全复核。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "本任务只做只读安全复核；删除、移动、重生成和插件配置变更仍等待用户单独确认。",
+  "created_at": "2026-08-02T18:45+08:00",
+  "department": "安全部",
+  "details": "仅只读核验目标工作区 .obsidian/plugins/obsidian-local-rest-api/data.json 的文件元数据、迁移排除合同、插件启用状态、Git跟踪/忽略状态和运行占用。禁止读取或输出JSON值、API key、私钥、证书正文；禁止删除、移动、复制、chmod、启动Obsidian、生成新凭证或修改任何配置。形成删除旧文件并在新机按需重新生成的风险与回退建议，明确是否需要同步移除插件、是否应仅加入.gitignore、旧客户端失效影响和用户确认点。",
+  "domain_stage": "project-migration-target-credential-disposition-review",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 无法证明文件属于旧机凭证或仍被进程占用：停止处置建议，要求用户确认用途，不删除。",
+    "2) 检查可能读取/输出key、private key、cert正文或把文件复制进报告/备份：立即停止并按安全事故回报。",
+    "3) 删除会破坏当前依赖该API的自动化且无重新生成路径：保持文件不动，建议先轮换与迁移客户端。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未输出或持久化凭证值；未删除/移动/复制/chmod/启动/重生成；未修改.gitignore或插件；未将默认loopback、lsof无句柄或仓库无引用夸大为当前运行态或全机证明；未改写历史pre-clean状态",
+  "node": "项目迁移/目标机复验/敏感配置处置",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-02-旧机Obsidian-Local-REST凭证处置安全复核.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-02-旧机Obsidian-Local-REST凭证处置安全复核.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-026EC3",
+  "title": "只读复核旧机Obsidian Local REST凭证处置边界",
+  "unverified": [
+    "Obsidian进程占用、旧配置安全开关与监听状态、外部客户端依赖、删除/重生成后的客户端失效与证书信任、插件供应链来源"
+  ],
+  "updated_at": "2026-08-02T19:13+08:00",
+  "verified": [
+    "目标文件元数据与结构、迁移排除合同、Git未跟踪与精确忽略规则、插件启用/版本、缺失配置重生成逻辑、lsof当时无打开句柄、仓库范围客户端引用扫描"
+  ]
+}

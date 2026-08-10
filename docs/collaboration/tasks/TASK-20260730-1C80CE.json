@@ -1,0 +1,56 @@
+{
+  "acceptance_exit": "报告覆盖功能与流程、可见接口或静态资源证据、架构推断及置信度、可借鉴与不应照搬项；关键结论带直接链接或可复核证据，并明确仅凭公开站点无法确认的后端、安全和基础设施细节。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/研究部/报告/2026-07-30-AI-Hot-公开产品与技术行为调研.md"
+  ],
+  "authorization_evidence": "当前主会话用户消息：核心功能完全可以跟参考站一样，仅信源不同，并要求多Agent深度调研。",
+  "authorization_history": [
+    {
+      "at": "2026-07-30T22:45+08:00",
+      "evidence": "当前主会话用户消息：核心功能完全可以跟参考站一样，仅信源不同，并要求多Agent深度调研。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "研究部/019fb36c-1f86-78d3-a6d7-f87f124bd710",
+  "completion_class": "standard",
+  "confirmation": "用户明确要求深度调研参考站并学习其核心功能、架构、接口、安全和稳定性。",
+  "created_at": "2026-07-30T22:45+08:00",
+  "department": "研究部",
+  "details": "对 https://aihot.virxact.com/all?page=2&anchorAt=1784285499568 及其公开可访问页面做只读、非侵入式调研。还原功能清单、信息架构、核心用户流程、页面状态、公开网络请求与数据字段、分页和图片代理线索、前端技术及部署信号。所有结论区分直接证据、合理推断与无法确认；不得绕过登录、认证、反爬或探测非公开资产。产出研究部工作报告。",
+  "domain_stage": "M2风险调研",
+  "event_receipts": [
+    "LOG_OK | 2026-07-30T23:16+08:00 | TASK-20260730-1C80CE | MIL-20260730T231653-334648 | docs/collaboration/部门/研究部/日志/2026-W31.md"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "站点打不开时记录真实错误并用公开缓存或搜索结果补证；遇到登录边界立即停止；遭遇反自动化时只分析公开HTML、JS和响应头。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查 docs/collaboration/错题集.md，当前无已登记条目命中；另已自检未把缺 CSP 写成漏洞、未把公开 DTO 写成数据库 schema、未把签名代理写成 SSRF 已解决、未把 anchorAt/详情路径/403 成因写成确定事实、未扩大 MVP 授权",
+  "node": "M2-参考站调研",
+  "pointers": [
+    "docs/spec.md"
+  ],
+  "report": "完成 AI Hot 公开产品与技术行为调研报告；关键结论均区分直接证据、合理推断与无法确认，并明确可借鉴、不应照搬及后续验证项。",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260730-1C80CE",
+  "title": "深度调研 AI Hot 公开产品与技术行为",
+  "unverified": [
+    "anchorAt 正式语义、缺参下一页的实际客户端行为、详情返回路径的上下文恢复机制和部分 403 的成因待复测或无法确认",
+    "数据库、ORM、队列、采集器、LLM、审核权限、审计、容灾、备份、限流额度、WAF、成本和 SLA 无法从公开站点确认",
+    "图片代理完整 SSRF/资源安全内控，以及收藏写入、反馈提交、分享海报和部分异常状态未做写入式验证"
+  ],
+  "updated_at": "2026-07-30T23:18+08:00",
+  "verified": [
+    "已复核精选、全部动态、详情、日周月报、主题、收藏、反馈与 Agent 接入的信息架构、核心流程和页面状态",
+    "已复核指定页面的 40 条首屏、复合游标、站内 feed 字段、客户端去重、重试和有限自动加载行为",
+    "已复核 Next.js App Router/RSC、nginx、Tencent EdgeOne、缓存、发布标识、v1 OpenAPI、ETag/304、CORS 与签名图片代理等公开技术信号",
+    "已完成产品、技术、架构安全三路并行取证及独立对抗性报告审查，验收出口无阻断"
+  ]
+}

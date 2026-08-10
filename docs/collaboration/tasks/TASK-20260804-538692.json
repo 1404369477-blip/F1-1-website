@@ -1,0 +1,63 @@
+{
+  "acceptance_exit": "开发部正式窗口提交精简final报告与TASK_STATE_OK；首页和详情运行时零demo-data/fixture/SQLite依赖，只消费closed公开DTO；feed初始12条、四类筛选、loading/error/empty/no-more、媒体占位与无图状态正确；detail/related/404/500/重试正确且零静态fallback；同源相对API请求，无Host/Forwarded拼接和外联；既有深浅主题、键盘焦点、44px触控与文案合同不退化；一次集成聚焦测试与一次typecheck PASS；无DB/.next/端口/临时残留。完成后交正式测试部与设计部做浏览器/视觉互补验收，未PASS前不ACK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/src/features/stories/public-api.ts",
+    "app/src/features/stories/feed-experience.tsx",
+    "app/src/features/stories/story-detail-experience.tsx",
+    "app/src/app/stories/[publicId]/page.tsx",
+    "app/src/app/stories/[publicId]/not-found.tsx",
+    "app/src/components/f1/story-parts.tsx",
+    "app/src/components/f1/f1-page-shell.tsx",
+    "app/src/app/layout.tsx",
+    "app/src/app/globals.css",
+    "app/src/tests/public-ui.test.ts",
+    "docs/collaboration/部门/开发部/报告/2026-08-04-公开前端API单一数据源接线实现报告.md"
+  ],
+  "authorization_evidence": "用户确认继续并要求所有执行通过原有对应部门窗口；公开Repository/feed/detail API已通过正式测试部和安全部并ACK。",
+  "authorization_history": [
+    {
+      "at": "2026-08-04T18:56+08:00",
+      "evidence": "用户确认继续并要求所有执行通过原有对应部门窗口；公开Repository/feed/detail API已通过正式测试部和安全部并ACK。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/019fb374-7c86-7882-9e51-76114ce69e7f",
+  "completion_class": "standard",
+  "confirmation": "开发完成后由原08测试部验证真实HTTP/交互，原04设计部验证390/1440深浅主题与可访问性；两者P0/P1=0前不ACK。",
+  "created_at": "2026-08-04T18:56+08:00",
+  "department": "开发部",
+  "details": "由原06开发部正式窗口执行。严格依据accepted ADR和已ACK AC25D4，只修改公开前端页面/组件/客户端数据适配/对应测试与开发报告；不得修改Repository/API/migration/seed/四root/data正式包/Spec/accepted ADR/design规范/lockfile。浏览器端使用同源相对路径调用GET /api/public/feed与GET /api/public/stories/{publicId}，禁止服务端自拼Host/Forwarded URL；运行时不得import demo-data.ts、不得直接读fixture/SQLite、不得保留静态fallback。保留现有F1+1视觉、深浅主题、四类筛选、来源/状态、12条卡片、详情导语/正文/关键点/related、无图/受限/原链禁用状态；增加明确loading/error/empty/no-more和重试交互，错误只显示安全中文文案。列表筛选映射到API query，详情public-demo-*深链可用；API失败、完整性500、404时不得回落演示数据。先形成可运行前端接线产出，再只跑一次前端-API集成聚焦测试与一次typecheck；不跑full check/build/浏览器验收，由后续正式测试/设计窗口完成。",
+  "domain_stage": "公开前端API接线",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任何运行时仍import demo-data.ts、读取fixture/DB或API失败时显示静态演示内容：P0/P1 FAIL。",
+    "筛选/detail/related/loading/error/empty/no-more/404/500映射错误，或现有可访问性与主题退化：P1 FAIL。",
+    "服务端依据Host/Forwarded构造自请求、产生外联，或越界修改API/DB/data/ADR/design/lock：P0/P1 FAIL。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未改Repository/API/migration/seed/data/Spec/accepted ADR/design/lockfile，未新增依赖、未联网、未开端口；验证次数严格为一次聚焦测试加一次typecheck；既有tsbuildinfo未改写。",
+  "node": "移除运行时静态demo依赖，让现有信息流与详情页消费已核收公开DTO",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260804-AC25D4.json",
+    "docs/collaboration/tasks/TASK-20260804-C30FD0.json",
+    "docs/collaboration/tasks/TASK-20260804-000EA6.json"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-04-公开前端API单一数据源接线实现报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260804-538692",
+  "title": "将公开前端切换到feed-detail API单一数据源",
+  "unverified": [
+    "未运行full check/build/browser；真实HTTP与hooks状态迁移交原测试部，390/1440深浅主题与视觉/交互交原设计部；客户端404视图不声明页面文档HTTP 404。"
+  ],
+  "updated_at": "2026-08-07T19:28+08:00",
+  "verified": [
+    "固定Node24聚焦集成测试1次：1 file、8/8 PASS；固定Node24 typecheck 1次：exit 0；运行时静态审查与只读对抗审查确认相对同源closed API、零demo/fixture/DB/static fallback。"
+  ]
+}

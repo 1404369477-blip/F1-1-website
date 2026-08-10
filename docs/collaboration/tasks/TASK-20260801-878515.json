@@ -1,0 +1,54 @@
+{
+  "acceptance_exit": "提交开发部预检报告、可重复的本地工具链清单、依赖风险、scratch探针及验证结果、app布局与代码ADR候选、正式初始化输入门槛；探针可删除且不污染app，未触碰外部系统；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-01-M4工程开工预检报告.md",
+    "scratch/product-experiments/m4-preflight/probe.py"
+  ],
+  "authorization_evidence": "用户授权团队自主技术选型和本地app初始化，并要求全员开工；高风险外部动作仍未授权。决策日志DEC-20260801T223248-7C91D6。",
+  "authorization_history": [
+    {
+      "at": "2026-08-01T22:35+08:00",
+      "evidence": "用户授权团队自主技术选型和本地app初始化，并要求全员开工；高风险外部动作仍未授权。决策日志DEC-20260801T223248-7C91D6。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部当前会话",
+  "completion_class": "standard",
+  "confirmation": "本任务只做本地预检与scratch探针；正式app初始化需产品路线审核落账后由统筹部续派。",
+  "created_at": "2026-08-01T22:35+08:00",
+  "department": "开发部",
+  "details": "用户已授权本地技术选型与app初始化，但正式app必须等待产品部系统路线通过审核并落为accepted。请开发部先完成开工预检：检查当前dirty worktree与app占位、可用Node/Python/包管理器/数据库工具、国内网络与依赖风险；阅读现有proposed架构，针对最小Web+API+worker+DB闭环做可抛弃探针，探针只能放scratch/，不得成为正式实现。形成app源码/测试/配置布局建议、代码级ADR候选、命令与环境变量清单、无外部调用mock策略及切换到正式初始化的精确门槛。不得部署、付费、访问真实Base、真实采集或外发；不得先写正式app业务代码。",
+  "domain_stage": "M4工程Kickoff预检",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "候选技术栈在本机无法稳定安装/运行或中国大陆依赖风险过高时保留证据并提出更小替代，不强行锁栈。",
+    "产品system ADR尚未accepted时不得初始化正式app；只完成预检与可抛弃探针。",
+    "现有dirty worktree与任务文件冲突时停止相关写入，不覆盖或清理用户/其他部门改动。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未将proposed架构或代码ADR写成accepted；未把SQLite探针写成生产数据库结论；未隐藏端口绑定阻断，已列为后续正式app门槛；未修改或清理既有dirty worktree；未接触真实Base、真实token、外部付费API或外发内容。",
+  "node": "验证本机工程工具链、候选架构可运行性与正式初始化前置条件",
+  "pointers": [
+    "docs/decisions/system/2026-07-30-F1+1-MVP与系统架构决策包-proposed.md",
+    "docs/spec.md",
+    "docs/conventions.md"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-01-M4工程开工预检报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260801-878515",
+  "title": "完成M4本地工程开工预检与可抛弃技术探针",
+  "unverified": [
+    "真实127.0.0.1端口启动、第三方依赖安装与中国大陆网络稳定性、Node LTS或Python正式Web栈、Postgres/Redis/部署、真实Base/平台采集/15分钟时效、AI与图片路线仍未验证。"
+  ],
+  "updated_at": "2026-08-01T22:48+08:00",
+  "verified": [
+    "已核对既有dirty worktree与app占位；已盘点Node/Python/包管理器/SQLite/数据库服务；无socket进程内探针两次运行与compile检查通过，覆盖路由、SQLite唯一约束、双worker重复投递、坏载荷、限流、权限拒绝和未知路由；external_calls=0；未初始化app且未访问外部系统。"
+  ]
+}

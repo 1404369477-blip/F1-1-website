@@ -1,0 +1,56 @@
+{
+  "acceptance_exit": "用户可从交互样板完整判断审核、拒绝和显式手动发布路径；四张基础视觉证据与关键状态可见，深浅主题和1440/390布局符合既有F1+1设计语言；实现差异边界、NOT_RUN和最终用户确认点明确，开发可在用户确认后复用布局/token落地。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "design/ui/F1+1-M5-admin-reviews-preview-v0.1/index.html",
+    "design/ui/F1+1-M5-admin-reviews-preview-v0.1/design-notes.md",
+    "design/ui/F1+1-M5-admin-reviews-preview-v0.1/SHA256.txt",
+    "docs/collaboration/部门/设计部/报告/2026-08-09-M5最小人工审核台可视化预览报告.md"
+  ],
+  "authorization_evidence": "本地设计预览，无外部I/O或正式实现",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T10:13+08:00",
+      "evidence": "本地设计预览，无外部I/O或正式实现",
+      "state": "none"
+    }
+  ],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "设计部/当前正式会话",
+  "completion_class": "standard",
+  "confirmation": "本任务只制作可视化预览；用户确认预览后才能派正式Admin UI实现。真实采集、外部发布、生产登录、部署和自动发布仍需独立门禁。",
+  "created_at": "2026-08-09T10:13+08:00",
+  "department": "设计部",
+  "details": "以已ACK的 docs/spec/F1+1-M5最小人工审核台纵切产品合同-v0.1.md、现有F1+1 v0.2设计系统和正式公开页视觉语言为输入，设计 loopback local-dev /admin/reviews 的可交互预览。范围只含待审核队列、单条证据与摘要编辑、保存新版本、批准确认、拒绝原因、已批准待手动发布、发布确认、published、empty/error/stale/conflict/blocked；宽屏左队列右详情，390单列层级。必须提供用户可直接打开的交互HTML、1440深浅与390深浅PNG、设计说明和状态/焦点/44px/响应式/无障碍证据。优先使用当前可用OpenDesign；若无active project或工具不可用，直接用本地HTML+PNG兜底并记录原因，不因此阻断。数据TASK-20260809-535C4B尚在收口，预览不得发明字段或改变Publication/Outbox时序，内部hash/fence只以可读完整性状态呈现。不得修改app、Spec、accepted ADR或数据合同。",
+  "domain_stage": "M5人工审核台设计预览",
+  "event_receipts": [
+    "MIL-20260809T154203-2D12DA"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "产品合同与后继数据映射发生字段或时序冲突：保留产品级状态，不自行定义后端字段，在报告列出待同步点。",
+    "OpenDesign不可用或无active project：使用本地HTML+PNG交付，不等待安装或新窗口。",
+    "某状态需要新增产品范围、批量操作、自动发布或生产认证：从预览删除并记录后续建议，不扩大本切片。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未把synthetic状态或hash/fence可读说明写成正式数据真值；未合并批准与发布；未增加自动、批量或定时发布；未伪造PNG或Kimi通过；四张PNG按用户最新明确范围豁免只列入unverified，不列为artifact或verified；complete只表示本地预览工作收口，不解除用户视觉确认门。",
+  "node": "提前解除Admin正式实现所需的用户视觉确认门禁",
+  "pointers": [
+    "docs/spec/F1+1-M5最小人工审核台纵切产品合同-v0.1.md"
+  ],
+  "report": "docs/collaboration/部门/设计部/报告/2026-08-09-M5最小人工审核台可视化预览报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-69BC5A",
+  "title": "最小人工审核台可视化预览与交互样板",
+  "unverified": [
+    "按用户最新授权停止外部调用：1440深浅与390深浅四张PNG未落盘；补入inert后的运行时读屏树、焦点返回和键盘穿透未复验；实体设备安全区、读屏、200%缩放、真实数据、后端守卫、operation对账与正式App接线未运行；Kimi尚未读取Admin截图且没有视觉结论；用户视觉确认尚未发生。"
+  ],
+  "updated_at": "2026-08-09T15:44+08:00",
+  "verified": [
+    "本地自包含HTML、设计说明与SHA清单已落盘；静态核对覆盖合同全部状态、队列/详情绑定、编辑脏状态守卫、blocked原因码与mutation隐藏、批准/拒绝/显式手动发布分离、Publication与重试守卫、终态保持、44px控件、可见焦点、reduced-motion、reduced-transparency、forced-colors与safe-area；既有浏览器记录覆盖批准至手动发布再到published、拒绝原因必填、指定错误/阻断状态和390无页面级横向溢出；未修改app、Spec、accepted ADR、数据合同或v0.2冻结文件；对抗复审P0=0、P1=0。"
+  ]
+}

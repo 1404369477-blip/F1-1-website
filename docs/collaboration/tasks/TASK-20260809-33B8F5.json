@@ -1,0 +1,76 @@
+{
+  "acceptance_exit": "successor机器包validator连续两次PASS；v0.4全部冻结hash/count/manifest零漂移；0/1/4图卡片均能由唯一领域链映射到版本化公开DTO，四图顺序与每图alt/credit/hash可重算且不依赖前端补造；给开发部明确到文件/字段/事务的最小实施清单，并列出API兼容、回退和错误码；external_calls=0、真实媒体=0、Base写入=0。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "data/mvp-contract-v0.5-public-multimedia-synthetic/schema.json",
+    "data/mvp-contract-v0.5-public-multimedia-synthetic/public-multimedia-mapping.json",
+    "data/mvp-contract-v0.5-public-multimedia-synthetic/fixtures.multimedia-synthetic.json",
+    "data/mvp-contract-v0.5-public-multimedia-synthetic/generate_successor.py",
+    "data/mvp-contract-v0.5-public-multimedia-synthetic/validate_successor.py",
+    "data/mvp-contract-v0.5-public-multimedia-synthetic/manifest.json",
+    "docs/collaboration/部门/数据部/报告/2026-08-09-公开资讯多媒体DTO与synthetic四图successor报告.md"
+  ],
+  "authorization_evidence": "COR-20260809T102214-960E65；用户已确认最终v0.2多图视觉交互",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T10:41+08:00",
+      "evidence": "COR-20260809T102214-960E65；用户已确认最终v0.2多图视觉交互",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "019fb371-9834-78d3-a7b3-4f4c62819520",
+  "completion_class": "standard",
+  "confirmation": "用户已确认最终v0.2多图视觉和交互，并明确要求开发高度贴合视觉、落实所有功能项；本任务仅开放本地synthetic数据successor设计与机器产物，不开放真实媒体或外部能力。",
+  "created_at": "2026-08-09T10:41+08:00",
+  "department": "数据部",
+  "details": "吸收 COR-20260809T102214-960E65、docs/spec/F1+1-v0.2-最终实现级产品合同.md、TASK-20260809-34476E final报告与现有 data/mvp-contract-v0.4-public-synthetic、app/src/server/public/types.ts、repository.ts；保留v0.4为不可改写历史输入，在data/下建立最小successor机器包。只复用现有MediaCandidate、ReleaseBundle media_refs/canonical media snapshot和PublishedProjection链，不新增领域实体或第二业务真值；固定公开DTO的0..4有序媒体数组、稳定主图/缩略图顺序、每图asset_ref/alt_zh/credit/tone/identity来源、state/access/hash/rights fail-closed语义，以及旧单media DTO到successor的明确版本迁移。successor synthetic fixture至少覆盖0图、1图、4图，至少一条四图必须能让正式UI真实到达缩略图、pointer/touch/trackpad单步切图与多图lightbox；全部资产保持本地synthetic，无外部URL/请求。交付schema、mapping、fixture、validator、manifest与migration/repository/API交接报告；不得修改冻结v0.4文件、app、migration、SQLite、Spec/accepted ADR或lockfile。",
+  "domain_stage": "M5公开多媒体数据successor",
+  "event_receipts": [
+    "MIL-20260809T105116-D344D7"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若需要新建PublicStory、Gallery或平行媒体表才能实现：停止该方向，回到现有MediaCandidate/ReleaseBundle/Projection链给出更窄映射。",
+    "若多图会绕过rights/license/safety/access或使hash来源不唯一：fail-closed并报告阻断，不以静态数组或前端复制单图补齐。",
+    "若无法保持v0.4字节/hash/count零漂移或无法给旧API明确版本化兼容：只交冲突报告，不修改冻结输入、App或数据库。"
+  ],
+  "from_department": "统筹部",
+  "impact_declaration": {
+    "admission": "manual",
+    "base_revision": "TASK-20260809-33B8F5@rev1",
+    "external_effects": [
+      "none; external_calls=0; real_media=0; Base_writes=0"
+    ],
+    "owner_task": "TASK-20260809-33B8F5",
+    "shared_contracts": [
+      "data/mvp-contract-v0.4-public-synthetic",
+      "data/mvp-contract-v0"
+    ],
+    "write_paths": [
+      "data/mvp-contract-v0.5-public-multimedia-synthetic"
+    ]
+  },
+  "mistake_check": "未新增PublicStory/Gallery/平行媒体表或前端真值，未修改冻结v0.4，未复制首图凑四图；presentation进入immutable ReleaseBundle snapshot并参与hash；顺序唯一来自media_refs。首版detail extension和bundle hash链精度不足已在最终生成前修正并全量重跑；首次impact声明含报告控制根被工具拒绝，任务仍queued，随后按协议仅声明data写根后正式claim",
+  "node": "关闭最终v0.2公开页P1-03，使已确认多图功能具备真实数据出口",
+  "pointers": [
+    "docs/spec/F1+1-v0.2-最终实现级产品合同.md",
+    "docs/collaboration/部门/测试部/报告/2026-08-09-34476E最终v0.2公开页冻结候选定向验收报告.md",
+    "data/mvp-contract-v0.4-public-synthetic"
+  ],
+  "report": "docs/collaboration/部门/数据部/报告/2026-08-09-公开资讯多媒体DTO与synthetic四图successor报告.md",
+  "resolution": null,
+  "revision": 5,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-33B8F5",
+  "title": "冻结公开资讯多媒体DTO与synthetic四图successor",
+  "unverified": [
+    "未改或运行App、SQLite、migration、Repository、API、UI、lockfile；未启动网站或执行缩略图/手势/lightbox浏览器验收；P1-03最终运行关闭需开发接入后由测试部验证；P1-01/P1-02不在本任务；未接触真实媒体、Base/provider/Collector或外部网络"
+  ],
+  "updated_at": "2026-08-09T10:53+08:00",
+  "verified": [
+    "先declare-impact后claim；public-read-v0.2闭合0..4有序媒体DTO且保留v1全部非媒体字段和detail扩展；0/1/4图fixture由MediaCandidate→ReleaseBundle immutable media_refs/canonical media/presentation→approved Decision→published Publication→PublishedProjection唯一链导出，四图identity/asset/alt/credit/tone/hash稳定可达；V1 null/首图降级、V2显式Accept、回退和错误码已冻结；两次独立生成receipt一致，每轮两次validator PASS，五项聚焦负例拒绝；v0.4 manifest及全部artifact SHA匹配，精确1/12/12/12/10/12/12/12/12零漂移；external_calls=0、real_media=0、Base写入=0、git diff check通过、无pycache"
+  ]
+}

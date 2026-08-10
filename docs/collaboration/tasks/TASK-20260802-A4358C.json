@@ -1,0 +1,58 @@
+{
+  "acceptance_exit": "提交测试部status=final、decision=pass|fail的后继终验报告；给出P0/P1/P2、至少10项事实抽样、7C7573原P1关闭证据、E4706F纠错生效证据、剩余P2/Unknown及当前可执行路线；P0/P1=0方可PASS；任务complete后由统筹ACK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-08-02-前沿调研增量包后继终验报告.md"
+  ],
+  "authorization_evidence": "用户本轮只读调研授权；未授权安装、登录、真实采集、真实平台API、部署或外部写入。",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T11:51+08:00",
+      "evidence": "用户本轮只读调研授权；未授权安装、登录、真实采集、真实平台API、部署或外部写入。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "测试部/019fb379-9212-7e80-a5df-587d339936c4",
+  "completion_class": "audit",
+  "confirmation": "用户明确要求多部门深度调研并在复杂任务后进行对抗性审查；本任务只读、无外部写入。",
+  "created_at": "2026-08-02T11:51+08:00",
+  "department": "测试部",
+  "details": "在7C7573历史FAIL之后做一次独立只读后继复验，纳入研究部8FF37A、开发部5BD745及纠错附录E4706F、安全部780373及六候选补充462E1A、正式测试历史7C7573和独立对抗审查结论。验证六候选6/6安全覆盖已闭合；开发附录已纠正README/manifest边界和installer crash-atomic过度表述；AIHot v1.2.1固定历史、v1.2.2未固定历史观察、v1.2.3固定f430c4b11eb7ce715d77768ff787855b7a025187时态一致；T0-T3和A/B/C仍为本地synthetic可行、真实与商业默认关闭。只读报告，不联网、不安装、不调用真实平台/API、不修改上游报告。",
+  "domain_stage": "M4前沿调研增量终验",
+  "event_receipts": [
+    "TEST-20260802-A4358C-FINAL-PASS-P0-0-P1-0-P2-2"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若462E1A未达到六候选6/6、权利/供应链/商业分层，判P1并FAIL。",
+    "若仍把9文件tree写成无README、把manifest写成覆盖9文件、或把installer写成全过程crash-atomic，判P1并FAIL。",
+    "若代码许可证被扩展为平台内容权/商业授权，或真实平台/API/安装/自动发布被写成已放行，判P0/P1并FAIL。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "保留7C7573、5BD745、780373历史；未把462E1A真实商业准入FAIL误判为安全补充未交付；未把E4706F P1/P2未来风险累计为当前A层P1；区分9文件tree与6文件manifest，区分正常EXIT恢复与SIGKILL/断电Unknown；未执行installer、联网、安装、真实API、外部写入或修改上游报告。",
+  "node": "M4/测试/前沿调研增量终验",
+  "pointers": [
+    "docs/collaboration/部门/研究部/报告/2026-08-02-F1聚合竞品与前沿工具雷达增量刷新.md",
+    "docs/collaboration/部门/开发部/报告/2026-08-02-AIHot-v1.2.3固定快照与合同拆解报告.md",
+    "docs/collaboration/部门/开发部/报告/2026-08-02-AIHot-v1.2.3纠错附录.md",
+    "docs/collaboration/部门/安全部/报告/2026-08-02-M4前沿候选许可平台条款与供应链增量准入复核.md",
+    "docs/collaboration/部门/安全部/报告/2026-08-02-M4增量雷达六候选许可供应链补充审核报告.md",
+    "docs/collaboration/部门/测试部/报告/2026-08-02-前沿调研增量包独立交叉复核报告.md"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-08-02-前沿调研增量包后继终验报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-A4358C",
+  "title": "复验前沿调研增量包后继闭环与最终门禁",
+  "unverified": [
+    "installer真实执行/故障注入/断电持久性/跨文件系统行为；AIHot远端服务/API/terms/内容商业权；v1.2.2完整固定快照；六候选B/C真实运行、SBOM、DPA、区域与供应链；T1实际运行收据；早期任务状态句统一时点与候选总量唯一ID。"
+  ],
+  "updated_at": "2026-08-02T11:56+08:00",
+  "verified": [
+    "独立只读核对462E1A与E4706F任务均已acknowledged且报告路径/产物存在；462E1A六候选6/6矩阵、许可/内容权/商业权分层和A/B/C边界已闭合；E4706F已纠正tree=9含README、manifest仅6文件6/6及installer target缺口与SIGKILL/断电crash-atomic Unknown；7C7573历史FAIL保留；AIHot三版本与当前deny-all路线一致；本终验P0=0、P1=0、P2=2。"
+  ]
+}

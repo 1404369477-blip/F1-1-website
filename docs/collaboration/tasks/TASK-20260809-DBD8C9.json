@@ -1,0 +1,73 @@
+{
+  "acceptance_exit": "项目级协作入口与progress逐字记录RPO≤15分钟、RTO≤4小时及六项备份恢复硬门；未来产品/安全/数据/开发TASK正文、验收出口和失败路径均受约束；活跃SQLite复制、数据库双活、跨地域双活和长期公网入口明确不合格；用户决策事实日志、diff-check和doctor通过。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/agent-guide.md",
+    "docs/progress.md"
+  ],
+  "authorization_evidence": "2026-08-09用户最终确认：RPO≤15分钟、RTO≤4小时；一致性备份、加密异机保存、hash/manifest、恢复演练、失败告警；禁止活跃SQLite复制、数据库双活或长期公网入口绕过。",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T12:01+08:00",
+      "evidence": "2026-08-09用户最终确认：RPO≤15分钟、RTO≤4小时；一致性备份、加密异机保存、hash/manifest、恢复演练、失败告警；禁止活跃SQLite复制、数据库双活或长期公网入口绕过。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "completion_class": "standard",
+  "confirmation": "用户已最终确认RPO≤15分钟并保持RTO≤4小时，明确备份、异机加密、manifest/hash、演练、告警和禁止绕过项；无需再次确认该决策，不包含实施授权。",
+  "created_at": "2026-08-09T12:01+08:00",
+  "department": "统筹部",
+  "details": "记录用户最终确认：Admin数据恢复目标RPO≤15分钟，RTO≤4小时保持；后续产品/安全/数据/开发任务必须绑定一致性备份、≤15分钟窗口、加密异机保存、hash/manifest、恢复演练和失败告警；不得通过复制活跃SQLite文件、数据库双活或长期公网入口绕过。只更新项目级协作入口和progress，不修改Spec/ADR/app/data/design，不实施备份、网络、数据库或部署，不新建会话。",
+  "domain_stage": "M5 Admin数据恢复治理",
+  "event_receipts": [
+    "DEC-20260809T120255-998817"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若现有合同缺少可证明≤15分钟RPO的恢复点模型，只记录硬门并要求后续产品/安全合同补齐，不自行猜测备份拓扑。",
+    "若受管协作模板不能修改，只写项目级覆盖规则，不改受管文件。",
+    "若并行部门已修改同一段落，停止覆盖并报告冲突；不得回滚他人改动。"
+  ],
+  "from_department": "统筹部",
+  "impact_declaration": {
+    "admission": "manual",
+    "base_revision": "a9691e71b1552592cc5ded8d5db66c336262301c",
+    "external_effects": [
+      "none"
+    ],
+    "owner_task": "TASK-20260809-DBD8C9",
+    "shared_contracts": [
+      "docs/spec.md"
+    ],
+    "write_paths": [
+      "docs/agent-guide.md",
+      "docs/progress.md"
+    ]
+  },
+  "mistake_check": "已对照用户最终决策和任务JSON逐项复核；未把活跃SQLite文件复制写成备份，未引入数据库/跨地域双活或长期公网入口，未猜测主机隔离选项，未触碰受管协议或范围外文件，未把合同RPO/RTO误写为运行达标。两路独立对抗审查均P0=0/P1=0/P2=0。",
+  "node": "将RPO≤15分钟及备份恢复证据写入全局派单规则",
+  "pointers": [
+    "docs/agent-guide.md"
+  ],
+  "report": "不适用",
+  "resolution": null,
+  "revision": 5,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-DBD8C9",
+  "title": "固化Admin最终RPO与一致性备份恢复硬门",
+  "unverified": [
+    "具体备份拓扑、异机存储位置、密钥托管/轮换/保留/删除策略、真实≤15分钟恢复点、隔离恢复演练、失败告警链、部署及Mac/iPhone实机均未验证。",
+    "未修改Spec、ADR、app、data或design；未实施备份、存储、网络、数据库、双活、应急入口或部署，也未证明运行系统已经达到RPO/RTO。"
+  ],
+  "updated_at": "2026-08-09T12:04+08:00",
+  "verified": [
+    "项目级协作入口已将Admin数据恢复目标更新为最终RPO≤15分钟，RTO≤4小时保持；后续产品、安全、数据、开发TASK的正文、验收出口和失败路径均必须绑定该目标。",
+    "六项恢复证据硬门已逐项固化：一致性备份及同一可恢复边界、可证明的≤15分钟恢复点窗口、加密异机保存、可校验hash/manifest、隔离目标恢复演练、失败状态与告警/重试/升级/回退/人工处置收据。",
+    "明确禁止复制运行中的SQLite主文件或活跃DB/WAL/SHM文件充当有效备份，也禁止通过数据库双活、跨地域双活或长期公网入口绕过一致性备份和恢复证据。具体存储、密钥和拓扑留待后续合同，不猜主机隔离选项。",
+    "两处修改均位于已声明write_paths，Spec保持只读；用户决策日志收据存在；受管协议MANAGED_OK，git diff --check与TASK doctor通过，沿用现有部门窗口。"
+  ]
+}

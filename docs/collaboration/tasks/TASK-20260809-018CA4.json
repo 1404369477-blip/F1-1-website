@@ -1,0 +1,72 @@
+{
+  "acceptance_exit": "四类阻断各有一个唯一主reason code和机械触发规则，现有46向量无需改变攻击输入即可被安全部回填并达到结构校验无blocker；draft仍只包含一个用户批准问题且真实请求保持关闭。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/decisions/system/2026-08-09-F1+1-VS-RSS-0本地低频RSS试验-draft.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-09-VS-RSS-0用户决策包与系统合同草案报告.md"
+  ],
+  "authorization_evidence": "本地draft文档修订，external_calls=0",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T10:03+08:00",
+      "evidence": "本地draft文档修订，external_calls=0",
+      "state": "none"
+    }
+  ],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "本任务只修订draft原因码；不批准真实RSS请求、不改变用户授权问题、不开放Source/Base/provider/公开输出。",
+  "created_at": "2026-08-09T10:03+08:00",
+  "department": "产品部",
+  "details": "在完成 TASK-20260809-97700F 后领取。只修订 status=draft 的 VS-RSS-0 系统合同与产品报告，不改accepted ADR/Spec/app/data：为 items>20、observation与inbox部分事务失败、日志含禁止字段、产生Publication/PublishedProjection或放宽第三方媒体CSP四类行为，各冻结唯一且互斥的主reason code、触发优先级、完整响应/事务/游标/保留语义；同步固定停止reason-code集合，确保能逐项回填安全TASK-20260809-88561C的四个null blocker。不得改变来源URL、请求次数、授权窗口、用户问题或真实请求边界。",
+  "domain_stage": "VS-RSS-0合同缺口整改",
+  "event_receipts": [
+    "adversarial_review=P0=0/P1=0; reviewers=reason-code-transaction,vector-mapping,scope-gate"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "新reason code与既有TLS/XML/identity/fence语义重叠：给出优先级或更名，不能唯一化则保持P1并等待统筹。",
+    "修订需要改变accepted ADR/Spec、请求范围或用户授权问题：停止并仅报告冲突，不扩大本任务。",
+    "事务、日志或公开出口属于实现层且无法在合同层形成机械判定：明确所缺输入并失败关闭，不留通配UNKNOWN掩盖。"
+  ],
+  "from_department": "统筹部",
+  "impact_declaration": {
+    "admission": "manual",
+    "base_revision": "TASK-20260809-018CA4@rev1",
+    "external_effects": [
+      "none"
+    ],
+    "owner_task": "TASK-20260809-018CA4",
+    "shared_contracts": [
+      "TASK-20260809-018CA4-vs-rss-reason-codes"
+    ],
+    "write_paths": [
+      "docs"
+    ]
+  },
+  "mistake_check": "已检查四码唯一性、既有码重叠、cursor第三参与者、日志与egress隔离域、XML判定顺序、existing public-synthetic保护、§11问题和请求边界零变化；未修改accepted ADR/Spec/app/data，external_calls=0。",
+  "node": "让离线安全向量从可讨论包升级为开发可执行真值",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260809-88561C.json"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-09-VS-RSS-0用户决策包与系统合同草案报告.md",
+  "resolution": null,
+  "revision": 5,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-018CA4",
+  "title": "闭合VS-RSS-0四类拒绝原因码",
+  "unverified": [
+    "安全部尚未在app/fixtures/rss-security/vectors.json回填四个primary_reason_code并重跑其正式结构校验；该app修改属于后续安全任务范围。",
+    "运输安全实现、真实负例复验及任何真实RSS请求均未执行，真实请求继续关闭。"
+  ],
+  "updated_at": "2026-08-09T10:15+08:00",
+  "verified": [
+    "四类阻断已一对一冻结为 XML_ITEM_LIMIT、ATOMIC_COMMIT_PARTIAL、LOG_POLICY_VIOLATION、EGRESS_POLICY_VIOLATION，唯一主码优先级与响应/事务/游标/保留出口已机械闭合。",
+    "对现有46向量执行只读回填模拟：4个null blocker无需改变攻击输入即可映射为4个互异主码，既有expected均保持 reject/true/false/false。",
+    "§11唯一用户问题区块SHA-256仍为3173b3ce0102a34cd706eb9d7a94ee86dc1724cc4aa2c882713363479e040aad；来源URL、3次GET、授权窗口和真实请求关闭边界未变。",
+    "三路只读对抗审查最终均为P0=0/P1=0；pilot出口限定本次operation/source隔离域，既有public-synthetic只读不动。"
+  ]
+}

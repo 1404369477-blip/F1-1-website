@@ -1,0 +1,60 @@
+{
+  "acceptance_exit": "设计部报告给出PASS/FAIL、P0/P1/P2，逐项对照设计合同，并明确390/1440、dark/light、四状态、详情、404和可访问性结果；列出最多必要的修正项或确认无P0/P1；TASK_STATE_OK完成。",
+  "artifacts": [],
+  "authorization_evidence": "用户已确认全站设计规范并授权持续推进前端；复杂UI实现按agent-team要求独立设计审查。",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T23:49+08:00",
+      "evidence": "用户已确认全站设计规范并授权持续推进前端；复杂UI实现按agent-team要求独立设计审查。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "",
+  "completion_class": "standard",
+  "confirmation": "设计部完成后由统筹部核收；若有P0/P1退回原开发部修正，原窗口继续复用。",
+  "created_at": "2026-08-02T23:49+08:00",
+  "department": "设计部",
+  "details": "基于已ACK的全站设计规范、首批页面实现级设计合同、token-map和16状态UI映射，对当前/与/stories/[publicId]实现做独立只读核验。至少检查1440和390的栅格、信息密度、标题层级、卡片/主视觉比例、深浅主题、移动TopBar和筛选dialog、Chip、default/restricted/empty/no-more、无授权图片、禁用原文入口、详情摘要/关键点/来源/相关内容/404，以及44px触控、焦点可见、状态非纯颜色表达和页面级横向溢出。不得改app/Spec/ADR/data；只出设计审查报告。开发报告与统筹浏览器收据只作线索，能独立看到页面时须亲自复核；无法执行的项目标NOT_RUN。",
+  "domain_stage": "设计实现验收",
+  "event_receipts": [],
+  "execution_state": "queued",
+  "external_artifacts": [],
+  "failure_paths": [
+    "实现快照SHA漂移、页面与accepted设计合同存在冲突或无法确认目标字节：停止视觉结论并回报统筹。",
+    "390/1440出现布局破损/横向溢出、主题不可读、状态只靠颜色、触控或焦点不可用、详情关键层级缺失：P1/FAIL，不代替开发修改。",
+    "宿主浏览器无法访问本地页面：明确NOT_RUN，只提交可独立完成的源码/合同审查，不将统筹截图或收据伪装为亲自视觉PASS。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "对TASK-20260802-C29BB8完成快照做设计合同、响应式、状态与可访问性视觉核验",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260802-C29BB8.json",
+    "design/ui/F1+1-全站设计规范-v0.1.md",
+    "design/ui/F1+1-首批页面实现级设计合同-v0.1.md",
+    "design/ui/F1+1-首批页面token-map-v0.1.json",
+    "design/ui/F1+1-VS-1-16状态UI映射-v0.1.md",
+    "docs/collaboration/部门/统筹部/报告/2026-08-02-M4-VS-1公开前端本地浏览器验收收据.md"
+  ],
+  "report": "",
+  "resolution": {
+    "evidence": "docs/collaboration/部门/设计部/报告/2026-08-03-M4-VS-1公开前端P1整改独立设计核验报告.md",
+    "reason": "原任务对应整改前快照；新任务对CD4228精确整改后快照完成独立设计PASS并已ACK，继续执行旧快照会产生重复和过期证据。",
+    "receipt_id": "RES-20260803T125833-2C9C2079",
+    "replacement_revision": 4,
+    "replacement_state": "acknowledged",
+    "replacement_task_id": "TASK-20260803-8C9709",
+    "resolved_at": "2026-08-03T12:58+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "superseded",
+    "target_revision_before": 1
+  },
+  "revision": 2,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-FA36FE",
+  "title": "独立设计核验首批公开资讯流与详情实现",
+  "unverified": [],
+  "updated_at": "2026-08-03T12:58+08:00",
+  "verified": []
+}

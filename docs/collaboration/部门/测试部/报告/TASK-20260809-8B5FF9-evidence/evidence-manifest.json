@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "task-20260809-8b5ff9-browser-gate-v1",
+  "taskId": "TASK-20260809-8B5FF9",
+  "recordedAt": "2026-08-09T20:20:41+08:00",
+  "status": "blocked",
+  "decision": "fail",
+  "firstGate": {
+    "name": "clean_browser_network_receipt",
+    "result": "FAIL",
+    "severity": "P1",
+    "reasonCode": "BROWSER_AUX_NETWORK_UNPROVABLE",
+    "detail": "The available isolated in-app browser exposes tab-scoped CDP network events, but does not expose a verifiable browser/auxiliary-process launch argument receipt or process-wide external connection/attempt ledger. The task requires both before functional interaction."
+  },
+  "candidateBefore": {
+    "sourceListStdoutSha256": "7b1e8977c3e7296f4e5cf165b106bc322c2ef19dbd5e506f51e2c4ec92465281",
+    "feedExperienceSha256": "b6bbf8a904cec7ebf344e27e0100dea37b5c84a8e392356ba80c60e26d7ca362",
+    "publicUiTestSha256": "52cc893d833b365bfd9e2c32df28a778b3f23c51f754ba8b91d461b57befabf6",
+    "canonicalDbSha256": "eb2d7ad2787a290f7a13adcb063215d58654bc9f66d1d8ff60b98f14592b9551",
+    "buildIdFileSha256": "8155e435b052ae87467671cfc0bdfc59bf931922eb55fcf16f03fc68a5efb1c5",
+    "buildManifestSha256": "b8c57b58a1f524871415bd233871800d9608e35f2f4f188b2d58675e38f0881c",
+    "middlewareManifestSha256": "3e662212864bc4c124cfc53fa5d428813c619852b447c9fd2d9926cd39d7a4a6"
+  },
+  "candidateAfter": {
+    "sourceListStdoutSha256": "7b1e8977c3e7296f4e5cf165b106bc322c2ef19dbd5e506f51e2c4ec92465281",
+    "canonicalDbSha256": "eb2d7ad2787a290f7a13adcb063215d58654bc9f66d1d8ff60b98f14592b9551",
+    "buildIdFileSha256": "8155e435b052ae87467671cfc0bdfc59bf931922eb55fcf16f03fc68a5efb1c5",
+    "buildManifestSha256": "b8c57b58a1f524871415bd233871800d9608e35f2f4f188b2d58675e38f0881c",
+    "middlewareManifestSha256": "3e662212864bc4c124cfc53fa5d428813c619852b447c9fd2d9926cd39d7a4a6",
+    "sourceListByteIdentical": true
+  },
+  "browser": {
+    "surface": "Codex In-app Browser",
+    "isolatedSessionNamed": "TASK-20260809-8B5FF9",
+    "availableNetworkScope": "tab-scoped CDP only",
+    "browserLaunchArgumentsReceiptAvailable": false,
+    "auxiliaryProcessNetworkLedgerAvailable": false,
+    "appNavigationPerformed": false,
+    "functionalInteractionsPerformed": false,
+    "tabsFinalized": true
+  },
+  "appInstance": {
+    "bindHost": "127.0.0.1",
+    "publicPort": 3000,
+    "internalPort": 3001,
+    "stopped": true,
+    "listenersAfterStop": [],
+    "canonicalSidecarsAfterCleanup": [],
+    "candidateFilesAfterCleanup": []
+  },
+  "requests": [],
+  "console": [],
+  "networkDestinations": [],
+  "focusReceipts": [],
+  "viewports": [],
+  "screenshots": [],
+  "notRun": [
+    "PUB-FEED-003 four category filters",
+    "PUB-FEED-004 seven states and recovery",
+    "PUB-FEED-005 12+12 partial same-cursor recovery",
+    "offline preservation",
+    "UI-A11Y-001 keyboard, focus, 200 percent, forced colors, reduced motion, reduced transparency",
+    "UI-RESP-002 six viewport-theme cells and non-zero safe area"
+  ],
+  "scopeGuard": {
+    "repeatedDeveloperTests": false,
+    "lintRun": false,
+    "typecheckRun": false,
+    "buildRun": false,
+    "implementationModified": false,
+    "externalIoAuthorized": false
+  }
+}

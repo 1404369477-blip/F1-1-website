@@ -1,0 +1,56 @@
+{
+  "acceptance_exit": "产品部提交精简final报告与TASK_STATE_OK；spec/progress/handoff三处状态一致，准确区分acknowledged/completed/in_progress/pending；SQLite与启动核收事实、历史FAIL整改链、AC25D4当前边界和未实现项完整；accepted ADR与代码/data/design/lock未改；task doctor与git diff --check PASS。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/spec.md",
+    "docs/progress.md",
+    "docs/handoff.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-04-M4-SQLite启动核收与公开API在办状态同步报告.md"
+  ],
+  "authorization_evidence": "用户持续要求统筹分派部门并推进网站初版；当前SQLite与启动门禁已核收，API任务已派发。",
+  "authorization_history": [
+    {
+      "at": "2026-08-04T15:18+08:00",
+      "evidence": "用户持续要求统筹分派部门并推进网站初版；当前SQLite与启动门禁已核收，API任务已派发。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "产品文档同步不作为API功能放行；AC25D4仍须开发、测试、安全三层完成。",
+  "created_at": "2026-08-04T15:18+08:00",
+  "department": "产品部",
+  "details": "只更新docs/spec.md、docs/progress.md、docs/handoff.md和产品部精简报告；不得修改accepted ADR、代码、data、design、lock或协作任务真值。以已ACK任务A1A095/A01DF7/253A43/3760和测试9F2DAD、安全B9D885历史FAIL为事实输入：写明双profile/四root/原子seed/启动输出已最终核收，B9D885 P1由A01DF7关闭且A1A095 PASS；Repository/API任务AC25D4已claimed或queued且未实现/未放行，前端API接线、admin、外部能力仍关闭。清理文档中与当前任务状态冲突的completed/pending/ACK描述，不改变产品范围。只做一次task doctor与git diff --check，不跑应用测试。",
+  "domain_stage": "M4状态与交接同步",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "把历史B9D885 FAIL抹掉、把测试PASS扩张为安全PASS、或把AC25D4写成已实现/已放行：P1文档错误。",
+    "修改accepted ADR/代码/data/design/lock或引入新产品范围：越界停止。",
+    "spec/progress/handoff对同一任务状态互相冲突或与task JSON不一致：FAIL后只修文档。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未抹除历史FAIL，未把局部PASS扩张为系统PASS，未把claimed写成已实现；仅修改spec/progress/handoff与产品报告，未触碰accepted ADR、app、data、design、SQLite或lock；未追加冗余测试。",
+  "node": "把已核收事实和下一阶段边界同步到Spec-progress-handoff，消除旧pending状态",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260804-A1A095.json",
+    "docs/collaboration/tasks/TASK-20260804-AC25D4.json",
+    "docs/progress.md"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-04-M4-SQLite启动核收与公开API在办状态同步报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260804-4B4628",
+  "title": "同步SQLite与启动门禁核收并登记公开API在办状态",
+  "unverified": [
+    "AC25D4尚未交付，Repository/feed/detail API、前端API接线、admin、R5/R12、生产存储及真实外部能力仍未实现或未放行。"
+  ],
+  "updated_at": "2026-08-04T15:33+08:00",
+  "verified": [
+    "以任务JSON与final报告为准，同步D53BF3/0AEACE/00972D/253A43/3760F6/9F2DAD/A01DF7/A1A095均已ACK，保留数据与B9D885历史FAIL；AC25D4仍为claimed且未实现/未放行；task doctor一次PASS（123，full history valid），git diff --check一次PASS；未运行应用测试。"
+  ]
+}

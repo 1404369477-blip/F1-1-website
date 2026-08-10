@@ -1,0 +1,384 @@
+{
+  "schemaVersion": "f1plus1-fixed-m1-temp-local-execution-bundle-v0.5",
+  "bundleId": "f1plus1-fixed-m1-temp-local-9acce0-v0.5",
+  "taskId": "TASK-20260809-9ACCE0",
+  "status": "blocked_waiting_for_47ef67_pass_ack",
+  "closedFileSet": true,
+  "extraEntriesAllowed": false,
+  "manifestSelfHash": {
+    "includedInFiles": false,
+    "rule": "The product final report and task artifact ledger bind the SHA-256 of the final manifest bytes; the manifest never self-hashes."
+  },
+  "authorization": {
+    "tempLocalSinglePreviewAuthorized": true,
+    "readOnlyPlanningBeforeConfirmationAllowed": true,
+    "copyAfterSingleConfirmationAllowed": true,
+    "localProcessAfterSingleConfirmationAllowed": true,
+    "sameMacSyntheticBrowserAfterHealthAllowed": true,
+    "installationAllowed": false,
+    "downloadAllowed": false,
+    "loginOrAccountCreationAllowed": false,
+    "networkReadOrChangeAllowed": false,
+    "uuChangeAllowed": false,
+    "sshOrRemoteLoginChangeAllowed": false,
+    "fileVaultChangeAllowed": false,
+    "tailscaleChangeAllowed": false,
+    "firewallChangeAllowed": false,
+    "routerChangeAllowed": false,
+    "lanOverlayOrPublicListenerAllowed": false,
+    "realAccountKeyOrDataAllowed": false,
+    "realProviderBaseFormMediaOrPublishAllowed": false,
+    "externalIoAllowed": false,
+    "uploadOrDeploymentAllowed": false,
+    "candidateMutationRebuildOrRepairAllowed": false,
+    "productionAuthorized": false
+  },
+  "deviceFactAllowlist": {
+    "modelFamily": "MacBook Air (M1, 2020)",
+    "memoryGB": 8,
+    "osVersion": "macOS 26.5.1",
+    "powerMode": "long_term_connected",
+    "networkPhysicalMode": "wifi_only",
+    "currentWifiSecurity": "legacy_wpa_low_security",
+    "evidence": "user_confirmed"
+  },
+  "uniqueIdentifierPolicy": {
+    "readAllowed": false,
+    "copyAllowed": false,
+    "writeAllowed": false,
+    "hashAllowed": false,
+    "encodeAllowed": false,
+    "forbiddenClasses": [
+      "screenshot_specific_wifi_or_router_address",
+      "ssid_or_wifi_name",
+      "wifi_password",
+      "ip_address",
+      "network_hardware_address",
+      "serial_number",
+      "hardware_uuid",
+      "disk_identifier",
+      "device_id",
+      "apple_account",
+      "overlay_id",
+      "credential_token_or_key"
+    ],
+    "conversationAliases": [
+      "<SOURCE_ROOT>",
+      "<TEMP_ROOT>",
+      "<LOCAL_USER>"
+    ]
+  },
+  "predecessor": {
+    "path": "docs/runbooks/F1+1-专用Admin-Mac-旧WPA临时运行与安全网络升级runbook-v0.4.md",
+    "sha256": "68f7622b41888e573de79f5537893c23983c691bbbc6ae73452b4fe1155e74db",
+    "state": "acknowledged_immutable"
+  },
+  "executionActivation": {
+    "gateTaskId": "TASK-20260809-47EF67",
+    "observedAtBundleCreation": "claimed_not_passed",
+    "requiredTaskState": "completed",
+    "requiredDecision": "PASS",
+    "requiredP0": 0,
+    "requiredP1": 0,
+    "coordinationAckRequired": true,
+    "candidateHashesMustEqualThisManifest": true,
+    "networkWrapperMustComeFromGateReport": true,
+    "pendingFailOrBlockedResult": "BLOCKED_47EF67",
+    "currentExecutionAllowed": false
+  },
+  "candidatePins": {
+    "sourceListStdoutSha256": "7b1e8977c3e7296f4e5cf165b106bc322c2ef19dbd5e506f51e2c4ec92465281",
+    "canonicalDbPath": "app/.local/f1plus1-public-multimedia-synthetic.sqlite",
+    "canonicalDbSha256": "eb2d7ad2787a290f7a13adcb063215d58654bc9f66d1d8ff60b98f14592b9551",
+    "buildIdPath": "app/.next/BUILD_ID",
+    "buildIdFileSha256": "8155e435b052ae87467671cfc0bdfc59bf931922eb55fcf16f03fc68a5efb1c5",
+    "buildManifestPath": "app/.next/build-manifest.json",
+    "buildManifestSha256": "b8c57b58a1f524871415bd233871800d9608e35f2f4f188b2d58675e38f0881c",
+    "middlewareManifestPath": "app/.next/server/middleware-manifest.json",
+    "middlewareManifestSha256": "3e662212864bc4c124cfc53fa5d428813c619852b447c9fd2d9926cd39d7a4a6",
+    "candidateClass": "preview_acceptance_candidate_not_production"
+  },
+  "orderedSourceAggregate": {
+    "algorithm": "Run shasum -a 256 in this exact array order and SHA-256 the complete stdout bytes including final LF.",
+    "expectedSha256": "7b1e8977c3e7296f4e5cf165b106bc322c2ef19dbd5e506f51e2c4ec92465281",
+    "files": [
+      {
+        "path": "app/src/features/stories/public-api.ts",
+        "sha256": "6b4fa207c07fbe99116e2a11b490a16dcbcf48543f953316f0a88028b30271cf"
+      },
+      {
+        "path": "app/src/features/stories/feed-experience.tsx",
+        "sha256": "b6bbf8a904cec7ebf344e27e0100dea37b5c84a8e392356ba80c60e26d7ca362"
+      },
+      {
+        "path": "app/src/app/globals.css",
+        "sha256": "9aee745405ebfed4a10cfb5628926f46f89a905d2a74d59ef0de93868b30c191"
+      },
+      {
+        "path": "app/src/app/layout.tsx",
+        "sha256": "d7f0d232f13a3346274ff02bd8ec8f44137b698f4f8a1c4ba7e4fda904779baa"
+      },
+      {
+        "path": "app/src/tests/public-ui.test.ts",
+        "sha256": "52cc893d833b365bfd9e2c32df28a778b3f23c51f754ba8b91d461b57befabf6"
+      },
+      {
+        "path": "app/src/server/db/profile.ts",
+        "sha256": "f66a77bc25b889f3a5b6f45803f157a931ddf751cd4ccce32584e237c554047c"
+      },
+      {
+        "path": "app/src/server/config/env.ts",
+        "sha256": "d0cdd85ea8b3bd956e7538a2a2681f2fa0c6d2dcf1728f037b9d227a89aba1ca"
+      },
+      {
+        "path": "app/src/server/health.ts",
+        "sha256": "e2f9643a27a6fb1202a1c7a8238c4d81fd69fdd8757856d4e4b9b798a9bb6bb1"
+      },
+      {
+        "path": "app/src/server/public/repository.ts",
+        "sha256": "c33772b4c5639bca5ce5547818fd4f3ed2969ae101edca87d134cd06e8ca01eb"
+      },
+      {
+        "path": "app/src/server/db/public-multimedia-synthetic.ts",
+        "sha256": "138f4e5566094c970d3eb6effde8ace4f29c597c5b28075c3a9c876757f68b40"
+      },
+      {
+        "path": "app/src/tests/public-multimedia-backend.test.ts",
+        "sha256": "cf657fc707c223784991003f7cd15ba75955b119f1631745db1c7b7af6b3d559"
+      }
+    ]
+  },
+  "treeRootAlgorithm": {
+    "id": "TREE-SHA256-LINES-v1",
+    "pathScope": "bundle-root-relative",
+    "sort": "LC_ALL=C bytewise ascending",
+    "line": "<file_sha256><two spaces><relative_path><LF>",
+    "root": "SHA-256 of the complete UTF-8 line stream",
+    "filenameWithLfAllowed": false,
+    "specialFilesAllowed": false
+  },
+  "treeRoots": [
+    {
+      "path": "app/.next",
+      "regularFileCount": 200,
+      "symlinkCount": 0,
+      "treeSha256": "d282b899667fb48c6ed44ae46da3abaadcfe148ed471c4c31cef240712eddb70"
+    },
+    {
+      "path": "app/node_modules",
+      "regularFileCount": 21110,
+      "symlinkCountInTarget": 0,
+      "excludedDirectoryBasename": ".bin",
+      "treeSha256": "dbefc0ae930804c6afb8582e3b539b17a6845120b86a343ad06c83b387ab24f8"
+    },
+    {
+      "path": "app/src/server",
+      "regularFileCount": 30,
+      "symlinkCount": 0,
+      "treeSha256": "bf20ef675c2b44c7bf1772e826ee7de2dcce99685bf697aa57ebb30ecdea8139"
+    }
+  ],
+  "singleFilePins": [
+    {
+      "path": "app/.local/toolchains/node-v24.18.0-darwin-arm64/bin/node",
+      "sha256": "ee6fb0e015284d83a91e8ec5213f43a157f8a392b58555301682892ba928c04a"
+    },
+    {
+      "path": "app/node_modules/.package-lock.json",
+      "sha256": "d20b937d69ac116f7fe6eeec5eba611e1dc88dda02eb4d55c7f96e2cf3a1d361"
+    },
+    {
+      "path": "app/package.json",
+      "sha256": "e39a413a0ae2000b781433e983a9df48c26b0f5c1db1ce950e2b0b6dd6be7752"
+    },
+    {
+      "path": "app/package-lock.json",
+      "sha256": "89807e33818cfb851b57da65a5675e413e5593d01d6773c3a71a6cc6ea3d85d3"
+    },
+    {
+      "path": "app/.node-version",
+      "sha256": "55075b5ec4e8b31936cbbc282b8829116d1fd48f2f2f1856dee592a6650700ce"
+    },
+    {
+      "path": "app/.nvmrc",
+      "sha256": "55075b5ec4e8b31936cbbc282b8829116d1fd48f2f2f1856dee592a6650700ce"
+    },
+    {
+      "path": "app/.npmrc",
+      "sha256": "be7906950cc4de765c6933ebada746d495050d9a6b4b61ddf0d261d0a8c747b1"
+    },
+    {
+      "path": "app/.env.example",
+      "sha256": "168b9708cac609b6ebefdbc94e48efdae8023cf62252a26edad9ec9bbd9bfa02"
+    },
+    {
+      "path": "app/next.config.ts",
+      "sha256": "4cad194c09413d0436f990ddb4a79c886d97611a01c592fd2a43f5f0d9eae313"
+    },
+    {
+      "path": "app/scripts/serve.ts",
+      "sha256": "1bc41e1b30d9606f83a7a07cf55fbf5007d7f04b7e762543df41f507d7c00ee4"
+    },
+    {
+      "path": "data/mvp-contract-v0.6-public-multimedia-pagination-synthetic/runtime-graph.public-multimedia-pagination-synthetic.json",
+      "sha256": "1eddfe54394757ff1cf00dce12ec2409772817256fe40177bc04e5a54989608b"
+    },
+    {
+      "path": "data/mvp-contract-v0.6-public-multimedia-pagination-synthetic/manifest.json",
+      "sha256": "38d51764568cc9d3943e0c31388bf125c1f3b207cde0fc2f37db22becfbed6eb"
+    }
+  ],
+  "copyClosedSet": {
+    "sourceMode": "read_only_user_selected_icloud_project_copy",
+    "targetAbsolutePath": "/private/tmp/f1plus1-temp-local-9acce0",
+    "targetMode": "0700",
+    "targetMustNotExistBeforeConfirmation": true,
+    "targetMustNotBeInSyncedOrGitTree": true,
+    "copyTreeRoots": [
+      "app/.next",
+      "app/node_modules excluding every .bin directory and every symlink",
+      "app/src/server"
+    ],
+    "copyOrderedSourceFiles": true,
+    "copySingleFilePins": true,
+    "copyBundleFiles": [
+      "docs/runbooks/F1+1-固定M1-Mac-TEMP-LOCAL精确执行runbook-v0.5.md",
+      "docs/runbooks/F1+1-固定M1-Mac-TEMP-LOCAL精确执行runbook-v0.5.manifest.json",
+      "docs/runbooks/F1+1-固定M1-Mac-TEMP-LOCAL执行交接提示词-v0.5.md"
+    ],
+    "forbiddenPatterns": [
+      ".git",
+      ".env",
+      "any .bin directory",
+      "any symlink hardlink socket fifo or device",
+      "app/.local except the exact Node binary and canonical DB",
+      "*-wal",
+      "*-shm",
+      "receipt log screenshot backup",
+      "real data account credential key or secret",
+      "any file outside the explicit union"
+    ],
+    "postCopyFullReverificationRequired": true
+  },
+  "runtime": {
+    "nodeVersion": "24.18.0",
+    "nodeArchitecture": "arm64",
+    "npmExecutionAllowed": false,
+    "bindHost": "127.0.0.1",
+    "publicPort": 3000,
+    "internalPort": 3001,
+    "healthPath": "/api/health",
+    "sameMacBrowserOnly": true,
+    "profile": "public-multimedia-synthetic",
+    "sqlitePath": ".local/f1plus1-public-multimedia-synthetic.sqlite",
+    "syntheticOnly": true,
+    "externalCalls": 0,
+    "realAccounts": 0,
+    "realData": 0,
+    "defaultTempRootRetention": "retained_0700_pending_separate_cleanup_authorization"
+  },
+  "runtimeEnvClosedSet": {
+    "APP_ENV": "local",
+    "APP_PORT": "3000",
+    "APP_BIND_HOST": "127.0.0.1",
+    "APP_PUBLIC_ORIGIN": "http://127.0.0.1:3000",
+    "F1_DATA_PROFILE": "public-multimedia-synthetic",
+    "F1_DB_PATH": ".local/f1plus1-public-multimedia-synthetic.sqlite",
+    "SOURCE_CONFIG_PROVIDER": "fixture",
+    "SOURCE_FIXTURE_PATH": "../data/mvp-contract-v0.6-public-multimedia-pagination-synthetic/runtime-graph.public-multimedia-pagination-synthetic.json",
+    "ADAPTER_MODE": "mock",
+    "SUMMARY_MODE": "fixture",
+    "MEDIA_MODE": "fixture",
+    "PUBLISH_MODE": "manual_only",
+    "REAL_FEISHU_IO": "false",
+    "REAL_EXTERNAL_IO": "false",
+    "REAL_FORM_SUBMIT": "false",
+    "ADMIN_ACCESS_MODE": "local_dev_only",
+    "LOG_LEVEL": "info"
+  },
+  "healthExpected": {
+    "httpStatus": 200,
+    "status": "ready",
+    "scope": "local-only",
+    "dataGate": "accepted-public-multimedia-synthetic",
+    "externalCalls": 0,
+    "node": "24.18.0"
+  },
+  "singleConfirmation": {
+    "required": true,
+    "onlyAfterAllReadOnlyGatesPass": true,
+    "inputChangesInvalidateConfirmation": true,
+    "defaultRetention": "retained_0700"
+  },
+  "receiptSchema": {
+    "additionalProperties": false,
+    "schemaVersion": "f1plus1-temp-local-receipt-v0.5",
+    "requiredTopLevelFields": [
+      "schemaVersion",
+      "taskId",
+      "mode",
+      "result",
+      "reasonCode",
+      "gate47ef67",
+      "candidate",
+      "runtime",
+      "guards",
+      "shutdown",
+      "redaction",
+      "unverified"
+    ],
+    "resultEnum": [
+      "PASS",
+      "FAIL",
+      "BLOCKED"
+    ],
+    "reasonCodeEnum": [
+      "OK",
+      "BLOCKED_47EF67",
+      "CANDIDATE_IDENTITY_MISMATCH",
+      "RUNTIME_INPUT_MISSING",
+      "CLOSED_SET_VIOLATION",
+      "TEMP_ROOT_UNSAFE",
+      "PORT_PRECONDITION_FAILED",
+      "NON_LOOPBACK_LISTENER",
+      "EXTERNAL_IO_DETECTED",
+      "REAL_AUTHORITY_DETECTED",
+      "HEALTH_NOT_READY",
+      "STOP_ZERO_NOT_PROVEN"
+    ],
+    "blockedOrNotRunNumericFieldsAreNullable": true,
+    "absolutePathsAccountsNetworkIdentifiersAndSecretsAllowed": false
+  },
+  "hardStops": [
+    "47ef67_not_completed_pass_ack_or_candidate_hash_mismatch",
+    "predecessor_candidate_tree_lock_node_db_build_or_fixture_drift",
+    "node_lock_node_modules_build_db_or_fixture_missing",
+    "temp_root_exists_is_synced_is_link_wrong_owner_or_not_0700",
+    "port_3000_or_3001_already_listening_or_unknown",
+    "any_non_loopback_listener_or_unknown_bind_scope",
+    "any_dns_non_loopback_http_raw_socket_proxy_or_external_io_or_unknown",
+    "any_real_account_key_data_provider_base_form_media_publish_backup_upload_or_deployment",
+    "any_network_uu_ssh_filevault_tailscale_firewall_router_or_service_configuration_change",
+    "health_contract_mismatch",
+    "exit_listener_process_or_guard_zero_not_proven"
+  ],
+  "files": [
+    {
+      "path": "docs/runbooks/F1+1-固定M1-Mac-TEMP-LOCAL精确执行runbook-v0.5.md",
+      "role": "execution_runbook",
+      "bytes": 16244,
+      "sha256": "f5b6d5108339f7d57fe35efba6c6b36a52ace1846953cf687303af39794114c0"
+    },
+    {
+      "path": "docs/runbooks/F1+1-固定M1-Mac-TEMP-LOCAL执行交接提示词-v0.5.md",
+      "role": "copyable_codex_deepseek_prompt",
+      "bytes": 6640,
+      "sha256": "0d565b5edb5a787036838931108180f9f7c2978e8fd7e8fd59fc6f045ac91088"
+    }
+  ],
+  "readOrder": [
+    "docs/runbooks/F1+1-固定M1-Mac-TEMP-LOCAL精确执行runbook-v0.5.manifest.json",
+    "docs/runbooks/F1+1-固定M1-Mac-TEMP-LOCAL精确执行runbook-v0.5.md",
+    "docs/runbooks/F1+1-固定M1-Mac-TEMP-LOCAL执行交接提示词-v0.5.md"
+  ]
+}

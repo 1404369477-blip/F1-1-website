@@ -1,0 +1,59 @@
+{
+  "acceptance_exit": "新会话从 Handoff、Progress、当前分工和任务索引读取时得到一致结论，不再重复领取已完成任务；三条旧未收口任务均有可审计处置或明确保留理由。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/handoff.md",
+    "docs/progress.md",
+    "docs/collaboration/当前工作分工与交接-2026-08-07.md",
+    "docs/collaboration/部门/统筹部/报告/2026-08-08-协作真值校正与交接入口恢复报告.md"
+  ],
+  "authorization_evidence": "当前主会话 2026-08-08：用户确认将 8 月 8 日最新视觉 Demo 作为本轮正式落地基准并要求继续推进",
+  "authorization_history": [
+    {
+      "at": "2026-08-08T21:57+08:00",
+      "evidence": "当前主会话 2026-08-08：用户确认将 8 月 8 日最新视觉 Demo 作为本轮正式落地基准并要求继续推进",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "completion_class": "standard",
+  "confirmation": "流程性校正可自主完成；涉及删除成果、改变范围或对外放行时回用户确认。",
+  "created_at": "2026-08-08T21:57+08:00",
+  "department": "统筹部",
+  "details": "依据任务JSON、已ACK报告、用户设计确认与新设计冻结任务，核对并用任务工具正式收口或取代 795FB0、3AF992、C25855；更新 docs/progress.md、docs/handoff.md、当前工作分工索引和关键报告索引；只通知各部门在各自当前任务中更新本部门交接，不越权修改Spec、Roadmap、app或设计产物；补记真实发生且可验证的DECISION/MILESTONE，不事后虚构。",
+  "domain_stage": "项目真值恢复",
+  "event_receipts": [
+    "DEC-20260808T220723-6B2994",
+    "MIL-20260808T220735-16FEF5"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "旧阻断缺少足以关闭的正式证据：保持原状态，记录缺口并派最小补证任务。",
+    "任务JSON与报告冲突：以任务工具和可复核产物为准，不手改JSON。",
+    "发现跨部门文件所有权冲突：仅登记并通知对应部门，不覆盖其产物。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查错题集无条目；首次claim参数名错误未改状态；C25855 supersede被历史链校验拒绝后未绕过或手改JSON；设计部通知首次缺hostId失败后核对同一正式线程并成功重发；未把设计确认写成冻结完成或把旧PASS外推。",
+  "node": "消除任务、进度、交接和报告索引的时态冲突",
+  "pointers": [
+    "docs/progress.md"
+  ],
+  "report": "docs/collaboration/部门/统筹部/报告/2026-08-08-协作真值校正与交接入口恢复报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260808-4802F7",
+  "title": "校正协作真值与恢复交接入口",
+  "unverified": [
+    "54BB47最终冻结产物、00A9C9最终合同、最终设计对应app落地与新测试/安全复验尚未完成。",
+    "真实Base/provider/Collector/采集、AI/媒体、发布、部署、R5与R12未放行；本任务未重跑app测试。"
+  ],
+  "updated_at": "2026-08-08T22:11+08:00",
+  "verified": [
+    "795FB0与3AF992已由任务工具正式superseded；C25855因既有replacement链被工具拒绝再次收口并保留blocked审计锚点；三处交接入口、关键报告索引和五个现有部门窗口通知已完成。",
+    "校正后doctor通过；4451C2与F01A13正式ACK报告分别支撑精确no-store/完整HTTP矩阵和启动脱敏/零泄露后继事实。"
+  ]
+}

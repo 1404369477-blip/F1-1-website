@@ -1,0 +1,62 @@
+{
+  "acceptance_exit": "交付一份逐项可溯源的像素复核报告，五项未确认内容均有verified或明确Unknown；P1/P2每项有保留/修改/否决结论、证据与影响。若存在建议修改，交付隔离successor HTML、hash清单及六格深浅响应式对照；若不建议修改，明确说明无需候选。任何候选仅供用户视觉确认，未确认不得替换SHA 5a84基线。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "design/ui/F1+1-v0.2-taste-successor-20260809/F1+1-v0.2-taste-successor-candidate-20260809.html",
+    "design/ui/F1+1-v0.2-taste-successor-20260809/SHA256.txt",
+    "design/ui/F1+1-v0.2-taste-successor-20260809/pixel-review-and-design-delta.md",
+    "design/ui/F1+1-v0.2-taste-successor-20260809/evidence/F1+1-v0.2-taste-successor-dark-1440.png",
+    "design/ui/F1+1-v0.2-taste-successor-20260809/evidence/F1+1-v0.2-taste-successor-light-1440.png",
+    "design/ui/F1+1-v0.2-taste-successor-20260809/evidence/F1+1-v0.2-taste-successor-dark-1024.png",
+    "design/ui/F1+1-v0.2-taste-successor-20260809/evidence/F1+1-v0.2-taste-successor-light-1024.png",
+    "design/ui/F1+1-v0.2-taste-successor-20260809/evidence/F1+1-v0.2-taste-successor-dark-390.png",
+    "design/ui/F1+1-v0.2-taste-successor-20260809/evidence/F1+1-v0.2-taste-successor-light-390.png",
+    "docs/collaboration/部门/设计部/报告/2026-08-09-v0.2-taste像素复核与打磨候选报告.md"
+  ],
+  "authorization_evidence": "2026-08-09主会话：用户明确要求设计部跟进Kimi/DeepSeek已落盘的taste视觉审视、未确定项与待优化内容",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T20:04+08:00",
+      "evidence": "2026-08-09主会话：用户明确要求设计部跟进Kimi/DeepSeek已落盘的taste视觉审视、未确定项与待优化内容",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "设计部/当前正式会话",
+  "completion_class": "standard",
+  "confirmation": "用户已授权设计部跟进客观复核；任何视觉改动是否替换冻结基线仍由用户单独确认",
+  "created_at": "2026-08-09T20:04+08:00",
+  "department": "设计部",
+  "details": "先完整读取设计部交接班文档、2026-08-09-taste标准v0.2冻结设计审美审视报告及研究部taste-skill评估。精确绑定冻结HTML design/ui/F1+1-v0.2-全站设计/F1+1-v0.2-final-20260808.html，SHA-256=5a84bfb27294ebd727369118a95528f5b788bfacbe2d56cc03fcb006f6168cb1，并对 evidence/final-20260808 下1440/1024/390×深浅六格做同一基线复核。必须逐项裁决：Dock浅色实感、深色底层次、Barlow Condensed实际落屏、390上22px缩略图密度与触控、真实图最差裁切区文字对比；同时复核报告P1-1移动端时间线隐喻、P1-2 Dock规范漂移和P2-1..P2-5。优先使用项目既有/内置视觉与浏览器能力，不安装taste-skill，不把Kimi结论当作唯一证据。若建议改动，另建不可变successor目录与精确hash，导出1440/1024/390×深浅六格对照；不得覆盖冻结HTML/index、不得修改app/、Spec、accepted ADR或当前开发候选。",
+  "domain_stage": "公开页-视觉复核",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "冻结HTML/hash或六格证据不匹配：立即block并回统筹部，不基于漂移对象下结论",
+    "视觉工具无法读取或真机/字体/远程图像条件不可证：保留Unknown并给唯一补证路径，不用代码推断冒充像素结论",
+    "建议会影响现有信息架构、功能合同或开发候选：只做隔离提案并回统筹部/用户确认，不直接修改正式资产"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未安装 taste-skill；未把 Kimi、Open Design 项目存在、computed font-family 或 fine-pointer 模拟外推为视觉、字体或真机通过；successor 从 SHA 5a84 冻结稿直接派生并保持隔离；任务完成只收口供用户确认的候选，不替换冻结基线，也不授权正式 App 实现。",
+  "node": "对冻结v0.2六格证据完成像素级客观复核；仅在证据支持时制作隔离 successor 候选，不覆盖冻结基线",
+  "pointers": [
+    "docs/collaboration/部门/设计部/报告/2026-08-09-taste标准v0.2冻结设计审美审视报告.md",
+    "docs/collaboration/部门/研究部/报告/2026-08-09-taste-skill评估与安装建议.md",
+    "design/ui/F1+1-v0.2-全站设计/F1+1-v0.2-final-20260808.html"
+  ],
+  "report": "docs/collaboration/部门/设计部/报告/2026-08-09-v0.2-taste像素复核与打磨候选报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-F1358A",
+  "title": "taste标准像素复核与v0.2视觉打磨候选",
+  "unverified": [
+    "Open Design Cloud 视觉代理、Kimi successor 视觉复核、Barlow 生产自托管与跨平台/离线字形、真实 coarse-pointer 44px 命中、不同 DPR、实体安全区、读屏、200% 缩放、forced-colors 实机和低性能设备均未验证；用户尚未确认 successor。"
+  ],
+  "updated_at": "2026-08-09T20:48+08:00",
+  "verified": [
+    "冻结 SHA 5a84 输入未漂移；五项未确认内容逐项获得 verified 或明确 Unknown；P1-1、P1-2、P2-1 至 P2-5 均有裁决、证据和影响；六张 PNG 的尺寸、格式、hash、深浅主题和三宽内容复核通过；390 发丝轴与节点、1024/390 Dock 渐变模糊、日期 18px、trace 透明度 .68 以及三宽无横向溢出均已验证；未修改冻结 HTML/index、app、Spec、accepted ADR 或公开页开发候选。"
+  ]
+}

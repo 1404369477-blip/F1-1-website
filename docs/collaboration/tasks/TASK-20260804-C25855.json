@@ -1,0 +1,44 @@
+{
+  "acceptance_exit": "安全启动包装器在失败时产生稳定且不泄密的 allowlist 收据；真实 Next 使用 canonical public-synthetic 成功监听，feed=200/12、有效详情=200、合法未知详情=404，closed Problem/no-store/零泄露/无 fallback/无外部 IO 保持；一次最终 HTTP 聚焦验收与一次 typecheck 通过；端口与任务临时产物清理完成并 TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "用户于2026-08-04明确要求继续推进",
+  "authorization_history": [
+    {
+      "at": "2026-08-04T20:21+08:00",
+      "evidence": "用户于2026-08-04明确要求继续推进",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "首次包装器启动成功监听；唯一HTTP验收首个feed为200但Cache-Control实测no-cache, must-revalidate，期望no-store，断言立即失败，其余矩阵NOT_RUN。HTTP预算已耗尽，未重跑。typecheck一次exit0；进程、端口、/tmp/C25855、DB/sidecar/.next/收据已清理。另记录tee未启pipefail导致外层exit0，但Node AssertionError明确FAIL。报告：docs/collaboration/部门/开发部/报告/2026-08-04-安全启动收据与public-synthetic-HTTP闭环阻断报告.md",
+  "claimed_by": "开发部/019fb374-7c86-7882-9e51-76114ce69e7f",
+  "completion_class": "standard",
+  "confirmation": "本任务完成后由安全部独立审核启动收据泄露边界，再与 TASK-20260804-3294F5 合并进入一次测试部+设计部真实页面验收。",
+  "created_at": "2026-08-04T20:21+08:00",
+  "department": "开发部",
+  "details": "承接 blocked TASK-20260804-16B34F 的有效产出：public-synthetic readiness 的 PROFILE_MIX 已定位并最小修复，内部 readiness 与 typecheck 已通过；剩余阻断是 scripts/serve.ts 安全包装器在 Next 子进程约449ms退出时只返回 CLI_INTERNAL_ERROR，吞掉了可定位的启动阶段与退出状态。开发部先为本地包装器增加稳定、脱敏、可枚举的失败收据，仅允许 stage、normalizedExitCode、allowlistedSignal、elapsedBucket、readyReached、profileLabel 等非敏感字段；禁止输出命令、参数、路径、环境值、stdout/stderr、stack、URL、数据库位置或 secret。使用 /tmp/TASK-20260804-NEW 专属快照和一次 canonical public-synthetic seed，在新任务预算内启动一次真实 Next；若成功，直接执行唯一 HTTP 聚焦验收；若失败且收据揭示单一明确实现问题，可做最小修复后至多一次纠正性重启，该重启同时承担最终验收。保持此前 profile-aware readiness 修复、完整 integrity、projection-first、无 fallback、无外部 IO、accepted DTO/Problem 合同。最终验收覆盖 feed 200/12、有效详情200、合法未知详情404、malformed闭合、no-store、零泄露；再做1次 typecheck。不得运行 full check/build/浏览器；完成后关闭端口并清理任务专属临时产物。提交开发部报告与 TASK_STATE_OK；若两次启动仍不能监听，按精确收据 block，不再试启。",
+  "domain_stage": "p1_remediation",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若首次启动失败，收据必须只包含允许字段并能区分 spawn、readiness、early_exit、timeout；若包含路径、命令、环境、stdout/stderr、stack、URL、数据库信息或 secret，立即停止并修复泄露。",
+    "若收据显示可修复的单一启动问题，只允许一次最小修复和一次纠正性重启；第二次仍失败则 block，禁止第三次启动、重复 seed 或绕过包装器直启 Next。",
+    "不得通过禁用 profile-aware readiness、放宽 integrity、吞掉错误、静态 fallback 或改 DTO/ADR 使验收通过；出现任何一项即任务失败。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "next-wrapper-diagnostics-and-http-closure",
+  "pointers": [
+    "TASK-20260804-16B34F; TASK-20260804-504B0D; TASK-20260804-697D1B; docs/decisions/system/2026-08-03-F1+1-公开读模型与API接线-v0.4-successor-accepted.md"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260804-C25855",
+  "title": "补齐安全启动收据并恢复 public-synthetic HTTP 闭环",
+  "unverified": [],
+  "updated_at": "2026-08-04T20:29+08:00",
+  "verified": []
+}

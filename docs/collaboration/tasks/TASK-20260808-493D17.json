@@ -1,0 +1,57 @@
+{
+  "acceptance_exit": "统筹、产品、数据和安全部门得到可溯源的候选矩阵，明确可直接试验、需用户授权、需付费、manual_only和排除路径；每个时效性事实都有官方链接与查询日期。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/研究部/报告/2026-08-08-首批采集路径官方证据刷新.md",
+    "docs/collaboration/部门/研究部/交接班文档.md",
+    "docs/progress.md"
+  ],
+  "authorization_evidence": "用户此前明确要求调研稳定采集方案并于当前主会话要求继续推进；仅允许公开官方资料只读研究",
+  "authorization_history": [
+    {
+      "at": "2026-08-08T21:57+08:00",
+      "evidence": "用户此前明确要求调研稳定采集方案并于当前主会话要求继续推进；仅允许公开官方资料只读研究",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "研究部/019fb36c-1f86-78d3-a6d7-f87f124bd710",
+  "completion_class": "standard",
+  "confirmation": "任何付费、账号授权、OAuth申请、真实采集和新信源启用都需用户另行确认。",
+  "created_at": "2026-08-08T21:57+08:00",
+  "department": "研究部",
+  "details": "只查官方或第一方资料，按2026-08-08当前状态复核第一方F1/RSS、X公开账号、Reddit与Instagram的可访问范围、授权、费用、速率、删除同步、摘要与图片展示边界；优先覆盖用户已列出的X白名单和现有信源文件；输出适合首条纵切的1到3个候选及证据日期。不得登录用户账号、不得购买额度、不得绕过验证码/登录/反爬、不得把GitHub项目许可证当平台授权。",
+  "domain_stage": "采集证据核验",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "官方价格、许可或API资格不可见：写unknown和待确认，不采用社区报价补结论。",
+    "页面要求登录、付费或验证码：停止该路径，不使用用户会话或绕过访问控制。",
+    "不同官方页面互相冲突：并列证据、版本和日期，提交不确定项。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "独立对抗审查PASS；已修正Motorsport权利措辞、统一direct_experiment/needs_user_auth/needs_payment/manual_only/exclude标签并给时效数字加证据编号。自检确认未把可达性当授权、未把图片URL当版权、未把GitHub许可证当平台授权；未登录、未付费、未创建OAuth/App、未调用凭证API、未下载图片、未抓正文、未绕控；TASK_STATE_OK。",
+  "node": "为首条真实纵切核验当前仍可用的官方采集路径",
+  "pointers": [
+    "research/multi-platform-source-collection-2026-07-30.md"
+  ],
+  "report": "docs/collaboration/部门/研究部/报告/2026-08-08-首批采集路径官方证据刷新.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260808-493D17",
+  "title": "首批采集路径官方证据刷新",
+  "unverified": [
+    "三条RSS长期稳定性、地区差异、连续15分钟SLA、历史回填、删除/编辑语义及生产摘要/图片/存储许可未验证。",
+    "X实际Developer Console资格/余额/最终价格/token权限及其余58条身份和API状态；Reddit商业协议价格/审批；Instagram精确速率/费用/App Review/账号类型/删除webhook覆盖均Unknown。",
+    "任何真实内容AI翻译/摘要的权利与数据处理合法依据未验证；真实平台采集、OAuth、付费和生产展示继续关闭。"
+  ],
+  "updated_at": "2026-08-08T22:15+08:00",
+  "verified": [
+    "2026-08-08 直接只读复核三条第一方 RSS：Motorsport F1 50条且50/50含pubDate与enclosure；Formula1.com 10条且0/10含pubDate、0/10含item图片；FIA News 10条且10/10含pubDate。",
+    "官方文档核对 X 按量预付价格、Filtered Stream 延迟/规则/连接、Enterprise compliance；Reddit OAuth/User-Agent/100QPM/删除与商业协议；Instagram专业账号/API token/embed/自动采集许可边界。",
+    "项目内59条X白名单仍为identity/monitorability unknown与proposed；仅@F1取得Formula 1自有corporate页面反向链接证据，未修改CSV。"
+  ]
+}

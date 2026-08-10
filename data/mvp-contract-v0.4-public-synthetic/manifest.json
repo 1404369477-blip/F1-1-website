@@ -1,0 +1,91 @@
+{
+  "manifest_version": "public-demo-12-v0.4-manifest-v2",
+  "contract_version": "mvp-local-v0.4",
+  "fixture_set": "public-demo-12-v0.4",
+  "source_task": "TASK-20260803-D53BF3",
+  "successor_of": "mvp-local-v0.3",
+  "status": "generated_candidate",
+  "artifact_hashes": {
+    "data/mvp-contract-v0.4-public-synthetic/stories.input.json": "42188f0b621bdfa9333fbe8b7541b284faf5e82ed655369b4a2feda383a4dcb1",
+    "data/mvp-contract-v0.4-public-synthetic/schema.json": "4b2d1abec6c6315c92fd2ae70c6422b894e380850a9b9408d35a385c777ca11f",
+    "data/mvp-contract-v0.4-public-synthetic/fixtures.public-synthetic.json": "c7d9d88b170214b283a214625d6fd2028fd8eb3a6a2701c556cb2364eb9941e4",
+    "data/mvp-contract-v0.4-public-synthetic/public-dto-mapping.json": "285bfe529b492c81fe883097615ebae34effbe6a9123a1bfd0184973f3fe7be2",
+    "data/mvp-contract-v0.4-public-synthetic/profile-boundary.json": "c9a83ddc7b99386181bcde3b9286f3c6d6fd83acff599a09a8d1a4639e025e90",
+    "data/mvp-contract-v0.4-public-synthetic/generate_public_fixture.py": "34ecfa83fec1f89a22d877e554c4ce5c4d11c1bad6b7f09f123fea3ede1cb81a",
+    "data/mvp-contract-v0.4-public-synthetic/validate_public_fixture.py": "058be83bdded7f5c60028f0a2e537c510e9386934284684fffb119d2e487360c"
+  },
+  "manifest_hash_scope": "artifact_hashes includes the sole story input and excludes manifest.json/profile-ledger.json to avoid recursion; ledger binds final manifest bytes",
+  "v0_3_frozen": {
+    "manifest_path": "data/mvp-contract-v0/manifest.json",
+    "manifest_sha256": "8a371102c28eaa557d33df8672338cb3aba7b7ae1fe75c0c357c8edaa23b2cde",
+    "artifact_count": 11,
+    "artifact_hashes": {
+      "data/mvp-contract-v0/schema.json": "de6c6c07a33589106ebb93496ad10ae3b06ab1c7845e4e0e91888ca0b17ae5a4",
+      "data/mvp-contract-v0/base-mapping.json": "f0a086099d0f4ce9bbcd1afb0533aef90ec8d4f00b1618cc5114bebe40601f9d",
+      "data/mvp-contract-v0/state-machine.json": "d5ca45fd60c2ad08c60929abd714f6e80c43c20f561be0c0a18e3baa17c7c120",
+      "data/mvp-contract-v0/fixtures.synthetic.json": "e56122c0d99761df2e48bfed817c45e0e184d10130ea5bfce89e1d1be56f4abf",
+      "data/mvp-contract-v0/runtime-envelope.schema.json": "15d398cbaaefa37dabfa6af9b7b9c3cc8b207922ef67b0889329366f8336b30d",
+      "data/mvp-contract-v0/security-fixtures.schema.json": "3a8dcd859f48edcd65ab6a05a4b34280f3629f7c879236dbab3ce83e61b78d0a",
+      "data/mvp-contract-v0/security-fixtures.synthetic.json": "66ace7a1e1800d740f75b35fd55234c7417b9acae7ef1c0a32757eec3051db22",
+      "data/mvp-contract-v0/internal-contract.schema.json": "462605a2258d2922d9b982f490aeda3a1395f9e1dcf718fb8745e49db2afade8",
+      "data/mvp-contract-v0/internal-fixtures.synthetic.json": "6fa873675732a06e440d8d67923647a9938d264b1162a485d3abf02ef33f86d8",
+      "data/mvp-contract-v0/seed-layers.json": "d8a9d5cbfb8f3b209557ef7c6ef904e8c63b03d577b461d4f2ecb2aae7b40459",
+      "data/mvp-contract-v0/generate_contract.py": "3f62c2eabdbd95c4b26bb878028481695aed5ab93173d3cba608acd1e6bf3841"
+    }
+  },
+  "m3_shadow_unchanged": {
+    "row_count": 59,
+    "field_count": 39,
+    "enabled_false_count": 59,
+    "canonical_projection_hash": "e7a8312c70a9a49922aedb3cfbeaa190db8f5dce8d4ab45db1570748fc329f17"
+  },
+  "story_input": {
+    "path": "data/mvp-contract-v0.4-public-synthetic/stories.input.json",
+    "sha256": "42188f0b621bdfa9333fbe8b7541b284faf5e82ed655369b4a2feda383a4dcb1",
+    "input_version": "public-demo-stories-input-v1",
+    "runtime_dependency": false
+  },
+  "one_time_provenance": {
+    "migration_type": "one_time_reviewed_transfer",
+    "source_path": "app/src/features/stories/demo-data.ts",
+    "source_sha256": "e6a8fb65374ec71722f8cf0c3234dfdef4ea8df691991d3f6615fdbf6de9881b",
+    "transfer_task": "TASK-20260802-EFA8A7",
+    "transferred_on": "2026-08-03",
+    "runtime_dependency": false,
+    "maintenance_source": "data/mvp-contract-v0.4-public-synthetic/stories.input.json"
+  },
+  "entity_counts": {
+    "sources": 1,
+    "captured_items": 12,
+    "contents": 12,
+    "events": 0,
+    "summaries": 12,
+    "media_candidates": 10,
+    "release_bundles": 12,
+    "review_decisions": 12,
+    "publications": 12,
+    "outbox_jobs": 0,
+    "published_projections": 12
+  },
+  "public_ids": [
+    "public-demo-qualifying-window",
+    "public-demo-pit-wall-notes",
+    "public-demo-practice-notebook",
+    "public-demo-helmet-sketch",
+    "public-demo-training-lap",
+    "public-demo-garage-ritual",
+    "public-demo-archive-gearbox",
+    "public-demo-legend-interview",
+    "public-demo-circuit-map",
+    "public-demo-paddock-rain",
+    "public-demo-radio-mixup",
+    "public-demo-fan-sign"
+  ],
+  "graph_hash": "4be9f7e868a8bf21551bdcdc05d6b0d027e1a0ea43fd16dd2c7ea2b2ff9ba526",
+  "source_id": "src-active",
+  "source_delta_from_v0_3": 0,
+  "synthetic_only": true,
+  "external_calls": 0,
+  "writes_to_base": false,
+  "real_content_imported": false
+}

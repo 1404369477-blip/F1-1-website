@@ -1,0 +1,69 @@
+{
+  "acceptance_exit": "开发部获得一套可离线读取、边界值明确、每个案例只有一个主 reason code 的 manifest/fixture 包；至少覆盖十项合同及临界值两侧，全部标注 external_calls=0、writes_to_base=false、cursor_advanced=false（拒绝例），并有自校验命令或结构校验收据。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/fixtures/rss-security/manifest.json",
+    "app/fixtures/rss-security/vectors.json",
+    "app/fixtures/rss-security/minimal-valid.xml",
+    "app/fixtures/rss-security/validate.py",
+    "docs/collaboration/部门/安全部/报告/2026-08-09-VS-RSS-0离线恶意样本与原因码向量包报告.md"
+  ],
+  "authorization_evidence": "纯本地恶意样本与描述性mock，external_calls=0",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T09:53+08:00",
+      "evidence": "纯本地恶意样本与描述性mock，external_calls=0",
+      "state": "none"
+    }
+  ],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "本任务只授权本地安全 fixture 与报告；不批准 Motorsport 或任何外部请求，不启用 Source，不写 Base，不实现或发布生产采集器。",
+  "created_at": "2026-08-09T09:53+08:00",
+  "department": "安全部",
+  "details": "以 docs/decisions/system/2026-08-09-F1+1-VS-RSS-0本地低频RSS试验-draft.md §6 为唯一输入，创建纯本地、零网络的机器可读安全向量包和最小 fixture：覆盖精确 URL allowlist、userinfo/query/fragment/端口/IP literal、DNS 公私混合与 IPv4-mapped IPv6、3xx、TLS/超时模拟、MIME/content-encoding、1 MiB、DTD/实体/XInclude、节点10000、深度32、字段16384字节、20 item、identity missing/collision unresolved、unknown schema/fence stale，并为每个向量绑定唯一 expected reason code、是否拒绝完整响应、是否推进游标、是否保留任何数据。网络/DNS/TLS只用注入式描述或 mock 向量，严禁真实解析或请求。允许写独立 app/fixtures/rss-security/ 与安全部报告；不改 app/src、migrations、data frozen artifact、Spec 或 accepted ADR。",
+  "domain_stage": "VS-RSS-0离线安全实现输入",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "某项只能通过真实 DNS/TLS/网络重现：改用依赖注入描述与固定 resolver/transport 结果，不发真实请求。",
+    "恶意 XML/压缩样本可能触发本机资源耗尽：使用最小结构生成规则与上限元数据，不生成超大炸弹文件。",
+    "合同无法为边界情况确定唯一 reason code：列为 P1 冲突交统筹，不自行扩展生产语义。"
+  ],
+  "from_department": "统筹部",
+  "impact_declaration": {
+    "admission": "manual",
+    "base_revision": "a9691e71b1552592cc5ded8d5db66c336262301c",
+    "external_effects": [
+      "none; offline fixtures only"
+    ],
+    "owner_task": "TASK-20260809-88561C",
+    "shared_contracts": [
+      "docs/decisions/system/2026-08-09-F1+1-VS-RSS-0本地低频RSS试验-draft.md §6 read-only input"
+    ],
+    "write_paths": [
+      "app/fixtures/rss-security"
+    ]
+  },
+  "mistake_check": "未猜测或新增四个生产reason code；未执行网络/DNS/TLS；未生成XML bomb；未修改app/src、migration、data、Spec、accepted ADR或draft；FAIL不授权真实RSS请求、Source、Base、provider或生产采集",
+  "node": "把十项RSS入口安全合同转成开发可直接消费的离线测试输入",
+  "pointers": [
+    "docs/decisions/system/2026-08-09-F1+1-VS-RSS-0本地低频RSS试验-draft.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-09-VS-RSS-0离线恶意样本与原因码向量包报告.md",
+  "resolution": null,
+  "revision": 5,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-88561C",
+  "title": "VS-RSS-0离线恶意样本与原因码向量包",
+  "unverified": [
+    "20-item越界、部分事务失败、日志违规、公开/媒体出口违规缺唯一主reason code；生产解析器、resolver、transport、TLS、游标、日志实现和实际XML库边界行为未验证；真实RSS、权利、来源行为及用户授权未验证"
+  ],
+  "updated_at": "2026-08-09T10:03+08:00",
+  "verified": [
+    "46个纯本地向量ID唯一并覆盖十项运输合同；所有已定义拒绝例均complete_response_rejected=true、cursor_advanced=false、data_retained=false；external_calls=0、writes_to_base=false；结构校验返回STRUCTURE_OK_WITH_BLOCKERS；三个被哈希产物SHA-256与manifest一致；未生成超大或资源耗尽样本"
+  ]
+}

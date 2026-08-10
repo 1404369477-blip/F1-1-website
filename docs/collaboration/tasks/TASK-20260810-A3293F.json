@@ -1,0 +1,56 @@
+{
+  "acceptance_exit": "提交测试部final报告与机器manifest，唯一decision=pass或fail并列P0/P1/P2；同一875B6C候选的完整独立HTTP/幂等/恢复/closed/零残留矩阵有证据；PASS要求P0=0且P1=0，完成返回TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-08-10-A3293F修复后独立HTTP恢复矩阵报告.md",
+    "docs/collaboration/部门/测试部/报告/TASK-20260810-A3293F-evidence/evidence-manifest.json",
+    "docs/collaboration/部门/测试部/报告/TASK-20260810-A3293F-evidence/raw-http-receipt.json"
+  ],
+  "authorization_evidence": "用户回复继续并持续授权推进本地初版；本任务仅对修复后的本地synthetic候选做独立复验。",
+  "authorization_history": [
+    {
+      "at": "2026-08-10T08:17+08:00",
+      "evidence": "用户回复继续并持续授权推进本地初版；本任务仅对修复后的本地synthetic候选做独立复验。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "测试部/019fb379-9212-7e80-a5df-587d339936c4",
+  "completion_class": "audit",
+  "confirmation": "这是37CA8F后的新任务；不得恢复或覆盖37CA8F历史FAIL，也不得外推UI、真实采集或生产完成。",
+  "created_at": "2026-08-10T08:17+08:00",
+  "department": "测试部",
+  "details": "唯一候选为已ACK TASK-20260810-875B6C：开发报告SHA=022e1d2db619494b60d0d5c6190946f0a453953ec5b878885d5ce3cc9f4e910f，manifest SHA=1d402722e2139fd5fbab0de791e691939273e0a534672aba71a629b45486519e，security.ts SHA=a455df964f86045ff4157142a7cd378f2f64a12bb46a54661daa711d0750f965，raw-target test SHA=aa30872b9a0a16696d4c42f61314efa9c340d00c5233d2e52edbd61afe4d00c9；继承91AF6E server/no-egress/repository与closed DB SHA ddf3778c。使用独立0700临时profile/DB和至多一个127.0.0.1:3019实例；独立客户端必须按冻结合同使用x-f1-csrf-token。覆盖health、session create/get/refresh/destroy、CSRF一次性/重放/错method/path/body、59 baseline只读、list/get/add/validate/activate/stop/retire/requeue、operation、response-loss replay、stale/conflict/404、最终local overlay、closed receipt、externalCalls=0及清理。先只读审查harness头名与route/body绑定再启动；不跑全量/build/typecheck，不改产品代码或正式DB，不外联。",
+  "domain_stage": "M5-SOURCE-MGMT修复后独立测试",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "候选报告/manifest/security/test/closed DB或继承保护SHA任一漂移：不启动并立即block。",
+    "harness静态预检发现头名、route、canonical body或断言与合同不一致：不启动，修正需新任务；不得本轮边跑边改。",
+    "首个HTTP/closed/恢复/清理断言失败或出现外联/正式资产写入：首错停止，保存实得，只清理由本任务创建的资源。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "独立客户端正确使用x-f1-csrf-token；最终误把合同local_synthetic断言为local_overlay，已归为测试执行首错且未制造产品缺陷；遵守首错停止未修harness重跑；37CA8F历史FAIL未改；未运行全量/build/typecheck或修改正式资产",
+  "node": "在修复后候选上用正确CSRF头完成一次独立HTTP/closed/恢复矩阵",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260810-875B6C.json",
+    "app/evidence/TASK-20260810-875B6C/manifest.json",
+    "docs/collaboration/部门/开发部/报告/2026-08-10-875B6C-RAW_DOT_SEGMENT_ALIAS原始路径前置拒绝修复报告.md",
+    "docs/collaboration/部门/测试部/报告/2026-08-10-37CA8F独立HTTP与closed复验报告.md"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-08-10-A3293F修复后独立HTTP恢复矩阵报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260810-A3293F",
+  "title": "875B6C新候选独立HTTP与恢复矩阵复验",
+  "unverified": [
+    "session destroy 204与destroy后401，因最终客户端overlay origin断言首错停止；closed receipt生成命令未重跑，仅交叉核对冻结receipt、自哈希字段和正式DB SHA"
+  ],
+  "updated_at": "2026-08-10T09:23+08:00",
+  "verified": [
+    "冻结候选全量SHA与正确x-f1-csrf-token静态预检；独立59+0 profile；唯一3019实例health/session/CSRF正反/add及response-loss replay/operation/get/validate/stale/activate replay/identity conflict/stop/retire/requeue conflict/404/list_after；externalCalls=0；正式DB与保护字节零漂移；端口与临时根清理"
+  ]
+}

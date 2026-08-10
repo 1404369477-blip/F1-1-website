@@ -1,0 +1,56 @@
+{
+  "acceptance_exit": "更新docs/spec.md和docs/decisions/system/2026-07-31-F1+1-信源库维护决策包-proposed.md；移除该门禁的unknown表述并记录用户确认日期/决定；给出明确的新信源默认状态、采集入队条件、失败状态和公开审核门禁；保持整体维护架构proposed且不把D/A写成用户已选；同步docs/progress.md；列出已验证/未验证与错题自检；完成只读对抗审查后complete并输出TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/spec.md",
+    "docs/decisions/system/2026-07-31-F1+1-信源库维护决策包-proposed.md",
+    "docs/progress.md"
+  ],
+  "authorization_evidence": "主会话用户于2026-07-31明确选择即时采集路径。",
+  "authorization_history": [
+    {
+      "at": "2026-07-31T21:56+08:00",
+      "evidence": "主会话用户于2026-07-31明确选择即时采集路径。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "用户明确回复：完成规范化与查重后立即开始采集，公开内容仍需人工审核。",
+  "created_at": "2026-07-31T21:56+08:00",
+  "department": "产品部",
+  "details": "用户已明确选择：手机新增信源完成规范化与查重后立即开始采集，公开内容仍需人工审核。请把该决定吸收到docs/spec.md与现有信源库proposed决策包，保持A/D架构路线本身仍为proposed。必须区分采集尝试与公开发布：新增记录不等待身份或F1相关性核验，身份/相关性可保持unknown；在规范URL与查重完成且平台适配器已有合法授权和能力时立即入采集队列。若适配器缺失、授权失效、平台受限或采集失败，记录阻断/失败状态并告警，不得绕过平台控制。所有采集内容继续进入人工审核，未经通过不得公开。不得创建或修改真实飞书资源。",
+  "domain_stage": "M2需求确认",
+  "event_receipts": [
+    "DEC-20260731T220043-5A4318",
+    "MIL-20260731T221321-07EE9F"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "不得仍要求identity_status=verified或relevance_status=qualified才能开始采集；不得把规范化与查重解释成可以绕过平台授权、适配器支持或访问控制；不得把开始采集等同自动公开；不得把用户对生效门禁的确认扩写成接受A/D架构、真实飞书创建或自动发布。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已读取项目错题集，当前无历史错题条目；额外检查并修正了用户确认与产品字段建议的标签边界；未保留“立即采集还是待验证”的unknown，未要求身份/F1相关性核验后才采集，未绕过适配器、授权或平台控制，未把采集等同自动公开，未把该确认扩写成A/D选择或真实飞书授权，未创建真实飞书资源、冻结Spec、初始化app或切换采集器。",
+  "node": "M2-信源新增生效门禁确认",
+  "pointers": [
+    "docs/spec.md",
+    "docs/decisions/system/2026-07-31-F1+1-信源库维护决策包-proposed.md",
+    "docs/progress.md"
+  ],
+  "report": "已吸收用户于2026-07-31确认的新增信源生效门禁并更新Spec v0、现有proposed决策包和进度。新信源通过规范化、查重、合法授权与适配器能力检查后立即启动幂等入队；身份与相关性unknown不阻断；所有拟公开内容继续绑定确定版本的人工审核。A/D仍为proposed，未创建真实飞书资源。三路独立审查无残留P0/P1。",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260731-8DE25C",
+  "title": "吸收信源新增后立即采集的用户决定",
+  "unverified": [
+    "真实飞书账号、租户、应用scope、Base、表单及授权状态未探测且未创建；transactional outbox、队列、适配器授权检查、双epoch栅栏、失败重试和审核hash绑定尚未实现或运行测试；真实手机路径与59个X账号的身份、相关性、质量和持续可监控性仍未验证；当前文档修订版尚未由测试部正式复验；A/D架构路线仍待用户接受。"
+  ],
+  "updated_at": "2026-07-31T22:14+08:00",
+  "verified": [
+    "TASK授权状态为user_confirmed，确认原文明确“规范化与查重后立即采集、公开仍人工审核”；Spec v0、proposed决策包和进度已同步，原待回答/unknown门禁已移除；新信源默认状态、规范化与查重、适配器能力与合法授权、transactional outbox幂等入队、停止与双epoch栅栏、阻断/失败状态及内容版本人工审核门禁已写明；identity/relevance unknown不阻断采集；A/D架构、Base真值与资源创建仍保持proposed或待授权；三路独立只读对抗审查复核无残留P0/P1；本地链接、Markdown围栏、尾随空格、git diff --check和TASK doctor均通过。"
+  ]
+}

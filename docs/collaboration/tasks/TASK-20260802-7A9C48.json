@@ -1,0 +1,56 @@
+{
+  "acceptance_exit": "Node24下新增负例证明npm run dev/start -- 任意附加参数（至少--port 3101、--hostname 0.0.0.0、positionals）均exit!=0且无3000/3101/外部监听；missing DB及代表性CLI失败stderr/stdout无绝对路径、stack、源码行、URL、secret，只含稳定safe JSON reason；正常start仍127.0.0.1:3000 ready。完整check、全部测试、lint/typecheck/build、重复migration/seed与hash零漂移通过；提交开发整改报告、唯一PASS/FAIL、未验证项、TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/scripts/serve.ts",
+    "app/scripts/p1-acceptance.ts",
+    "app/src/server/security/cli.ts",
+    "app/src/server/security/log.ts",
+    "app/src/tests/p1-cli.test.ts",
+    "app/README.md"
+  ],
+  "authorization_evidence": "用户授权持续推进本地初版；统筹与安全部已机械复现启动端口覆盖和CLI绝对路径stack泄漏。",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T13:47+08:00",
+      "evidence": "用户授权持续推进本地初版；统筹与安全部已机械复现启动端口覆盖和CLI绝对路径stack泄漏。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部当前会话",
+  "completion_class": "standard",
+  "confirmation": "只修复两项本地P1；真实能力、R12和同UID威胁模型继续关闭/待决。",
+  "created_at": "2026-08-02T13:47+08:00",
+  "department": "开发部",
+  "details": "修复安全复验新确认的两项P1，禁止扩大范围。P1-A：npm run dev/start 后附加 --port/--hostname/positionals 当前可覆盖固定127.0.0.1:3000；实现fail-closed命令边界，任何用户附加参数均非零拒绝且不得启动监听，正常命令仍先runtime readiness再固定loopback:3000。P1-B：runtime/bootstrap、verify、migrate、seed等CLI负例当前由Node输出绝对路径/源码/stack；建立无新依赖的统一顶层安全catch，只输出结构化allowlist event/status/reasonCode/externalCalls=0，禁止message/stack/path/URL/secret。新增真实子进程负例覆盖参数覆盖、missing DB、坏env/fixture/migration错误；保持R5同UID与R12 pending如实。不得改Spec/ADR/data/design/accepted migration bytes/lockfile，不新增依赖。",
+  "domain_stage": "M4-C-VS0-postfix-p1-remediation",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 仅依赖Next参数解析或参数顺序，仍能被重复option/positionals绕过：FAIL，改为应用自有入口显式拒绝argv。",
+    "2) catch仍输出error.message/stack或npm/Node绕过catch泄漏绝对路径/secret：FAIL并提供最短复现，不以测试正则放宽。",
+    "3) 修复需要新依赖、改accepted migration/lock、开放child_process外联或破坏normal start：停止并回报统筹。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "保留沙箱socket EPERM与继承代理变量ENV_FORBIDDEN两条作废历史；未放宽测试、环境门禁或版本栅栏；未重新claim/reset/clean，未删node_modules/.local，未改Spec/ADR/data/design/migration bytes/lockfile，未新增依赖；结论唯一PASS。",
+  "node": "M4/C层/VS-0修订后P1整改",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-02-M4-VS-0启动参数与CLI错误泄漏整改报告.md"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-02-M4-VS-0启动参数与CLI错误泄漏整改报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-7A9C48",
+  "title": "修复VS-0启动参数覆盖与CLI错误泄漏",
+  "unverified": [
+    "R5恶意同UID竞争与完整TOCTOU证明、R12 OS/系统调用级deny-all、真实Base/provider/采集/AI/媒体/发布/部署/付费能力均未验证且继续fail closed。"
+  ],
+  "updated_at": "2026-08-07T19:28+08:00",
+  "verified": [
+    "PASS：迁移断点与claimed_by均匹配；Node24.18.0/npm11.16.0完整check exit0；42/42测试通过；dev/start六组真实npm附加argv负例均稳定JSON非零退出且3000/3101无监听；四组CLI负例无路径/stack/源码行/URL/secret；正常start固定127.0.0.1:3000且health ready；重复migration applied=[]、seed inserted=false；lock/migration/data/spec/ADR/design/app聚合hash零漂移；externalCalls=0。"
+  ]
+}

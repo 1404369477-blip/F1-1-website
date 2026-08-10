@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "提交产品部final裁决报告，只有一个A或B结论；列固定输入身份、后端可实施/不可实施边界、每个审核动作的真实出口、状态/事务/幂等/恢复、失败reason、与视觉确认门的关系，以及对数据/开发/测试/安全的精确派单条件。P0=0、P1=0、doctor和TASK_STATE_OK；不修改产品合同或实现。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/产品部/报告/2026-08-09-ADMIN-REVIEW-001后端先行与视觉门解耦裁决报告.md"
+  ],
+  "authorization_evidence": "用户持续推进初版本地方案并要求各部门分工；本任务是只读产品裁决，无外部I/O或实现变更。",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T23:52+08:00",
+      "evidence": "用户持续推进初版本地方案并要求各部门分工；本任务是只读产品裁决，无外部I/O或实现变更。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "统筹部依据A/B决定是否派开发后端任务；无论结论为何，Admin UI正式实现仍须用户视觉确认。",
+  "created_at": "2026-08-09T23:52+08:00",
+  "department": "产品部",
+  "details": "完整读取已ACK的最小人工审核台产品合同TASK-20260809-97700F及docs/spec/F1+1-M5最小人工审核台纵切产品合同-v0.1.md、数据映射TASK-20260809-535C4B、设计候选TASK-20260809-69BC5A与现行Spec/accepted ADR。只做产品级可实施性和门禁裁决，不改app、data、design、Spec或accepted ADR。必须给唯一A/B结论：A=后端SQLite/API/session/CSRF/operation/Publication预留时序可按固定合同先行，UI/CSS/真实浏览器仍等待用户视觉确认；B=存在会改变后端合同的视觉/交互未决，必须等待。若A，列精确后端功能范围、不可触碰的UI范围、固定输入路径与SHA、真实operator/route、事务/状态/幂等/恢复、测试安全门及停止条件；若B，只列最小阻断字段/时序和唯一上游确认点。不得把批准和发布合并，不得开放自动发布、真实Base/provider/AI/媒体/外部I/O、生产认证或公网Admin。",
+  "domain_stage": "M5-ADMIN-REVIEW产品门禁",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "产品合同、111槽位数据映射与设计候选在字段、状态或Publication时序上冲突：判B，列精确冲突，不自行发明第二合同。",
+    "固定输入缺失、hash不可解析或任务时态不一致：停止并block，指出唯一待修前置。",
+    "结论需要自动发布、真实外部I/O、生产认证、公网Admin或改变用户未确认视觉：保持关闭并从后端先行范围删除。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未用裁决替代ADMIN-DECISION或ADMIN-VISUAL；未把ACK的proposed合同/mapping写成accepted授权；未合并批准与发布；未修改Spec/app/data/design/accepted ADR；未外联、未测试、未派实现",
+  "node": "裁决人工审核台后端是否可在用户视觉确认前独立实现，并冻结唯一可派发边界",
+  "pointers": [],
+  "report": "不适用",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-DCEFF8",
+  "title": "ADMIN-REVIEW-001后端先行与视觉门解耦裁决",
+  "unverified": [
+    "review-synthetic第三profile、SQLite/migration、Repository/API、session/CSRF、operation receipt、worker及运行收据；Admin UI/CSS/client、基础PNG、辅助技术、真实浏览器与用户视觉确认；全部真实外部能力和部署"
+  ],
+  "updated_at": "2026-08-09T23:58+08:00",
+  "verified": [
+    "只读核对已ACK产品合同、11类111槽位数据mapping、设计候选、现行Spec/progress、accepted M4/公开读ADR与review-synthetic successor draft；固定输入SHA实算匹配；唯一裁决B；列明未来真实路由、事务/状态/幂等/恢复/reasonCode、当前禁止边界、既有唯一用户问题与条件式后端派单门；P0=0/P1=0；external_calls=0；未运行测试"
+  ]
+}

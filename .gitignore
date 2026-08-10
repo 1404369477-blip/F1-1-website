@@ -10,16 +10,27 @@ Thumbs.db
 .vscode/
 .idea/
 *.swp
+.obsidian/
+.codex/
 
 # 环境与密钥
 .env
 .env.local
 *.local
+.obsidian/plugins/obsidian-local-rest-api/data.json
 
 # 日志与临时产物
 *.log
 tmp/
 .tmp/
+app/Library/
+app/~/
+
+# 已完成迁移后的本机打包与恢复副本；保留 migration 顶层交接文档和 conversations/
+migration/bundles/
+migration/manifests/
+migration/portable-assets/
+migration/scripts/
 
 # ——— 选型后按需启用(取消注释,或删掉不相关的)———
 # 依赖与构建产物

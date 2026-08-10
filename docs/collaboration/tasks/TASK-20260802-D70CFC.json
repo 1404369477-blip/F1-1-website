@@ -1,0 +1,58 @@
+{
+  "acceptance_exit": "交付accepted实现决策，逐项冻结6字段、added_at转换、时区/actor/epoch/provenance/hash排序规则、source_safety_epoch优先级；明确不改冻结v0.3/不写Base/59 disabled/仅VS-0；Spec只增加引用和变更记录；唯一PASS/FAIL、报告、TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/decisions/system/2026-08-02-F1+1-VS0-M3种子投影-accepted.md",
+    "docs/spec.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-02-VS0-M3种子投影产品决策报告.md"
+  ],
+  "authorization_evidence": "用户明确要求统筹负责拆解、规划、分配与执行决策并持续推进；当前为已开放VS-0内的局部实现语义",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T10:10+08:00",
+      "evidence": "用户明确要求统筹负责拆解、规划、分配与执行决策并持续推进；当前为已开放VS-0内的局部实现语义",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "用户已授权统筹进行实现决策；本决策仅影响本地fixture seed，无外部写入或业务真值切换。",
+  "created_at": "2026-08-02T10:10+08:00",
+  "department": "产品部",
+  "details": "为TASK-158240/6DAEAE关闭两个数据P0，不改变冻结mvp-local-v0.3领域schema/状态机/Base真值。证据：M3为33列，Source required39列缺platform_allowed/source_config_epoch/created_at/updated_at/created_by_ref/updated_by_ref；M3 added_at为59/59 `2026-07-31 00:00:00`，冻结mapping preserve_value=true但Source format=date；source_safety_epoch已在M3却被local_only误标。请从fail-closed、无状态升级、确定性与个人维护成本做单一决策，优先评估数据部推荐：platform_allowed=unknown；source_config_epoch=1；added_at仅接受精确`YYYY-MM-DD 00:00:00`并投影同一日历日期`YYYY-MM-DD`、无时区换日；created_at=该日期`T00:00:00Z`、updated_at=created_at；actor固定`synthetic:seed-m3-v0`；source_safety_epoch逐字直读M3；59行按source_id排序的canonical projection hash作为实现收据。明确这是local fixture implementation projection，原M3原值/字节/hash仍保留，不写Base、不授权provider/状态升级、不成为第二domain schema。若不同意必须给单一替代。写一份小型accepted实现决策并在Spec变更记录/当前VS-0窗口引用，不改已有accepted核心/data/app。",
+  "domain_stage": "M4-C-VS0-seed-projection-decision",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 转换可能改变日历日期、升级状态或借synthetic fixture填真实M3事实：拒绝并改为更保守规则。",
+    "2) 决策需要修改Source schema或冻结v0.3 hash：停止，另起v0.4 proposed，不在本任务修改。",
+    "3) 无法确定actor/时间/epoch provenance：FAIL并要求用户决定，不让开发自行默认。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "没有把 33 列误报为 39 列；没有把 source_safety_epoch 当作 derived；没有猜时区、静默截断 added_at 或新增 raw timestamp；没有把 epoch=1/synthetic actor写成真实切换或真实用户；没有将 local fixture projection/hash写成 Base 真值或生产放行。",
+  "node": "M4/C层/VS-0种子投影产品决策",
+  "pointers": [
+    "docs/decisions/system/2026-08-02-F1+1-VS0-M3种子投影-accepted.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-02-VS0-M3种子投影产品决策报告.md"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-02-VS0-M3种子投影产品决策报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-D70CFC",
+  "title": "决策VS-0 M3影子种子投影语义",
+  "unverified": [
+    "产品决策后的 bridge validator 复跑、VS-0 seed command、Repository/migration/SQLite ledger 与业务实现",
+    "真实 Base/provider/Collector、真实采集、发布、部署、AI/媒体、付费、外发和所有外部 I/O"
+  ],
+  "updated_at": "2026-08-02T10:18+08:00",
+  "verified": [
+    "已建立唯一窄范围 accepted ADR，冻结六项 derived 字段、added_at 同日历日期投影、UTC creation timestamp、synthetic actor、epoch=1、provenance 与 source_id canonical hash 排序规则",
+    "source_safety_epoch 明确按 M3 direct field ownership 逐字直读，59 行 enabled=false、unknown/pending/proposed/null 保守值与原 M3 字节/hash 保留",
+    "Spec 已仅增加 ADR 引用与变更记录；未修改既有 accepted 核心、data、app、Base、provider 或第二 schema",
+    "数据 bridge 的 33/39、59x39、双跑确定性、candidate hash 与 added_at 冲突证据已核对；git diff --check、JSON 解析和 agent_team_task doctor 通过"
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "acceptance_exit": "开发部提交精简final报告与TASK_STATE_OK；真实CLI中allowTestDatabasePath不可达；NODE_ENV=test加随机DB路径的db-migrate/runtime-ready/start均写前/监听前safe reject且无数据库/sidecar/端口残留；canonical m3/public配置与现有目标测试通过；一次聚焦测试和一次typecheck PASS；冻结改动SHA；未改迁移/data图/四root/UI/API/ADR/lock。完成后交安全部做一次静态+单负例复验，未PASS前不得ACK 253A43/3760。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/src/server/config/env.ts",
+    "app/src/server/runtime-config.ts",
+    "app/src/server/db/profile.ts",
+    "app/src/tests/p1-cli.test.ts",
+    "app/src/tests/runtime-profile-boundary.test.ts",
+    "docs/collaboration/部门/开发部/报告/2026-08-04-NODE_ENV-test数据库覆盖P1整改报告.md"
+  ],
+  "authorization_evidence": "用户持续确认推进并明确要求减少冗余测试；安全任务B9D885已确认单一P1静态可达路径。",
+  "authorization_history": [
+    {
+      "at": "2026-08-04T14:33+08:00",
+      "evidence": "用户持续确认推进并明确要求减少冗余测试；安全任务B9D885已确认单一P1静态可达路径。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/019fb374-7c86-7882-9e51-76114ce69e7f",
+  "completion_class": "standard",
+  "confirmation": "开发完成后只派安全部一次聚焦复验；测试部稳定闭包功能PASS继续有效，除非改动触及其已验行为。安全PASS后统筹再决定ACK 253A43与3760。",
+  "created_at": "2026-08-04T14:33+08:00",
+  "department": "开发部",
+  "details": "以安全FAIL TASK-20260804-B9D885为唯一缺陷输入，只修改runtime config/profile相关最小代码、P1测试辅助与开发报告；不得修改迁移/public-synthetic数据图/四root/公开页面/API/Spec/accepted ADR/design/lockfile。所有真实CLI入口verify-env/db-migrate/seed-fixtures/runtime-ready/dev/start调用loadRuntimeConfig时，必须无条件关闭testDatabasePathOverride，不能由NODE_ENV、APP_ENV、F1_DB_PATH或其他环境值开启任意.local数据库路径。测试如需隔离数据库，应改为隔离app根下的canonical profile路径或直接函数级显式测试配置，不能保留可被真实CLI继承的能力开关。新增一个最小负例矩阵：NODE_ENV=test配随机F1_DB_PATH调用上述真实CLI至少覆盖db-migrate/runtime-ready/start，均在打开数据库/监听前以safe四字段配置错误拒绝；canonical m3/public路径和既有SQLite/启动实现保持可用。先形成可运行修复，再只跑一次聚焦测试与一次typecheck，不跑完整npm check、不build、不增加同质探针。",
+  "domain_stage": "SQLite启动能力P1整改",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任何真实CLI仍能仅凭NODE_ENV/APP_ENV/env值开启任意.local DB覆盖或先创建/写数据库再拒绝：P1 FAIL。",
+    "修复通过删除测试隔离导致测试污染正式canonical DB、破坏m3/public seed或放宽profile/path/fixture/ATTACH边界：P0/P1 FAIL。",
+    "为修复扩大到迁移、数据图、四root、公开UI/API、ADR/lock，或新增完整check/build/重复探针：越界停止。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "首轮聚焦测试实际安全拒绝但DATA_PROFILE_MIX未在CLI allowlist而映射CLI_INTERNAL_ERROR；未扩大安全日志边界，改用既有DB_PATH reason后聚焦套件5/5 PASS。测试隔离改为隔离app根+canonical basename，未留下新的环境能力开关。",
+  "node": "让所有真实CLI运行路径始终使用canonical profile数据库，测试隔离不再依赖继承NODE_ENV开启覆盖",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260804-B9D885.json",
+    "app/src/server/runtime-config.ts",
+    "app/scripts/serve.ts"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-04-NODE_ENV-test数据库覆盖P1整改报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260804-A01DF7",
+  "title": "关闭启动前NODE_ENV=test数据库覆盖P1",
+  "unverified": [
+    "安全部尚未执行静态+单负例聚焦复验；按任务边界未运行full check/build；安全PASS前不得ACK本任务、253A43或3760。"
+  ],
+  "updated_at": "2026-08-04T15:15+08:00",
+  "verified": [
+    "真实loadRuntimeConfig已无条件关闭随机数据库路径覆盖；NODE_ENV=test+随机F1_DB_PATH对db:migrate/runtime-ready/start均在建库/监听前以四字段DB_PATH拒绝且无DB/sidecar/端口残留；canonical m3/public与既有双profile目标测试继续通过；Node24聚焦2文件5测试PASS，typecheck PASS；无.next或.local SQLite残留。"
+  ]
+}

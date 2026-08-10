@@ -1,0 +1,63 @@
+{
+  "acceptance_exit": "交付独立安全合同候选报告：关闭测试缺口3和5的安全部分，给端点级请求/响应/状态码和session/CSRF状态机、攻击矩阵、390/1440浏览器约束、实现最小接口、测试golden；明确产品字段仍需统筹整合；P0/P1/P2自审、未验证项、TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-02-M4-VS-1本地管理API会话与CSRF安全合同候选.md"
+  ],
+  "authorization_evidence": "用户授权持续推进本地初版并要求部门并行执行；本任务关闭已核收测试计划中的admin安全合同缺口。",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T13:38+08:00",
+      "evidence": "用户授权持续推进本地初版并要求部门并行执行；本任务关闭已核收测试计划中的admin安全合同缺口。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "只产出loopback本地管理面安全候选，不改应用，不开放外网、真实账号或生产。",
+  "created_at": "2026-08-02T13:38+08:00",
+  "department": "安全部",
+  "details": "读取测试计划TASK-28882C §16、Spec R2/R3/R4/R12/R13与现有设计合同，只做本地/loopback管理面安全合同候选。定义session创建/刷新/销毁、cookie或header传递、CSPRNG熵、TTL/idle TTL、exact Origin/Host、一次性CSRF原子消费、nonce重放/并发、method/content-type、CORS、缓存、错误reason code、日志脱敏和mutation前置顺序；列出add/activate/stop/retry API的安全predicate与零写入失败语义。不得修改app/Spec/ADR/data/design，不开放真实账号或外部能力。",
+  "domain_stage": "M4-C-VS1-contract-gap-admin-security",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) local HTTP与cookie属性无法同时满足合同：给两套可验证候选与安全差异，保持proposed，不静默降级。",
+    "2) 缺session/Origin/CSRF或nonce非原子仍可能mutation：P0/FAIL，拒绝形成可执行候选。",
+    "3) 协议需要真实身份系统、外部端口或新依赖：缩回local-only原生能力，无法满足则报告阻断。"
+  ],
+  "from_department": "统筹部",
+  "impact_declaration": {
+    "admission": "manual",
+    "base_revision": "git:a9691e71b1552592cc5ded8d5db66c336262301c;read-only-source-contracts;separate-report-only",
+    "external_effects": [
+      "none"
+    ],
+    "owner_task": "TASK-20260802-6F7563",
+    "shared_contracts": [],
+    "write_paths": [
+      "scratch/TASK-20260802-6F7563"
+    ]
+  },
+  "mistake_check": "未把合同PASS扩大为实现或生产PASS；未将loopback/Origin当作OS身份；未允许nonce回滚恢复、response-loss换key、dead-letter requeue新建operation/key、validation job未冻结计数、M3/真实外部能力；对抗复核前FAIL发现已逐项修正并保留审计链；只新增安全部报告和任务状态，未修改app/Spec/ADR/data/design，未启动端口、安装或联网。",
+  "node": "M4/C层/VS-1实现合同缺口/Admin安全协议",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-02-M4-VS-1本地管理API会话与CSRF安全合同候选.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-02-M4-VS-1本地管理API会话与CSRF安全合同候选.md",
+  "resolution": null,
+  "revision": 5,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-6F7563",
+  "title": "冻结VS-1本地管理API会话与CSRF安全合同候选",
+  "unverified": [
+    "app未实现本候选；未运行Node/Next/SQLite/server/browser/port/Cookie/并发重放/fault injection/build/test；R12 OS/process external_calls=0、DNS/raw socket/proxy/subprocess deny-all、390/1440与辅助技术均NOT_RUN/Unknown；validation执行形态与job计数、产品DTO/stop fence/canonical state、生产认证/真实账号/HTTPS/多进程/跨网络未冻结或超范围。"
+  ],
+  "updated_at": "2026-08-02T23:09+08:00",
+  "verified": [
+    "前序026EC3已acknowledged；impact与git:a9691e71b1552592cc5ded8d5db66c336262301c一致；只读对照测试计划§11/§12/§16、Spec R2/R3/R4/R12/R13、accepted ADR、设计与产品候选；报告已冻结启动生成/POST原子领取session、exact raw HTTP/1.1 Host/Origin、每入口no-egress readiness、一次性CSRF原子消费、DEAD-02原operation/key复用、零业务写入、390/1440与golden；独立对抗复核发现已按本地冻结合同修正；静态检查P0=0/P1=0/P2=2。"
+  ]
+}

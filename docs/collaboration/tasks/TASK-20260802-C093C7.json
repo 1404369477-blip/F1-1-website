@@ -1,0 +1,56 @@
+{
+  "acceptance_exit": "提交测试部正式v0.3复验报告并给唯一PASS或FAIL；列P0-01至P0-09、P1/P2、机械计数/hash/引用/状态出口和B/C遗留。PASS必须P0=0且P1=0，全部机器证据可只读重算；完成后TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-08-02-M4-A轴v0.3跨合同定版复验报告.md"
+  ],
+  "authorization_evidence": "用户已明确授权项目全员开工并持续推进本地工程；本任务纯本地只读、无外部I/O",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T02:10+08:00",
+      "evidence": "用户已明确授权项目全员开工并持续推进本地工程；本任务纯本地只读、无外部I/O",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "测试部/019fb379-9212-7e80-a5df-587d339936c4",
+  "completion_class": "audit",
+  "confirmation": "只有测试部PASS且P0=0/P1=0才允许进入产品accepted收口；FAIL退回对应部门。",
+  "created_at": "2026-08-02T02:10+08:00",
+  "department": "测试部",
+  "details": "只读复验已ACK的产品任务TASK-20260802-5BAF26与数据任务TASK-20260802-D80846。目标限定docs/spec.md、M4 proposed ADR、docs/progress.md、data/mvp-contract-v0全部v0.3产物及前序测试/安全失败报告。按P0-01至P0-09重跑跨合同机械验收：所有JSON解析、manifest 11 hashes、版本旧名、6组状态机/5类key/9 invariants/3 seed、16状态fixture、4 reconcile case、三门原子激活、operation/task/lease唯一、TaskEnvelope epoch/deadline/attempt/reconcile、strict content/summary release snapshots、全hash重算、单一Publication/public_id/key、internal-only schema/mapping/fixture真实schema SHA、seed file SHA与subset hash、M3 33/9/59/59、snapshot failure与stale epoch独立、synthetic/no-egress。只评A轴静态合同；B/C运行收据后置。禁止改文件、运行生成器、安装依赖、联网或操作外部资源。",
+  "domain_stage": "M4-A-v0.3-cross-contract-revalidation",
+  "event_receipts": [
+    "TASK-20260802-C093C7-TEST-20260802-FAIL"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 任一跨合同冲突、hash不匹配、fixture不可达、重复identity或第二真值：FAIL并定位，不自行修改。",
+    "2) 仅真实JSON Schema引擎或Node/app/SQLite/UI运行证据缺失：列B/C pending或验证边界，不升级为A轴FAIL。",
+    "3) 历史报告与当前ACK产物冲突：以当前文件与任务收据为准，记录漂移并保持只读。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已纠正M3文件名、JSON结构、Publication聚合键读取误报和stale epoch预期失败识别；agent_team_task.py show为不支持的只读命令，未改变状态；未将B/C缺证据升级为A轴P0。",
+  "node": "M4/A轴定版门禁/v0.3测试复验",
+  "pointers": [
+    "docs/collaboration/部门/测试部/报告/2026-08-02-M4-A轴v0.3跨合同定版复验报告.md"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-08-02-M4-A轴v0.3跨合同定版复验报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-C093C7",
+  "title": "复验M4 A轴v0.3跨合同一致性与机器产物",
+  "unverified": [
+    "P1-01：D80846当前任务收据为acknowledged，但Spec/progress/M4 ADR仍写进行中/尚未ACK，需上游同步后重验。",
+    "原生Draft 2020-12引擎、Node24/app/lockfile、SQLite/worker/UI/API/安全和真实外部运行均未覆盖，按B/C后置边界保留。"
+  ],
+  "updated_at": "2026-08-02T02:30+08:00",
+  "verified": [
+    "P0-01至P0-09逐项机械复算通过，P0失败数为0；state machine 6组全状态可达，5类幂等键、9条不变量、16安全fixture、4 reconcile case复核通过。",
+    "manifest 11项artifact SHA、Content/Summary/ReleaseBundle/ReviewDecision strict hash链、Publication/Outbox/TaskEnvelope key、internal schema SHA、seed subset hash及M3 33/9/59/59、no-egress均通过。",
+    "当前任务已正式claim；未修改被审上游文件，未运行生成器、联网或操作外部资源。"
+  ]
+}

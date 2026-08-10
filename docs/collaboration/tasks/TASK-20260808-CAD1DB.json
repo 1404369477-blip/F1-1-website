@@ -1,0 +1,58 @@
+{
+  "acceptance_exit": "产品和开发获得一个来源级、字段级、失败路径完整的首条采集输入包，可据此实现采集到待审核记录；清楚标识哪些内容来自已授权名单，哪些仍需用户批准。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "data/real-collection-slice-v0/input-gate-package.json",
+    "data/real-collection-slice-v0/fixture.synthetic.json",
+    "data/real-collection-slice-v0/manifest.json",
+    "data/real-collection-slice-v0/validate_package.py",
+    "docs/collaboration/部门/数据部/报告/2026-08-08-首条真实采集纵切数据输入与门禁包.md",
+    "docs/collaboration/部门/数据部/交接班文档.md"
+  ],
+  "authorization_evidence": "仅使用现有本地产物，不触发新外部授权",
+  "authorization_history": [
+    {
+      "at": "2026-08-08T21:57+08:00",
+      "evidence": "仅使用现有本地产物，不触发新外部授权",
+      "state": "none"
+    }
+  ],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "数据部/019fb371-9834-78d3-a7b3-4f4c62819520",
+  "completion_class": "standard",
+  "confirmation": "选择新外部来源、真实Base写入或provider切换均需用户另行确认。",
+  "created_at": "2026-08-08T21:57+08:00",
+  "department": "数据部",
+  "details": "只使用现有本地59条信源、Base影子载荷、accepted信源ADR和既有RSS实验记录；核对可作为第一条纵切的候选来源，输出source/source_item字段映射、游标、去重键、时间可信度、媒体权利状态、错误与退避、15分钟指标、人工审核前状态以及fixture样本；不得访问新外部来源、不得写真实飞书Base、不得切换provider、不得写正式代码。若当前获准名单没有适合的RSS，明确列出需要用户确认的最小候选。",
+  "domain_stage": "真实采集准备",
+  "event_receipts": [
+    "MIL-20260808T221010-535E73"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "没有已授权且可自动监控的来源：输出候选与授权门禁，不擅自采集。",
+    "来源缺发布时间、GUID或媒体权利字段：保留null和置信度，不推断或伪造。",
+    "本地清单与Base影子载荷不一致：停止宣称可切换，给出逐字段差异和对账要求。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "首次validator发现shell预计算的U+001F dedupe hash字节错误，已按真实UTF-8控制字符复算并更新fixture/manifest后PASS；claim后declare-impact因协议只允许queued而被拒绝，未绕过或手改任务真值；未把历史200、59个X候选或proposed fixture表述为当前授权或可用性。",
+  "node": "从现有信源真值中准备一个可实现的最小采集切片",
+  "pointers": [
+    "docs/decisions/system/2026-08-01-F1+1-信源库A到D演进路线-accepted.md"
+  ],
+  "report": "docs/collaboration/部门/数据部/报告/2026-08-08-首条真实采集纵切数据输入与门禁包.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260808-CAD1DB",
+  "title": "首条真实采集纵切的数据输入与门禁包",
+  "unverified": [
+    "未访问Formula 1 Feed或其他来源；未验证当前HTTP/ETag/Last-Modified/GUID稳定性/条款/媒体权利；未获得用户allowlist与second-hop授权；未运行真实Collector/provider/Base/SQLite ingest/15分钟窗口或审核UI。"
+  ],
+  "updated_at": "2026-08-08T22:11+08:00",
+  "verified": [
+    "离线 validator PASS；现有投影59条、59个唯一source_id、59 X、0 RSS、59 disabled；Source映射39/39、source_item映射18/18；candidate保持validating/proposed/disabled和unknown/pending默认值；synthetic fixture hash/游标/U+001F幂等键可复算；external_calls=0、writes_to_base=false、provider_switch=false、new_source_access=false。"
+  ]
+}

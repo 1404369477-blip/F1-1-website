@@ -1,0 +1,54 @@
+{
+  "acceptance_exit": "提交聚焦测试报告唯一PASS/FAIL；PASS要求P0=0/P1=0、时态一致、历史保留、B静态基线未漂移、C/external边界未扩大；完成后TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-08-02-M4-B层时态修订后聚焦测试报告.md"
+  ],
+  "authorization_evidence": "用户已授权持续推进本地网站工程；本任务纯本地只读，无外部I/O",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T03:54+08:00",
+      "evidence": "用户已授权持续推进本地网站工程；本任务纯本地只读，无外部I/O",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "测试部/019fb379-9212-7e80-a5df-587d339936c4",
+  "completion_class": "audit",
+  "confirmation": "本次PASS与已ACK安全B层PASS共同作为进入C层本地工具链预检的门禁，不授权真实外部能力。",
+  "created_at": "2026-08-02T03:54+08:00",
+  "department": "测试部",
+  "details": "只读复验已ACK的TASK-20260802-7F3D22以及Spec/progress/accepted ADR现行状态。核对测试F23239唯一P1已关闭：当前不再写app仅README、无lockfile、B初始化未完成；B=completed/PASS，F8BF72 PARTIAL历史与F23239首轮FAIL保留；C仅local preflight pending，node_modules/Node24/npm ci/SQLite/UI/API/build/test/security未验证；外部能力关闭。机械抽查package/lock仍为399/399官方resolved+sha512且无上游语义漂移。2026-08-01历史行不当作当前状态。禁止改文件、联网、安装或运行项目。",
+  "domain_stage": "M4-B-focused-test-revalidation",
+  "event_receipts": [
+    "TASK-20260802-7746F8-TEST-20260802-PASS"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 任一现行段仍写app仅README/无lock/B未完成：FAIL定位。",
+    "2) 任一段把C预检写成C通过或真实外部授权：FAIL定位。",
+    "3) 仅2026-08-01或F8BF72历史旧状态：确认历史标识后不计当前P1。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "明确区分2026-08-01历史旧描述与当前段落；未把历史F8BF72/F23239或C预检pending计为当前P1，未把静态lock写成安装/运行通过；未联网、未安装、未运行项目、未修改上游。",
+  "node": "M4/B层/时态修订后聚焦测试",
+  "pointers": [
+    "docs/collaboration/部门/测试部/报告/2026-08-02-M4-B层时态修订后聚焦测试报告.md"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-08-02-M4-B层时态修订后聚焦测试报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-7746F8",
+  "title": "聚焦复验B层时态修订与C预检边界",
+  "unverified": [
+    "Node24/npm11.16.0实机、npm ci、SQLite、UI/API、build/test/security、真实loopback与全部真实外部能力继续pending/Unknown。"
+  ],
+  "updated_at": "2026-08-02T03:58+08:00",
+  "verified": [
+    "现行Spec/progress/accepted ADR已统一：B=completed/PASS，C=local preflight pending；不再把app写成仅README、lockfile写成不存在或B初始化写成未完成。",
+    "F8BF72 PARTIAL与F23239首轮FAIL历史保留；399/399官方resolved、399/399 sha512 integrity、package/lock根依赖与直接版本一致，未发现漂移；node_modules不存在。"
+  ]
+}

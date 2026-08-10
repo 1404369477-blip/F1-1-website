@@ -1,0 +1,47 @@
+{
+  "acceptance_exit": "代码、scoped migration、后端测试、机器证据manifest与开发报告落盘；source-management profile可独立migrate/seed-ready/closed receipt，baseline=59只读、local初始0，旧profile/public/package-lock逐文件零漂移；session/CSRF/raw gate及add/validate/activate/stop/retire/requeue/operation/worker全有正常、拒绝、幂等、并发、response-loss、rollback、fence、dead-letter恢复证据，外部调用为0；v0.2后端归属golden与v0.3十一项安全golden的server侧全部PASS，浏览器/UI分支明确NOT_RUN；固定Node24聚焦测试、lint、typecheck、build和一次loopback HTTP验收通过，实例/端口/临时DB收口。不得宣称SOURCE-MGMT-001整体complete；列已验证/未验证/错题自检并TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "2026-08-09持续目标与产品后端解耦裁决A；范围限本地synthetic、externalCalls=0。",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T22:59+08:00",
+      "evidence": "2026-08-09持续目标与产品后端解耦裁决A；范围限本地synthetic、externalCalls=0。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "恢复后的唯一最终验收再次在固定Node24 typecheck首错停止：app/src/server/source-management/repository.ts:701 的SQLite run参数仍有一个 unknown→SQLInputValue 未收敛；build、loopback HTTP、closed receipt均NOT_RUN。此前migrate/seed/readiness、5/5聚焦测试与lint收据保留；候选不宣称完成。开发部报告：docs/collaboration/部门/开发部/报告/2026-08-09-SOURCE-MGMT-001纯后端纵切实现首错阻断报告.md；不得用any/放宽tsconfig/重复全量测试绕过。",
+  "claimed_by": "开发部/019fb374-7c86-7882-9e51-76114ce69e7f",
+  "completion_class": "standard",
+  "confirmation": "用户持续授权推进有前端、必要数据库和核心功能可用的本地初版；产品TASK-20260809-95A738明确裁决纯后端可先行，UI与外部能力继续关闭。",
+  "created_at": "2026-08-09T22:59+08:00",
+  "department": "开发部",
+  "details": "绑定产品v0.3 SHA=90ee4ed30d325b7b2833582cc0ac8134aefc7fbc2dcd43ec9d20c0f726b2f1fe、后端解耦裁决报告SHA=8dbcf669b7bb0e6d67fb0b1dd395b6c52a7a6cd5ad9ecd5fabf319389bcfc77f、数据合同SHA=4498eea95e8d2461bd3c4bbb1e3ff67de2247a65c0da99951a194b2b9e9d3d95、安全PASS SHA=495bcf8a670cf275c88a67056370e62ec238fc5b38e3a3165dfbb82f3c8ebc6d、baseline SHA=d4da9fc24c792c0471bcd24c525a46dcef1e521b36a870fd111e7310243888b2、现行package-lock SHA=89807e33818cfb851b57da65a5675e413e5593d01d6773c3a71a6cc6ea3d85d3。按产品裁决A实施纯后端：独立source-management-synthetic profile、显式migration selector/ledger/schema fingerprint/closed receipt、单进程单SQLite handle单writer、baseline59只读引用与local overlay；Repository和GET/POST sources、GET source、validate/activate/stop/retire/requeue、GET operation、session create/get/refresh/destroy与CSRF显式路由；raw authority/peer/Host/Origin/proxy/no-egress前门、内存单session与一次性nonce、command/business/job/task/lease identity分域；activation worker只消费唯一source_activation并覆盖CAS/five-fence/attempt/dead-letter/requeue/response-loss。不得创建admin page、浏览器客户端、Web Crypto UI、CSS或视觉入口；不得修改根layout/globals/public runtime/public routes/public UI、design/data/Spec/ADR、package-lock或新增依赖；不得打开真实URL/Base/provider/AI/媒体/发布/外网。开发过程中只跑聚焦测试；候选稳定后仅一次目标验收批次和必要的一次loopback HTTP实例，避免重复full check。",
+  "domain_stage": "M5-SOURCE-MGMT纯后端实现",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "raw adapter无法在Next规范化前取得合同要求的原始authority/header/peer证据：首错block，不降级到框架合并值或隐藏路由。",
+    "实现需要第二DB handle/writer、跨profile读取、第二Source schema、新依赖或package-lock漂移：停止并block，不扩实体。",
+    "任一公开文件/旧profile/合同pin漂移，或目标验收首个P1失败：保存首错和零漂移证据后停止，不用重复全量测试覆盖。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "在用户视觉门保持关闭的前提下，完成可实际运行的信源管理后端核心，让初版具备独立数据库、受保护API和生命周期事务能力",
+  "pointers": [
+    "docs/spec/F1+1-SOURCE-MGMT-001本地synthetic信源管理纵切实现合同-v0.3.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-09-SOURCE-MGMT-001后端先行与视觉门解耦裁决报告.md",
+    "docs/collaboration/部门/数据部/报告/2026-08-09-SOURCE-MGMT-001-SQLite-profile-mutation-successor数据合同.md",
+    "docs/collaboration/部门/安全部/报告/2026-08-09-SOURCE-MGMT-001-v0.3实施前独立安全复验报告.md"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 5,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-BDBD33",
+  "title": "SOURCE-MGMT-001纯后端纵切实现：profile、SQLite、安全Admin API与activation worker",
+  "unverified": [],
+  "updated_at": "2026-08-09T23:42+08:00",
+  "verified": []
+}

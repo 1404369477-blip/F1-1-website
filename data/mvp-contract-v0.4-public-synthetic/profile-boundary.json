@@ -1,0 +1,61 @@
+{
+  "boundary_version": "fixture-profile-boundary-v1",
+  "decision_inputs": [
+    "U1",
+    "U2"
+  ],
+  "profiles": {
+    "m3-shadow": {
+      "sqlite_path": "app/.local/f1plus1.sqlite",
+      "contract_version": "mvp-local-v0.3",
+      "source_artifact": "data/m4-vs0-seed-enrichment-v0/source-seed-enriched.json",
+      "source_count": 59,
+      "source_field_count": 39,
+      "all_enabled_false": true,
+      "canonical_projection_hash": "e7a8312c70a9a49922aedb3cfbeaa190db8f5dce8d4ab45db1570748fc329f17",
+      "public_graph_count": 0
+    },
+    "public-synthetic": {
+      "sqlite_path": "app/.local/f1plus1-public-synthetic.sqlite",
+      "contract_version": "mvp-local-v0.4",
+      "source_artifact": "data/mvp-contract-v0/fixtures.synthetic.json#/sources[source_id=src-active]",
+      "source_count": 1,
+      "source_field_count": 39,
+      "source_id_allowlist": [
+        "src-active"
+      ],
+      "source_delta_from_v0_3": 0,
+      "source_canonical_hash": "3d03d296391e2aac773b7e209256279a5e69089b7b3d613217d43ea68331fe61",
+      "public_graph_count": 12,
+      "synthetic_only": true,
+      "external_calls": 0,
+      "writes_to_base": false,
+      "real_content_imported": false
+    }
+  },
+  "process_rules": {
+    "exactly_one_profile_per_process": true,
+    "sqlite_attach_allowed": false,
+    "cross_profile_copy_allowed": false,
+    "merge_source_tables_allowed": false,
+    "paths_must_be_distinct_regular_local_files": true,
+    "implicit_default_allowed": false
+  },
+  "import_preconditions": [
+    "PROFILE_EXPLICIT_PUBLIC_SYNTHETIC",
+    "DB_PATH_EXACT_PUBLIC_SYNTHETIC",
+    "ROOT_HASHES_VALID_BEFORE_BEGIN_IMMEDIATE",
+    "SOURCE_EXACT_SRC_ACTIVE_NO_M3_IDS",
+    "TWELVE_CHAINS_FULLY_VALIDATED",
+    "LEDGER_AND_GRAPH_SINGLE_ATOMIC_SEED",
+    "SYNTHETIC_ONLY_ZERO_EXTERNAL_IO"
+  ],
+  "forbidden": [
+    "SQLITE_ATTACH_M3_SHADOW",
+    "MIX_M3_AND_SRC_ACTIVE",
+    "PUBLIC_STORY_TABLE",
+    "BASE_WRITE",
+    "REAL_PROVIDER_PLATFORM_IO",
+    "STATIC_RUNTIME_FALLBACK"
+  ]
+}

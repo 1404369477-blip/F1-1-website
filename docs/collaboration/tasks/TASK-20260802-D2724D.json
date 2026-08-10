@@ -1,0 +1,51 @@
+{
+  "acceptance_exit": "package-lock通过独立静态审计且README现行状态准确；B层具备唯一package/lock、精确版本栅栏、canonical目录、安全默认值和最小scaffold；Node24运行/npm ci/C层业务仍pending且Node25未被冒充。报告给唯一PASS/FAIL，PASS要求B层P0/P1=0，完成后TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-02-M4-B层lockfile恢复与门禁闭合报告.md"
+  ],
+  "authorization_evidence": "用户已授权持续推进本地网站工程；官方registry只用于精确依赖lock解析，未执行lifecycle或安装node_modules；A轴accepted已ACK",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T03:28+08:00",
+      "evidence": "用户已授权持续推进本地网站工程；官方registry只用于精确依赖lock解析，未执行lifecycle或安装node_modules；A轴accepted已ACK",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部当前会话",
+  "completion_class": "standard",
+  "confirmation": "本任务仅闭合B层静态初始化；C层运行/业务实现与全部真实外部能力继续关闭。",
+  "created_at": "2026-08-02T03:28+08:00",
+  "department": "开发部",
+  "details": "统筹线程在开发线程DNS隔离后，用官方registry、NODE_OPTIONS=--dns-result-order=ipv4first、精确npm@11.16.0、package-lock-only、ignore-scripts/no-audit/no-fund/fetch-retries=0生成了app/package-lock.json；命令exit=0，仅因当前Node25对engines Node24.18.0产生预期EBADENGINE警告，未生成node_modules。请只读审计lockfile并关闭B层：校验lockfileVersion、根engines/packageManager、精确next16.2.11/react19.2.0/eslint-config-next16.2.11，所有resolved仅官方registry、integrity完备、无latest/canary/git/file/http/非官方源，列出hasInstallScript/optional native元数据但确认未执行；核对package-lock与package.json依赖一致。修订app/README中“无lock/DNS阻断”旧叙述，新增B层闭合报告；保留TASK-F8BF72 PARTIAL历史，不覆写其任务JSON。禁止npm ci、node_modules、lifecycle、系统安装、业务代码、真实外联。",
+  "domain_stage": "M4-B-lockfile-recovery",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 任一resolved非官方、integrity缺失、浮动版本或package/lock不一致：FAIL，不修写lock，回报统筹部。",
+    "2) lock包含install-script或optional native元数据：区分元数据与已执行事实，记录C层审计，不运行脚本；若无法安全隔离则FAIL。",
+    "3) Node24缺失只列C层pending，不回退B层静态lock判定，也不以Node25替代。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "仅静态读取lock并修改本任务README、progress、报告；未运行npm ci、lifecycle或业务代码；未安装node_modules、未改系统、未调用真实provider/Base/平台/外联；精确版本未漂移；保留TASK-20260802-F8BF72的PARTIAL历史且未改写其任务JSON",
+  "node": "M4/B层/app初始化/lockfile恢复",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-02-M4-B层lockfile恢复与门禁闭合报告.md"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-02-M4-B层lockfile恢复与门禁闭合报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-D2724D",
+  "title": "审计官方lockfile并关闭M4 B层初始化门禁",
+  "unverified": [
+    "Node24实机运行、npm ci、SQLite、业务切片、lint/typecheck/build/test/security、真实127.0.0.1端口和全部C层收据仍pending；Node25未作为C层通过证据"
+  ],
+  "updated_at": "2026-08-02T03:33+08:00",
+  "verified": [
+    "B层overall=PASS，P0=0/P1=0；lockfileVersion3；399/399 resolved均为官方registry；399/399 integrity为sha512；根engines、packageManager、package与lock依赖一致；无latest/canary/preview/git/file/非官方源；README已修订；hasInstallScript与optional native仅作元数据列出且无node_modules/lifecycle执行；canonical目录、安全env、scaffold保持通过"
+  ]
+}

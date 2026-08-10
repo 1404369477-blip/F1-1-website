@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "出具测试部验收报告 + 用户可打开的三档视觉证据预览；通过/不通过结论 + TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-08-07-v0.2时间线前端独立验收报告.md"
+  ],
+  "authorization_evidence": "用户要求推进各部门工作流（2026-08-07）",
+  "authorization_history": [
+    {
+      "at": "2026-08-07T20:07+08:00",
+      "evidence": "用户要求推进各部门工作流（2026-08-07）",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "测试部/统筹部并行子代理",
+  "completion_class": "audit",
+  "confirmation": "用户体验确认 + 统筹核收。",
+  "created_at": "2026-08-07T20:07+08:00",
+  "department": "测试部",
+  "details": "对开发部 6CD2FB 产出的公开信息流 v0.2 时间线做独立验收：功能矩阵（时间线/主图+缩略图/就地展开/lightbox/7 状态）、feed/detail HTTP 闭环、对比度复核（基线：design/ui/F1+1-v0.2-全站设计/F1+1-v0.2-对比度验证.md）、1440/1024/390 三档视觉证据与用户可打开预览、可访问（键盘/焦点/44px/reduced-motion）。只读验收，不修改实现。",
+  "domain_stage": "验收测试",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若发现阻断缺陷，如实记录 P0/P1，不绕过、不降级 DEMO_STORIES。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查错题集,无命中",
+  "node": "v0.2-frontend-acceptance",
+  "pointers": [
+    "app/src/features/stories/feed-experience.tsx; design/ui/F1+1-v0.2-全站设计/F1+1-v0.2-对比度验证.md"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-08-07-v0.2时间线前端独立验收报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260807-4451C2",
+  "title": "独立验收 v0.2 时间线前端实现（功能/HTTP/体验/视觉证据）",
+  "unverified": [
+    "VoiceOver/NVDA/TalkBack 实机、原生 200% 缩放、真实 forced-colors 待后续;用户最终体验确认待用户"
+  ],
+  "updated_at": "2026-08-07T20:20+08:00",
+  "verified": [
+    "功能矩阵/HTTP 闭环/对比度/三档视觉证据/可访问抽查完成,结论与证据已写入报告"
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "acceptance_exit": "提交安全部审核报告，逐项给出威胁、证据、严重度、是否阻断ADR accepted、精确最小修订和未验证项，并完成任务返回TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-01-M4本地安全门禁与外部IO隔离-审核报告.md"
+  ],
+  "authorization_evidence": "用户已授权本地技术选型与app开工；当前仅做本地合同安全复核，高风险外部动作仍关闭，DEC-20260801T223248-7C91D6。",
+  "authorization_history": [
+    {
+      "at": "2026-08-01T23:46+08:00",
+      "evidence": "用户已授权本地技术选型与app开工；当前仅做本地合同安全复核，高风险外部动作仍关闭，DEC-20260801T223248-7C91D6。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "复核通过后由统筹部与开发/测试复核合并，再交产品部定版；本任务不授权实现或认证操作。",
+  "created_at": "2026-08-01T23:46+08:00",
+  "department": "安全部",
+  "details": "读取Spec v1候选、ADR-M4-KICKOFF-001、OAuth纠偏补充审核、数据合同与测试矩阵。审查fixture-only配置是否默认失效闭合，REAL_FEISHU_IO、REAL_EXTERNAL_IO、REAL_FORM_SUBMIT、PUBLISH_MODE和provider/adapter是否存在环境变量绕过；审查loopback admin、Origin、一次性CSRF nonce、会话、日志脱敏、secret零落盘、SQLite文件权限、SSRF、open redirect、XSS、prompt injection、媒体URL、原链与外部调用检测；审查source epoch、task envelope fence、审核hash、manual publish以及OAuth三层门禁。给出PASS或CONDITIONAL PASS或FAIL、P0/P1/P2和最小修订文字。本任务不得修改Spec、ADR或app，不得执行logout、refresh、reauthorize、revoke、token轮换、Base访问或任何真实外部IO。",
+  "domain_stage": "M4系统路线复核",
+  "event_receipts": [
+    "MIL-20260802T000518-7537CA | docs/collaboration/部门/安全部/日志/2026-W31.md"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一配置可由单个环境变量打开真实provider或外部IO时判P0/P1并阻断accepted，要求编译期或代码级双门禁与测试。",
+    "loopback管理面、CSRF、重定向、SSRF或媒体处理边界含糊时保持proposed，给最小安全合同，不假设生产认证。",
+    "OAuth/logout/refresh证据不足时保留Unknown，禁止用本任务触发真实授权状态变化。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查任务错题与既有OAuth历史边界；未把候选文字、mock、mtime或成功JSON写成运行/撤权证明；未修改Spec、ADR、app或既有OAuth报告",
+  "node": "在系统ADR定版前完成独立安全只读复核",
+  "pointers": [
+    "docs/spec.md",
+    "docs/decisions/system/2026-08-01-F1+1-M4本地Kickoff系统路线-proposed.md",
+    "docs/collaboration/部门/安全部/报告/2026-08-01-OAuth轮换与logout边界证据纠偏-补充审核报告.md",
+    "data/mvp-contract-v0/manifest.json"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-01-M4本地安全门禁与外部IO隔离-审核报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260801-08E045",
+  "title": "复核M4本地安全门禁与外部IO隔离",
+  "unverified": [
+    "app仍只有README；环境parser、capability registry、HTTP/session/CSRF、SQLite权限、safe DTO、worker、TaskEnvelope/CAS、ReleaseBundle hash、manual publish和所有K/P/S/V/deny-all/供应链/并发/恢复收据未实现或未执行",
+    "Node24、真实端口、目标依赖安装、运行时外连、真实OAuth三层/ACL/provider/Collector/Base状态均未验证；本任务不触发这些动作",
+    "既有OAuth报告23:47:30 mtime的具体写入进程/归属为Unknown，历史内容保持不变"
+  ],
+  "updated_at": "2026-08-02T00:07+08:00",
+  "verified": [
+    "已读取任务JSON、Spec v1候选、ADR-M4-KICKOFF-001、测试部M4验收矩阵、数据部本地MVP合同和OAuth纠偏报告",
+    "两路本地只读对抗复核均返回条件式PASS；未确认当前已发生P0，已合并环境双门禁、admin/CSRF、URL/媒体、日志/SQLite、epoch/fence/hash/manual publish和OAuth边界",
+    "报告逐项列出威胁、证据、严重度、A层是否阻断ADR accepted、B层运行门禁、最小修订和停止条件；明确A/B接受顺序",
+    "已核查既有OAuth补充审核报告mtime为23:47:30，无法从文件系统归属本会话，未删除、覆盖或回滚历史内容",
+    "本地task doctor通过；安全部milestone日志返回LOG_OK；无认证、飞书访问、外部网络或资源写入"
+  ]
+}

@@ -1,0 +1,11 @@
+5a84bfb27294ebd727369118a95528f5b788bfacbe2d56cc03fcb006f6168cb1  design/ui/F1+1-v0.2-全站设计/F1+1-v0.2-final-20260808.html
+bea6b45835d4a5f63258959a30ba327a50373977d24747a65ca1b669fef4cc1d  design/video/F1+1-launch-direction-v0.1/assets/frozen-final-dark-1440.png
+0f6d6df3540899a39906bb2faa157d4b88a5f0379e289250d79d22ce8f6a09fd  design/video/F1+1-launch-direction-v0.1/index.html
+21c9b70462a16108bb77a8283319d4427f7031c9ec83e141e04231a71cc35e10  design/video/F1+1-launch-direction-v0.1/motion-tokens.md
+af1069a4e95b82a6105ba34f82d52904919ca8ff9dba6dbb624e4492b264a418  design/video/F1+1-launch-direction-v0.1/storyboard.md
+f19f4c4713811b4feca50acf645d255ee018acfec07aa4c41f6dd1f8c4535367  design/video/F1+1-launch-direction-v0.1/sources.md
+e26c14ab34709b8ac79862af8f833f8b1ebee669e24610987d293f5548f875cb  design/video/F1+1-launch-direction-v0.1/single-shot-validation.md
+13638bf6fac27804baf50fcf888617205daf8d811e1c90918f741c0934146888  design/video/F1+1-launch-direction-v0.1/styleframes/F1+1-launch-styleframe-01-brand.png
+9f4ada6c576ca120af5ac96e0daf96744054e82b8b83a51ffe232d30ddacac09  design/video/F1+1-launch-direction-v0.1/styleframes/F1+1-launch-styleframe-02-product.png
+d1c26a01695ed4f6fd2f172694f851c6a8c2e08ed623d723493cd805f2296e79  design/video/F1+1-launch-direction-v0.1/styleframes/F1+1-launch-styleframe-03-close.png
+3e777d57434ec2cc8ae0c7139824f196a85eb488143ae529206d64f7eb2b7181  design/video/F1+1-launch-direction-v0.1/styleframes/F1+1-launch-single-shot-validation.png

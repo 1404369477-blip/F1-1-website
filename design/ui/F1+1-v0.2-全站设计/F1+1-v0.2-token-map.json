@@ -1,0 +1,84 @@
+{
+  "meta": {
+    "project": "F1+1",
+    "version": "v0.2-draft",
+    "status": "draft（已确认方向）",
+    "updated": "2026-08-07",
+    "basis": "design/ui/F1+1-v0.2-全站设计/design-system.md; brand-spec.md",
+    "purpose": "实现级设计合同（产品部 EA00A8）与前端落地（开发部 6CD2FB）的 token/组件/状态映射"
+  },
+  "theme": {
+    "default": "dark",
+    "light": "完整可切换",
+    "switch": "主题 seg（无框低对比，hover 浮现）"
+  },
+  "colors": {
+    "bg": { "dark": "oklch(0.145 0.008 252)", "light": "oklch(0.97 0.005 250)", "usage": "页面底" },
+    "bg-elev": { "dark": "oklch(0.172 0.01 252)", "light": "oklch(0.99 0.003 250)", "usage": "展开条目底/聚焦底" },
+    "surface": { "dark": "oklch(0.205 0.012 252)", "light": "oklch(1 0 0 / 1)", "usage": "seg/降级表面" },
+    "surface-2": { "dark": "oklch(0.25 0.013 252)", "light": "oklch(0.94 0.006 250)", "usage": "骨架/图片占位底" },
+    "fg": { "dark": "oklch(0.94 0.006 252)", "light": "oklch(0.22 0.012 252)", "usage": "正文/提炼" },
+    "fg-strong": { "dark": "oklch(0.985 0.003 252)", "light": "oklch(0.14 0.012 252)", "usage": "标题/日期" },
+    "muted": { "dark": "oklch(0.68 0.012 252)", "light": "oklch(0.46 0.015 252)", "usage": "摘要/次要" },
+    "faint": { "dark": "oklch(0.60 0.012 252)", "light": "oklch(0.54 0.015 252)", "usage": "证据小字/时间" },
+    "border": { "dark": "oklch(0.285 0.012 252)", "light": "oklch(0.88 0.008 250)", "usage": "发丝线/时间轴" },
+    "border-strong": { "dark": "oklch(0.48 0.014 252)", "light": "oklch(0.64 0.01 250)", "usage": "控件边界/节点（≥3:1）" },
+    "accent": { "dark": "oklch(0.73 0.117 246)", "light": "oklch(0.47 0.14 246)", "usage": "链接/选中/焦点" },
+    "accent-deep": { "dark": "oklch(0.6 0.125 246)", "light": "oklch(0.42 0.14 246)", "usage": "hover" },
+    "signal": { "dark": "oklch(0.70 0.168 38)", "light": "oklch(0.50 0.15 35)", "usage": "直播/品牌圆点" },
+    "focus": { "dark": "oklch(0.76 0.13 246)", "light": "oklch(0.44 0.14 246)", "usage": "焦点环" },
+    "ok": { "dark": "oklch(0.72 0.15 155)", "light": "oklch(0.48 0.13 155)", "usage": "成功" },
+    "danger": { "dark": "oklch(0.68 0.19 25)", "light": "oklch(0.52 0.16 25)", "usage": "错误" }
+  },
+  "typography": {
+    "display": { "family": "Barlow Condensed → CJK 黑体", "usage": "标题/日期/状态码", "date": "20px / 600（时间线锚点）" },
+    "body": { "family": "Inter → CJK 黑体", "usage": "摘要/提炼/证据", "detail": "14px / 1.6" },
+    "mono": { "family": "SF Mono / Menlo / Consolas", "usage": "时刻 HH:MM" },
+    "sizes": { "title": "20px/700", "lead": "14.5px/1.7", "cat": "11px", "time": "11px", "evidence": "11.5px", "date": "20px" }
+  },
+  "spacing_radius": {
+    "spacing": "4/8/12/16/24/32/48/64/96",
+    "radius": { "sm": 6, "md": 10, "lg": 14, "image": 4 }
+  },
+  "image": {
+    "main": { "width": "auto", "maxWidth": "100%", "maxHeight": "255px", "radius": "4px", "shadow": "0 1px 3px + 0 8px 24px", "align": "左对齐（与标题）", "crop": "不裁切（原始比例）" },
+    "thumbnail": { "height": "40px（移动端 32px）", "radius": "4px", "opacity": "0.55，hover 1，激活 accent 边", "singleImage": "无缩略图" },
+    "navigation": { "hover": "临时切换主图", "leave": "恢复当前图", "click": "固定切换并激活", "lightbox": "点主图放大" }
+  },
+  "glass": { "usage": "仅悬浮工具/toast", "blur": "16px（低性能 8px）", "fallback": "reduced-transparency → surface 不透明" },
+  "motion": { "fast": "140ms", "base": "240ms", "expand": "0fr→1fr 240ms", "lightbox": "340ms", "hover_reveal": "150ms scale 1.04" },
+  "components": {
+    "topbar": { "structure": "品牌标记 + DRAFT 徽标 + 搜索 + 主题 seg", "trace": "低对比常驻 hover 浮现" },
+    "timeline": { "maxWidth": "920px", "axis": "左侧 1px 发丝轴 + 节点", "timeCol": "64px 左对齐（时刻在上/日期在下）" },
+    "item": { "button": "head+title+lead", "media": "主图+缩略图", "collapse": "就地展开详情", "evidence": "底部来源/时间+前往原文" },
+    "lightbox": { "zoom": "从源图缩放", "bg": "app 灰度+模糊+压暗", "paging": "‹›/方向键/Esc", "size": "max 70vw/70vh" },
+    "states": ["loading", "empty", "error", "404", "nomore", "partial", "offline"]
+  },
+  "interactions": {
+    "expand": "手风琴一次一个；点击外部收起；展开聚焦高亮+其余灰度",
+    "scroll": "block:start + scroll-margin 20px（标题留在画面内）",
+    "hover_reveal": "必要控件低对比 → 悬停浮现",
+    "image_nav": "悬停预览 / 移走恢复 / 点击固定",
+    "keyboard": "图片 tabindex+Enter/Space；lightbox 焦点管理"
+  },
+  "responsive": {
+    "1440": "单列居中 920px",
+    "1024": "同 1440",
+    "390": "时间/日期并排；缩略图 32px；触控 ≥44px"
+  },
+  "a11y": {
+    "focus": "3px 焦点环 + 2px offset",
+    "touch": "≥44px",
+    "reduced_motion": "过渡 .01ms、lightbox/展开跳过、滚动 auto",
+    "reduced_transparency": "玻璃→不透明",
+    "contrast": "文本 AA 通过；控件边界 ≥3:1（见对比度验证表）"
+  },
+  "url_params": {
+    "theme": "dark|light",
+    "width": "1440|1024|390",
+    "state": "timeline|loading|empty|error|404|nomore|partial|offline",
+    "open": "r1…r10（预展开）",
+    "search": "过滤时间线",
+    "reveal": "强制 UI 痕迹显形"
+  }
+}

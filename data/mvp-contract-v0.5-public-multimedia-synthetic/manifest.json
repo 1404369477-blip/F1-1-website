@@ -1,0 +1,46 @@
+{
+  "artifact_hashes": {
+    "data/mvp-contract-v0.5-public-multimedia-synthetic/fixtures.multimedia-synthetic.json": "ee52a70cda9eea32600a443ad5411cd76d2b4cf3d8894d9b46396c28252823c0",
+    "data/mvp-contract-v0.5-public-multimedia-synthetic/generate_successor.py": "23f4d8adf0f75f65f56997f9e7ecaa75d70790239fe860373012925cd2d2dc31",
+    "data/mvp-contract-v0.5-public-multimedia-synthetic/public-multimedia-mapping.json": "3c05b244c0087d9aea35f63f80c38329b0e7205f78a04e7afcb097a1ef04ae7a",
+    "data/mvp-contract-v0.5-public-multimedia-synthetic/schema.json": "ade4feda490a8bc2fd68817d8f48ac0994cdf81dd4703e3317003d04705451de",
+    "data/mvp-contract-v0.5-public-multimedia-synthetic/validate_successor.py": "58063ea96b585fff65b11dedd3b95417a1ded9abc81e08aa102f19bc646e64c7"
+  },
+  "canonical_hashes": {
+    "fixtures.multimedia-synthetic.json": "2145f9ef688cdd0a66fc8a825e1c533fa431ea08f7740eeb2aeb5de2bd188424",
+    "public-multimedia-mapping.json": "bbeb141c8dc90c48b4c784718f57f2f32af6b36469bf430eeaa6ddb7a3b85e45",
+    "schema.json": "363b325b53dcf91a7510e35c02a3d957b6354958c564e889e1b1530a96ed3bb8"
+  },
+  "classification": "local_synthetic_dto_successor_not_domain_schema",
+  "contract_version": "public-read-v0.2",
+  "entity_additions": 0,
+  "external_calls": 0,
+  "fixture_counts": {
+    "cases": 3,
+    "four_media": 1,
+    "media_total": 5,
+    "single_media": 1,
+    "zero_media": 1
+  },
+  "frozen_input_hashes": {
+    "data/mvp-contract-v0.4-public-synthetic/fixtures.public-synthetic.json": "c7d9d88b170214b283a214625d6fd2028fd8eb3a6a2701c556cb2364eb9941e4",
+    "data/mvp-contract-v0.4-public-synthetic/manifest.json": "3b296868dc0c0000fb94856b334ff7d1f698e3e80d4bb02e7062142dc1a0e554",
+    "data/mvp-contract-v0.4-public-synthetic/public-dto-mapping.json": "285bfe529b492c81fe883097615ebae34effbe6a9123a1bfd0184973f3fe7be2",
+    "data/mvp-contract-v0.4-public-synthetic/schema.json": "4b2d1abec6c6315c92fd2ae70c6422b894e380850a9b9408d35a385c777ca11f",
+    "data/mvp-contract-v0/schema.json": "de6c6c07a33589106ebb93496ad10ae3b06ab1c7845e4e0e91888ca0b17ae5a4"
+  },
+  "manifest_version": "public-multimedia-successor-manifest-v0.1",
+  "real_media": 0,
+  "v0_4_frozen_counts": {
+    "captured_items": 12,
+    "contents": 12,
+    "media_candidates": 10,
+    "publications": 12,
+    "published_projections": 12,
+    "release_bundles": 12,
+    "review_decisions": 12,
+    "sources": 1,
+    "summaries": 12
+  },
+  "writes_to_base": false
+}

@@ -1,0 +1,62 @@
+{
+  "acceptance_exit": "提交产品部final Markdown执行包，给出精确的Base名、表名、字段类型/选项、导入默认值、migration_batch_id、视图与筛选、表单结构、外部写入步骤、每步读取验证、失败停止点和可恢复回退；清楚标注用户已授权M3资源创建与影子导入、仍未授权的切换；三路只读对抗审查无残留P0/P1；complete并输出TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/产品部/报告/2026-08-01-F1+1飞书Base影子建表-M3执行包.md"
+  ],
+  "authorization_evidence": "主会话用户于2026-08-01回复“可以”，确认统筹部提出的M3资源创建、影子导入与59/59对账范围。",
+  "authorization_history": [
+    {
+      "at": "2026-08-01T14:30+08:00",
+      "evidence": "主会话用户于2026-08-01回复“可以”，确认统筹部提出的M3资源创建、影子导入与59/59对账范围。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "用户明确授权创建真实飞书Base、字段、视图和手机表单，影子导入59条并对账；暂不切换业务真值和采集器。",
+  "created_at": "2026-08-01T14:30+08:00",
+  "department": "产品部",
+  "details": "用户已明确授权执行A阶段第一道资源门禁：创建真实飞书Base、字段、视图、手机表单，影子导入59条并59/59对账；未授权Base业务真值切换、A base_direct切换、D切换或自动公开。请基于Spec、ADR-SOURCE-001、现有信源库proposed包第6/8/10节与data/x-source-inventory-v0.csv，形成一份窄范围M3执行包，明确最小表结构、精确字段JSON、默认值、59条映射、视图、手机表单题目、资源命名、写入顺序、幂等/重复创建预防、验证和回退。按奥卡姆剃刀控制表和字段数量；运行遥测不得写回Base；手机只展示raw_url必填与capture_note可选。只写本地产品报告，不操作飞书、不修改accepted ADR核心、不切真值/provider。",
+  "domain_stage": "M3-Base影子建表",
+  "event_receipts": [
+    "MIL-20260801T145708-4F008F"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "不得把M3授权扩写成业务真值/provider切换；不得让59条临时分类冒充身份/官方性/启用结论；不得创建第二业务真值、把运行遥测写入Base或让手机表单暴露内部状态；若CLI能力无法实现某视图/表单要求，标记降级与后续人工配置，不猜API。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "错题集无历史条目；已检查并避免把 M3 授权扩写为真值/provider/自动采集或公开授权，避免把批内 URL 唯一性冒充稳定账号 ID 查重，保持身份与可监控性 unknown、enabled=false、dedup_status=pending，排除运行遥测，并对 CLI 不确定点采用读后停止分支。",
+  "node": "M3-Base资源创建前实施收口",
+  "pointers": [
+    "docs/spec.md",
+    "docs/decisions/system/2026-08-01-F1+1-信源库A到D演进路线-accepted.md",
+    "docs/decisions/system/2026-07-31-F1+1-信源库维护决策包-proposed.md",
+    "data/x-source-inventory-v0.csv"
+  ],
+  "report": "已提交 M3 飞书 Base 影子建表最小执行包；本任务只写本地产品报告，未调用飞书 API、未修改 accepted ADR 核心、Spec、真值/provider 或 app。",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260801-71E193",
+  "title": "形成M3飞书Base影子建表执行包",
+  "unverified": [
+    "真实 Base 是否存在、资源级权限、真实字段/视图/表单 API 返回和表单问题绑定行为。",
+    "59 条真实写入、分页回读、59/59 对账、部分写入恢复与高风险删除回退均未执行。",
+    "Base 业务真值、base_direct/base_snapshot provider、Collector、运行实现和 app 均未切换或初始化。"
+  ],
+  "updated_at": "2026-08-01T15:01+08:00",
+  "verified": [
+    "TASK JSON 的 user_confirmed 凭据授权 M3 资源创建、59 条影子导入与 59/59 对账，同时未授权 Base 真值或 A/D provider 切换。",
+    "执行包严格收敛为 1 个 Base、2 张表、3 个长期视图和 1 个仅含 raw_url/capture_note 的手机表单；主表排除运行遥测。",
+    "主表 33 字段、捕获表 9 字段、表单 2 题、批量字段顺序与单行 33 值均为有效 JSON且一一对应。",
+    "输入 CSV SHA-256 为 bbb84a7f8f625e8106ae6e0b2714a363940dbf3f20dcbbf300fa6552de1ac01b；59 行，source_id 与 canonical_url 均为 59 个唯一值。",
+    "当前 lark-cli 指南/帮助覆盖所需 Base、表、字段、视图、表单与批量记录命令；未确认行为已写成执行时读后分支。",
+    "三路独立只读审查覆盖范围授权、字段映射/CLI 可执行性和幂等/故障回退；修订后无残留 P0/P1。",
+    "本地链接、Markdown 围栏/尾随空白、git diff --check 与 agent_team_task.py doctor 通过。"
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "acceptance_exit": "交付脱敏v0.3 runbook successor、闭集manifest/hash与产品报告；不含任何设备唯一标识或恢复秘密；清楚区分已验证硬件条件、Apple官方能力、合理推断和仍Unknown的真实网络/UU/SSH/RTO/RPO；给出实施阶段顺序、停止条件和一个下一步用户确认点。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/runbooks/F1+1-专用Admin-Mac-远程恢复与跨网联动runbook-v0.3.md",
+    "docs/runbooks/F1+1-专用Admin-Mac-远程恢复与跨网联动runbook-v0.3.manifest.json",
+    "docs/collaboration/部门/产品部/报告/2026-08-09-M1固定Admin-Mac远程恢复与跨网联动runbook-v0.3报告.md"
+  ],
+  "authorization_evidence": "2026-08-09主会话：用户提供固定Admin Mac截图，确认MacBook Air M1 2020、8GB、macOS 26.5.1；此前已要求形成服务器配置与两机联动交接文档",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T20:14+08:00",
+      "evidence": "2026-08-09主会话：用户提供固定Admin Mac截图，确认MacBook Air M1 2020、8GB、macOS 26.5.1；此前已要求形成服务器配置与两机联动交接文档",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "用户已提供固定Mac硬件/系统信息并要求继续规划；本任务不构成真实设备配置、安装、账号、网络、SSH或部署授权",
+  "created_at": "2026-08-09T20:14+08:00",
+  "department": "产品部",
+  "details": "输入设备仅记录：MacBook Air (M1, 2020)、8GB、macOS Tahoe 26.5.1；严禁复制、转写或散列截图中的序列号、磁盘标识或其他设备唯一标识。基于Apple官方macOS 26+ Apple silicon重启后可在Remote Login开启且网络可用时通过SSH解锁FileVault的能力，更新为职责分离三通道：1.UU远程仅作为系统已可达/已解锁后的图形运维与终端辅助；2.路由器或独立网关上的私有VPN提供不依赖Admin Mac用户态进程的启动前网络路径，再由原生OpenSSH承担FileVault/应急；3.异机备份、现场/冷备承担供电、宽带、路由器、磁盘、主板、丢失故障。明确Mac宿主上的Tailscale/UU在FileVault启动前不可被当作已证明路径；SSH不得公网端口转发。基于现有v0.2新建不可变v0.3 successor及闭集manifest，不覆盖v0.2。补充8GB单人Node/SQLite初版适用边界、UU/SSH/网络/供电/硬件故障矩阵、配置期同LAN与运行期跨网演练、RTO<=4h和RPO<=15m仍需的运行收据。不得安装、登录、改网络、启用FileVault/Remote Login、创建账号、上传数据或部署。",
+  "domain_stage": "Admin-Mac-恢复规划",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "现有v0.2或冻结输入hash漂移：block，不覆盖旧版或自行合并",
+    "Apple/UU能力缺官方证据或启动前网络路径无法证明：保持Unknown并给精确实测门，不写成可用",
+    "任何文档拟包含序列号、恢复密钥、账号、IP或设备唯一标识：删除敏感字段并停止生成，回统筹复核"
+  ],
+  "from_department": "统筹部",
+  "impact_declaration": {
+    "admission": "manual",
+    "base_revision": "a9691e71b1552592cc5ded8d5db66c336262301c",
+    "external_effects": [
+      "none；只新增脱敏planning_only文档、manifest和产品报告"
+    ],
+    "owner_task": "TASK-20260809-C4AA4B",
+    "shared_contracts": [
+      "v0.2字节不变；设备事实只记录MacBook Air M1 2020/8GB/macOS 26.5.1；图区分UU解锁后、网关私有VPN+原生SSH启动前、现场/冷备灾难三通道；所有真实配置和部署关闭"
+    ],
+    "write_paths": [
+      "docs/runbooks/F1+1-专用Admin-Mac-远程恢复与跨网联动runbook-v0.3.md",
+      "docs/runbooks/F1+1-专用Admin-Mac-远程恢复与跨网联动runbook-v0.3.manifest.json"
+    ]
+  },
+  "mistake_check": "已检查：未读取、抄录、编码或散列截图序列号/磁盘标识/UUID/MAC/IP/设备ID；未把Apple平台能力外推为本机或端到端PASS；未把UU/Tailscale宿主应用当启动前证据；未开放公网SSH/Admin；未把8GB/长期接电写成容量或UPS PASS；未安装、登录、改网络、启用SSH/FileVault、上传或部署；未覆盖v0.2或accepted核心",
+  "node": "把用户确认的固定设备硬件与macOS 26远程FileVault条件吸收到脱敏配置交接稿；只做planning_only successor",
+  "pointers": [
+    "docs/runbooks/F1+1-专用Admin-MacBook-配置执行交接提示词-v0.2.md",
+    "docs/collaboration/部门/研究部/报告/2026-08-09-两台MacBook配置期同网与运行期跨网联动方案.md"
+  ],
+  "report": "不适用",
+  "resolution": null,
+  "revision": 5,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-C4AA4B",
+  "title": "M1固定Admin Mac远程恢复与跨网联动runbook v0.3 successor",
+  "unverified": [
+    "目标机FileVault/Remote Login/SSH/Firewall/UU/此前连接/WPA2-PSK/DHCP保留/启动前Wi-Fi重连均未验证；网关/VPN/ISP-CGNAT/蜂窝外网重启与FileVault演练未执行，RTO保持Unknown；现场Owner/冷备/异机备份/epoch fence/RPO-RTO和生产均未验证或授权；安全部独立复核待后继任务"
+  ],
+  "updated_at": "2026-08-09T20:34+08:00",
+  "verified": [
+    "v0.2 SHA-256保持97b0dbdf452d7200d4165d8e1629b6424e8ffcdea0aba8237e46c764e428527e；v0.3只记录MacBook Air M1 2020/8GB/macOS26.5.1/长期接电/Wi-Fi-only非唯一事实；Apple官方只读核验确认macOS26+条件式SSH解锁FileVault及此前连接开放或WPA2-PSK Wi-Fi网络条件；v0.3固定UU解锁后、网关VPN+原生SSH启动前、现场/冷备三通道；Wi-Fi-only固定此前连接/WPA2-PSK/DHCP保留/蜂窝外网重启演练，WPA3-only与802.1X不推定；manifest 3文件hash闭合；唯一标识扫描无命中；diff check和doctor通过；外部配置变更=0"
+  ]
+}

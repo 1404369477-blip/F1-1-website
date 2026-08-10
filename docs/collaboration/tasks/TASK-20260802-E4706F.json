@@ -1,0 +1,52 @@
+{
+  "acceptance_exit": "提交开发部纠错附录：逐字指出原表述、准确替代表述、代码行/固定SHA证据、对F1+1采用结论影响；确认manifest6/6仍有效但覆盖范围仅6文件；installer在当前路线继续禁止执行；P0/P1/P2自评、已验证/Unknown、TASK_STATE_OK。原5BD745报告保持原样并由附录显式补正。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-02-AIHot-v1.2.3纠错附录.md"
+  ],
+  "authorization_evidence": "用户授权深度调研及对抗复核；本任务仅本地只读纠错，不扩大外部能力。",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T11:44+08:00",
+      "evidence": "用户授权深度调研及对抗复核；本任务仅本地只读纠错，不扩大外部能力。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部当前会话",
+  "completion_class": "standard",
+  "confirmation": "统筹对抗复核发现已ACK开发报告两处P2/P1级证据表述冲突，需要独立纠错附录保持审计链。",
+  "created_at": "2026-08-02T11:44+08:00",
+  "department": "开发部",
+  "details": "只读纠正已ACK的5BD745报告中两处交叉审查问题，不改原报告历史正文，新增纠错附录并明确其为现行解释：其一，原报告§3.1写“目录没有README”，但9文件树明确包含README.md；准确结论应为manifest只覆盖6个runtime文件，README.md、install.sh、manifest.sha256不在manifest自校验集合，目录本身包含三者。其二，原报告多处将install.sh描述为原子替换；静态代码实际先将旧target移动到backup，再把stage移动到target，正常路径使用同文件系统rename且有失败恢复，但存在target短暂缺口和进程崩溃/SIGKILL后只留backup的窗口，不能宣称全过程crash-atomic。重新逐行核对install.sh相关范围并区分正常失败恢复与进程级崩溃恢复Unknown。不得执行脚本、安装、联网、改app/Spec/ADR/data或修改已ACK报告。",
+  "domain_stage": "M4前沿调研证据纠错",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若manifest自递归/覆盖范围无法从固定文件证明，保持Unknown，不声称README/install被hash保护。",
+    "若rename/backup流程不能证明崩溃恢复，明确crash-atomic未证，不把trap或普通命令失败恢复扩展到SIGKILL/断电。",
+    "不得为了验证installer而执行它、创建真实target或访问远端下载。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已读取错题集并自检：区分9文件tree与6文件manifest，区分正常EXIT恢复与SIGKILL/断电窗口；未执行installer/联网/安装，未修改原5BD745报告、app、Spec、ADR、data、design。",
+  "node": "M4/开发/AIHot审计证据纠错",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-02-AIHot-v1.2.3固定快照与合同拆解报告.md",
+    "/tmp/f1-research-aihot.5kSpWB/khazix-skills/aihot/install.sh"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-02-AIHot-v1.2.3纠错附录.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-E4706F",
+  "title": "纠正AIHot报告README范围与installer原子性表述",
+  "unverified": [
+    "未执行installer或故障注入；SIGKILL/断电下的具体文件系统行为、真实target、远端安装站和跨文件系统mv仍Unknown；crash-atomic未被代码证明。"
+  ],
+  "updated_at": "2026-08-02T11:50+08:00",
+  "verified": [
+    "固定SHA f430c4b11eb7ce715d77768ff787855b7a025187/tree已复核；9文件树与manifest 6行边界、6/6 hash、install.sh第116-131/238-242/250-305/307-329行已只读核对；原5BD745报告SHA保持0afb7dce33159c9c048ed173cacba17fbbc4d2903e71b9c1ac9793aafe15a9f8；纠错附录已落盘。"
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "acceptance_exit": "明确引用三份正式报告；所有结论区分事实、推断、建议和待确认；给出最小MVP、明确暂不做项、系统架构候选及推荐理由、关键接口与数据边界、至少三类故障恢复、需要用户逐项拍板的问题；不得把参考站不可见后端写成已知事实。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/decisions/system/2026-07-30-F1+1-MVP与系统架构决策包-proposed.md"
+  ],
+  "authorization_evidence": "当前主会话用户明确要求创建部门后继续推进深度调研和架构学习。",
+  "authorization_history": [
+    {
+      "at": "2026-07-30T23:05+08:00",
+      "evidence": "当前主会话用户明确要求创建部门后继续推进深度调研和架构学习。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "用户要求在多Agent调研后继续推进，并参考AI Hot核心功能设计F1聚合站。",
+  "created_at": "2026-07-30T23:05+08:00",
+  "department": "产品部",
+  "details": "待研究部参考站报告、数据部采集报告、安全部安全基线三项均完成后再领取。综合三份报告与docs/spec.md，形成面向用户的决策包：参考站公开功能对照、F1适配差异、MVP与后续范围、端到端系统模块和数据流、连接器边界、稳定性与安全控制、技术小实验顺序、成本和未知项。只形成proposed方案，不冻结Spec v1、不初始化app、不替用户决定付费、平台授权、UI方向或自动发布控制。",
+  "domain_stage": "M2风险调研",
+  "event_receipts": [
+    "MIL-20260730T234150-7975BC"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一前置报告未完成时等待且不领取；证据冲突时并列呈现并标置信度；平台费用、条款或权限未知时保留为决策门禁。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已读取错题集，当前无已登记历史错题；专项检查了参考站公开表现不得反推后端、SDK许可证不得替代平台许可、robots不得当授权、公开可见不得当转载权、前置测试pass不得当产品或上线放行、自动发布门槛不得写成已验证、尽量有图不得降低权利或SSRF控制、未确认默认不得当默示授权，均未命中。",
+  "node": "M2-证据综合",
+  "pointers": [
+    "docs/spec.md"
+  ],
+  "report": "已形成status=proposed的MVP与系统架构决策包；未修改Spec v0，未冻结Spec v1，未初始化app，未采购、未调用付费API、未登录平台、未发布。",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260730-393806",
+  "title": "综合调研证据形成MVP与系统架构决策包",
+  "unverified": [
+    "首批真实信源与平台授权、真实平台15分钟发现率和费用、内容/图片权利、AI供应商数据条款与摘要质量、具体技术栈/部署/容量/RTO/RPO、后台权限与发布/急停实现、UI交互与视觉均未验证；安全部对真实持续采集、公开上线和自动发布的fail结论仍有效。"
+  ],
+  "updated_at": "2026-07-30T23:42+08:00",
+  "verified": [
+    "已完整读取并明确引用研究、数据、安全三份正式报告；已对照Spec v0；决策包覆盖最小MVP、暂不做项、三种架构候选与推荐、模块/接口/数据边界、九类故障恢复、技术实验、成本未知项和U1-U16用户门禁；本地链接、Markdown围栏、任务doctor通过；三路只读对抗审查复核后无残留P0/P1。"
+  ]
+}

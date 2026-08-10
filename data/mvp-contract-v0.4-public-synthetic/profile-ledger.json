@@ -1,0 +1,25 @@
+{
+  "profile_id": "public-synthetic",
+  "sqlite_path": "app/.local/f1plus1-public-synthetic.sqlite",
+  "contract_version": "mvp-local-v0.4",
+  "fixture_set": "public-demo-12-v0.4",
+  "fixture_manifest_hash": "3b296868dc0c0000fb94856b334ff7d1f698e3e80d4bb02e7062142dc1a0e554",
+  "fixture_graph_hash": "4be9f7e868a8bf21551bdcdc05d6b0d027e1a0ea43fd16dd2c7ea2b2ff9ba526",
+  "row_counts": {
+    "sources": 1,
+    "captured_items": 12,
+    "contents": 12,
+    "events": 0,
+    "summaries": 12,
+    "media_candidates": 10,
+    "release_bundles": 12,
+    "review_decisions": 12,
+    "publications": 12,
+    "outbox_jobs": 0,
+    "published_projections": 12
+  },
+  "synthetic_only": true,
+  "external_calls": 0,
+  "writes_to_base": false,
+  "real_content_imported": false
+}

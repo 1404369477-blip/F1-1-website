@@ -1,0 +1,55 @@
+{
+  "acceptance_exit": "提交C预检报告唯一PASS/FAIL：PASS要求Node24.18.0/npm11.16.0官方hash验证、npm ci ignore-scripts成功且lock未漂移、SQLite实际>=3.51.3及事务/锁/recovery探针通过、lint/typecheck/build通过、无真实外联/secret/lifecycle；列精确版本、命令、退出码与临时文件清理。任何失败阻止业务实现。TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/next.config.ts",
+    "app/tsconfig.json",
+    "app/next-env.d.ts",
+    "app/.gitignore",
+    "docs/collaboration/部门/开发部/报告/2026-08-02-M4-C层Node24与SQLite能力预检报告.md"
+  ],
+  "authorization_evidence": "用户已授权持续推进本地网站工程；B层安全/测试门禁已PASS并ACK；允许官方依赖与Node发行物的本地隔离bootstrap",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T03:58+08:00",
+      "evidence": "用户已授权持续推进本地网站工程；B层安全/测试门禁已PASS并ACK；允许官方依赖与Node发行物的本地隔离bootstrap",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部当前会话",
+  "completion_class": "standard",
+  "confirmation": "本任务只做C层本地能力预检；PASS后才派业务实现，真实外部能力持续关闭。",
+  "created_at": "2026-08-02T03:58+08:00",
+  "department": "开发部",
+  "details": "依据已ACK的7F3D22与7746F8进入C层local preflight。仅在app/.local内安装隔离工具链：CLI从nodejs.org下载Node v24.18.0对应当前macOS架构发行包与SHASUMS256，先验SHA-256再解压，禁止全局安装；核对随附npm=11.16.0。用官方registry执行npm ci --ignore-scripts --no-audit --no-fund（NEXT_TELEMETRY_DISABLED=1，必要时IPv4-first），确认lock不改、node_modules gitignored、lifecycle未执行；审计direct dependency许可证与unknown。使用Node24 node:sqlite在app/.local临时库做实际capability spike：记录sqlite_version/source_id，校验>=3.51.3；WAL、synchronous=FULL、busy_timeout、BEGIN IMMEDIATE、双连接锁竞争、user_version/migration、rollback/commit、checkpoint与reopen一致性，全部有限时且删除临时DB。用Node24运行当前空scaffold的lint/typecheck/build，禁止dev外网/真实端口长期驻留。Bootstrap网络与runtime no-egress分账；不调用真实provider/Base/Collector/平台/AI/媒体/发布/部署，不实现业务代码。若开发线程网络隔离，可报告统筹部进行同一官方来源的最小下载/安装动作后回交，开发部必须独立验证字节/hash/运行结果。",
+  "domain_stage": "M4-C-local-runtime-capability-preflight",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 官方Node下载/hash/架构不匹配或网络隔离：停止使用该包，不全局安装；请求统筹同源解阻或FAIL。",
+    "2) SQLite实际版本<3.51.3或WAL/锁/rollback/reopen不满足：FAIL，禁止静默换数据库或开始repository实现，提交新proposed ADR建议。",
+    "3) npm ci需要lifecycle、lock漂移、license Unknown/禁止项、lint/typecheck/build失败：FAIL并定位，不放宽engine/版本/安全开关。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未删除或修改Home lock，next root未写死绝对路径；未修改Spec/accepted ADR/data/design/业务代码；没有把preflight PASS写成C业务实现或生产放行。首次SQLite包装器因null-prototype row比较exit1且临时文件已清，改普通对象比较后完整重跑exit0；一次错误workdir复核命令的伪0已作废并以set -e重跑。实际index仅跟踪README，故使用cached+others-exclude-standard的37文件candidate全集做前后hash/status比较。",
+  "node": "M4/C层/本地工具链与能力预检",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-02-M4-C层Node24与SQLite能力预检报告.md"
+  ],
+  "report": "M4 C层本地工具链与SQLite能力预检最终PASS（P0=0/P1=0）；首轮FAIL/P1/P2、修复、全部命令/退出码/hash/清理/边界见开发部正式报告。",
+  "resolution": null,
+  "revision": 6,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-D27E44",
+  "title": "执行M4 C层Node24与SQLite能力预检",
+  "unverified": [
+    "Repository/migration正式实现、fixture seed、CAS/lease/outbox、四页UI/API、admin session/Origin/CSRF、真实loopback端口、完整R12 deny-all harness、无障碍AT、生产存储/网络文件系统/多实例/容量/RTO/RPO、真实provider/Base/平台/AI/媒体/发布/部署仍未实现或未授权；本线程未重复npm ci、未独立PGP验证SHASUMS签名。"
+  ],
+  "updated_at": "2026-08-02T09:33+08:00",
+  "verified": [
+    "官方Node v24.18.0 Darwin arm64发行包SHA-256=e1a97e14c99c803e96c7339403282ea05a499c32f8d83defe9ef5ec66f979ed1校验OK，随附npm=11.16.0；统筹npm ci --ignore-scripts exit0收据经registry/ignore-scripts/lock/tree独立复核，lock SHA=de0eb658c3e407b17d6c94466f4766a343997b7e11d88e60c52d2dccd8544b83；npm ls --all exit0/problems=[]；9项direct版本与MIT/Apache-2.0许可证通过、Unknown=0；Node24 node:sqlite=3.53.1，WAL/FULL/busy_timeout/BEGIN IMMEDIATE/双连接锁/rollback/commit/user_version/checkpoint/SIGKILL-reopen/integrity/0600权限/临时清理全部exit0，external_calls=0；lint/typecheck/build均exit0；重复build的37个Git-visible candidate聚合SHA与status SHA前后相同，workspace-root/多lock/tsconfig改写warning命中0；secret/runtime-egress静态扫描exit0。首轮FAIL(P1 root误推断与配置自动漂移，P2 tsbuildinfo)历史已保留并最小修复。"
+  ]
+}

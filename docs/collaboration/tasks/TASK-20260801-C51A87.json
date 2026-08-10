@@ -1,0 +1,58 @@
+{
+  "acceptance_exit": "提交安全部final补充报告decision=pass|fail：逐项调和token缩窄、refresh、旧access并存、logout服务端尝试/错误忽略、embedded skill漂移和grant单scope删除Unknown；给出修订后的轮换门禁与验证证据，明确原报告哪些句子已被本补充取代；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-01-OAuth轮换与logout边界证据纠偏-补充审核报告.md"
+  ],
+  "authorization_evidence": "用户授权只读OAuth最小化分析并要求发现问题马上反馈、快速优化；未授权实际重授权或撤权。",
+  "authorization_history": [
+    {
+      "at": "2026-08-01T22:51+08:00",
+      "evidence": "用户授权只读OAuth最小化分析并要求发现问题马上反馈、快速优化；未授权实际重授权或撤权。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "只读文档纠偏；不授权任何认证状态或飞书资源变更。",
+  "created_at": "2026-08-01T22:51+08:00",
+  "department": "安全部",
+  "details": "研究部TASK-20260801-F4526F已用官方文档和官方CLI源码证明：OAuth v2 token/refresh可在历史grant子集内缩窄；refresh token一次性轮换，旧access token到期前仍有效；当前官方CLI源码和v1.0.53+变更日志显示auth logout尝试服务端revoke后删除本地凭证，但忽略revoke错误，因此成功JSON不能证明服务端撤权。此前安全部报告依据embedded skill写成logout只清本地，存在版本/文档漂移。请安全部只读吸收研究报告，提交补充审核报告，明确本机v1.0.68可证明与不可证明项、固定CLI版本的轮换步骤、旧token保留/撤权证据与回退；不要修改原历史报告，不执行login/logout/revoke/refresh或任何外部访问。",
+  "domain_stage": "M2权限风险证据调和",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "无法把官方main分支实现映射到本机v1.0.68时按版本Unknown处理，不宣称本机必然执行服务端revoke。",
+    "任何结论需要实际logout/revoke/refresh验证时停止，只列未来用户确认后的受控探针。",
+    "若补充方案会导致先删本地凭证再失去回退，判FAIL并保留旧token，不提出直接执行。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已自检：未修改原安全报告；未把 main 源码冒充 v1.0.68 现场行为；未把 logout 成功 JSON、本地凭证删除或事件类型写成 grant 删除/所有 token 失效；未把 token scope 缩窄写成历史 grant 单 scope 删除；未重用旧 refresh、未忽略旧 access 并存窗口；未执行任何 auth/外部/资源操作。",
+  "node": "纠正嵌入skill与当前官方CLI实现冲突，形成版本锁定后的安全结论",
+  "pointers": [
+    "docs/collaboration/部门/研究部/报告/2026-08-01-飞书OAuth最小Scope与撤权轮换官方语义核验.md",
+    "docs/collaboration/部门/安全部/报告/2026-08-01-OAuth142scopes最小化与无损轮换执行包-审核报告.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-01-OAuth轮换与logout边界证据纠偏-补充审核报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260801-C51A87",
+  "title": "吸收官方证据修订OAuth轮换与logout边界",
+  "unverified": [
+    "官方 main/CHANGELOG 与本机 v1.0.68 二进制的逐行映射、当前 CLI refresh 本地存储/轮换行为、并行 token 选择和失败恢复未验证。",
+    "实际用户 grant 删除、服务端 revoke 请求/完成/幂等语义、历史 grant 删除、撤权事件投递和旧 access 现场失效时序未验证。",
+    "本轮未执行任何 auth 命令、外部访问、login/logout/revoke/refresh、token 变更或飞书资源读写；未来受控探针仍需用户确认。"
+  ],
+  "updated_at": "2026-08-01T23:00+08:00",
+  "verified": [
+    "已吸收 TASK-20260801-F4526F 研究部官方证据：OAuth v2 token scope 可缩窄到用户 grant 子集，refresh token 一次性轮换、旧 refresh 立即失效、旧 access 在自身到期前继续有效。",
+    "已调和官方 CLI main/CHANGELOG 与 embedded lark-shared 漂移：官方实现设计上尝试 server revoke 后删除本地凭证，但忽略 revoke 错误；本机 v1.0.68 与 main 的逐行映射保持 Unknown，成功 JSON不能证明服务端撤权。",
+    "已形成修订后的版本锁定、一次性 refresh、旧 access 并存、logout/revoke 分层证据、失败回退与用户门禁，并明确 device flow 自动补 offline_access 的官方源码事实及本机映射 Unknown。",
+    "已列出原安全报告涉及 logout、refresh 和撤权证明的具体取代关系；原历史报告未修改。",
+    "本地 LOGOUT_CORRECTION_LOCAL_OK、git diff --check、TASK_DOCTOR_OK 通过；两路本地只读对抗审查均为 PASS（条件式）。"
+  ]
+}

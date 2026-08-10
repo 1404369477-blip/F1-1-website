@@ -1,0 +1,57 @@
+{
+  "acceptance_exit": "固定候选目录含可交互HTML、设计说明、SHA256清单、1440深/浅与390深/浅四张可见PNG；六操作与全部状态从真实预览入口可达，baseline无mutation，Mac/iPhone无功能删减；报告明确视觉锚点、开发映射、已验证/未验证及用户确认问题；候选不替换冻结基线，externalCalls=0，doctor通过。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "design/ui/F1+1-M5-admin-sources-preview-v0.1/index.html",
+    "design/ui/F1+1-M5-admin-sources-preview-v0.1/design-notes.md",
+    "design/ui/F1+1-M5-admin-sources-preview-v0.1/SHA256.txt",
+    "design/ui/F1+1-M5-admin-sources-preview-v0.1/evidence/F1+1-admin-sources-mac-1440-dark.png",
+    "design/ui/F1+1-M5-admin-sources-preview-v0.1/evidence/F1+1-admin-sources-mac-1440-light.png",
+    "design/ui/F1+1-M5-admin-sources-preview-v0.1/evidence/F1+1-admin-sources-iphone-390-dark.png",
+    "design/ui/F1+1-M5-admin-sources-preview-v0.1/evidence/F1+1-admin-sources-iphone-390-light.png",
+    "docs/collaboration/部门/设计部/报告/2026-08-09-SOURCE-MGMT-001双端信源管理可视化候选报告.md"
+  ],
+  "authorization_evidence": "2026-08-09主会话已确认Admin双端功能等价并持续推进初版；产品v0.2已ACK。",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T21:28+08:00",
+      "evidence": "2026-08-09主会话已确认Admin双端功能等价并持续推进初版；产品v0.2已ACK。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "设计部/当前正式会话",
+  "completion_class": "standard",
+  "confirmation": "用户已要求设计后台并确认Mac/iPhone都能执行全部操作；当前只制作本地可视候选，正式实现和视觉定稿仍需用户确认。",
+  "created_at": "2026-08-09T21:28+08:00",
+  "department": "设计部",
+  "details": "Function ID=SOURCE-MGMT-001。绑定产品v0.2路径docs/spec/F1+1-SOURCE-MGMT-001本地synthetic信源管理纵切实现合同-v0.2.md、SHA-256=a4b7230c89b0083f6d3f412d2c3f3f767c7f131d4ea422f85fe5721f75df686b；绑定冻结全站视觉design/ui/F1+1-v0.2-全站设计/F1+1-v0.2-final-20260808.html、SHA-256=5a84bfb27294ebd727369118a95528f5b788bfacbe2d56cc03fcb006f6168cb1。只在独立design/ui候选目录制作交互HTML、设计说明、SHA清单与390x844/1440x900深浅四张PNG；可使用本机Open Design，失败则本地HTML+PNG兜底。必须覆盖59 baseline只读、local synthetic add/validate/activate/stop/retire/requeue、四类筛选、详情、11 alias、loading/filter-empty/partial/error/conflict/stale/blocked/dead-letter/active/stopped/response-unknown、危险确认、操作收据；Mac与iPhone功能等价，允许布局不同，44px、safe-area、键盘/触控、focus trap/return、200%/forced-colors/reduced-motion/read-screen labels有明确锚点。URL只显示/复制文本且不可点击。不得修改app/、Spec、accepted ADR、冻结设计或现有Admin reviews预览；不得外联或安装依赖；用户确认前不得标记正式UI完成。",
+  "domain_stage": "M5-SOURCE-MGMT双端视觉候选",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "产品v0.2或冻结视觉hash漂移：立即block不猜设计；任一端缺操作、状态、失败恢复或无可见PNG：不得complete；预览需要真实URL/账号、外联、依赖安装或改变冻结设计：删除该路径并保持Unknown。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未把v0.3与安全合同层ACK/PASS外推为正式实现或上线；未把旧PNG充当最新候选截图；未把静态CSS/可访问性锚点外推为实机通过；未暴露或允许编辑token/key/CSRF/command identity；未把baseline占位当成真值，改用受pin真实本地投影；本次complete只收口视觉候选和报告，用户确认门与实现runtime P1门仍关闭。",
+  "node": "按唯一v0.2合同为/admin/sources制作可直接体验的Mac/iPhone等价操作视觉候选，作为正式实现前用户视觉门",
+  "pointers": [
+    "docs/spec/F1+1-SOURCE-MGMT-001本地synthetic信源管理纵切实现合同-v0.2.md",
+    "design/ui/F1+1-v0.2-全站设计/F1+1-v0.2-final-20260808.html"
+  ],
+  "report": "docs/collaboration/部门/设计部/报告/2026-08-09-SOURCE-MGMT-001双端信源管理可视化候选报告.md",
+  "resolution": null,
+  "revision": 6,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-08CCEF",
+  "title": "SOURCE-MGMT-001双端信源管理可视化预览与用户确认候选",
+  "unverified": [
+    "v0.3与安全合同层已ACK/PASS但正式server session/Host/Origin/CSRF/CAS/SQLite/Outbox/worker/API及11+16 mandatory golden尚未实现或运行；一次本地CLI渲染批次未产生新文件或输出，现有四PNG对应最小修订前候选，当前sticky actions/横滚提示/390本次修订后的实机截图、键盘滚动和无横溢均Unknown；200%/forced-colors/读屏/实体safe-area/低性能/Kimi/工作站级绝对无外呼和用户视觉确认均Unknown。"
+  ],
+  "updated_at": "2026-08-09T22:42+08:00",
+  "verified": [
+    "v0.2、冻结视觉、59条baseline artifact与v0.3补充pin的SHA均匹配；候选静态覆盖59条真实本地baseline投影只读、四筛选、11 alias、12状态、add/validate/显式retry/activate/stop/retire/requeue、guard-shell/conflict零写、凭据不暴露、Mac/iPhone同一控制器；1440具备可发现局部横滚、键盘可聚焦region、aria-controls按钮与固定actions入口；HTML/JS/CSS静态解析通过，四PNG文件尺寸和格式通过，候选CSP无外联路径；未修改App、Spec、ADR、冻结设计或Admin Reviews。"
+  ]
+}

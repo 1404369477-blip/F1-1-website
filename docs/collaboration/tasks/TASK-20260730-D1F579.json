@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "最终审核报告使用审核模板且decision明确；亲自运行任务doctor与会话状态检查；列出阻断项、重要问题、一般问题和证据；检查误建产品部副本已归档且未进入会话真值。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-07-30-协作地基与任务拆分-审核报告.md"
+  ],
+  "authorization_evidence": "当前主会话用户确认八部门与auto模式。",
+  "authorization_history": [
+    {
+      "at": "2026-07-30T22:45+08:00",
+      "evidence": "当前主会话用户确认八部门与auto模式。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "019fb379-9212-7e80-a5df-587d339936c4",
+  "completion_class": "audit",
+  "confirmation": "本任务是复杂协作层创建后的独立对抗性审查。",
+  "created_at": "2026-07-30T22:45+08:00",
+  "department": "测试部",
+  "details": "只读审核本次Spec v0补全、八部门协作层、会话登记和首轮任务拆分。核对已确认事实是否被准确写入、未确认事项是否被诚实标记、部门边界是否重叠、任务是否具备验收出口与异常路径、项目级UI预览要求是否仍有效。只提交审核报告，不修改任何产物。",
+  "domain_stage": "M1协作层验收",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "发现用户事实被擅自量化时判为问题；发现会话登记和真实对话框不一致时判为阻断；无法验证归档状态时明确未验证。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已读取当前错题集（无登记条目）；重点自检把推断当用户事实、只信状态文件、只跑 happy path、越权修改被审核产物。已用用户原文、实际会话、归档回执、跨文档反向探针和子 Agent 只读对抗性复核处理，未修改审核对象或代替统筹放行。",
+  "node": "M1-协作层验收",
+  "pointers": [
+    "docs/collaboration/部门表.md"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-07-30-协作地基与任务拆分-审核报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260730-D1F579",
+  "title": "独立审核协作地基与任务拆分",
+  "unverified": [
+    "研究、数据和安全任务的最终报告质量与外部平台技术事实仍在其他任务中验证，不属于本审核任务。",
+    "静态会话启动清单和 failure_paths 结构优化尚未实施；二者不影响本次通过结论。"
+  ],
+  "updated_at": "2026-07-30T23:05+08:00",
+  "verified": [
+    "任务 doctor 复跑通过：TASK_DOCTOR_OK，4 张任务完整历史有效；四张 TASK 均有验收出口、失败路径、授权声明与真实指针。",
+    "会话状态复跑显示八个部门均 registered；Codex 实际会话 ID 与真值一致；误建产品部副本有 archived=true 回执且未进入会话真值。",
+    "修订后的 Spec、overview、progress、roadmap 和 agent-guide 已关闭目标用户边界、自动发布确认边界、阶段真值、UI 预览门禁及研究/产品/设计写入边界问题。",
+    "最终审核报告 status=final、decision=pass，含阻断/重要/一般问题、必测失败路径、自设计反向探针、独立证据与子 Agent 对抗性复核结果。"
+  ]
+}

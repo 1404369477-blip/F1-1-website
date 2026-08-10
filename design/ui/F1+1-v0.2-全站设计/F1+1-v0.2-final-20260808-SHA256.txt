@@ -1,0 +1,11 @@
+# F1+1 v0.2 final baseline, frozen 2026-08-08
+# Hash algorithm: SHA-256
+# The frozen HTML is byte-identical to index.html at freeze time.
+5a84bfb27294ebd727369118a95528f5b788bfacbe2d56cc03fcb006f6168cb1  index.html
+5a84bfb27294ebd727369118a95528f5b788bfacbe2d56cc03fcb006f6168cb1  F1+1-v0.2-final-20260808.html
+9dd879937083a3127ef865714a59375f6a15297518f3269ef25b5cfbc672e838  evidence/final-20260808/F1+1-v0.2-final-dark-1024.png
+bea6b45835d4a5f63258959a30ba327a50373977d24747a65ca1b669fef4cc1d  evidence/final-20260808/F1+1-v0.2-final-dark-1440.png
+ce726e1e34e21f2fdc0905e95d9521daed11d96aa068b98cb1386338eb27606b  evidence/final-20260808/F1+1-v0.2-final-dark-390.png
+06f8ecca3e78020e372cf81bf1b32e385f53c02a5082d85dd291fa69e8483bd3  evidence/final-20260808/F1+1-v0.2-final-light-1024.png
+ce5264e2f46a7b26472fe51ba2e4468bc7fe03995eaf1cad4c96d8368cfc00bb  evidence/final-20260808/F1+1-v0.2-final-light-1440.png
+5334c88be26a7b7c4cd5800dc1636fb0fc1d6a55c4d61f515ff6901c6dbdeb15  evidence/final-20260808/F1+1-v0.2-final-light-390.png

@@ -1,0 +1,52 @@
+{
+  "acceptance_exit": "提交研究部final报告：至少3种方案对比、唯一推荐及适用前提；配置期/运行期数据流和角色分工清楚；官方来源直接可追溯并注明访问日期；明确哪些能力已证实、哪些为推断/Unknown；列出至少3条失败路径、退出路线和最低下一决策；doctor通过并TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/研究部/报告/2026-08-09-两台MacBook配置期同网与运行期跨网联动方案.md"
+  ],
+  "authorization_evidence": "用户当前明确要求规划两台MacBook联动工作，并提供运行地点/网络场景。",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T18:39+08:00",
+      "evidence": "用户当前明确要求规划两台MacBook联动工作，并提供运行地点/网络场景。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "研究部/019fb36c-1f86-78d3-a6d7-f87f124bd710",
+  "completion_class": "standard",
+  "confirmation": "用户要求设计两台MacBook合理高效的联动方法，并已说明配置期可同网、运行期经常跨网络；本任务只读研究，不产生外部效果。",
+  "created_at": "2026-08-09T18:39+08:00",
+  "department": "研究部",
+  "details": "基于用户现行场景开展只读研究：M5工作Mac会外出，专用Admin MacBook长期固定在同一地点；前期配置可放同一局域网，后期两机独立运行；public-host仍独立。仅使用Apple、Tailscale/WireGuard/Headscale、Git、OpenSSH、SQLite等官方/第一方资料，必要时GitHub官方仓库；不用百度。比较至少三种联动模式并明确推荐：1）iCloud仅同步文档/任务入口 + 私有Git或版本化发布传代码 + 私有overlay访问Admin；2）局域网初配+按需远程维护通道；3）全目录文件同步/远程桌面/数据库复制等高耦合方案。逐项分析代码、配置、任务、日志、生产SQLite、密钥、备份、发布、回滚、并发编辑、iCloud冲突副本/按需下载/优化存储、macOS Remote Login/Screen Sharing、Tailscale macOS能力与Tailscale SSH平台限制、跨网络/CGNAT/中国大陆Unknown、目标Mac离线、工作Mac丢失、撤权、维护窗口。提出配置期和运行期拓扑、两机角色、数据流、唯一真值、单写者、server pull部署、只读/append-only收据、Codex/DeepSeek跨机协作规则；明确M5不能作为RPO≤15m唯一异机备份，iCloud不能承载生产数据库/密钥/运行目录。不得登录、安装、购买、改网络、创建Git远端或运行真实探针。",
+  "domain_stage": "dual-mac-operating-model-research",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若官方资料不能证明macOS端某项SSH/overlay能力，必须标Unknown或排除，不得从Linux能力外推。",
+    "若方案依赖同步活跃SQLite、共享写目录、两机同时编辑同一iCloud项目或公网Admin，直接判不适用。",
+    "若任何候选需要真实账号、付费、安装或网络探针，停在研究边界并列为后续独立授权门。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "没有把iCloud当Git、部署、数据库复制、密钥托管或备份证明；没有把同网直传外推为运行模型；没有把普通Tailscale macOS客户端外推为Tailscale SSH服务端；没有混同生产运行/DB/备份解密key与release signing key；没有让工作Mac、iCloud、Git或public-host成为第二writer/RPO点；未安装、登录、购买、创建远端、改网络或运行真实探针。独立对抗复核P0=0/P1=0。TASK_STATE_OK。",
+  "node": "RESEARCH-DUAL-MAC-01",
+  "pointers": [
+    "docs/runbooks/F1+1-专用Admin-MacBook服务器预配置手册-v0.1.md",
+    "docs/collaboration/部门/研究部/报告/2026-08-09-专用Admin-MacBook私有访问与异机备份候选.md"
+  ],
+  "report": "docs/collaboration/部门/研究部/报告/2026-08-09-两台MacBook配置期同网与运行期跨网联动方案.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-CE1771",
+  "title": "RESEARCH-DUAL-MAC：两台MacBook配置期同网与运行期跨网联动方案",
+  "unverified": [
+    "中国大陆目标宽带/蜂窝/跨运营商下overlay、Git、SSH与Screen Sharing真实可达和性能；目标Git/overlay/iCloud账号、价格、地域；独立signer和Admin trust root；Remote Login/Screen Sharing精确门禁；真实发布、备份、RPO≤15m/RTO≤4h均待完整production manifest获批后的受控实施验证。"
+  ],
+  "updated_at": "2026-08-09T18:50+08:00",
+  "verified": [
+    "仅用Apple、Tailscale、Git等官方/第一方资料核验iCloud按需下载/冲突/删除、Git fetch与签名tag、macOS Remote Login/Screen Sharing、Tailscale macOS三变体和Tailscale SSH服务端限制；形成3类模式、唯一三通道+server-pull推荐、配置期/运行期拓扑、独立signer、生产SQLite/密钥/备份禁区、失败/退出路径；独立对抗复核PASS/P0=0/P1=0。"
+  ]
+}

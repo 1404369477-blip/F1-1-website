@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "出具安全部独立复验报告，给出 PASS/FAIL 与 P0/P1/P2；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-07-v0.2前端M4门禁独立安全复验报告.md"
+  ],
+  "authorization_evidence": "用户要求推进各部门工作流（2026-08-07）",
+  "authorization_history": [
+    {
+      "at": "2026-08-07T20:07+08:00",
+      "evidence": "用户要求推进各部门工作流（2026-08-07）",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/统筹部并行子代理",
+  "completion_class": "audit",
+  "confirmation": "统筹核收。",
+  "created_at": "2026-08-07T20:07+08:00",
+  "department": "安全部",
+  "details": "独立复核开发部 6CD2FB 实现是否保持 M4 安全门禁：前端无外联（externalCalls=0）、无服务端 fetch、图片仅 display-only、REAL_* fail-closed、DTO/Repository 未改、无新增后端实体、无 token/密钥泄漏到日志；对照 R1–R13 门禁与 v0.2 对比度验证表。只读复核 + 真实 CLI 复验。",
+  "domain_stage": "安全复验",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若发现门禁被绕过或泄露，如实 FAIL，不绕过、不掩盖。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查错题集,无命中",
+  "node": "v0.2-frontend-security-reverify",
+  "pointers": [
+    "app/src/features/stories/feed-experience.tsx; app/src/server/public/"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-07-v0.2前端M4门禁独立安全复验报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260807-F01A13",
+  "title": "独立安全复验 v0.2 前端实现的 M4 门禁保持",
+  "unverified": [
+    "真实外部网络探测与生产环境部署未执行;R5 同 UID 威胁模型等既有 pending 不因本任务改变"
+  ],
+  "updated_at": "2026-08-07T20:20+08:00",
+  "verified": [
+    "无外联/REAL_* fail-closed/数据边界/密钥日志/偏差安全影响逐项复验完成,证据入报告"
+  ]
+}

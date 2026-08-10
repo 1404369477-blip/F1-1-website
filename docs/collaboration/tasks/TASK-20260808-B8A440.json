@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "设计部完成悬浮按钮无外框纯文字样式修订，产出证据与报告；用户确认后由统筹派开发落地。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "design/ui/F1+1-v0.2-全站设计/index.html"
+  ],
+  "authorization_evidence": "用户反馈悬浮按钮样式（2026-08-08）",
+  "authorization_history": [
+    {
+      "at": "2026-08-08T14:34+08:00",
+      "evidence": "用户反馈悬浮按钮样式（2026-08-08）",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "设计部/统筹部并行子代理",
+  "completion_class": "standard",
+  "confirmation": "用户体验确认门。",
+  "created_at": "2026-08-08T14:34+08:00",
+  "department": "设计部",
+  "details": "用户反馈(2026-08-08)：回到顶部按钮和设置按钮不要带外框，直接文字带一点阴影放置在页面右下角，隐形呈现（低透明度），光标移动到按钮上方时才高亮显示对应按钮。修订设计草案（设置 FAB 与回到顶部按钮样式），产出视觉证据，停在用户体验确认门。",
+  "domain_stage": "design_direction_revision",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若与已确认布局冲突，说明取舍理由，不擅自推翻。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查错题集,无命中",
+  "node": "v0.2-fab-text-style-revision",
+  "pointers": [
+    "design/ui/F1+1-v0.2-全站设计/index.html"
+  ],
+  "report": "docs/collaboration/部门/设计部/报告/2026-08-08-悬浮按钮无框样式修订报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260808-B8A440",
+  "title": "设计修订:回到顶部/设置悬浮按钮无外框纯文字+阴影+悬停高亮",
+  "unverified": [
+    "用户尚未确认;正式app未落地;真实设备体验待用户/测试部"
+  ],
+  "updated_at": "2026-08-08T14:41+08:00",
+  "verified": [
+    "回到顶部/设置按钮改为无外框纯文字+text-shadow、右下角、默认隐形、hover/focus高亮;触控命中区/键盘/降级保持;证据PNG与报告已产出"
+  ]
+}

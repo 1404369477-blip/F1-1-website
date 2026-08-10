@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "提交独立Markdown验收报告，给出pass/fail、阻断/重要/一般问题、验证命令与证据；检查59行/59唯一、原件哈希、分类计数、unknown/proposed状态、相对链接、决策标签、唯一真值、故障恢复、用户唯一门禁、Spec未冻结、doctor与git diff --check；列出未验证边界与错题自检；完成TASK并输出TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-07-31-信源分类与维护决策包-审核报告.md"
+  ],
+  "authorization_evidence": "主会话用户于2026-07-31要求整理信源并比较维护方案。",
+  "authorization_history": [
+    {
+      "at": "2026-07-31T19:51+08:00",
+      "evidence": "主会话用户于2026-07-31要求整理信源并比较维护方案。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "测试部/019fb379-9212-7e80-a5df-587d339936c4",
+  "completion_class": "audit",
+  "confirmation": "用户要求整理、分类并分析信源库维护方案；复杂任务按项目规则执行独立验收。",
+  "created_at": "2026-07-31T19:51+08:00",
+  "department": "测试部",
+  "details": "对数据清单、分类字典、研究报告和产品 proposed 决策包做独立只读验收。核对原始59条与CSV一一对应且原件未改；分类不得冒充身份/官方认证；飞书能力必须有官方证据且CLI安装不得等同真实授权；A/B/C/D真值边界清楚；D只允许Base到本地单向只读快照；待验证/立即采集保持用户待确认；评分、A到D建议和字段合同均不得写成用户批准；立即采集不能绕过monitorability或公开内容人工审核；所有本地链接可解析。不得创建真实飞书资源，不改产品结论，发现问题只提交报告和明确修复建议。",
+  "domain_stage": "M2风险调研",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任何数量/哈希不一致、身份结论越界、待验证被写成用户已确认、CLI被写成已授权、D出现双向同步、立即采集绕过可监控性或人工审核、产品建议被写成已批准均至少为重要问题；发现阻断时不得自行篡改上游产出。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已读取错题集，当前无历史条目；专项检查分类冒充身份、CLI冒充授权、建议冒充批准及只测happy path，均未命中。子Agent只读对抗复核维持pass，并纠正RTF URL提取措辞和第7节指代。",
+  "node": "M2-信源库方案独立验收",
+  "pointers": [
+    "F1+1信源.md",
+    "data/x-source-inventory-v0.csv",
+    "research/x-source-classification-data-dictionary-v0.md",
+    "docs/collaboration/部门/研究部/报告/2026-07-31-飞书多维表格与本地信源库维护方案比较.md",
+    "docs/decisions/system/2026-07-31-F1+1-信源库维护决策包-proposed.md"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-07-31-信源分类与维护决策包-审核报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260731-85233C",
+  "title": "独立验收信源分类与维护决策包",
+  "unverified": [
+    "59账号真实身份/相关性/可监控性；飞书账号、租户、应用、scope和资源授权；移动端真机体验；一致性revision token、事件与分页动态行为；D同步、版本epoch围栏、备份恢复和provider切换实现；用户尚未回答立即采集或先待验证。"
+  ],
+  "updated_at": "2026-07-31T20:07+08:00",
+  "verified": [
+    "原件SHA-256未变；59条URL与CSV逐条逐序一致且59唯一；分类/优先级/unknown/proposed计数正确；研究官方证据边界与CLI授权unknown；A/B/C/D分数复算；产品proposed、Base唯一真值、D单向只读快照、故障恢复、唯一用户门禁、相对链接、Spec v0、doctor和git diff --check。"
+  ]
+}

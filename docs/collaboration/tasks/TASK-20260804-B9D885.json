@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "安全部final报告分别列SQLite与启动decision、P0/P1/P2；完整闭包SHA稳定；四root为包外pin且任一漂移写前拒绝、production测试覆盖通道不可达、profile/path/source/ATTACH隔离fail closed、事务无部分写；Next输出closed exact且signal/进程/共享.next安全；无URL/path/stack/hash敏感输出或残留；两部分均P0=0/P1=0才整体PASS；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-04-SQLite信任根与Next启动稳定闭包安全复验.md"
+  ],
+  "authorization_evidence": "用户持续确认推进并要求减少冗余；本任务只保留能改变安全放行判断的互补检查。",
+  "authorization_history": [
+    {
+      "at": "2026-08-04T13:53+08:00",
+      "evidence": "用户持续确认推进并要求减少冗余；本任务只保留能改变安全放行判断的互补检查。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "/root/security_next_startup_recheck",
+  "completion_class": "audit",
+  "confirmation": "安全与测试联合审查均PASS后，统筹才可ACK 253A43和3760并进入Repository/API；本任务只做互补高风险检查。",
+  "created_at": "2026-08-04T13:53+08:00",
+  "department": "安全部",
+  "details": "当前禁止任何并发代码修改。开始时冻结253A43报告列实现SHA、3760三项直接SHA和必要runtime/migration/data/build闭包SHA。静态审查包外四root常量与写前顺序、no-follow/path/owner、testDatabasePathOverride只能NODE_ENV=test、canonical profile/path/fixture绑定、ATTACH/DETACH authorizer、transaction边界；行为只做一次最小root漂移零写探针、一次local/production test override拒绝与一次cross-profile/ATTACH检查。启动部分静态审查stdio/signal/nonzero exit closed boundary，行为只做一个start端口冲突和一次SIGINT清理；不运行测试部两个目标套件、不运行完整npm check、不重复同类攻击。只写安全部final报告和任务状态，不修代码。",
+  "domain_stage": "SQLite与启动稳定闭包独立安全复验",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "root可协调改写绕过、漂移后已有写入、testDatabasePathOverride可在local/production启用、symlink/path/ATTACH/cross-profile可越界：SQLite P0/P1 FAIL。",
+    "Next子进程输出可旁路safe envelope、信号误杀/孤儿/监听残留、共享.next会被移动删除或argv/hostname/port/readiness放宽：启动P0/P1 FAIL。",
+    "候选闭包SHA在审核期间漂移或审核必须修改正式代码才能继续：立即NOT_RUN并停止。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "发现NODE_ENV=test可在serve运行准备前开启testDatabasePathOverride并据静态可达路径判P1；无效root-drift准备轮未计PASS；未继承测试部结论，未在停止指令后追加检查，未修改正式代码。",
+  "node": "在稳定候选上互补审查四根写前拒绝、profile隔离及Next输出进程边界",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260804-253A43.json",
+    "docs/collaboration/tasks/TASK-20260802-3760F6.json",
+    "docs/collaboration/部门/安全部/报告/2026-08-04-M4-VS-0-Next启动边界并发污染-NOT-RUN安全复验.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-04-SQLite信任根与Next启动稳定闭包安全复验.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260804-B9D885",
+  "title": "独立安全复验SQLite信任根与稳定启动闭包",
+  "unverified": [
+    "SQLite root实际漂移零写、production/local override真实子进程、cross-profile/ATTACH行为未完成；Next端口冲突与SIGINT清理由安全部NOT_RUN；R5/R12/VS-0整体/Repository/API/真实外部能力未放行。"
+  ],
+  "updated_at": "2026-08-04T14:24+08:00",
+  "verified": [
+    "253A43的12个实现SHA与3760的3个直接SHA匹配；隔离app 75文件和data 30文件初始闭包已冻结；四根包外常量、写前校验、no-follow/owner/path、单事务、ATTACH authorizer及Next stdio/signal/error边界完成静态核对；canonical public migration到schema v3成功；精确隔离目录与共享.next已清理。"
+  ]
+}

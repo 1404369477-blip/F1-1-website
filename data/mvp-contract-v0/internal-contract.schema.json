@@ -1,0 +1,389 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:f1plus1:internal-contract:mvp-local-v0.3",
+  "title": "F1+1 internal-only runtime contract",
+  "description": "Internal SourceObservation and AuditEvent records; never domain truth, Base mapping or public DTO.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "mvp-local-v0.3"
+    },
+    "contract_scope": {
+      "const": "internal-only"
+    },
+    "synthetic_only": {
+      "const": true
+    },
+    "external_calls": {
+      "const": 0
+    },
+    "source_observations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/SourceObservation"
+      },
+      "minItems": 1
+    },
+    "audit_events": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/AuditEvent"
+      },
+      "minItems": 1
+    },
+    "cases": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/InternalCase"
+      },
+      "minItems": 3
+    },
+    "domain_refs": {
+      "const": []
+    },
+    "base_mapping_refs": {
+      "const": []
+    }
+  },
+  "required": [
+    "schema_version",
+    "contract_scope",
+    "synthetic_only",
+    "external_calls",
+    "source_observations",
+    "audit_events",
+    "cases",
+    "domain_refs",
+    "base_mapping_refs"
+  ],
+  "$defs": {
+    "SourceObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "observation_id": {
+          "type": "string",
+          "pattern": "^observation-[a-z0-9-]+$"
+        },
+        "unique_key": {
+          "type": "string",
+          "pattern": "^source-observation:[a-z0-9-]+:[a-z0-9._:-]+$"
+        },
+        "owner_ref": {
+          "type": "string",
+          "pattern": "^synthetic:owner-[a-z0-9-]+$"
+        },
+        "source_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{1,127}$"
+        },
+        "external_id": {
+          "type": "string",
+          "pattern": "^synthetic-external-[a-z0-9-]+$"
+        },
+        "observed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "discovered_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "published_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cursor_ref": {
+          "type": "string",
+          "pattern": "^synthetic:cursor-[a-z0-9-]+$"
+        },
+        "response_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "error_class": {
+          "type": "string",
+          "enum": [
+            "none",
+            "http_429",
+            "http_5xx",
+            "timeout",
+            "invalid_fixture"
+          ]
+        },
+        "source_config_epoch": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "source_safety_epoch": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "operation_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^op-[a-z0-9-]+$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "payload_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "internal_only": {
+          "const": true
+        }
+      },
+      "required": [
+        "observation_id",
+        "unique_key",
+        "owner_ref",
+        "source_id",
+        "external_id",
+        "observed_at",
+        "discovered_at",
+        "published_at",
+        "cursor_ref",
+        "response_hash",
+        "error_class",
+        "source_config_epoch",
+        "source_safety_epoch",
+        "operation_id",
+        "idempotency_key",
+        "payload_hash",
+        "internal_only"
+      ]
+    },
+    "AuditEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "event_id": {
+          "type": "string",
+          "pattern": "^event-audit-[a-z0-9-]+$"
+        },
+        "monotonic_seq": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "occurred_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "clock_status": {
+          "type": "string",
+          "enum": [
+            "trusted_synthetic",
+            "skew_observed"
+          ]
+        },
+        "trace_ref": {
+          "type": "string",
+          "pattern": "^synthetic:trace-[a-z0-9-]+$"
+        },
+        "session_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "reason_code": {
+          "type": "string",
+          "pattern": "^[A-Z0-9_:-]{1,128}$"
+        },
+        "owner": {
+          "type": "string",
+          "pattern": "^synthetic:owner-[a-z0-9-]+$"
+        },
+        "operation_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^op-[a-z0-9-]+$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "task_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^task-[a-z0-9-]+$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source_config_epoch": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "source_safety_epoch": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "authorization_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "policy_epoch": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "recovery_epoch": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "attempt": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "payload_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "fixture_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "schema_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "redaction_version": {
+          "type": "string",
+          "pattern": "^redaction-v[0-9]+$"
+        },
+        "retention": {
+          "type": "string",
+          "enum": [
+            "short_synthetic",
+            "audit_synthetic"
+          ]
+        },
+        "cleanup_after": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "append_only": {
+          "const": true
+        },
+        "internal_only": {
+          "const": true
+        },
+        "external_calls": {
+          "const": 0
+        }
+      },
+      "required": [
+        "event_id",
+        "monotonic_seq",
+        "occurred_at",
+        "clock_status",
+        "trace_ref",
+        "session_hash",
+        "reason_code",
+        "owner",
+        "operation_id",
+        "task_id",
+        "source_config_epoch",
+        "source_safety_epoch",
+        "authorization_version",
+        "policy_epoch",
+        "recovery_epoch",
+        "attempt",
+        "payload_hash",
+        "fixture_hash",
+        "schema_hash",
+        "redaction_version",
+        "retention",
+        "cleanup_after",
+        "append_only",
+        "internal_only",
+        "external_calls"
+      ]
+    },
+    "InternalCase": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "case_id": {
+          "type": "string",
+          "pattern": "^internal-case-[a-z0-9-]+$"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "unique_observation",
+            "audit_monotonic",
+            "internal_not_domain"
+          ]
+        },
+        "expected": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "outcome": {
+              "type": "string",
+              "enum": [
+                "dedupe_by_unique_key",
+                "append_only_sequence",
+                "never_enters_domain"
+              ]
+            },
+            "assertions": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1
+            }
+          },
+          "required": [
+            "outcome",
+            "assertions"
+          ]
+        },
+        "synthetic_input": {
+          "const": true
+        },
+        "external_calls": {
+          "const": 0
+        }
+      },
+      "required": [
+        "case_id",
+        "kind",
+        "expected",
+        "synthetic_input",
+        "external_calls"
+      ]
+    }
+  }
+}

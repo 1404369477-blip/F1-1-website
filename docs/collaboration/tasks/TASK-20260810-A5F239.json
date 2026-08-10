@@ -1,0 +1,47 @@
+{
+  "acceptance_exit": "提交安全部final独立报告与机器manifest，唯一decision=pass或fail并列P0/P1/P2；绑定精确91AF6E候选和独立攻击证据；PASS要求P0=0且P1=0，raw authority/session/CSRF/identity/SQLite/audit/no-egress及零残留均闭合，完成返回TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "用户回复继续并持续授权推进本地初版；本任务只对已完成本地synthetic候选做无外部I/O独立安全复验。",
+  "authorization_history": [
+    {
+      "at": "2026-08-10T07:59+08:00",
+      "evidence": "用户回复继续并持续授权推进本地初版；本任务只对已完成本地synthetic候选做无外部I/O独立安全复验。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "独立安全首向量 RAW_DOT_SEGMENT_ALIAS 失败：raw target /api/admin/alias/../session 在 assertRawAdminRequest 内被 URL 规范化为 /api/admin/session 并未授权通过；evidence manifest=docs/collaboration/部门/安全部/报告/TASK-20260810-A5F239-evidence/manifest.json SHA256=92339f02cf0f30075e1059b8e41df0d1d0c6b60f4236119917b8d4ebc138d764。其余向量按首错规则 NOT_RUN；实例/正式DB/外联均0、临时根已清理。安全部两次仅收据写作回合被系统cyber过滤中止，未形成final报告。",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "本任务不授权UI、真实采集、生产、公网Admin或部署；只验证本地synthetic后端安全下界。",
+  "created_at": "2026-08-10T07:59+08:00",
+  "department": "安全部",
+  "details": "唯一输入为已ACK TASK-20260810-91AF6E、开发报告SHA 65d2ea230c0b78da12c0407b2a1e0fc0c84980502b6324621a33694546d99374、manifest SHA 7b0658d9972df676acec689cb3d99ea23e74bf1abc2e51f9a169a9aa49b187b3、三候选SHA 5c40918c/5f008507/7e35d4c及closed DB SHA ddf3778c。只读产品代码，使用安全部独立临时profile/DB和必要的至多一个127.0.0.1实例，亲自构造攻击向量；覆盖raw peer/request-target、Host/Origin、Forwarded/X-Forwarded、encoded slash/backslash/dot segment、非loopback/wildcard拒绝；单ACTIVE session、随机材料失败关闭、cookie/refresh/destroy/过期；CSRF TTL/重放/method/path/body绑定；identity冲突/截断碰撞、SQL/字段注入、baseline不可变/local overlay、audit/receipt/ledger篡改、第二writer/profile/路径/权限隔离、错误脱敏、token/hash/path零泄漏及所有非loopback外部I/O=0。不得跑全量测试、修改产品代码/正式DB/依赖/UI/Spec/ADR、安装或改变网络。",
+  "domain_stage": "M5-SOURCE-MGMT后端独立安全successor",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "候选、开发报告、manifest、closed DB或精确SHA任一漂移：不执行动态攻击，立即block并回传首个差异。",
+    "任一raw/session/CSRF/identity/SQLite/audit攻击形成未授权成功、部分写或信息泄漏：保存最小复现并立即FAIL，不用后续成功覆盖。",
+    "出现外部I/O、正式数据写入或残留实例/端口/锁/WAL/SHM/临时DB：立即停止，只清理由本任务明确创建的资源并报告P0/P1。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "对已ACK的91AF6E精确候选独立攻击raw authority、session/CSRF、身份域、SQLite隔离与no-egress",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260810-91AF6E.json",
+    "app/evidence/TASK-20260810-91AF6E/manifest.json",
+    "docs/collaboration/部门/开发部/报告/2026-08-10-91AF6E五项Node24静态类型收敛与SOURCE-MGMT启动闭环报告.md",
+    "app/.local/receipts/source-management-synthetic.closed.json"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260810-A5F239",
+  "title": "91AF6E冻结候选独立安全复验",
+  "unverified": [],
+  "updated_at": "2026-08-10T08:08+08:00",
+  "verified": []
+}

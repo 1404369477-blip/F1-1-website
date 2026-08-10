@@ -1,0 +1,57 @@
+{
+  "acceptance_exit": "使用public-synthetic本地生产模式打开/时，用户可在1440/1024/390看到与冻结设计一致的正式App；主题、Dock、设置、展开、图片导航/lightbox、搜索、loading/empty/error/404/nomore/partial/offline和主要恢复出口可操作；生产页面无DRAFT/调试/强制状态控件，源码无DEMO_STORIES或静态第二真值回退。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/src/features/stories/public-api.ts",
+    "app/src/components/f1/f1-page-shell.tsx",
+    "app/src/features/stories/feed-experience.tsx",
+    "app/src/app/globals.css",
+    "app/src/tests/public-ui.test.ts",
+    "docs/collaboration/部门/开发部/交接班文档.md",
+    "docs/collaboration/部门/开发部/报告/2026-08-09-v0.2最终公开信息流正式App落地报告.md"
+  ],
+  "authorization_evidence": "用户确认2026-08-08最终设计；设计TASK-20260808-54BB47与产品TASK-20260808-00A9C9均已统筹ACK",
+  "authorization_history": [
+    {
+      "at": "2026-08-08T22:30+08:00",
+      "evidence": "用户确认2026-08-08最终设计；设计TASK-20260808-54BB47与产品TASK-20260808-00A9C9均已统筹ACK",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/019fb374-7c86-7882-9e51-76114ce69e7f",
+  "completion_class": "standard",
+  "confirmation": "最终视觉与产品合同均已获用户确认；新增页面、功能、DTO、外部媒体、真实采集、删除、Git提交或发布仍需独立门禁。",
+  "created_at": "2026-08-08T22:30+08:00",
+  "department": "开发部",
+  "details": "以 docs/spec/F1+1-v0.2-最终实现级产品合同.md 和 design/ui/F1+1-v0.2-全站设计/F1+1-v0.2-final-20260808.html（SHA-256 5a84bfb27294ebd727369118a95528f5b788bfacbe2d56cc03fcb006f6168cb1）为唯一实现输入；在现有app公开首页实现单列时间线、完整摘要、1440右下工具、<=1100 Dock与安全区、设置外点关闭和占位边界、主题、单一展开、居中滚动、多图组件与lightbox、七类view state、响应式和无障碍降级；继续只消费accepted feed/detail API，不新增DTO/实体/后端设置/第二真值，不开放admin/采集/外部I/O。先复核三份验收后中间文件，按最终合同重写或吸收，不回滚未知成果；若单媒体DTO无法在不补造字段的情况下满足多图出口，保留通用组件能力并停止伪造真实媒体，提交合同冲突证据给统筹，不静默改API。",
+  "domain_stage": "最终UI开发实现",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "最终设计与accepted API/安全合同冲突或需要新DTO：停止相关实现并提交精确冲突，不改后端合同。",
+    "现有未跟踪文件无法确认来源：保留并做最小局部修改，不重置、不删除、不用全量格式化覆盖。",
+    "受控启动或公开API因安全环境失败：不放宽fail-closed规则，记录可复现出口并回统筹。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已用奥卡姆边界保持API/DTO/安全合同和零外联；按墨菲原则完成独立只读对抗审查，收口手势时钟、焦点陷阱、44px命中区、离线/partial优先级、详情重试、安全publicId定位和Dock背板；未改Spec/ADR/data/design/lockfile，未新增依赖或Git写操作",
+  "node": "把固定hash的最终设计与产品合同实现到现有公开页面",
+  "pointers": [
+    "docs/spec/F1+1-v0.2-最终实现级产品合同.md"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-09-v0.2最终公开信息流正式App落地报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260808-33533E",
+  "title": "落地最终v0.2公开信息流到正式App",
+  "unverified": [
+    "accepted DTO仅单media，真实多图缩略图/swipe/trackpad/lightbox翻页NOT_RUN且未补造；empty/error/404/partial/offline自然生产故障注入未在本轮成功实例执行；VoiceOver/NVDA、forced-colors、200%缩放与reduced-transparency实机NOT_RUN；lint保留3条原生img性能提示"
+  ],
+  "updated_at": "2026-08-09T10:00+08:00",
+  "verified": [
+    "冻结设计SHA匹配；固定Node24聚焦测试12/12、lint 0 errors、typecheck、Next16.2.11 build通过；任务专用production health/feed/detail均200且no-store/externalCalls=0；1440/1024/390深浅主题、Dock、设置、单展开、搜索、lightbox、无溢出及零外部资源浏览器验收通过；任务进程已停止且3000/3001释放"
+  ]
+}

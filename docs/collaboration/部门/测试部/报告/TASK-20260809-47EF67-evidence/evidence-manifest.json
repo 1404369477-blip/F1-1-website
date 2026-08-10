@@ -1,0 +1,12 @@
+{
+  "schemaVersion":"47ef67-environment-gate-v1",
+  "taskId":"TASK-20260809-47EF67",
+  "status":"blocked",
+  "decision":"fail",
+  "firstError":{"stage":"app-seatbelt-apply","exitCode":71,"stderr":"sandbox-exec: sandbox_apply: Operation not permitted","reasonCode":"SEATBELT_APPLY_DENIED"},
+  "candidate":{"sourceAggregateSha256":"7b1e8977c3e7296f4e5cf165b106bc322c2ef19dbd5e506f51e2c4ec92465281","canonicalDbSha256":"eb2d7ad2787a290f7a13adcb063215d58654bc9f66d1d8ff60b98f14592b9551","buildIdFileSha256":"8155e435b052ae87467671cfc0bdfc59bf931922eb55fcf16f03fc68a5efb1c5","buildManifestSha256":"b8c57b58a1f524871415bd233871800d9608e35f2f4f188b2d58675e38f0881c","middlewareManifestSha256":"3e662212864bc4c124cfc53fa5d428813c619852b447c9fd2d9926cd39d7a4a6"},
+  "tooling":{"playwrightCore":"1.58.2","headlessShellRevision":1208,"headlessShellSha256":"a46b3b1e63163fa2d2437fb6ae967cb5a73b50050bca32f1964e6129b6228244","appSeatbeltSha256":"efaaaff11027fd8ff637743ce3fb0cef4d7931c74780b899fc9e9e5cb1446880","browserSeatbeltSha256":"758a81d69f18dfb62433cdd5e559bf80ed5d3c8a1891244810aff42d57bd784b"},
+  "browserRunStarted":false,
+  "functionMatrixRunCount":0,
+  "screenshots":[],"requests":[],"console":[],"network":[],"notRun":["PUB-FEED-003","PUB-FEED-004","PUB-FEED-005","UI-A11Y-001","UI-RESP-002"]
+}

@@ -1,0 +1,1533 @@
+{
+  "canonical_json_rule": {
+    "encoding": "UTF-8",
+    "hash": "SHA-256 over the exact compact UTF-8 byte sequence",
+    "key_order": "lexicographic Unicode code-point order",
+    "nulls": "preserve explicit null values; never omit a present null",
+    "numbers": "finite JSON numbers only; no NaN, Infinity or exponent rewriting",
+    "rfc8785": "project-defined canonical JSON; not RFC 8785 JCS",
+    "unicode": "preserve Unicode code points with ensure_ascii=false; no NFC/NFD normalization",
+    "version": "canonical-json-v1",
+    "whitespace": "compact JSON separators comma=',' and colon=':'"
+  },
+  "canonical_json_rule_version": "canonical-json-v1",
+  "captured_items": [
+    {
+      "canonical_url": "https://synthetic.invalid/public-multimedia/zero",
+      "capture_id": "cap-mm-zero",
+      "capture_note": "SYNTHETIC_ONLY: public multimedia runtime fixture",
+      "captured_at": "2026-08-09T03:00:00Z",
+      "content_id": "content-mm-zero",
+      "created_at": "2026-08-09T03:00:00Z",
+      "created_by_ref": "synthetic:system",
+      "dedup_match_source_id": null,
+      "dedup_status": "unique",
+      "normalization_error": null,
+      "normalization_status": "valid",
+      "raw_url": "https://synthetic.invalid/public-multimedia/zero",
+      "source_config_epoch": 1,
+      "source_id": "src-active",
+      "updated_at": "2026-08-09T03:00:00Z",
+      "updated_by_ref": "synthetic:system"
+    },
+    {
+      "canonical_url": "https://synthetic.invalid/public-multimedia/single",
+      "capture_id": "cap-mm-single",
+      "capture_note": "SYNTHETIC_ONLY: public multimedia runtime fixture",
+      "captured_at": "2026-08-09T03:01:00Z",
+      "content_id": "content-mm-single",
+      "created_at": "2026-08-09T03:01:00Z",
+      "created_by_ref": "synthetic:system",
+      "dedup_match_source_id": null,
+      "dedup_status": "unique",
+      "normalization_error": null,
+      "normalization_status": "valid",
+      "raw_url": "https://synthetic.invalid/public-multimedia/single",
+      "source_config_epoch": 1,
+      "source_id": "src-active",
+      "updated_at": "2026-08-09T03:01:00Z",
+      "updated_by_ref": "synthetic:system"
+    },
+    {
+      "canonical_url": "https://synthetic.invalid/public-multimedia/gallery",
+      "capture_id": "cap-mm-gallery",
+      "capture_note": "SYNTHETIC_ONLY: public multimedia runtime fixture",
+      "captured_at": "2026-08-09T03:02:00Z",
+      "content_id": "content-mm-gallery",
+      "created_at": "2026-08-09T03:02:00Z",
+      "created_by_ref": "synthetic:system",
+      "dedup_match_source_id": null,
+      "dedup_status": "unique",
+      "normalization_error": null,
+      "normalization_status": "valid",
+      "raw_url": "https://synthetic.invalid/public-multimedia/gallery",
+      "source_config_epoch": 1,
+      "source_id": "src-active",
+      "updated_at": "2026-08-09T03:02:00Z",
+      "updated_by_ref": "synthetic:system"
+    }
+  ],
+  "contents": [
+    {
+      "canonical_url": "https://synthetic.invalid/public-multimedia/zero",
+      "capture_id": "cap-mm-zero",
+      "captured_at": "2026-08-09T03:00:00Z",
+      "content_hash_input": {
+        "canonical_url": "https://synthetic.invalid/public-multimedia/zero",
+        "content_id": "content-mm-zero",
+        "content_kind": "post",
+        "content_version": "v1",
+        "editorial_category": "race_news",
+        "external_content_id": "synthetic-public-multimedia-zero",
+        "language": "zh-CN",
+        "normalized_body": "该记录只包含本地 synthetic 文本与证据快照。\n\nReleaseBundle 的媒体数组为空，公开 DTO 返回空数组。",
+        "normalized_title": "本地零图完整链样本",
+        "published_at": "2026-08-09T03:00:00Z",
+        "source_config_epoch": 1,
+        "source_evidence_url": "https://synthetic.invalid/evidence/public-multimedia/zero",
+        "source_id": "src-active",
+        "source_time_status": "known"
+      },
+      "content_id": "content-mm-zero",
+      "content_kind": "post",
+      "content_status": "published",
+      "content_version": "v1",
+      "content_version_hash": "7c1e0f8a532988a95ebdc2ed069fca9629d3bba60feaf1bc1974d087c294ba92",
+      "created_at": "2026-08-09T03:00:00Z",
+      "created_by_ref": "synthetic:system",
+      "editorial_category": "race_news",
+      "external_content_id": "synthetic-public-multimedia-zero",
+      "external_url": "https://synthetic.invalid/public-multimedia/zero",
+      "language": "zh-CN",
+      "normalized_body": "该记录只包含本地 synthetic 文本与证据快照。\n\nReleaseBundle 的媒体数组为空，公开 DTO 返回空数组。",
+      "normalized_title": "本地零图完整链样本",
+      "published_at": "2026-08-09T03:00:00Z",
+      "source_config_epoch": 1,
+      "source_evidence_url": "https://synthetic.invalid/evidence/public-multimedia/zero",
+      "source_id": "src-active",
+      "source_time_status": "known",
+      "updated_at": "2026-08-09T03:00:00Z",
+      "updated_by_ref": "synthetic:system"
+    },
+    {
+      "canonical_url": "https://synthetic.invalid/public-multimedia/single",
+      "capture_id": "cap-mm-single",
+      "captured_at": "2026-08-09T03:01:00Z",
+      "content_hash_input": {
+        "canonical_url": "https://synthetic.invalid/public-multimedia/single",
+        "content_id": "content-mm-single",
+        "content_kind": "post",
+        "content_version": "v1",
+        "editorial_category": "race_news",
+        "external_content_id": "synthetic-public-multimedia-single",
+        "language": "zh-CN",
+        "normalized_body": "媒体身份、顺序、hash、rights 与 safety 均来自领域链。\n\nV1 继续返回同一首图单对象。",
+        "normalized_title": "本地单图完整链样本",
+        "published_at": "2026-08-09T03:01:00Z",
+        "source_config_epoch": 1,
+        "source_evidence_url": "https://synthetic.invalid/evidence/public-multimedia/single",
+        "source_id": "src-active",
+        "source_time_status": "known"
+      },
+      "content_id": "content-mm-single",
+      "content_kind": "post",
+      "content_status": "published",
+      "content_version": "v1",
+      "content_version_hash": "94dfda60c0d683fae0a646ccb51db14dd18f268b8811a184e0c5ccee3885d7cc",
+      "created_at": "2026-08-09T03:01:00Z",
+      "created_by_ref": "synthetic:system",
+      "editorial_category": "race_news",
+      "external_content_id": "synthetic-public-multimedia-single",
+      "external_url": "https://synthetic.invalid/public-multimedia/single",
+      "language": "zh-CN",
+      "normalized_body": "媒体身份、顺序、hash、rights 与 safety 均来自领域链。\n\nV1 继续返回同一首图单对象。",
+      "normalized_title": "本地单图完整链样本",
+      "published_at": "2026-08-09T03:01:00Z",
+      "source_config_epoch": 1,
+      "source_evidence_url": "https://synthetic.invalid/evidence/public-multimedia/single",
+      "source_id": "src-active",
+      "source_time_status": "known",
+      "updated_at": "2026-08-09T03:01:00Z",
+      "updated_by_ref": "synthetic:system"
+    },
+    {
+      "canonical_url": "https://synthetic.invalid/public-multimedia/gallery",
+      "capture_id": "cap-mm-gallery",
+      "captured_at": "2026-08-09T03:02:00Z",
+      "content_hash_input": {
+        "canonical_url": "https://synthetic.invalid/public-multimedia/gallery",
+        "content_id": "content-mm-gallery",
+        "content_kind": "post",
+        "content_version": "v1",
+        "editorial_category": "race_news",
+        "external_content_id": "synthetic-public-multimedia-gallery",
+        "language": "zh-CN",
+        "normalized_body": "四个 MediaCandidate 具有不同 identity、assetRef 与 mediaHash。\n\n任何乱序、第五图或 rights/safety 漂移都会整条拒绝。",
+        "normalized_title": "本地四图完整链样本",
+        "published_at": "2026-08-09T03:02:00Z",
+        "source_config_epoch": 1,
+        "source_evidence_url": "https://synthetic.invalid/evidence/public-multimedia/gallery",
+        "source_id": "src-active",
+        "source_time_status": "known"
+      },
+      "content_id": "content-mm-gallery",
+      "content_kind": "post",
+      "content_status": "published",
+      "content_version": "v1",
+      "content_version_hash": "9e76ccadd678c9010ec5eda9a19826b159315dadff25de217c607d5976b0ac93",
+      "created_at": "2026-08-09T03:02:00Z",
+      "created_by_ref": "synthetic:system",
+      "editorial_category": "race_news",
+      "external_content_id": "synthetic-public-multimedia-gallery",
+      "external_url": "https://synthetic.invalid/public-multimedia/gallery",
+      "language": "zh-CN",
+      "normalized_body": "四个 MediaCandidate 具有不同 identity、assetRef 与 mediaHash。\n\n任何乱序、第五图或 rights/safety 漂移都会整条拒绝。",
+      "normalized_title": "本地四图完整链样本",
+      "published_at": "2026-08-09T03:02:00Z",
+      "source_config_epoch": 1,
+      "source_evidence_url": "https://synthetic.invalid/evidence/public-multimedia/gallery",
+      "source_id": "src-active",
+      "source_time_status": "known",
+      "updated_at": "2026-08-09T03:02:00Z",
+      "updated_by_ref": "synthetic:system"
+    }
+  ],
+  "contract_version": "public-read-v0.2",
+  "events": [],
+  "expected_dto_cases": [
+    {
+      "case_id": "case-zero",
+      "expected_detail_extension": {
+        "bodyZh": [
+          "该记录只包含本地 synthetic 文本与证据快照。",
+          "ReleaseBundle 的媒体数组为空，公开 DTO 返回空数组。"
+        ],
+        "keyPointsZh": [
+          "媒体计数为零",
+          "公开状态为 media_missing"
+        ],
+        "leadZh": "零图样本保持正文可读并明确进入 media_missing。"
+      },
+      "expected_v1_item": {
+        "contentType": "race_news",
+        "media": null,
+        "originalLink": {
+          "enabled": false,
+          "reason": "synthetic_only",
+          "url": null
+        },
+        "publicId": "public-mm-zero",
+        "publishedAt": "2026-08-09T03:00:00Z",
+        "source": {
+          "accessStatus": "available",
+          "byline": "F1+1 多媒体验证台",
+          "displayName": "本地合成多媒体资料",
+          "platform": "x",
+          "sourceId": "src-active"
+        },
+        "sourcePublishedAt": "2026-08-09T03:00:00Z",
+        "sourceTimeStatus": "known",
+        "state": "media_missing",
+        "summaryZh": "用于验证无媒体卡片仍可通过完整发布链读取。",
+        "titleZh": "本地零图完整链样本"
+      },
+      "expected_v2_item": {
+        "contentType": "race_news",
+        "media": [],
+        "originalLink": {
+          "enabled": false,
+          "reason": "synthetic_only",
+          "url": null
+        },
+        "publicId": "public-mm-zero",
+        "publishedAt": "2026-08-09T03:00:00Z",
+        "source": {
+          "accessStatus": "available",
+          "byline": "F1+1 多媒体验证台",
+          "displayName": "本地合成多媒体资料",
+          "platform": "x",
+          "sourceId": "src-active"
+        },
+        "sourcePublishedAt": "2026-08-09T03:00:00Z",
+        "sourceTimeStatus": "known",
+        "state": "media_missing",
+        "summaryZh": "用于验证无媒体卡片仍可通过完整发布链读取。",
+        "titleZh": "本地零图完整链样本"
+      },
+      "media_count": 0,
+      "public_id": "public-mm-zero"
+    },
+    {
+      "case_id": "case-single",
+      "expected_detail_extension": {
+        "bodyZh": [
+          "媒体身份、顺序、hash、rights 与 safety 均来自领域链。",
+          "V1 继续返回同一首图单对象。"
+        ],
+        "keyPointsZh": [
+          "V2 媒体计数为一",
+          "V1 首图降级稳定"
+        ],
+        "leadZh": "单图样本只展示主图，不生成无意义导航。"
+      },
+      "expected_v1_item": {
+        "contentType": "race_news",
+        "media": {
+          "altZh": "本地合成示意图：蓝色赛道节奏与单图卡片。",
+          "assetRef": "synthetic:multimedia-single-1",
+          "captionZh": null,
+          "creditDisplay": "F1+1 本地合成占位",
+          "kind": "synthetic_placeholder",
+          "tone": "blue"
+        },
+        "originalLink": {
+          "enabled": false,
+          "reason": "synthetic_only",
+          "url": null
+        },
+        "publicId": "public-mm-single",
+        "publishedAt": "2026-08-09T03:01:00Z",
+        "source": {
+          "accessStatus": "available",
+          "byline": "F1+1 多媒体验证台",
+          "displayName": "本地合成多媒体资料",
+          "platform": "x",
+          "sourceId": "src-active"
+        },
+        "sourcePublishedAt": "2026-08-09T03:01:00Z",
+        "sourceTimeStatus": "known",
+        "state": "available",
+        "summaryZh": "用于验证 V2 单元素数组和 V1 稳定首图降级。",
+        "titleZh": "本地单图完整链样本"
+      },
+      "expected_v2_item": {
+        "contentType": "race_news",
+        "media": [
+          {
+            "altZh": "本地合成示意图：蓝色赛道节奏与单图卡片。",
+            "assetRef": "synthetic:multimedia-single-1",
+            "captionZh": null,
+            "creditDisplay": "F1+1 本地合成占位",
+            "kind": "synthetic_placeholder",
+            "mediaHash": "78245f2b42249904eb9db16ddf064a2f478719ba72a29edcd0e4a484affa5146",
+            "mediaId": "media-mm-single-1",
+            "tone": "blue"
+          }
+        ],
+        "originalLink": {
+          "enabled": false,
+          "reason": "synthetic_only",
+          "url": null
+        },
+        "publicId": "public-mm-single",
+        "publishedAt": "2026-08-09T03:01:00Z",
+        "source": {
+          "accessStatus": "available",
+          "byline": "F1+1 多媒体验证台",
+          "displayName": "本地合成多媒体资料",
+          "platform": "x",
+          "sourceId": "src-active"
+        },
+        "sourcePublishedAt": "2026-08-09T03:01:00Z",
+        "sourceTimeStatus": "known",
+        "state": "available",
+        "summaryZh": "用于验证 V2 单元素数组和 V1 稳定首图降级。",
+        "titleZh": "本地单图完整链样本"
+      },
+      "media_count": 1,
+      "public_id": "public-mm-single"
+    },
+    {
+      "case_id": "case-gallery",
+      "expected_detail_extension": {
+        "bodyZh": [
+          "四个 MediaCandidate 具有不同 identity、assetRef 与 mediaHash。",
+          "任何乱序、第五图或 rights/safety 漂移都会整条拒绝。"
+        ],
+        "keyPointsZh": [
+          "媒体计数为四",
+          "顺序只认 media_refs",
+          "第五图必须拒绝"
+        ],
+        "leadZh": "四图严格按 ReleaseBundle.media_refs 顺序发布。"
+      },
+      "expected_v1_item": {
+        "contentType": "race_news",
+        "media": {
+          "altZh": "本地合成四图之一：深色赛道网格。",
+          "assetRef": "synthetic:multimedia-gallery-1",
+          "captionZh": null,
+          "creditDisplay": "F1+1 本地合成占位",
+          "kind": "synthetic_placeholder",
+          "tone": "night"
+        },
+        "originalLink": {
+          "enabled": false,
+          "reason": "synthetic_only",
+          "url": null
+        },
+        "publicId": "public-mm-gallery",
+        "publishedAt": "2026-08-09T03:02:00Z",
+        "source": {
+          "accessStatus": "available",
+          "byline": "F1+1 多媒体验证台",
+          "displayName": "本地合成多媒体资料",
+          "platform": "x",
+          "sourceId": "src-active"
+        },
+        "sourcePublishedAt": "2026-08-09T03:02:00Z",
+        "sourceTimeStatus": "known",
+        "state": "available",
+        "summaryZh": "用于让缩略图、单步切图和多图 lightbox 获得正式数据出口。",
+        "titleZh": "本地四图完整链样本"
+      },
+      "expected_v2_item": {
+        "contentType": "race_news",
+        "media": [
+          {
+            "altZh": "本地合成四图之一：深色赛道网格。",
+            "assetRef": "synthetic:multimedia-gallery-1",
+            "captionZh": null,
+            "creditDisplay": "F1+1 本地合成占位",
+            "kind": "synthetic_placeholder",
+            "mediaHash": "deeb2e0164b5e708914129ba7ac4fbc09379eda8b3b8c798f990615d48f7b48c",
+            "mediaId": "media-mm-gallery-1",
+            "tone": "night"
+          },
+          {
+            "altZh": "本地合成四图之二：蓝色维修区线条。",
+            "assetRef": "synthetic:multimedia-gallery-2",
+            "captionZh": null,
+            "creditDisplay": "F1+1 本地合成占位",
+            "kind": "synthetic_placeholder",
+            "mediaHash": "c44a575e6638b5845be2cf3f862862abf6548bcbf9e35f171bc057264f6080fa",
+            "mediaId": "media-mm-gallery-2",
+            "tone": "blue"
+          },
+          {
+            "altZh": "本地合成四图之三：琥珀色计时块。",
+            "assetRef": "synthetic:multimedia-gallery-3",
+            "captionZh": null,
+            "creditDisplay": "F1+1 本地合成占位",
+            "kind": "synthetic_placeholder",
+            "mediaHash": "79d4bac4ed12aa08e43233e247d38632ac365efe8a02e9ecc1b4260d1c1cead8",
+            "mediaId": "media-mm-gallery-3",
+            "tone": "amber"
+          },
+          {
+            "altZh": "本地合成四图之四：紫色围场光带。",
+            "assetRef": "synthetic:multimedia-gallery-4",
+            "captionZh": null,
+            "creditDisplay": "F1+1 本地合成占位",
+            "kind": "synthetic_placeholder",
+            "mediaHash": "2076815a2ec9418947fc1c6199c5ebb9fae6511da6cbed3babd7439105c3bfc1",
+            "mediaId": "media-mm-gallery-4",
+            "tone": "violet"
+          }
+        ],
+        "originalLink": {
+          "enabled": false,
+          "reason": "synthetic_only",
+          "url": null
+        },
+        "publicId": "public-mm-gallery",
+        "publishedAt": "2026-08-09T03:02:00Z",
+        "source": {
+          "accessStatus": "available",
+          "byline": "F1+1 多媒体验证台",
+          "displayName": "本地合成多媒体资料",
+          "platform": "x",
+          "sourceId": "src-active"
+        },
+        "sourcePublishedAt": "2026-08-09T03:02:00Z",
+        "sourceTimeStatus": "known",
+        "state": "available",
+        "summaryZh": "用于让缩略图、单步切图和多图 lightbox 获得正式数据出口。",
+        "titleZh": "本地四图完整链样本"
+      },
+      "media_count": 4,
+      "public_id": "public-mm-gallery"
+    }
+  ],
+  "external_calls": 0,
+  "fixture_set": "public-multimedia-0-1-4-v0.5",
+  "media_candidates": [
+    {
+      "asset_ref": "synthetic:multimedia-single-1",
+      "candidate_status": "selected",
+      "content_id": "content-mm-single",
+      "created_at": "2026-08-09T03:01:00Z",
+      "created_by_ref": "synthetic:system",
+      "license_status": "allowed",
+      "media_candidate_id": "media-mm-single-1",
+      "media_hash": "78245f2b42249904eb9db16ddf064a2f478719ba72a29edcd0e4a484affa5146",
+      "mime_type": "image/webp",
+      "safety_status": "passed",
+      "updated_at": "2026-08-09T03:01:00Z",
+      "updated_by_ref": "synthetic:system"
+    },
+    {
+      "asset_ref": "synthetic:multimedia-gallery-1",
+      "candidate_status": "selected",
+      "content_id": "content-mm-gallery",
+      "created_at": "2026-08-09T03:02:00Z",
+      "created_by_ref": "synthetic:system",
+      "license_status": "allowed",
+      "media_candidate_id": "media-mm-gallery-1",
+      "media_hash": "deeb2e0164b5e708914129ba7ac4fbc09379eda8b3b8c798f990615d48f7b48c",
+      "mime_type": "image/webp",
+      "safety_status": "passed",
+      "updated_at": "2026-08-09T03:02:00Z",
+      "updated_by_ref": "synthetic:system"
+    },
+    {
+      "asset_ref": "synthetic:multimedia-gallery-2",
+      "candidate_status": "selected",
+      "content_id": "content-mm-gallery",
+      "created_at": "2026-08-09T03:02:00Z",
+      "created_by_ref": "synthetic:system",
+      "license_status": "allowed",
+      "media_candidate_id": "media-mm-gallery-2",
+      "media_hash": "c44a575e6638b5845be2cf3f862862abf6548bcbf9e35f171bc057264f6080fa",
+      "mime_type": "image/webp",
+      "safety_status": "passed",
+      "updated_at": "2026-08-09T03:02:00Z",
+      "updated_by_ref": "synthetic:system"
+    },
+    {
+      "asset_ref": "synthetic:multimedia-gallery-3",
+      "candidate_status": "selected",
+      "content_id": "content-mm-gallery",
+      "created_at": "2026-08-09T03:02:00Z",
+      "created_by_ref": "synthetic:system",
+      "license_status": "allowed",
+      "media_candidate_id": "media-mm-gallery-3",
+      "media_hash": "79d4bac4ed12aa08e43233e247d38632ac365efe8a02e9ecc1b4260d1c1cead8",
+      "mime_type": "image/webp",
+      "safety_status": "passed",
+      "updated_at": "2026-08-09T03:02:00Z",
+      "updated_by_ref": "synthetic:system"
+    },
+    {
+      "asset_ref": "synthetic:multimedia-gallery-4",
+      "candidate_status": "selected",
+      "content_id": "content-mm-gallery",
+      "created_at": "2026-08-09T03:02:00Z",
+      "created_by_ref": "synthetic:system",
+      "license_status": "allowed",
+      "media_candidate_id": "media-mm-gallery-4",
+      "media_hash": "2076815a2ec9418947fc1c6199c5ebb9fae6511da6cbed3babd7439105c3bfc1",
+      "mime_type": "image/webp",
+      "safety_status": "passed",
+      "updated_at": "2026-08-09T03:02:00Z",
+      "updated_by_ref": "synthetic:system"
+    }
+  ],
+  "outbox_jobs": [],
+  "profile_id": "public-multimedia-synthetic",
+  "profile_ledger_seed_contract": {
+    "profile_ledger_root_rule": "accepted ADR-M5-PUBLIC-MULTIMEDIA-RUNTIME-001 section 4.2; computed inside atomic seed after all runtime bindings are known",
+    "row_counts_json_rule": "canonical-json-v1(row_counts)",
+    "runtime_bindings": {
+      "fixture_graph_hash": "runtime-profile-manifest.runtime_graph_canonical_sha256",
+      "fixture_manifest_hash": "sha256_file(runtime-profile-manifest.json)",
+      "generator_root_sha256": "runtime-profile-manifest.generator_root_sha256",
+      "manifest_root_sha256": "runtime-profile-manifest.runtime_manifest_root_sha256",
+      "migration_selector_root_sha256": "DEV-MM-01 accepted exact selector root",
+      "schema_fingerprint_sha256": "DEV-MM-01 closed SQLite schema fingerprint",
+      "validator_root_sha256": "runtime-profile-manifest.validator_root_sha256"
+    },
+    "static": {
+      "contract_version": "public-read-v0.2",
+      "external_calls": 0,
+      "fixture_set": "public-multimedia-0-1-4-v0.5",
+      "profile_id": "public-multimedia-synthetic",
+      "real_content_imported": false,
+      "real_media": 0,
+      "row_counts": {
+        "captured_items": 3,
+        "contents": 3,
+        "events": 0,
+        "media_candidates": 5,
+        "outbox_jobs": 0,
+        "publications": 3,
+        "published_projections": 3,
+        "release_bundles": 3,
+        "review_decisions": 3,
+        "sources": 1,
+        "summaries": 3
+      },
+      "sqlite_path": "app/.local/f1plus1-public-multimedia-synthetic.sqlite",
+      "synthetic_only": true,
+      "writes_to_base": false
+    }
+  },
+  "publications": [
+    {
+      "approved_bundle_hash": "6e3a9960e2fbb8befb7ddbbaade152a4234d52997ff1f5b0a5f2a4bf3c6df343",
+      "approved_content_version_hash": "7c1e0f8a532988a95ebdc2ed069fca9629d3bba60feaf1bc1974d087c294ba92",
+      "approved_summary_version_hash": "67bceda888e708abb45ce83fde803151a233ff55cc56e6d52c22c83de20640e8",
+      "attempt": 1,
+      "authorization_version": 1,
+      "content_id": "content-mm-zero",
+      "created_at": "2026-08-09T03:00:00Z",
+      "created_by_ref": "synthetic:system",
+      "emergency_stop": false,
+      "idempotency_key": "publish:publication-mm-zero:bundle:6e3a9960e2fbb8befb7ddbbaade152a4234d52997ff1f5b0a5f2a4bf3c6df343",
+      "last_error_code": null,
+      "last_query_at": null,
+      "policy_epoch": 1,
+      "public_id": "public-mm-zero",
+      "publication_id": "publication-mm-zero",
+      "publication_status": "published",
+      "publish_generation": 1,
+      "published_at": "2026-08-09T03:00:00Z",
+      "published_version_hash": "e81f5b053fa38c1574da85ea9212adcabc56dede03f9945b05c2d8b9044963ec",
+      "reconcile_attempt": 0,
+      "reconcile_key": "reconcile:publication-mm-zero:6e3a9960e2fbb8befb7ddbbaade152a4234d52997ff1f5b0a5f2a4bf3c6df343",
+      "reconcile_status": "not_needed",
+      "recovery_epoch": 1,
+      "release_bundle_id": "bundle-mm-zero",
+      "source_config_epoch": 1,
+      "source_evidence_url": "https://synthetic.invalid/evidence/public-multimedia/zero",
+      "source_safety_epoch": 1,
+      "summary_id": "summary-mm-zero",
+      "updated_at": "2026-08-09T03:00:00Z",
+      "updated_by_ref": "synthetic:system"
+    },
+    {
+      "approved_bundle_hash": "aff63645ed1450898db99057c7b9a7ff4c597d9541d2f796b7039f8a9f91056f",
+      "approved_content_version_hash": "94dfda60c0d683fae0a646ccb51db14dd18f268b8811a184e0c5ccee3885d7cc",
+      "approved_summary_version_hash": "ffae34752087ed70a9a9eddcb6912d3dd79df3e071fe61bfdde54a8dbcfd5edc",
+      "attempt": 1,
+      "authorization_version": 1,
+      "content_id": "content-mm-single",
+      "created_at": "2026-08-09T03:01:00Z",
+      "created_by_ref": "synthetic:system",
+      "emergency_stop": false,
+      "idempotency_key": "publish:publication-mm-single:bundle:aff63645ed1450898db99057c7b9a7ff4c597d9541d2f796b7039f8a9f91056f",
+      "last_error_code": null,
+      "last_query_at": null,
+      "policy_epoch": 1,
+      "public_id": "public-mm-single",
+      "publication_id": "publication-mm-single",
+      "publication_status": "published",
+      "publish_generation": 1,
+      "published_at": "2026-08-09T03:01:00Z",
+      "published_version_hash": "0a6a45dc245b2e554dd94fcfa27e3ab1889d4fe581caa6cc214f6aa9a421c5fd",
+      "reconcile_attempt": 0,
+      "reconcile_key": "reconcile:publication-mm-single:aff63645ed1450898db99057c7b9a7ff4c597d9541d2f796b7039f8a9f91056f",
+      "reconcile_status": "not_needed",
+      "recovery_epoch": 1,
+      "release_bundle_id": "bundle-mm-single",
+      "source_config_epoch": 1,
+      "source_evidence_url": "https://synthetic.invalid/evidence/public-multimedia/single",
+      "source_safety_epoch": 1,
+      "summary_id": "summary-mm-single",
+      "updated_at": "2026-08-09T03:01:00Z",
+      "updated_by_ref": "synthetic:system"
+    },
+    {
+      "approved_bundle_hash": "11b5d0abd1dd9d7494a668ded57bc2b51b6359f9799f32af02f7b64eb7a5af2c",
+      "approved_content_version_hash": "9e76ccadd678c9010ec5eda9a19826b159315dadff25de217c607d5976b0ac93",
+      "approved_summary_version_hash": "2e3470170ef762163713f03d29c208c1ad7f87e58abebcf9435c8ac3db450eb2",
+      "attempt": 1,
+      "authorization_version": 1,
+      "content_id": "content-mm-gallery",
+      "created_at": "2026-08-09T03:02:00Z",
+      "created_by_ref": "synthetic:system",
+      "emergency_stop": false,
+      "idempotency_key": "publish:publication-mm-gallery:bundle:11b5d0abd1dd9d7494a668ded57bc2b51b6359f9799f32af02f7b64eb7a5af2c",
+      "last_error_code": null,
+      "last_query_at": null,
+      "policy_epoch": 1,
+      "public_id": "public-mm-gallery",
+      "publication_id": "publication-mm-gallery",
+      "publication_status": "published",
+      "publish_generation": 1,
+      "published_at": "2026-08-09T03:02:00Z",
+      "published_version_hash": "3bce08bdabdfad66866aa1521b71bcb2865aed04a27f68867e398bf6affc9bc2",
+      "reconcile_attempt": 0,
+      "reconcile_key": "reconcile:publication-mm-gallery:11b5d0abd1dd9d7494a668ded57bc2b51b6359f9799f32af02f7b64eb7a5af2c",
+      "reconcile_status": "not_needed",
+      "recovery_epoch": 1,
+      "release_bundle_id": "bundle-mm-gallery",
+      "source_config_epoch": 1,
+      "source_evidence_url": "https://synthetic.invalid/evidence/public-multimedia/gallery",
+      "source_safety_epoch": 1,
+      "summary_id": "summary-mm-gallery",
+      "updated_at": "2026-08-09T03:02:00Z",
+      "updated_by_ref": "synthetic:system"
+    }
+  ],
+  "published_projections": [
+    {
+      "content_id": "content-mm-zero",
+      "created_at": "2026-08-09T03:00:00Z",
+      "created_by_ref": "synthetic:system",
+      "external_calls": 0,
+      "projection_id": "projection-mm-zero",
+      "projection_status": "published",
+      "public_id": "public-mm-zero",
+      "publish_generation": 1,
+      "published_version_hash": "e81f5b053fa38c1574da85ea9212adcabc56dede03f9945b05c2d8b9044963ec",
+      "release_bundle_id": "bundle-mm-zero",
+      "source_evidence_url": "https://synthetic.invalid/evidence/public-multimedia/zero",
+      "summary_id": "summary-mm-zero",
+      "synthetic_only": true,
+      "updated_at": "2026-08-09T03:00:00Z",
+      "updated_by_ref": "synthetic:system"
+    },
+    {
+      "content_id": "content-mm-single",
+      "created_at": "2026-08-09T03:01:00Z",
+      "created_by_ref": "synthetic:system",
+      "external_calls": 0,
+      "projection_id": "projection-mm-single",
+      "projection_status": "published",
+      "public_id": "public-mm-single",
+      "publish_generation": 1,
+      "published_version_hash": "0a6a45dc245b2e554dd94fcfa27e3ab1889d4fe581caa6cc214f6aa9a421c5fd",
+      "release_bundle_id": "bundle-mm-single",
+      "source_evidence_url": "https://synthetic.invalid/evidence/public-multimedia/single",
+      "summary_id": "summary-mm-single",
+      "synthetic_only": true,
+      "updated_at": "2026-08-09T03:01:00Z",
+      "updated_by_ref": "synthetic:system"
+    },
+    {
+      "content_id": "content-mm-gallery",
+      "created_at": "2026-08-09T03:02:00Z",
+      "created_by_ref": "synthetic:system",
+      "external_calls": 0,
+      "projection_id": "projection-mm-gallery",
+      "projection_status": "published",
+      "public_id": "public-mm-gallery",
+      "publish_generation": 1,
+      "published_version_hash": "3bce08bdabdfad66866aa1521b71bcb2865aed04a27f68867e398bf6affc9bc2",
+      "release_bundle_id": "bundle-mm-gallery",
+      "source_evidence_url": "https://synthetic.invalid/evidence/public-multimedia/gallery",
+      "summary_id": "summary-mm-gallery",
+      "synthetic_only": true,
+      "updated_at": "2026-08-09T03:02:00Z",
+      "updated_by_ref": "synthetic:system"
+    }
+  ],
+  "real_content_imported": false,
+  "real_media": 0,
+  "release_bundles": [
+    {
+      "assembled_at": "2026-08-09T03:00:00Z",
+      "authorization_version": 1,
+      "bundle_hash": "6e3a9960e2fbb8befb7ddbbaade152a4234d52997ff1f5b0a5f2a4bf3c6df343",
+      "bundle_hash_input": {
+        "bundle_version": "v1",
+        "canonical_json_rule_version": "canonical-json-v1",
+        "immutable": true,
+        "payload_hash": "f8a9acebeb03d9e20d61003c0aba1110f805f0a3136f4d3494760d8e504d8695",
+        "release_bundle_id": "bundle-mm-zero"
+      },
+      "bundle_version": "v1",
+      "canonical_json_rule_version": "canonical-json-v1",
+      "canonical_payload": {
+        "access_snapshot": {
+          "content_access_status": "available",
+          "original_link_reason": "synthetic_only",
+          "original_link_status": "disabled_synthetic"
+        },
+        "content_snapshot": {
+          "canonical_url": "https://synthetic.invalid/public-multimedia/zero",
+          "capture_id": "cap-mm-zero",
+          "captured_at": "2026-08-09T03:00:00Z",
+          "content_id": "content-mm-zero",
+          "content_kind": "post",
+          "content_version": "v1",
+          "content_version_hash": "7c1e0f8a532988a95ebdc2ed069fca9629d3bba60feaf1bc1974d087c294ba92",
+          "editorial_category": "race_news",
+          "external_content_id": "synthetic-public-multimedia-zero",
+          "external_url": "https://synthetic.invalid/public-multimedia/zero",
+          "language": "zh-CN",
+          "normalized_body": "该记录只包含本地 synthetic 文本与证据快照。\n\nReleaseBundle 的媒体数组为空，公开 DTO 返回空数组。",
+          "normalized_title": "本地零图完整链样本",
+          "published_at": "2026-08-09T03:00:00Z",
+          "source_config_epoch": 1,
+          "source_evidence_url": "https://synthetic.invalid/evidence/public-multimedia/zero",
+          "source_id": "src-active",
+          "source_time_status": "known"
+        },
+        "content_version_hash": "7c1e0f8a532988a95ebdc2ed069fca9629d3bba60feaf1bc1974d087c294ba92",
+        "fences": {
+          "authorization_version": 1,
+          "policy_epoch": 1,
+          "recovery_epoch": 1,
+          "source_config_epoch": 1,
+          "source_safety_epoch": 1
+        },
+        "media": [],
+        "media_presentation": {
+          "alt_zh": "本地无图占位：该卡片没有合规媒体。",
+          "asset_ref": null,
+          "caption_zh": null,
+          "credit_display": null,
+          "mode": "none",
+          "tone": null
+        },
+        "media_presentations": [],
+        "original_url": "https://synthetic.invalid/public-multimedia/zero",
+        "policy": {
+          "manual_review_required": true,
+          "policy_epoch": 1,
+          "publication_mode": "manual_only",
+          "safety_rule_version": "safety-rule-v1"
+        },
+        "release_bundle_id": "bundle-mm-zero",
+        "rights": {
+          "evidence_ref": "synthetic:rights-public-multimedia-zero",
+          "rights_status": "allowed"
+        },
+        "schema": {
+          "canonical_json_rule_version": "canonical-json-v1",
+          "domain_schema_version": "mvp-local-v0.4",
+          "payload_schema_version": "release-payload-v2"
+        },
+        "source_snapshot": {
+          "byline": "F1+1 多媒体验证台",
+          "canonical_url": "https://synthetic.invalid/x/src-active",
+          "display_name": "本地合成多媒体资料",
+          "identity_status": "unknown",
+          "platform": "x",
+          "source_config_epoch": 1,
+          "source_id": "src-active",
+          "source_safety_epoch": 1
+        },
+        "summary_snapshot": {
+          "body_zh": [
+            "该记录只包含本地 synthetic 文本与证据快照。",
+            "ReleaseBundle 的媒体数组为空，公开 DTO 返回空数组。"
+          ],
+          "content_id": "content-mm-zero",
+          "deterministic": true,
+          "input_content_hash": "7c1e0f8a532988a95ebdc2ed069fca9629d3bba60feaf1bc1974d087c294ba92",
+          "key_points_zh": [
+            "媒体计数为零",
+            "公开状态为 media_missing"
+          ],
+          "language": "zh-CN",
+          "lead_zh": "零图样本保持正文可读并明确进入 media_missing。",
+          "source_evidence_url": "https://synthetic.invalid/evidence/public-multimedia/zero",
+          "summarizer": "synthetic:public-multimedia-runtime-v1",
+          "summary_id": "summary-mm-zero",
+          "summary_schema_version": "summary-schema-v2",
+          "summary_version": "v1",
+          "summary_version_hash": "67bceda888e708abb45ce83fde803151a233ff55cc56e6d52c22c83de20640e8",
+          "summary_zh": "用于验证无媒体卡片仍可通过完整发布链读取。",
+          "title_zh": "本地零图完整链样本"
+        },
+        "summary_version_hash": "67bceda888e708abb45ce83fde803151a233ff55cc56e6d52c22c83de20640e8",
+        "time_snapshot": {
+          "source_published_at": "2026-08-09T03:00:00Z",
+          "source_time_status": "known"
+        }
+      },
+      "content_id": "content-mm-zero",
+      "content_version_hash": "7c1e0f8a532988a95ebdc2ed069fca9629d3bba60feaf1bc1974d087c294ba92",
+      "created_at": "2026-08-09T03:00:00Z",
+      "created_by_ref": "synthetic:system",
+      "immutable": true,
+      "media_refs": [],
+      "payload_hash": "f8a9acebeb03d9e20d61003c0aba1110f805f0a3136f4d3494760d8e504d8695",
+      "policy_epoch": 1,
+      "recovery_epoch": 1,
+      "release_bundle_id": "bundle-mm-zero",
+      "release_status": "approved",
+      "source_config_epoch": 1,
+      "source_evidence_url": "https://synthetic.invalid/evidence/public-multimedia/zero",
+      "source_safety_epoch": 1,
+      "summary_id": "summary-mm-zero",
+      "summary_version_hash": "67bceda888e708abb45ce83fde803151a233ff55cc56e6d52c22c83de20640e8",
+      "updated_at": "2026-08-09T03:00:00Z",
+      "updated_by_ref": "synthetic:system"
+    },
+    {
+      "assembled_at": "2026-08-09T03:01:00Z",
+      "authorization_version": 1,
+      "bundle_hash": "aff63645ed1450898db99057c7b9a7ff4c597d9541d2f796b7039f8a9f91056f",
+      "bundle_hash_input": {
+        "bundle_version": "v1",
+        "canonical_json_rule_version": "canonical-json-v1",
+        "immutable": true,
+        "payload_hash": "de00b290aaf3b480a25a2d5a07641c4cb5e16da80d4c8dd876464c39a5327f1e",
+        "release_bundle_id": "bundle-mm-single"
+      },
+      "bundle_version": "v1",
+      "canonical_json_rule_version": "canonical-json-v1",
+      "canonical_payload": {
+        "access_snapshot": {
+          "content_access_status": "available",
+          "original_link_reason": "synthetic_only",
+          "original_link_status": "disabled_synthetic"
+        },
+        "content_snapshot": {
+          "canonical_url": "https://synthetic.invalid/public-multimedia/single",
+          "capture_id": "cap-mm-single",
+          "captured_at": "2026-08-09T03:01:00Z",
+          "content_id": "content-mm-single",
+          "content_kind": "post",
+          "content_version": "v1",
+          "content_version_hash": "94dfda60c0d683fae0a646ccb51db14dd18f268b8811a184e0c5ccee3885d7cc",
+          "editorial_category": "race_news",
+          "external_content_id": "synthetic-public-multimedia-single",
+          "external_url": "https://synthetic.invalid/public-multimedia/single",
+          "language": "zh-CN",
+          "normalized_body": "媒体身份、顺序、hash、rights 与 safety 均来自领域链。\n\nV1 继续返回同一首图单对象。",
+          "normalized_title": "本地单图完整链样本",
+          "published_at": "2026-08-09T03:01:00Z",
+          "source_config_epoch": 1,
+          "source_evidence_url": "https://synthetic.invalid/evidence/public-multimedia/single",
+          "source_id": "src-active",
+          "source_time_status": "known"
+        },
+        "content_version_hash": "94dfda60c0d683fae0a646ccb51db14dd18f268b8811a184e0c5ccee3885d7cc",
+        "fences": {
+          "authorization_version": 1,
+          "policy_epoch": 1,
+          "recovery_epoch": 1,
+          "source_config_epoch": 1,
+          "source_safety_epoch": 1
+        },
+        "media": [
+          {
+            "license_status": "allowed",
+            "media_candidate_id": "media-mm-single-1",
+            "media_hash": "78245f2b42249904eb9db16ddf064a2f478719ba72a29edcd0e4a484affa5146",
+            "safety_status": "passed"
+          }
+        ],
+        "media_presentation": {
+          "alt_zh": "本地合成示意图：蓝色赛道节奏与单图卡片。",
+          "asset_ref": "synthetic:multimedia-single-1",
+          "caption_zh": null,
+          "credit_display": "F1+1 本地合成占位",
+          "mode": "synthetic_placeholder",
+          "tone": "blue"
+        },
+        "media_presentations": [
+          {
+            "alt_zh": "本地合成示意图：蓝色赛道节奏与单图卡片。",
+            "caption_zh": null,
+            "credit_display": "F1+1 本地合成占位",
+            "media_candidate_id": "media-mm-single-1",
+            "tone": "blue"
+          }
+        ],
+        "original_url": "https://synthetic.invalid/public-multimedia/single",
+        "policy": {
+          "manual_review_required": true,
+          "policy_epoch": 1,
+          "publication_mode": "manual_only",
+          "safety_rule_version": "safety-rule-v1"
+        },
+        "release_bundle_id": "bundle-mm-single",
+        "rights": {
+          "evidence_ref": "synthetic:rights-public-multimedia-single",
+          "rights_status": "allowed"
+        },
+        "schema": {
+          "canonical_json_rule_version": "canonical-json-v1",
+          "domain_schema_version": "mvp-local-v0.4",
+          "payload_schema_version": "release-payload-v2"
+        },
+        "source_snapshot": {
+          "byline": "F1+1 多媒体验证台",
+          "canonical_url": "https://synthetic.invalid/x/src-active",
+          "display_name": "本地合成多媒体资料",
+          "identity_status": "unknown",
+          "platform": "x",
+          "source_config_epoch": 1,
+          "source_id": "src-active",
+          "source_safety_epoch": 1
+        },
+        "summary_snapshot": {
+          "body_zh": [
+            "媒体身份、顺序、hash、rights 与 safety 均来自领域链。",
+            "V1 继续返回同一首图单对象。"
+          ],
+          "content_id": "content-mm-single",
+          "deterministic": true,
+          "input_content_hash": "94dfda60c0d683fae0a646ccb51db14dd18f268b8811a184e0c5ccee3885d7cc",
+          "key_points_zh": [
+            "V2 媒体计数为一",
+            "V1 首图降级稳定"
+          ],
+          "language": "zh-CN",
+          "lead_zh": "单图样本只展示主图，不生成无意义导航。",
+          "source_evidence_url": "https://synthetic.invalid/evidence/public-multimedia/single",
+          "summarizer": "synthetic:public-multimedia-runtime-v1",
+          "summary_id": "summary-mm-single",
+          "summary_schema_version": "summary-schema-v2",
+          "summary_version": "v1",
+          "summary_version_hash": "ffae34752087ed70a9a9eddcb6912d3dd79df3e071fe61bfdde54a8dbcfd5edc",
+          "summary_zh": "用于验证 V2 单元素数组和 V1 稳定首图降级。",
+          "title_zh": "本地单图完整链样本"
+        },
+        "summary_version_hash": "ffae34752087ed70a9a9eddcb6912d3dd79df3e071fe61bfdde54a8dbcfd5edc",
+        "time_snapshot": {
+          "source_published_at": "2026-08-09T03:01:00Z",
+          "source_time_status": "known"
+        }
+      },
+      "content_id": "content-mm-single",
+      "content_version_hash": "94dfda60c0d683fae0a646ccb51db14dd18f268b8811a184e0c5ccee3885d7cc",
+      "created_at": "2026-08-09T03:01:00Z",
+      "created_by_ref": "synthetic:system",
+      "immutable": true,
+      "media_refs": [
+        "media-mm-single-1"
+      ],
+      "payload_hash": "de00b290aaf3b480a25a2d5a07641c4cb5e16da80d4c8dd876464c39a5327f1e",
+      "policy_epoch": 1,
+      "recovery_epoch": 1,
+      "release_bundle_id": "bundle-mm-single",
+      "release_status": "approved",
+      "source_config_epoch": 1,
+      "source_evidence_url": "https://synthetic.invalid/evidence/public-multimedia/single",
+      "source_safety_epoch": 1,
+      "summary_id": "summary-mm-single",
+      "summary_version_hash": "ffae34752087ed70a9a9eddcb6912d3dd79df3e071fe61bfdde54a8dbcfd5edc",
+      "updated_at": "2026-08-09T03:01:00Z",
+      "updated_by_ref": "synthetic:system"
+    },
+    {
+      "assembled_at": "2026-08-09T03:02:00Z",
+      "authorization_version": 1,
+      "bundle_hash": "11b5d0abd1dd9d7494a668ded57bc2b51b6359f9799f32af02f7b64eb7a5af2c",
+      "bundle_hash_input": {
+        "bundle_version": "v1",
+        "canonical_json_rule_version": "canonical-json-v1",
+        "immutable": true,
+        "payload_hash": "a26f404611e91f1303d68201c0f8164711c3fed50c682fd3fedf1110f1ed79be",
+        "release_bundle_id": "bundle-mm-gallery"
+      },
+      "bundle_version": "v1",
+      "canonical_json_rule_version": "canonical-json-v1",
+      "canonical_payload": {
+        "access_snapshot": {
+          "content_access_status": "available",
+          "original_link_reason": "synthetic_only",
+          "original_link_status": "disabled_synthetic"
+        },
+        "content_snapshot": {
+          "canonical_url": "https://synthetic.invalid/public-multimedia/gallery",
+          "capture_id": "cap-mm-gallery",
+          "captured_at": "2026-08-09T03:02:00Z",
+          "content_id": "content-mm-gallery",
+          "content_kind": "post",
+          "content_version": "v1",
+          "content_version_hash": "9e76ccadd678c9010ec5eda9a19826b159315dadff25de217c607d5976b0ac93",
+          "editorial_category": "race_news",
+          "external_content_id": "synthetic-public-multimedia-gallery",
+          "external_url": "https://synthetic.invalid/public-multimedia/gallery",
+          "language": "zh-CN",
+          "normalized_body": "四个 MediaCandidate 具有不同 identity、assetRef 与 mediaHash。\n\n任何乱序、第五图或 rights/safety 漂移都会整条拒绝。",
+          "normalized_title": "本地四图完整链样本",
+          "published_at": "2026-08-09T03:02:00Z",
+          "source_config_epoch": 1,
+          "source_evidence_url": "https://synthetic.invalid/evidence/public-multimedia/gallery",
+          "source_id": "src-active",
+          "source_time_status": "known"
+        },
+        "content_version_hash": "9e76ccadd678c9010ec5eda9a19826b159315dadff25de217c607d5976b0ac93",
+        "fences": {
+          "authorization_version": 1,
+          "policy_epoch": 1,
+          "recovery_epoch": 1,
+          "source_config_epoch": 1,
+          "source_safety_epoch": 1
+        },
+        "media": [
+          {
+            "license_status": "allowed",
+            "media_candidate_id": "media-mm-gallery-1",
+            "media_hash": "deeb2e0164b5e708914129ba7ac4fbc09379eda8b3b8c798f990615d48f7b48c",
+            "safety_status": "passed"
+          },
+          {
+            "license_status": "allowed",
+            "media_candidate_id": "media-mm-gallery-2",
+            "media_hash": "c44a575e6638b5845be2cf3f862862abf6548bcbf9e35f171bc057264f6080fa",
+            "safety_status": "passed"
+          },
+          {
+            "license_status": "allowed",
+            "media_candidate_id": "media-mm-gallery-3",
+            "media_hash": "79d4bac4ed12aa08e43233e247d38632ac365efe8a02e9ecc1b4260d1c1cead8",
+            "safety_status": "passed"
+          },
+          {
+            "license_status": "allowed",
+            "media_candidate_id": "media-mm-gallery-4",
+            "media_hash": "2076815a2ec9418947fc1c6199c5ebb9fae6511da6cbed3babd7439105c3bfc1",
+            "safety_status": "passed"
+          }
+        ],
+        "media_presentation": {
+          "alt_zh": "本地合成四图之一：深色赛道网格。",
+          "asset_ref": "synthetic:multimedia-gallery-1",
+          "caption_zh": null,
+          "credit_display": "F1+1 本地合成占位",
+          "mode": "synthetic_placeholder",
+          "tone": "night"
+        },
+        "media_presentations": [
+          {
+            "alt_zh": "本地合成四图之一：深色赛道网格。",
+            "caption_zh": null,
+            "credit_display": "F1+1 本地合成占位",
+            "media_candidate_id": "media-mm-gallery-1",
+            "tone": "night"
+          },
+          {
+            "alt_zh": "本地合成四图之二：蓝色维修区线条。",
+            "caption_zh": null,
+            "credit_display": "F1+1 本地合成占位",
+            "media_candidate_id": "media-mm-gallery-2",
+            "tone": "blue"
+          },
+          {
+            "alt_zh": "本地合成四图之三：琥珀色计时块。",
+            "caption_zh": null,
+            "credit_display": "F1+1 本地合成占位",
+            "media_candidate_id": "media-mm-gallery-3",
+            "tone": "amber"
+          },
+          {
+            "alt_zh": "本地合成四图之四：紫色围场光带。",
+            "caption_zh": null,
+            "credit_display": "F1+1 本地合成占位",
+            "media_candidate_id": "media-mm-gallery-4",
+            "tone": "violet"
+          }
+        ],
+        "original_url": "https://synthetic.invalid/public-multimedia/gallery",
+        "policy": {
+          "manual_review_required": true,
+          "policy_epoch": 1,
+          "publication_mode": "manual_only",
+          "safety_rule_version": "safety-rule-v1"
+        },
+        "release_bundle_id": "bundle-mm-gallery",
+        "rights": {
+          "evidence_ref": "synthetic:rights-public-multimedia-gallery",
+          "rights_status": "allowed"
+        },
+        "schema": {
+          "canonical_json_rule_version": "canonical-json-v1",
+          "domain_schema_version": "mvp-local-v0.4",
+          "payload_schema_version": "release-payload-v2"
+        },
+        "source_snapshot": {
+          "byline": "F1+1 多媒体验证台",
+          "canonical_url": "https://synthetic.invalid/x/src-active",
+          "display_name": "本地合成多媒体资料",
+          "identity_status": "unknown",
+          "platform": "x",
+          "source_config_epoch": 1,
+          "source_id": "src-active",
+          "source_safety_epoch": 1
+        },
+        "summary_snapshot": {
+          "body_zh": [
+            "四个 MediaCandidate 具有不同 identity、assetRef 与 mediaHash。",
+            "任何乱序、第五图或 rights/safety 漂移都会整条拒绝。"
+          ],
+          "content_id": "content-mm-gallery",
+          "deterministic": true,
+          "input_content_hash": "9e76ccadd678c9010ec5eda9a19826b159315dadff25de217c607d5976b0ac93",
+          "key_points_zh": [
+            "媒体计数为四",
+            "顺序只认 media_refs",
+            "第五图必须拒绝"
+          ],
+          "language": "zh-CN",
+          "lead_zh": "四图严格按 ReleaseBundle.media_refs 顺序发布。",
+          "source_evidence_url": "https://synthetic.invalid/evidence/public-multimedia/gallery",
+          "summarizer": "synthetic:public-multimedia-runtime-v1",
+          "summary_id": "summary-mm-gallery",
+          "summary_schema_version": "summary-schema-v2",
+          "summary_version": "v1",
+          "summary_version_hash": "2e3470170ef762163713f03d29c208c1ad7f87e58abebcf9435c8ac3db450eb2",
+          "summary_zh": "用于让缩略图、单步切图和多图 lightbox 获得正式数据出口。",
+          "title_zh": "本地四图完整链样本"
+        },
+        "summary_version_hash": "2e3470170ef762163713f03d29c208c1ad7f87e58abebcf9435c8ac3db450eb2",
+        "time_snapshot": {
+          "source_published_at": "2026-08-09T03:02:00Z",
+          "source_time_status": "known"
+        }
+      },
+      "content_id": "content-mm-gallery",
+      "content_version_hash": "9e76ccadd678c9010ec5eda9a19826b159315dadff25de217c607d5976b0ac93",
+      "created_at": "2026-08-09T03:02:00Z",
+      "created_by_ref": "synthetic:system",
+      "immutable": true,
+      "media_refs": [
+        "media-mm-gallery-1",
+        "media-mm-gallery-2",
+        "media-mm-gallery-3",
+        "media-mm-gallery-4"
+      ],
+      "payload_hash": "a26f404611e91f1303d68201c0f8164711c3fed50c682fd3fedf1110f1ed79be",
+      "policy_epoch": 1,
+      "recovery_epoch": 1,
+      "release_bundle_id": "bundle-mm-gallery",
+      "release_status": "approved",
+      "source_config_epoch": 1,
+      "source_evidence_url": "https://synthetic.invalid/evidence/public-multimedia/gallery",
+      "source_safety_epoch": 1,
+      "summary_id": "summary-mm-gallery",
+      "summary_version_hash": "2e3470170ef762163713f03d29c208c1ad7f87e58abebcf9435c8ac3db450eb2",
+      "updated_at": "2026-08-09T03:02:00Z",
+      "updated_by_ref": "synthetic:system"
+    }
+  ],
+  "review_decisions": [
+    {
+      "approved_bundle_hash": "6e3a9960e2fbb8befb7ddbbaade152a4234d52997ff1f5b0a5f2a4bf3c6df343",
+      "authorization_version": 1,
+      "canonical_json_rule_version": "canonical-json-v1",
+      "content_id": "content-mm-zero",
+      "created_at": "2026-08-09T03:00:00Z",
+      "created_by_ref": "synthetic:reviewer-multimedia",
+      "decision": "approved",
+      "decision_hash": "6ef36b251740794f562313025eea21592b293476230e697f8d771f5e07c28553",
+      "decision_hash_input": {
+        "approved_bundle_hash": "6e3a9960e2fbb8befb7ddbbaade152a4234d52997ff1f5b0a5f2a4bf3c6df343",
+        "authorization_version": 1,
+        "canonical_json_rule_version": "canonical-json-v1",
+        "decision": "approved",
+        "policy_epoch": 1,
+        "recovery_epoch": 1,
+        "release_bundle_id": "bundle-mm-zero",
+        "review_decision_id": "decision-mm-zero",
+        "review_version": 1,
+        "source_config_epoch": 1,
+        "source_safety_epoch": 1
+      },
+      "decision_reason": "SYNTHETIC_ONLY: local multimedia runtime bundle approved",
+      "immutable": true,
+      "policy_epoch": 1,
+      "recovery_epoch": 1,
+      "release_bundle_id": "bundle-mm-zero",
+      "review_decision_id": "decision-mm-zero",
+      "review_version": 1,
+      "reviewed_at": "2026-08-09T03:00:00Z",
+      "reviewer_ref": "synthetic:reviewer-multimedia",
+      "source_config_epoch": 1,
+      "source_safety_epoch": 1,
+      "summary_id": "summary-mm-zero",
+      "updated_at": "2026-08-09T03:00:00Z",
+      "updated_by_ref": "synthetic:reviewer-multimedia"
+    },
+    {
+      "approved_bundle_hash": "aff63645ed1450898db99057c7b9a7ff4c597d9541d2f796b7039f8a9f91056f",
+      "authorization_version": 1,
+      "canonical_json_rule_version": "canonical-json-v1",
+      "content_id": "content-mm-single",
+      "created_at": "2026-08-09T03:01:00Z",
+      "created_by_ref": "synthetic:reviewer-multimedia",
+      "decision": "approved",
+      "decision_hash": "91fd78d1fa3d53dd177a1e7de3fad6613ca82a0ab0d5597c2e3d007b9e147fce",
+      "decision_hash_input": {
+        "approved_bundle_hash": "aff63645ed1450898db99057c7b9a7ff4c597d9541d2f796b7039f8a9f91056f",
+        "authorization_version": 1,
+        "canonical_json_rule_version": "canonical-json-v1",
+        "decision": "approved",
+        "policy_epoch": 1,
+        "recovery_epoch": 1,
+        "release_bundle_id": "bundle-mm-single",
+        "review_decision_id": "decision-mm-single",
+        "review_version": 1,
+        "source_config_epoch": 1,
+        "source_safety_epoch": 1
+      },
+      "decision_reason": "SYNTHETIC_ONLY: local multimedia runtime bundle approved",
+      "immutable": true,
+      "policy_epoch": 1,
+      "recovery_epoch": 1,
+      "release_bundle_id": "bundle-mm-single",
+      "review_decision_id": "decision-mm-single",
+      "review_version": 1,
+      "reviewed_at": "2026-08-09T03:01:00Z",
+      "reviewer_ref": "synthetic:reviewer-multimedia",
+      "source_config_epoch": 1,
+      "source_safety_epoch": 1,
+      "summary_id": "summary-mm-single",
+      "updated_at": "2026-08-09T03:01:00Z",
+      "updated_by_ref": "synthetic:reviewer-multimedia"
+    },
+    {
+      "approved_bundle_hash": "11b5d0abd1dd9d7494a668ded57bc2b51b6359f9799f32af02f7b64eb7a5af2c",
+      "authorization_version": 1,
+      "canonical_json_rule_version": "canonical-json-v1",
+      "content_id": "content-mm-gallery",
+      "created_at": "2026-08-09T03:02:00Z",
+      "created_by_ref": "synthetic:reviewer-multimedia",
+      "decision": "approved",
+      "decision_hash": "416f9322beaac151b6c865cd9afcc132e3504fe51ef00f4635e3cc62e05bfaef",
+      "decision_hash_input": {
+        "approved_bundle_hash": "11b5d0abd1dd9d7494a668ded57bc2b51b6359f9799f32af02f7b64eb7a5af2c",
+        "authorization_version": 1,
+        "canonical_json_rule_version": "canonical-json-v1",
+        "decision": "approved",
+        "policy_epoch": 1,
+        "recovery_epoch": 1,
+        "release_bundle_id": "bundle-mm-gallery",
+        "review_decision_id": "decision-mm-gallery",
+        "review_version": 1,
+        "source_config_epoch": 1,
+        "source_safety_epoch": 1
+      },
+      "decision_reason": "SYNTHETIC_ONLY: local multimedia runtime bundle approved",
+      "immutable": true,
+      "policy_epoch": 1,
+      "recovery_epoch": 1,
+      "release_bundle_id": "bundle-mm-gallery",
+      "review_decision_id": "decision-mm-gallery",
+      "review_version": 1,
+      "reviewed_at": "2026-08-09T03:02:00Z",
+      "reviewer_ref": "synthetic:reviewer-multimedia",
+      "source_config_epoch": 1,
+      "source_safety_epoch": 1,
+      "summary_id": "summary-mm-gallery",
+      "updated_at": "2026-08-09T03:02:00Z",
+      "updated_by_ref": "synthetic:reviewer-multimedia"
+    }
+  ],
+  "row_counts": {
+    "captured_items": 3,
+    "contents": 3,
+    "events": 0,
+    "media_candidates": 5,
+    "outbox_jobs": 0,
+    "publications": 3,
+    "published_projections": 3,
+    "release_bundles": 3,
+    "review_decisions": 3,
+    "sources": 1,
+    "summaries": 3
+  },
+  "runtime_graph_version": "public-multimedia-runtime-graph-v0.1",
+  "seed_order": [
+    "sources",
+    "captured_items",
+    "contents",
+    "events",
+    "summaries",
+    "media_candidates",
+    "release_bundles",
+    "review_decisions",
+    "publications",
+    "outbox_jobs",
+    "published_projections"
+  ],
+  "sources": [
+    {
+      "adapter_authorization_status": "valid",
+      "adapter_status": "ready",
+      "added_at": "2026-08-02",
+      "authorization_checked_at": "2026-08-02T00:00:00Z",
+      "authorization_expires_at": null,
+      "canonical_url": "https://synthetic.invalid/x/src-active",
+      "canonical_url_valid": true,
+      "change_reason": "SYNTHETIC_ONLY: local v0.3 A-axis fixture",
+      "collection_onboarding_status": "active",
+      "content_focus": "journalism_commentary",
+      "created_at": "2026-08-02T00:00:00Z",
+      "created_by_ref": "synthetic:system",
+      "dedup_status": "unique",
+      "enabled": true,
+      "entity_type": "journalist_commentator_media",
+      "evidence_url": "https://synthetic.invalid/evidence/src-active",
+      "handle": "synthetic_handle_ive",
+      "identity_status": "unknown",
+      "lifecycle_status": "active",
+      "manual_disable_at": null,
+      "migration_batch_id": "M4-SYNTH-20260802-02",
+      "monitorability": "unknown",
+      "normalization_status": "valid",
+      "normalizer_version": "m2_x_url_v2",
+      "notes": "SYNTHETIC_ONLY: no real account identity, content, token, or provider call",
+      "onboarding_operation_id": "op-active-001",
+      "platform": "x",
+      "platform_account_id": null,
+      "platform_allowed": "allowed",
+      "priority": "medium",
+      "raw_url": "https://synthetic.invalid/x/src-active?share=synthetic",
+      "relevance_status": "unknown",
+      "source_config_epoch": 1,
+      "source_id": "src-active",
+      "source_safety_epoch": 1,
+      "source_stop_status": "clear",
+      "updated_at": "2026-08-02T00:00:00Z",
+      "updated_by_ref": "synthetic:system",
+      "verification_status": "pending"
+    }
+  ],
+  "sqlite_path": "app/.local/f1plus1-public-multimedia-synthetic.sqlite",
+  "summaries": [
+    {
+      "body_zh": [
+        "该记录只包含本地 synthetic 文本与证据快照。",
+        "ReleaseBundle 的媒体数组为空，公开 DTO 返回空数组。"
+      ],
+      "content_id": "content-mm-zero",
+      "created_at": "2026-08-09T03:00:00Z",
+      "created_by_ref": "synthetic:system",
+      "deterministic": true,
+      "input_content_hash": "7c1e0f8a532988a95ebdc2ed069fca9629d3bba60feaf1bc1974d087c294ba92",
+      "key_points_zh": [
+        "媒体计数为零",
+        "公开状态为 media_missing"
+      ],
+      "language": "zh-CN",
+      "lead_zh": "零图样本保持正文可读并明确进入 media_missing。",
+      "source_evidence_url": "https://synthetic.invalid/evidence/public-multimedia/zero",
+      "summarizer": "synthetic:public-multimedia-runtime-v1",
+      "summary_hash_input": {
+        "body_zh": [
+          "该记录只包含本地 synthetic 文本与证据快照。",
+          "ReleaseBundle 的媒体数组为空，公开 DTO 返回空数组。"
+        ],
+        "content_id": "content-mm-zero",
+        "deterministic": true,
+        "input_content_hash": "7c1e0f8a532988a95ebdc2ed069fca9629d3bba60feaf1bc1974d087c294ba92",
+        "key_points_zh": [
+          "媒体计数为零",
+          "公开状态为 media_missing"
+        ],
+        "language": "zh-CN",
+        "lead_zh": "零图样本保持正文可读并明确进入 media_missing。",
+        "source_evidence_url": "https://synthetic.invalid/evidence/public-multimedia/zero",
+        "summarizer": "synthetic:public-multimedia-runtime-v1",
+        "summary_id": "summary-mm-zero",
+        "summary_schema_version": "summary-schema-v2",
+        "summary_version": "v1",
+        "summary_zh": "用于验证无媒体卡片仍可通过完整发布链读取。",
+        "title_zh": "本地零图完整链样本"
+      },
+      "summary_id": "summary-mm-zero",
+      "summary_schema_version": "summary-schema-v2",
+      "summary_status": "approved",
+      "summary_version": "v1",
+      "summary_version_hash": "67bceda888e708abb45ce83fde803151a233ff55cc56e6d52c22c83de20640e8",
+      "summary_zh": "用于验证无媒体卡片仍可通过完整发布链读取。",
+      "title_zh": "本地零图完整链样本",
+      "updated_at": "2026-08-09T03:00:00Z",
+      "updated_by_ref": "synthetic:system"
+    },
+    {
+      "body_zh": [
+        "媒体身份、顺序、hash、rights 与 safety 均来自领域链。",
+        "V1 继续返回同一首图单对象。"
+      ],
+      "content_id": "content-mm-single",
+      "created_at": "2026-08-09T03:01:00Z",
+      "created_by_ref": "synthetic:system",
+      "deterministic": true,
+      "input_content_hash": "94dfda60c0d683fae0a646ccb51db14dd18f268b8811a184e0c5ccee3885d7cc",
+      "key_points_zh": [
+        "V2 媒体计数为一",
+        "V1 首图降级稳定"
+      ],
+      "language": "zh-CN",
+      "lead_zh": "单图样本只展示主图，不生成无意义导航。",
+      "source_evidence_url": "https://synthetic.invalid/evidence/public-multimedia/single",
+      "summarizer": "synthetic:public-multimedia-runtime-v1",
+      "summary_hash_input": {
+        "body_zh": [
+          "媒体身份、顺序、hash、rights 与 safety 均来自领域链。",
+          "V1 继续返回同一首图单对象。"
+        ],
+        "content_id": "content-mm-single",
+        "deterministic": true,
+        "input_content_hash": "94dfda60c0d683fae0a646ccb51db14dd18f268b8811a184e0c5ccee3885d7cc",
+        "key_points_zh": [
+          "V2 媒体计数为一",
+          "V1 首图降级稳定"
+        ],
+        "language": "zh-CN",
+        "lead_zh": "单图样本只展示主图，不生成无意义导航。",
+        "source_evidence_url": "https://synthetic.invalid/evidence/public-multimedia/single",
+        "summarizer": "synthetic:public-multimedia-runtime-v1",
+        "summary_id": "summary-mm-single",
+        "summary_schema_version": "summary-schema-v2",
+        "summary_version": "v1",
+        "summary_zh": "用于验证 V2 单元素数组和 V1 稳定首图降级。",
+        "title_zh": "本地单图完整链样本"
+      },
+      "summary_id": "summary-mm-single",
+      "summary_schema_version": "summary-schema-v2",
+      "summary_status": "approved",
+      "summary_version": "v1",
+      "summary_version_hash": "ffae34752087ed70a9a9eddcb6912d3dd79df3e071fe61bfdde54a8dbcfd5edc",
+      "summary_zh": "用于验证 V2 单元素数组和 V1 稳定首图降级。",
+      "title_zh": "本地单图完整链样本",
+      "updated_at": "2026-08-09T03:01:00Z",
+      "updated_by_ref": "synthetic:system"
+    },
+    {
+      "body_zh": [
+        "四个 MediaCandidate 具有不同 identity、assetRef 与 mediaHash。",
+        "任何乱序、第五图或 rights/safety 漂移都会整条拒绝。"
+      ],
+      "content_id": "content-mm-gallery",
+      "created_at": "2026-08-09T03:02:00Z",
+      "created_by_ref": "synthetic:system",
+      "deterministic": true,
+      "input_content_hash": "9e76ccadd678c9010ec5eda9a19826b159315dadff25de217c607d5976b0ac93",
+      "key_points_zh": [
+        "媒体计数为四",
+        "顺序只认 media_refs",
+        "第五图必须拒绝"
+      ],
+      "language": "zh-CN",
+      "lead_zh": "四图严格按 ReleaseBundle.media_refs 顺序发布。",
+      "source_evidence_url": "https://synthetic.invalid/evidence/public-multimedia/gallery",
+      "summarizer": "synthetic:public-multimedia-runtime-v1",
+      "summary_hash_input": {
+        "body_zh": [
+          "四个 MediaCandidate 具有不同 identity、assetRef 与 mediaHash。",
+          "任何乱序、第五图或 rights/safety 漂移都会整条拒绝。"
+        ],
+        "content_id": "content-mm-gallery",
+        "deterministic": true,
+        "input_content_hash": "9e76ccadd678c9010ec5eda9a19826b159315dadff25de217c607d5976b0ac93",
+        "key_points_zh": [
+          "媒体计数为四",
+          "顺序只认 media_refs",
+          "第五图必须拒绝"
+        ],
+        "language": "zh-CN",
+        "lead_zh": "四图严格按 ReleaseBundle.media_refs 顺序发布。",
+        "source_evidence_url": "https://synthetic.invalid/evidence/public-multimedia/gallery",
+        "summarizer": "synthetic:public-multimedia-runtime-v1",
+        "summary_id": "summary-mm-gallery",
+        "summary_schema_version": "summary-schema-v2",
+        "summary_version": "v1",
+        "summary_zh": "用于让缩略图、单步切图和多图 lightbox 获得正式数据出口。",
+        "title_zh": "本地四图完整链样本"
+      },
+      "summary_id": "summary-mm-gallery",
+      "summary_schema_version": "summary-schema-v2",
+      "summary_status": "approved",
+      "summary_version": "v1",
+      "summary_version_hash": "2e3470170ef762163713f03d29c208c1ad7f87e58abebcf9435c8ac3db450eb2",
+      "summary_zh": "用于让缩略图、单步切图和多图 lightbox 获得正式数据出口。",
+      "title_zh": "本地四图完整链样本",
+      "updated_at": "2026-08-09T03:02:00Z",
+      "updated_by_ref": "synthetic:system"
+    }
+  ],
+  "synthetic_only": true,
+  "writes_to_base": false
+}

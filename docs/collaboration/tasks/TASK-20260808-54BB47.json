@@ -1,0 +1,61 @@
+{
+  "acceptance_exit": "用户和产品/开发部门能通过固定路径打开与当前已确认Demo一致的不可变版本，并能用hash与最终证据复核；设计报告明确视觉已冻结和未包含的新功能。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "design/ui/F1+1-v0.2-全站设计/F1+1-v0.2-final-20260808.html",
+    "design/ui/F1+1-v0.2-全站设计/F1+1-v0.2-final-20260808-SHA256.txt",
+    "design/ui/F1+1-v0.2-全站设计/evidence/final-20260808/F1+1-v0.2-final-dark-1440.png",
+    "design/ui/F1+1-v0.2-全站设计/evidence/final-20260808/F1+1-v0.2-final-light-1440.png",
+    "design/ui/F1+1-v0.2-全站设计/evidence/final-20260808/F1+1-v0.2-final-dark-1024.png",
+    "design/ui/F1+1-v0.2-全站设计/evidence/final-20260808/F1+1-v0.2-final-light-1024.png",
+    "design/ui/F1+1-v0.2-全站设计/evidence/final-20260808/F1+1-v0.2-final-dark-390.png",
+    "design/ui/F1+1-v0.2-全站设计/evidence/final-20260808/F1+1-v0.2-final-light-390.png",
+    "docs/collaboration/部门/设计部/报告/2026-08-08-v0.2最终设计基准冻结报告.md"
+  ],
+  "authorization_evidence": "当前主会话 2026-08-08：用户确认将 8 月 8 日最新视觉 Demo 作为本轮正式落地基准并要求继续推进",
+  "authorization_history": [
+    {
+      "at": "2026-08-08T21:57+08:00",
+      "evidence": "当前主会话 2026-08-08：用户确认将 8 月 8 日最新视觉 Demo 作为本轮正式落地基准并要求继续推进",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "设计部/当前正式会话",
+  "completion_class": "standard",
+  "confirmation": "当前视觉方向已获用户确认；只有文件漂移、渲染差异或范围变化才回统筹部重新确认。",
+  "created_at": "2026-08-08T21:57+08:00",
+  "department": "设计部",
+  "details": "以 design/ui/F1+1-v0.2-全站设计/index.html 当前内容为唯一输入；停止新增视觉修改；保存带版本号的不可变HTML快照、SHA-256清单、1440/1024/390深浅主题最终证据与设计收口报告；说明Dock、设置面板、多图、移动端和安全区最终行为；不得修改app、Spec或实现级合同。",
+  "domain_stage": "设计定稿",
+  "event_receipts": [
+    "MIL-20260808T221347-8640D5"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "冻结期间源文件发生变化：停止完成，记录前后hash并回报冲突。",
+    "快照缺资源或关键宽度渲染不一致：保留原文件，提交失败证据，不宣称定稿。",
+    "发现需要新增页面、主流程或功能：列为待确认，不擅自纳入最终版。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已停止新增视觉修改；冻结副本与源逐字节一致；初次错误路由及非精确画布截图未纳入最终清单；没有把设置占位写成获授权功能，没有把外部媒体写成离线不可变资源，没有修改 app、Spec、ADR、v0.1 或实现级合同；对抗审查指出的交接冲突和手势验证措辞已修正",
+  "node": "冻结用户已确认的当前设计Demo，形成不可变实现输入",
+  "pointers": [
+    "design/ui/F1+1-v0.2-全站设计/index.html"
+  ],
+  "report": "docs/collaboration/部门/设计部/报告/2026-08-08-v0.2最终设计基准冻结报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260808-54BB47",
+  "title": "冻结v0.2最终设计基准与不可变证据",
+  "unverified": [
+    "远程媒体与 Google Fonts 后续可用性、离线/生产代理与授权；实体设备安全区、读屏、forced-colors、200% 缩放、低性能、真实触控板与全部 lightbox 手势组合；正式数据接线和 app 实现一致性"
+  ],
+  "updated_at": "2026-08-08T22:15+08:00",
+  "verified": [
+    "冻结 HTML 与 index.html 逐字节一致且 SHA-256 均为 5a84bfb27294ebd727369118a95528f5b788bfacbe2d56cc03fcb006f6168cb1；六张 PNG hash 全部匹配清单，尺寸精确覆盖深浅主题 1440×900、1024×768、390×844；真实页面三宽无横向溢出，设置面板外点收起、Dock 点击拦截和首个四图缩略图切换已实测；两路独立对抗审查 P0=0，产物完整性无 P1"
+  ]
+}

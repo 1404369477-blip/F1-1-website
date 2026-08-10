@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "安全部final报告分别给SQLite与Next decision、P0/P1/P2；五个整改SHA一致且保护输入未越界漂移；运行时覆盖符号/路径不可达；随机DB start负例写前/监听前exact DB_PATH，missing-build start负例exact CLI_INTERNAL_ERROR且零敏感泄露；两次后无DB/sidecar/.next/端口/进程/临时目录残留；静态Next边界未放宽；两部分P0=0/P1=0才PASS；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-04-真实CLI数据库覆盖与Next安全出口聚焦复验.md"
+  ],
+  "authorization_evidence": "用户持续确认推进并要求减少冗余；A01DF7已形成单点整改候选，当前只需一次静态+两个真实CLI负例。",
+  "authorization_history": [
+    {
+      "at": "2026-08-04T14:52+08:00",
+      "evidence": "用户持续确认推进并要求减少冗余；A01DF7已形成单点整改候选，当前只需一次静态+两个真实CLI负例。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "/root/security_runtime_override_final",
+  "completion_class": "audit",
+  "confirmation": "本任务PASS后，结合测试TASK-9F2DAD PASS，统筹可ACK A01DF7、253A43与3760并进入Repository/API；FAIL则只按新缺陷整改。",
+  "created_at": "2026-08-04T14:52+08:00",
+  "department": "安全部",
+  "details": "严格只读最终候选，只写安全部精简final报告和任务状态。先核A01DF7五个文件SHA及253A43/3760保护文件未越界漂移；静态确认AppConfig/loadAppConfig/loadRuntimeConfig/profile不再含allowTestDatabasePath或testDatabasePathOverride，所有真实CLI无法从NODE_ENV/APP_ENV/env开启随机DB路径，测试隔离仅发生在测试代码的隔离app canonical basename。行为只运行两个真实CLI负例且各一次：A) NODE_ENV=test+随机F1_DB_PATH执行npm --silent run start，必须在建库/监听前exact四字段DB_PATH拒绝且目标DB/sidecar不存在；B) 使用canonical m3临时准备ready DB且保持无.next，npm --silent run start必须exact四字段CLI_INTERNAL_ERROR拒绝，无Next banner/URL/stack/path/address/port，随后精确清理canonical DB/sidecar。静态复核stdio/signal/127.0.0.1:3000/argv边界未放宽；不得build、full check、运行测试套件、复制node_modules或新增同质探针。",
+  "domain_stage": "SQLite启动能力P1安全复验",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任何真实CLI仍可由NODE_ENV/APP_ENV/env开启随机DB、产生DB/sidecar或绕过canonical profile/path：SQLite P1 FAIL。",
+    "missing-build start泄露Next诊断或多行/多键输出，stdio/signal/argv/loopback边界被放宽，或留下监听/进程/DB：Next P0/P1 FAIL。",
+    "复验需要build/full check/复制依赖/修改正式代码才能继续：立即NOT_RUN，不扩展。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未重跑同质探针；未把migration/seed准备计作负例PASS；未继承开发/测试行为结论；未修改正式代码；只精确清理本任务DB与sidecar。",
+  "node": "用静态审查和两个真实CLI负例确认A01DF7关闭P1并补齐3760安全行为证据",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260804-A01DF7.json",
+    "docs/collaboration/tasks/TASK-20260804-B9D885.json",
+    "docs/collaboration/tasks/TASK-20260802-3760F6.json"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-04-真实CLI数据库覆盖与Next安全出口聚焦复验.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260804-A1A095",
+  "title": "聚焦复验真实CLI数据库覆盖P1与Next安全出口",
+  "unverified": [
+    "按任务边界未build、未运行full check或测试套件；R5/R12、Repository/API、真实外部能力与部署不在本次结论内。"
+  ],
+  "updated_at": "2026-08-04T15:15+08:00",
+  "verified": [
+    "五个整改SHA、253A43/3760保护输入及四root均匹配；静态确认真实CLI不再存在NODE_ENV或环境值开启随机DB覆盖的路径，Next stdio/signal/argv/127.0.0.1:3000边界未放宽；两个真实start负例各一次分别exact DB_PATH与CLI_INTERNAL_ERROR，随机DB零写、missing-build零Next诊断泄露；清理后无DB/sidecar/.next/3000/3101监听残留。"
+  ]
+}

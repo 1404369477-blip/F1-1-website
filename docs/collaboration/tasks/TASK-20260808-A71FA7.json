@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "设计部修复手机端多缩略图条目换行导致的未对齐,产出证据与报告；用户确认后由统筹派开发落地。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "design/ui/F1+1-v0.2-全站设计/index.html"
+  ],
+  "authorization_evidence": "用户反馈缩略图仍未与文本底对齐（2026-08-08）",
+  "authorization_history": [
+    {
+      "at": "2026-08-08T15:03+08:00",
+      "evidence": "用户反馈缩略图仍未与文本底对齐（2026-08-08）",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "设计部/统筹部并行子代理",
+  "completion_class": "standard",
+  "confirmation": "用户体验确认门。",
+  "created_at": "2026-08-08T15:03+08:00",
+  "department": "设计部",
+  "details": "实测定位(2026-08-08)：桌面端与 1-3 图条目的缩略图已与来源文本底对齐(diffBottom=0,sameLine)；但手机端(390)有 4 张缩略图的条目(如 r1/r8),右侧操作区(前往原文+缩略图)太宽 flex-wrap 换行到下一行,缩略图与来源文本不在同一行(diffBottom=44)。修复：确保手机端缩略图与来源文本同一行且底对齐(可缩小小图/收紧间距/让来源文本区收缩,给合理方案),并回归其它条目与桌面端。产出证据与报告,停在用户体验确认门。",
+  "domain_stage": "design_direction_revision",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若与已确认布局冲突,说明取舍理由,不擅自推翻。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查错题集,无命中",
+  "node": "v0.2-mobile-thumbs-same-line-fix",
+  "pointers": [
+    "design/ui/F1+1-v0.2-全站设计/index.html"
+  ],
+  "report": "docs/collaboration/部门/设计部/报告/2026-08-08-手机端缩略图对齐修复报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260808-A71FA7",
+  "title": "设计修订:手机端多缩略图条目与来源文本同排底对齐",
+  "unverified": [
+    "用户尚未确认;正式app未落地"
+  ],
+  "updated_at": "2026-08-08T15:10+08:00",
+  "verified": [
+    "手机端4图条目缩略图与来源文本同排底对齐(diffBottom=0),1-3图与桌面不回退;证据PNG与报告已产出"
+  ]
+}

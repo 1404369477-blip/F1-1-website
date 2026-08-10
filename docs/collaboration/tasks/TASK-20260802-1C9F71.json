@@ -1,0 +1,78 @@
+{
+  "acceptance_exit": "本地Node24下/与/story/[storyId]可运行；390与1440布局符合设计合同，深浅主题、键盘焦点、语义标题、状态非纯颜色表达通过；首页至少12条演示卡片且演示标签清晰，筛选可用，空/受限/no-more和详情404边界可验证；原文入口无外部调用；相关纯函数测试、lint、typecheck、build与完整check通过；P1冻结文件和lockfile哈希零漂移；提交开发报告并以TASK_STATE_OK结束。",
+  "artifacts": [],
+  "authorization_evidence": "主任务会话019fb2b1-fb60-7792-adb4-e0e876a32947：用户2026-08-02询问为何尚未安排前端页面制作，结合此前已授权全力开工。",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T23:04+08:00",
+      "evidence": "主任务会话019fb2b1-fb60-7792-adb4-e0e876a32947：用户2026-08-02询问为何尚未安排前端页面制作，结合此前已授权全力开工。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "任务正文误用了设计稿非约束route_hint /story/[storyId]，与accepted Spec/ADR固定路由 /stories/[publicId] 冲突；需以相同页面范围的corrected successor替代，开发不得按错误路由继续。",
+  "claimed_by": "开发部当前会话",
+  "completion_class": "standard",
+  "confirmation": "用户已要求继续推进项目，并于2026-08-02追问前端页面制作进度；本任务落实首批可体验公开页面，不开放真实外部能力。",
+  "created_at": "2026-08-02T23:04+08:00",
+  "department": "开发部",
+  "details": "按已ACK的首批页面实现级设计合同、token-map和全站规范，先实现公开信息流与内容详情两页的可运行前端。范围：共享F1PageShell/TopBar/主题与响应式基础；首页Featured+筛选+StoryCard+SourceMeta+默认/空/受限/no-more状态；/story/[storyId]详情页含中文摘要、关键点、来源元数据、相关内容和明确的原文入口状态。使用至少12条纯本地、明确标注为演示的合成F1资讯数据，覆盖赛事新闻、车手社交、名宿/历史、趣事四类；不得伪造真实采集、不得使用未授权赛车摄影、不得发起外部请求。原文链接在演示数据中禁用并说明待真实采集接入。不得修改P1安全文件、package.json、package-lock.json、Spec、ADR、data或design，不新增依赖，不实现admin mutation、真实provider、Base、采集、AI、媒体下载、发布或部署。",
+  "domain_stage": "M4-C-VS1-public-ui-slice",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "页面把演示数据伪装成已采集真实内容、使用未授权图片或触发任何外部请求：P0停止并回滚本任务改动。",
+    "实现改动P1安全文件、package/lock、Spec/ADR/data/design，或破坏现有health/check：FAIL并停止扩范围。",
+    "390/1440出现页面级横向溢出、关键信息/焦点不可达、状态只靠颜色、详情缺原文状态或无明确演示标识：FAIL后仅在本任务UI范围修正。"
+  ],
+  "from_department": "统筹部",
+  "impact_declaration": {
+    "admission": "manual",
+    "base_revision": "a9691e71b1552592cc5ded8d5db66c336262301c",
+    "external_effects": [
+      "none"
+    ],
+    "owner_task": "TASK-20260802-1C9F71",
+    "shared_contracts": [
+      "F1+1 public feed and content detail UI"
+    ],
+    "write_paths": [
+      "app/src/app/page.tsx",
+      "app/src/app/layout.tsx",
+      "app/src/app/globals.css",
+      "app/src/app/story",
+      "app/src/components/f1",
+      "app/src/features/stories",
+      "app/src/tests/public-ui.test.ts"
+    ]
+  },
+  "mistake_check": "",
+  "node": "M4-VS1-PUBLIC-UI-SLICE",
+  "pointers": [
+    "design/ui/F1+1-首批页面实现级设计合同-v0.1.md",
+    "design/ui/F1+1-首批页面token-map-v0.1.json",
+    "design/ui/F1+1-全站设计规范-v0.1.md",
+    "docs/collaboration/tasks/TASK-20260802-7A9C48.json"
+  ],
+  "report": "",
+  "resolution": {
+    "evidence": "docs/spec.md与accepted M4 ADR固定 `/stories/[publicId]`；TASK-C29BB8 impact revision2且已由原开发部窗口claimed。",
+    "reason": "原任务误用设计非约束route_hint /story/[storyId]，与accepted Spec/ADR固定 `/stories/[publicId]` 冲突；修正版保持页面、视觉、数据和安全边界不变，仅纠正路由合同。",
+    "receipt_id": "RES-20260802T231411-9A09DAA5",
+    "replacement_revision": 3,
+    "replacement_state": "claimed",
+    "replacement_task_id": "TASK-20260802-C29BB8",
+    "resolved_at": "2026-08-02T23:14+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "superseded",
+    "target_revision_before": 4
+  },
+  "revision": 5,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-1C9F71",
+  "title": "实现首批公开信息流与内容详情可体验前端",
+  "unverified": [],
+  "updated_at": "2026-08-02T23:14+08:00",
+  "verified": []
+}

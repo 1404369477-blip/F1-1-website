@@ -1,0 +1,51 @@
+{
+  "acceptance_exit": "在精确候选hash上给出PASS或FAIL及P0/P1/P2；R1/R7/R12相关公开页边界逐项有证据，P0=0且P1=0时才建议进入下一切片，未覆盖的真实多图/外部能力明确NOT_RUN。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-10-最终v0.2公开页冻结候选安全门禁-SNAPSHOT_DRIFT报告.md"
+  ],
+  "authorization_evidence": "用户已确认最终v0.2范围；开发候选已ACK；复验无外部I/O",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T10:02+08:00",
+      "evidence": "用户已确认最终v0.2范围；开发候选已ACK；复验无外部I/O",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "本任务是本地公开页只读安全复验；不授权真实采集、外部媒体、admin生产认证、部署、付费或Git操作。",
+  "created_at": "2026-08-09T10:02+08:00",
+  "department": "安全部",
+  "details": "在完成 TASK-20260809-88561C 后再领取本任务。只审查 TASK-20260808-33533E 已ACK的五文件hash和测试TASK-20260809-34476E证据：同源相对API与no-store、Zod strict/错误映射、URL scheme与新窗口隔离、无dangerouslySetInnerHTML/未审计HTML、data URI与CSP边界、DOM publicId使用、localStorage仅主题、设置占位不持久化、外点/焦点/inert、错误/404/离线无内部泄露、externalCalls=0、无admin/采集/发布/真实媒体能力和运行日志脱敏。复用测试部运行收据，不另启第二实例、不跑全量回归；只做必要静态检查和证据交叉核对。只写安全部报告，不改app/Spec/data/design。",
+  "domain_stage": "M5最终公开页安全门禁",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "候选hash或测试证据漂移：停止审查并报告SNAPSHOT_DRIFT，不把旧安全PASS继承到新快照。",
+    "发现可导致外部请求、注入、内部数据泄露、绕过同源或后台能力意外开放：至少P1并fail closed，提交精确文件/出口，不直接修改实现。",
+    "需要真实网络或生产凭证才能验证：保持NOT_RUN，不申请或使用凭证、不访问外部。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未因任务恢复忽略候选替代；hash漂移后未读取当前实现或审替代版本；未把34476E旧FAIL/PASS局部结论继承到当前快照；未启动实例、跑全量、联网或修改app/Spec/data/design；报告含SNAPSHOT_DRIFT、P0/P1/P2和TASK_STATE_OK。",
+  "node": "对最终公开页精确快照做一次独立、聚焦的安全放行判断",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260809-34476E.json"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-10-最终v0.2公开页冻结候选安全门禁-SNAPSHOT_DRIFT报告.md",
+  "resolution": null,
+  "revision": 6,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-22EC6D",
+  "title": "最终v0.2公开页冻结候选安全门禁",
+  "unverified": [
+    "当前五文件内容和安全属性未审查；同源API/no-store、Zod strict、URL/HTML/data URI/CSP/publicId/localStorage/focus/inert/error leakage/log redaction/no-egress与后台能力均Unknown；真实多图和外部能力NOT_RUN。"
+  ],
+  "updated_at": "2026-08-10T01:00+08:00",
+  "verified": [
+    "任务固定五文件SHA逐项重算，五项全部漂移；34476E acknowledged报告SHA=5d03bcaa37bcbbd10e44607a9fab4193329e40d784a56fb0c88610b8662721e7且旧结论FAIL/P1=3；触发SNAPSHOT_DRIFT后停止，未继承旧收据；externalCalls=0。"
+  ]
+}

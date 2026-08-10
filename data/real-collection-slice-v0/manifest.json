@@ -1,0 +1,49 @@
+{
+  "manifest_version": "real-collection-slice-manifest-v0.1",
+  "package_version": "real-collection-slice-input-gate-v0.1",
+  "task_id": "TASK-20260808-CAD1DB",
+  "status": "gate_closed_user_approval_required",
+  "generated_at": "2026-08-08T14:02:06Z",
+  "validator_mode": "offline_local_read_only_validation",
+  "artifact_role": "hash receipt for an implementation mapping/gate package; not a second domain schema",
+  "artifact_hashes": {
+    "data/real-collection-slice-v0/input-gate-package.json": "2cc4b16fd61209cba60fb232c091a01bd538cb9fb094617e4a776d9391f2b902",
+    "data/real-collection-slice-v0/fixture.synthetic.json": "a145133e9d2c0257068edf70b9f4ee31b4f836a2496c7a53b9b25de2df93f217",
+    "data/real-collection-slice-v0/validate_package.py": "50e15d86ab97e61899e8fa8abbee76674578e35fd1077d44499919dbd67d97a3"
+  },
+  "input_hashes": {
+    "data/m4-vs0-seed-enrichment-v0/source-seed-enriched.json": "d4da9fc24c792c0471bcd24c525a46dcef1e521b36a870fd111e7310243888b2",
+    "data/m4-vs0-seed-enrichment-v0/manifest.json": "473c6f0dd5176ea6a8122577f07c5795c01f3b4c2df737f8f7973968781c5c39",
+    "data/mvp-contract-v0/schema.json": "de6c6c07a33589106ebb93496ad10ae3b06ab1c7845e4e0e91888ca0b17ae5a4",
+    "data/mvp-contract-v0/internal-contract.schema.json": "462605a2258d2922d9b982f490aeda3a1395f9e1dcf718fb8745e49db2afade8",
+    "data/mvp-contract-v0/state-machine.json": "d5ca45fd60c2ad08c60929abd714f6e80c43c20f561be0c0a18e3baa17c7c120",
+    "research/multi-platform-source-collection-2026-07-30.md": "4245e02639ae988bf080a7c7dcac14bb3568bc2339372e5e528725d3ba03636c",
+    "docs/decisions/system/2026-08-01-F1+1-信源库A到D演进路线-accepted.md": "11424b03112d8f578a01ffb068ce6d0744fef377294908170df3994ef275c7d2"
+  },
+  "counts": {
+    "inventory_sources": 59,
+    "inventory_x": 59,
+    "inventory_rss": 0,
+    "inventory_enabled": 0,
+    "source_mapping_fields": 39,
+    "source_item_mapping_fields": 18,
+    "candidate_sources": 1,
+    "synthetic_transport_items": 1,
+    "user_confirmation_gates": 3
+  },
+  "safety": {
+    "external_calls": 0,
+    "writes_to_base": false,
+    "provider_switch": false,
+    "new_source_access": false,
+    "real_content_imported": false,
+    "candidate_enabled": false,
+    "fixture_synthetic_only": true
+  },
+  "candidate": {
+    "source_id": "candidate_rss_formula1_latest_all",
+    "current_authorization": "none",
+    "current_slo_evidence": "not_measurable",
+    "next_state": "wait_for_user_approval"
+  }
+}

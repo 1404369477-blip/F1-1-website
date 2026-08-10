@@ -1,0 +1,78 @@
+{
+  "acceptance_exit": "形成单一可引用的现行accepted successor或等价不可变决策入口；Spec、实施合同、追踪矩阵与progress一致地标明专用MacBook已确认、真实配置和部署仍未授权；列出设备基线、故障恢复、回退、后继开发/安全/测试门禁；三路只读对抗审查P0=0/P1=0，报告包含已验证、未验证、错题自检并返回TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/decisions/system/2026-08-09-F1+1-M5-Admin专用MacBook部署边界-successor-accepted.md",
+    "docs/spec/F1+1-M5-Admin专用MacBook补充实施合同-v0.2.md",
+    "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md",
+    "docs/spec/README.md",
+    "docs/spec.md",
+    "docs/progress.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-09-Admin专用MacBook部署边界合同报告.md"
+  ],
+  "authorization_evidence": "用户当前消息：A. 专用（推荐）",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T14:37+08:00",
+      "evidence": "用户当前消息：A. 专用（推荐）",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "用户于当前会话明确选择A：专用（推荐）；仅授权合同吸收，不授权真实设备配置、安装、联网、付费或部署。",
+  "created_at": "2026-08-09T14:37+08:00",
+  "department": "产品部",
+  "details": "用户已明确选择A：Admin主机使用专用、以常开为运维目标的MacBook。基于已accepted的MacBook主机落点successor，使用新successor或等价不可变入口关闭专用/共用唯一未决项，并同步Spec、初版全功能追踪矩阵、实施合同与progress。冻结边界：专用OS用户、FileVault、自动登录关闭、合盖/睡眠/更新/重启策略、私有overlay、应用强认证、Mac/iPhone全功能、唯一写主、public-host独立、RTO不超过4小时、RPO不超过15分钟、异机加密备份。只做本地产品合同，不操作真实设备、网络、端口、密钥、备份服务、public-host或生产部署；不把专用设备写成已经配置或验证。",
+  "domain_stage": "M5 Admin专用主机决策冻结",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若需要修改既有accepted正文，停止原地修改并新建successor，保留历史链。",
+    "若RTO/RPO依赖双写、长期公网Admin、端口转发或UPnP，停止扩张并给出单写主的最小替代。",
+    "若缺少真实设备、网络、备份介质或密钥信息，只冻结合同与deployment manifest门禁，不虚构已实施状态。"
+  ],
+  "from_department": "统筹部",
+  "impact_declaration": {
+    "admission": "manual",
+    "base_revision": "a9691e71b1552592cc5ded8d5db66c336262301c",
+    "external_effects": [
+      "none；仅本地产品合同，不操作设备、网络、端口、密钥、备份服务、public-host或部署"
+    ],
+    "owner_task": "TASK-20260809-00EFBB",
+    "shared_contracts": [
+      "专用Admin MacBook已获用户确认；真实设备配置与生产部署仍未授权"
+    ],
+    "write_paths": [
+      "docs/decisions/system/2026-08-09-F1+1-M5-Admin专用MacBook部署边界-successor-accepted.md",
+      "docs/spec/F1+1-M5-Admin专用MacBook补充实施合同-v0.2.md",
+      "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md",
+      "docs/spec/README.md",
+      "docs/spec.md",
+      "docs/progress.md"
+    ]
+  },
+  "mistake_check": "未把dedicated写成设备已配置或验证；未外推Admin业务/视觉/网络/密钥/备份/部署授权；未在manifest前允许实机安全测试；未知基线关闭全部远程Admin并停服务；未混淆私有listener/public-host GET与公网Admin；未改旧accepted/app/data/design；未新增第二写主/schema/Publication/Projection/真值；未执行设备、网络、端口、密钥、付费、外发或部署",
+  "node": "将用户已确认的专用Admin MacBook选择吸收到唯一现行系统合同",
+  "pointers": [
+    "docs/decisions/system/2026-08-09-F1+1-M5-Admin-MacBook主机落点-successor-accepted.md",
+    "docs/spec/F1+1-M5-Admin-MacBook主机补充实施合同-v0.1.md",
+    "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-09-Admin专用MacBook部署边界合同报告.md",
+  "resolution": null,
+  "revision": 5,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-00EFBB",
+  "title": "冻结Admin专用MacBook部署边界",
+  "unverified": [
+    "精确MacBook/OS/地点、服务与运营账号、FileVault/恢复密钥、自动登录、软件/进程/R5、供电/UPS/睡眠、overlay/CGNAT、异机备份/密钥/地域、具体public-host/DNS-TLS、监控/成本、实机Mac-iPhone、writer/listener、真实RPO-RTO、production manifest与部署均未实施/未验证/未授权"
+  ],
+  "updated_at": "2026-08-09T14:48+08:00",
+  "verified": [
+    "用户A/dedicated已形成唯一现行accepted successor与v0.2实施入口；旧MacBook successor/v0.1哈希前后相等；Spec/矩阵/index/progress时态一致；专用账号、FileVault、自动登录、最小软件/进程、secret、睡眠更新、私有双端、唯一写主、public只读、备份/RTO-RPO、失陷回退和manifest前后门禁闭合；三路只读审查最终P0=0/P1=0；diff-check、链接、关键时态和doctor通过；无外部IO"
+  ]
+}

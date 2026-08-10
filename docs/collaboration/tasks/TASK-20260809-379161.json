@@ -1,0 +1,44 @@
+{
+  "acceptance_exit": "基于同一冻结候选和测试证据给出独立视觉结论；六档关键关系与状态逐项可追溯，任何P1都指向精确组件/视口/证据，P0=0且P1=0时才建议进入下一切片。",
+  "artifacts": [],
+  "authorization_evidence": "用户已确认最终v0.2设计；本任务不改变视觉方向",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T10:01+08:00",
+      "evidence": "用户已确认最终v0.2设计；本任务不改变视觉方向",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "34476E冻结的public-api.ts、f1-page-shell.tsx、feed-experience.tsx、globals.css、public-ui.test.ts五个SHA与当前五文件逐项全量不一致，触发SNAPSHOT_DRIFT。任务明确仅在五文件无漂移时复用六张旧截图；禁止启动服务/浏览器或重新采样，故不能在可变候选上给当前正式App视觉结论。独立设计报告已落盘，保留历史34476E的FAIL/P1与NOT_RUN边界。",
+  "claimed_by": "设计部/当前正式会话",
+  "completion_class": "standard",
+  "confirmation": "这是对用户已确认视觉方向的只读核验，不产生新视觉方向；任何新增页面或方向性视觉修改仍需用户预览确认。",
+  "created_at": "2026-08-09T10:01+08:00",
+  "department": "设计部",
+  "details": "输入为固定设计 HTML（SHA 5a84bfb27294ebd727369118a95528f5b788bfacbe2d56cc03fcb006f6168cb1）、最终产品合同、开发TASK-20260808-33533E报告与后继测试TASK-20260809-34476E的冻结截图/状态证据。只有测试任务completed且候选五文件hash无漂移后才开始最终判断；优先复用测试部六张基础证据与故障态证据，不另启服务、不重复浏览器采样。逐档核对1440/1024/390深浅主题的信息层级、时间线宽度、摘要完整性、媒体比例、工具/Dock/设置、展开焦点、lightbox、空/错/离线状态、触控面积、对比度和降级；报告P0/P1/P2、已验证/未验证/根因未知。accepted单media的真实多图出口保持NOT_RUN。只写设计部报告，不修改实现、冻结设计或产品合同。",
+  "domain_stage": "M5最终公开页设计核验",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "测试证据未完成、hash漂移或六档截图缺失：进入waiting/blocked并列缺口，不自行启动另一套候选。",
+    "正式App与冻结设计存在需要改变用户可见方向的差异：标P1并提交最小修订建议，等待用户确认，不直接改实现。",
+    "真实多图、AT或故障态没有可达证据：明确NOT_RUN/未验证，不用静态推断冒充通过。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "在不重复启动页面的前提下核对正式App与用户确认设计的一致性",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260809-34476E.json"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 5,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-379161",
+  "title": "最终v0.2正式App冻结证据视觉核验",
+  "unverified": [],
+  "updated_at": "2026-08-10T01:00+08:00",
+  "verified": []
+}

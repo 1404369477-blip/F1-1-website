@@ -1,0 +1,54 @@
+{
+  "acceptance_exit": "设计部提交final审核报告，给出PASS/FAIL、P0/P1/P2、精确SHA、深浅主题与390/1440直接观察证据；验证四项P1和共享Shell相关回归均无P0/P1；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/设计部/报告/2026-08-03-M4-VS-1公开前端P1整改独立设计核验报告.md"
+  ],
+  "authorization_evidence": "用户持续目标要求交付可用初版并已授权按部门推进；公开前端整改后需独立设计放行。",
+  "authorization_history": [
+    {
+      "at": "2026-08-03T00:40+08:00",
+      "evidence": "用户持续目标要求交付可用初版并已授权按部门推进；公开前端整改后需独立设计放行。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "设计部/审核成员:/root/design_frontend_p1_postfix",
+  "completion_class": "standard",
+  "confirmation": "设计与测试均PASS后统筹才ACK；尚未实现的后端状态与真实内容/媒体继续范围外。",
+  "created_at": "2026-08-03T00:40+08:00",
+  "department": "设计部",
+  "details": "对照全站规范、首批页面实现合同、token-map和当前整改快照，先核对开发报告10个UI SHA。亲自检查深浅主题的媒体标签可读性与>=4.5:1证据、筛选选中态背景/边框/字重/可见标记、0/1/3/12状态文案、详情返回入口44px、390/1440布局、共享Shell在首页/详情/404的一致性、主题跨路由/刷新、sticky锚点、Featured与Feed标题层级、焦点和交互状态。不得修改app/Spec/ADR/data/设计合同，只出独立审核报告。",
+  "domain_stage": "设计实现验收",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "快照SHA漂移或实现与开发报告不一致：停止并按漂移FAIL，不基于旧截图放行。",
+    "对比度、非颜色选中态、数量一致性、44px、主题/布局/标题语义任一不满足确认设计合同：P1/FAIL，只报告不返工。",
+    "无法直接观察运行页面或关键computed尺寸：明确NOT_RUN/证据不足，不把开发收据当独立设计PASS。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已区分浏览器actual computed/DOM/交互证据与静态代码证据；未继承开发自证；未修改app/Spec/ADR/data/设计合同/lock；3101受固定运行合同拒绝且未产生listener，改在空闲3000单实例核验并清理。",
+  "node": "对TASK-20260803-CD4228整改后实现做独立设计、响应式和可访问性一致性核验",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260803-CD4228.json",
+    "docs/collaboration/部门/开发部/报告/2026-08-03-M4-VS-1公开前端P1整改实现报告.md",
+    "design/ui/F1+1-全站设计规范-v0.1.md",
+    "design/ui/F1+1-首批页面实现级设计合同-v0.1.md"
+  ],
+  "report": "docs/collaboration/部门/设计部/报告/2026-08-03-M4-VS-1公开前端P1整改独立设计核验报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260803-8C9709",
+  "title": "独立设计核验公开前端P1整改快照",
+  "unverified": [
+    "VoiceOver/NVDA/TalkBack、原生200%缩放、真实forced-colors、生产字体/媒体与后续public-demo-*及SQLite/API接线快照未验证，均保持P2/后续定向回归边界。"
+  ],
+  "updated_at": "2026-08-03T12:58+08:00",
+  "verified": [
+    "10个UI SHA逐项MATCH；内置浏览器在1440×1100与390×844对深浅主题媒体标签、选中态、0/1/3/12文案、详情44px、共享Shell、主题保持、sticky、标题层级、焦点与手机交互完成独立核验；HTTP 200/200/404、console warn/error=0、结束后3000/3101无监听；P0=0/P1=0/PASS。"
+  ]
+}

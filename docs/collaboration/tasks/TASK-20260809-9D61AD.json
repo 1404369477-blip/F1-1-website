@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "测试部final报告绑定精确候选与收据hash；唯一目标命令一次通过并逐项关闭原P1；P0=0/P1=0方可pass；临时根无残留；列已验证/未验证与错题自检，TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-08-09-9D61AD-VS1最终25-case恢复链后继验收报告.md",
+    "docs/collaboration/部门/测试部/报告/TASK-20260809-9D61AD-evidence/README.md"
+  ],
+  "authorization_evidence": "TASK-20260809-3A8C0E已ACK；C66A73唯一P1后继",
+  "authorization_history": [
+    {
+      "at": "2026-08-09T14:05+08:00",
+      "evidence": "TASK-20260809-3A8C0E已ACK；C66A73唯一P1后继",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "测试部/019fb379-9212-7e80-a5df-587d339936c4",
+  "completion_class": "audit",
+  "confirmation": "只读独立复验已ACK本地synthetic候选；无外部能力或生产变更。",
+  "created_at": "2026-08-09T14:05+08:00",
+  "department": "测试部",
+  "details": "后继只针对TASK-20260809-C66A73已ACK FAIL/P1-01与3A8C0E最终候选。精确身份：contract-entry 00591f56b1d148113259bfb21d227138fc7b177a25240befcc1391dcdc73b1e4；receipt file 2fcaefd2998ad9b5c4885c5d7b64a1ee290be4c9cf898b98a19f85c99ce08750；core 98258fe9591688216707afc16dc7a84c8b1a6d370cd9851c275ee3a0e5992e85；worker/pipeline/fixture/migrations/package-lock沿用C66A73已核对hash且应零漂移。只在固定Node24 env-i clean-room运行一次npm run test:contract；逐case核对reasonCode/exitCode/recoveryAction，014的HTTP_503/1s→COLLECTION_TIMEOUT/3s→PIPELINE_READY/0s与最多3次，015三次HTTP_503/deadLetterDelta=1，012/016A-G/017 rollback，replay/no-work，25/25 PASS与externalCalls=0；独立回算core hash和清理。因worker字节未变且C66A73已一次验证成功，本任务禁止重复worker/普通test/build/check/浏览器。Function ID为矩阵109-111三项，不提前修改矩阵。",
+  "domain_stage": "M5 VS1最终候选测试门禁",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一mandatory字段/case缺失、expected不符、hash不可回算或externalCalls>0，立即fail并保留首证据。",
+    "首次命令非零时不重跑、不改候选、不用开发结论替代。",
+    "出现代码修改、依赖安装、worker/整站冗余测试或外部I/O需求时停止并回统筹。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "唯一目标命令仅运行一次；未运行worker/普通test/build/check/浏览器；未改候选或矩阵；区分case预期exit1与顶层exit0；core按无换行JSON回算；P0=0/P1=0/P2=0 scoped PASS；无临时根残留",
+  "node": "关闭C66A73的唯一P1并证明三个Function ID恢复链可验",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260809-C66A73.json",
+    "docs/collaboration/tasks/TASK-20260809-3A8C0E.json"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-08-09-9D61AD-VS1最终25-case恢复链后继验收报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260809-9D61AD",
+  "title": "独立复验VS1最终25-case恢复链收据",
+  "unverified": [
+    "worker未重复，沿用C66A73独立通过；普通test/build/check/typecheck/浏览器与外部能力不在任务范围"
+  ],
+  "updated_at": "2026-08-09T14:49+08:00",
+  "verified": [
+    "00591f contract-entry、2fca receipt file、98258 core三hash命中；固定Node24 clean-room唯一一次test:contract exit0；25/25 case reason/exit/recovery/assertion/externalCalls=0；014 retry、015 dead-letter、012/016A-G/017 rollback、replay/no-work；三前缀NO_MATCH"
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "acceptance_exit": "交付按路由与组件组织的实现清单和验收矩阵；每一项可追溯到现有design文件/token key；未决字体/生产角色/AT实机等保持Unknown/C层，不编造；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/设计部/报告/2026-08-02-M4-C层四页组件与状态实现交接清单.md"
+  ],
+  "authorization_evidence": "用户已明确授权全员持续推进本地网站工程；A轴accepted已ACK；本任务本地只读设计转译，无外部I/O",
+  "authorization_history": [
+    {
+      "at": "2026-08-02T03:03+08:00",
+      "evidence": "用户已明确授权全员持续推进本地网站工程；A轴accepted已ACK；本任务本地只读设计转译，无外部I/O",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "design",
+  "completion_class": "standard",
+  "confirmation": "本任务是实现交接，不代表页面完成或C层通过；开发完成后仍需设计复验。",
+  "created_at": "2026-08-02T03:03+08:00",
+  "department": "设计部",
+  "details": "只读使用已核收F1+1全站设计规范v0.1、首批页面实现级设计合同v0.1、token-map JSON、accepted ADR与Spec，形成开发部可直接执行的四页组件清单。覆盖共享F1PageShell、Feed/Detail/Review/Sources组件层级、props与状态alias映射、fixture内容槽、图片/无图fallback、深浅主题、320/390/768/1024/1200/1440/1600响应式、44px触控、键盘/焦点/语义、对比度、reduced-motion/forced-colors/200%缩放及loading/empty/error/partial等全状态。只交付文档/检查表，不改design既有资产、app、Spec/ADR，不新增依赖。",
+  "domain_stage": "M4-C-design-implementation-handoff",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) design route_hint与accepted四路由冲突时，以accepted路由为准并记录映射，不改设计源文件。",
+    "2) token缺失时标显式TBD并给最小CSS fallback，不新增隐性设计系统。",
+    "3) AT实机或真实图片权利无法本地证实时列C层/外部门禁，不当作已验证。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已按accepted路由优先；route_hint仅记录别名；未修改design/app/Spec/ADR；未新增依赖/领域状态/字段；未使用商标、专有字体或未授权媒体；未将静态规范误报为C层通过；保留unknown/C门禁",
+  "node": "M4/C层准备/设计实现交接",
+  "pointers": [
+    "docs/collaboration/部门/设计部/报告/2026-08-02-M4-C层四页组件与状态实现交接清单.md"
+  ],
+  "report": "docs/collaboration/部门/设计部/报告/2026-08-02-M4-C层四页组件与状态实现交接清单.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260802-2437C9",
+  "title": "生成M4 C层四页组件与状态实现交接清单",
+  "unverified": [
+    "C层页面代码与真实浏览器渲染未实现；VoiceOver/NVDA/TalkBack实机；生产字体WOFF2/许可证；生产媒体权利/最差裁切；生产admin角色与跨网络权限；Appica/Base UI包与Portal/SSR回归；目标浏览器性能"
+  ],
+  "updated_at": "2026-08-02T03:14+08:00",
+  "verified": [
+    "报告已生成；覆盖accepted四路由、共同F1PageShell、四页组件树、props/槽位、状态与alias、fixture槽、图片/无图降级、双主题、七档响应式、44px触控、键盘/焦点/语义、对比度、reduced-motion、forced-colors、200%缩放；内部链接存在；token-map与task JSON可解析；TASK_DOCTOR_OK"
+  ]
+}
