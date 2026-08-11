@@ -27,6 +27,10 @@
     "test:contract": "node --experimental-strip-types scripts/vs1-contract.ts",
     "test:source-management": "vitest run src/tests/source-management-backend.test.ts --config vitest.config.ts",
     "profile:closed-receipt": "node --experimental-strip-types scripts/profile-closed-receipt.ts",
+    "profile:source-management-closed-receipt": "node --experimental-strip-types scripts/source-management-closed-receipt.ts",
+    "release:bootstrap": "node --experimental-strip-types scripts/public-release-bootstrap.ts",
+    "release:refresh-receipts": "node --experimental-strip-types scripts/public-release-refresh.ts",
+    "release:install-macos-agents": "node --experimental-strip-types scripts/install-macos-public-beta.ts",
     "check": "npm run verify:env && npm run db:migrate && npm run seed:fixtures && npm run runtime:assert-ready && npm run test && npm run test:contract && npm run lint && npm run typecheck && npm run build && npm run test:p1"
   },
   "dependencies": {

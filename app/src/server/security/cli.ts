@@ -7,19 +7,22 @@ import {
 
 const ERROR_CODE_PATTERN = /^([A-Z][A-Z0-9_]{2,63})(?::|$)/;
 
-function safeReasonCode(error: unknown): CliReasonCode {
+export function safeReasonCode(error: unknown): CliReasonCode {
+  if (error instanceof ConfigError && error.code.startsWith("RECEIPT_")) return "RECEIPT_INTEGRITY";
   if (error instanceof ConfigError && isCliReasonCode(error.code)) return error.code;
   if (error instanceof Error) {
     const candidate = ERROR_CODE_PATTERN.exec(error.message)?.[1];
+    if (candidate?.startsWith("RECEIPT_")) return "RECEIPT_INTEGRITY";
     if (candidate && isCliReasonCode(candidate)) return candidate;
   }
   if (
     typeof error === "object" &&
     error !== null &&
     "code" in error &&
-    typeof error.code === "string" &&
-    error.code.startsWith("SQLITE_")
+    typeof error.code === "string"
   ) {
+    if (error.code.startsWith("RECEIPT_")) return "RECEIPT_INTEGRITY";
+    if (!error.code.startsWith("SQLITE_")) return "CLI_INTERNAL_ERROR";
     return "SQLITE_FAILURE";
   }
   return "CLI_INTERNAL_ERROR";
@@ -28,6 +31,14 @@ function safeReasonCode(error: unknown): CliReasonCode {
 export function assertNoAdditionalCliArguments(arguments_: readonly string[]): void {
   if (arguments_.length !== 0) {
     throw new ConfigError("CLI_ARGUMENTS_FORBIDDEN", "additional command arguments are disabled");
+  }
+}
+
+export function runReceiptIntegrityBoundary<T>(operation: () => T): T {
+  try {
+    return operation();
+  } catch {
+    throw new ConfigError("RECEIPT_INTEGRITY", "closed receipt validation was rejected");
   }
 }
 

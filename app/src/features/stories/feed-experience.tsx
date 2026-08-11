@@ -217,6 +217,7 @@ export function FeedExperience() {
   const loadMoreControllerRef = useRef<AbortController | null>(null);
   const pendingFeedRecoveryFocusRef = useRef(false);
   const pendingAppendFocusIndexRef = useRef<number | null>(null);
+  const pendingDetailRecoveryFocusRef = useRef<string | null>(null);
   const detailRequestedRef = useRef<Set<string>>(new Set());
   const openIdRef = useRef<string | null>(null);
   const lastTriggerRef = useRef<LightboxTrigger | null>(null);
@@ -238,17 +239,45 @@ export function FeedExperience() {
   }, [openId]);
 
   useEffect(() => {
-    if (feedState.status !== "ready") return;
     if (pendingFeedRecoveryFocusRef.current) {
-      pendingFeedRecoveryFocusRef.current = false;
-      document.getElementById("main-content")?.focus({ preventScroll: true });
+      const settled = feedState.status === "ready" || feedState.status === "error" || feedState.status === "not-found";
+      if (settled) {
+        pendingFeedRecoveryFocusRef.current = false;
+        queueMicrotask(() => {
+          const failureAction = feedState.status === "error" || feedState.status === "not-found"
+            ? document.querySelector<HTMLElement>("#state-box .sb-action")
+            : null;
+          (failureAction ?? document.getElementById("main-content"))?.focus({ preventScroll: true });
+        });
+      }
     }
+    if (feedState.status !== "ready") return;
     const nextIndex = pendingAppendFocusIndexRef.current;
     if (nextIndex === null || feedState.data.stories.length <= nextIndex) return;
     pendingAppendFocusIndexRef.current = null;
     const nextItem = document.querySelectorAll<HTMLElement>(".tl-item")[nextIndex];
     nextItem?.querySelector<HTMLElement>(".tl-summary-btn")?.focus({ preventScroll: true });
   }, [feedState]);
+
+  useEffect(() => {
+    const publicId = pendingDetailRecoveryFocusRef.current;
+    if (!publicId) return;
+    if (openId !== publicId) {
+      pendingDetailRecoveryFocusRef.current = null;
+      return;
+    }
+    const detail = detailStates[publicId];
+    if (!detail || detail.status === "loading") return;
+    pendingDetailRecoveryFocusRef.current = null;
+    queueMicrotask(() => {
+      const item = Array.from(document.querySelectorAll<HTMLElement>(".tl-item"))
+        .find((candidate) => candidate.dataset.id === publicId);
+      const target = detail.status === "error" || detail.status === "not-found"
+        ? item?.querySelector<HTMLElement>(".tl-detail-retry")
+        : item?.querySelector<HTMLElement>(".tl-summary-btn");
+      (target ?? document.getElementById("main-content"))?.focus({ preventScroll: true });
+    });
+  }, [detailStates, openId]);
 
   useEffect(() => {
     loadMoreControllerRef.current?.abort();
@@ -533,6 +562,7 @@ export function FeedExperience() {
   }, [activeCategory]);
 
   const retryDetail = useCallback((publicId: string): void => {
+    pendingDetailRecoveryFocusRef.current = publicId;
     detailRequestedRef.current.delete(publicId);
     setDetailRequestVersion((version) => version + 1);
   }, []);

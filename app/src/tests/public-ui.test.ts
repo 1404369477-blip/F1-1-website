@@ -320,6 +320,12 @@ describe("public frontend API single-source integration", () => {
     expect(feedSource).toContain("appendPublicFeedPage(feedState.data, next)");
     expect(feedSource).toContain("setLoadMoreFailed(true)");
     expect(feedSource).toContain("pendingFeedRecoveryFocusRef.current = true");
+    expect(feedSource).toContain('document.querySelector<HTMLElement>("#state-box .sb-action")');
+    expect(feedSource).toContain("pendingDetailRecoveryFocusRef.current = publicId");
+    expect(feedSource).toContain('item?.querySelector<HTMLElement>(".tl-detail-retry")');
+    expect(detailSource).toContain("pendingRecoveryFocusRef.current = true");
+    expect(detailSource).toContain('document.querySelector<HTMLElement>(".not-found-retry")');
+    expect(detailSource).toContain('document.querySelector<HTMLElement>(".detail-retry")');
     expect(feedSource).toContain("pendingAppendFocusIndexRef.current ??= feedState.data.stories.length");
     expect(feedSource).toContain('nextItem?.querySelector<HTMLElement>(".tl-summary-btn")?.focus({ preventScroll: true })');
     expect(feedSource).toContain('aria-live="polite"');

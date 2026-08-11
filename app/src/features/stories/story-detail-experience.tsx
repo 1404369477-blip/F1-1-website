@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import {
   DisabledOriginalEntry,
@@ -26,6 +26,7 @@ type DetailRequestState =
 export function StoryDetailExperience({ publicId }: { publicId: string }) {
   const [requestVersion, setRequestVersion] = useState(0);
   const [detailState, setDetailState] = useState<DetailRequestState>({ status: "loading" });
+  const pendingRecoveryFocusRef = useRef(false);
   const [fetchKey, setFetchKey] = useState<{ publicId: string; requestVersion: number }>({
     publicId,
     requestVersion: 0
@@ -47,6 +48,24 @@ export function StoryDetailExperience({ publicId }: { publicId: string }) {
     return () => controller.abort();
   }, [publicId, requestVersion]);
 
+  useEffect(() => {
+    if (!pendingRecoveryFocusRef.current || detailState.status === "loading") return;
+    pendingRecoveryFocusRef.current = false;
+    queueMicrotask(() => {
+      const failureAction = detailState.status === "not-found"
+        ? document.querySelector<HTMLElement>(".not-found-retry")
+        : detailState.status === "error"
+          ? document.querySelector<HTMLElement>(".detail-retry")
+          : null;
+      (failureAction ?? document.getElementById("main-content"))?.focus({ preventScroll: true });
+    });
+  }, [detailState]);
+
+  const retry = (): void => {
+    pendingRecoveryFocusRef.current = true;
+    setRequestVersion((version) => version + 1);
+  };
+
   if (detailState.status === "loading") {
     return (
       <main className="page-content story-page" id="main-content" tabIndex={-1}>
@@ -61,7 +80,7 @@ export function StoryDetailExperience({ publicId }: { publicId: string }) {
   if (detailState.status === "not-found") {
     return (
       <main className="page-content" id="main-content" tabIndex={-1}>
-        <F1StoryNotFoundState onRetry={() => setRequestVersion((version) => version + 1)} />
+        <F1StoryNotFoundState onRetry={retry} />
       </main>
     );
   }
@@ -72,7 +91,7 @@ export function StoryDetailExperience({ publicId }: { publicId: string }) {
         <section className="empty-state" aria-labelledby="detail-error-title" role="alert">
           <h1 id="detail-error-title">公开内容暂时不可用</h1>
           <p>详情请求没有返回可用内容。页面没有回退到静态演示数据，可以稍后重试。</p>
-          <button className="filter-clear" type="button" onClick={() => setRequestVersion((version) => version + 1)}>重试</button>
+          <button className="filter-clear detail-retry" type="button" onClick={retry}>重试</button>
         </section>
       </main>
     );

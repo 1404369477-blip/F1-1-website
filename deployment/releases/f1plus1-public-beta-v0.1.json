@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "f1plus1-deployment-candidate-v1",
+  "releaseId": "f1plus1-public-beta-v0.1",
+  "branch": "codex/first-public-release",
+  "selectedHost": "fixed-m1-macbook-temporary-beta",
+  "profileId": "public-multimedia-synthetic",
+  "nodeVersion": "24.18.0",
+  "syntheticOnly": true,
+  "externalCalls": 0,
+  "publicListener": "127.0.0.1:3000",
+  "nextListener": "127.0.0.1:3001",
+  "receiptRefreshSeconds": 43200,
+  "sourceHashes": {
+    "app/.env.example": "ef03a0c95556c42ccbfa3ab8a575ae1801860ee09e30e872aed2031895bf7973",
+    "app/package-lock.json": "89807e33818cfb851b57da65a5675e413e5593d01d6773c3a71a6cc6ea3d85d3",
+    "app/package.json": "67bcd48310581252defcb00840d1c1fc26b254f5656996d83d42e1db348442bf",
+    "app/scripts/install-macos-public-beta.ts": "4381f09eb872c1c7b38dd94503799313f4acc1b03a3cfbf6a774d977acaed86b",
+    "app/scripts/profile-closed-receipt.ts": "ecd8706b7962e41660255c4bd11eebdbdad193ccc945f1d8e442bb6cb8e64ea8",
+    "app/scripts/public-release-bootstrap.ts": "dbc6e4c5ecc221579615d7d89789d518b8e5684b64a4c4974ee2176a26521fa0",
+    "app/scripts/public-release-refresh.ts": "aec933aeeca248dbfe1f71952d2acdf8b315074f935ea1b5909b0ca038ce9938",
+    "app/scripts/serve.ts": "af013608f8ea37fec13f9691f34c9fe9795d5237f70cfb57d78093050cc98e3a",
+    "app/src/features/stories/feed-experience.tsx": "0c669d2dabddd4023472e1fce506da3f13308c1a0e27f5f9f90eba12c8001135",
+    "app/src/features/stories/story-detail-experience.tsx": "85234bb7b1c8093dd8827c27995921b7050306bbe993a67a403d052270d1f517",
+    "app/src/server/db/closed-receipt.ts": "099c571ec2034ad74d6a2ebed3ca501e0414e2c0c262ba0d24b7823bc6ece820",
+    "app/src/server/db/public-multimedia-synthetic.ts": "047037b73dae8c3ace781c5873b9eb2c606e966cb7bdffbbed83c3dfd11023a9",
+    "app/validator-manifests/legacy-profile-validator-v2.json": "f88c9d2ef08ed6e20e8a60df3af346a08e6c91012896a97e8aa0c09c7105e0f2",
+    "deployment/bootstrap/legacy/f1plus1-public-synthetic.sqlite": "24536392e0ca00524010ba70ff55f754cd892e3f3f4652eb69ae6a182deaf041",
+    "deployment/bootstrap/legacy/f1plus1.sqlite": "df82598ca2405ad2dfebd01503ac5615a10dcbd40807d308a87fa5c27fb519c0",
+    "deployment/bootstrap/legacy/manifest.json": "08d4334d36e61d656ddcb6d3f586d1fd539f887f9328f7dd416e32d58b23cb6e",
+    "deployment/macos/README.md": "0126b5f8fb34cbe8019a047640ceb71654ff1f5ffe89ac52e5c934cb5bb25332",
+    "docs/runbooks/F1+1-第一版快速上线部署方案-v0.1.md": "caafefb6d2b6301e8e958350bcf5b3ef67704a714a4bea077bc4f4ae26d01e66"
+  },
+  "verifiedOnBuildMac": {
+    "typecheck": "pass",
+    "productionBuild": "pass-with-one-nonblocking-turbopack-nft-warning",
+    "releaseBootstrap": "ready",
+    "healthStatus": 200,
+    "homeStatus": 200,
+    "detailStatus": 200,
+    "adminStatus": 404,
+    "portsClearAfterStop": [3000, 3001],
+    "sqliteSidecarsAfterStop": 0
+  },
+  "excluded": [
+    "admin-ui-and-admin-public-access",
+    "real-source-collection",
+    "real-ai-summary",
+    "automatic-publication",
+    "incomplete-design-integrity-successor"
+  ],
+  "unverified": [
+    "m1-node-24-installation",
+    "m1-fresh-clone-bootstrap-and-build",
+    "m1-launchd-runtime",
+    "public-tunnel-and-domain",
+    "china-mainland-public-access-quality",
+    "real-device-post-deployment-behavior"
+  ]
+}

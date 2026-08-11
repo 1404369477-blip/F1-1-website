@@ -121,7 +121,12 @@ const CLOSED_RECEIPTS = [
   { path: "app/.local/receipts/public-synthetic.closed.json", db: "app/.local/f1plus1-public-synthetic.sqlite", profile: "public-synthetic" }
 ] as const;
 const PUBLIC_DATA_RECEIPT = "app/.local/receipts/public-synthetic.data.closed.json";
-const CLOSED_VALIDATOR_SHA256 = "2a8c89ace30b1e9cac876adb0583ec47e43ce6d6806616a58fac7823ca586d83";
+const CLOSED_VALIDATOR_MARKERS = [
+  { path: "app/.local/validator-migrations/m3-shadow.validator-v2.json", profileId: "m3-shadow" },
+  { path: "app/.local/validator-migrations/public-synthetic.validator-v2.json", profileId: "public-synthetic" }
+] as const;
+const CLOSED_VALIDATOR_REVISION = "legacy-profile-validator-v2";
+const CLOSED_VALIDATOR_SHA256 = "712fe5d6e9d693eaf0d531b481253374d9c5a8b4d912ab4f05157700879f57f2";
 const LEGACY_RECEIPT_EXPECTATIONS = {
   "m3-shadow": {
     schemaVersion: "f1plus1-profile-closed-receipt-v1",
@@ -137,6 +142,7 @@ const LEGACY_RECEIPT_EXPECTATIONS = {
     fixtureManifestSha256: "d4da9fc24c792c0471bcd24c525a46dcef1e521b36a870fd111e7310243888b2",
     fixtureGraphSha256: "e7a8312c70a9a49922aedb3cfbeaa190db8f5dce8d4ab45db1570748fc329f17",
     artifactRevision: "m4-vs0-seed-enrichment-manifest-v0.3",
+    validatorRevision: CLOSED_VALIDATOR_REVISION,
     validatorArtifactSha256: CLOSED_VALIDATOR_SHA256,
     checkpoint: { busy: 0, log: 0, checkpointed: 0 }, walPresent: false, shmPresent: false, externalCalls: 0
   },
@@ -154,6 +160,7 @@ const LEGACY_RECEIPT_EXPECTATIONS = {
     fixtureManifestSha256: "3b296868dc0c0000fb94856b334ff7d1f698e3e80d4bb02e7062142dc1a0e554",
     fixtureGraphSha256: "4be9f7e868a8bf21551bdcdc05d6b0d027e1a0ea43fd16dd2c7ea2b2ff9ba526",
     artifactRevision: "public-demo-12-v0.4-manifest-v2",
+    validatorRevision: CLOSED_VALIDATOR_REVISION,
     validatorArtifactSha256: CLOSED_VALIDATOR_SHA256,
     checkpoint: { busy: 0, log: 0, checkpointed: 0 }, walPresent: false, shmPresent: false, externalCalls: 0
   }
@@ -170,6 +177,7 @@ const PUBLIC_DATA_RECEIPT_EXPECTATION = {
   profileLedgerSha256: "1f7719490a18a49842427907b53c3dbde5813709a2ad611f7cfaca891880caf1",
   generatorSha256: "34ecfa83fec1f89a22d877e554c4ce5c4d11c1bad6b7f09f123fea3ede1cb81a",
   validatorSha256: "058be83bdded7f5c60028f0a2e537c510e9386934284684fffb119d2e487360c",
+  receiptValidatorRevision: CLOSED_VALIDATOR_REVISION,
   receiptValidatorArtifactSha256: CLOSED_VALIDATOR_SHA256,
   externalCalls: 0
 } as const;
@@ -184,13 +192,7 @@ function record(value: unknown, code = "PUBLIC_MULTIMEDIA_FIXTURE_SCHEMA"): Json
 }
 
 function parseCanonicalFile(projectRoot: string, relativePath: string, expectedSha256: string): { value: JsonRecord; bytes: Buffer } {
-  const path = resolve(/* turbopackIgnore: true */ projectRoot, relativePath);
-  const stat = lstatSync(path);
-  const uid = process.getuid?.();
-  if (!stat.isFile() || stat.isSymbolicLink() || stat.nlink !== 1 || (stat.mode & 0o022) !== 0 || uid === undefined || stat.uid !== uid) {
-    throw new ConfigError("PUBLIC_MULTIMEDIA_FIXTURE_PATH", "fixture artifact is not an owner-controlled regular file");
-  }
-  const bytes = readFileSync(/* turbopackIgnore: true */ path);
+  const bytes = secureReadProjectFile(projectRoot, relativePath);
   if (sha256(bytes) !== expectedSha256) throw new ConfigError("PUBLIC_MULTIMEDIA_FIXTURE_DRIFT", "fixture artifact hash changed");
   let value: JsonRecord;
   try {
@@ -266,6 +268,11 @@ function secureReadProjectFile(projectRoot: string, relativePath: string): Buffe
   if (rel === "" || rel === ".." || rel.startsWith(`..${sep}`) || isAbsolute(rel)) {
     throw new ConfigError("RECEIPT_PATH", "legacy receipt artifact escaped the project root");
   }
+  const rootStat = lstatSync(root);
+  const uid = process.getuid?.();
+  if (!rootStat.isDirectory() || rootStat.isSymbolicLink() || uid === undefined || rootStat.uid !== uid || (rootStat.mode & 0o022) !== 0) {
+    throw new ConfigError("RECEIPT_PATH", "project root is not an owner-controlled real directory");
+  }
   let current = root;
   for (const part of rel.split(sep)) {
     current = resolve(/* turbopackIgnore: true */ current, part);
@@ -273,7 +280,6 @@ function secureReadProjectFile(projectRoot: string, relativePath: string): Buffe
     if (component.isSymbolicLink()) throw new ConfigError("RECEIPT_PATH", "legacy receipt artifact path contains a symlink");
   }
   const before = lstatSync(path);
-  const uid = process.getuid?.();
   if (!before.isFile() || before.nlink !== 1 || uid === undefined || before.uid !== uid || (before.mode & 0o022) !== 0) {
     throw new ConfigError("RECEIPT_PATH", "legacy receipt artifact is not an owner-controlled regular file");
   }
@@ -328,6 +334,27 @@ function verifyReceiptEnvelope(bytes: Buffer, expected: JsonRecord): JsonRecord 
   return receipt;
 }
 
+function verifyValidatorMarker(bytes: Buffer, profileId: string): void {
+  let marker: JsonRecord;
+  try { marker = record(JSON.parse(bytes.toString("utf8")), "RECEIPT_TAMPER"); }
+  catch { throw new ConfigError("RECEIPT_TAMPER", "validator marker is not valid JSON"); }
+  if (`${canonicalJson(marker)}\n` !== bytes.toString("utf8")) throw new ConfigError("RECEIPT_TAMPER", "validator marker bytes are not canonical");
+  const claimed = marker.receiptSha256;
+  const core = { ...marker };
+  delete core.receiptSha256;
+  if (
+    typeof claimed !== "string" || sha256(canonicalJson(core)) !== claimed ||
+    canonicalJson(Object.keys(marker).sort()) !== canonicalJson([
+      "externalCalls", "previousValidatorArtifactSha256", "profileId", "receiptSha256", "schemaVersion",
+      "validatorArtifactSha256", "validatorRevision"
+    ]) ||
+    marker.schemaVersion !== "f1plus1-validator-migration-marker-v1" || marker.profileId !== profileId ||
+    marker.previousValidatorArtifactSha256 !== "2a8c89ace30b1e9cac876adb0583ec47e43ce6d6806616a58fac7823ca586d83" ||
+    marker.validatorRevision !== CLOSED_VALIDATOR_REVISION || marker.validatorArtifactSha256 !== CLOSED_VALIDATOR_SHA256 ||
+    marker.externalCalls !== 0
+  ) throw new ConfigError("RECEIPT_TAMPER", "validator marker binding changed");
+}
+
 export function assertLegacyClosedReceipts(projectRoot: string): void {
   for (const item of CLOSED_RECEIPTS) {
     const expected = LEGACY_RECEIPT_EXPECTATIONS[item.profile];
@@ -342,6 +369,9 @@ export function assertLegacyClosedReceipts(projectRoot: string): void {
     secureReadProjectFile(projectRoot, PUBLIC_DATA_RECEIPT),
     PUBLIC_DATA_RECEIPT_EXPECTATION as unknown as JsonRecord
   );
+  for (const marker of CLOSED_VALIDATOR_MARKERS) {
+    verifyValidatorMarker(secureReadProjectFile(projectRoot, marker.path), marker.profileId);
+  }
   const validatorArtifacts = ["app/src/server/db/closed-receipt.ts", "app/scripts/profile-closed-receipt.ts"].map((path) => ({
     path,
     sha256: sha256(secureReadProjectFile(projectRoot, path))

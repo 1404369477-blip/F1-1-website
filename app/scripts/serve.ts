@@ -70,14 +70,38 @@ function isPublicApiPath(url: string | undefined): boolean {
   return pathname === "/api/public/feed" || pathname.startsWith("/api/public/stories/");
 }
 
+function isAllowedPublicReleaseRequest(method: string | undefined, url: string | undefined): boolean {
+  if ((method !== "GET" && method !== "HEAD") || !url?.startsWith("/")) return false;
+  const pathname = new URL(url, "http://127.0.0.1").pathname;
+  return pathname === "/" ||
+    pathname === "/api/health" ||
+    pathname.startsWith("/stories/") ||
+    pathname.startsWith("/api/public/") ||
+    pathname.startsWith("/_next/static/");
+}
+
 function closeProxy(server: Server | undefined): void {
   if (!server?.listening) return;
   server.close();
   server.closeAllConnections();
 }
 
-function createFinalResponseProxy(): Server {
+function createFinalResponseProxy(restrictToPublicRelease: boolean): Server {
   return createServer((incoming, outgoing) => {
+    if (restrictToPublicRelease && !isAllowedPublicReleaseRequest(incoming.method, incoming.url)) {
+      outgoing.writeHead(404, {
+        "Cache-Control": "no-store",
+        "Content-Type": "application/problem+json; charset=utf-8",
+        "X-Content-Type-Options": "nosniff"
+      });
+      outgoing.end(JSON.stringify({
+        type: "about:blank",
+        title: "Not Found",
+        status: 404,
+        reasonCode: "PUBLIC_ROUTE_NOT_FOUND"
+      }));
+      return;
+    }
     const headers: OutgoingHttpHeaders = { ...incoming.headers, host: `${NEXT_HOSTNAME}:${NEXT_INTERNAL_PORT}` };
     delete headers.forwarded;
     delete headers["x-forwarded-for"];
@@ -175,7 +199,7 @@ async function runNextProcess(mode: ServeMode, profileLabel: ProfileLabel, start
         probing = false;
         if (concluded || !ready) return;
         startingProxy = true;
-        proxy = createFinalResponseProxy();
+        proxy = createFinalResponseProxy(mode === "start" && profileLabel === "public-multimedia-synthetic");
         proxy.once("error", () => {
           rejectWithReceipt("spawn", null, null);
           stopChild(child, "SIGTERM");

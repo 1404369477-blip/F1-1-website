@@ -69,6 +69,7 @@ type ClosedReceiptCore = {
   fixtureManifestSha256: string;
   fixtureGraphSha256: string;
   artifactRevision: string;
+  validatorRevision: typeof CLOSED_RECEIPT_VALIDATOR_REVISION;
   validatorArtifactSha256: string;
   checkpoint: { busy: 0; log: 0; checkpointed: 0 };
   walPresent: false;
@@ -90,6 +91,7 @@ type PublicDataReceiptCore = {
   profileLedgerSha256: string;
   generatorSha256: string;
   validatorSha256: string;
+  receiptValidatorRevision: typeof CLOSED_RECEIPT_VALIDATOR_REVISION;
   receiptValidatorArtifactSha256: string;
   externalCalls: 0;
   validatedAt: string;
@@ -108,16 +110,29 @@ export type ClosedReceiptOptions = {
   appRoot: string;
   projectRoot: string;
   now?: () => Date;
+  testOnlyReceiptSetCrashAt?: "after-first-install" | "after-all-installs" | "during-recovery";
 };
 
 const RECEIPT_DIRECTORY = "app/.local/receipts";
+const VALIDATOR_MARKER_DIRECTORY = "app/.local/validator-migrations";
 const M3_RECEIPT_PATH = `${RECEIPT_DIRECTORY}/m3-shadow.closed.json`;
 const PUBLIC_RECEIPT_PATH = `${RECEIPT_DIRECTORY}/public-synthetic.closed.json`;
 const PUBLIC_DATA_RECEIPT_PATH = `${RECEIPT_DIRECTORY}/public-synthetic.data.closed.json`;
+const M3_VALIDATOR_MARKER_PATH = `${VALIDATOR_MARKER_DIRECTORY}/m3-shadow.validator-v2.json`;
+const PUBLIC_VALIDATOR_MARKER_PATH = `${VALIDATOR_MARKER_DIRECTORY}/public-synthetic.validator-v2.json`;
 const M3_ARTIFACT_REVISION = "m4-vs0-seed-enrichment-manifest-v0.3";
 const PUBLIC_ARTIFACT_REVISION = "public-demo-12-v0.4-manifest-v2";
 const EXPECTED_SCHEMA_FINGERPRINT = "ad2f86e03d9aa8727fe7555729e65a18e4c3986a572ca88cb52cc96245afd23b";
-const RECEIPT_PATH_ALLOWLIST = new Set([M3_RECEIPT_PATH, PUBLIC_RECEIPT_PATH, PUBLIC_DATA_RECEIPT_PATH]);
+export const PREVIOUS_CLOSED_RECEIPT_VALIDATOR_SHA256 = "2a8c89ace30b1e9cac876adb0583ec47e43ce6d6806616a58fac7823ca586d83";
+export const CLOSED_RECEIPT_VALIDATOR_REVISION = "legacy-profile-validator-v2" as const;
+const CLOSED_RECEIPT_VALIDATOR_MANIFEST = "app/validator-manifests/legacy-profile-validator-v2.json";
+const RECEIPT_PATH_ALLOWLIST = new Set([
+  M3_RECEIPT_PATH,
+  PUBLIC_RECEIPT_PATH,
+  PUBLIC_DATA_RECEIPT_PATH,
+  M3_VALIDATOR_MARKER_PATH,
+  PUBLIC_VALIDATOR_MARKER_PATH
+]);
 const SHA256_PATTERN = /^[a-f0-9]{64}$/;
 const TIMESTAMP_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 const LOGICAL_TABLES = [
@@ -327,10 +342,11 @@ function artifactPins(profileId: ClosedProfileId): { fixtureManifestSha256: stri
     : { fixtureManifestSha256: PUBLIC_ROOT_HASHES.manifest, fixtureGraphSha256: PUBLIC_GRAPH_SHA256 };
 }
 
-function readValidatorArtifactSha256(): string {
+export function readValidatorArtifactSha256(): string {
   const modulePath = fileURLToPath(import.meta.url);
   const projectRoot = resolve(dirname(modulePath), "../../../..");
   const scriptPath = resolve(projectRoot, "app/scripts/profile-closed-receipt.ts");
+  const manifestPath = resolve(projectRoot, CLOSED_RECEIPT_VALIDATOR_MANIFEST);
   const expectedModulePath = resolve(projectRoot, "app/src/server/db/closed-receipt.ts");
   if (modulePath !== expectedModulePath) {
     throw new ConfigError("RECEIPT_VALIDATOR", "validator module is outside its canonical project path");
@@ -339,14 +355,36 @@ function readValidatorArtifactSha256(): string {
     path: relative(projectRoot, path).replaceAll(sep, "/"),
     sha256: secureArtifactSha256(path, projectRoot)
   }));
-  return sha256(canonicalJson(artifacts));
+  let manifest: Record<string, unknown>;
+  const manifestBytes = secureArtifactBytes(manifestPath, projectRoot).toString("utf8");
+  try {
+    const value: unknown = JSON.parse(manifestBytes);
+    if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("invalid manifest");
+    manifest = value as Record<string, unknown>;
+  } catch {
+    throw new ConfigError("RECEIPT_VALIDATOR", "validator manifest is not canonical JSON");
+  }
+  if (manifestBytes !== `${canonicalJson(manifest)}\n`) {
+    throw new ConfigError("RECEIPT_VALIDATOR", "validator manifest bytes are not canonical");
+  }
+  const root = sha256(canonicalJson(artifacts));
+  if (
+    canonicalJson(Object.keys(manifest).sort()) !== canonicalJson(["artifacts", "revision", "rootSha256"]) ||
+    manifest.revision !== CLOSED_RECEIPT_VALIDATOR_REVISION ||
+    canonicalJson(manifest.artifacts) !== canonicalJson(artifacts) ||
+    manifest.rootSha256 !== root ||
+    root === PREVIOUS_CLOSED_RECEIPT_VALIDATOR_SHA256
+  ) {
+    throw new ConfigError("RECEIPT_VALIDATOR", "validator manifest does not bind the frozen scoped artifacts");
+  }
+  return root;
 }
 
 function assertNoSymlinkComponents(path: string, root: string): void {
   if (!isInside(root, path)) throw new ConfigError("RECEIPT_VALIDATOR", "validator artifact escaped the project root");
   let current = root;
   const rootStat = lstatSync(root);
-  if (!rootStat.isDirectory() || rootStat.isSymbolicLink()) {
+  if (!rootStat.isDirectory() || rootStat.isSymbolicLink() || (rootStat.mode & 0o022) !== 0) {
     throw new ConfigError("RECEIPT_VALIDATOR", "project root is not a real directory");
   }
   assertCurrentOwner(rootStat.uid, "project root");
@@ -362,6 +400,10 @@ function assertNoSymlinkComponents(path: string, root: string): void {
 }
 
 export function secureArtifactSha256(path: string, projectRoot: string): string {
+  return sha256(secureArtifactBytes(path, projectRoot));
+}
+
+function secureArtifactBytes(path: string, projectRoot: string): Buffer {
   assertNoSymlinkComponents(path, projectRoot);
   const before = lstatSync(path);
   if (!before.isFile() || before.isSymbolicLink() || before.nlink !== 1 || (before.mode & 0o022) !== 0) {
@@ -383,7 +425,7 @@ export function secureArtifactSha256(path: string, projectRoot: string): string 
     ) {
       throw new ConfigError("RECEIPT_VALIDATOR", "validator artifact changed during secure hashing");
     }
-    return sha256(bytes);
+    return bytes;
   } finally {
     closeSync(descriptor);
   }
@@ -437,15 +479,121 @@ function verifyReceiptEnvelope(path: string, expectedSchema: string): Record<str
   return receipt;
 }
 
+type ValidatorMigrationMarkerCore = {
+  schemaVersion: "f1plus1-validator-migration-marker-v1";
+  profileId: ClosedProfileId;
+  previousValidatorArtifactSha256: typeof PREVIOUS_CLOSED_RECEIPT_VALIDATOR_SHA256;
+  validatorRevision: typeof CLOSED_RECEIPT_VALIDATOR_REVISION;
+  validatorArtifactSha256: string;
+  externalCalls: 0;
+};
+
+type ValidatorMigrationMarker = ValidatorMigrationMarkerCore & { receiptSha256: string };
+
+function validatorMarkerPath(profileId: ClosedProfileId): string {
+  return profileId === M3_PROFILE_ID ? M3_VALIDATOR_MARKER_PATH : PUBLIC_VALIDATOR_MARKER_PATH;
+}
+
+function buildValidatorMigrationMarker(profileId: ClosedProfileId, validatorArtifactSha256: string): ValidatorMigrationMarker {
+  return withReceiptHash({
+    schemaVersion: "f1plus1-validator-migration-marker-v1" as const,
+    profileId,
+    previousValidatorArtifactSha256: PREVIOUS_CLOSED_RECEIPT_VALIDATOR_SHA256,
+    validatorRevision: CLOSED_RECEIPT_VALIDATOR_REVISION,
+    validatorArtifactSha256,
+    externalCalls: 0 as const
+  });
+}
+
+function verifyValidatorMigrationMarker(path: string, profileId: ClosedProfileId): Record<string, unknown> | undefined {
+  if (!existsSync(path)) return undefined;
+  const marker = readJsonRecord(path);
+  const { receiptSha256, ...core } = marker;
+  if (
+    marker.schemaVersion !== "f1plus1-validator-migration-marker-v1" ||
+    marker.profileId !== profileId ||
+    marker.previousValidatorArtifactSha256 !== PREVIOUS_CLOSED_RECEIPT_VALIDATOR_SHA256 ||
+    marker.validatorRevision !== CLOSED_RECEIPT_VALIDATOR_REVISION ||
+    marker.externalCalls !== 0 ||
+    typeof marker.validatorArtifactSha256 !== "string" || !SHA256_PATTERN.test(marker.validatorArtifactSha256) ||
+    typeof receiptSha256 !== "string" || !SHA256_PATTERN.test(receiptSha256) ||
+    sha256(canonicalJson(core)) !== receiptSha256 ||
+    canonicalJson(Object.keys(marker).sort()) !== canonicalJson([
+      "externalCalls",
+      "previousValidatorArtifactSha256",
+      "profileId",
+      "receiptSha256",
+      "schemaVersion",
+      "validatorArtifactSha256",
+      "validatorRevision"
+    ])
+  ) {
+    throw new ConfigError("RECEIPT_TAMPER", "validator migration marker is invalid");
+  }
+  return marker;
+}
+
 function withoutVolatile(receipt: Record<string, unknown>): Record<string, unknown> {
   const { validatedAt: _validatedAt, receiptSha256: _receiptSha256, ...stable } = receipt;
   return stable;
 }
 
-function assertExistingReceiptMatches(existing: Record<string, unknown> | undefined, next: Record<string, unknown>): void {
+type ValidatorIdentityKeys = {
+  revision: "validatorRevision" | "receiptValidatorRevision";
+  root: "validatorArtifactSha256" | "receiptValidatorArtifactSha256";
+};
+
+const PROFILE_VALIDATOR_KEYS: ValidatorIdentityKeys = {
+  revision: "validatorRevision",
+  root: "validatorArtifactSha256"
+};
+const PUBLIC_DATA_VALIDATOR_KEYS: ValidatorIdentityKeys = {
+  revision: "receiptValidatorRevision",
+  root: "receiptValidatorArtifactSha256"
+};
+
+function withoutValidatorIdentity(
+  receipt: Record<string, unknown>,
+  keys: ValidatorIdentityKeys
+): Record<string, unknown> {
+  const stable = withoutVolatile(receipt);
+  delete stable[keys.revision];
+  delete stable[keys.root];
+  return stable;
+}
+
+function assertExistingReceiptMatches(
+  existing: Record<string, unknown> | undefined,
+  next: Record<string, unknown>,
+  keys: ValidatorIdentityKeys
+): void {
   if (!existing) return;
-  if (canonicalJson(withoutVolatile(existing)) !== canonicalJson(withoutVolatile(next))) {
+  if (canonicalJson(withoutVolatile(existing)) === canonicalJson(withoutVolatile(next))) return;
+  const exactLegacyMigration =
+    existing[keys.root] === PREVIOUS_CLOSED_RECEIPT_VALIDATOR_SHA256 &&
+    existing[keys.revision] === undefined &&
+    next[keys.revision] === CLOSED_RECEIPT_VALIDATOR_REVISION &&
+    typeof next[keys.root] === "string" &&
+    next[keys.root] !== PREVIOUS_CLOSED_RECEIPT_VALIDATOR_SHA256 &&
+    canonicalJson(withoutValidatorIdentity(existing, keys)) === canonicalJson(withoutValidatorIdentity(next, keys));
+  if (!exactLegacyMigration) {
     throw new ConfigError("RECEIPT_OLD_BYTE_DRIFT", "existing closed receipt no longer matches the validated profile");
+  }
+}
+
+function assertPublicReceiptSetIdentity(
+  profileReceipt: Record<string, unknown> | undefined,
+  dataReceipt: Record<string, unknown> | undefined
+): void {
+  if ((profileReceipt === undefined) !== (dataReceipt === undefined)) {
+    throw new ConfigError("RECEIPT_SET_DRIFT", "public receipt set is incomplete");
+  }
+  if (!profileReceipt || !dataReceipt) return;
+  if (
+    profileReceipt.validatorArtifactSha256 !== dataReceipt.receiptValidatorArtifactSha256 ||
+    profileReceipt.validatorRevision !== dataReceipt.receiptValidatorRevision
+  ) {
+    throw new ConfigError("RECEIPT_SET_DRIFT", "public receipt set validator identity is inconsistent");
   }
 }
 
@@ -465,6 +613,18 @@ function ensureReceiptDirectory(projectRoot: string): string {
   chmodSync(receiptDirectory, 0o700);
   assertPrivateDirectory(receiptDirectory, "receipt directory");
   return receiptDirectory;
+}
+
+function ensureValidatorMarkerDirectory(projectRoot: string): string {
+  const appLocal = resolve(projectRoot, "app/.local");
+  const markerDirectory = resolve(projectRoot, VALIDATOR_MARKER_DIRECTORY);
+  if (!isInside(appLocal, markerDirectory) || dirname(markerDirectory) !== appLocal) {
+    throw new ConfigError("RECEIPT_PATH", "validator marker directory escaped app/.local");
+  }
+  assertPrivateDirectory(appLocal, "app local directory");
+  if (!existsSync(markerDirectory)) mkdirSync(markerDirectory, { mode: 0o700 });
+  assertPrivateDirectory(markerDirectory, "validator marker directory");
+  return markerDirectory;
 }
 
 function directoryIdentity(path: string): { dev: number; ino: number } {
@@ -534,6 +694,304 @@ function atomicWriteReceipt(projectRoot: string, relativePath: string, receipt: 
   }
 }
 
+type ReceiptSetEntry = {
+  relativePath: string;
+  receipt: Record<string, unknown>;
+};
+
+function writePrivateTemp(directory: string, label: string, bytes: Buffer): string {
+  const path = join(directory, `.${label}.${randomBytes(8).toString("hex")}.tmp`);
+  const noFollow = (fsConstants as { O_NOFOLLOW?: number }).O_NOFOLLOW;
+  if (typeof noFollow !== "number") throw new ConfigError("RECEIPT_PATH", "O_NOFOLLOW is unavailable");
+  const descriptor = openSync(path, fsConstants.O_WRONLY | fsConstants.O_CREAT | fsConstants.O_EXCL | noFollow, 0o600);
+  try {
+    writeFileSync(descriptor, bytes);
+    fdatasyncSync(descriptor);
+  } finally {
+    closeSync(descriptor);
+  }
+  assertPrivateFile(path, "receipt transaction file");
+  return path;
+}
+
+function readPrivateFileBytes(path: string, label: string): Buffer {
+  assertPrivateFile(path, label);
+  const noFollow = (fsConstants as { O_NOFOLLOW?: number }).O_NOFOLLOW;
+  if (typeof noFollow !== "number") throw new ConfigError("RECEIPT_PATH", "O_NOFOLLOW is unavailable");
+  const descriptor = openSync(path, fsConstants.O_RDONLY | noFollow);
+  try {
+    const before = fstatSync(descriptor);
+    const bytes = readFileSync(descriptor);
+    const after = fstatSync(descriptor);
+    const pathAfter = lstatSync(path);
+    if (
+      before.dev !== after.dev || before.ino !== after.ino || before.size !== after.size ||
+      after.dev !== pathAfter.dev || after.ino !== pathAfter.ino || pathAfter.isSymbolicLink() ||
+      pathAfter.nlink !== 1 || (pathAfter.mode & 0o077) !== 0
+    ) {
+      throw new ConfigError("RECEIPT_PATH", `${label} changed during secure read`);
+    }
+    return bytes;
+  } finally {
+    closeSync(descriptor);
+  }
+}
+
+type ReceiptTransactionJournalEntry = {
+  index: number;
+  relativePath: string;
+  oldExists: boolean;
+  oldSha256: string | null;
+  candidateSha256: string;
+};
+
+function transactionDirectory(projectRoot: string, transactionName: string): string {
+  if (!/^[a-z0-9-]{3,48}$/.test(transactionName)) throw new ConfigError("RECEIPT_PATH", "invalid receipt transaction name");
+  return join(ensureReceiptDirectory(projectRoot), `.${transactionName}.transaction`);
+}
+
+function transactionFileName(index: number, kind: "candidate" | "rollback"): string {
+  return `${index}.${kind}`;
+}
+
+function writeNamedPrivateFile(directory: string, name: string, bytes: Buffer): string {
+  const target = join(directory, name);
+  if (existsSync(target)) throw new ConfigError("RECEIPT_SET_DRIFT", "receipt transaction file already exists");
+  const temporary = writePrivateTemp(directory, name, bytes);
+  renameSync(temporary, target);
+  chmodSync(target, 0o600);
+  assertPrivateFile(target, "receipt transaction file");
+  return target;
+}
+
+function readTransactionJournal(path: string, transactionName: string): ReceiptTransactionJournalEntry[] {
+  const journal = readJsonRecord(path);
+  const { receiptSha256, ...core } = journal;
+  if (
+    journal.schemaVersion !== "f1plus1-receipt-set-transaction-v1" ||
+    journal.transactionName !== transactionName ||
+    journal.externalCalls !== 0 ||
+    !Array.isArray(journal.entries) ||
+    typeof receiptSha256 !== "string" || !SHA256_PATTERN.test(receiptSha256) ||
+    sha256(canonicalJson(core)) !== receiptSha256 ||
+    canonicalJson(Object.keys(journal).sort()) !== canonicalJson([
+      "entries", "externalCalls", "receiptSha256", "schemaVersion", "transactionName"
+    ])
+  ) {
+    throw new ConfigError("RECEIPT_ROLLBACK", "receipt transaction journal is invalid");
+  }
+  const entries = journal.entries.map((value, index) => {
+    if (!value || typeof value !== "object" || Array.isArray(value)) {
+      throw new ConfigError("RECEIPT_ROLLBACK", "receipt transaction entry is invalid");
+    }
+    const entry = value as Record<string, unknown>;
+    if (
+      canonicalJson(Object.keys(entry).sort()) !== canonicalJson([
+        "candidateSha256", "index", "oldExists", "oldSha256", "relativePath"
+      ]) ||
+      entry.index !== index || typeof entry.relativePath !== "string" ||
+      typeof entry.oldExists !== "boolean" || typeof entry.candidateSha256 !== "string" ||
+      !SHA256_PATTERN.test(entry.candidateSha256) ||
+      (entry.oldExists ? typeof entry.oldSha256 !== "string" || !SHA256_PATTERN.test(entry.oldSha256) : entry.oldSha256 !== null)
+    ) {
+      throw new ConfigError("RECEIPT_ROLLBACK", "receipt transaction entry fields are invalid");
+    }
+    assertRelativePath(entry.relativePath);
+    return entry as unknown as ReceiptTransactionJournalEntry;
+  });
+  if (entries.length < 2 || new Set(entries.map((entry) => entry.relativePath)).size !== entries.length) {
+    throw new ConfigError("RECEIPT_ROLLBACK", "receipt transaction set is incomplete or duplicated");
+  }
+  return entries;
+}
+
+function removeTransactionDirectory(directory: string, entries: readonly ReceiptTransactionJournalEntry[]): void {
+  const allowed = new Set(["journal.json"]);
+  for (const entry of entries) {
+    allowed.add(transactionFileName(entry.index, "candidate"));
+    allowed.add(transactionFileName(entry.index, "rollback"));
+  }
+  for (const name of readdirSync(directory)) {
+    if (!allowed.has(name)) throw new ConfigError("RECEIPT_ROLLBACK", "receipt transaction contains an unknown file");
+    const path = join(directory, name);
+    assertPrivateFile(path, "receipt transaction cleanup file");
+    unlinkSync(path);
+  }
+  rmdirSync(directory);
+  syncDirectory(dirname(directory));
+}
+
+function recoverReceiptSetTransaction(projectRoot: string, transactionName: string, crashDuringRecovery = false): void {
+  const directory = transactionDirectory(projectRoot, transactionName);
+  if (!existsSync(directory)) return;
+  assertPrivateDirectory(directory, "receipt transaction directory");
+  const journalPath = join(directory, "journal.json");
+  if (!existsSync(journalPath)) {
+    const entries = readdirSync(directory);
+    for (const name of entries) {
+      if (
+        !/^\d+\.(?:candidate|rollback)$/.test(name) &&
+        !/^\.\d+\.(?:candidate|rollback)\.[a-f0-9]{16}\.tmp$/.test(name) &&
+        !/^\.journal\.json\.[a-f0-9]{16}\.tmp$/.test(name)
+      ) {
+        throw new ConfigError("RECEIPT_ROLLBACK", "uncommitted receipt transaction contains an unknown file");
+      }
+      const path = join(directory, name);
+      assertPrivateFile(path, "uncommitted receipt transaction file");
+      unlinkSync(path);
+    }
+    rmdirSync(directory);
+    syncDirectory(dirname(directory));
+    return;
+  }
+  const entries = readTransactionJournal(journalPath, transactionName);
+  const allowedTargetDirectories = new Set([
+    ensureReceiptDirectory(projectRoot),
+    ensureValidatorMarkerDirectory(projectRoot)
+  ]);
+  let restoredEntries = 0;
+  for (const entry of [...entries].reverse()) {
+    const target = resolve(projectRoot, entry.relativePath);
+    if (!allowedTargetDirectories.has(dirname(target))) {
+      throw new ConfigError("RECEIPT_ROLLBACK", "receipt transaction target directory is not allowlisted");
+    }
+    const rollback = join(directory, transactionFileName(entry.index, "rollback"));
+    if (entry.oldExists) {
+      if (existsSync(target)) {
+        const currentSha256 = sha256(readPrivateFileBytes(target, "receipt rollback target"));
+        if (currentSha256 !== entry.oldSha256 && currentSha256 !== entry.candidateSha256) {
+          throw new ConfigError("RECEIPT_ROLLBACK", "receipt rollback target has a third-state hash");
+        }
+      }
+      if (existsSync(rollback)) {
+        const rollbackBytes = readPrivateFileBytes(rollback, "receipt rollback file");
+        if (sha256(rollbackBytes) !== entry.oldSha256) {
+          throw new ConfigError("RECEIPT_ROLLBACK", "receipt rollback bytes changed");
+        }
+        renameSync(rollback, target);
+        chmodSync(target, 0o600);
+      }
+      if (!existsSync(target) || sha256(readPrivateFileBytes(target, "restored receipt")) !== entry.oldSha256) {
+        throw new ConfigError("RECEIPT_ROLLBACK", "receipt transaction cannot restore exact old bytes");
+      }
+    } else if (existsSync(target)) {
+      const targetBytes = readPrivateFileBytes(target, "new receipt rollback target");
+      if (sha256(targetBytes) !== entry.candidateSha256) {
+        throw new ConfigError("RECEIPT_ROLLBACK", "new receipt rollback target is not the staged candidate");
+      }
+      unlinkSync(target);
+    }
+    restoredEntries += 1;
+    if (crashDuringRecovery && restoredEntries === 1) {
+      process.kill(process.pid, "SIGKILL");
+      throw new ConfigError("RECEIPT_SET_TEST_CRASH", "receipt recovery process interruption did not terminate");
+    }
+  }
+  for (const targetDirectory of allowedTargetDirectories) syncDirectory(targetDirectory);
+  removeTransactionDirectory(directory, entries);
+}
+
+function atomicWriteReceiptSet(
+  projectRoot: string,
+  transactionName: string,
+  entries: readonly ReceiptSetEntry[],
+  crashAt?: ClosedReceiptOptions["testOnlyReceiptSetCrashAt"]
+): void {
+  recoverReceiptSetTransaction(projectRoot, transactionName);
+  const receiptDirectory = ensureReceiptDirectory(projectRoot);
+  const markerDirectory = ensureValidatorMarkerDirectory(projectRoot);
+  const allowedTargetDirectories = new Set([receiptDirectory, markerDirectory]);
+  const localDirectory = dirname(receiptDirectory);
+  const directoryBefore = directoryIdentity(receiptDirectory);
+  const localBefore = directoryIdentity(localDirectory);
+  const directory = transactionDirectory(projectRoot, transactionName);
+  if (existsSync(directory)) throw new ConfigError("RECEIPT_SET_DRIFT", "receipt transaction was not fully recovered");
+  const transaction = entries.map((entry, index) => {
+    assertRelativePath(entry.relativePath);
+    const target = resolve(projectRoot, entry.relativePath);
+    if (!allowedTargetDirectories.has(dirname(target))) throw new ConfigError("RECEIPT_PATH", "receipt target escaped the allowlisted directories");
+    const oldBytes = existsSync(target) ? readPrivateFileBytes(target, "existing receipt") : undefined;
+    const candidateBytes = Buffer.from(`${canonicalJson(entry.receipt)}\n`, "utf8");
+    return { ...entry, index, target, oldBytes, candidateBytes };
+  });
+  if (transaction.length < 2 || new Set(transaction.map((item) => item.target)).size !== transaction.length) {
+    throw new ConfigError("RECEIPT_PATH", "receipt set is incomplete or contains duplicate targets");
+  }
+  mkdirSync(directory, { mode: 0o700 });
+  assertPrivateDirectory(directory, "receipt transaction directory");
+
+  try {
+    const journalEntries: ReceiptTransactionJournalEntry[] = transaction.map((item) => {
+      writeNamedPrivateFile(directory, transactionFileName(item.index, "candidate"), item.candidateBytes);
+      if (item.oldBytes) writeNamedPrivateFile(directory, transactionFileName(item.index, "rollback"), item.oldBytes);
+      return {
+        index: item.index,
+        relativePath: item.relativePath,
+        oldExists: item.oldBytes !== undefined,
+        oldSha256: item.oldBytes ? sha256(item.oldBytes) : null,
+        candidateSha256: sha256(item.candidateBytes)
+      };
+    });
+    const journalCore = {
+      schemaVersion: "f1plus1-receipt-set-transaction-v1" as const,
+      transactionName,
+      entries: journalEntries,
+      externalCalls: 0 as const
+    };
+    writeNamedPrivateFile(
+      directory,
+      "journal.json",
+      Buffer.from(`${canonicalJson({ ...journalCore, receiptSha256: sha256(canonicalJson(journalCore)) })}\n`, "utf8")
+    );
+    syncDirectory(directory);
+    for (const targetDirectory of allowedTargetDirectories) syncDirectory(targetDirectory);
+
+    for (const item of transaction) {
+      if (item.oldBytes) {
+        if (!readPrivateFileBytes(item.target, "existing receipt before set commit").equals(item.oldBytes)) {
+          throw new ConfigError("RECEIPT_SET_DRIFT", "receipt set changed before commit");
+        }
+      } else if (existsSync(item.target)) {
+        throw new ConfigError("RECEIPT_SET_DRIFT", "receipt set target appeared before commit");
+      }
+      renameSync(join(directory, transactionFileName(item.index, "candidate")), item.target);
+      chmodSync(item.target, 0o600);
+      assertPrivateFile(item.target, "installed receipt");
+      if (item.index === 0 && crashAt === "after-first-install") {
+        process.kill(process.pid, "SIGKILL");
+        throw new ConfigError("RECEIPT_SET_TEST_CRASH", "receipt set process interruption did not terminate");
+      }
+    }
+    if (crashAt === "after-all-installs") {
+      process.kill(process.pid, "SIGKILL");
+      throw new ConfigError("RECEIPT_SET_TEST_CRASH", "receipt set process interruption did not terminate");
+    }
+    for (const targetDirectory of allowedTargetDirectories) syncDirectory(targetDirectory);
+    for (const item of transaction) {
+      if (!readPrivateFileBytes(item.target, "installed receipt").equals(item.candidateBytes)) {
+        throw new ConfigError("RECEIPT_TAMPER", "installed receipt bytes changed");
+      }
+    }
+    removeTransactionDirectory(directory, journalEntries);
+  } catch (error) {
+    try {
+      recoverReceiptSetTransaction(projectRoot, transactionName);
+    } catch {
+      throw new ConfigError("RECEIPT_ROLLBACK", "receipt set rollback could not prove exact old bytes");
+    }
+    throw error;
+  }
+
+  const directoryAfter = directoryIdentity(receiptDirectory);
+  const localAfter = directoryIdentity(localDirectory);
+  if (
+    directoryBefore.dev !== directoryAfter.dev || directoryBefore.ino !== directoryAfter.ino ||
+    localBefore.dev !== localAfter.dev || localBefore.ino !== localAfter.ino
+  ) {
+    throw new ConfigError("RECEIPT_PATH", "receipt directory changed during set commit");
+  }
+}
+
 function secureFileSha256(path: string, label: string): string {
   assertPrivateFile(path, label);
   const noFollow = (fsConstants as { O_NOFOLLOW?: number }).O_NOFOLLOW;
@@ -598,7 +1056,7 @@ function validateOpenProfile(
   profileId: ClosedProfileId,
   config: AppConfig,
   options: ClosedReceiptOptions
-): Omit<ClosedReceiptCore, "closedDbSha256" | "validatorArtifactSha256" | "validatedAt" | "walPresent" | "shmPresent" | "externalCalls"> {
+): Omit<ClosedReceiptCore, "closedDbSha256" | "validatorRevision" | "validatorArtifactSha256" | "validatedAt" | "walPresent" | "shmPresent" | "externalCalls"> {
   assertSingleDatabase(database);
   assertMigrationState(database, resolve(options.appRoot, "migrations"), 3);
   if (profileId === M3_PROFILE_ID) {
@@ -788,6 +1246,7 @@ function buildDataReceipt(validatedAt: string, validatorArtifactSha256: string):
     profileLedgerSha256: PUBLIC_ROOT_HASHES.ledger,
     generatorSha256: PUBLIC_ROOT_HASHES.generator,
     validatorSha256: PUBLIC_ROOT_HASHES.validator,
+    receiptValidatorRevision: CLOSED_RECEIPT_VALIDATOR_REVISION,
     receiptValidatorArtifactSha256: validatorArtifactSha256,
     externalCalls: 0 as const,
     validatedAt
@@ -801,6 +1260,8 @@ export function generateClosedReceipt(profileId: ClosedProfileId, options: Close
   if (appRoot !== resolve(projectRoot, "app")) throw new ConfigError("RECEIPT_PATH", "app root is not the canonical project app directory");
   const normalizedOptions = { ...options, appRoot, projectRoot };
   prepareLocalRoot(appRoot);
+  const transactionName = profileId === M3_PROFILE_ID ? "m3-receipt-v2" : "public-receipt-v2";
+  recoverReceiptSetTransaction(projectRoot, transactionName, options.testOnlyReceiptSetCrashAt === "during-recovery");
   const config = profileConfig(profileId, normalizedOptions);
   if (profileId === M3_PROFILE_ID) {
     recoverM3Install(resolve(appRoot, ".local"), resolve(appRoot, M3_SQLITE_PATH));
@@ -808,6 +1269,11 @@ export function generateClosedReceipt(profileId: ClosedProfileId, options: Close
   const receiptPath = profileReceiptPath(profileId);
   const receiptAbsolutePath = resolve(projectRoot, receiptPath);
   const existingReceipt = verifyReceiptEnvelope(receiptAbsolutePath, "f1plus1-profile-closed-receipt-v1");
+  const markerPath = validatorMarkerPath(profileId);
+  const existingMarker = verifyValidatorMigrationMarker(resolve(projectRoot, markerPath), profileId);
+  if (existingMarker && !existingReceipt) {
+    throw new ConfigError("RECEIPT_SET_DRIFT", "validator marker exists without its closed receipt");
+  }
   if (existingReceipt) {
     if (existingReceipt.profileId !== profileId || existingReceipt.dbRelativePath !== profileDbRelativePath(profileId)) {
       throw new ConfigError("RECEIPT_TAMPER", "existing receipt is bound to another profile");
@@ -817,12 +1283,23 @@ export function generateClosedReceipt(profileId: ClosedProfileId, options: Close
     if (existingReceipt.closedDbSha256 !== secureFileSha256(dbPath, "closed profile database")) {
       throw new ConfigError("RECEIPT_OLD_BYTE_DRIFT", "closed database bytes changed after the previous receipt");
     }
+    if (existingMarker && existingReceipt.validatorArtifactSha256 === PREVIOUS_CLOSED_RECEIPT_VALIDATOR_SHA256) {
+      throw new ConfigError("RECEIPT_MIGRATION_REPLAY", "legacy validator receipt replay is forbidden after migration");
+    }
+    if (!existingMarker && existingReceipt.validatorRevision === CLOSED_RECEIPT_VALIDATOR_REVISION) {
+      throw new ConfigError("RECEIPT_SET_DRIFT", "scoped validator receipt is missing its migration marker");
+    }
   }
   const existingDataReceipt = profileId === PUBLIC_PROFILE_ID
     ? verifyReceiptEnvelope(resolve(projectRoot, PUBLIC_DATA_RECEIPT_PATH), "f1plus1-public-data-closed-receipt-v1")
     : undefined;
+  if (profileId === PUBLIC_PROFILE_ID) assertPublicReceiptSetIdentity(existingReceipt, existingDataReceipt);
 
   const validatorArtifactSha256 = readValidatorArtifactSha256();
+  if (existingMarker && existingMarker.validatorArtifactSha256 !== validatorArtifactSha256) {
+    throw new ConfigError("RECEIPT_VALIDATOR", "validator migration marker does not match the frozen artifact root");
+  }
+  const validatorMarker = existingMarker ?? buildValidatorMigrationMarker(profileId, validatorArtifactSha256);
   const beforeDbPath = resolve(appRoot, profileId === M3_PROFILE_ID ? M3_SQLITE_PATH : PUBLIC_SQLITE_PATH);
   const beforeDbSha256 = existsSync(beforeDbPath) ? secureFileSha256(beforeDbPath, "profile database before validation") : undefined;
   const validated = profileId === M3_PROFILE_ID
@@ -837,27 +1314,43 @@ export function generateClosedReceipt(profileId: ClosedProfileId, options: Close
   const dbReceipt = withReceiptHash({
     ...validated.core,
     closedDbSha256,
+    validatorRevision: CLOSED_RECEIPT_VALIDATOR_REVISION,
     validatorArtifactSha256,
     walPresent: false as const,
     shmPresent: false as const,
     externalCalls: 0 as const,
     validatedAt
   });
-  assertExistingReceiptMatches(existingReceipt, dbReceipt);
+  assertExistingReceiptMatches(existingReceipt, dbReceipt, PROFILE_VALIDATOR_KEYS);
 
   let dataReceipt: PublicDataReceipt | undefined;
   if (profileId === PUBLIC_PROFILE_ID) {
     dataReceipt = buildDataReceipt(validatedAt, validatorArtifactSha256);
-    assertExistingReceiptMatches(existingDataReceipt, dataReceipt);
+    assertExistingReceiptMatches(existingDataReceipt, dataReceipt, PUBLIC_DATA_VALIDATOR_KEYS);
   }
 
-  atomicWriteReceipt(projectRoot, receiptPath, dbReceipt);
-  if (dataReceipt) atomicWriteReceipt(projectRoot, PUBLIC_DATA_RECEIPT_PATH, dataReceipt);
+  if (dataReceipt) {
+    const publicEntries: ReceiptSetEntry[] = [
+      { relativePath: receiptPath, receipt: dbReceipt },
+      { relativePath: PUBLIC_DATA_RECEIPT_PATH, receipt: dataReceipt }
+    ];
+    if (!existingMarker) publicEntries.push({ relativePath: markerPath, receipt: validatorMarker });
+    atomicWriteReceiptSet(projectRoot, transactionName, publicEntries, options.testOnlyReceiptSetCrashAt);
+  } else if (!existingMarker) {
+    atomicWriteReceiptSet(projectRoot, transactionName, [
+      { relativePath: receiptPath, receipt: dbReceipt },
+      { relativePath: markerPath, receipt: validatorMarker }
+    ], options.testOnlyReceiptSetCrashAt);
+  } else {
+    atomicWriteReceipt(projectRoot, receiptPath, dbReceipt);
+  }
   return { profileId, dbReceipt, dataReceipt, restoredM3: validated.restored };
 }
 
 export const CLOSED_RECEIPT_PATHS = Object.freeze({
   m3: M3_RECEIPT_PATH,
   public: PUBLIC_RECEIPT_PATH,
-  publicData: PUBLIC_DATA_RECEIPT_PATH
+  publicData: PUBLIC_DATA_RECEIPT_PATH,
+  m3ValidatorMarker: M3_VALIDATOR_MARKER_PATH,
+  publicValidatorMarker: PUBLIC_VALIDATOR_MARKER_PATH
 });

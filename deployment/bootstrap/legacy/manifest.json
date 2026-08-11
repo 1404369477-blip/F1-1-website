@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "f1plus1-public-beta-bootstrap-v1",
+  "releaseId": "f1plus1-public-beta-v0.1",
+  "syntheticOnly": true,
+  "externalCalls": 0,
+  "assets": [
+    {
+      "profileId": "m3-shadow",
+      "path": "deployment/bootstrap/legacy/f1plus1.sqlite",
+      "target": "app/.local/f1plus1.sqlite",
+      "size": 290816,
+      "sha256": "df82598ca2405ad2dfebd01503ac5615a10dcbd40807d308a87fa5c27fb519c0"
+    },
+    {
+      "profileId": "public-synthetic",
+      "path": "deployment/bootstrap/legacy/f1plus1-public-synthetic.sqlite",
+      "target": "app/.local/f1plus1-public-synthetic.sqlite",
+      "size": 507904,
+      "sha256": "24536392e0ca00524010ba70ff55f754cd892e3f3f4652eb69ae6a182deaf041"
+    }
+  ],
+  "operationalRule": "Install only into an owner-controlled app/.local directory, refresh both legacy receipts before startup and every 12 hours, and never expose these SQLite files through HTTP."
+}

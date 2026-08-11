@@ -12,25 +12,34 @@ import {
   renameSync,
   rmSync,
   symlinkSync,
+  unlinkSync,
   writeFileSync
 } from "node:fs";
+import { createHash } from "node:crypto";
+import { spawnSync } from "node:child_process";
 import { tmpdir } from "node:os";
 import { basename, dirname, join, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 import { afterEach, describe, expect, it } from "vitest";
 
-import { loadAppConfig, type EnvRecord } from "../server/config/env";
+import { ConfigError, loadAppConfig, type EnvRecord } from "../server/config/env";
 import {
+  CLOSED_RECEIPT_VALIDATOR_REVISION,
   CLOSED_RECEIPT_PATHS,
+  PREVIOUS_CLOSED_RECEIPT_VALIDATOR_SHA256,
   generateClosedReceipt,
+  readValidatorArtifactSha256,
   secureArtifactSha256,
   type ClosedProfileReceipt,
   type PublicDataReceipt
 } from "../server/db/closed-receipt";
 import { closeDatabase, migrateDatabase, openSafeDatabase } from "../server/db/database";
 import { PUBLIC_GRAPH_SHA256, PUBLIC_ROOT_HASHES, seedPublicSyntheticFixture } from "../server/db/public-synthetic";
-import { M3_PROFILE_COUNTS, PUBLIC_PROFILE_COUNTS } from "../server/db/profile";
+import { M3_PROFILE_COUNTS, PUBLIC_PROFILE_COUNTS, canonicalJson } from "../server/db/profile";
+import { assertLegacyClosedReceipts } from "../server/db/public-multimedia-synthetic";
+import { runReceiptIntegrityBoundary, safeReasonCode } from "../server/security/cli";
+import { redactLogEvent } from "../server/security/log";
 
 const canonicalAppRoot = resolve(fileURLToPath(new URL(".", import.meta.url)), "../..");
 const canonicalProjectRoot = resolve(canonicalAppRoot, "..");
@@ -62,6 +71,14 @@ function preparePinnedWorkspace(roots: { appRoot: string; projectRoot: string })
   copyPinnedFile(
     resolve(canonicalAppRoot, "scripts/profile-closed-receipt.ts"),
     resolve(roots.appRoot, "scripts/profile-closed-receipt.ts")
+  );
+  copyPinnedFile(
+    resolve(canonicalAppRoot, "scripts/source-management-closed-receipt.ts"),
+    resolve(roots.appRoot, "scripts/source-management-closed-receipt.ts")
+  );
+  copyPinnedFile(
+    resolve(canonicalAppRoot, "src/server/db/closed-receipt.ts"),
+    resolve(roots.appRoot, "src/server/db/closed-receipt.ts")
   );
   copyPinnedFile(
     resolve(canonicalProjectRoot, "data/m3-base-shadow-import-v0/main-source-record-batch.json"),
@@ -124,6 +141,49 @@ function receiptPath(projectRoot: string, path: string): string {
   return resolve(projectRoot, path);
 }
 
+function receiptSha256(core: Record<string, unknown>): string {
+  return createHash("sha256").update(canonicalJson(core)).digest("hex");
+}
+
+function rewriteReceiptValidatorIdentity(
+  path: string,
+  rootKey: "validatorArtifactSha256" | "receiptValidatorArtifactSha256",
+  revisionKey: "validatorRevision" | "receiptValidatorRevision",
+  root = PREVIOUS_CLOSED_RECEIPT_VALIDATOR_SHA256,
+  mutate?: (core: Record<string, unknown>) => void
+): void {
+  const receipt = readJson<Record<string, unknown>>(path);
+  delete receipt.receiptSha256;
+  delete receipt[revisionKey];
+  receipt[rootKey] = root;
+  mutate?.(receipt);
+  writeFileSync(path, `${canonicalJson({ ...receipt, receiptSha256: receiptSha256(receipt) })}\n`, { mode: 0o600 });
+}
+
+function crashReceiptProcess(
+  roots: { appRoot: string; projectRoot: string },
+  profileId: "m3-shadow" | "public-synthetic",
+  crashAt: "after-first-install" | "after-all-installs" | "during-recovery"
+): void {
+  const moduleUrl = pathToFileURL(resolve(canonicalAppRoot, "src/server/db/closed-receipt.ts")).href;
+  const source = [
+    `import { generateClosedReceipt } from ${JSON.stringify(moduleUrl)};`,
+    `generateClosedReceipt(${JSON.stringify(profileId)}, ${JSON.stringify({
+      appRoot: roots.appRoot,
+      projectRoot: roots.projectRoot,
+      testOnlyReceiptSetCrashAt: crashAt
+    })});`
+  ].join("\n");
+  const result = spawnSync(process.execPath, [
+    "--experimental-strip-types",
+    "--input-type=module",
+    "--eval",
+    source
+  ], { cwd: canonicalAppRoot, encoding: "utf8" });
+  expect(result.status).toBeNull();
+  expect(result.signal).toBe("SIGKILL");
+}
+
 afterEach(() => {
   while (temporaryRoots.length > 0) rmSync(temporaryRoots.pop()!, { recursive: true, force: true });
 });
@@ -155,6 +215,8 @@ describe("profile-scoped closed receipts", () => {
     expect(firstPublic.dbReceipt.profileLedgerRootSha256).toBe(PUBLIC_ROOT_HASHES.ledger);
     expect(firstPublic.dataReceipt?.artifactRevision).toBe(firstPublic.dbReceipt.artifactRevision);
     expect(firstPublic.dataReceipt?.manifestSha256).toBe(PUBLIC_ROOT_HASHES.manifest);
+    expect(firstM3.dbReceipt.validatorRevision).toBe(CLOSED_RECEIPT_VALIDATOR_REVISION);
+    expect(firstPublic.dataReceipt?.receiptValidatorRevision).toBe(CLOSED_RECEIPT_VALIDATOR_REVISION);
     expect(existsSync(interruptedDirectory)).toBe(false);
 
     for (const [first, second] of [[firstM3.dbReceipt, secondM3.dbReceipt], [firstPublic.dbReceipt, secondPublic.dbReceipt]] as const) {
@@ -178,6 +240,7 @@ describe("profile-scoped closed receipts", () => {
       expect(stat.isFile() && !stat.isSymbolicLink() && stat.nlink === 1).toBe(true);
     }
     expect(lstatSync(resolve(roots.projectRoot, "app/.local/receipts")).mode & 0o777).toBe(0o700);
+    expect(lstatSync(resolve(roots.projectRoot, "app/.local/validator-migrations")).mode & 0o777).toBe(0o700);
     expect(lstatSync(resolve(roots.appRoot, ".local/f1plus1.sqlite")).mode & 0o777).toBe(0o600);
     for (const database of ["f1plus1.sqlite", "f1plus1-public-synthetic.sqlite"]) {
       expect(lstatSync(resolve(roots.appRoot, `.local/${database}`)).nlink).toBe(1);
@@ -188,6 +251,127 @@ describe("profile-scoped closed receipts", () => {
     const storedPublicData = readJson<PublicDataReceipt>(receiptPath(roots.projectRoot, CLOSED_RECEIPT_PATHS.publicData));
     expect(storedM3.validatedAt).toBe("2026-08-09T08:00:02.000Z");
     expect(storedPublicData.validatedAt).toBe("2026-08-09T08:00:03.000Z");
+  });
+
+  it("performs the one exact legacy-root migration and binds the refreshed set to the scoped validator", () => {
+    const roots = tempProject("f1plus1-closed-migration-");
+    preparePinnedWorkspace(roots);
+    createPublicDatabase(roots);
+    const now = new Date();
+    generateClosedReceipt("m3-shadow", { ...roots, now: () => now });
+    generateClosedReceipt("public-synthetic", { ...roots, now: () => now });
+
+    rewriteReceiptValidatorIdentity(receiptPath(roots.projectRoot, CLOSED_RECEIPT_PATHS.m3), "validatorArtifactSha256", "validatorRevision");
+    rewriteReceiptValidatorIdentity(receiptPath(roots.projectRoot, CLOSED_RECEIPT_PATHS.public), "validatorArtifactSha256", "validatorRevision");
+    rewriteReceiptValidatorIdentity(receiptPath(roots.projectRoot, CLOSED_RECEIPT_PATHS.publicData), "receiptValidatorArtifactSha256", "receiptValidatorRevision");
+    unlinkSync(receiptPath(roots.projectRoot, CLOSED_RECEIPT_PATHS.m3ValidatorMarker));
+    unlinkSync(receiptPath(roots.projectRoot, CLOSED_RECEIPT_PATHS.publicValidatorMarker));
+    const oldM3Bytes = readFileSync(receiptPath(roots.projectRoot, CLOSED_RECEIPT_PATHS.m3));
+    const oldPublicBytes = readFileSync(receiptPath(roots.projectRoot, CLOSED_RECEIPT_PATHS.public));
+    const oldPublicDataBytes = readFileSync(receiptPath(roots.projectRoot, CLOSED_RECEIPT_PATHS.publicData));
+
+    crashReceiptProcess(roots, "m3-shadow", "after-first-install");
+    expect(existsSync(resolve(roots.projectRoot, "app/.local/receipts/.m3-receipt-v2.transaction/journal.json"))).toBe(true);
+    const migratedM3 = generateClosedReceipt("m3-shadow", { ...roots, now: () => new Date(now.getTime() + 1_000) });
+    crashReceiptProcess(roots, "public-synthetic", "after-all-installs");
+    expect(existsSync(resolve(roots.projectRoot, "app/.local/receipts/.public-receipt-v2.transaction/journal.json"))).toBe(true);
+    const migratedPublic = generateClosedReceipt("public-synthetic", { ...roots, now: () => new Date(now.getTime() + 2_000) });
+    const validatorRoot = readValidatorArtifactSha256();
+    expect(validatorRoot).not.toBe(PREVIOUS_CLOSED_RECEIPT_VALIDATOR_SHA256);
+    expect(migratedM3.dbReceipt).toMatchObject({
+      validatorRevision: CLOSED_RECEIPT_VALIDATOR_REVISION,
+      validatorArtifactSha256: validatorRoot,
+      externalCalls: 0
+    });
+    expect(migratedPublic.dbReceipt.validatorArtifactSha256).toBe(validatorRoot);
+    expect(migratedPublic.dataReceipt).toMatchObject({
+      receiptValidatorRevision: CLOSED_RECEIPT_VALIDATOR_REVISION,
+      receiptValidatorArtifactSha256: validatorRoot,
+      externalCalls: 0
+    });
+    expect(() => assertLegacyClosedReceipts(roots.projectRoot))
+      .toThrow(/RECEIPT_TAMPER.*closed receipt binding changed/);
+
+    const migratedM3Bytes = readFileSync(receiptPath(roots.projectRoot, CLOSED_RECEIPT_PATHS.m3));
+    writeFileSync(receiptPath(roots.projectRoot, CLOSED_RECEIPT_PATHS.m3), oldM3Bytes, { mode: 0o600 });
+    expect(() => generateClosedReceipt("m3-shadow", { ...roots, now: () => new Date(now.getTime() + 3_000) }))
+      .toThrow(/RECEIPT_MIGRATION_REPLAY/);
+    expect(readFileSync(receiptPath(roots.projectRoot, CLOSED_RECEIPT_PATHS.m3))).toEqual(oldM3Bytes);
+    writeFileSync(receiptPath(roots.projectRoot, CLOSED_RECEIPT_PATHS.m3), migratedM3Bytes, { mode: 0o600 });
+
+    writeFileSync(receiptPath(roots.projectRoot, CLOSED_RECEIPT_PATHS.public), oldPublicBytes, { mode: 0o600 });
+    writeFileSync(receiptPath(roots.projectRoot, CLOSED_RECEIPT_PATHS.publicData), oldPublicDataBytes, { mode: 0o600 });
+    expect(() => generateClosedReceipt("public-synthetic", { ...roots, now: () => new Date(now.getTime() + 4_000) }))
+      .toThrow(/RECEIPT_MIGRATION_REPLAY/);
+    expect(readFileSync(receiptPath(roots.projectRoot, CLOSED_RECEIPT_PATHS.public))).toEqual(oldPublicBytes);
+    expect(readFileSync(receiptPath(roots.projectRoot, CLOSED_RECEIPT_PATHS.publicData))).toEqual(oldPublicDataBytes);
+  });
+
+  it("rejects an unknown old root with zero writes and restores both public receipts after a set failure", () => {
+    const roots = tempProject("f1plus1-closed-set-");
+    preparePinnedWorkspace(roots);
+    createPublicDatabase(roots);
+    const first = new Date();
+    generateClosedReceipt("public-synthetic", { ...roots, now: () => first });
+    const publicPath = receiptPath(roots.projectRoot, CLOSED_RECEIPT_PATHS.public);
+    const dataPath = receiptPath(roots.projectRoot, CLOSED_RECEIPT_PATHS.publicData);
+    const currentSetBytes = [readFileSync(publicPath), readFileSync(dataPath)];
+
+    rewriteReceiptValidatorIdentity(publicPath, "validatorArtifactSha256", "validatorRevision", "1".repeat(64));
+    rewriteReceiptValidatorIdentity(dataPath, "receiptValidatorArtifactSha256", "receiptValidatorRevision", "1".repeat(64));
+    const unknownRootBytes = [readFileSync(publicPath), readFileSync(dataPath)];
+    expect(() => generateClosedReceipt("public-synthetic", { ...roots, now: () => new Date(first.getTime() + 1_000) }))
+      .toThrow(/RECEIPT_OLD_BYTE_DRIFT/);
+    expect(readFileSync(publicPath)).toEqual(unknownRootBytes[0]);
+    expect(readFileSync(dataPath)).toEqual(unknownRootBytes[1]);
+
+    writeFileSync(publicPath, currentSetBytes[0], { mode: 0o600 });
+    writeFileSync(dataPath, currentSetBytes[1], { mode: 0o600 });
+    crashReceiptProcess(roots, "public-synthetic", "after-first-install");
+    expect(existsSync(resolve(roots.projectRoot, "app/.local/receipts/.public-receipt-v2.transaction/journal.json"))).toBe(true);
+    crashReceiptProcess(roots, "public-synthetic", "during-recovery");
+    expect(existsSync(resolve(roots.projectRoot, "app/.local/receipts/.public-receipt-v2.transaction/journal.json"))).toBe(true);
+    writeFileSync(publicPath, "third-state\n", { mode: 0o600 });
+    expect(() => generateClosedReceipt("public-synthetic", { ...roots, now: () => new Date(first.getTime() + 2_000) }))
+      .toThrow(/RECEIPT_ROLLBACK/);
+    expect(existsSync(resolve(roots.projectRoot, "app/.local/receipts/.public-receipt-v2.transaction/journal.json"))).toBe(true);
+    writeFileSync(publicPath, currentSetBytes[0], { mode: 0o600 });
+    const recovered = generateClosedReceipt("public-synthetic", {
+      ...roots,
+      now: () => new Date(first.getTime() + 3_000)
+    });
+    expect(recovered.dbReceipt.validatorRevision).toBe(CLOSED_RECEIPT_VALIDATOR_REVISION);
+    expect(existsSync(resolve(roots.projectRoot, "app/.local/receipts/.public-receipt-v2.transaction"))).toBe(false);
+    expect(readdirSync(resolve(roots.projectRoot, "app/.local/receipts")).some((entry) => entry.endsWith(".tmp"))).toBe(false);
+  });
+
+  it("keeps legacy and source-management entries separate and exposes only the coarse receipt reason", () => {
+    const legacyEntry = readFileSync(resolve(canonicalAppRoot, "scripts/profile-closed-receipt.ts"), "utf8");
+    const sourceEntry = readFileSync(resolve(canonicalAppRoot, "scripts/source-management-closed-receipt.ts"), "utf8");
+    const packageJson = readJson<{ scripts: Record<string, string> }>(resolve(canonicalAppRoot, "package.json"));
+    expect(legacyEntry).not.toContain("source-management");
+    expect(legacyEntry).not.toContain("generateSourceManagementClosedReceipt");
+    expect(sourceEntry).toContain("generateSourceManagementClosedReceipt");
+    expect(sourceEntry).toContain("SOURCE_MANAGEMENT_PROFILE_ID");
+    expect(packageJson.scripts["profile:closed-receipt"]).toContain("scripts/profile-closed-receipt.ts");
+    expect(packageJson.scripts["profile:source-management-closed-receipt"]).toContain("scripts/source-management-closed-receipt.ts");
+    const internal = new ConfigError("RECEIPT_OLD_BYTE_DRIFT", "/private/tmp/secret payload");
+    expect(safeReasonCode(internal)).toBe("RECEIPT_INTEGRITY");
+    let bounded: unknown;
+    try {
+      runReceiptIntegrityBoundary(() => {
+        throw new ConfigError("MIGRATION_DRIFT", "/private/tmp/migration.sql");
+      });
+    } catch (error) {
+      bounded = error;
+    }
+    expect(safeReasonCode(bounded)).toBe("RECEIPT_INTEGRITY");
+    expect(redactLogEvent({
+      event: "cli_failure",
+      status: "rejected",
+      reasonCode: safeReasonCode(internal),
+      externalCalls: 0
+    })).toEqual({ event: "cli_failure", status: "rejected", reasonCode: "RECEIPT_INTEGRITY", externalCalls: 0 });
   });
 
   it("rejects ATTACH, cross-profile bytes, symlinks, path escape, receipt tamper, and old-byte drift", () => {
@@ -224,7 +408,9 @@ describe("profile-scoped closed receipts", () => {
     const externalReceipts = resolve(roots.projectRoot, "external-receipts");
     mkdirSync(externalReceipts, { mode: 0o755 });
     const externalModeBefore = lstatSync(externalReceipts).mode & 0o777;
-    symlinkSync(externalReceipts, resolve(roots.appRoot, ".local/receipts"));
+    const temporaryReceiptDirectory = resolve(roots.appRoot, ".local/receipts");
+    rmSync(temporaryReceiptDirectory, { recursive: true, force: true });
+    symlinkSync(externalReceipts, temporaryReceiptDirectory);
     expect(() => generateClosedReceipt("m3-shadow", roots)).toThrow(/RECEIPT_PATH/);
     expect(lstatSync(externalReceipts).mode & 0o777).toBe(externalModeBefore);
     rmSync(resolve(roots.appRoot, ".local/receipts"));

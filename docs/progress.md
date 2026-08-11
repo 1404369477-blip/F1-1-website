@@ -5,6 +5,14 @@
 
 ---
 
+## 2026-08-11
+
+- 🚀 **用户已选择固定 M1 MacBook 作为第一版临时 beta 主机，部署必需缺口已在 release 分支关闭**：已创建 `codex/first-public-release`。只读预检确认 UU 远程中的目标设备在线、为 arm64，已安装 Git、Homebrew Node/npm 与 gh；现有 Node 为 22.23.1，目标部署必须换用项目固定 Node 24.18.0。新增两份可公开的纯 synthetic legacy SQLite bootstrap 资产、原子 0600 本地安装入口、legacy receipt 自举与每 12 小时刷新入口、M1 用户级 launchd plist 生成器；production proxy 对公开 profile 增加 GET/HEAD 路径 allowlist，Admin 和其他路径统一 404。新代码固定 Node24 typecheck PASS；唯一 production build PASS；最小真实 HTTP 为 health/home/detail=200、Admin=404，随后服务和 3000/3001 已清理。公网隧道/域名仍待确定，尚未宣称公网已上线。
+- ✅ **第一版公开站已形成最小 production 可部署候选，公网目标待确定**：`TASK-20260811-BB3641` 已在不重复 lint/typecheck/build/全量测试的前提下复用唯一 production build，完成首页、24 条双页 feed、分类筛选、详情 API、详情页 SSR 加载壳及真实缺失内容 404 的最小 HTTP 闭环；服务已停止，3000/3001 端口和运行期 SQLite sidecar 已清理，三份 canonical DB 与 `package-lock.json` 字节零漂移。放行范围仅为 `public-multimedia-synthetic` 公开只读站，内容仍为 synthetic；Admin API/页面、真实采集、自动发布及未完成的 390px 设计 successor 不进入本次候选。下一步只需确定独立云服务器或固定 M1 临时 beta 二选一，再按 `docs/runbooks/F1+1-第一版快速上线部署方案-v0.1.md` 执行公网部署、最小上线探针与可回滚发布。
+
+- ✅ **SOURCE-MGMT-001 本地 synthetic 后端最终安全出口已闭合并完成产品事实同步**：数据 `TASK-20260811-3D190C` 交付冻结机器 oracle；安全后继 `TASK-20260811-FAD506` 以唯一固定 Node24 harness 闭合 5/5 audit payload/event hash 与 operation 关联、两个 append-only trigger、logical content root、第二 profile owner 和三次有界 `BEGIN IMMEDIATE` contention，结论 `PASS / P0=0 / P1=0 / P2=0`，并由统筹 ACK。closed DB SHA=`ddf3778c…e939`、logical root=`7cae9bb8…e6a`、正式 DB handle=0、`externalCalls=0`、零临时残留。产品 `TASK-20260811-0345AC` 随后完成并 ACK `docs/spec.md` 与初版功能矩阵的事实同步：raw 后端/API 已完成，但 `SOURCE-MGMT-001` 总状态继续为 `P1-blocker`，剩余出口严格收敛为当前视觉确认、真实 `/admin/sources` 页面实现，以及同一页面候选的设计/测试/安全三路运行验收。
+- ⚠️ **当前 `/admin/sources` 四图自动恢复被执行环境阻断，改为直接交互 HTML 用户确认**：设计 `TASK-20260811-A32E0E` 的本地 Chrome 批次在首图前退出；测试后继 `TASK-20260811-E1DCF2` 复核固定 HTML SHA `0d73ea29…6d68` 与 Playwright/headless-shell 字节一致，但宿主拒绝 Seatbelt apply，唯一等价兜底又在页面创建前因 Chromium Mach rendezvous 权限拒绝以 SIGTRAP 退出。两次均未改候选、未复用旧 PNG、未建立产品缺陷；`A32E0E` 已由任务工具取代为 `E1DCF2`，`E1DCF2` 已按 `ENVIRONMENT_BLOCKED` 收口。当前不再重复同类渲染，用户可直接打开固定 [交互 HTML](../design/ui/F1+1-M5-admin-sources-preview-v0.1/index.html) 判断 Mac 表格+Drawer、iPhone 卡片+全屏详情及六操作入口；确认前不派真实页面编码。
+
 ## 2026-08-10
 
 - ⚠️ **SOURCE-MGMT-001 测试出口已闭合，最终安全出口仍被探针假阴性阻断**：测试 `TASK-20260810-92C716` 已以 `PASS / P0=0 / P1=0 / P2=0` 完成并由统筹 ACK；单次 Node24 进程内 harness 验证 closed DB 副本 integrity、59 baseline+1 `local_synthetic`、retired/stopped/disabled 与 session destroy 后401语义，结合 A3293F 同候选真实 HTTP 和 `http.ts` 静态映射关闭测试缺口，未重复 server/build/typecheck/全量。安全 `70EC0F` 先因 `cpSync.mode` 参数误用停止；最小后继 `AD6AD9` 已修正复制+chmod，但产品对0644副本正确返回 `DB_PATH` 并写前失败关闭，harness 只允许 `DB_PERMISSIONS`，再次形成 operator assertion P1，未建立产品缺陷。错误 basename、profile/ledger/audit 内容根和第二 writer 仍 `NOT_RUN`；正式 DB SHA=`ddf3778c…e939`、`externalCalls=0`、无服务/端口/临时残留。下一步只允许安全部以语义级 fail-closed allowlist 复用已验证弱权限结果，并单次执行剩余未运行出口；禁止重复 raw/session/CSRF/identity/no-egress 与完整 HTTP 链。
@@ -162,6 +170,9 @@
 ---
 
 <!-- 新进展加在这条线下方、上一条上方(倒序) -->
+
+- 🚧 **v0.2 公开页设计勘误已建立正式后继任务，统筹只读预审已落盘**：用户明确要求设计部复核 Kimi/frontend-design 审查并给出具体优化方案；`TASK-20260811-EE3F90` 已按 `user_confirmed` 入队，绑定审查报告 SHA `a4022a97…a487` 与冻结 HTML SHA `5a84bfb2…f6168cb1`，要求逐项核验 A1–F2、交付精确优化动作、隔离 successor 与 1440/1024/390×深浅六格。正式设计部窗口未归档，但线程写入接口没有送达派单，当前任务仍为 `queued`，不得写成已领取。统筹为减少等待建立[只读预审](collaboration/部门/统筹部/报告/2026-08-11-Kimi-frontend-design审查统筹只读预审.md)（SHA `f58aee1d…b29d8`），结论仅作补充证据：多数代码级发现成立，B2/E2 需反证修正；最小 integrity successor 应只闭合设计真值、44px 命中、错误文案/alt/meta 与本地媒体边界，不自动吸收 F1358A 中未获确认的审美变化。未修改冻结设计、App、Spec、accepted ADR 或发布视频。
+- 🔎 **v0.2 冻结设计 frontend-design 透镜深度审视完成（用户 2026-08-11 主会话直接委托，无正式 TASK，只读诊断）**：官方 `frontend-design` skill 已装用户级（`~/.claude/skills/`，不装进项目，沿用 taste-skill 处置先例）。以「路径+SHA-256 `5a84bf…`」为审视身份，证据为全量代码 + 5 张截图（dark/light × 1440/390 + `#open=r1` 展开态）+ CDP 实测（390×844@1x）。结论：方向与结构纪律获透镜正面确认（时间线即论点、结构即信息、聚焦灰度为唯一签名手势、AI-default 校准因简报冻结深色而合规）；发现按性质分组——A 制品与自有规范 5 处漂移（标题未用 Barlow Condensed、列宽 880/920、主图限高 360/255、缩略图 22/32、摘要截断已移除但文档未同步）、B 自设 44px 触控地板在触屏端被自家制品打破（缩略图 32×22、证据行 22px）、C 冻进制品的可见错误文案（kicker「7 条示例」实为 10 条、页脚占位声明与真实热链内容矛盾、alt 截断）、D 桌面触控板 wheel 劫持切图风险（back-swipe 冲突列入实机待验证）、E 真实内容暴露的设计缺口（同日分组缺失、提炼层级、相对时间无设计）、F meta/热链卫生项。**揭示时序张力：发布视频素材绑定当前 hash，C/F 类文案会被录进成片，建议统筹裁定「先勘误再录制」或「旧 hash 录制、勘误进下一版」**。本会话未改动冻结产物、未建 TASK；建议路由为设计部主导的「v0.2 勘误与裁定」TASK。证据：[审视报告](collaboration/部门/设计部/报告/2026-08-11-frontend-design透镜v0.2冻结设计深度审视.md)。
 
 - ⛔ **公开页筛选、真实两页分页、七状态与无障碍核心闭环已完成实现但验收证据 blocked**：开发任务 `TASK-20260809-F67080` 已接入 ACK 的 PAGE2 successor；本地 profile 为 24 条、两页各 12、四类各 6。对抗审查发现离线刷新会清空已加载列表，该 P1 已修复；当前 Node24 聚焦测试 19/19、lint、typecheck、build 均通过。六格与七态/page2/a11y 运行观察来自修复前候选，且 Chrome/Updater harness 记录了后台外部端点尝试、未保留精确网络收据，无法绑定为当前候选的 clean-room 证据。遵守“不追加视觉轮次、浏览器阻断立即回报”，任务保持 blocked，等待隔离浏览器对当前 source/build/data hash 做一次同候选复验。`DEV-MM-04`、真实媒体/provider/Base、Admin、发布、部署与其他外部能力继续关闭。证据：[开发报告](collaboration/部门/开发部/报告/2026-08-09-筛选分页七状态与无障碍核心闭环实现报告.md)。
 
