@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "部署候选代码和 runbook 落盘；冻结五文件 SHA 保持 2ec322...3538/747c3f...cd09/a4f076...86c1/edae42...c0c0/94cace...2de9；installer 只 prepare 不 load，plist 为900秒独立任务且环境闭合；stop/resume 顺序符合 stop_epoch 合同；manifest 字段齐全且自洽；typecheck、单次 plist lint、diff-check 各一次 PASS；0网络/0SSH/0部署；TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "用户2026-08-12明确允许直接SSH连接固定M1、接入真实采集并要求快速上线；公开内容仍保持人工审核。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T01:58+08:00",
+      "evidence": "用户2026-08-12明确允许直接SSH连接固定M1、接入真实采集并要求快速上线；公开内容仍保持人工审核。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "PLIST_RENDER_TEMP_ROOT_REJECTED",
+  "claimed_by": "开发部/internal-agent:rss_real",
+  "completion_class": "standard",
+  "confirmation": "该任务只形成部署候选，安全部代码门与部署门通过前不初始化M1生产DB、不执行真实请求、不加载900秒任务；后续由统筹单独授权的SSH部署任务完成受控运行。",
+  "created_at": "2026-08-12T01:58+08:00",
+  "department": "开发部",
+  "details": "在不触碰正在安全复审的 types.ts、transport.ts、repository.ts、rss-collect-once.ts、rss-real.test.ts 五个冻结输入的前提下，形成 M1 部署候选。新增最小必要脚本/模块：1) macOS arm64 RSS collector installer：固定 label com.f1plus1.rss-collector、RunAtLoad=true、StartInterval=900、无 KeepAlive，ProgramArguments 使用 /usr/bin/env -i、固定 HOME/TMPDIR/PATH、RSS_REAL_IO=true、固定 Node24 + --experimental-strip-types + scripts/rss-collect-once.ts；WorkingDirectory 为非 iCloud app root；日志与私有 DB 只在 app/.local；目录0700、plist/manifest/DB 0600，拒绝 symlink/hardlink，原子写；只生成 installed-not-loaded 收据，绝不自行 bootstrap。2) 精确 status|stop|resume 控制工具：stop 必须先在 SQLite IMMEDIATE 事务置 enabled=0 并 stop_epoch+1，再 bootout；resume 只在 plist/manifest/hash/权限匹配后置 enabled=1 并 bootstrap；status 只读。3) 部署 manifest 绑定 release commit/release hash、package-lock/fast-xml-parser、migration/schema/profile/DB path、collector/installer/control/plist SHA。4) 最短 M1 运行与回退 runbook。允许修改 package.json 的明确脚本；不得真实联网、不得 SSH/M1部署、不得加载本机LaunchAgent、不得修改公开 synthetic 数据。验证预算仅一次固定 Node24 typecheck、一次 deterministic plist render 到临时目录并用 plutil -lint、一次 git diff --check；不跑 Vitest/build/full suite。",
+  "domain_stage": "RSS-REAL-001 M1部署候选",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若需修改冻结采集核心或其测试，立即停止回统筹；若本机脚本误触 LaunchAgent/网络/公开数据库，立即停止并报告影响范围；若任一限定验证首错，立即停止不重跑并记录 blocked。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "RSS-REAL-001/deployment/m1-candidate",
+  "pointers": [
+    "docs/decisions/system/2026-08-12-F1+1-RSS-REAL-001单一真实RSS采集纵切-successor-accepted.md;docs/collaboration/部门/安全部/报告/2026-08-12-E60186-RSS-REAL-001冻结候选单次静态对抗审查报告.md;app/scripts/install-macos-public-beta.ts;docs/runbooks/F1+1-固定M1公开Beta-SSH运行收据-v0.1.md"
+  ],
+  "report": "",
+  "resolution": {
+    "evidence": "docs/collaboration/tasks/TASK-20260812-6A7EAC.json;docs/collaboration/部门/开发部/报告/2026-08-12-741878-M1真实RSS采集部署候选报告.md",
+    "reason": "部署候选实现已完成，原任务唯一 plist 验证调用路径错误由不改代码的后继 6A7EAC 修正并通过",
+    "receipt_id": "RES-20260812T021521-0334017F",
+    "replacement_revision": 3,
+    "replacement_state": "completed",
+    "replacement_task_id": "TASK-20260812-6A7EAC",
+    "resolved_at": "2026-08-12T02:15+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "superseded",
+    "target_revision_before": 3
+  },
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-741878",
+  "title": "M1真实RSS采集LaunchAgent与停启工具部署候选",
+  "unverified": [],
+  "updated_at": "2026-08-12T02:15+08:00",
+  "verified": []
+}

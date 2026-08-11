@@ -21,6 +21,12 @@
     "runtime:assert-ready": "node --experimental-strip-types scripts/runtime-bootstrap.ts",
     "worker:mock": "node --experimental-strip-types scripts/vs1-worker.ts",
     "worker:source-mock": "node --experimental-strip-types scripts/source-management-worker.ts",
+    "rss:collect-once": "node --experimental-strip-types scripts/rss-collect-once.ts",
+    "rss:scheduled-run": "node --experimental-strip-types scripts/rss-scheduled-run.ts",
+    "rss:build-release-manifest": "node --experimental-strip-types scripts/rss-build-release-manifest.ts",
+    "rss:install-macos": "node --experimental-strip-types scripts/rss-install-macos.ts",
+    "rss:render-plist": "node --experimental-strip-types scripts/rss-install-macos.ts --render-plist",
+    "rss:control": "node --experimental-strip-types scripts/rss-control.ts",
     "test": "vitest run --config vitest.config.ts",
     "test:p1": "node --experimental-strip-types scripts/p1-acceptance.ts",
     "test:public-http": "node --experimental-strip-types scripts/public-http-acceptance.ts",
@@ -34,6 +40,7 @@
     "check": "npm run verify:env && npm run db:migrate && npm run seed:fixtures && npm run runtime:assert-ready && npm run test && npm run test:contract && npm run lint && npm run typecheck && npm run build && npm run test:p1"
   },
   "dependencies": {
+    "fast-xml-parser": "5.10.1",
     "next": "16.2.11",
     "react": "19.2.0",
     "react-dom": "19.2.0",

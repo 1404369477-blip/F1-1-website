@@ -1,0 +1,56 @@
+{
+  "acceptance_exit": "CC7577 P1-01至P1-04和P2-01/02均以代码/文档候选关闭；外部release-manifest SHA锚与完整闭包/content root/Node/生产依赖校验可静态追溯；resume同连接schema门、stop/resume fail-closed后置确认成立；日志0600+Umask、prepare措辞准确；冻结采集核心SHA不变；typecheck、render+plutil、diff-check各一次PASS；0外联/0SSH/0部署；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/src/server/rss/release-manifest.ts",
+    "app/scripts/rss-build-release-manifest.ts",
+    "app/src/server/rss/deployment.ts",
+    "app/scripts/rss-install-macos.ts",
+    "app/scripts/rss-control.ts",
+    "app/package.json",
+    "docs/runbooks/F1+1-固定M1真实RSS采集器部署与回退-v0.1.md",
+    "docs/collaboration/部门/开发部/报告/2026-08-12-741878-M1真实RSS采集部署候选实现报告.md"
+  ],
+  "authorization_evidence": "用户明确授权直接SSH固定M1、真实采集和快速上线，同时要求减少冗余测试；本任务保持自动发布与公网Admin关闭。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T02:24+08:00",
+      "evidence": "用户明确授权直接SSH固定M1、真实采集和快速上线，同时要求减少冗余测试；本任务保持自动发布与公网Admin关闭。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:rss_real",
+  "completion_class": "standard",
+  "confirmation": "该任务只修部署工具与身份闭包，不执行部署。完成后安全部做一次精确SHA只读复审；通过后统筹精确提交、生成release manifest、SSH M1受控prepare与单次真实运行，再决定900秒load。",
+  "created_at": "2026-08-12T02:24+08:00",
+  "department": "开发部",
+  "details": "按安全报告 CC7577 一次性修复部署候选四项P1与两项P2；不得修改已放行的采集核心 types/transport/parser/repository/collector 及 rss-real.test。1) 新增可信 release identity 构建/验证：在提交后由 M5 builder 从精确 Git HEAD 生成独立 rss-real-release-manifest，拒绝列明运行时文件的dirty/untracked漂移；manifest显式列出并hash完整生产传递闭包（collector、types/transport/parser/repository、DB database.ts、config/env.ts、runtime-config.ts、security/cli.ts、deployment/installer/control及必要脚本/迁移/package/lock），递归解析lock并绑定 fast-xml-parser 全部生产依赖目录content root，绑定目标M1 Node绝对路径/版本/SHA；计算确定性content root/release SHA。M1 installer必须以统筹通过环境传入的 expected release-manifest SHA 为外部信任锚，核对实际manifest字节、所有安装树文件/依赖目录/Node字节和content root；部署manifest回读重新核验，不得从待验证部署manifest自身取得唯一锚。2) resume 在 enable 前以同一随后写入的DB连接执行完整 assertRssSchema/integrity/fingerprint，再在IMMEDIATE事务更新；不得只信常量。3) launchctl状态结构化：仅明确service-not-found可判unloaded，其余非零为Unknown/FAIL；stop与resume失败清理均在独立best-effort阶段尝试DB refence和bootout，最终回读确认source disabled且epoch已增加、job明确unloaded，任何不满足不得宣称stopped；resume成功也确认loaded+enabled。4) installer预创建两日志叶子0600单链接，plist增加0077 Umask，status/resume复核；prepare收据改为 prepared-no-bootstrap-called，不声称目标机全局未加载，runbook要求prepare前明确not-found/unloaded。更新package脚本、runbook与开发报告。0网络/0SSH/0M1/0launchctl真实操作/0DB生产初始化。验证预算：一次固定Node24 typecheck、一次Node真实tmpdir plist render+plutil lint、一次git diff --check；不跑Vitest/build/full suite。",
+  "domain_stage": "RSS-REAL-001部署安全修复",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若需修改已放行采集核心立即停止；若完整闭包无法在当前lock/文件图确定，列具体缺口并blocked，禁止用任意受信字符串代替；若任一限定验证首错立即停止不重跑；若实现意外调用network/SSH/launchctl或写生产DB立即停止并报告影响。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "首错为空；三项限定验证各只运行一次，中断后未重跑；0网络、0SSH、0launchctl、0部署、0生产或公开DB修改、0 Git提交；未修改冻结采集核心、migration、package-lock、accepted ADR；保留精确plist临时目录。",
+  "node": "RSS-REAL-001/deployment/security-successor",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-CC7577-M1真实RSS部署候选P1-04只读安全审查报告.md;docs/collaboration/tasks/TASK-20260812-6A7EAC.json;docs/runbooks/F1+1-固定M1真实RSS采集器部署与回退-v0.1.md"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-741878-M1真实RSS采集部署候选实现报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-1BC83F",
+  "title": "M1 RSS部署门四项P1与两项P2原子收敛",
+  "unverified": [
+    "未生成真实release manifest；未连接M1；未动态执行builder、installer prepare、status/stop/resume、collector；未验证真实Node/依赖目录/launchd/DB/900秒调度或真实RSS收据，需后续精确SHA安全复审与受控部署。"
+  ],
+  "updated_at": "2026-08-12T02:39+08:00",
+  "verified": [
+    "固定Node24 typecheck唯一一次PASS；Node真实os.tmpdir plist render与plutil lint唯一一次PASS，plist SHA-256=f2f5dc56f854b069a37df5aceae48c6fd3594e422da4ec71697f1bbebd27c130；任务范围git diff --check唯一一次PASS；冻结采集核心SHA保持不变；CC7577四项P1与两项P2均有代码/文档候选闭合。"
+  ]
+}

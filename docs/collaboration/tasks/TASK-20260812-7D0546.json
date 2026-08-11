@@ -1,0 +1,55 @@
+{
+  "acceptance_exit": "LaunchAgent与runbook均不再直接执行collector；每次运行在外联前以外部锚完整复核release/deployment/Node/dependency/schema闭包，失败时不导入collector且externalCalls=0；wrapper被release manifest绑定；冻结采集核心/lock SHA不变；typecheck、render+plutil、diff-check各一次PASS；报告和精确SHA落盘；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/scripts/rss-scheduled-run.ts",
+    "app/src/server/rss/release-manifest.ts",
+    "app/src/server/rss/deployment.ts",
+    "app/scripts/rss-install-macos.ts",
+    "app/package.json",
+    "docs/runbooks/F1+1-固定M1真实RSS采集器部署与回退-v0.1.md",
+    "docs/collaboration/部门/开发部/报告/2026-08-12-741878-M1真实RSS采集部署候选实现报告.md"
+  ],
+  "authorization_evidence": "用户授权固定M1 SSH和真实采集，要求快速上线并避免冗余测试。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T02:49+08:00",
+      "evidence": "用户授权固定M1 SSH和真实采集，要求快速上线并避免冗余测试。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:rss_real",
+  "completion_class": "standard",
+  "confirmation": "该任务是部署门最后一个已确认代码缺口的最小修复；完成后只做一次精确SHA安全复审，通过即提交release并进入M1受控实施。",
+  "created_at": "2026-08-12T02:49+08:00",
+  "department": "开发部",
+  "details": "仅关闭安全报告32B03D唯一P1-N01。新增最小 `app/scripts/rss-scheduled-run.ts` 定时入口：不接收参数；从LaunchAgent闭合环境读取并严格校验 RSS_RELEASE_MANIFEST_SHA256 外部锚；在任何DNS/HTTP/collector动态导入前，用现有部署/manifest验证器复核当前 release manifest、全部运行文件、递归生产依赖目录、目标Node字节/content root、部署manifest/plist/DB schema/权限；验证通过后才动态 import/执行现有 rss-collect-once.ts。修改 plist ProgramArguments 指向 scheduled wrapper 并注入实际外部manifest SHA；installer/deployment manifest生成与回读使用同一锚；release闭包加入wrapper；runbook的受控单次与900秒路径都调用wrapper；package增加明确scheduled脚本。不得修改types/transport/parser/repository/collector/test/migration/lock；不得改变采集行为或审核状态。验证预算：一次固定Node24 typecheck、一次真实Node tmpdir plist render+plutil lint（可用固定64hex预览锚）、一次git diff --check；0网络/0SSH/0launchctl/0生产DB/0部署，不跑Vitest/build/full suite。",
+  "domain_stage": "RSS-REAL-001调度前验签",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若必须修改采集核心或lock立即停止；若wrapper在验签前加载网络/collector模块或无法传入外部锚则blocked；任一限定验证首错立即停止不重跑；任何意外网络/SSH/launchctl/DB写立即报告。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "首错为空；三项限定验证各只执行一次；0网络、0SSH、0launchctl、0DB读写、0部署、0Git提交；未修改types/transport/parser/repository/collector/test/migration/lock；临时plist目录按要求保留。",
+  "node": "RSS-REAL-001/deployment/preflight-wrapper-successor",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-32B03D-M1-RSS部署门六项只读复审报告.md;docs/collaboration/tasks/TASK-20260812-1BC83F.json;app/src/server/rss/release-manifest.ts;app/src/server/rss/deployment.ts"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-741878-M1真实RSS采集部署候选实现报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-7D0546",
+  "title": "RSS每次调度前release闭包验签最小后继",
+  "unverified": [
+    "未动态执行wrapper、collector、installer prepare、control或release builder；未连接M1；真实manifest/content/release SHA、目标Node/依赖/DB/launchd、一次真实收据及900秒节奏需后续精确SHA安全复审与受控实施。"
+  ],
+  "updated_at": "2026-08-12T02:55+08:00",
+  "verified": [
+    "LaunchAgent plist与runbook真实执行入口均已切到scheduled wrapper；wrapper在collector动态导入前以外部RSS_RELEASE_MANIFEST_SHA256复核release/deployment/Node/递归依赖/权限/schema闭包；wrapper同时进入release与deployment manifest绑定；冻结采集核心、migration、lock SHA不变；固定Node24 typecheck唯一一次PASS；Node真实tmpdir plist render及plutil唯一一次PASS；任务范围git diff --check唯一一次PASS。"
+  ]
+}

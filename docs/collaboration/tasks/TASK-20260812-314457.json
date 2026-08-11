@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "输入无漂移；P1-N01 closed/open与精确调用序证据；P0/P1/P2明确；允许提交release、M1 prepare、单次真实运行、900秒load四层结论明确；M1动态事实留给实施任务；报告落盘并TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-314457-RSS调度前验签唯一P1最终只读复审报告.md"
+  ],
+  "authorization_evidence": "用户授权固定M1 SSH真实采集并要求快速上线、减少冗余测试。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T02:55+08:00",
+      "evidence": "用户授权固定M1 SSH真实采集并要求快速上线、减少冗余测试。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/internal-agent:rss_static_review",
+  "completion_class": "audit",
+  "confirmation": "这是部署代码门的最终限定复审；若P0/P1=0，统筹不再增加静态门，直接提交并SSH实施。",
+  "created_at": "2026-08-12T02:55+08:00",
+  "department": "安全部",
+  "details": "仅复审32B03D唯一P1-N01及wrapper直接引入的新同级问题，禁止扩展。精确输入：wrapper 937f2a6ab073987e627b6b7d56a228b91a610ee8175822fd66eb1f2c00662b35；release-manifest f61f5e1c34b236c16af2649c5a08fc91751e1bc8b851c41681ccab906085ddef；deployment 2b09bedf9bc087e79a33e0b48fc25360e432887afd24bdad4de8bd9540f89539；builder 349e683e0fc8a31addcbc876ebf534e4bbfba5644924ab23fbcf91626244c55f；installer 807a67732573b08a3b7e824bf1f370db031c9c4469eba0d1a5575ce5da33f5a7；control 81facbc2600588546a09fa16cfb51cc66249915dab45507dad22da7d6a50e4e2；package 54d1435cecfa287de7eb2ffa8f67e232dfa3014732bb82b95a32f9d1ea0c9c13；lock a3b9c7410b130be95b501bd8da89d8a312d58aada5fa311f77994d8d14686bc6；runbook 489d3697cc2625e03ea9e2b55f318853f4a96544ea5ba7ab4946af2aaf4d63ba；报告 d8fdab686873de400c70cc086af9313da4025189de3b184070ef463266edeafc。只读确认：LaunchAgent与受控单次均指向wrapper；外部SHA锚被传入且不是来自待验证manifest；完整release/deployment/Node/dependency/schema/权限验证发生在collector动态导入和任何DNS/HTTP/业务DB写前；wrapper自身被闭包绑定；失败externalCalls=0。0测试/脚本/网络/SSH/launchctl/修改。",
+  "domain_stage": "RSS-REAL-001最终部署代码门",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "SHA漂移立即停止；若P1-N01未闭合只给最小修复；动态事实Unknown不得用静态推断替代。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未重跑开发验证；未把静态PASS外推为M1动态事实；900秒仅作单次实测和停采核对后的条件放行；未扩展P1-N01与wrapper直接问题范围",
+  "node": "RSS-REAL-001/security/preflight-wrapper-final",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-32B03D-M1-RSS部署门六项只读复审报告.md;docs/collaboration/tasks/TASK-20260812-7D0546.json"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-12-314457-RSS调度前验签唯一P1最终只读复审报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-314457",
+  "title": "RSS调度前验签唯一P1最终只读复审",
+  "unverified": [
+    "干净Git HEAD及真实manifest/content/release SHA、M1文件/Node/依赖/launchd/DB状态、一次真实RSS收据、人工字段保护、synthetic零漂移、900秒节奏与停采后零新增run均Unknown"
+  ],
+  "updated_at": "2026-08-12T03:00+08:00",
+  "verified": [
+    "十项精确输入SHA全部MATCH；P1-N01静态CLOSED；LaunchAgent与单次runbook均进入wrapper；外部锚、release/deployment/Node/递归依赖/权限/schema验证均先于collector动态导入；前置失败externalCalls=0；限定范围P0=0/P1=0/P2=0"
+  ]
+}

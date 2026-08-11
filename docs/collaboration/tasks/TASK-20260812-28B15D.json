@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "十项相关输入无漂移；逐项给出 P1-01/P1-02/P1-03/P2 的 closed/open 与代码证据；代码门 P0/P1 数量及放行/不放行结论明确；P1-04 作为后续部署门单列，不据此判代码门失败；报告落安全部目录并 TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-28B15D-RSS真实采集四项代码修复只读复审报告.md"
+  ],
+  "authorization_evidence": "用户2026-08-12明确要求继续快速搭建、允许真实采集并减少冗余测试。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T01:55+08:00",
+      "evidence": "用户2026-08-12明确要求继续快速搭建、允许真实采集并减少冗余测试。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/internal-agent:rss_static_review",
+  "completion_class": "audit",
+  "confirmation": "本次仅为代码候选的单次只读复审；通过后仍须另行形成 LaunchAgent/manifest 并做部署前安全门，未授权自动发布或公网Admin。",
+  "created_at": "2026-08-12T01:55+08:00",
+  "department": "安全部",
+  "details": "对 TASK-20260812-FE5474 最终候选做一次限定只读对抗复审。精确输入：types SHA 2ec322b51d5dc0c37b9baf3269af6b53972b86c76879029a9f9e092375b13538；transport 747c3fa238dab55bb9eb247b3337ae2b8e7918e45d68a9d9033fcaa62064cd09；repository a4f07610f5cf588a2605c04005736d3d3c681d4db2fb98d39b628b5ceda886c1；CLI edae42d8a8085a66225865b985f480865bb49e73c120325c18b0cc1471f00c0c；test 94cacecb3f3db9241c10c6bc1b784dbebe9515c8e8657b7607b1cbd7f8d52de9；报告 4b95c3dc182487872b8d12dbcb90d4a04207abfe33786098ac43fad5135dd198。只核对原安全报告 P1-01 stop_epoch claim/finalize 同事务围栏、P1-02 IPv6 特殊/文档/6to4 拒绝、P1-03 拒绝/304 响应有界 destroy、P2 externalCalls 按真实I/O阶段准确记账，以及这些修复是否引入新的同等级代码问题。不得运行测试/CLI/网络/部署，不得修改实现，不扩展到完整IANA穷举。P1-04 LaunchAgent/manifest/M1证据明确保留给部署候选任务，不得混入本代码门结论。",
+  "domain_stage": "RSS-REAL-001代码放行复审",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若任一精确 SHA 漂移，立即以 SNAPSHOT_DRIFT 停止；若确认任一原 P1 未关闭或出现新 P0/P1，给最小修复而不自行改代码；若静态证据不足，标 Unknown，不运行动态测试补证。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未继承开发自测为安全动态PASS；P1-04未混入代码门计数且未表述为关闭；未扩大到完整IANA穷举；未运行任何测试或修改实现/依赖/Spec/ADR/部署文件",
+  "node": "RSS-REAL-001/security/code-gate-successor",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-E60186-RSS-REAL-001冻结候选单次静态对抗审查报告.md;docs/collaboration/部门/开发部/报告/2026-08-12-FE6B43-RSS上线前代码P1与外联收据P2原子收敛报告.md;docs/collaboration/tasks/TASK-20260812-FE5474.json"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-12-28B15D-RSS真实采集四项代码修复只读复审报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-28B15D",
+  "title": "RSS真实采集四项代码修复只读复审",
+  "unverified": [
+    "0测试/0CLI/0网络/0部署；真实DNS/TLS/HTTP、恶意持续响应实际终止、真实多进程stop fence、完整IANA穷举均Unknown；P1-04 LaunchAgent/manifest/M1权限/真实单次运行/900秒调度/停机回退/公开synthetic零漂移保持OPEN并另走部署门"
+  ],
+  "updated_at": "2026-08-12T02:00+08:00",
+  "verified": [
+    "十项代码/合同输入、开发报告与前驱安全报告SHA全部MATCH；限定静态复审确认P1-01 stop_epoch成功提交围栏、P1-02 IPv6特殊/文档/6to4拒绝、P1-03 rejected/304立即destroy、P2-01 externalCalls分阶段记账均CLOSED；修复直接路径无新P0/P1；代码门PASS P0=0/P1=0；报告SHA=e977a1ad12ea4d1821f6bb0e0f0867e0d0ba36e61ba854e683cf31e9b90acdcf"
+  ]
+}

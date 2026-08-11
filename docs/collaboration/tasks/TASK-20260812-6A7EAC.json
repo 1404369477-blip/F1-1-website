@@ -1,0 +1,54 @@
+{
+  "acceptance_exit": "部署候选文件字节与741878首错时一致；render 唯一一次 PASS且收据 externalCalls=0、status=rendered-not-installed；plutil 唯一一次 PASS；git diff --check 唯一一次 PASS；继承 typecheck PASS；回报临时目录精确路径、文件0600/目录0700及精确 SHA；0部署；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/src/server/rss/deployment.ts",
+    "app/scripts/rss-install-macos.ts",
+    "app/scripts/rss-control.ts",
+    "app/package.json",
+    "docs/runbooks/F1+1-固定M1真实RSS采集器部署与回退-v0.1.md",
+    "docs/collaboration/部门/开发部/报告/2026-08-12-741878-M1真实RSS采集部署候选实现报告.md"
+  ],
+  "authorization_evidence": "用户要求快速部署M1并减少冗余测试；本后继只补唯一未实际执行的plist render/lint。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T02:12+08:00",
+      "evidence": "用户要求快速部署M1并减少冗余测试；本后继只补唯一未实际执行的plist render/lint。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:rss_real",
+  "completion_class": "standard",
+  "confirmation": "该任务只纠正验证调用路径，不修代码、不重跑已通过的类型检查；完成后进入安全部部署候选只读审查。",
+  "created_at": "2026-08-12T02:12+08:00",
+  "department": "开发部",
+  "details": "继承 TASK-20260812-741878 已落盘部署候选与唯一一次 Node24 typecheck PASS。741878 的 plist 验证因调用方错误使用 /tmp 路径而在 render 前被脚本按 allowlist 拒绝；代码静态定位为 Node os.tmpdir() 当前实路径 /private/var/folders/.../T，与 /tmp 不同。不得修改任何实现、package、runbook或冻结采集核心。仅在 Node os.tmpdir() 返回的真实临时根内用 mktemp 创建0700目录，目标名固定 com.f1plus1.rss-collector.plist；唯一一次运行 package render 命令，成功后唯一一次 plutil -lint 同一文件；再唯一一次 git diff --check。不得重跑 typecheck/Vitest/build，不得清理临时目录（回报精确路径供统筹安全清理），0网络/0SSH/0LaunchAgent操作。同步开发报告真实收据时如需改报告仅允许机械修正。",
+  "domain_stage": "RSS-REAL-001部署候选验证",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若 Node tmpdir 内 render 仍失败，立即停止不重跑并记录首错；若发现必须修改实现或候选 SHA 漂移，停止并回统筹；若命令意外触发LaunchAgent/网络/生产DB，立即停止并报告影响。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未修改741878部署候选实现/package/runbook或冻结采集核心；准确保留741878调用方/tmp首错；机械后继只修正验证调用路径，没有重跑typecheck/Vitest；临时目录按任务要求未清理并已精确回报；未真实联网、SSH、部署或操作LaunchAgent。",
+  "node": "RSS-REAL-001/deployment/plist-validation-successor",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-741878.json;app/scripts/rss-install-macos.ts;app/src/server/rss/deployment.ts"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-741878-M1真实RSS采集部署候选实现报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-6A7EAC",
+  "title": "M1 RSS部署候选plist验证机械后继",
+  "unverified": [
+    "未执行installer prepare、control、collector、Vitest/build/lint/full suite；未连接M1；真实release commit/package SHA、M1权限与路径、私有DB初始化、受控真实请求、900秒调度、stop/resume动态回退与公开synthetic零漂移仍待独立部署门验证。"
+  ],
+  "updated_at": "2026-08-12T02:15+08:00",
+  "verified": [
+    "继承741878固定Node24 typecheck唯一一次PASS；6A7EAC在Node os.tmpdir真实根内唯一一次render PASS，status=rendered-not-installed、externalCalls=0、plist SHA=ff17a7a48410e2785b5d30a72294daa8ece4535b505ea42eda06d1fdf16d150c；同一plist唯一一次plutil lint PASS；git diff --check唯一一次PASS；目录0700/文件0600；冻结五SHA无漂移；0网络/0SSH/0LaunchAgent操作/0部署。"
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "acceptance_exit": "四处 env 类型首错以最小测试夹具修正关闭；固定 Node24 typecheck 唯一一次 PASS；git diff --check 唯一一次 PASS；生产代码 SHA 与 FE6B43 首错时保持一致；开发报告列出继承的 Vitest PASS、当前精确 SHA、未运行项；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/src/tests/rss-real.test.ts",
+    "docs/collaboration/部门/开发部/报告/2026-08-12-FE6B43-RSS上线前代码P1与外联收据P2原子收敛报告.md"
+  ],
+  "authorization_evidence": "用户2026-08-12明确要求继续快速搭建、允许真实采集并直接部署到M1，同时要求减少无意义测试。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T01:51+08:00",
+      "evidence": "用户2026-08-12明确要求继续快速搭建、允许真实采集并直接部署到M1，同时要求减少无意义测试。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:rss_real",
+  "completion_class": "standard",
+  "confirmation": "修正仅限测试环境对象的 NODE_ENV 类型字段；继承已通过的 focused Vitest，不重复运行；通过后交安全部只读审查，再进入 M1 受控真实运行。",
+  "created_at": "2026-08-12T01:51+08:00",
+  "department": "开发部",
+  "details": "继承 TASK-20260812-FE6B43 已落盘四项生产修复与唯一一次 focused Vitest 1 file/6 tests PASS。仅修复 app/src/tests/rss-real.test.ts 中四处测试 env 夹具缺少项目扩展 ProcessEnv.NODE_ENV 的类型首错：添加 NODE_ENV=\\\"test\\\" 或等价最小机械修正；不得修改生产代码、测试向量语义、RSS合同、依赖或部署文件。更新开发报告，明确 FE6B43 typecheck 首错与本 successor 的验证边界。不得重跑 Vitest；只允许一次固定 Node24 npm run typecheck、一次 git diff --check；0真实请求、0部署。",
+  "domain_stage": "RSS-REAL-001机械收口",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若 typecheck 再次失败，立即停止且不重跑，记录首个错误并 blocked；若发现需要修改生产代码或测试语义，停止并回统筹重划范围；若生产目标 SHA 在领取前后发生非预期漂移，记录 SNAPSHOT_DRIFT 并停止。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "仅在四处测试env夹具添加NODE_ENV=test并更新开发报告；未改生产代码、测试向量语义、parser、migration、依赖、ADR、部署或无关脏文件；FE6B43首错已如实记录，未把P1-04部署门表述为关闭。",
+  "node": "RSS-REAL-001/implementation/typecheck-successor",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-FE6B43.json;app/src/tests/rss-real.test.ts;docs/collaboration/部门/开发部/报告/2026-08-12-RSS-REAL-001真实RSS采集器待审SQLite与单次CLI实现报告.md"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-FE6B43-RSS上线前代码P1与外联收据P2原子收敛报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-FE5474",
+  "title": "RSS真实采集修复候选机械类型收口",
+  "unverified": [
+    "FE5474添加四处NODE_ENV测试类型字段后按任务要求未重跑Vitest；未运行全量测试/build/lint/check/CLI；真实DNS/TLS、恶意持续响应、完整IANA注册表、LaunchAgent与M1部署仍未验证。"
+  ],
+  "updated_at": "2026-08-12T01:55+08:00",
+  "verified": [
+    "继承FE6B43固定Node24 focused Vitest唯一一次PASS（1 file/6 tests）；FE5474固定Node24 npm run typecheck唯一一次PASS；git diff --check唯一一次PASS；四个生产目标SHA与领取前一致；真实请求0、部署0。"
+  ]
+}

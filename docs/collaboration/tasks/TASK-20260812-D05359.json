@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "精确修改types/repository/transport/CLI/test及一份开发报告；新增聚焦断言证明stop_epoch改变后成功finalize零候选且同run可失败收口、2002/3fff/IPv4-mapped拒绝、网络尝试后的错误收据不能为0（可用导出纯函数验证）；固定Node24聚焦Vitest仅一次、typecheck仅一次、git diff --check仅一次均PASS；真实请求0、部署0，TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "当前对话用户批准真实采集与M1部署；统筹按上线前静态审查收敛最小P1。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T01:35+08:00",
+      "evidence": "当前对话用户批准真实采集与M1部署；统筹按上线前静态审查收敛最小P1。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "SECURITY_REVIEW_SCOPE_EXPANDED",
+  "claimed_by": "开发部/internal-agent:rss_real",
+  "completion_class": "standard",
+  "confirmation": "用户要求快速上线；只修已识别的小范围上线阻断，不扩展测试。",
+  "created_at": "2026-08-12T01:35+08:00",
+  "department": "开发部",
+  "details": "基于冻结候选SHA types d6451086/transport 60ede2f7/parser 988a6a66/repository 98aad203/migration c03c5c0b/CLI dd8e74e7/test f1ca4635做最小后继，不改parser/migration/package依赖。三项精确修复：1) ClaimedRssRun绑定claim时source.stop_epoch，所有成功/304落库前在同一事务复核enabled=true且stop_epoch未变化；若停源或epoch漂移，候选/validator零写入并允许同一run写SOURCE_STOPPED失败收据。2) CLI在networkAttempted=true后，无论错误原本来自parser/repository且RssError.externalCalls为0，都克隆保持reason/nextAction/http/retry/stop并把最终失败收据externalCalls固定为1。3) IPv6公共地址判断显式拒绝6to4 2002::/16、文档3fff::/20及2001特殊/文档范围等合同列明非普通公网地址，同时保留真实全局单播；用聚焦单测固定负例。不得新增依赖、URL、重试、日志或外部请求。",
+  "domain_stage": "p1-fix",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若stop fence修复要求新表/新业务实体或改accepted合同，立即block，不擅自扩张；若失败收据修正丢失原reason/http/retry/stop属性，测试失败并停止；若IPv6判断无法在无新依赖下精确证明，宁可对非明确全球单播失败关闭并记录地区可达性Unknown，不得放宽私网/特殊地址。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "M5真实采集最小纵切",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-E60186.json"
+  ],
+  "report": "",
+  "resolution": {
+    "evidence": "docs/collaboration/部门/安全部/报告/2026-08-12-E60186-RSS-REAL-001冻结候选单次静态对抗审查报告.md;docs/collaboration/tasks/TASK-20260812-FE6B43.json",
+    "reason": "安全部静态审查将修复范围扩展为四项，合并到单一 successor 以避免重复修改和重复测试",
+    "receipt_id": "RES-20260812T014050-9F49E7CA",
+    "replacement_revision": 2,
+    "replacement_state": "claimed",
+    "replacement_task_id": "TASK-20260812-FE6B43",
+    "resolved_at": "2026-08-12T01:40+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "superseded",
+    "target_revision_before": 3
+  },
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-D05359",
+  "title": "RSS-REAL-001上线前最小P1收敛：stop fence、外联收据与IPv6特殊地址",
+  "unverified": [],
+  "updated_at": "2026-08-12T01:40+08:00",
+  "verified": []
+}

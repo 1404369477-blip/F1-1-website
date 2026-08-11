@@ -1,0 +1,52 @@
+{
+  "acceptance_exit": "新增一份状态明确的RSS-REAL-001 successor系统ADR或实施合同并绑定用户授权证据；docs/spec.md准确反映该纵切已获授权、仍为pending_review且不自动发布；报告列出数据表/输入输出/15分钟运行/失败恢复/回退；所有路径存在，git diff --check通过，回报TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/decisions/system/2026-08-12-F1+1-RSS-REAL-001单一真实RSS采集纵切-successor-accepted.md",
+    "docs/spec.md",
+    "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-12-RSS-REAL-001单一真实RSS采集纵切产品合同报告.md"
+  ],
+  "authorization_evidence": "当前对话2026-08-12：用户明确批准真实采集，并确认个人非商业Beta暂不以合规为阻断。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T00:46+08:00",
+      "evidence": "当前对话2026-08-12：用户明确批准真实采集，并确认个人非商业Beta暂不以合规为阻断。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/internal-agent:rss_contract",
+  "completion_class": "standard",
+  "confirmation": "无需再次提问；用户已在本会话明确“可以接入真实采集”及“暂时不需要考虑合规性，目前不是商业使用”。",
+  "created_at": "2026-08-12T00:46+08:00",
+  "department": "产品部",
+  "details": "基于用户已授权真实采集与个人非商业Beta边界，冻结一个可直接实施的最小合同：只接入Motorsport.com官方Formula 1 News RSS https://www.motorsport.com/rss/f1/news/；每15分钟由固定M1执行一次；仅抓取RSS响应，不二跳正文/媒体；以私有SQLite保存source、ingest_run与pending_review候选；公开站继续只读synthetic且严禁自动发布。合同需明确1MiB、HTTPS/443/同域、DNS公共IP、拒绝重定向/压缩/DOCTYPE/ENTITY/XInclude、完整解析上限60条后取最新20条、ETag/Last-Modified、幂等去重、内容更新不覆盖人工字段、失败收据、M1部署/回退边界。同步docs/spec.md的当前阶段与真实能力边界，交付产品报告；不写业务代码、不改accepted旧ADR正文。",
+  "domain_stage": "contract-freeze",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若现有accepted ADR与最小纵切发生实质冲突，停止改写旧ADR并在报告中指出需新successor；若官方RSS合同或响应字段无法支撑15分钟/20条假设，将该字段标为运行期Unknown并给出fail-closed出口；不得把个人非商业授权扩张为自动发布、全文镜像、真实媒体下载或Admin公网开放。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未改旧accepted ADR或旧draft正文；未写业务代码；未把个人非商业Beta授权扩张为自动发布、正文/媒体/其他来源；采集器永不覆盖人工字段或review_status；未把历史RSS观察冒充当前事实",
+  "node": "M5真实采集最小纵切",
+  "pointers": [
+    "docs/spec.md"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-12-RSS-REAL-001单一真实RSS采集纵切产品合同报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-4133D9",
+  "title": "RSS-REAL-001：单一真实RSS采集纵切合同与Spec同步",
+  "unverified": [
+    "真实URL当前HTTP/MIME/字段/ETag/Last-Modified/地区可达性、解析依赖与代码、SQLite/migration、M1调度、15分钟样本、测试/安全独立复验均未运行或未实现"
+  ],
+  "updated_at": "2026-08-12T01:02+08:00",
+  "verified": [
+    "用户授权、固定源/15分钟/RSS-only/1MiB/60→20/私有三表/pending_review/幂等/人工字段保护/失败恢复/M1回退/零自动发布已跨合同、Spec与矩阵同步；四路径存在；git diff --check通过；ADR SHA-256=1d22d5022699cd2bd1885f19c076093b37220ba6bd458b3aaa9bdcdacaa4bdf9"
+  ]
+}

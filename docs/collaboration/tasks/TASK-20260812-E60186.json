@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "在安全部报告目录提交status=final且decision=pass|fail的报告，逐项列P0/P1/P2、已验证/未验证、精确文件/行证据与最小修复建议；若无P0/P1明确PASS，若有任何可能导致越界外联、部分写入、人工字段覆盖、错误启停或部署不可用的P1明确FAIL；任务工具complete并回TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-E60186-RSS-REAL-001冻结候选单次静态对抗审查报告.md"
+  ],
+  "authorization_evidence": "当前对话用户批准真实采集与M1部署；统筹限定上线前仅一次静态对抗审查。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T01:22+08:00",
+      "evidence": "当前对话用户批准真实采集与M1部署；统筹限定上线前仅一次静态对抗审查。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/internal-agent:rss_static_review",
+  "completion_class": "audit",
+  "confirmation": "用户要求快速上线并减少冗余测试；本任务仅单次静态对抗审查。",
+  "created_at": "2026-08-12T01:22+08:00",
+  "department": "安全部",
+  "details": "对已ACK开发候选做一次只读静态对抗审查，候选精确SHA：types d6451086；transport 60ede2f7；parser 988a6a66；repository 98aad203；migration c03c5c0b；CLI dd8e74e7；test f1ca4635；package ea380a7b；lock a3b9c741；accepted ADR 1d22d502。重点核对：固定URL/代理/SSRF与DNS pin、IPv4/IPv6保留地址、TLS/redirect/timeout/response draining、MIME/压缩/大小/conditional header；XML UTF8/DTD/ENTITY/XInclude/depth/nodes/60→20/字段/HTML纯文本；SQLite migration/schema指纹、slot/单在途/事务原子性、失败收据、429/stop、人工字段零覆盖；CLI真实I/O门、externalCalls、单行脱敏。只读代码、任务报告与既有一次验证收据；禁止重跑Vitest/typecheck/build/lint/check、禁止真实请求、禁止部署、禁止修改实现。",
+  "domain_stage": "security-review",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若任一候选SHA漂移，停止审查并以SNAPSHOT_DRIFT完成FAIL，不读取新候选冒充旧候选；若结论需要动态网络或系统调用证据，保持Unknown，不自行发请求或重跑测试；若发现P0/P1，只报告且禁止安全部直接改代码或放行部署。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "仅审查任务精确SHA候选；无snapshot drift；未继承开发自测为安全动态PASS；未把用户部署授权当作LaunchAgent放行；发现P1后停止低优先级扩展；无代码/Spec/ADR/依赖/部署修改",
+  "node": "M5真实采集最小纵切",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-76189F.json"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-12-E60186-RSS-REAL-001冻结候选单次静态对抗审查报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-E60186",
+  "title": "RSS-REAL-001冻结候选单次静态对抗审查",
+  "unverified": [
+    "未运行任何测试/CLI或动态探针；未联网、未发真实请求、未部署；真实源行为、动态TLS/timeout/XML/SQLite、完整特殊地址表、M1目录权限/LaunchAgent/停机回退与公开synthetic零漂移保持Unknown"
+  ],
+  "updated_at": "2026-08-12T01:36+08:00",
+  "verified": [
+    "十项冻结SHA全部MATCH；静态确认P0=0/P1=4/P2=1：stop_epoch未绑定成功finalize、IPv6特殊/文档范围拒绝不完整、拒绝响应无界drain会阻塞CLI、LaunchAgent/manifest部署硬门未形成；真实响应后的parser/DB失败externalCalls=1，I/O门前失败反向过报1；人工字段更新SQL未被机器更新覆盖"
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "输入无漂移；六项逐条closed/open并给精确证据；代码/部署候选门P0/P1/P2数量明确；分别裁定是否允许提交release、M1 prepare、单次真实运行、900秒load；报告落盘并TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-32B03D-M1-RSS部署门六项只读复审报告.md"
+  ],
+  "authorization_evidence": "用户授权固定M1 SSH和真实采集，要求快速推进并减少冗余测试。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T02:39+08:00",
+      "evidence": "用户授权固定M1 SSH和真实采集，要求快速推进并减少冗余测试。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/internal-agent:rss_static_review",
+  "completion_class": "audit",
+  "confirmation": "只读精确复审；通过仅允许进入精确Git提交与M1受控实施，900秒load仍需单次真实运行成功和停止后零新增run。",
+  "created_at": "2026-08-12T02:39+08:00",
+  "department": "安全部",
+  "details": "对 1BC83F 最终部署候选做一次限定只读复审，只裁定 CC7577 P1-01至P1-04、P2-01/02 及直接引入的新同级问题。精确输入：release-manifest.ts 91fd414377be2c3311db41102c0269416e3add2a467f593dbe5618f1e667bd54；builder 349e683e0fc8a31addcbc876ebf534e4bbfba5644924ab23fbcf91626244c55f；deployment 4c6bfa0c391840e2bcd31efb707c98f68ab6ae1857c33acd5101c07714e0b566；installer c0cc19ea687d534105fc9e1e784a27b5774b930ccfefe5d7fda5c17913308811；control 81facbc2600588546a09fa16cfb51cc66249915dab45507dad22da7d6a50e4e2；package 729b066d52a4de7f290403e082d592272fb14789a664bb651fec1b01b61a68c4；lock a3b9c7410b130be95b501bd8da89d8a312d58aada5fa311f77994d8d14686bc6；runbook fdb7ffe2ac346c243b50cc24c69f5b14f66e883d53d73bd6b179989fc2711578；报告 9fbc4227f35b1e381887f068fb42e89e1cb21977911f3d42d34af20522c18a8f。检查外部release-manifest SHA锚、干净HEAD/完整运行闭包/递归依赖/Node字节/content root；同DB连接schema门；结构化launchctl与stop/resume最终后置；日志0600+Umask；prepare措辞和preflight。不得运行测试/脚本/网络/SSH/launchctl，不得改代码，不扩展低优先级审查。",
+  "domain_stage": "RSS-REAL-001部署安全复审",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一SHA漂移即SNAPSHOT_DRIFT停止；任一P0/P1未关仅给最小修复且不自行改；M1动态事实保持Unknown并留给SSH任务。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已核对未把manifest描述闭包外推为每次执行前重验；未把runbook当运行收据；未扩展到六项以外低优先级背景问题；只给P1-N01最小修复",
+  "node": "RSS-REAL-001/security/deployment-gate-successor",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-CC7577-M1真实RSS部署候选P1-04只读安全审查报告.md;docs/collaboration/部门/开发部/报告/2026-08-12-741878-M1真实RSS采集部署候选实现报告.md;docs/collaboration/tasks/TASK-20260812-1BC83F.json"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-12-32B03D-M1-RSS部署门六项只读复审报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-32B03D",
+  "title": "M1 RSS部署门六项问题精确SHA只读复审",
+  "unverified": [
+    "M1真实文件/Node/依赖/launchd/DB状态、真实RSS收据、人工字段保护、synthetic零漂移、900秒节奏与停采后零新增run均Unknown；本任务未执行动态验证"
+  ],
+  "updated_at": "2026-08-12T02:49+08:00",
+  "verified": [
+    "九项精确输入SHA全部MATCH；CC7577原P1-01/P1-02/P1-03/P1-04及P2-01/P2-02静态关闭；直接同级P1-N01为定时与单次collector入口执行前不重验已绑定运行闭包；最终P0=0/P1=1/P2=0，四层均不放行"
+  ]
+}

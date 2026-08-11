@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "输入 SHA 无漂移；对原 P1-04 的每个子门给 closed/open/Unknown 与精确代码证据；给出是否允许先提交release、是否允许M1 prepare、是否允许单次真实运行、是否允许900秒load四个分层结论；P0/P1=0 才可放行相应层；报告落安全部并 TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-CC7577-M1真实RSS部署候选P1-04只读安全审查报告.md"
+  ],
+  "authorization_evidence": "用户2026-08-12授权直接SSH固定M1并接入真实采集，同时要求快速落地与减少冗余测试。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T02:16+08:00",
+      "evidence": "用户2026-08-12授权直接SSH固定M1并接入真实采集，同时要求快速落地与减少冗余测试。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/internal-agent:rss_static_review",
+  "completion_class": "audit",
+  "confirmation": "本次安全门只审部署候选；用户已授权SSH与真实采集，但未授权自动发布或公网Admin。通过审查仍需统筹精确提交、SSH受控单次运行，成功后方可加载900秒任务。",
+  "created_at": "2026-08-12T02:16+08:00",
+  "department": "安全部",
+  "details": "对 M1 部署候选做一次限定只读对抗审查，关闭或保留原 P1-04。精确输入：deployment.ts SHA 5bdab3d4aea3fb6e82643027114e74889354311352c9afae50153dbcf3c8451c；installer ef5fb91a59018a2f7a6d9e98e5ab1b382f1c407a12b5ebcc3f0fd8e70b68af59；control 53073b2b8d699bfb7adef99c9947db776948501ed8e4348e4c55320718856f0c；package bfaf7040403a92b8c73c184a9e9cfd465f224ed9c05b2ac69c1f0b524ebb247b；lock a3b9c7410b130be95b501bd8da89d8a312d58aada5fa311f77994d8d14686bc6；migration c03c5c0bd5887e9e74453c91602bae76f6a7c74db513a2d9ff808ad498807ef3；runbook 4a806434c38f937e17f505a8fde93faef776a1c053a9c3605c80334d73ca527f；报告 2a89055788e9c188f54b4ae0a7dc8f00093789ae8cdb7026fcd52c172fef83ea；deterministic render/plutil 已PASS。只读核对：900秒/RunAtLoad/无KeepAlive/独立进程；env闭合、Node24、非iCloud；私有目录/DB/manifest/plist/log权限与link/atomic边界；manifest 是否实质绑定 commit/release及全部运行时关键字节而非仅信任输入；installer只prepare不load；stop先epoch围栏再bootout、resume失败重围栏；真实单次运行与load的部署顺序、回退、公开synthetic零写。不得运行测试/脚本/网络/SSH/launchctl，不得修改代码；仅给 P0/P1/P2 与最小修复。",
+  "domain_stage": "RSS-REAL-001部署安全门",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若任一SHA漂移立即SNAPSHOT_DRIFT停止；若发现P0/P1，只列最小修复且不自行改代码；若结论需要真实M1事实，标Unknown并限定到SSH部署任务，不做动态验证。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未把格式合法release输入当实际字节证据；未把schema常量当当前DB fingerprint；未把prepare无bootstrap扩大成目标机一定unloaded；未把主顺序扩大成失败后置条件；未修改实现/runbook/Spec/ADR/package",
+  "node": "RSS-REAL-001/security/deployment-gate",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-28B15D-RSS真实采集四项代码修复只读复审报告.md;docs/runbooks/F1+1-固定M1真实RSS采集器部署与回退-v0.1.md;docs/collaboration/部门/开发部/报告/2026-08-12-741878-M1真实RSS采集部署候选实现报告.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-12-CC7577-M1真实RSS部署候选P1-04只读安全审查报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-CC7577",
+  "title": "M1真实RSS部署候选P1-04只读放行审查",
+  "unverified": [
+    "0测试/0脚本/0网络/0SSH/0launchctl/0部署；M1 owner/mode/Node/release/job/DB/schema、日志叶子mode、真实单次RSS、公开synthetic零漂移、900秒节奏、停采后零新增run均Unknown"
+  ],
+  "updated_at": "2026-08-12T02:23+08:00",
+  "verified": [
+    "八项精确输入SHA全部MATCH；部署门FAIL P0=0/P1=4/P2=2：release commit/hash仅格式自洽未核验实际release、manifest缺完整运行时闭包、resume未验证当前DB schema fingerprint、launchctl异常与bootstrap失败补偿不能保证refence/unloaded；schedule/env/原子写/prepare-only/stop主顺序静态成立；四层均不放行；报告SHA=b18edbb7c07f21152f744624c859ac1e3471324e3d74a3479de40f1d35a58e1f"
+  ]
+}

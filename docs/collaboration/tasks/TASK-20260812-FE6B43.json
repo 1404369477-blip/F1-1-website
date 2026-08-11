@@ -1,0 +1,42 @@
+{
+  "acceptance_exit": "聚焦测试新增并证明stop_epoch漂移后成功finalize零候选/零validator且同run失败收口；2002/3fff/IPv4-mapped负例；拒绝响应销毁使用可静态判定出口或纯函数测试；externalCalls前门0/响应后1。固定Node24只运行一次聚焦Vitest、一次typecheck、一次git diff --check且均PASS；真实请求0、部署0；报告绑定E60186四项P1/P2处置与未验证项，TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "当前对话用户批准真实采集/M1部署；安全E60186确认P1=4/P2=1。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T01:37+08:00",
+      "evidence": "当前对话用户批准真实采集/M1部署；安全E60186确认P1=4/P2=1。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "TYPECHECK_TEST_ENV_NODE_ENV_REQUIRED",
+  "claimed_by": "开发部/internal-agent:rss_real",
+  "completion_class": "standard",
+  "confirmation": "用户要求快速上线且减少测试；四项代码问题必须在同一后继中一次收敛。",
+  "created_at": "2026-08-12T01:37+08:00",
+  "department": "开发部",
+  "details": "绑定安全报告 docs/collaboration/部门/安全部/报告/2026-08-12-E60186-RSS-REAL-001冻结候选单次静态对抗审查报告.md，旧候选十项SHA由E60186证明无漂移。后端-only，视觉=N/A。一次性修复并同次验证：1) claim返回stopEpoch，200/304成功finalize在同一BEGIN IMMEDIATE事务写任何候选/validator前复核source enabled=true且stop_epoch等于claim；漂移抛SOURCE_STOPPED，随后允许同一run写failed收据且候选/validator零写入。2) IPv6拒绝2002::/16、3fff::/20、IPv4-mapped及RFC/IANA特殊/文档范围，只有明确全球单播可pin。3) redirect/429/401/403/404/5xx/MIME/encoding/length等拒绝出口必须destroy response/socket，不得无界resume；304也不得留下可持续body，10秒总上界在所有未终结路径有效。4) externalCalls以真实阶段计数：RSS_IO_DISABLED/URL/proxy/validator等I/O门前失败=0；HTTP/DNS/request已发生或响应后parser/repository失败=1，保留原reason/http/retry/stop。只改types/transport/repository/CLI/test和开发报告；不改parser/migration/package/accepted ADR。",
+  "domain_stage": "p1-fix",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若需要新表/新业务实体/改accepted合同，立即block；若stop fence失败收口会覆盖已递增stop_epoch或重新启用source，测试失败并停止；若响应销毁后仍有无总上界的stream/socket，保持P1不完成；若externalCalls无法区分I/O前后，保持P2并不宣称收口。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "M5真实采集最小纵切",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-E60186.json"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-FE6B43",
+  "title": "D05359后继：RSS上线前四项代码P1与外联收据P2原子收敛",
+  "unverified": [],
+  "updated_at": "2026-08-12T01:51+08:00",
+  "verified": []
+}
