@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "lookup在Node24 all/scalar两种回调形状均符合契约；单地址pin和安全边界保持；聚焦测试、typecheck、diff-check各一次PASS；transport/test精确SHA与报告落盘；M1仍disabled/epoch3/unloaded且未触碰；TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "用户授权真实采集和快速上线；实机诊断已高置信定位callback shape根因。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T03:43+08:00",
+      "evidence": "用户授权真实采集和快速上线；实机诊断已高置信定位callback shape根因。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "TYPECHECK_HTTPS_REQUEST_OPTIONS_AUTO_SELECT_FAMILY",
+  "claimed_by": "开发部/internal-agent:rss_real",
+  "completion_class": "standard",
+  "confirmation": "这是实机唯一NETWORK_FAILURE的直接最小修复；完成后只做一次安全只读复审，再生成新commit/release并执行一次受控实采，不启用900秒。",
+  "created_at": "2026-08-12T03:43+08:00",
+  "department": "开发部",
+  "details": "依据E17AE8实机诊断，只修改 app/src/server/rss/transport.ts、app/src/tests/rss-real.test.ts 与一份新开发报告。当前根因：Node24 https/net 在 lookupOptions.all=true 时要求callback接收单元素 LookupAddress[]，现pinned lookup固定返回scalar address/family，触发ERR_INVALID_IP_ADDRESS并映射NETWORK_FAILURE。最小修复：把pinned lookup提取为可聚焦验证的纯helper或等价最小实现；当options.all===true时回调 `(null,[{address:selected.address,family:4|6}])`，否则保持 `(null,address,family)`；只返回已通过public判定的同一selected地址，不重新DNS、不引入多地址fallback。https request显式 `autoSelectFamily:false` 作为单地址pin纵深限制，但helper仍兼容all形状。不得放宽固定URL/DNS公共地址/TLS/SNI/0redirect/timeout/MIME/size/no-proxy边界，不改repository/parser/types/collector/deployment/lock。添加纯本地回归：all=true返回单元素数组且family正确；all=false返回scalar；无网络。验证预算：一次focused rss-real Vitest、一次固定Node24 typecheck、一次git diff --check；0网络/0SSH/0M1/0DB写，不跑build/full suite。",
+  "domain_stage": "RSS-REAL-001 Node24网络兼容",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若类型定义无法表达且需要any/ts-ignore/放宽安全边界立即停止；任一限定验证首错停止不重跑；若发现根因需要第二处生产模块修改回统筹重划范围。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "RSS-REAL-001/runtime/node24-lookup-shape-fix",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-E17AE8-M1-RSS-NETWORK_FAILURE最小分层诊断报告.md;app/src/server/rss/transport.ts;app/src/tests/rss-real.test.ts"
+  ],
+  "report": "",
+  "resolution": {
+    "evidence": "docs/collaboration/tasks/TASK-20260812-8E1E13.json;docs/collaboration/部门/开发部/报告/2026-08-12-DC8D28与8E1E13-Node24-pinned-lookup兼容修复报告.md",
+    "reason": "唯一typecheck首错由无断言交叉类型机械后继关闭，继承7个聚焦测试PASS",
+    "receipt_id": "RES-20260812T035650-2FA6B627",
+    "replacement_revision": 3,
+    "replacement_state": "completed",
+    "replacement_task_id": "TASK-20260812-8E1E13",
+    "resolved_at": "2026-08-12T03:56+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "superseded",
+    "target_revision_before": 3
+  },
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-DC8D28",
+  "title": "Node24 pinned lookup all回调形状兼容最小修复",
+  "unverified": [],
+  "updated_at": "2026-08-12T03:56+08:00",
+  "verified": []
+}

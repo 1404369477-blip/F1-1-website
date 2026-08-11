@@ -145,6 +145,20 @@ export function terminateRejectedRssResponse(response: DestroyableRssResponse): 
   response.destroy();
 }
 
+export function createPinnedRssLookup(selected: Readonly<{
+  address: string;
+  family: number;
+}>): NonNullable<RequestOptions["lookup"]> {
+  const family: 4 | 6 = selected.family === 6 ? 6 : 4;
+  return (_hostname, lookupOptions, callback) => {
+    if (lookupOptions.all === true) {
+      callback(null, [{ address: selected.address, family }]);
+      return;
+    }
+    callback(null, selected.address, family);
+  };
+}
+
 function assertNoProxyEnvironment(env: NodeJS.ProcessEnv): void {
   if (PROXY_ENV_KEYS.some((key) => typeof env[key] === "string" && env[key] !== "")) {
     throw new RssError("PROXY_ENV_FORBIDDEN");
@@ -313,14 +327,10 @@ export async function fetchFixedRss(options: Readonly<{
     if (requestEtag !== null) headers["If-None-Match"] = requestEtag;
     if (requestLastModified !== null) headers["If-Modified-Since"] = requestLastModified;
 
-    const pinnedLookup = ((
-      _hostname: string,
-      _lookupOptions: unknown,
-      callback: (error: NodeJS.ErrnoException | null, address: string, family: 4 | 6) => void
-    ): void => callback(null, selected.address, selected.family === 6 ? 6 : 4)) as unknown as RequestOptions["lookup"];
+    const pinnedLookup = createPinnedRssLookup(selected);
 
     let firstByteTimer: NodeJS.Timeout | undefined;
-    const request = httpsRequest({
+    const requestOptions: RequestOptions & { autoSelectFamily: false } = {
       protocol: "https:",
       hostname: RSS_FEED_HOST,
       port: 443,
@@ -328,9 +338,11 @@ export async function fetchFixedRss(options: Readonly<{
       path: RSS_FEED_PATH,
       servername: RSS_FEED_HOST,
       agent: false,
+      autoSelectFamily: false,
       headers,
       lookup: pinnedLookup
-    }, (response) => {
+    };
+    const request = httpsRequest(requestOptions, (response) => {
       if (firstByteTimer) {
         clearTimeout(firstByteTimer);
         timers.delete(firstByteTimer);

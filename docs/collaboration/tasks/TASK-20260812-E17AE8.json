@@ -1,0 +1,52 @@
+{
+  "acceptance_exit": "DNS/route/TLS/必要时headers层分界明确；外部连接数量不超过TLS2+headers1，wrapper/collector/DB写均0；根因若证实则给精确最小修复和回归向量，若仍Unknown列下一最小证据；source disabled/epoch3/job unloaded/public零漂移；task-owned临时文件清理；报告与TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-E17AE8-M1-RSS-NETWORK_FAILURE最小分层诊断报告.md"
+  ],
+  "authorization_evidence": "用户授权固定M1 SSH与真实采集；一次真实请求已失败且无可诊断子码，需要最小外部握手定位。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T03:34+08:00",
+      "evidence": "用户授权固定M1 SSH与真实采集；一次真实请求已失败且无可诊断子码，需要最小外部握手定位。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:rss_real",
+  "completion_class": "standard",
+  "confirmation": "该任务只诊断已发生的真实NETWORK_FAILURE，不重试collector、不写候选、不加载900秒任务；用户已授权真实采集和SSH。",
+  "created_at": "2026-08-12T03:34+08:00",
+  "department": "开发部",
+  "details": "保持M1 RSS source disabled/epoch3、job unloaded，不修改任何DB、代码、manifest、plist或public服务。经ssh f1plus1-m1-uu做最小诊断：1) 本地只读核对DNS lookup all+verbatim 的地址族顺序、public判定、默认IPv4/IPv6路由与接口IPv6可用性；不得在报告记录原始IP，只记录family/order和IP SHA前缀。2) 最多执行两次无HTTP的TLS握手：对collector实际会选的首地址一次，若其失败再对首个public IPv4一次；固定SNI motorsport.com、3秒上限，只记录family、error code、timing与证书hostname结果，不发HTTP method/path/body。3) 若首选TLS成功仍不能解释NETWORK_FAILURE，允许唯一一次headers-only HTTPS GET诊断，使用同一固定host/path/header与pin策略，收到status/headers即destroy，不读取/保存正文；只记录status、mime/encoding/length/redirect与错误code。不得运行wrapper/collector，不得重试RSS入库，不得改变source。给出已证实根因、置信度和最小代码修复；诊断后复核source disabled/job unloaded/public服务零漂移，清理临时脚本。",
+  "domain_stage": "RSS-REAL-001真实网络诊断",
+  "event_receipts": [
+    "tls-only:success:family=4:ipShaPrefix=65c1a3ce1574:hostname=pass:timingMs=314:connections=1",
+    "headers-only-get:failed:ERR_INVALID_IP_ADDRESS:family=4:ipShaPrefix=c0f3a978d289:httpStatus=null:bodyRead=false:timingMs=6:connections=1"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "DNS/route事实已足以定位则不执行多余连接；首选TLS失败且IPv4成功即停止，不做headers GET；TLS均失败不继续HTTP；任何source/job/public漂移立即停止并报告。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "仅记录family/order/IP SHA前缀，无原始IP；TLS1<=2、headers GET1、wrapper0、collector0、DB写0、正文读取保存0；首选TLS成功后未执行第二次TLS，GET失败后未重试或继续联网；未修改代码/manifest/plist/DB/服务；最终disabled/epoch3/unloaded及public零漂移已核对。",
+  "node": "RSS-REAL-001/runtime/network-failure-diagnosis",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-E157BC-M1真实RSS单次受控采集实施报告.md;app/src/server/rss/transport.ts;docs/collaboration/tasks/TASK-20260812-E157BC.json"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-E17AE8-M1-RSS-NETWORK_FAILURE最小分层诊断报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-E17AE8",
+  "title": "M1 RSS NETWORK_FAILURE最小分层网络诊断",
+  "unverified": [
+    "修复尚未实施或验证；上游HTTP status/headers/RSS内容与200/304/parse/candidate/editor保护/900秒调度未触达；原E157BC wrapper所选具体IP未记录。"
+  ],
+  "updated_at": "2026-08-12T03:43+08:00",
+  "verified": [
+    "前置与后置均确认source disabled/stop_epoch3、job unloaded、private run1/candidate0/integrity ok、public DB精确身份与三服务零漂移；DNS all+verbatim为4个public IPv4且IPv4/IPv6默认路由存在；TLS-only恰1次成功且证书hostname通过；headers-only GET恰1次、0正文，在6ms建连前精确复现ERR_INVALID_IP_ADDRESS；结合固定Node24 all=true回调数组合同，高置信定位pinned lookup无条件scalar回调根因；任务临时文件0。"
+  ]
+}

@@ -7,6 +7,7 @@ import { parseRssFeed } from "../server/rss/parser.ts";
 import { RssRepository, applyRssMigration } from "../server/rss/repository.ts";
 import {
   assertFixedFeedUrl,
+  createPinnedRssLookup,
   fetchFixedRss,
   isPublicRssAddress,
   terminateRejectedRssResponse
@@ -116,6 +117,35 @@ describe("RSS-REAL-001 focused contract", () => {
       }
     });
     expect(destroyed).toBe(1);
+  });
+
+  it("returns Node 24 lookup callback shapes for one pinned address", () => {
+    let allCalls = 0;
+    createPinnedRssLookup({ address: "8.8.8.8", family: 4 })(
+      "www.motorsport.com",
+      { all: true },
+      (error, address, family) => {
+        allCalls += 1;
+        expect(error).toBeNull();
+        expect(address).toEqual([{ address: "8.8.8.8", family: 4 }]);
+        expect(family).toBeUndefined();
+      }
+    );
+    expect(allCalls).toBe(1);
+
+    let scalarCalls = 0;
+    createPinnedRssLookup({ address: "2606:4700:4700::1111", family: 6 })(
+      "www.motorsport.com",
+      { all: false },
+      (error, address, family) => {
+        scalarCalls += 1;
+        expect(error).toBeNull();
+        expect(address).toBe("2606:4700:4700::1111");
+        expect(Array.isArray(address)).toBe(false);
+        expect(family).toBe(6);
+      }
+    );
+    expect(scalarCalls).toBe(1);
   });
 
   it("keeps pre-I/O failures at zero and preserves post-network failure metadata", async () => {

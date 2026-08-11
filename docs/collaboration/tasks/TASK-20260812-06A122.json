@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "输入无漂移；根因修复closed/open及调用序证据；P0/P1/P2明确；是否放行新commit/release与一次M1真实重试明确；报告与TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-06A122-Node24-pinned-lookup根因修复最终只读复审报告.md"
+  ],
+  "authorization_evidence": "用户授权真实采集；本修复直接对应已证实ERR_INVALID_IP_ADDRESS。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T03:57+08:00",
+      "evidence": "用户授权真实采集；本修复直接对应已证实ERR_INVALID_IP_ADDRESS。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/internal-agent:rss_static_review",
+  "completion_class": "audit",
+  "confirmation": "通过后立即提交第二release、精确同步GitHub并在M1只执行一次修复后实采；仍不加载900秒。",
+  "created_at": "2026-08-12T03:57+08:00",
+  "department": "安全部",
+  "details": "对实机根因修复做一次限定只读复审。精确输入：transport a55b76fa8899173341671a3c8e13d67c47e6f74d8fd6e0ff68a29e1abc134028；test b797fac7a914c075226535c42e4a2c660d666f2ed0a95fe18b9c74fd936400d2；报告 c9cc917b7f3dcfcddf758a383801040703cb54aeb18f91cd0b219993fc964a0b；诊断报告 d04337bd114c558af62398e5faa61f451f5d179c92d0ae25f60bcaf7c6231aa8。只确认：all=true回调为单元素已选public地址数组、scalar分支正确、family类型正确；autoSelectFamily=false不破坏pin；未重新DNS/多地址fallback；固定URL/public DNS/TLS/SNI/proxy/redirect/timeout/MIME/size边界保持；测试覆盖实机ERR_INVALID_IP_ADDRESS根因；无any/断言/ts-ignore。0测试/脚本/网络/SSH/M1/修改，不扩展。",
+  "domain_stage": "RSS-REAL-001网络修复安全门",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "SHA漂移停止；发现P0/P1只给最小修复；真实M1结果保持Unknown。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未运行测试/网络/SSH/M1；未把类型与静态PASS外推为真实采集成功；只放行一次受控实采，900秒不放行；未扩展lookup修复范围",
+  "node": "RSS-REAL-001/security/node24-lookup-fix",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-E17AE8-M1-RSS-NETWORK_FAILURE最小分层诊断报告.md;docs/collaboration/部门/开发部/报告/2026-08-12-DC8D28与8E1E13-Node24-pinned-lookup兼容修复报告.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-12-06A122-Node24-pinned-lookup根因修复最终只读复审报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-06A122",
+  "title": "Node24 pinned lookup实机根因修复最终只读复审",
+  "unverified": [
+    "第二commit/release manifest与GitHub/M1同步、修复后唯一真实HTTPS/RSS及parse/candidate结果、人工字段与synthetic零漂移、stop后零新增run、900秒节奏均Unknown"
+  ],
+  "updated_at": "2026-08-12T04:00+08:00",
+  "verified": [
+    "四项精确输入SHA全部MATCH；all=true返回单元素已选public地址数组，scalar分支返回同一地址与4|6 family；autoSelectFamily=false保持单地址pin；无重新DNS或多地址fallback；既有URL/public DNS/TLS/SNI/proxy/redirect/timeout/MIME/size边界保持；根因CLOSED，P0=0/P1=0/P2=0"
+  ]
+}

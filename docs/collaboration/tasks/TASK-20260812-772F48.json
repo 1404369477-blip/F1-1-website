@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "release builder一次PASS且commit/content/manifest/Node/依赖闭包一致；M1 prepare一次PASS且job仍unloaded；verified wrapper真实请求最多一次并有脱敏收据；stop后source disabled、epoch增加、job明确unloaded、短窗零新增run；人工editor字段未被机器覆盖，公开synthetic DB与public服务零漂移；0自动发布/0公网Admin；报告精确列已验证/失败/Unknown、清理结果与SHA；TASK_STATE_OK。真实源失败仍可TASK_STATE_OK但必须保持stopped并给reason/nextAction，不能放行900秒。",
+  "artifacts": [],
+  "authorization_evidence": "用户2026-08-12明确说可以直接部署到M1、直接用SSH连接、可以接入真实采集，并要求快速落地且减少冗余测试。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T03:07+08:00",
+      "evidence": "用户2026-08-12明确说可以直接部署到M1、直接用SSH连接、可以接入真实采集，并要求快速落地且减少冗余测试。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "STAGE_D_BASELINE_QUERY_SQL_LITERAL_ERROR",
+  "claimed_by": "开发部/internal-agent:rss_real",
+  "completion_class": "standard",
+  "confirmation": "用户已明确授权直接SSH固定M1和真实采集。本任务只允许一条真实RSS请求、prepare-only和停采核对；不授权900秒load、自动发布、公开数据写、站点重启、删除private DB或修改网络/SSH配置。",
+  "created_at": "2026-08-12T03:07+08:00",
+  "department": "开发部",
+  "details": "以本地精确提交 7f5cab64e25d01c74005fbb24c4f0e2905291f1d 为唯一release，通过既有 SSH alias `f1plus1-m1-uu` 实施；公开synthetic站点和现有三个LaunchAgent必须持续运行且不得重启。阶段A只读preflight：确认M1 UID/home/appRoot真实路径/非iCloud、固定Node 24.18.0绝对路径与二进制SHA、磁盘、现有public-beta/receipt-refresh/quick-tunnel状态；`com.f1plus1.rss-collector`必须明确service-not-found，其他结果停止；记录公开synthetic DB SHA/size/ino与公开home/detail HTTP状态。阶段B本地固定Node运行release builder唯一一次，要求运行闭包相对HEAD干净，生成release/content/manifest SHA；远端Node SHA必须与manifest一致。使用确定性临时包/rsync仅传输commit内RSS运行闭包、package/lock、release manifest及manifest列明的fast-xml-parser递归生产依赖目录；禁止传工作区无关脏文件，禁止npm联网安装；远端每个传输字节/权限须与manifest匹配。阶段C在M1先复核job仍unloaded，再以独立expected manifest SHA运行installer prepare唯一一次；只接受prepared-no-bootstrap-called/externalCalls=0，核对私有目录0700、DB/manifest/plist/log0600和deployment manifest；不得bootstrap/resume。阶段D通过verified wrapper执行唯一一次真实RSS请求，然后立即执行control stop完成epoch围栏；保存脱敏单行收据。只读核对private DB schema/integrity、ingest_run/candidate聚合、新增/更新/重复计数、review_status分布、editor字段非空计数、stop前后run数；等待一个短核对窗后确认零新增run；核对公开synthetic DB SHA/size/ino与公开home/detail/现有服务零漂移。无论真实运行成功或失败都保持RSS job unloaded/source disabled，不执行900秒load。精确清理本地和M1 task-owned临时包/阶段目录；保留正式private DB、manifest/plist/log与脱敏收据，不删除数据。",
+  "domain_stage": "RSS-REAL-001 M1受控实施",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任何preflight/release/hash/权限/job状态不符立即停止，不改M1；prepare失败立即停止并保持public服务不动，清理task-owned阶段文件；真实请求失败或解析/DB失败立即stop并保留脱敏失败收据，不重试请求；若public服务/DB漂移立即停止RSS并回退本次overlay文件到提交前版本或从精确Git父提交恢复，报告影响。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "RSS-REAL-001/deployment/m1-prepare-one-real-run",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-314457-RSS调度前验签唯一P1最终只读复审报告.md;docs/runbooks/F1+1-固定M1真实RSS采集器部署与回退-v0.1.md;7f5cab64e25d01c74005fbb24c4f0e2905291f1d"
+  ],
+  "report": "",
+  "resolution": {
+    "evidence": "docs/collaboration/tasks/TASK-20260812-E157BC.json;docs/collaboration/部门/开发部/报告/2026-08-12-E157BC-M1真实RSS阶段D机械后继实施报告.md",
+    "reason": "阶段D只读baseline SQL引号首错由机械后继修正；继承阶段A-C，后继执行唯一真实请求并安全停采收口",
+    "receipt_id": "RES-20260812T033241-A1A954ED",
+    "replacement_revision": 3,
+    "replacement_state": "completed",
+    "replacement_task_id": "TASK-20260812-E157BC",
+    "resolved_at": "2026-08-12T03:32+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "superseded",
+    "target_revision_before": 3
+  },
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-772F48",
+  "title": "固定M1精确release准备与一次真实RSS受控运行",
+  "unverified": [],
+  "updated_at": "2026-08-12T03:32+08:00",
+  "verified": []
+}

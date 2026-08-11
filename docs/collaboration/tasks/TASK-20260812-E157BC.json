@@ -1,0 +1,52 @@
+{
+  "acceptance_exit": "baseline无歧义PASS；one-shot enable只改source.enabled且job未加载；wrapper恰1次并输出脱敏收据；stop恰1次且disabled/epoch增加/unloaded；私有schema/integrity、run/candidate/status/editor聚合与短窗零新增有收据；公开DB/home/detail/三服务零漂移；0自动发布/0公网Admin/0900秒load；task-owned stage/tar/backup精确清理或失败时用于恢复；报告与TASK_STATE_OK。真实源返回失败仍不得重试，保持stopped并如实报告。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-E157BC-M1真实RSS单次受控采集实施报告.md"
+  ],
+  "authorization_evidence": "用户授权直接SSH固定M1与真实采集，并要求快速推进、避免冗余测试。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T03:22+08:00",
+      "evidence": "用户授权直接SSH固定M1与真实采集，并要求快速推进、避免冗余测试。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:rss_real",
+  "completion_class": "standard",
+  "confirmation": "用户已授权一次真实采集；当前真实请求计数为0。该后继只纠正调用方SQL并执行剩余的一次请求，不重复已通过阶段，不加载900秒任务。",
+  "created_at": "2026-08-12T03:22+08:00",
+  "department": "开发部",
+  "details": "继承772F48阶段A-C全部PASS及当前M1正式release/prepare状态，不得重做builder/传输/overlay/installer。当前事实：wrapper0次、真实RSS请求0次；RSS job明确unloaded；source disabled/stopEpoch=2；private schema/integrity ok且run0/candidate0；public DB/home/detail/三服务零漂移。仅修正阶段D调用方只读baseline SQL：使用参数化或 `IS NULL/IS NOT NULL`，禁止把字符串写成双引号。先重验release/deployment/Node/依赖/DB/schema/权限和job unloaded、公私DB聚合基线。随后在job仍unloaded前提下，用固定Node和同一private DB连接执行assertRssSchema，再在BEGIN IMMEDIATE事务把固定source从enabled=0置1（不得改stop_epoch、validator或任何候选/人工字段），只作为一次手动wrapper运行前的one-shot enable；变更数必须恰1。执行verified wrapper恰1次，真实RSS请求最多1次；无论wrapper exit0/非0都立即执行control stop恰1次，确认disabled、epoch>2、job unloaded。再用无歧义只读SQL核对run/candidate/review_status/editor字段聚合、短窗零新增run，核对公开synthetic DB SHA/size/ino与public服务状态。不得resume/bootstrap/load，不得第二次wrapper/请求，不得改代码。成功收口后清理772F48/本任务的本地tar、M1 stage和任务backup；如wrapper或核对失败则先用backup恢复overlay并重新核对public服务，正式private DB/manifest/plist/log保留。",
+  "domain_stage": "RSS-REAL-001 M1单次实采后继",
+  "event_receipts": [
+    "wrapper:failed:NETWORK_FAILURE:externalCalls=1:sha256=b0b9ff2fb18ed5d47d4df0f4749b337f2d8d47530181fa123e443ae85e101421",
+    "stop:stopped-confirmed:disabled:epoch=3:unloaded:sha256=272e039f663b64a8f6758c4bde3c98594792fe2294a43b81a3a8e2063f2607a7"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任何身份/权限/job/baseline漂移在enable前停止；one-shot enable变更数非1立即rollback并停止；wrapper失败不重试，仍stop并保留脱敏收据；stop后置不满足立即尝试独立DB fence与bootout并停止；public漂移立即恢复overlay backup并报告。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "wrapper/真实请求/stop均恰1次，未重试；0resume、0bootstrap、0900秒load、0自动发布、0公网Admin、0站点重启、0npm联网；正式private DB/manifest/plist/log/收据保留；递归删除被执行前拦截后改为可恢复Trash，原任务stage路径已不存在并如实披露Trash副本；complete首次仅因external-artifact参数格式被工具拒绝，未改变外部状态。",
+  "node": "RSS-REAL-001/deployment/m1-one-real-run-successor",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-772F48.json;docs/runbooks/F1+1-固定M1真实RSS采集器部署与回退-v0.1.md;7f5cab64e25d01c74005fbb24c4f0e2905291f1d"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-E157BC-M1真实RSS单次受控采集实施报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-E157BC",
+  "title": "M1真实RSS阶段D基线SQL机械后继与唯一请求",
+  "unverified": [
+    "NETWORK_FAILURE具体属于DNS/TCP/TLS/timeout或对端哪一层未定位；未获得HTTP200/304、parse或candidate写入路径；基线无非空editor候选，故真实更新保护缺少动态样本；900秒load未执行且不得放行。"
+  ],
+  "updated_at": "2026-08-12T03:32+08:00",
+  "verified": [
+    "继承772F48阶段A-C PASS且未重做；无歧义baseline重验release/deployment/Node/19+8/schema/integrity/权限/job absent与公私基线PASS；同一DB连接assert schema后BEGIN IMMEDIATE one-shot enable只改enabled且epoch保持2；wrapper恰1次、真实请求恰1次，脱敏结果failed/NETWORK_FAILURE/next_slot/externalCalls1，未重试；紧随其后control stop恰1次PASS，disabled/epoch3/unloaded；private run1/candidate0/review-editor聚合0，20秒零新增；公开DB/home/detail/三服务零漂移；原stage/tar/backup路径已清理。"
+  ]
+}

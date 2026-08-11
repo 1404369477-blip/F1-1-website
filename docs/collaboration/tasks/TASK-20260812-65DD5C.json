@@ -1,0 +1,51 @@
+{
+  "acceptance_exit": "远端起点与本地parent一致；API生成tree SHA=本地tree；API commit SHA=7f5cab64...；ref fast-forward后远端ref/tree/parent精确匹配；无本地文件变化、无权限配置变化；报告脱敏API调用数与结果并TASK_STATE_OK。若任一硬门不满足，保持远端ref不变并如实blocked。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-GitHub-Git-Data-API精确commit同步报告.md"
+  ],
+  "authorization_evidence": "用户明确指定 https://github.com/1404369477-blip/F1-1-website 为长期仓库并要求提交/同步。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T03:37+08:00",
+      "evidence": "用户明确指定 https://github.com/1404369477-blip/F1-1-website 为长期仓库并要求提交/同步。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:github_api_push",
+  "completion_class": "standard",
+  "confirmation": "用户此前明确要求把当前节点提交并同步到该GitHub仓库，且指定以后在该仓库维护；本任务只做已有本地commit的精确fast-forward同步。",
+  "created_at": "2026-08-12T03:37+08:00",
+  "department": "开发部",
+  "details": "目标仓库固定 https://github.com/1404369477-blip/F1-1-website，分支 codex/first-public-release，本地精确commit 7f5cab64e25d01c74005fbb24c4f0e2905291f1d。现有git push已三次分别以HTTP2 framing/HTTP1.1 empty-reply失败；gh api rate_limit正常且账号chanaiai具repo权限。只读取得远端ref/parent/tree，必须确认远端分支head恰为本地commit父提交且更新为fast-forward。若满足，使用官方Git Data API：为本地commit相对父提交的精确新增/修改文本文件创建blob，以远端base tree创建tree；要求API tree SHA恰等于本地commit tree SHA；按本地commit的message、author/committer name/email/date和单一parent创建commit；只有返回commit SHA恰等于本地7f5cab64...才允许原子更新远端ref。任何tree/commit SHA不一致都禁止更新ref并停止。完成后API回读远端ref/tree/parent，确认精确相等；不得修改本地工作树、commit、remote配置、GitHub权限/SSH key、PR或其他分支；不得输出token或文件正文。",
+  "domain_stage": "RSS release GitHub同步",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [
+    "https://github.com/1404369477-blip/F1-1-website/commit/7f5cab64e25d01c74005fbb24c4f0e2905291f1d"
+  ],
+  "failure_paths": [
+    "远端head非本地parent立即停止；blob/tree/commit任何SHA不一致不更新ref；API网络/权限错误不重试超过一次且不改认证；更新ref后验证不匹配立即报告，不force。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "逐层以API返回SHA做下一门前置，未以内容相似替代SHA相等；ref更新前二次核对远端head；未force、未改remote/权限/SSH key、未输出token/文件正文；仅任务协议JSON与报告构成本地协作收据。",
+  "node": "release/github/api-fallback-exact-sha",
+  "pointers": [
+    "7f5cab64e25d01c74005fbb24c4f0e2905291f1d;https://github.com/1404369477-blip/F1-1-website"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-GitHub-Git-Data-API精确commit同步报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-65DD5C",
+  "title": "GitHub smart-HTTP故障后的精确commit Git Data API同步",
+  "unverified": [
+    "未重试Git smart-HTTP push；未变更或验证仓库可见性、分支保护及其他仓库设置。"
+  ],
+  "updated_at": "2026-08-12T03:50+08:00",
+  "verified": [
+    "远端更新前head两次精确等于本地目标唯一parent 3475d660a0a09a147ad0b043fb79fcf792bf4bf0；42/42 API blob SHA精确等于本地blob；API tree精确等于dbf4962bd4e5378a76ecbb8749b8baec6a3722b2；API commit精确等于7f5cab64e25d01c74005fbb24c4f0e2905291f1d；force=false更新后API回读ref/tree/parent全部精确匹配；本地HEAD/.git/config/index在ref事务前后稳定；API共49次、0重试、0 SHA不一致。"
+  ]
+}
