@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark" data-mobile-view="list">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="F1+1 私有人工审核台。">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
+  <title>F1+1 · 人工审核台</title>
+  <link rel="stylesheet" href="/admin/assets/app.css">
+  <script defer src="/admin/assets/app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#admin-main">跳到审核详情</a>
+
+  <header class="topbar" id="topbar">
+    <div class="brand">
+      <span class="brand-mark">F1+1</span>
+      <span class="route">私有 Admin · /admin/reviews</span>
+      <span class="environment-badge" id="environment-badge" hidden>验收 Fixture</span>
+    </div>
+    <div class="top-actions">
+      <span class="connection-state" id="connection-state" aria-live="polite">正在检查会话</span>
+      <button class="icon-button" id="theme-toggle" type="button" aria-label="当前深色主题，切换主题">深</button>
+    </div>
+  </header>
+
+  <main id="admin-main">
+    <section class="auth-shell" id="auth-view" aria-labelledby="auth-title">
+      <div class="auth-card">
+        <p class="eyebrow">Private operator access</p>
+        <h1 id="auth-title">进入人工审核台</h1>
+        <p class="auth-intro">仅供已授权的运营者使用。私有网络负责可达性，通行密钥负责身份验证。</p>
+
+        <div class="auth-status" id="auth-status" role="status">
+          <span class="spinner" aria-hidden="true"></span>
+          <div>
+            <strong>正在检查会话</strong>
+            <span>等待同源 Admin 服务响应。</span>
+          </div>
+        </div>
+
+        <div class="auth-actions" id="auth-actions" hidden>
+          <button class="primary-button" id="login-passkey" type="button">使用通行密钥登录</button>
+          <button class="secondary-button" id="show-bootstrap" type="button">首次配置通行密钥</button>
+        </div>
+
+        <form class="bootstrap-form" id="bootstrap-form" hidden>
+          <label for="bootstrap-token">一次性配置令牌</label>
+          <input class="text-field" id="bootstrap-token" name="bootstrap-token" type="password" autocomplete="one-time-code" minlength="43" maxlength="43" pattern="[A-Za-z0-9_-]{43}" required>
+          <p class="field-help">令牌只提交给当前同源 Admin 服务，不会写入页面存储。</p>
+          <div class="inline-actions">
+            <button class="primary-button" type="submit">注册通行密钥</button>
+            <button class="quiet-button" id="cancel-bootstrap" type="button">取消</button>
+          </div>
+        </form>
+
+        <p class="auth-footnote">Mac 与 iPhone 使用同一操作语义。发布仍需一次新的通行密钥验证。</p>
+      </div>
+    </section>
+
+    <section class="admin-app" id="app-view" hidden aria-label="人工审核工作区">
+      <aside class="queue" id="queue-panel" aria-label="待审核队列">
+        <div class="queue-heading">
+          <p class="eyebrow">Manual review</p>
+          <h1>人工审核台</h1>
+          <p class="queue-summary" id="queue-summary">正在读取候选</p>
+        </div>
+        <div class="queue-controls">
+          <input class="text-field" id="queue-search" type="search" placeholder="搜索标题或来源" aria-label="搜索审核队列">
+          <button class="icon-button" id="refresh-queue" type="button" aria-label="刷新审核队列">↻</button>
+        </div>
+        <div class="queue-notice" id="queue-notice" hidden role="status"></div>
+        <ul class="queue-list" id="queue-list"></ul>
+      </aside>
+
+      <section class="detail" id="detail-panel" aria-label="审核详情">
+        <button class="mobile-back" id="mobile-back" type="button">← 返回待审核队列</button>
+
+        <section class="system-panel" id="system-panel" hidden aria-live="polite">
+          <span class="system-symbol" id="system-symbol" aria-hidden="true">…</span>
+          <h2 id="system-title">正在读取</h2>
+          <p id="system-copy">请稍候。</p>
+          <button class="secondary-button" id="system-action" type="button" hidden>重试</button>
+        </section>
+
+        <article class="detail-content" id="detail-content" hidden>
+          <header class="detail-header">
+            <div>
+              <p class="eyebrow" id="detail-kicker">真实 RSS 候选</p>
+              <h2 id="detail-title">选择一条候选内容</h2>
+              <p class="detail-meta" id="detail-meta">来源与时间将在此显示</p>
+            </div>
+            <div class="integrity" id="integrity-card">
+              <strong id="integrity-title">等待完整性检查</strong>
+              <span id="integrity-copy">未开放任何写操作</span>
+            </div>
+          </header>
+
+          <div class="review-grid">
+            <div class="review-main">
+              <section class="content-section" aria-labelledby="source-snapshot-title">
+                <div class="section-heading">
+                  <h3 id="source-snapshot-title">来源快照</h3>
+                  <a class="source-link" id="source-link" href="#" target="_blank" rel="noopener noreferrer">打开原文 ↗</a>
+                </div>
+                <div class="media-placeholder" role="img" aria-label="当前真实 RSS 候选没有媒体">
+                  <strong>F1+1 SOURCE SNAPSHOT</strong>
+                  <span>RSS · 当前候选无媒体</span>
+                </div>
+                <p class="source-excerpt" id="source-excerpt"></p>
+              </section>
+
+              <section class="content-section evidence-card" aria-labelledby="evidence-title">
+                <div class="section-heading">
+                  <h3 id="evidence-title">可核对证据</h3>
+                  <span>不显示内部完整 hash</span>
+                </div>
+                <dl>
+                  <dt>来源</dt><dd id="evidence-source">—</dd>
+                  <dt>作者</dt><dd id="evidence-author">—</dd>
+                  <dt>来源时间</dt><dd id="evidence-time">—</dd>
+                  <dt>来源版本</dt><dd id="evidence-source-revision">—</dd>
+                  <dt>审核版本</dt><dd id="evidence-bundle">—</dd>
+                  <dt>投递状态</dt><dd id="evidence-delivery">—</dd>
+                </dl>
+              </section>
+
+              <form class="editor" id="editor-form" aria-labelledby="editor-title">
+                <div class="section-heading">
+                  <h3 id="editor-title">中文标题、摘要与私有备注</h3>
+                  <span id="editor-binding">等待当前版本</span>
+                </div>
+                <div class="form-row">
+                  <label for="title-input">中文标题 <small><span id="title-count">0</span> / 400</small></label>
+                  <input class="text-field" id="title-input" maxlength="400" autocomplete="off" required>
+                </div>
+                <div class="form-row">
+                  <label for="summary-input">中文摘要 <small><span id="summary-count">0</span> / 1200</small></label>
+                  <textarea class="text-area" id="summary-input" maxlength="1200" required></textarea>
+                </div>
+                <div class="form-row">
+                  <label for="notes-input">私有审核备注 <small><span id="notes-count">0</span> / 2000</small></label>
+                  <textarea class="text-area notes-area" id="notes-input" maxlength="2000"></textarea>
+                </div>
+                <button class="secondary-button" id="save-revision" type="submit">保存并生成待审核版本</button>
+                <p class="form-note">保存会生成新的不可变审核版本。来源或审核版本变化时，服务端以 409 拒绝覆盖。</p>
+              </form>
+            </div>
+
+            <aside class="action-panel" aria-label="当前审核动作">
+              <section class="state-card" id="state-card">
+                <p class="eyebrow">Current state</p>
+                <h3 id="action-title" tabindex="-1">等待候选</h3>
+                <p id="action-copy">载入详情并通过完整性检查后，才会显示可执行动作。</p>
+                <div class="action-stack" id="action-stack"></div>
+                <div class="operation-status" id="operation-status" hidden role="status"></div>
+                <p class="safety-note">批准只记录当前审核决定；手动发布是批准后的第二次显式动作，并要求新鲜通行密钥验证。</p>
+              </section>
+            </aside>
+          </div>
+        </article>
+      </section>
+    </section>
+  </main>
+
+  <dialog class="confirm-dialog" id="confirm-dialog" aria-labelledby="dialog-title" aria-describedby="dialog-copy">
+    <form method="dialog" id="dialog-form">
+      <p class="eyebrow" id="dialog-eyebrow">Confirm action</p>
+      <h2 id="dialog-title">确认操作</h2>
+      <p id="dialog-copy"></p>
+      <div class="dialog-summary" id="dialog-summary"></div>
+      <div class="reject-field" id="reject-field" hidden>
+        <label for="reject-reason">拒绝原因 <small>必填 · 1–500 字</small></label>
+        <textarea class="text-area" id="reject-reason" maxlength="500"></textarea>
+        <p class="field-error" id="reject-error" role="alert"></p>
+      </div>
+      <div class="dialog-actions">
+        <button class="secondary-button" id="dialog-cancel" value="cancel" type="button">取消</button>
+        <button class="primary-button" id="dialog-confirm" value="confirm" type="submit">确认</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="fixture-warning" id="fixture-warning" hidden>
+    <strong>验收 Fixture</strong>
+    <span>当前页面没有连接真实 API，所有变化只保存在本页内存。</span>
+  </div>
+</body>
+</html>

@@ -27,6 +27,9 @@
     "rss:install-macos": "node --experimental-strip-types scripts/rss-install-macos.ts",
     "rss:render-plist": "node --experimental-strip-types scripts/rss-install-macos.ts --render-plist",
     "rss:control": "node --experimental-strip-types scripts/rss-control.ts",
+    "admin:start": "node --experimental-strip-types scripts/admin-service.ts",
+    "admin:prepare-macos": "node --experimental-strip-types scripts/admin-install-macos.ts",
+    "admin:status": "node --experimental-strip-types scripts/admin-install-macos.ts --status",
     "test": "vitest run --config vitest.config.ts",
     "test:p1": "node --experimental-strip-types scripts/p1-acceptance.ts",
     "test:public-http": "node --experimental-strip-types scripts/public-http-acceptance.ts",
@@ -40,6 +43,7 @@
     "check": "npm run verify:env && npm run db:migrate && npm run seed:fixtures && npm run runtime:assert-ready && npm run test && npm run test:contract && npm run lint && npm run typecheck && npm run build && npm run test:p1"
   },
   "dependencies": {
+    "@simplewebauthn/server": "13.3.2",
     "fast-xml-parser": "5.10.1",
     "next": "16.2.11",
     "react": "19.2.0",

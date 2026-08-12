@@ -5,6 +5,12 @@
 
 ---
 
+## 2026-08-12
+
+- ✅ **真实审核后端本地候选已完成，产品真值已机械对齐，尚未部署**：数据七表与 mapping、Review Repository/route facade、ProjectionReceiver、PublicSnapshotRepository 和完整 `sqlite_schema` 启动指纹均已落地；唯一端到端临时库正例、固定 Node24 typecheck 与最终限定安全门已有 `C334CE/739DF6/7B47E0` ACK 收据。产品合同的三个客户端 Bundle CAS 字段现与 schema 一致：`latestBundleVersionTag`、`bundleVersionTag`、`approvedBundleVersionTag`，均为 12 位小写十六进制，完整 64 位 hash 继续只由服务端复算和关联。九项 Admin/恢复 Function 继续为 `P1-blocker`：固定 M1 真实库尚未迁移，正式 opener/HTTP server、Tailscale/passkey、Admin UI、投递回执运行和 public origin 切换均未完成；当前公网仍只读 synthetic，真实自动发布为 0。
+
+- ✅ **真实 RSS 候选到人工审核、显式发布和独立公开投影的唯一最小 successor 已接受**：固定 M1 的 `rss-real-private` 已有一次真实 HTTP 200 采集、一次 RunAtLoad 去重和一个零手动触发的自然 900 秒周期收据，共保留 20 条 `pending_review` 候选，现有 public synthetic 数据零漂移。产品 `TASK-20260812-28FA62` 冻结 candidate-first 主链：在现有三表后只追加七张审核/决定/发布/私有投影/outbox/operation/audit 表；批准精确生成 `1 Decision + 1 queued Publication + 0 Projection/Outbox`，用户第二次显式手动发布才生成私有 PublishedProjection 与唯一全量 `snapshot_sync` outbox；公开 `/` 与 `/stories/{publicId}` 只读独立 active snapshot。后端第一切片可立即实施，`/admin/reviews` UI/CSS 仍等待视觉 successor 的用户确认。当前公开站仍是 synthetic Beta，真实自动发布为 0；未来各周期稳定性、已有非空人工字段遇真实更新的动态保护、真实审核/发布代码、公开 snapshot reader、Mac/iPhone 私有入口与双主机实机均未验证。
+
 ## 2026-08-11
 
 - 🌐 **第一版公开 synthetic beta 已通过 SSH 部署到固定 M1 并形成常驻公网入口**：发布分支 `codex/first-public-release` 已同步 GitHub，M1 非 iCloud 运行目录以精确 release package 部署；官方 arm64 Node 24.18.0、一次 `npm ci`、一次 bootstrap、一次 production build均通过。`com.f1plus1.public-beta` 与 `com.f1plus1.quick-tunnel` 正在运行，`com.f1plus1.receipt-refresh` 按 12 小时计划且 last exit=0；应用只监听 loopback。常驻临时地址为 `https://firmware-arch-eagles-slot.trycloudflare.com/`，公网 home/detail=200、Admin session=404。M1 当前接交流电且 AC/电池 `sleep=0`。该 URL 属 Quick Tunnel，重启可能变化、无 SLA，中国大陆异网可达性仍需真实手机网络验证；真实采集、AI 摘要、Admin UI 和自动发布仍未上线。运行与回退见 `docs/runbooks/F1+1-固定M1公开Beta-SSH运行收据-v0.1.md`。
