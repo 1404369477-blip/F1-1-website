@@ -56,7 +56,7 @@ npm run admin:prepare-macos
 npm run admin:status
 ```
 
-Admin deployment schema 固定为 `admin-service-deployment-v3` 并直接拒绝 v1/v2；`trustedIdentities` 首版精确一行，使用精确 ASCII login、同一 operatorRef 与两个唯一的 43 字符 `sourceRefs`，旧 `deviceRefs` schema 直接拒绝。`Tailscale-User-Login` 与 `Tailscale-App-Capabilities` 在静态页、登录和业务路由前统一闭集解析；遗留 `x-f1-approved-device-ref` 存在即返回通用 401。manifest 显式分离 `targetReleaseAppRoot` 与 `reviewDatabasePath + dev/ino/uid/nlink`。prepare 只做 existing-only 身份门，不打开或迁移 SQLite；Admin HTTP 与独立 sender 只能从同一 manifest 打开该路径，missing 不创建，运行时只接受 user_version 1/2/3 并原位追加至 3。私钥/公钥必须为同一 Ed25519 key pair，文件为当前用户拥有、单硬链接且无 group/other 权限；Admin data root、review DB 与 public projection root 分离。生成的 plist 固定 `RunAtLoad=false`、`KeepAlive=false`。
+Admin deployment schema 固定为 `admin-service-deployment-v3` 并直接拒绝 v1/v2；`trustedIdentities` 首版精确一行，使用精确 ASCII login、同一 operatorRef 与三个唯一的 43 字符 `sourceRefs`，依次绑定 M5、新 iPhone 与旧 iPad；旧两项输入、重复项与 `deviceRefs` schema 直接拒绝。`Tailscale-User-Login` 与 `Tailscale-App-Capabilities` 在静态页、登录和业务路由前统一闭集解析；遗留 `x-f1-approved-device-ref` 存在即返回通用 401。manifest 显式分离 `targetReleaseAppRoot` 与 `reviewDatabasePath + dev/ino/uid/nlink`。prepare 只做 existing-only 身份门，不打开或迁移 SQLite；Admin HTTP 与独立 sender 只能从同一 manifest 打开该路径，missing 不创建，运行时只接受 user_version 1/2/3 并原位追加至 3。私钥/公钥必须为同一 Ed25519 key pair，文件为当前用户拥有、单硬链接且无 group/other 权限；Admin data root、review DB 与 public projection root 分离。生成的 plist 固定 `RunAtLoad=false`、`KeepAlive=false`。
 
 ## Public prepare-only 输入
 

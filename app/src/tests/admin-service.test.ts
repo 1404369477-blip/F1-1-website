@@ -188,7 +188,7 @@ describe("independent admin service candidate", () => {
       trustedIdentities: [{
         login: "owner@example.com",
         operatorRef: "operator-primary",
-        sourceRefs: ["A".repeat(43), "B".repeat(43)]
+        sourceRefs: ["A".repeat(43), "B".repeat(43), "C".repeat(43)]
       }],
       projectionSigningKeyId: "projection-key-v1",
       projectionSigningPrivateKeyPath: join(root, "private.pem"),
@@ -212,10 +212,11 @@ describe("independent admin service candidate", () => {
     const capabilityId = "admin.example.com/cap/f1-admin-device";
     const m5SourceRef = "A".repeat(43);
     const iphoneSourceRef = "B".repeat(43);
+    const ipadSourceRef = "C".repeat(43);
     const trustedIdentities: readonly TrustedTailnetIdentity[] = [{
       login: "owner@example.com",
       operatorRef: "operator-primary",
-      sourceRefs: [m5SourceRef, iphoneSourceRef]
+      sourceRefs: [m5SourceRef, iphoneSourceRef, ipadSourceRef]
     }];
     const rawHeaders = (sourceRef: string): string[] => [
       "Tailscale-User-Login", "owner@example.com",
@@ -229,6 +230,7 @@ describe("independent admin service candidate", () => {
 
     const m5 = parse(rawHeaders(m5SourceRef));
     const iphone = parse(rawHeaders(iphoneSourceRef));
+    const ipad = parse(rawHeaders(ipadSourceRef));
     expect(m5).toMatchObject({
       operatorRef: "operator-primary",
       tailnetUserRef: "tailnet-user-c8cd3c6427301eaf"
@@ -236,6 +238,8 @@ describe("independent admin service candidate", () => {
     expect(m5.deviceRef).toMatch(/^device-[0-9a-f]{16}$/);
     expect(iphone.deviceRef).toMatch(/^device-[0-9a-f]{16}$/);
     expect(iphone.deviceRef).not.toBe(m5.deviceRef);
+    expect(ipad.deviceRef).toMatch(/^device-[0-9a-f]{16}$/);
+    expect(new Set([m5.deviceRef, iphone.deviceRef, ipad.deviceRef]).size).toBe(3);
 
     const failures: readonly (readonly string[])[] = [
       rawHeaders(m5SourceRef).slice(2),
@@ -264,6 +268,16 @@ describe("independent admin service candidate", () => {
     expect(TailscaleAppCapabilityIdSchema.safeParse(capabilityId).success).toBe(true);
     expect(TailscaleAppCapabilityIdSchema.safeParse("tailscale.com/cap/f1-admin-device").success).toBe(false);
     expect(AdminTrustedIdentityDeploymentSchema.safeParse(trustedIdentities[0]).success).toBe(true);
+    expect(AdminTrustedIdentityDeploymentSchema.safeParse({
+      login: "owner@example.com",
+      operatorRef: "operator-primary",
+      sourceRefs: [m5SourceRef, iphoneSourceRef]
+    }).success).toBe(false);
+    expect(AdminTrustedIdentityDeploymentSchema.safeParse({
+      login: "owner@example.com",
+      operatorRef: "operator-primary",
+      sourceRefs: [m5SourceRef, iphoneSourceRef, iphoneSourceRef]
+    }).success).toBe(false);
     expect(AdminTrustedIdentityDeploymentSchema.safeParse({
       login: "owner@example.com",
       operatorRef: "operator-primary",

@@ -381,8 +381,8 @@ export function createAdminServiceServer(dependencies: AdminServiceDependencies)
     !validCapabilityId(dependencies.tailscaleAppCapabilityId) ||
     dependencies.trustedIdentities.length !== 1 ||
     configuredIdentity === undefined ||
-    configuredIdentity.sourceRefs.length !== 2 ||
-    new Set(configuredIdentity.sourceRefs).size !== 2
+    configuredIdentity.sourceRefs.length !== 3 ||
+    new Set(configuredIdentity.sourceRefs).size !== 3
   ) {
     throw new ReviewRealError("ADMIN_INTERNAL_FAILURE", 500);
   }

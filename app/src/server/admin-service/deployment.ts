@@ -86,7 +86,7 @@ const REVIEW_DATABASE_BASENAME = "f1plus1-rss-real-private.sqlite" as const;
 export const AdminTrustedIdentityDeploymentSchema = z.object({
   login: z.string().min(3).max(320).regex(VISIBLE_ASCII_PATTERN),
   operatorRef: z.string().min(1).max(256),
-  sourceRefs: z.array(z.string().regex(SOURCE_REF_PATTERN)).length(2)
+  sourceRefs: z.array(z.string().regex(SOURCE_REF_PATTERN)).length(3)
     .refine((values) => new Set(values).size === values.length)
 }).strict();
 
