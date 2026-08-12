@@ -931,7 +931,12 @@ export function FeedExperience() {
             </span>
             <span className="ev-right">
               {hasOriginalUrl ? (
-                <a className="tl-original-link" href={story.originalUrl ?? ""}>前往原文 ↗</a>
+                <a
+                  className="tl-original-link"
+                  href={story.originalUrl ?? ""}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >前往原文 ↗</a>
               ) : (
                 <span className="tl-original-disabled">原文暂不可用</span>
               )}

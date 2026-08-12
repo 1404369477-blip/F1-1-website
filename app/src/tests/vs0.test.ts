@@ -103,7 +103,8 @@ describe("VS-0 fail-closed configuration", () => {
   it("parses the checked-in example without creating a second contract", () => {
     const parsed = parseEnvText(readFileSync(resolve(appRoot, ".env.example"), "utf8"));
     expect(parsed.SOURCE_CONFIG_PROVIDER).toBe("fixture");
-    expect(Object.keys(parsed)).toHaveLength(17);
+    expect(Object.keys(parsed)).toHaveLength(21);
+    expect(parsed.F1_PUBLIC_READ_MODE).toBe("public-multimedia-synthetic");
   });
 });
 

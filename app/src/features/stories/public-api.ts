@@ -21,7 +21,21 @@ const publicReasonCodeSchema = z.enum([
   "PUBLIC_READ_INCOMPLETE_CHAIN",
   "PUBLIC_READ_INTEGRITY_FAILED",
   "PUBLIC_DB_BUSY",
-  "PUBLIC_PROFILE_UNAVAILABLE"
+  "PUBLIC_PROFILE_UNAVAILABLE",
+  "PUBLIC_MEDIA_VERSION_UNSUPPORTED"
+]);
+
+const originalLinkSchema = z.discriminatedUnion("enabled", [
+  z.object({
+    enabled: z.literal(false),
+    url: z.null(),
+    reason: z.enum(["synthetic_only", "source_restricted"])
+  }).strict(),
+  z.object({
+    enabled: z.literal(true),
+    url: z.string().url(),
+    reason: z.null()
+  }).strict()
 ]);
 
 const publicFeedItemSchema = z.object({
@@ -48,11 +62,7 @@ const publicFeedItemSchema = z.object({
     creditDisplay: z.string().nullable(),
     tone: z.enum(["night", "blue", "amber", "violet", "slate"])
   }).strict().nullable(),
-  originalLink: z.object({
-    enabled: z.literal(false),
-    url: z.null(),
-    reason: z.enum(["synthetic_only", "source_restricted"])
-  }).strict()
+  originalLink: originalLinkSchema
 }).strict();
 
 const publicFeedResponseSchema = z.object({
@@ -70,7 +80,7 @@ const publicStoryDetailResponseSchema = z.object({
   story: publicFeedItemSchema.extend({
     leadZh: z.string().min(1),
     bodyZh: z.array(z.string().min(1)).min(1),
-    keyPointsZh: z.array(z.string().min(1)).min(1)
+    keyPointsZh: z.array(z.string().min(1))
   }).strict(),
   relatedItems: z.array(publicFeedItemSchema).max(3)
 }).strict();

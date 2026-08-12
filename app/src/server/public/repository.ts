@@ -482,7 +482,11 @@ function buildVerifiedMultimediaStory(row: ChainRow, database: SqliteDatabase): 
       byline: text(sourceSnapshot.byline, 1, 120),
       accessStatus: contentAccess === "source_restricted" ? "restricted" as const : "available" as const
     },
-    originalLink: { enabled: false as const, url: null, reason: reason as PublicFeedItemV1["originalLink"]["reason"] }
+    originalLink: {
+      enabled: false as const,
+      url: null,
+      reason: reason as Extract<PublicFeedItemV1["originalLink"], { enabled: false }>["reason"]
+    }
   };
   const itemV2: PublicFeedItemV2 = { ...shared, media: mediaV2 };
   const first = mediaV2[0];

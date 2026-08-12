@@ -11,7 +11,7 @@ import { join, resolve } from "node:path";
 
 import type { RawAdminContext } from "../source-management/security.ts";
 import { asReviewRealError, ReviewRealError } from "../review-real/error.ts";
-import type { ProjectionReceiver } from "../review-real/projection.ts";
+import type { ProjectionReceipt } from "../review-real/projection.ts";
 import type { ReviewAdminRoutes } from "../review-real/routes.ts";
 import type { ReviewAdminSecurity } from "../review-real/security.ts";
 import {
@@ -23,21 +23,21 @@ export const ADMIN_BIND_HOST = "127.0.0.1" as const;
 export const ADMIN_BIND_PORT = 3101 as const;
 const AUTH_BODY_LIMIT = 128 * 1024;
 const REVIEW_BODY_LIMIT = 64 * 1024;
-const PROJECTION_BODY_LIMIT = 2 * 1024 * 1024;
 
 export type TrustedTailnetIdentity = Readonly<{
   login: string;
   operatorRef: string;
-  deviceRefs: readonly string[];
+  sourceRefs: readonly string[];
 }>;
 
 export type AdminServiceDependencies = Readonly<{
   canonicalOrigin: string;
+  tailscaleAppCapabilityId: string;
   trustedIdentities: readonly TrustedTailnetIdentity[];
   auth: AdminPasskeyAuth;
   reviewRoutes: ReviewAdminRoutes;
   security: ReviewAdminSecurity;
-  projectionReceiver: ProjectionReceiver;
+  projectionDeliveryReceipt: (deliveryId: string) => ProjectionReceipt;
   staticRoot: string;
 }>;
 
@@ -50,6 +50,10 @@ function headersMap(rawHeaders: readonly string[]): ReadonlyMap<string, readonly
   const map = new Map<string, string[]>();
   for (let index = 0; index < rawHeaders.length; index += 2) {
     const name = String(rawHeaders[index] ?? "").toLowerCase();
+    if (name === "x-f1-approved-device-ref") {
+      map.set(name, [""]);
+      continue;
+    }
     const value = String(rawHeaders[index + 1] ?? "");
     const values = map.get(name) ?? [];
     values.push(value);
@@ -63,8 +67,84 @@ function single(map: ReadonlyMap<string, readonly string[]>, name: string): stri
   return values.length === 1 ? values[0] : null;
 }
 
+function hasRawHeader(rawHeaders: readonly string[], name: string): boolean {
+  for (let index = 0; index < rawHeaders.length; index += 2) {
+    if (String(rawHeaders[index] ?? "").toLowerCase() === name) return true;
+  }
+  return false;
+}
+
+function plainObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value) &&
+    Object.getPrototypeOf(value) === Object.prototype;
+}
+
+function validCapabilityId(value: string): boolean {
+  const suffix = "/cap/f1-admin-device";
+  if (!value.endsWith(suffix)) return false;
+  const domain = value.slice(0, -suffix.length);
+  if (domain.length < 3 || domain.length > 253 || !domain.includes(".")) return false;
+  if (
+    domain === "tailscale.com" || domain.endsWith(".tailscale.com") ||
+    domain === "tailscale.io" || domain.endsWith(".tailscale.io")
+  ) return false;
+  return domain.split(".").every((label) => (
+    label.length >= 1 && label.length <= 63 &&
+    /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/.test(label)
+  ));
+}
+
 function identityRef(kind: "tailnet-user" | "device", value: string): string {
   return `${kind}-${createHash("sha256").update(value, "utf8").digest("hex").slice(0, 16)}`;
+}
+
+export function parseTrustedAdminIdentity(input: Readonly<{
+  rawHeaders: readonly string[];
+  tailscaleAppCapabilityId: string;
+  trustedIdentities: readonly TrustedTailnetIdentity[];
+}>): AdminTrustedIdentity {
+  if (hasRawHeader(input.rawHeaders, "x-f1-approved-device-ref")) {
+    throw new ReviewRealError("ADMIN_SESSION_REQUIRED", 401);
+  }
+  const headers = headersMap(input.rawHeaders);
+  const login = single(headers, "tailscale-user-login");
+  const capabilitiesRaw = single(headers, "tailscale-app-capabilities");
+  if (
+    login === null ||
+    Buffer.byteLength(login, "utf8") < 3 ||
+    Buffer.byteLength(login, "utf8") > 320 ||
+    !/^[\x21-\x7e]+$/.test(login) ||
+    capabilitiesRaw === null ||
+    Buffer.byteLength(capabilitiesRaw, "utf8") < 1 ||
+    Buffer.byteLength(capabilitiesRaw, "utf8") > 4096
+  ) {
+    throw new ReviewRealError("ADMIN_SESSION_REQUIRED", 401);
+  }
+  let capabilities: unknown;
+  try { capabilities = JSON.parse(capabilitiesRaw) as unknown; }
+  catch { throw new ReviewRealError("ADMIN_SESSION_REQUIRED", 401); }
+  const encodedObjectKeys = capabilitiesRaw.match(/"(?:\\.|[^"\\])*"\s*:/g) ?? [];
+  if (!plainObject(capabilities) || Object.keys(capabilities).length !== 1 || encodedObjectKeys.length !== 2) {
+    throw new ReviewRealError("ADMIN_SESSION_REQUIRED", 401);
+  }
+  const grants = capabilities[input.tailscaleAppCapabilityId];
+  if (!Array.isArray(grants) || grants.length !== 1 || !plainObject(grants[0])) {
+    throw new ReviewRealError("ADMIN_SESSION_REQUIRED", 401);
+  }
+  const parameter = grants[0];
+  if (Object.keys(parameter).length !== 1 || typeof parameter.sourceRef !== "string" ||
+      !/^[A-Za-z0-9_-]{43}$/.test(parameter.sourceRef)) {
+    throw new ReviewRealError("ADMIN_SESSION_REQUIRED", 401);
+  }
+  const approved = input.trustedIdentities.find((candidate) => (
+    candidate.login === login && candidate.sourceRefs.includes(parameter.sourceRef as string)
+  ));
+  if (!approved) throw new ReviewRealError("ADMIN_SESSION_REQUIRED", 401);
+  return Object.freeze({
+    operatorRef: approved.operatorRef,
+    deviceRef: identityRef("device", parameter.sourceRef),
+    tailnetUserRef: identityRef("tailnet-user", login)
+  });
 }
 
 function normalizePeer(value: string | undefined): "loopback" | null {
@@ -114,12 +194,11 @@ function requestEnvelope(request: IncomingMessage, dependencies: AdminServiceDep
       throw new ReviewRealError("ADMIN_REQUEST_INVALID", 404);
     }
   }
-  const login = single(rawHeaders, "tailscale-user-login");
-  const requestedDevice = single(rawHeaders, "x-f1-approved-device-ref");
-  const approved = dependencies.trustedIdentities.find((candidate) => candidate.login === login);
-  if (!approved || requestedDevice === null || !approved.deviceRefs.includes(requestedDevice)) {
-    throw new ReviewRealError("ADMIN_SESSION_REQUIRED", 401);
-  }
+  const identity = parseTrustedAdminIdentity({
+    rawHeaders: request.rawHeaders,
+    tailscaleAppCapabilityId: dependencies.tailscaleAppCapabilityId,
+    trustedIdentities: dependencies.trustedIdentities
+  });
   const originHeader = single(rawHeaders, "origin");
   if (
     method === "POST" && (
@@ -140,11 +219,7 @@ function requestEnvelope(request: IncomingMessage, dependencies: AdminServiceDep
       rawHeaders,
       noEgressReady: true as const
     }),
-    identity: Object.freeze({
-      operatorRef: approved.operatorRef,
-      deviceRef: identityRef("device", requestedDevice),
-      tailnetUserRef: identityRef("tailnet-user", approved.login)
-    })
+    identity
   };
 }
 
@@ -216,9 +291,7 @@ function staticFile(path: string, staticRoot: string): Readonly<{ path: string; 
 export function adminServiceOwnsPath(path: string): boolean {
   return (
     staticFile(path, "/unused") !== null ||
-    path.startsWith("/api/admin/") ||
-    path === "/internal/projections" ||
-    /^\/internal\/projections\/receipts\/[^/]+$/.test(path)
+    path.startsWith("/api/admin/")
   );
 }
 
@@ -281,20 +354,10 @@ async function dispatch(
     writeJson(response, 200, result.body, result.setCookie);
     return;
   }
-  if (context.method === "POST" && context.path === "/internal/projections") {
-    const receipt = dependencies.projectionReceiver.receive(await readJson(request, PROJECTION_BODY_LIMIT));
-    writeJson(response, 200, receipt);
-    return;
-  }
-  const internalReceipt = routeSegment(context.path, /^\/internal\/projections\/receipts\/([^/]+)$/);
-  if (context.method === "GET" && internalReceipt !== null) {
-    writeJson(response, 200, dependencies.projectionReceiver.getReceipt(internalReceipt));
-    return;
-  }
   const adminDelivery = routeSegment(context.path, /^\/api\/admin\/deliveries\/([^/]+)$/);
   if (context.method === "GET" && adminDelivery !== null) {
     dependencies.security.authorizeBoundIdentity(context, identity);
-    writeJson(response, 200, dependencies.projectionReceiver.getReceipt(adminDelivery));
+    writeJson(response, 200, dependencies.projectionDeliveryReceipt(adminDelivery));
     return;
   }
   if (context.path.startsWith("/api/admin/")) {
@@ -309,12 +372,17 @@ async function dispatch(
 
 export function createAdminServiceServer(dependencies: AdminServiceDependencies): Server {
   const canonicalOrigin = new URL(dependencies.canonicalOrigin);
+  const configuredIdentity = dependencies.trustedIdentities[0];
   if (
     canonicalOrigin.protocol !== "https:" ||
     canonicalOrigin.pathname !== "/" ||
     canonicalOrigin.search ||
     canonicalOrigin.hash ||
-    dependencies.trustedIdentities.length < 1
+    !validCapabilityId(dependencies.tailscaleAppCapabilityId) ||
+    dependencies.trustedIdentities.length !== 1 ||
+    configuredIdentity === undefined ||
+    configuredIdentity.sourceRefs.length !== 2 ||
+    new Set(configuredIdentity.sourceRefs).size !== 2
   ) {
     throw new ReviewRealError("ADMIN_INTERNAL_FAILURE", 500);
   }

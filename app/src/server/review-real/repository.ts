@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import type { DatabaseSync } from "node:sqlite";
 
 import type { z } from "zod";
@@ -37,6 +37,7 @@ import {
   type ProjectionTaskEnvelope
 } from "./schema.ts";
 import { asReviewRealError, ReviewRealError } from "./error.ts";
+import { ProjectionReceiptSchema, type ProjectionReceipt } from "./projection.ts";
 
 type SqlRow = Record<string, unknown>;
 type Clock = () => Date;
@@ -56,6 +57,16 @@ export type PublishSuccess = z.infer<typeof PublishSuccessSchema>;
 
 type OperationType = OperationReceipt["operationType"];
 type StoredBundle = Readonly<{ row: SqlRow; material: ReviewBundleMaterial }>;
+
+export type ProjectionDeliveryWork = Readonly<{
+  deliveryId: string;
+  leaseToken: string | null;
+  attemptCount: number;
+  maxAttempts: number;
+  envelope: ProjectionTaskEnvelope;
+  envelopeJson: string;
+  envelopeHash: string;
+}>;
 
 function sha256(value: string): string {
   return createHash("sha256").update(value, "utf8").digest("hex");
@@ -901,6 +912,206 @@ export class ReviewRealRepository {
     }
     const response = parseStored(responseSchema(operationType), parseJson(responseJson)) as { operation?: unknown };
     return parseStored(OperationReceiptSchema, response.operation);
+  }
+
+  private deliveryWork(row: SqlRow): ProjectionDeliveryWork {
+    const envelopeJson = requiredText(row, "task_envelope_json");
+    const envelopeHash = requiredText(row, "task_envelope_hash");
+    return Object.freeze({
+      deliveryId: requiredText(row, "delivery_id"),
+      leaseToken: nullableText(row, "lease_token"),
+      attemptCount: requiredInteger(row, "attempt_count"),
+      maxAttempts: requiredInteger(row, "max_attempts"),
+      envelope: verifyStoredProjectionTaskEnvelope(envelopeJson, envelopeHash),
+      envelopeJson,
+      envelopeHash
+    });
+  }
+
+  private appendDeliveryAudit(
+    row: SqlRow,
+    eventType: z.infer<typeof AuditEventPayloadSchema>["eventType"],
+    outcome: "succeeded" | "failed",
+    reasonCode: string | null,
+    actorRef: string,
+    occurredAt: string
+  ): void {
+    const deliveryId = requiredText(row, "delivery_id");
+    const operation = this.database.prepare(
+      "SELECT operation_id FROM admin_operation WHERE operation_type='publish' AND json_extract(response_json, '$.operation.deliveryId') = ?"
+    ).get(deliveryId) as SqlRow | undefined;
+    if (!operation) throw new ReviewRealError("ADMIN_INTERNAL_FAILURE", 500);
+    const operationId = requiredText(operation, "operation_id");
+    const previous = this.database.prepare(
+      "SELECT previous_event_hash, event_json, event_hash FROM audit_event ORDER BY audit_seq DESC LIMIT 1"
+    ).get() as SqlRow | undefined;
+    const previousHash = previous === undefined ? null : requiredText(previous, "event_hash");
+    if (previous !== undefined) {
+      verifyStoredAuditEvent({
+        previousEventHash: nullableText(previous, "previous_event_hash"),
+        eventJson: requiredText(previous, "event_json"),
+        eventHash: requiredText(previous, "event_hash")
+      });
+    }
+    const payload = parseStored(AuditEventPayloadSchema, {
+      schemaVersion: "admin-audit-v1",
+      eventType,
+      outcome,
+      reasonCode,
+      operationId,
+      entityType: "delivery",
+      entityId: deliveryId,
+      actorRef,
+      occurredAt
+    });
+    const material = buildAuditEventMaterial({ previousEventHash: previousHash, eventPayload: payload });
+    const eventId = `audit-delivery-${sha256(`${deliveryId}\n${eventType}\n${requiredInteger(row, "attempt_count")}\n${occurredAt}`)}`;
+    this.database.prepare(
+      "INSERT INTO audit_event (event_id, event_type, operation_id, entity_type, entity_id, actor_ref, event_json, previous_event_hash, event_hash, created_at) VALUES (?, ?, ?, 'delivery', ?, ?, ?, ?, ?, ?)"
+    ).run(eventId, eventType, operationId, deliveryId, actorRef, material.eventJson, material.previousEventHash, material.eventHash, occurredAt);
+  }
+
+  recoverExpiredLease(actorRef: string): ProjectionDeliveryWork | null {
+    return this.transaction(() => {
+      const now = this.now();
+      const row = this.database.prepare(
+        "SELECT * FROM projection_outbox WHERE status='leased' AND lease_expires_at <= ? ORDER BY lease_expires_at, delivery_id LIMIT 1"
+      ).get(now) as SqlRow | undefined;
+      if (!row) return null;
+      const changed = this.database.prepare(
+        "UPDATE projection_outbox SET status='reconcile_wait', lease_token=NULL, lease_expires_at=NULL, last_reason_code='DELIVERY_LEASE_EXPIRED', updated_at=? WHERE delivery_id=? AND status='leased' AND lease_token=?"
+      ).run(now, requiredText(row, "delivery_id"), requiredText(row, "lease_token"));
+      if (Number(changed.changes) !== 1) throw new ReviewRealError("DELIVERY_RECONCILE_WAIT", 409);
+      const updated = this.database.prepare("SELECT * FROM projection_outbox WHERE delivery_id=?").get(requiredText(row, "delivery_id")) as SqlRow;
+      this.appendDeliveryAudit(updated, "projection_delivery_reconcile_wait", "failed", "DELIVERY_LEASE_EXPIRED", actorRef, now);
+      return this.deliveryWork(updated);
+    });
+  }
+
+  nextReconcile(): ProjectionDeliveryWork | null {
+    const row = this.database.prepare(
+      "SELECT * FROM projection_outbox WHERE status='reconcile_wait' ORDER BY updated_at, delivery_id LIMIT 1"
+    ).get() as SqlRow | undefined;
+    return row ? this.deliveryWork(row) : null;
+  }
+
+  leaseNext(actorRef: string): ProjectionDeliveryWork | null {
+    return this.transaction(() => {
+      const now = this.now();
+      const row = this.database.prepare(
+        "SELECT * FROM projection_outbox WHERE status IN ('pending','retryable_failed') AND attempt_count < max_attempts AND NOT EXISTS (SELECT 1 FROM projection_outbox WHERE status IN ('leased','reconcile_wait')) ORDER BY created_at, delivery_id LIMIT 1"
+      ).get() as SqlRow | undefined;
+      if (!row) return null;
+      const token = `lease-${randomUUID()}`;
+      const expiresAt = new Date(Date.parse(now) + 60_000).toISOString();
+      const changed = this.database.prepare(
+        "UPDATE projection_outbox SET status='leased', attempt_count=attempt_count+1, lease_token=?, lease_expires_at=?, last_reason_code=NULL, updated_at=? WHERE delivery_id=? AND status=? AND attempt_count=?"
+      ).run(token, expiresAt, now, requiredText(row, "delivery_id"), requiredText(row, "status"), requiredInteger(row, "attempt_count"));
+      if (Number(changed.changes) !== 1) return null;
+      const updated = this.database.prepare("SELECT * FROM projection_outbox WHERE delivery_id=?").get(requiredText(row, "delivery_id")) as SqlRow;
+      this.appendDeliveryAudit(updated, "projection_delivery_leased", "succeeded", null, actorRef, now);
+      return this.deliveryWork(updated);
+    });
+  }
+
+  markDeliveryReconcileWait(work: ProjectionDeliveryWork, reasonCode: string, actorRef: string): void {
+    this.transitionDelivery(work, "reconcile_wait", reasonCode, actorRef);
+  }
+
+  markDeliveryRetryable(work: ProjectionDeliveryWork, reasonCode: string, actorRef: string): "retryable_failed" | "terminal_failed" {
+    const terminal = work.attemptCount >= work.maxAttempts;
+    this.transitionDelivery(work, terminal ? "terminal_failed" : "retryable_failed", reasonCode, actorRef);
+    return terminal ? "terminal_failed" : "retryable_failed";
+  }
+
+  markDeliveryTerminal(work: ProjectionDeliveryWork, reasonCode: string, actorRef: string): void {
+    this.transitionDelivery(work, "terminal_failed", reasonCode, actorRef);
+  }
+
+  private transitionDelivery(
+    work: ProjectionDeliveryWork,
+    target: "retryable_failed" | "reconcile_wait" | "terminal_failed",
+    reasonCode: string,
+    actorRef: string
+  ): void {
+    this.transaction(() => {
+      const now = this.now();
+      const row = this.database.prepare("SELECT * FROM projection_outbox WHERE delivery_id=?").get(work.deliveryId) as SqlRow | undefined;
+      if (!row || !["leased", "reconcile_wait"].includes(requiredText(row, "status"))) {
+        throw new ReviewRealError("DELIVERY_RECONCILE_WAIT", 409);
+      }
+      if (requiredText(row, "status") === "leased" && nullableText(row, "lease_token") !== work.leaseToken) {
+        throw new ReviewRealError("DELIVERY_RECONCILE_WAIT", 409);
+      }
+      if (target === "terminal_failed" && requiredText(row, "status") === "leased") {
+        const staged = this.database.prepare(
+          "UPDATE projection_outbox SET status='reconcile_wait', lease_token=NULL, lease_expires_at=NULL, last_reason_code=?, updated_at=? WHERE delivery_id=? AND status='leased' AND lease_token=? AND attempt_count=?"
+        ).run(reasonCode, now, work.deliveryId, work.leaseToken, work.attemptCount);
+        if (Number(staged.changes) !== 1) throw new ReviewRealError("DELIVERY_RECONCILE_WAIT", 409);
+      }
+      const changed = this.database.prepare(
+        "UPDATE projection_outbox SET status=?, lease_token=NULL, lease_expires_at=NULL, last_reason_code=?, updated_at=? WHERE delivery_id=? AND status=? AND attempt_count=?"
+      ).run(
+        target,
+        reasonCode,
+        now,
+        work.deliveryId,
+        target === "terminal_failed" && requiredText(row, "status") === "leased" ? "reconcile_wait" : requiredText(row, "status"),
+        work.attemptCount
+      );
+      if (Number(changed.changes) !== 1) throw new ReviewRealError("DELIVERY_RECONCILE_WAIT", 409);
+      const updated = this.database.prepare("SELECT * FROM projection_outbox WHERE delivery_id=?").get(work.deliveryId) as SqlRow;
+      const eventType = target === "retryable_failed"
+        ? "projection_delivery_retryable_failed"
+        : target === "reconcile_wait"
+          ? "projection_delivery_reconcile_wait"
+          : "projection_delivery_terminal_failed";
+      this.appendDeliveryAudit(updated, eventType, "failed", reasonCode, actorRef, now);
+    });
+  }
+
+  markDeliverySucceeded(work: ProjectionDeliveryWork, value: unknown, actorRef: string): ProjectionReceipt {
+    const receipt = ProjectionReceiptSchema.parse(value);
+    if (
+      receipt.deliveryId !== work.deliveryId ||
+      receipt.snapshotGeneration !== work.envelope.snapshot.snapshotGeneration ||
+      receipt.snapshotManifestHash !== work.envelope.snapshot.snapshotManifestHash
+    ) {
+      throw new ReviewRealError("PROJECTION_IDEMPOTENCY_CONFLICT", 409);
+    }
+    return this.transaction(() => {
+      const now = this.now();
+      const row = this.database.prepare("SELECT * FROM projection_outbox WHERE delivery_id=?").get(work.deliveryId) as SqlRow | undefined;
+      if (!row || !["leased", "reconcile_wait"].includes(requiredText(row, "status"))) {
+        throw new ReviewRealError("DELIVERY_RECONCILE_WAIT", 409);
+      }
+      if (requiredText(row, "status") === "leased" && nullableText(row, "lease_token") !== work.leaseToken) {
+        throw new ReviewRealError("DELIVERY_RECONCILE_WAIT", 409);
+      }
+      const receiptJson = canonicalJson(receipt);
+      this.database.prepare(
+        "INSERT INTO projection_delivery_receipt (delivery_id, snapshot_generation, snapshot_manifest_hash, receipt_json, receipt_hash, receipt_status, received_at, activated_at, committed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+      ).run(work.deliveryId, receipt.snapshotGeneration, receipt.snapshotManifestHash, receiptJson, sha256(receiptJson), receipt.status, receipt.receivedAt, receipt.activatedAt, now);
+      const changed = this.database.prepare(
+        "UPDATE projection_outbox SET status='succeeded', lease_token=NULL, lease_expires_at=NULL, last_reason_code=NULL, updated_at=? WHERE delivery_id=? AND status=? AND attempt_count=?"
+      ).run(now, work.deliveryId, requiredText(row, "status"), work.attemptCount);
+      if (Number(changed.changes) !== 1) throw new ReviewRealError("DELIVERY_RECONCILE_WAIT", 409);
+      const updated = this.database.prepare("SELECT * FROM projection_outbox WHERE delivery_id=?").get(work.deliveryId) as SqlRow;
+      this.appendDeliveryAudit(updated, "projection_delivery_succeeded", "succeeded", null, actorRef, now);
+      return receipt;
+    });
+  }
+
+  deliveryReceipt(deliveryId: string): ProjectionReceipt {
+    const row = this.database.prepare(
+      "SELECT receipt_json, receipt_hash FROM projection_delivery_receipt WHERE delivery_id=?"
+    ).get(deliveryId) as SqlRow | undefined;
+    if (!row) throw new ReviewRealError("PROJECTION_RECEIPT_UNKNOWN", 404);
+    const json = requiredText(row, "receipt_json");
+    if (sha256(json) !== requiredText(row, "receipt_hash") || canonicalJson(parseJson(json)) !== json) {
+      throw new ReviewRealError("ADMIN_INTERNAL_FAILURE", 500);
+    }
+    return parseStored(ProjectionReceiptSchema, parseJson(json));
   }
 
   deliveryTask(deliveryId: string): Readonly<{

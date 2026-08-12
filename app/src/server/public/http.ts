@@ -2,8 +2,27 @@ import { randomUUID } from "node:crypto";
 
 import { decodePublicCursor, isCanonicalUtc, isPublicContentType, isPublicId, isSourceId } from "./cursor.ts";
 import { asPublicReadError, PublicReadError } from "./error.ts";
-import type { PublicStoryRepository } from "./repository.ts";
-import type { PublicFeedQuery, PublicProblemV1, PublicReadVersion, PublicReasonCodeV1 } from "./types.ts";
+import type {
+  PublicFeedQuery,
+  PublicFeedResponseV1,
+  PublicFeedResponseV2,
+  PublicProblemV1,
+  PublicReadVersion,
+  PublicReasonCodeV1,
+  PublicStoryDetailResponseV1,
+  PublicStoryDetailResponseV2
+} from "./types.ts";
+
+export type PublicStoryReader = {
+  getFeed(
+    query: PublicFeedQuery,
+    version?: PublicReadVersion
+  ): PublicFeedResponseV1 | PublicFeedResponseV2;
+  getDetail(
+    publicId: string,
+    version?: PublicReadVersion
+  ): PublicStoryDetailResponseV1 | PublicStoryDetailResponseV2 | null;
+};
 
 const JSON_HEADERS = {
   "Cache-Control": "no-store",
@@ -95,7 +114,7 @@ function parseFeedQuery(request: Request): PublicFeedQuery {
   return { source, contentType: contentTypeValue, cursor };
 }
 
-export function handlePublicFeed(request: Request, repository: PublicStoryRepository): Response {
+export function handlePublicFeed(request: Request, repository: PublicStoryReader): Response {
   try {
     const query = parseFeedQuery(request);
     return jsonResponse(repository.getFeed(query, selectPublicReadVersion(request)));
@@ -104,7 +123,7 @@ export function handlePublicFeed(request: Request, repository: PublicStoryReposi
   }
 }
 
-export function handlePublicStory(publicId: string, repository: PublicStoryRepository, request?: Request): Response {
+export function handlePublicStory(publicId: string, repository: PublicStoryReader, request?: Request): Response {
   try {
     if (!isPublicId(publicId)) throw new PublicReadError("PUBLIC_ID_INVALID");
     const version = request ? selectPublicReadVersion(request) : "public-read-v0.1";

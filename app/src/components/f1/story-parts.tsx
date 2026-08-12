@@ -86,6 +86,20 @@ export function SyntheticStoryMedia({ story, detail = false }: { story: PublicSt
 
 export function DisabledOriginalEntry({ story, entryId }: { story: PublicStoryCardViewModel; entryId: string }) {
   const descriptionId = `public-original-entry-note-${entryId}`;
+  if (story.originalUrl) {
+    return (
+      <div className="original-entry">
+        <a
+          className="disabled-original"
+          href={story.originalUrl}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          ↗ 前往原文
+        </a>
+      </div>
+    );
+  }
   const restricted = story.originalReason === "source_restricted";
   return (
     <div className="original-entry">

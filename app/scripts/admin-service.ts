@@ -12,19 +12,21 @@ await runSafeCli(async () => {
   }
   const manifest = readAdminDeploymentManifest(resolve(arguments_[1]));
   await runReviewAdminRuntime({
-    appRoot: manifest.appRoot,
+    targetReleaseAppRoot: manifest.targetReleaseAppRoot,
+    reviewDatabasePath: manifest.reviewDatabasePath,
+    reviewDatabaseIdentity: manifest.reviewDatabaseIdentity,
     dataRoot: manifest.dataRoot,
     staticRoot: manifest.staticRoot,
     canonicalOrigin: manifest.canonicalOrigin,
     rpName: manifest.rpName,
     operatorRef: manifest.operatorRef,
+    tailscaleAppCapabilityId: manifest.tailscaleAppCapabilityId,
     trustedIdentities: manifest.trustedIdentities,
     sessionHashKeyPath: manifest.sessionHashKeyPath,
     recoveryFencePath: manifest.recoveryFencePath,
-    projectionRoot: manifest.projectionRoot,
     projectionSigningKeyId: manifest.projectionSigningKeyId,
-    projectionVerifyKeyPath: manifest.projectionVerifyKeyPath,
-    projectionBootstrapGeneration: manifest.projectionBootstrapGeneration,
-    projectionBootstrapHash: manifest.projectionBootstrapHash
+    projectionSigningPrivateKeyPath: manifest.projectionSigningPrivateKeyPath,
+    projectionInternalEndpoint: manifest.projectionInternalEndpoint,
+    projectionSenderServiceIdentity: manifest.projectionSenderServiceIdentity
   });
 });

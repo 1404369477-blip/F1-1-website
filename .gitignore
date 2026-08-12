@@ -25,6 +25,7 @@ tmp/
 .tmp/
 app/Library/
 app/~/
+app/evidence/
 
 # 已完成迁移后的本机打包与恢复副本；保留 migration 顶层交接文档和 conversations/
 migration/bundles/

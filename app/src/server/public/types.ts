@@ -8,6 +8,18 @@ export const PUBLIC_CONTENT_TYPES = [
 export type PublicContentType = (typeof PUBLIC_CONTENT_TYPES)[number];
 export type PublicState = "available" | "restricted" | "media_missing";
 
+export type PublicOriginalLink =
+  | {
+      enabled: false;
+      url: null;
+      reason: "synthetic_only" | "source_restricted";
+    }
+  | {
+      enabled: true;
+      url: string;
+      reason: null;
+    };
+
 export type PublicFeedItemV1 = {
   publicId: string;
   contentType: PublicContentType;
@@ -32,11 +44,7 @@ export type PublicFeedItemV1 = {
     creditDisplay: string | null;
     tone: "night" | "blue" | "amber" | "violet" | "slate";
   };
-  originalLink: {
-    enabled: false;
-    url: null;
-    reason: "synthetic_only" | "source_restricted";
-  };
+  originalLink: PublicOriginalLink;
 };
 
 export type PublicFeedResponseV1 = {

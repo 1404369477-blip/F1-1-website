@@ -19,6 +19,10 @@ export const CANONICAL_ENV_KEYS = [
   "APP_PUBLIC_ORIGIN",
   "F1_DATA_PROFILE",
   "F1_DB_PATH",
+  "F1_PUBLIC_READ_MODE",
+  "F1_PUBLIC_PROJECTION_ROOT",
+  "F1_PUBLIC_VERIFY_KEY_PATH",
+  "F1_PUBLIC_SIGNING_KEY_ID",
   "SOURCE_CONFIG_PROVIDER",
   "SOURCE_FIXTURE_PATH",
   "ADAPTER_MODE",
@@ -42,6 +46,10 @@ export type AppConfig = {
   publicOrigin: string;
   dataProfile: "m3-shadow" | "public-synthetic" | "public-multimedia-synthetic" | "source-management-synthetic";
   dbPath: string;
+  publicReadMode?: "public-multimedia-synthetic" | "public-real-snapshot";
+  publicProjectionRoot?: string | null;
+  publicVerifyKeyPath?: string | null;
+  publicSigningKeyId?: string | null;
   sourceProvider: "fixture";
   fixturePath: string;
   adapterMode: "mock";
@@ -70,6 +78,10 @@ const DEFAULTS: Record<CanonicalEnvKey, string> = {
   APP_PUBLIC_ORIGIN: "http://127.0.0.1:3000",
   F1_DATA_PROFILE: "m3-shadow",
   F1_DB_PATH: ".local/f1plus1.sqlite",
+  F1_PUBLIC_READ_MODE: "public-multimedia-synthetic",
+  F1_PUBLIC_PROJECTION_ROOT: "",
+  F1_PUBLIC_VERIFY_KEY_PATH: "",
+  F1_PUBLIC_SIGNING_KEY_ID: "",
   SOURCE_CONFIG_PROVIDER: "fixture",
   SOURCE_FIXTURE_PATH: "../data/m3-base-shadow-import-v0/main-source-record-batch.json",
   ADAPTER_MODE: "mock",
@@ -206,6 +218,44 @@ function assertDbPath(value: string): void {
   if (!/^\.local\/[A-Za-z0-9][A-Za-z0-9._-]*\.sqlite$/.test(normalized)) {
     throw new ConfigError("DB_PATH", "database path must be one .local/<basename>.sqlite file without nested directories");
   }
+}
+
+type PublicRuntimeConfig = Readonly<{
+  publicReadMode: "public-multimedia-synthetic" | "public-real-snapshot";
+  publicProjectionRoot: string | null;
+  publicVerifyKeyPath: string | null;
+  publicSigningKeyId: string | null;
+}>;
+
+function parsePublicRuntime(values: Record<CanonicalEnvKey, string>): PublicRuntimeConfig {
+  const mode = values.F1_PUBLIC_READ_MODE;
+  if (mode === "public-multimedia-synthetic") {
+    if (values.F1_PUBLIC_PROJECTION_ROOT || values.F1_PUBLIC_VERIFY_KEY_PATH || values.F1_PUBLIC_SIGNING_KEY_ID) {
+      throw new ConfigError("PUBLIC_READ_MODE_MIX", "synthetic mode must not include real projection inputs");
+    }
+    return {
+      publicReadMode: mode,
+      publicProjectionRoot: null,
+      publicVerifyKeyPath: null,
+      publicSigningKeyId: null
+    };
+  }
+  if (mode !== "public-real-snapshot") {
+    throw new ConfigError("PUBLIC_READ_MODE", "unknown public read mode");
+  }
+  if (
+    !isAbsolute(values.F1_PUBLIC_PROJECTION_ROOT) ||
+    !isAbsolute(values.F1_PUBLIC_VERIFY_KEY_PATH) ||
+    !/^[A-Za-z0-9][A-Za-z0-9._:-]{0,255}$/.test(values.F1_PUBLIC_SIGNING_KEY_ID)
+  ) {
+    throw new ConfigError("PUBLIC_REAL_CONFIG", "real snapshot mode requires absolute public paths and one signing key id");
+  }
+  return {
+    publicReadMode: mode,
+    publicProjectionRoot: resolve(values.F1_PUBLIC_PROJECTION_ROOT),
+    publicVerifyKeyPath: resolve(values.F1_PUBLIC_VERIFY_KEY_PATH),
+    publicSigningKeyId: values.F1_PUBLIC_SIGNING_KEY_ID
+  };
 }
 
 function assertOrigin(origin: string, host: string, port: number): void {
@@ -438,6 +488,7 @@ export function loadAppConfig(
   if (values.SOURCE_FIXTURE_PATH !== profileContract.fixturePath) {
     throw new ConfigError("DATA_PROFILE_MIX", "profile and fixture path must match one canonical profile");
   }
+  const publicRuntime = parsePublicRuntime(values);
   return {
     appEnv,
     port,
@@ -445,6 +496,7 @@ export function loadAppConfig(
     publicOrigin: values.APP_PUBLIC_ORIGIN,
     dataProfile,
     dbPath: values.F1_DB_PATH,
+    ...publicRuntime,
     sourceProvider: "fixture",
     fixturePath: pathInfo.realPath,
     adapterMode: "mock",

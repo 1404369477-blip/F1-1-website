@@ -1,15 +1,25 @@
-import { readFileSync, rmSync, mkdirSync, cpSync } from "node:fs";
+import { chmodSync, existsSync, lstatSync, readFileSync, rmSync, mkdirSync, cpSync, mkdtempSync, realpathSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 import { afterAll, describe, expect, it, vi } from "vitest";
 
 import { AdminPasskeyAuth, type AdminTrustedIdentity } from "../server/admin-service/auth.ts";
+import {
+  ADMIN_REVIEW_DATABASE_PATH,
+  AdminTrustedIdentityDeploymentSchema,
+  adminDeploymentPaths,
+  prepareAdminDeployment,
+  TailscaleAppCapabilityIdSchema
+} from "../server/admin-service/deployment.ts";
 import { openReviewAdminDatabase } from "../server/admin-service/runtime.ts";
+import { inspectExistingPrivateDatabase } from "../server/db/database.ts";
 import {
   ADMIN_BIND_HOST,
   ADMIN_BIND_PORT,
-  adminServiceOwnsPath
+  adminServiceOwnsPath,
+  parseTrustedAdminIdentity,
+  type TrustedTailnetIdentity
 } from "../server/admin-service/server.ts";
 import {
   BootstrapTokenStore,
@@ -22,15 +32,15 @@ import type {
   RegistrationVerification
 } from "../server/admin-service/webauthn.ts";
 import { preparePublishMutation } from "../server/review-real/backend.ts";
-import { reviewRealSchemaFingerprint } from "../server/review-real/migration.ts";
+import { assertProjectionDeliveryRuntimeSchema, reviewRealSchemaFingerprint } from "../server/review-real/migration.ts";
+import { applyRssMigration, openRssDatabase } from "../server/rss/repository.ts";
 import { ReviewAdminSecurity } from "../server/review-real/security.ts";
 import type { RawAdminContext } from "../server/source-management/security.ts";
 
 const roots: string[] = [];
 
 function privateTemporaryRoot(): string {
-  const path = join(tmpdir(), `f1plus1-admin-service-${process.pid}-${roots.length}`);
-  mkdirSync(path, { mode: 0o700 });
+  const path = mkdtempSync(join(realpathSync(tmpdir()), "f1plus1-admin-service-"));
   roots.push(path);
   return path;
 }
@@ -145,6 +155,142 @@ afterAll(() => {
 });
 
 describe("independent admin service candidate", () => {
+  it("rejects a second owner-private same-name review database before creating Admin artifacts", () => {
+    process.umask(0o077);
+    expect(ADMIN_REVIEW_DATABASE_PATH).toBe(
+      "/Users/chanai/F1-1-website/app/.local/f1plus1-rss-real-private.sqlite"
+    );
+    const root = privateTemporaryRoot();
+    const secondAppRoot = join(root, "second-app");
+    mkdirSync(join(secondAppRoot, ".local"), { mode: 0o700, recursive: true });
+    const secondDatabase = openRssDatabase(secondAppRoot);
+    secondDatabase.close();
+    const secondDatabasePath = join(secondAppRoot, ".local/f1plus1-rss-real-private.sqlite");
+    chmodSync(secondDatabasePath, 0o600);
+    const secondIdentity = inspectExistingPrivateDatabase(
+      secondDatabasePath,
+      "f1plus1-rss-real-private.sqlite"
+    );
+    const home = join(root, "home");
+    const paths = adminDeploymentPaths(home);
+
+    expect(() => prepareAdminDeployment({
+      home,
+      targetReleaseAppRoot: join(root, "release"),
+      reviewDatabasePath: secondDatabasePath,
+      reviewDatabaseExpectedDev: secondIdentity.dev,
+      reviewDatabaseExpectedIno: secondIdentity.ino,
+      nodePath: "/usr/bin/false",
+      canonicalOrigin: "https://f1-admin.example.ts.net",
+      rpName: "F1+1 Admin",
+      operatorRef: "operator-primary",
+      tailscaleAppCapabilityId: "admin.example.com/cap/f1-admin-device",
+      trustedIdentities: [{
+        login: "owner@example.com",
+        operatorRef: "operator-primary",
+        sourceRefs: ["A".repeat(43), "B".repeat(43)]
+      }],
+      projectionSigningKeyId: "projection-key-v1",
+      projectionSigningPrivateKeyPath: join(root, "private.pem"),
+      projectionVerifyKeyPath: join(root, "public.pem"),
+      publicReadMode: "public-real-snapshot",
+      syntheticRollbackRelease: "synthetic-release-v1",
+      syntheticRollbackHash: "a".repeat(64),
+      projectionSenderServiceIdentity: "projection-sender-v1",
+      projectionReceiverServiceIdentity: "projection-receiver-v1"
+    })).toThrowError("ADMIN_REVIEW_DATABASE_PATH_INVALID");
+
+    expect(existsSync(paths.dataRoot)).toBe(false);
+    expect(existsSync(paths.publicProjectionRoot)).toBe(false);
+    expect(existsSync(paths.manifest)).toBe(false);
+    expect(existsSync(paths.plist)).toBe(false);
+    expect(existsSync(paths.sessionHashKey)).toBe(false);
+    expect(existsSync(paths.recoveryFence)).toBe(false);
+  });
+
+  it("parses the single Serve app-cap identity for every Admin route before session handling", () => {
+    const capabilityId = "admin.example.com/cap/f1-admin-device";
+    const m5SourceRef = "A".repeat(43);
+    const iphoneSourceRef = "B".repeat(43);
+    const trustedIdentities: readonly TrustedTailnetIdentity[] = [{
+      login: "owner@example.com",
+      operatorRef: "operator-primary",
+      sourceRefs: [m5SourceRef, iphoneSourceRef]
+    }];
+    const rawHeaders = (sourceRef: string): string[] => [
+      "Tailscale-User-Login", "owner@example.com",
+      "Tailscale-App-Capabilities", JSON.stringify({ [capabilityId]: [{ sourceRef }] })
+    ];
+    const parse = (headers: readonly string[]) => parseTrustedAdminIdentity({
+      rawHeaders: headers,
+      tailscaleAppCapabilityId: capabilityId,
+      trustedIdentities
+    });
+
+    const m5 = parse(rawHeaders(m5SourceRef));
+    const iphone = parse(rawHeaders(iphoneSourceRef));
+    expect(m5).toMatchObject({
+      operatorRef: "operator-primary",
+      tailnetUserRef: "tailnet-user-c8cd3c6427301eaf"
+    });
+    expect(m5.deviceRef).toMatch(/^device-[0-9a-f]{16}$/);
+    expect(iphone.deviceRef).toMatch(/^device-[0-9a-f]{16}$/);
+    expect(iphone.deviceRef).not.toBe(m5.deviceRef);
+
+    const failures: readonly (readonly string[])[] = [
+      rawHeaders(m5SourceRef).slice(2),
+      ["Tailscale-User-Login", "owner@example.com", ...rawHeaders(m5SourceRef)],
+      ["Tailscale-User-Login", "ownér@example.com", ...rawHeaders(m5SourceRef).slice(2)],
+      rawHeaders(m5SourceRef).slice(0, 2),
+      [...rawHeaders(m5SourceRef), "Tailscale-App-Capabilities", "{}"],
+      ["Tailscale-User-Login", "owner@example.com", "Tailscale-App-Capabilities", "{"],
+      ["Tailscale-User-Login", "owner@example.com", "Tailscale-App-Capabilities", JSON.stringify({ "other.example.com/cap/f1-admin-device": [{ sourceRef: m5SourceRef }] })],
+      ["Tailscale-User-Login", "owner@example.com", "Tailscale-App-Capabilities", JSON.stringify({ [capabilityId]: [{ sourceRef: m5SourceRef }], unexpected: [] })],
+      ["Tailscale-User-Login", "owner@example.com", "Tailscale-App-Capabilities", JSON.stringify({ [capabilityId]: [] })],
+      ["Tailscale-User-Login", "owner@example.com", "Tailscale-App-Capabilities", JSON.stringify({ [capabilityId]: [{ sourceRef: m5SourceRef }, { sourceRef: iphoneSourceRef }] })],
+      ["Tailscale-User-Login", "owner@example.com", "Tailscale-App-Capabilities", JSON.stringify({ [capabilityId]: [{ sourceRef: m5SourceRef, unexpected: true }] })],
+      ["Tailscale-User-Login", "owner@example.com", "Tailscale-App-Capabilities", JSON.stringify({ [capabilityId]: [{ sourceRef: "short" }] })],
+      ["Tailscale-User-Login", "other@example.com", "Tailscale-App-Capabilities", JSON.stringify({ [capabilityId]: [{ sourceRef: m5SourceRef }] })],
+      ["Tailscale-User-Login", "owner@example.com", "Tailscale-App-Capabilities", " ".repeat(4097)]
+    ];
+    for (const headers of failures) {
+      expect(() => parse(headers)).toThrowError("ADMIN_SESSION_REQUIRED");
+    }
+
+    const legacy = ["x-f1-approved-device-ref", "unread"];
+    Object.defineProperty(legacy, 1, { get: () => { throw new Error("LEGACY_VALUE_WAS_READ"); } });
+    expect(() => parse(legacy)).toThrowError("ADMIN_SESSION_REQUIRED");
+
+    expect(TailscaleAppCapabilityIdSchema.safeParse(capabilityId).success).toBe(true);
+    expect(TailscaleAppCapabilityIdSchema.safeParse("tailscale.com/cap/f1-admin-device").success).toBe(false);
+    expect(AdminTrustedIdentityDeploymentSchema.safeParse(trustedIdentities[0]).success).toBe(true);
+    expect(AdminTrustedIdentityDeploymentSchema.safeParse({
+      login: "owner@example.com",
+      operatorRef: "operator-primary",
+      deviceRefs: ["legacy-device"]
+    }).success).toBe(false);
+
+    const security = new ReviewAdminSecurity({
+      canonicalOrigin: "https://f1-admin.example.ts.net",
+      sessionHashKey: Buffer.alloc(32, 5),
+      readRecoveryFence: () => ({
+        clockTrusted: true,
+        writerReady: true,
+        lastSuccessfulRecoveryPointAt: Date.now()
+      }),
+      randomBytes: (size) => Buffer.alloc(size, 6)
+    });
+    const session = security.acceptVerifiedSession(m5);
+    expect(security.authorizeBoundIdentity(
+      rawContext({ method: "GET", path: "/api/admin/reviews", cookie: session.cookieHeader }),
+      m5
+    )).toEqual({ actorRef: "operator-primary" });
+    expect(() => security.authorizeBoundIdentity(
+      rawContext({ method: "GET", path: "/api/admin/reviews", cookie: session.cookieHeader }),
+      iphone
+    )).toThrowError("ADMIN_SESSION_REQUIRED");
+  });
+
   it("opens the frozen schema and completes bootstrap, login, CSRF and fresh publish gates without owning public paths", async () => {
     process.umask(0o077);
     const root = privateTemporaryRoot();
@@ -153,10 +299,32 @@ describe("independent admin service candidate", () => {
     mkdirSync(join(fakeApp, "migrations/rss-real"), { mode: 0o700, recursive: true });
     cpSync(join(process.cwd(), "migrations/rss-real/0001_rss_real.sql"), join(fakeApp, "migrations/rss-real/0001_rss_real.sql"));
     cpSync(join(process.cwd(), "migrations/rss-real/0002_admin_review_publish.sql"), join(fakeApp, "migrations/rss-real/0002_admin_review_publish.sql"));
-    const opened = openReviewAdminDatabase(fakeApp);
-    expect(Number((opened.database.prepare("PRAGMA user_version").get() as Record<string, unknown>).user_version)).toBe(2);
-    expect(reviewRealSchemaFingerprint(opened.database)).toBe("46a714035b59e1d608065922593895cd72c0748ac5ddbef660ae16e99e7f638e");
+    cpSync(join(process.cwd(), "migrations/rss-real/0003_projection_delivery_runtime.sql"), join(fakeApp, "migrations/rss-real/0003_projection_delivery_runtime.sql"));
+    const databasePath = join(fakeApp, ".local/f1plus1-rss-real-private.sqlite");
+    const initialDatabase = openRssDatabase(fakeApp);
+    applyRssMigration(initialDatabase, readFileSync(join(fakeApp, "migrations/rss-real/0001_rss_real.sql"), "utf8"));
+    initialDatabase.close();
+    chmodSync(databasePath, 0o600);
+    const databaseIdentity = inspectExistingPrivateDatabase(databasePath, "f1plus1-rss-real-private.sqlite");
+    const opened = openReviewAdminDatabase({
+      targetReleaseAppRoot: fakeApp,
+      reviewDatabasePath: databasePath,
+      reviewDatabaseIdentity: databaseIdentity
+    });
+    expect(Number((opened.database.prepare("PRAGMA user_version").get() as Record<string, unknown>).user_version)).toBe(3);
+    expect(reviewRealSchemaFingerprint(opened.database)).toBe("5d3316653750c8eaafefda7a0d5e3a154ab647a7e77329c048b91ce516a8b84f");
+    expect(() => assertProjectionDeliveryRuntimeSchema(opened.database)).not.toThrow();
     opened.database.close();
+
+    const missingPath = join(fakeApp, ".local/missing/f1plus1-rss-real-private.sqlite");
+    expect(() => openReviewAdminDatabase({
+      targetReleaseAppRoot: fakeApp,
+      reviewDatabasePath: missingPath,
+      reviewDatabaseIdentity: databaseIdentity
+    })).toThrow();
+    expect(existsSync(missingPath)).toBe(false);
+    expect(lstatSync(databasePath).dev).toBe(databaseIdentity.dev);
+    expect(lstatSync(databasePath).ino).toBe(databaseIdentity.ino);
 
     const authRoot = join(root, "auth");
     mkdirSync(authRoot, { mode: 0o700 });
@@ -274,6 +442,7 @@ describe("independent admin service candidate", () => {
     expect(ADMIN_BIND_PORT).toBe(3101);
     expect(adminServiceOwnsPath("/admin/reviews")).toBe(true);
     expect(adminServiceOwnsPath("/api/admin/reviews")).toBe(true);
+    expect(adminServiceOwnsPath("/internal/projections")).toBe(false);
     expect(adminServiceOwnsPath("/")).toBe(false);
     expect(adminServiceOwnsPath("/stories/public-rss-example")).toBe(false);
     expect(webauthn.authenticationCount).toBe(2);

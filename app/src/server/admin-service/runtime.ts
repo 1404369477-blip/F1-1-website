@@ -1,18 +1,24 @@
-import { createPublicKey } from "node:crypto";
-import { existsSync, readFileSync } from "node:fs";
+import { createPrivateKey } from "node:crypto";
+import { readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 
 import { z } from "zod";
 
 import { canonicalJson } from "../db/profile.ts";
+import {
+  inspectExistingPrivateDatabase,
+  openExistingSafeDatabase,
+  readSqliteRuntime,
+  type ExistingDatabaseIdentity
+} from "../db/database.ts";
 import { ReviewAdminBackend } from "../review-real/backend.ts";
-import { applyReviewRealAdminMigration } from "../review-real/migration.ts";
-import { ProjectionReceiver } from "../review-real/projection.ts";
+import { applyProjectionDeliveryRuntimeMigration, applyReviewRealAdminMigration } from "../review-real/migration.ts";
 import { ReviewRealRepository } from "../review-real/repository.ts";
+import { ProjectionHttpTransport, ProjectionSender } from "../review-real/sender.ts";
 import { ReviewAdminRoutes } from "../review-real/routes.ts";
 import { ReviewAdminSecurity, type ReviewRecoveryFence } from "../review-real/security.ts";
-import { applyRssMigration, openRssDatabase } from "../rss/repository.ts";
+import { RSS_DATABASE_PATH } from "../rss/repository.ts";
 import { AdminPasskeyAuth } from "./auth.ts";
 import { createAdminServiceServer, listenAdminService, type TrustedTailnetIdentity } from "./server.ts";
 import {
@@ -23,7 +29,6 @@ import {
 } from "./storage.ts";
 import { SimpleWebAuthnAdapter } from "./webauthn.ts";
 
-const HashSchema = z.string().regex(/^[0-9a-f]{64}$/);
 const RecoveryFenceSchema = z.object({
   schemaVersion: z.literal("admin-recovery-fence-v1"),
   clockTrusted: z.boolean(),
@@ -32,20 +37,22 @@ const RecoveryFenceSchema = z.object({
 }).strict();
 
 export type AdminRuntimeConfig = Readonly<{
-  appRoot: string;
+  targetReleaseAppRoot: string;
+  reviewDatabasePath: string;
+  reviewDatabaseIdentity: ExistingDatabaseIdentity;
   dataRoot: string;
   staticRoot: string;
   canonicalOrigin: string;
   rpName: string;
   operatorRef: string;
+  tailscaleAppCapabilityId: string;
   trustedIdentities: readonly TrustedTailnetIdentity[];
   sessionHashKeyPath: string;
   recoveryFencePath: string;
-  projectionRoot: string;
   projectionSigningKeyId: string;
-  projectionVerifyKeyPath: string;
-  projectionBootstrapGeneration: number;
-  projectionBootstrapHash: string;
+  projectionSigningPrivateKeyPath: string;
+  projectionInternalEndpoint: "http://127.0.0.1:3102/internal/projections";
+  projectionSenderServiceIdentity: string;
 }>;
 
 function readCanonical<T>(path: string, schema: z.ZodType<T>): T {
@@ -72,21 +79,52 @@ function readSessionKey(path: string): Buffer {
   return key;
 }
 
-export function openReviewAdminDatabase(appRoot: string): Readonly<{
+export function openReviewAdminDatabase(input: Readonly<{
+  targetReleaseAppRoot: string;
+  reviewDatabasePath: string;
+  reviewDatabaseIdentity: ExistingDatabaseIdentity;
+}>): Readonly<{
   database: DatabaseSync;
   repository: ReviewRealRepository;
 }> {
-  const root = resolve(appRoot);
-  const database = openRssDatabase(root);
+  if (resolve(input.targetReleaseAppRoot) !== input.targetReleaseAppRoot ||
+      resolve(input.reviewDatabasePath) !== input.reviewDatabasePath) {
+    throw new Error("ADMIN_REVIEW_DATABASE_PATH_INVALID");
+  }
+  const targetReleaseAppRoot = resolve(input.targetReleaseAppRoot);
+  const reviewDatabasePath = resolve(input.reviewDatabasePath);
+  const database = openExistingSafeDatabase(
+    reviewDatabasePath,
+    RSS_DATABASE_PATH.split("/").at(-1)!,
+    input.reviewDatabaseIdentity,
+    [1, 2, 3]
+  );
   try {
     const version = Number((database.prepare("PRAGMA user_version").get() as Record<string, unknown>).user_version);
-    if (version === 0 || version === 1) {
-      applyRssMigration(database, readFileSync(join(root, "migrations/rss-real/0001_rss_real.sql"), "utf8"));
+    if (version === 1) {
+      applyReviewRealAdminMigration(
+        database,
+        readFileSync(join(targetReleaseAppRoot, "migrations/rss-real/0002_admin_review_publish.sql"), "utf8")
+      );
     }
-    applyReviewRealAdminMigration(
+    applyProjectionDeliveryRuntimeMigration(
       database,
-      readFileSync(join(root, "migrations/rss-real/0002_admin_review_publish.sql"), "utf8")
+      readFileSync(join(targetReleaseAppRoot, "migrations/rss-real/0003_projection_delivery_runtime.sql"), "utf8")
     );
+    const runtime = readSqliteRuntime(database);
+    if (runtime.journalMode !== "wal" || runtime.synchronous !== 2 || runtime.foreignKeys !== 1 || runtime.userVersion !== 3) {
+      throw new Error("ADMIN_REVIEW_DATABASE_RUNTIME_INVALID");
+    }
+    const currentIdentity = inspectExistingPrivateDatabase(
+      reviewDatabasePath,
+      RSS_DATABASE_PATH.split("/").at(-1)!
+    );
+    if (
+      currentIdentity.dev !== input.reviewDatabaseIdentity.dev ||
+      currentIdentity.ino !== input.reviewDatabaseIdentity.ino ||
+      currentIdentity.uid !== input.reviewDatabaseIdentity.uid ||
+      currentIdentity.nlink !== input.reviewDatabaseIdentity.nlink
+    ) throw new Error("ADMIN_REVIEW_DATABASE_RECEIPT_MISMATCH");
     return { database, repository: new ReviewRealRepository(database) };
   } catch (error) {
     database.close();
@@ -97,11 +135,10 @@ export function openReviewAdminDatabase(appRoot: string): Readonly<{
 export function createReviewAdminRuntime(config: AdminRuntimeConfig): Readonly<{
   server: ReturnType<typeof createAdminServiceServer>;
   database: DatabaseSync;
+  sender: ProjectionSender;
 }> {
   const dataRoot = resolve(config.dataRoot);
-  const projectionRoot = resolve(config.projectionRoot);
   assertPrivateDirectory(dataRoot);
-  if (existsSync(projectionRoot)) assertPrivateDirectory(projectionRoot);
   const origin = new URL(config.canonicalOrigin);
   if (
     origin.protocol !== "https:" ||
@@ -110,9 +147,7 @@ export function createReviewAdminRuntime(config: AdminRuntimeConfig): Readonly<{
     origin.hash ||
     config.projectionSigningKeyId.length < 1 ||
     config.projectionSigningKeyId.length > 256 ||
-    !Number.isSafeInteger(config.projectionBootstrapGeneration) ||
-    config.projectionBootstrapGeneration < 1 ||
-    !HashSchema.safeParse(config.projectionBootstrapHash).success
+    config.projectionInternalEndpoint !== "http://127.0.0.1:3102/internal/projections"
   ) {
     throw new Error("ADMIN_RUNTIME_CONFIG_INVALID");
   }
@@ -131,20 +166,25 @@ export function createReviewAdminRuntime(config: AdminRuntimeConfig): Readonly<{
     readRecoveryFence
   });
   sessionHashKey.fill(0);
-  assertPrivateFile(config.projectionVerifyKeyPath);
-  const publicKey = createPublicKey(readFileSync(config.projectionVerifyKeyPath, "utf8"));
-  const receiver = new ProjectionReceiver({
-    root: projectionRoot,
-    signingKeyId: config.projectionSigningKeyId,
-    publicKey,
-    bootstrapPin: {
-      snapshotGeneration: config.projectionBootstrapGeneration,
-      snapshotManifestHash: config.projectionBootstrapHash
-    }
+  assertPrivateFile(config.projectionSigningPrivateKeyPath);
+  const privateKey = createPrivateKey(readFileSync(config.projectionSigningPrivateKeyPath, "utf8"));
+  const { database, repository } = openReviewAdminDatabase({
+    targetReleaseAppRoot: config.targetReleaseAppRoot,
+    reviewDatabasePath: config.reviewDatabasePath,
+    reviewDatabaseIdentity: config.reviewDatabaseIdentity
   });
-  const { database, repository } = openReviewAdminDatabase(config.appRoot);
   try {
     const backend = new ReviewAdminBackend(repository, security);
+    const sender = new ProjectionSender({
+      repository,
+      transport: new ProjectionHttpTransport({
+        endpoint: config.projectionInternalEndpoint,
+        serviceIdentity: config.projectionSenderServiceIdentity
+      }),
+      signingKeyId: config.projectionSigningKeyId,
+      privateKey,
+      actorRef: config.projectionSenderServiceIdentity
+    });
     const reviewRoutes = new ReviewAdminRoutes(backend);
     const credentialStore = new PasskeyCredentialStore(dataRoot);
     const bootstrapStore = new BootstrapTokenStore(dataRoot);
@@ -159,14 +199,15 @@ export function createReviewAdminRuntime(config: AdminRuntimeConfig): Readonly<{
     });
     const server = createAdminServiceServer({
       canonicalOrigin: origin.origin,
+      tailscaleAppCapabilityId: config.tailscaleAppCapabilityId,
       trustedIdentities: config.trustedIdentities,
       auth,
       reviewRoutes,
       security,
-      projectionReceiver: receiver,
+      projectionDeliveryReceipt: (deliveryId) => repository.deliveryReceipt(deliveryId),
       staticRoot: config.staticRoot
     });
-    return { server, database };
+    return { server, database, sender };
   } catch (error) {
     database.close();
     throw error;
@@ -178,6 +219,14 @@ export async function runReviewAdminRuntime(config: AdminRuntimeConfig): Promise
   let stop: (() => void) | undefined;
   const stopped = new Promise<void>((resolve) => { stop = resolve; });
   const requestStop = (): void => stop?.();
+  let senderRunning = false;
+  const senderTick = (): void => {
+    if (senderRunning) return;
+    senderRunning = true;
+    void runtime.sender.tick().finally(() => { senderRunning = false; });
+  };
+  const senderInterval = setInterval(senderTick, 60_000);
+  senderInterval.unref();
   process.once("SIGINT", requestStop);
   process.once("SIGTERM", requestStop);
   try {
@@ -186,6 +235,7 @@ export async function runReviewAdminRuntime(config: AdminRuntimeConfig): Promise
   } finally {
     process.off("SIGINT", requestStop);
     process.off("SIGTERM", requestStop);
+    clearInterval(senderInterval);
     if (runtime.server.listening) {
       await new Promise<void>((resolveClose, rejectClose) => {
         runtime.server.close((error) => error ? rejectClose(error) : resolveClose());

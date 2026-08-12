@@ -10,11 +10,13 @@ import {
   closeSync,
   constants as fsConstants,
   existsSync,
+  fstatSync,
   fsyncSync,
   lstatSync,
   mkdirSync,
   openSync,
   readFileSync,
+  realpathSync,
   renameSync,
   unlinkSync,
   writeFileSync
@@ -203,14 +205,46 @@ function writeAtomic(path: string, value: string): void {
   }
 }
 
+function writeExclusive(path: string, value: string): void {
+  const noFollow = fsConstants.O_NOFOLLOW ?? 0;
+  const descriptor = openSync(path, fsConstants.O_WRONLY | fsConstants.O_CREAT | fsConstants.O_EXCL | noFollow, 0o600);
+  try {
+    writeFileSync(descriptor, value, { encoding: "utf8" });
+    fsyncSync(descriptor);
+  } finally {
+    closeSync(descriptor);
+  }
+}
+
 function parseCanonicalFile<T>(path: string, schema: z.ZodType<T>): T {
+  const noFollow = fsConstants.O_NOFOLLOW ?? 0;
+  let descriptor: number | null = null;
   let raw: string;
   let value: unknown;
   try {
-    raw = readFileSync(path, "utf8");
+    descriptor = openSync(path, fsConstants.O_RDONLY | noFollow);
+    const before = fstatSync(descriptor);
+    const pathIdentity = lstatSync(path);
+    const currentUid = process.getuid?.();
+    if (
+      !before.isFile() || before.nlink !== 1 || currentUid === undefined || before.uid !== currentUid ||
+      (before.mode & 0o077) !== 0 || pathIdentity.isSymbolicLink() ||
+      before.dev !== pathIdentity.dev || before.ino !== pathIdentity.ino || before.size > MAX_PACKAGE_BYTES
+    ) throw new Error("PUBLIC_SNAPSHOT_FILE_IDENTITY_INVALID");
+    raw = readFileSync(descriptor, "utf8");
+    const after = fstatSync(descriptor);
+    const finalPathIdentity = lstatSync(path);
+    if (
+      before.dev !== after.dev || before.ino !== after.ino || before.size !== after.size ||
+      before.mtimeMs !== after.mtimeMs || before.ctimeMs !== after.ctimeMs ||
+      after.dev !== finalPathIdentity.dev || after.ino !== finalPathIdentity.ino ||
+      finalPathIdentity.isSymbolicLink()
+    ) throw new Error("PUBLIC_SNAPSHOT_FILE_CHANGED");
     value = JSON.parse(raw) as unknown;
   } catch {
     throw new ReviewRealError("PUBLIC_SNAPSHOT_INTEGRITY_FAILED", 503);
+  } finally {
+    if (descriptor !== null) closeSync(descriptor);
   }
   const parsed = schema.safeParse(value);
   if (!parsed.success || raw !== canonicalJson(parsed.data)) {
@@ -219,26 +253,69 @@ function parseCanonicalFile<T>(path: string, schema: z.ZodType<T>): T {
   return parsed.data;
 }
 
+function assertReadableProjectionDirectory(path: string): void {
+  try {
+    const stat = lstatSync(path);
+    const canonicalStat = lstatSync(realpathSync(path));
+    const currentUid = process.getuid?.();
+    if (
+      !stat.isDirectory() || stat.isSymbolicLink() || currentUid === undefined || stat.uid !== currentUid ||
+      stat.nlink < 1 || (stat.mode & 0o077) !== 0 ||
+      canonicalStat.ino !== stat.ino || canonicalStat.dev !== stat.dev
+    ) throw new Error("PUBLIC_SNAPSHOT_DIRECTORY_IDENTITY_INVALID");
+  } catch {
+    throw new ReviewRealError("PUBLIC_SNAPSHOT_INTEGRITY_FAILED", 503);
+  }
+}
+
+export function readProjectionSnapshot(input: Readonly<{
+  root: string;
+  signingKeyId: string;
+  publicKey: KeyObject;
+}>): ProjectionSnapshot | null {
+  const root = resolve(input.root);
+  assertReadableProjectionDirectory(root);
+  const activePath = join(root, "active.json");
+  try {
+    lstatSync(activePath);
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") return null;
+    throw new ReviewRealError("PUBLIC_SNAPSHOT_INTEGRITY_FAILED", 503);
+  }
+  const active = parseCanonicalFile(activePath, ActivePointerSchema);
+  const generationsRoot = join(root, "generations");
+  assertReadableProjectionDirectory(generationsRoot);
+  const generationPath = join(generationsRoot, `${active.snapshotManifestHash}.json`);
+  const generation = parseCanonicalFile(generationPath, CommittedGenerationSchema);
+  const packageValue = verifySignedProjectionPackage(generation.package, {
+    signingKeyId: input.signingKeyId,
+    publicKey: input.publicKey
+  });
+  const snapshot = packageValue.taskEnvelope.snapshot;
+  if (
+    snapshot.snapshotGeneration !== active.snapshotGeneration ||
+    snapshot.snapshotManifestHash !== active.snapshotManifestHash ||
+    generation.activatedAt !== active.activatedAt
+  ) throw new ReviewRealError("PUBLIC_SNAPSHOT_INTEGRITY_FAILED", 503);
+  try { return verifyProjectionSnapshot(snapshot); }
+  catch { throw new ReviewRealError("PUBLIC_SNAPSHOT_INTEGRITY_FAILED", 503); }
+}
+
 export class ProjectionReceiver {
   private readonly root: string;
   private readonly generationsRoot: string;
   private readonly activePath: string;
   private readonly signingKeyId: string;
   private readonly publicKey: KeyObject;
-  private readonly bootstrapPin: Readonly<{
-    snapshotGeneration: number;
-    snapshotManifestHash: string;
-  }>;
+  private readonly activationLockPath: string;
   private readonly now: () => number;
 
   constructor(input: Readonly<{
     root: string;
     signingKeyId: string;
     publicKey: KeyObject;
-    bootstrapPin: Readonly<{
-      snapshotGeneration: number;
-      snapshotManifestHash: string;
-    }>;
+    /** Deprecated compatibility input. Bootstrap identity is established by a valid signed generation 1. */
+    bootstrapPin?: unknown;
     now?: () => number;
   }>) {
     this.root = resolve(input.root);
@@ -246,14 +323,7 @@ export class ProjectionReceiver {
     this.activePath = join(this.root, "active.json");
     this.signingKeyId = input.signingKeyId;
     this.publicKey = input.publicKey;
-    if (
-      !Number.isSafeInteger(input.bootstrapPin.snapshotGeneration) ||
-      input.bootstrapPin.snapshotGeneration < 1 ||
-      !HashSchema.safeParse(input.bootstrapPin.snapshotManifestHash).success
-    ) {
-      throw new ReviewRealError("PROJECTION_STORAGE_FAILED", 503);
-    }
-    this.bootstrapPin = Object.freeze({ ...input.bootstrapPin });
+    this.activationLockPath = join(this.root, "activation.lock");
     this.now = input.now ?? Date.now;
     ensurePrivateDirectory(this.root);
     ensurePrivateDirectory(this.generationsRoot);
@@ -312,14 +382,15 @@ export class ProjectionReceiver {
       if (generation.package.taskEnvelope.deliveryId === deliveryId) {
         matched = generation;
       }
-      if (
-        expectedGeneration === this.bootstrapPin.snapshotGeneration &&
-        hash === this.bootstrapPin.snapshotManifestHash
-      ) {
+      const previousHash = generation.package.taskEnvelope.snapshot.previousSnapshotManifestHash;
+      if (expectedGeneration === 1 && previousHash === null) {
         hash = null;
         expectedGeneration = 0;
       } else {
-        hash = generation.package.taskEnvelope.snapshot.previousSnapshotManifestHash;
+        if (expectedGeneration <= 1 || previousHash === null) {
+          throw new ReviewRealError("PUBLIC_SNAPSHOT_INTEGRITY_FAILED", 503);
+        }
+        hash = previousHash;
         expectedGeneration -= 1;
       }
       steps += 1;
@@ -339,48 +410,52 @@ export class ProjectionReceiver {
     if (Buffer.byteLength(rawPackage, "utf8") > MAX_PACKAGE_BYTES) {
       throw new ReviewRealError("PROJECTION_REQUEST_INVALID", 413);
     }
-    const existingReceipt = this.findCommitted(packageValue.taskEnvelope.deliveryId);
-    if (existingReceipt !== null) {
-      if (existingReceipt.snapshotManifestHash !== packageValue.taskEnvelope.snapshot.snapshotManifestHash) {
-        throw new ReviewRealError("PROJECTION_IDEMPOTENCY_CONFLICT", 409);
-      }
-      return existingReceipt;
-    }
-
-    const active = this.readPointer();
-    const snapshot = packageValue.taskEnvelope.snapshot;
-    if ((snapshot.snapshotGeneration === 1) !== (snapshot.previousSnapshotManifestHash === null)) {
-      throw new ReviewRealError("PROJECTION_GENERATION_CONFLICT", 409);
-    }
-    if (active !== null) {
-      const activeGeneration = this.readGeneration(active.snapshotManifestHash);
-      if (activeGeneration.package.taskEnvelope.snapshot.snapshotGeneration !== active.snapshotGeneration) {
-        throw new ReviewRealError("PUBLIC_SNAPSHOT_INTEGRITY_FAILED", 503);
-      }
-    }
-    if (
-      (active === null && (
-        snapshot.snapshotGeneration !== this.bootstrapPin.snapshotGeneration ||
-        snapshot.snapshotManifestHash !== this.bootstrapPin.snapshotManifestHash
-      )) ||
-      (active !== null && (
-        snapshot.snapshotGeneration !== active.snapshotGeneration + 1 ||
-        snapshot.previousSnapshotManifestHash !== active.snapshotManifestHash
-      ))
-    ) {
-      throw new ReviewRealError("PROJECTION_GENERATION_CONFLICT", 409);
-    }
-
-    const receivedAt = iso(this.now());
-    const activatedAt = receivedAt;
-    let committed = CommittedGenerationSchema.parse({
-      schemaVersion: "projection-committed-generation-v1",
-      package: packageValue,
-      receivedAt,
-      activatedAt
-    });
-    const generationPath = this.generationPath(snapshot.snapshotManifestHash);
+    let lockDescriptor: number | null = null;
+    let ownsActivationLock = false;
     try {
+      lockDescriptor = openSync(
+        this.activationLockPath,
+        fsConstants.O_WRONLY | fsConstants.O_CREAT | fsConstants.O_EXCL | (fsConstants.O_NOFOLLOW ?? 0),
+        0o600
+      );
+      closeSync(lockDescriptor);
+      lockDescriptor = null;
+      ownsActivationLock = true;
+      const existingReceipt = this.findCommitted(packageValue.taskEnvelope.deliveryId);
+      if (existingReceipt !== null) {
+        if (existingReceipt.snapshotManifestHash !== packageValue.taskEnvelope.snapshot.snapshotManifestHash) {
+          throw new ReviewRealError("PROJECTION_IDEMPOTENCY_CONFLICT", 409);
+        }
+        return existingReceipt;
+      }
+      const active = this.readPointer();
+      const snapshot = packageValue.taskEnvelope.snapshot;
+      if ((snapshot.snapshotGeneration === 1) !== (snapshot.previousSnapshotManifestHash === null)) {
+        throw new ReviewRealError("PROJECTION_GENERATION_CONFLICT", 409);
+      }
+      if (active !== null) {
+        const activeGeneration = this.readGeneration(active.snapshotManifestHash);
+        if (activeGeneration.package.taskEnvelope.snapshot.snapshotGeneration !== active.snapshotGeneration) {
+          throw new ReviewRealError("PUBLIC_SNAPSHOT_INTEGRITY_FAILED", 503);
+        }
+      }
+      if (
+        (active === null && snapshot.snapshotGeneration !== 1) ||
+        (active !== null && (
+          snapshot.snapshotGeneration !== active.snapshotGeneration + 1 ||
+          snapshot.previousSnapshotManifestHash !== active.snapshotManifestHash
+        ))
+      ) {
+        throw new ReviewRealError("PROJECTION_GENERATION_CONFLICT", 409);
+      }
+      const receivedAt = iso(this.now());
+      let committed = CommittedGenerationSchema.parse({
+        schemaVersion: "projection-committed-generation-v1",
+        package: packageValue,
+        receivedAt,
+        activatedAt: receivedAt
+      });
+      const generationPath = this.generationPath(snapshot.snapshotManifestHash);
       if (existsSync(generationPath)) {
         const prior = parseCanonicalFile(generationPath, CommittedGenerationSchema);
         if (canonicalJson(prior.package) !== rawPackage) {
@@ -388,7 +463,7 @@ export class ProjectionReceiver {
         }
         committed = prior;
       } else {
-        writeAtomic(generationPath, canonicalJson(committed));
+        writeExclusive(generationPath, canonicalJson(committed));
         fsyncDirectory(this.generationsRoot);
       }
       const pointer = ActivePointerSchema.parse({
@@ -402,7 +477,13 @@ export class ProjectionReceiver {
       return this.receiptFor(committed, pointer);
     } catch (error) {
       if (error instanceof ReviewRealError) throw error;
+      if ((error as NodeJS.ErrnoException).code === "EEXIST") {
+        throw new ReviewRealError("PROJECTION_GENERATION_CONFLICT", 409);
+      }
       throw new ReviewRealError("PROJECTION_ACTIVATION_FAILED", 503);
+    } finally {
+      if (lockDescriptor !== null) closeSync(lockDescriptor);
+      if (ownsActivationLock && existsSync(this.activationLockPath)) unlinkSync(this.activationLockPath);
     }
   }
 
@@ -416,17 +497,11 @@ export class ProjectionReceiver {
   }
 
   readActiveSnapshot(): ProjectionSnapshot | null {
-    const active = this.readPointer();
-    if (active === null) return null;
-    const generation = this.readGeneration(active.snapshotManifestHash);
-    if (generation.package.taskEnvelope.snapshot.snapshotGeneration !== active.snapshotGeneration) {
-      throw new ReviewRealError("PUBLIC_SNAPSHOT_INTEGRITY_FAILED", 503);
-    }
-    try {
-      return verifyProjectionSnapshot(generation.package.taskEnvelope.snapshot);
-    } catch {
-      throw new ReviewRealError("PUBLIC_SNAPSHOT_INTEGRITY_FAILED", 503);
-    }
+    return readProjectionSnapshot({
+      root: this.root,
+      signingKeyId: this.signingKeyId,
+      publicKey: this.publicKey
+    });
   }
 }
 

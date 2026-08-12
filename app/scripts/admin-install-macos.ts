@@ -5,19 +5,17 @@ import { basename, dirname, relative, resolve, sep } from "node:path";
 import { z } from "zod";
 
 import {
+  AdminTrustedIdentityDeploymentSchema,
   adminDeploymentPaths,
   adminDeploymentStatus,
+  PublicReadModeSchema,
   prepareAdminDeployment,
   renderAdminServicePlist
 } from "../src/server/admin-service/deployment.ts";
 import { runSafeCli } from "../src/server/security/cli.ts";
 import { appRoot } from "../src/server/runtime-config.ts";
 
-const TrustedIdentitiesSchema = z.array(z.object({
-  login: z.string().min(3).max(320),
-  operatorRef: z.string().min(1).max(256),
-  deviceRefs: z.array(z.string().min(1).max(256)).min(1).max(8)
-}).strict()).min(1).max(8);
+const TrustedIdentitiesSchema = z.array(AdminTrustedIdentityDeploymentSchema).length(1);
 
 function required(name: string): string {
   const value = process.env[name];
@@ -25,10 +23,12 @@ function required(name: string): string {
   return value;
 }
 
-function parsePositiveInteger(name: string): number {
-  const value = Number(required(name));
-  if (!Number.isSafeInteger(value) || value < 1) throw new Error("ADMIN_PREPARE_INPUT_INVALID");
-  return value;
+function requiredReceiptInteger(name: string): number {
+  const value = required(name);
+  if (!/^[0-9]+$/.test(value)) throw new Error("ADMIN_PREPARE_INPUT_INVALID");
+  const parsed = Number(value);
+  if (!Number.isSafeInteger(parsed)) throw new Error("ADMIN_PREPARE_INPUT_INVALID");
+  return parsed;
 }
 
 function privateTemporaryOutput(path: string): string {
@@ -67,7 +67,7 @@ await runSafeCli(() => {
     const output = privateTemporaryOutput(arguments_[1]);
     const value = renderAdminServicePlist({
       nodePath: process.execPath,
-      appRoot,
+      targetReleaseAppRoot: appRoot,
       manifestPath: paths.manifest,
       stdoutLog: paths.stdoutLog,
       stderrLog: paths.stderrLog
@@ -88,20 +88,28 @@ await runSafeCli(() => {
   catch { throw new Error("ADMIN_PREPARE_INPUT_INVALID"); }
   const prepared = prepareAdminDeployment({
     home: homedir(),
-    appRoot,
+    targetReleaseAppRoot: appRoot,
+    reviewDatabasePath: required("F1_ADMIN_REVIEW_DATABASE_PATH"),
+    reviewDatabaseExpectedDev: requiredReceiptInteger("F1_ADMIN_REVIEW_DATABASE_DEV"),
+    reviewDatabaseExpectedIno: requiredReceiptInteger("F1_ADMIN_REVIEW_DATABASE_INO"),
     nodePath: process.execPath,
     canonicalOrigin: required("F1_ADMIN_CANONICAL_ORIGIN"),
     rpName: "F1+1 Admin",
     operatorRef: required("F1_ADMIN_OPERATOR_REF"),
+    tailscaleAppCapabilityId: required("F1_ADMIN_TAILSCALE_APP_CAPABILITY_ID"),
     trustedIdentities: TrustedIdentitiesSchema.parse(identities),
     projectionSigningKeyId: required("F1_ADMIN_PROJECTION_SIGNING_KEY_ID"),
+    projectionSigningPrivateKeyPath: resolve(required("F1_ADMIN_PROJECTION_SIGNING_PRIVATE_KEY_PATH")),
     projectionVerifyKeyPath: resolve(required("F1_ADMIN_PROJECTION_VERIFY_KEY_PATH")),
-    projectionBootstrapGeneration: parsePositiveInteger("F1_ADMIN_PROJECTION_BOOTSTRAP_GENERATION"),
-    projectionBootstrapHash: required("F1_ADMIN_PROJECTION_BOOTSTRAP_HASH")
+    publicReadMode: PublicReadModeSchema.parse(required("F1_ADMIN_PUBLIC_READ_MODE")),
+    syntheticRollbackRelease: required("F1_ADMIN_SYNTHETIC_ROLLBACK_RELEASE"),
+    syntheticRollbackHash: required("F1_ADMIN_SYNTHETIC_ROLLBACK_HASH"),
+    projectionSenderServiceIdentity: required("F1_ADMIN_PROJECTION_SENDER_SERVICE_IDENTITY"),
+    projectionReceiverServiceIdentity: required("F1_ADMIN_PROJECTION_RECEIVER_SERVICE_IDENTITY")
   });
   process.stdout.write(`${JSON.stringify({
     command: "admin:install-macos",
-    status: "prepared-disabled-no-bootstrap-called",
+    status: "prepared-disabled-not-loaded",
     label: "com.f1plus1.admin-service",
     manifestSha256: prepared.manifestSha256,
     plistSha256: prepared.plistSha256,

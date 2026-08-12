@@ -161,7 +161,8 @@ function ensurePrivateDirectory(path: string, label: string, allowedRoot: string
   assertRegularDirectory(absolute, label);
 }
 
-type FileIdentity = { dev: number; ino: number; size: number; nlink: number };
+export type ExistingDatabaseIdentity = Readonly<{ dev: number; ino: number; uid: number; nlink: 1 }>;
+type FileIdentity = { dev: number; ino: number; uid: number; size: number; nlink: number };
 type DirectoryIdentity = { dev: number; ino: number };
 
 function assertPrivateDirectoryIdentity(path: string, label: string): DirectoryIdentity {
@@ -198,11 +199,11 @@ function assertPrivateIdentity(path: string, label: string): FileIdentity {
     throw new ConfigError("DB_PERMISSIONS", `${label} must be mode 600 or stricter`);
   }
   assertCurrentOwner(stat.uid, label);
-  return { dev: stat.dev, ino: stat.ino, size: stat.size, nlink: stat.nlink };
+  return { dev: stat.dev, ino: stat.ino, uid: stat.uid, size: stat.size, nlink: stat.nlink };
 }
 
 function sameIdentity(left: FileIdentity, right: FileIdentity): boolean {
-  return left.dev === right.dev && left.ino === right.ino && left.nlink === right.nlink;
+  return left.dev === right.dev && left.ino === right.ino && left.uid === right.uid && left.nlink === right.nlink;
 }
 
 function openStableDatabasePath(path: string): { guardFd: number; identity: FileIdentity } {
@@ -231,6 +232,7 @@ function openStableDatabasePath(path: string): { guardFd: number; identity: File
     const identity: FileIdentity = {
       dev: fdStat.dev,
       ino: fdStat.ino,
+      uid: fdStat.uid,
       size: fdStat.size,
       nlink: fdStat.nlink
     };
@@ -241,6 +243,177 @@ function openStableDatabasePath(path: string): { guardFd: number; identity: File
   } catch (error) {
     closeSync(guardFd);
     throw error;
+  }
+}
+
+function openStableExistingDatabasePath(path: string): { guardFd: number; identity: FileIdentity } {
+  const noFollow = (fsConstants as { O_NOFOLLOW?: number }).O_NOFOLLOW;
+  if (typeof noFollow !== "number") {
+    throw new ConfigError("DB_PATH", "O_NOFOLLOW is unavailable; refusing an unguarded existing database open");
+  }
+  let guardFd: number;
+  try {
+    guardFd = openSync(/* turbopackIgnore: true */ path, fsConstants.O_RDWR | noFollow);
+  } catch (error) {
+    throw new ConfigError("DB_PATH", `existing database path cannot be opened without following symlinks: ${String(error)}`);
+  }
+  try {
+    const fdStat = fstatSync(guardFd);
+    if (!fdStat.isFile() || fdStat.nlink !== 1 || (fdStat.mode & 0o077) !== 0) {
+      throw new ConfigError("DB_PATH", "existing database guard is not a private regular file");
+    }
+    assertCurrentOwner(fdStat.uid, "existing database guard");
+    const pathIdentity = assertPrivateIdentity(path, "existing database");
+    const identity: FileIdentity = {
+      dev: fdStat.dev,
+      ino: fdStat.ino,
+      uid: fdStat.uid,
+      size: fdStat.size,
+      nlink: fdStat.nlink
+    };
+    if (!sameIdentity(identity, pathIdentity)) {
+      throw new ConfigError("DB_PATH", "existing database path changed during no-follow open");
+    }
+    return { guardFd, identity };
+  } catch (error) {
+    closeSync(guardFd);
+    throw error;
+  }
+}
+
+function assertExactExistingDatabasePath(path: string, expectedBasename: string): Readonly<{
+  parentIdentity: DirectoryIdentity;
+  fileIdentity: FileIdentity;
+}> {
+  if (!isAbsolute(path) || resolve(/* turbopackIgnore: true */ path) !== path || basename(path) !== expectedBasename) {
+    throw new ConfigError("DB_PATH", "existing database path is not the exact absolute database path");
+  }
+  const parent = dirname(path);
+  let realParent: string;
+  try {
+    realParent = realpathSync(/* turbopackIgnore: true */ parent);
+  } catch {
+    throw new ConfigError("DB_PATH", "existing database parent does not exist");
+  }
+  if (realParent !== parent) {
+    throw new ConfigError("DB_PATH", "existing database parent contains a symlink component");
+  }
+  const parentIdentity = assertPrivateDirectoryIdentity(parent, "existing database parent");
+  const fileIdentity = assertPrivateIdentity(path, "existing database");
+  assertPrivateSidecars(path);
+  return Object.freeze({ parentIdentity, fileIdentity });
+}
+
+export function inspectExistingPrivateDatabase(
+  path: string,
+  expectedBasename: string
+): ExistingDatabaseIdentity {
+  if (!isAbsolute(path) || resolve(/* turbopackIgnore: true */ path) !== path) {
+    throw new ConfigError("DB_PATH", "existing database path must be exact and absolute");
+  }
+  const absolutePath = resolve(/* turbopackIgnore: true */ path);
+  const before = assertExactExistingDatabasePath(absolutePath, expectedBasename);
+  const noFollow = (fsConstants as { O_NOFOLLOW?: number }).O_NOFOLLOW;
+  if (typeof noFollow !== "number") {
+    throw new ConfigError("DB_PATH", "O_NOFOLLOW is unavailable; refusing an unguarded existing database");
+  }
+  let descriptor: number;
+  try {
+    descriptor = openSync(/* turbopackIgnore: true */ absolutePath, fsConstants.O_RDWR | noFollow);
+  } catch (error) {
+    throw new ConfigError("DB_PATH", `existing database cannot be opened without following symlinks: ${String(error)}`);
+  }
+  try {
+    const stat = fstatSync(descriptor);
+    const descriptorIdentity: FileIdentity = {
+      dev: stat.dev,
+      ino: stat.ino,
+      uid: stat.uid,
+      size: stat.size,
+      nlink: stat.nlink
+    };
+    const after = assertExactExistingDatabasePath(absolutePath, expectedBasename);
+    if (!stat.isFile() || (stat.mode & 0o077) !== 0 || stat.nlink !== 1 ||
+        !sameIdentity(before.fileIdentity, descriptorIdentity) ||
+        !sameIdentity(descriptorIdentity, after.fileIdentity) ||
+        !sameDirectoryIdentity(before.parentIdentity, after.parentIdentity)) {
+      throw new ConfigError("DB_PATH", "existing database identity changed during no-follow inspection");
+    }
+    assertCurrentOwner(stat.uid, "existing database guard");
+    return Object.freeze({ dev: stat.dev, ino: stat.ino, uid: stat.uid, nlink: 1 });
+  } finally {
+    closeSync(descriptor);
+  }
+}
+
+export function openExistingSafeDatabase(
+  path: string,
+  expectedBasename: string,
+  expectedIdentity: ExistingDatabaseIdentity,
+  acceptedUserVersions: readonly number[]
+): SqliteDatabase {
+  assertNodeVersion();
+  process.umask(0o077);
+  const absolutePath = resolve(/* turbopackIgnore: true */ path);
+  const inspected = inspectExistingPrivateDatabase(absolutePath, expectedBasename);
+  if (
+    inspected.dev !== expectedIdentity.dev || inspected.ino !== expectedIdentity.ino ||
+    inspected.uid !== expectedIdentity.uid || inspected.nlink !== expectedIdentity.nlink
+  ) throw new ConfigError("DB_PATH", "existing database receipt does not match the current file");
+  const before = assertExactExistingDatabasePath(absolutePath, expectedBasename);
+  const opened = openStableExistingDatabasePath(absolutePath);
+  const guardedDescriptorCount = countMatchingDescriptors(opened.identity);
+  if (!sameIdentity(before.fileIdentity, opened.identity)) {
+    closeSync(opened.guardFd);
+    throw new ConfigError("DB_PATH", "existing database changed before SQLite open");
+  }
+  let database: SqliteDatabase | undefined;
+  try {
+    database = new DatabaseSync(absolutePath, { allowExtension: false, timeout: 250 });
+    database.prepare("PRAGMA schema_version").get();
+    assertSqliteConnectionIdentity(database, absolutePath, opened.identity, guardedDescriptorCount);
+    const securityConstants = sqliteConstants as unknown as Record<string, number>;
+    const authorizerDatabase = database as SqliteDatabase & {
+      setAuthorizer(callback: (actionCode: number) => number): void;
+    };
+    authorizerDatabase.setAuthorizer((actionCode) =>
+      actionCode === securityConstants.SQLITE_ATTACH || actionCode === securityConstants.SQLITE_DETACH
+        ? securityConstants.SQLITE_DENY
+        : securityConstants.SQLITE_OK
+    );
+    const initialVersion = Number(
+      (database.prepare("PRAGMA user_version").get() as Record<string, unknown>).user_version
+    );
+    if (!acceptedUserVersions.includes(initialVersion)) {
+      throw new ConfigError("MIGRATION_VERSION", `database user_version ${initialVersion} is not accepted`);
+    }
+    database.exec("PRAGMA foreign_keys=ON;");
+    database.exec("PRAGMA journal_mode=WAL;");
+    database.exec("PRAGMA synchronous=FULL;");
+    database.exec("PRAGMA busy_timeout=250;");
+    database.exec("PRAGMA temp_store=MEMORY;");
+    database.exec("PRAGMA trusted_schema=OFF;");
+    const runtime = readSqliteRuntime(database);
+    const [major, minor, patch] = runtime.sqliteVersion.split(".").map(Number);
+    const versionNumber = major * 1_000_000 + minor * 1_000 + patch;
+    if (!Number.isFinite(versionNumber) || versionNumber < 3_051_003) {
+      throw new ConfigError("SQLITE_VERSION", "SQLite must be at least 3.51.3");
+    }
+    if (
+      runtime.journalMode !== "wal" || runtime.synchronous !== 2 || runtime.busyTimeout !== 250 ||
+      runtime.foreignKeys !== 1 || runtime.tempStore !== 2
+    ) throw new ConfigError("SQLITE_PRAGMA", "required SQLite connection pragmas were not applied");
+    const after = assertExactExistingDatabasePath(absolutePath, expectedBasename);
+    if (!sameIdentity(opened.identity, after.fileIdentity) ||
+        !sameDirectoryIdentity(before.parentIdentity, after.parentIdentity)) {
+      throw new ConfigError("DB_PATH", "existing database or parent changed while applying SQLite pragmas");
+    }
+    return database;
+  } catch (error) {
+    if (database) database.close();
+    throw error;
+  } finally {
+    closeSync(opened.guardFd);
   }
 }
 
