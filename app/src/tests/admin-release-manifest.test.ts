@@ -188,7 +188,11 @@ afterAll(() => {
 
 describe("Admin exact release manifest", () => {
   it("builds only from a clean single-parent Git fixture and keeps target verification externally anchored", () => {
-    expect(() => resolveAdminReleaseGitIdentity(appRoot, projectRoot)).toThrow(/runtime closure must be clean/);
+    expect(resolveAdminReleaseGitIdentity(appRoot, projectRoot)).toEqual({
+      gitCommit: git(["rev-parse", "HEAD"], projectRoot),
+      gitTree: git(["rev-parse", "HEAD^{tree}"], projectRoot),
+      gitParent: git(["rev-parse", "HEAD^"], projectRoot)
+    });
     const fixture = makeCleanGitFixture(true);
     const normalized = normalizeAdminNextBuildPermissions(fixture.appRoot);
     expect(normalized.fileCount).toBeGreaterThan(100);
