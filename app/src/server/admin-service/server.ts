@@ -8,6 +8,7 @@ import {
 } from "node:http";
 import { existsSync, lstatSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
+import { isIP } from "node:net";
 
 import type { RawAdminContext } from "../source-management/security.ts";
 import { asReviewRealError, ReviewRealError } from "../review-real/error.ts";
@@ -153,6 +154,15 @@ function normalizePeer(value: string | undefined): "loopback" | null {
     : null;
 }
 
+export function validTailscaleForwardedFor(value: string | null): boolean {
+  if (value === null || value !== value.trim() || value.includes(",")) return false;
+  if (isIP(value) === 4) {
+    const octets = value.split(".").map(Number);
+    return octets.length === 4 && octets[0] === 100 && octets[1] >= 64 && octets[1] <= 127;
+  }
+  return isIP(value) === 6 && value.toLowerCase().startsWith("fd7a:115c:a1e0:");
+}
+
 function requestEnvelope(request: IncomingMessage, dependencies: AdminServiceDependencies): RequestEnvelope {
   const rawHeaders = headersMap(request.rawHeaders);
   const peer = normalizePeer(request.socket.remoteAddress);
@@ -179,9 +189,11 @@ function requestEnvelope(request: IncomingMessage, dependencies: AdminServiceDep
   }
   const forwardedProto = single(rawHeaders, "x-forwarded-proto");
   const forwardedHost = single(rawHeaders, "x-forwarded-host");
+  const forwardedFor = single(rawHeaders, "x-forwarded-for");
   if (
     (forwardedProto !== null && forwardedProto !== "https") ||
-    (forwardedHost !== null && forwardedHost !== origin.host)
+    (forwardedHost !== null && forwardedHost !== origin.host) ||
+    !validTailscaleForwardedFor(forwardedFor)
   ) {
     throw new ReviewRealError("ADMIN_REQUEST_INVALID", 404);
   }
@@ -189,7 +201,8 @@ function requestEnvelope(request: IncomingMessage, dependencies: AdminServiceDep
     if (
       (name === "forwarded" || name === "x-real-ip" || name.startsWith("x-forwarded-")) &&
       name !== "x-forwarded-proto" &&
-      name !== "x-forwarded-host"
+      name !== "x-forwarded-host" &&
+      name !== "x-forwarded-for"
     ) {
       throw new ReviewRealError("ADMIN_REQUEST_INVALID", 404);
     }

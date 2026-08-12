@@ -19,6 +19,7 @@ import {
   ADMIN_BIND_PORT,
   adminServiceOwnsPath,
   parseTrustedAdminIdentity,
+  validTailscaleForwardedFor,
   type TrustedTailnetIdentity
 } from "../server/admin-service/server.ts";
 import {
@@ -303,6 +304,27 @@ describe("independent admin service candidate", () => {
       rawContext({ method: "GET", path: "/api/admin/reviews", cookie: session.cookieHeader }),
       iphone
     )).toThrowError("ADMIN_SESSION_REQUIRED");
+  });
+
+  it("accepts only a single Tailscale source address forwarded by loopback Serve", () => {
+    expect(validTailscaleForwardedFor("100.123.84.74")).toBe(true);
+    expect(validTailscaleForwardedFor("100.64.0.1")).toBe(true);
+    expect(validTailscaleForwardedFor("100.127.255.254")).toBe(true);
+    expect(validTailscaleForwardedFor("fd7a:115c:a1e0::d435:544c")).toBe(true);
+
+    for (const value of [
+      null,
+      "100.63.255.255",
+      "100.128.0.1",
+      "192.168.1.20",
+      "203.0.113.10",
+      "fd7a:115c:a1e1::1",
+      "100.123.84.74, 100.115.142.46",
+      " 100.123.84.74",
+      "100.123.84.74 "
+    ]) {
+      expect(validTailscaleForwardedFor(value)).toBe(false);
+    }
   });
 
   it("opens the frozen schema and completes bootstrap, login, CSRF and fresh publish gates without owning public paths", async () => {
