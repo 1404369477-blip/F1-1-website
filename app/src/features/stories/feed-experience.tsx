@@ -18,7 +18,6 @@ import { createPortal } from "react-dom";
 
 import {
   PublicApiClientError,
-  STORY_CATEGORY_OPTIONS,
   contentTypeForCategory,
   fetchPublicFeed,
   fetchPublicStory,
@@ -69,11 +68,6 @@ type SwipeState = {
 };
 
 type WheelState = { accumulated: number; lastAt: number; flipped: boolean };
-
-const FEED_CATEGORY_OPTIONS = [
-  { label: "全部", contentType: null },
-  ...STORY_CATEGORY_OPTIONS
-] as const;
 
 function subscribeOnlineStatus(onStoreChange: () => void): () => void {
   if (typeof window === "undefined") return () => undefined;
@@ -549,18 +543,6 @@ export function FeedExperience() {
     setRequestVersion((version) => version + 1);
   }, []);
 
-  const selectCategory = useCallback((category: StoryCategory | "全部"): void => {
-    if (category === activeCategory) return;
-    loadMoreControllerRef.current?.abort();
-    setLoadingMore(false);
-    setLoadMoreFailed(false);
-    pendingAppendFocusIndexRef.current = null;
-    setOpenId(null);
-    setHashParams({ open: undefined });
-    setFeedState({ status: "loading" });
-    setActiveCategory(category);
-  }, [activeCategory]);
-
   const retryDetail = useCallback((publicId: string): void => {
     pendingDetailRecoveryFocusRef.current = publicId;
     detailRequestedRef.current.delete(publicId);
@@ -830,7 +812,7 @@ export function FeedExperience() {
     const images = story.images;
     const activeIndex = mediaHover[story.publicId] ?? mediaIndex[story.publicId] ?? 0;
     const mainImage = images[activeIndex] ?? null;
-    const author = hasAuthor(story.author) ? story.author : null;
+    const author = hasAuthor(story.author) && story.author.trim() !== story.sourceName.trim() ? story.author : null;
     const hasOriginalUrl = story.originalUrl !== null && story.originalUrl !== "";
 
     return (
@@ -871,6 +853,8 @@ export function FeedExperience() {
                 src={mainImage.src}
                 alt={mainImage.alt}
                 loading="lazy"
+                decoding="async"
+                referrerPolicy="no-referrer"
                 tabIndex={0}
                 role="button"
                 aria-label="放大图片"
@@ -1012,19 +996,6 @@ export function FeedExperience() {
       <div className="shell">
         <section className="timeline" aria-label="F1+1 信息时间线">
           <p className="timeline-kicker">信息 + 时间 + 时间线 · {formatVisibleStoryCount(stories.length)} · 倒序</p>
-
-          <div className="seg feed-category-filter" role="group" aria-label="按内容类型筛选时间线">
-            {FEED_CATEGORY_OPTIONS.map((option) => (
-              <button
-                type="button"
-                key={option.label}
-                aria-pressed={activeCategory === option.label}
-                onClick={() => selectCategory(option.label)}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
 
           {displayState === "loading" ? <TimelineSkeleton /> : null}
 

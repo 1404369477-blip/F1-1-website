@@ -5,7 +5,7 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import { F1DetailBreadcrumb, F1StoryCard } from "../components/f1/story-parts";
+import { F1StoryCard } from "../components/f1/story-parts";
 import {
   F1_THEME_STORAGE_KEY,
   readThemePreference,
@@ -338,7 +338,7 @@ describe("public frontend API single-source integration", () => {
     expect(feedSource).toContain("detailRequestedRef.current.delete(publicId)");
     expect(feedSource).toContain("onClick={() => retryDetail(story.publicId)}");
     expect(feedSource).toMatch(/这条内容已不可用（404）。[\s\S]{0,260}>重试<\/button>/);
-    expect(detailSource).toContain("<F1StoryNotFoundState onRetry=");
+    expect(detailSource).toContain('code="404"');
     expect(detailSource).toContain("setRequestVersion((version) => version + 1)");
     expect(feedSource).toContain('id="main-content" tabIndex={-1}');
     expect(shellSource).toContain('document.getElementById("main-content")');
@@ -357,9 +357,8 @@ describe("public frontend API single-source integration", () => {
     expect(feedSource).toContain("已经到底了，没有更多聚合内容。");
     expect(feedSource).toContain("部分内容加载成功");
     expect(feedSource).toContain("离线 / 受限");
-    expect(feedSource).toContain("feed-category-filter");
-    expect(feedSource).toContain('aria-label="按内容类型筛选时间线"');
-    expect(feedSource).toContain("aria-pressed={activeCategory === option.label}");
+    expect(feedSource).not.toContain("feed-category-filter");
+    expect(feedSource).not.toContain('aria-label="按内容类型筛选时间线"');
     expect(feedSource).toContain("contentTypeForCategory(activeCategory)");
     expect(feedSource).toContain("appendPublicFeedPage(feedState.data, next)");
     expect(feedSource).toContain("setLoadMoreFailed(true)");
@@ -406,7 +405,6 @@ describe("public frontend API single-source integration", () => {
 
   it("keeps theme, media-label contrast, detail target and semantic shell contracts", () => {
     const ratio = contrastRatio("#ffffff", "#141417");
-    const breadcrumb = renderToStaticMarkup(createElement(F1DetailBreadcrumb, { category: "赛事新闻" }));
     const values = new Map<string, string>();
     const storage: ThemePreferenceStorage = {
       getItem: (key) => values.get(key) ?? null,
@@ -416,10 +414,11 @@ describe("public frontend API single-source integration", () => {
     expect(ratio).toBeGreaterThanOrEqual(4.5);
     expect(globalCss.match(/--f1-media-label-bg: #141417;/g)).toHaveLength(2);
     expect(globalCss.match(/--f1-media-label-text: #ffffff;/g)).toHaveLength(2);
-    expect(breadcrumb).toContain('class="breadcrumb-back"');
-    expect(breadcrumb).toContain('href="/"');
-    expect(breadcrumb).toContain('aria-current="page"');
-    expect(globalCss).toMatch(/\.breadcrumb \.breadcrumb-back\s*\{[\s\S]*?min-width: 44px;[\s\S]*?min-height: 44px;/);
+    expect(detailSource).toContain('className="detail-back-link" href="/"');
+    expect(detailSource).toContain('className="tl-item is-open"');
+    expect(detailSource).not.toContain("F1DetailBreadcrumb");
+    expect(detailSource).not.toContain("PUBLIC API");
+    expect(globalCss).toMatch(/\.detail-back-link\s*\{[\s\S]*?min-height: 44px;/);
     expect(globalCss).toMatch(/\.not-found-retry\s*\{[\s\S]*?min-height: 44px;[\s\S]*?background: transparent;/);
     expect(readThemePreference(storage)).toBe("dark");
     expect(writeThemePreference(storage, "light")).toBe(true);
@@ -467,9 +466,10 @@ describe("public frontend API single-source integration", () => {
     expect(globalCss).toContain("--bg: oklch(0.97 0.005 250)");
     expect(globalCss).toContain("--border-strong: oklch(0.48 0.014 252)");
     expect(globalCss).toContain("--border-strong: oklch(0.64 0.01 250)");
-    // 时间线几何：单列 64px 1fr gap 24px、发丝轴 left 78px
-    expect(globalCss).toMatch(/\.tl-item\s*\{[\s\S]*?grid-template-columns: 64px 1fr;[\s\S]*?gap: 24px;/);
+    // 时间线几何：冻结基准 64px 1fr gap 32px、发丝轴 left 78px、节点 top 38px
+    expect(globalCss).toMatch(/\.tl-item\s*\{[\s\S]*?grid-template-columns: 64px 1fr;[\s\S]*?gap: var\(--s4\);/);
     expect(globalCss).toMatch(/\.tl::before\s*\{[\s\S]*?left: 78px;/);
+    expect(globalCss).toMatch(/\.tl-item::before\s*\{[\s\S]*?top: 38px;/);
     // 最终主图不裁切 + 证据行横向缩略图
     expect(finalCss).toMatch(/\.ph-main\s*\{[\s\S]*?max-width: 100%;[\s\S]*?max-height: 360px;/);
     expect(finalCss).toMatch(/\.ph-thumbs\s*\{[\s\S]*?flex-direction: row;/);
@@ -480,13 +480,14 @@ describe("public frontend API single-source integration", () => {
     expect(finalCss).toMatch(/@media \(max-width: 1100px\)\s*\{[\s\S]*?env\(safe-area-inset-bottom, 0px\)/);
     expect(finalCss).toMatch(/@media \(max-width: 1100px\)\s*\{[\s\S]*?linear-gradient[\s\S]*?backdrop-filter: blur\(16px\)/);
     expect(finalCss).toMatch(/@supports not \(\(-webkit-backdrop-filter: blur\(1px\)\) or \(backdrop-filter: blur\(1px\)\)\)/);
-    expect(globalCss).toMatch(/\.feed-category-filter\s*\{[\s\S]*?display: flex;[\s\S]*?flex-wrap: wrap;/);
-    expect(globalCss).toMatch(/\.feed-category-filter button\s*\{[\s\S]*?flex: 1 1 64px;/);
+    expect(feedSource).not.toContain("feed-filters");
+    expect(feedSource).not.toContain("feed-category-filter");
     expect(globalCss).toMatch(/\.app\s*\{[\s\S]*?max-width: 880px;[\s\S]*?padding-inline: clamp\(16px, 3\.5vw, 40px\);/);
     expect(finalCss).toMatch(/@media \(max-width: 1100px\)\s*\{[\s\S]*?\.utility-anchor\s*\{[\s\S]*?max-width: 880px;[\s\S]*?max-height: calc\(48px \+ env\(safe-area-inset-bottom, 0px\)\);/);
     expect(finalCss).toMatch(/\.utility-anchor\.is-open\s*\{[\s\S]*?max-height: calc\(440px \+ env\(safe-area-inset-bottom, 0px\)\);/);
     expect(finalCss).toMatch(/@media \(max-width: 1100px\)\s*\{[\s\S]*?scroll-padding-bottom: calc\(72px \+ env\(safe-area-inset-bottom, 0px\)\)/);
-    expect(globalCss).toMatch(/@media \(forced-colors: active\)\s*\{[\s\S]*?\.feed-category-filter button\[aria-pressed="true"\]/);
+    expect(globalCss).toMatch(/button\s*\{[\s\S]*?padding: 0;[\s\S]*?border: 0;[\s\S]*?background: none;/);
+    expect(globalCss).not.toContain(".feed-filters");
     // 状态码 44px display + 触控 44px
     expect(globalCss).toMatch(/\.state-box \.sb-code\s*\{[\s\S]*?font-size: 44px;/);
     expect(globalCss).toMatch(/\.tl-ev a\s*\{[\s\S]*?min-height: 44px;/);
