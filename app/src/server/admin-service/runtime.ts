@@ -16,7 +16,8 @@ import { ReviewAdminBackend } from "../review-real/backend.ts";
 import {
   applyProjectionDeliveryRuntimeMigration,
   applyReviewRealAdminMigration,
-  applyRssMediaRefinementMigration
+  applyRssMediaRefinementMigration,
+  assertRssMediaRefinementSchema
 } from "../review-real/migration.ts";
 import { ReviewRealRepository } from "../review-real/repository.ts";
 import { ProjectionHttpTransport, ProjectionSender } from "../review-real/sender.ts";
@@ -111,14 +112,19 @@ export function openReviewAdminDatabase(input: Readonly<{
         readFileSync(join(targetReleaseAppRoot, "migrations/rss-real/0002_admin_review_publish.sql"), "utf8")
       );
     }
-    applyProjectionDeliveryRuntimeMigration(
-      database,
-      readFileSync(join(targetReleaseAppRoot, "migrations/rss-real/0003_projection_delivery_runtime.sql"), "utf8")
-    );
-    applyRssMediaRefinementMigration(
-      database,
-      readFileSync(join(targetReleaseAppRoot, "migrations/rss-real/0004_rss_media_and_chinese_refinement.sql"), "utf8")
-    );
+    if (version < 4) {
+      applyProjectionDeliveryRuntimeMigration(
+        database,
+        readFileSync(join(targetReleaseAppRoot, "migrations/rss-real/0003_projection_delivery_runtime.sql"), "utf8")
+      );
+      applyRssMediaRefinementMigration(
+        database,
+        readFileSync(join(targetReleaseAppRoot, "migrations/rss-real/0004_rss_media_and_chinese_refinement.sql"), "utf8")
+      );
+    } else {
+      database.exec("PRAGMA foreign_keys=ON; PRAGMA recursive_triggers=ON;");
+      assertRssMediaRefinementSchema(database);
+    }
     const runtime = readSqliteRuntime(database);
     if (runtime.journalMode !== "wal" || runtime.synchronous !== 2 || runtime.foreignKeys !== 1 || runtime.userVersion !== 4) {
       throw new Error("ADMIN_REVIEW_DATABASE_RUNTIME_INVALID");

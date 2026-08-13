@@ -351,6 +351,13 @@ describe("independent admin service candidate", () => {
     expect(Number((opened.database.prepare("PRAGMA user_version").get() as Record<string, unknown>).user_version)).toBe(4);
     expect(reviewRealSchemaFingerprint(opened.database)).toBe("40b1b59c8a8dab3413dfe85311b72cb735e3523071dbd70b0c3a42b0b7eb3b7c");
     opened.database.close();
+    const reopened = openReviewAdminDatabase({
+      targetReleaseAppRoot: fakeApp,
+      reviewDatabasePath: databasePath,
+      reviewDatabaseIdentity: databaseIdentity
+    });
+    expect(Number((reopened.database.prepare("PRAGMA user_version").get() as Record<string, unknown>).user_version)).toBe(4);
+    reopened.database.close();
 
     const missingPath = join(fakeApp, ".local/missing/f1plus1-rss-real-private.sqlite");
     expect(() => openReviewAdminDatabase({
