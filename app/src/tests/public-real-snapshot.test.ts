@@ -30,6 +30,8 @@ import {
 import { ProjectionHttpTransport } from "../server/review-real/sender.ts";
 import { PublicRealSnapshotReader } from "../server/public/snapshot-adapter.ts";
 import { handlePublicFeed, handlePublicStory } from "../server/public/http.ts";
+import { loadAppConfig } from "../server/config/env.ts";
+import { getHealthDto } from "../server/health.ts";
 import type { PublicFeedResponseV1, PublicProblemV1, PublicStoryDetailResponseV1 } from "../server/public/types.ts";
 
 function hash(value: string): string {
@@ -173,6 +175,64 @@ describe("ADR-M5-REAL-PROJECTION-RUNTIME-002 public B", () => {
       expect((await symlinkResponse.json() as PublicProblemV1).reasonCode).toBe("PUBLIC_READ_INTEGRITY_FAILED");
 
       expect(AdminDeploymentManifestSchema.safeParse({ schemaVersion: "admin-service-deployment-v1" }).success).toBe(false);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it("starts real snapshot mode without a synthetic fixture or database", () => {
+    const root = mkdtempSync(join(tmpdir(), "f1-public-real-readiness-"));
+    chmodSync(root, 0o700);
+    const fixture = signedGeneration(join(root, "projection"));
+    fixture.receiver.receive(fixture.packageValue);
+    const keyPath = join(root, "verify.pem");
+    writeFileSync(keyPath, fixture.publicKey.export({ format: "pem", type: "spki" }), { mode: 0o600 });
+    try {
+      const config = loadAppConfig({
+        APP_ENV: "test",
+        APP_PORT: "3014",
+        APP_BIND_HOST: "127.0.0.1",
+        APP_PUBLIC_ORIGIN: "http://127.0.0.1:3014",
+        F1_DATA_PROFILE: "public-multimedia-synthetic",
+        F1_DB_PATH: ".local/f1plus1-public-multimedia-synthetic.sqlite",
+        F1_PUBLIC_READ_MODE: "public-real-snapshot",
+        F1_PUBLIC_PROJECTION_ROOT: join(root, "projection"),
+        F1_PUBLIC_VERIFY_KEY_PATH: keyPath,
+        F1_PUBLIC_SIGNING_KEY_ID: "projection-key-v1",
+        SOURCE_CONFIG_PROVIDER: "fixture",
+        SOURCE_FIXTURE_PATH: "../data/mvp-contract-v0.6-public-multimedia-pagination-synthetic/runtime-graph.public-multimedia-pagination-synthetic.json",
+        ADAPTER_MODE: "mock",
+        SUMMARY_MODE: "fixture",
+        MEDIA_MODE: "fixture",
+        PUBLISH_MODE: "manual_only",
+        REAL_FEISHU_IO: "false",
+        REAL_EXTERNAL_IO: "false",
+        REAL_FORM_SUBMIT: "false",
+        ADMIN_ACCESS_MODE: "local_dev_only",
+        LOG_LEVEL: "info"
+      }, {
+        appRoot: join(root, "missing-release-app"),
+        projectRoot: join(root, "missing-release-project")
+      });
+      expect(config.fixturePath).toContain("../data/");
+      expect(getHealthDto({
+        config,
+        appRoot: join(root, "missing-release-app"),
+        projectRoot: join(root, "missing-release-project")
+      })).toMatchObject({
+        status: "ready",
+        dataGate: "accepted-public-real-snapshot",
+        runtime: {
+          sqlite: "not-applicable",
+          migration: "public-real-snapshot-v1",
+          seed: "signed-active-snapshot"
+        }
+      });
+      expect(getHealthDto({
+        config,
+        appRoot: join(root, "missing-release-app"),
+        projectRoot: join(root, "missing-release-project")
+      }).runtime).not.toHaveProperty("fixtureGraphHash");
     } finally {
       rmSync(root, { recursive: true, force: true });
     }

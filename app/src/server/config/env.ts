@@ -484,11 +484,13 @@ export function loadAppConfig(
   if (logLevel !== "debug" && logLevel !== "info" && logLevel !== "warn" && logLevel !== "error") {
     throw new ConfigError("LOG_LEVEL", "unknown log level");
   }
-  const pathInfo = validateFixturePath(values.SOURCE_FIXTURE_PATH, options.appRoot, options.projectRoot);
   if (values.SOURCE_FIXTURE_PATH !== profileContract.fixturePath) {
     throw new ConfigError("DATA_PROFILE_MIX", "profile and fixture path must match one canonical profile");
   }
   const publicRuntime = parsePublicRuntime(values);
+  const fixturePath = publicRuntime.publicReadMode === "public-real-snapshot"
+    ? values.SOURCE_FIXTURE_PATH
+    : validateFixturePath(values.SOURCE_FIXTURE_PATH, options.appRoot, options.projectRoot).realPath;
   return {
     appEnv,
     port,
@@ -498,7 +500,7 @@ export function loadAppConfig(
     dbPath: values.F1_DB_PATH,
     ...publicRuntime,
     sourceProvider: "fixture",
-    fixturePath: pathInfo.realPath,
+    fixturePath,
     adapterMode: "mock",
     summaryMode: "fixture",
     mediaMode: values.MEDIA_MODE,

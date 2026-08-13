@@ -31,12 +31,13 @@ import {
   loadRuntimeConfig,
   projectRoot as defaultProjectRoot
 } from "./runtime-config.ts";
+import { PublicRealSnapshotReader } from "./public/snapshot-adapter.ts";
 
 export type HealthDto = {
   scope: "local-only";
   status: "ready" | "not_ready";
   reasonCode: "ok" | "runtime_not_ready";
-  dataGate: "accepted-local-fixture" | "accepted-public-synthetic" | "accepted-public-multimedia-synthetic" | "accepted-source-management-synthetic" | "unverified";
+  dataGate: "accepted-local-fixture" | "accepted-public-synthetic" | "accepted-public-multimedia-synthetic" | "accepted-public-real-snapshot" | "accepted-source-management-synthetic" | "unverified";
   externalCalls: 0;
   capabilities: {
     sourceProvider: "fixture";
@@ -55,8 +56,8 @@ export type HealthDto = {
   runtime: {
     node: string;
     sqlite: string;
-    migration: "source-fixture-0002" | "public-synthetic-0003" | "public-multimedia-synthetic-0003" | "source-management-synthetic-0003" | "unverified";
-    seed: "59-source-disabled" | "12-public-synthetic" | "24-public-multimedia-pagination" | "59-baseline-readonly-local-overlay" | "unverified";
+    migration: "source-fixture-0002" | "public-synthetic-0003" | "public-multimedia-synthetic-0003" | "public-real-snapshot-v1" | "source-management-synthetic-0003" | "unverified";
+    seed: "59-source-disabled" | "12-public-synthetic" | "24-public-multimedia-pagination" | "signed-active-snapshot" | "59-baseline-readonly-local-overlay" | "unverified";
     contractVersion?: "public-read-v0.2" | "source-management-local-v0.3";
     fixtureGraphHash?: string;
     migrationSelectorRootSha256?: string;
@@ -91,9 +92,26 @@ function resolveReadinessOptions(options: RuntimeReadinessOptions): {
 export function assertRuntimeReady(options: RuntimeReadinessOptions = {}): {
   sqliteVersion: string;
   dataProfile: AppConfig["dataProfile"];
+  publicReadMode: AppConfig["publicReadMode"];
 } {
   const resolved = resolveReadinessOptions(options);
   assertCapabilityRegistry(resolved.config);
+  if (resolved.config.publicReadMode === "public-real-snapshot") {
+    if (!resolved.config.publicProjectionRoot || !resolved.config.publicVerifyKeyPath || !resolved.config.publicSigningKeyId) {
+      throw new Error("HEALTH_PUBLIC_REAL_CONFIG_MISSING");
+    }
+    const reader = new PublicRealSnapshotReader({
+      projectionRoot: resolved.config.publicProjectionRoot,
+      signingKeyId: resolved.config.publicSigningKeyId,
+      verifyKeyPath: resolved.config.publicVerifyKeyPath
+    });
+    reader.getFeed({ source: null, contentType: null, cursor: null });
+    return {
+      sqliteVersion: "not-applicable",
+      dataProfile: resolved.config.dataProfile,
+      publicReadMode: resolved.config.publicReadMode
+    };
+  }
   const absoluteDbPath = isAbsolute(resolved.dbPath)
     ? resolve(resolved.dbPath)
     : resolve(resolved.databaseOptions.appRoot, resolved.dbPath);
@@ -102,7 +120,7 @@ export function assertRuntimeReady(options: RuntimeReadinessOptions = {}): {
     return withPublicMultimediaRuntimeDatabase(resolved.config, resolved.appRoot, resolved.projectRoot, (database) => {
       assertPublicMultimediaSeeded(database, resolved.config, resolved.projectRoot);
       const sqliteVersion = String((database.prepare("SELECT sqlite_version() AS version").get() as Record<string, unknown>).version);
-      return { sqliteVersion, dataProfile: resolved.config.dataProfile };
+      return { sqliteVersion, dataProfile: resolved.config.dataProfile, publicReadMode: resolved.config.publicReadMode };
     });
   }
   const sourceManagementLock = resolved.config.dataProfile === "source-management-synthetic" && !resolved.databaseOptions.allowTestRoot
@@ -121,7 +139,7 @@ export function assertRuntimeReady(options: RuntimeReadinessOptions = {}): {
       assertSourceManagementReady(database, resolved.config, resolved.appRoot, resolved.projectRoot);
     }
     const sqliteVersion = String((database.prepare("SELECT sqlite_version() AS version").get() as Record<string, unknown>).version);
-    return { sqliteVersion, dataProfile: resolved.config.dataProfile };
+    return { sqliteVersion, dataProfile: resolved.config.dataProfile, publicReadMode: resolved.config.publicReadMode };
   } finally {
     if (database) closeDatabase(database);
     sourceManagementLock?.release();
@@ -131,9 +149,11 @@ export function assertRuntimeReady(options: RuntimeReadinessOptions = {}): {
 function dto(
   status: "ready" | "not_ready",
   sqliteVersion = "unverified",
-  dataProfile?: AppConfig["dataProfile"]
+  dataProfile?: AppConfig["dataProfile"],
+  publicReadMode?: AppConfig["publicReadMode"]
 ): HealthDto {
   const ready = status === "ready";
+  const publicReal = ready && publicReadMode === "public-real-snapshot";
   const publicSynthetic = ready && dataProfile === "public-synthetic";
   const publicMultimedia = ready && dataProfile === "public-multimedia-synthetic";
   const sourceManagement = ready && dataProfile === "source-management-synthetic";
@@ -142,7 +162,7 @@ function dto(
     status,
     reasonCode: ready ? "ok" : "runtime_not_ready",
     dataGate: ready
-      ? sourceManagement ? "accepted-source-management-synthetic" : publicMultimedia ? "accepted-public-multimedia-synthetic" : publicSynthetic ? "accepted-public-synthetic" : "accepted-local-fixture"
+      ? publicReal ? "accepted-public-real-snapshot" : sourceManagement ? "accepted-source-management-synthetic" : publicMultimedia ? "accepted-public-multimedia-synthetic" : publicSynthetic ? "accepted-public-synthetic" : "accepted-local-fixture"
       : "unverified",
     externalCalls: 0,
     capabilities: {
@@ -163,12 +183,12 @@ function dto(
       node: process.versions.node,
       sqlite: sqliteVersion,
       migration: ready
-        ? sourceManagement ? "source-management-synthetic-0003" : publicMultimedia ? "public-multimedia-synthetic-0003" : publicSynthetic ? "public-synthetic-0003" : "source-fixture-0002"
+        ? publicReal ? "public-real-snapshot-v1" : sourceManagement ? "source-management-synthetic-0003" : publicMultimedia ? "public-multimedia-synthetic-0003" : publicSynthetic ? "public-synthetic-0003" : "source-fixture-0002"
         : "unverified",
       seed: ready
-        ? sourceManagement ? "59-baseline-readonly-local-overlay" : publicMultimedia ? "24-public-multimedia-pagination" : publicSynthetic ? "12-public-synthetic" : "59-source-disabled"
+        ? publicReal ? "signed-active-snapshot" : sourceManagement ? "59-baseline-readonly-local-overlay" : publicMultimedia ? "24-public-multimedia-pagination" : publicSynthetic ? "12-public-synthetic" : "59-source-disabled"
         : "unverified",
-      ...(sourceManagement ? {
+      ...(publicReal ? {} : sourceManagement ? {
         contractVersion: "source-management-local-v0.3" as const,
         fixtureGraphHash: SOURCE_PROJECTION_SHA256,
         migrationSelectorRootSha256: sourceManagementMigrationSelectorRoot(defaultAppRoot),
@@ -187,7 +207,7 @@ function dto(
 export function getHealthDto(options: RuntimeReadinessOptions = {}): HealthDto {
   try {
     const runtime = assertRuntimeReady(options);
-    return dto("ready", runtime.sqliteVersion, runtime.dataProfile);
+    return dto("ready", runtime.sqliteVersion, runtime.dataProfile, runtime.publicReadMode);
   } catch {
     return dto("not_ready");
   }
