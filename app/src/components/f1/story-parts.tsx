@@ -5,7 +5,7 @@ import type { PublicStoryCardViewModel, StoryCategory } from "../../features/sto
 type BadgeKind = "available" | "restricted" | "missing";
 
 const badgeDetails: Record<BadgeKind, { icon: string; label: string }> = {
-  available: { icon: "◎", label: "公开演示" },
+  available: { icon: "◎", label: "已公开" },
   restricted: { icon: "▣", label: "来源受限" },
   missing: { icon: "◇", label: "无授权图片" }
 };
@@ -73,6 +73,40 @@ export function SyntheticStoryMedia({ story, detail = false }: { story: PublicSt
       </div>
     );
   }
+  const sourceImage = story.images.find((image) => {
+    try {
+      const url = new URL(image.src);
+      return url.protocol === "https:" && !url.username && !url.password;
+    } catch {
+      return false;
+    }
+  });
+  if (sourceImage) {
+    return (
+      <div className={`story-media story-media--${story.mediaTone}${detail ? " story-detail-media" : ""}`}>
+        <img
+          src={sourceImage.src}
+          alt={sourceImage.alt}
+          loading={detail ? "eager" : "lazy"}
+          decoding="async"
+          fetchPriority={detail ? "high" : "auto"}
+          referrerPolicy="no-referrer"
+          draggable={false}
+          style={{
+            position: "absolute",
+            zIndex: 0,
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover"
+          }}
+        />
+        <span className="media-demo-mark" aria-hidden="true" style={{ position: "relative", zIndex: 1 }}>
+          {story.mediaLabel}
+        </span>
+      </div>
+    );
+  }
   return (
     <div
       className={`story-media story-media--${story.mediaTone}${detail ? " story-detail-media" : ""}`}
@@ -107,7 +141,7 @@ export function DisabledOriginalEntry({ story, entryId }: { story: PublicStoryCa
         ↗ {restricted ? "原文入口因来源受限而关闭" : "原文入口待真实内容接入"}
       </button>
       <p id={descriptionId} className="original-entry-note">
-        {restricted ? "公开 DTO 只提供安全摘要，不会访问受限来源。" : "公开 synthetic DTO 没有原文 URL，不会发起外部请求。"}
+        {restricted ? "公开 DTO 只提供安全摘要，不会访问受限来源。" : "当前公开内容未提供原文 URL，不会发起外部请求。"}
       </p>
     </div>
   );

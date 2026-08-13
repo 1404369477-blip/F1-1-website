@@ -265,7 +265,7 @@ export function F1PageShell({
       </div>
 
       <div className="visually-hidden" aria-live="polite" aria-atomic="true">
-        公开合成内容页面，仅通过同源公开 API 读取，未连接外部服务。
+        公开资讯页面，通过同源公开 API 读取已发布内容。
       </div>
     </div>
   );

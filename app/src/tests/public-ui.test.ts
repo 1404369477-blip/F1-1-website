@@ -229,6 +229,39 @@ describe("public frontend API single-source integration", () => {
     expect(markup).not.toMatch(/href="https?:/);
   });
 
+  it("renders an HTTPS source image while keeping synthetic media as a local placeholder", async () => {
+    const sourceImageItem: PublicFeedItemV1 = {
+      ...feedItems[0],
+      media: {
+        kind: "source_image",
+        assetRef: "https://media.example.com/f1/source-image.webp",
+        mimeType: "image/webp",
+        declaredBytes: 42_000,
+        altZh: "F1 车辆来源配图"
+      }
+    };
+    const sourceImageResponse: PublicFeedResponseV1 = {
+      ...feedResponse,
+      items: [sourceImageItem]
+    };
+    const sourceImageFetch: PublicApiFetch = async () => jsonResponse(sourceImageResponse);
+    const result = await fetchPublicFeed({ fetchImpl: sourceImageFetch });
+    const markup = renderToStaticMarkup(createElement(F1StoryCard, { story: result.stories[0] }));
+
+    expect(markup).toContain('src="https://media.example.com/f1/source-image.webp"');
+    expect(markup).toContain('alt="F1 车辆来源配图"');
+    expect(markup).toContain('loading="lazy"');
+    expect(markup).toContain('referrerPolicy="no-referrer"');
+    expect(markup).toContain("已公开");
+    expect(markup).not.toContain("公开演示");
+
+    const synthetic = await fetchPublicFeed({ fetchImpl: integrationFetch([]) });
+    const syntheticMarkup = renderToStaticMarkup(createElement(F1StoryCard, { story: synthetic.stories[0] }));
+    expect(syntheticMarkup).toContain("public-demo-01");
+    expect(syntheticMarkup).toContain("公开合成示意");
+    expect(syntheticMarkup).not.toContain('src="https://');
+  });
+
   it("maps 404 separately and keeps 500 or malformed responses closed with no static fallback", async () => {
     const fetchImpl = integrationFetch([]);
     const missing = await fetchPublicStory({ publicId: "public-demo-missing", fetchImpl }).catch((error: unknown) => error);
@@ -249,6 +282,17 @@ describe("public frontend API single-source integration", () => {
       expect(formatVisibleStoryCount(count)).toBe(`${count} 条`);
     }
     expect(feedSource).not.toContain("12 条公开合成内容已全部显示");
+  });
+
+  it("uses runtime-neutral public copy for the real snapshot rollout", () => {
+    expect(layoutSource).toContain('title: "F1+1 · F1 中文资讯"');
+    expect(layoutSource).toContain("聚合已发布的 F1 中文资讯、来源与原文入口");
+    expect(shellSource).toContain("公开资讯页面，通过同源公开 API 读取已发布内容。");
+    expect(feedSource).toContain("F1+1 · F1 中文资讯时间线");
+    expect(feedSource).toContain("内容通过公开 API 提供；聚合内容版权归原作者与来源所有。");
+    for (const source of [layoutSource, shellSource, feedSource]) {
+      expect(source).not.toMatch(/公开合成资讯|合成占位|未连接外部服务/);
+    }
   });
 
   it("renders the v0.2 timeline loading skeleton server-side with no external href", () => {

@@ -1103,9 +1103,9 @@ export function FeedExperience() {
 
       <footer className="site-footer">
         <div className="fs">
-          <span>F1+1 · 公开合成资讯时间线</span>
+          <span>F1+1 · F1 中文资讯时间线</span>
         </div>
-        <p>内容来自同源公开 API，媒体为合成占位；聚合内容版权归原作者与来源所有。</p>
+        <p>内容通过公开 API 提供；聚合内容版权归原作者与来源所有。</p>
       </footer>
 
       {renderLightbox()}

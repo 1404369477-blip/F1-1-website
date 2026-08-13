@@ -11,8 +11,8 @@ import {
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "F1+1 · 公开合成资讯",
-  description: "通过同源公开 API 读取已发布合成内容的 F1+1 信息流"
+  title: "F1+1 · F1 中文资讯",
+  description: "聚合已发布的 F1 中文资讯、来源与原文入口"
 };
 
 export const viewport: Viewport = {

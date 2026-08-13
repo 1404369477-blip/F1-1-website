@@ -1219,6 +1219,7 @@ body {
 /* ---------- App 壳层（单列居中，容器查询断点载体） ---------- */
 .app {
   container-type: inline-size;
+  width: 100%;
   max-width: 880px;
   margin-inline: auto;
   padding-inline: clamp(16px, 3.5vw, 40px);
