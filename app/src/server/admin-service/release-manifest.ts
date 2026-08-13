@@ -164,7 +164,7 @@ export type AdminReleaseManifest = Readonly<{
     contentRootSha256: string;
   }>;
   productionDependencies: Readonly<{
-    roots: readonly ["@simplewebauthn/server", "next", "react", "react-dom", "zod"];
+    roots: readonly ["@simplewebauthn/server", "fast-xml-parser", "next", "react", "react-dom", "zod"];
     platformPackages: readonly ["@next/swc-darwin-arm64", "@img/sharp-darwin-arm64", "@img/sharp-libvips-darwin-arm64"];
     packages: readonly DependencyRecord[];
     contentRootSha256: string;
@@ -414,7 +414,7 @@ function productionDependencies(appRoot: string): AdminReleaseManifest["producti
       }
     }
   };
-  const roots = ["@simplewebauthn/server", "next", "react", "react-dom", "zod"] as const;
+  const roots = ["@simplewebauthn/server", "fast-xml-parser", "next", "react", "react-dom", "zod"] as const;
   for (const root of roots) visit(root, root === "next");
   for (const platformPackage of [
     "@next/swc-darwin-arm64",

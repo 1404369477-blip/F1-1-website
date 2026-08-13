@@ -91,7 +91,7 @@ function productionPackageNames(): readonly string[] {
       }
     }
   };
-  for (const root of ["@simplewebauthn/server", "next", "react", "react-dom", "zod"] as const) {
+  for (const root of ["@simplewebauthn/server", "fast-xml-parser", "next", "react", "react-dom", "zod"] as const) {
     visit(root, root === "next");
   }
   for (const platformPackage of [
@@ -204,6 +204,7 @@ describe("Admin exact release manifest", () => {
     expect(new Set(manifest.nextBuild.files.map((entry) => entry.mode))).toEqual(new Set([0o644]));
     expect(manifest.node.sha256).toBe(sha256File(process.execPath));
     expect(manifest.productionDependencies.packages.length).toBeGreaterThan(22);
+    expect(manifest.productionDependencies.packages.map((entry) => entry.name)).toContain("fast-xml-parser");
     const manifestJson = `${canonicalAdminReleaseJson(manifest)}\n`;
     const root = stage(fixture.appRoot, manifest, manifestJson);
     const manifestPath = join(root, ADMIN_RELEASE_MANIFEST_PATH);
