@@ -664,6 +664,16 @@ label small {
   border-radius: 4px;
 }
 
+.source-image {
+  display: block;
+  width: 100%;
+  max-height: 360px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface-2);
+}
+
 .media-placeholder strong,
 .media-placeholder span {
   display: block;

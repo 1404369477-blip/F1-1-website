@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="description" content="F1+1 私有人工审核台。">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https://*.motorsport.com; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
   <title>F1+1 · 人工审核台</title>
   <link rel="stylesheet" href="/admin/assets/app.css">
   <script defer src="/admin/assets/app.js"></script>
@@ -107,6 +107,7 @@
                   <strong>F1+1 SOURCE SNAPSHOT</strong>
                   <span>RSS · 当前候选无媒体</span>
                 </div>
+                <img class="source-image" id="source-image" alt="" hidden>
                 <p class="source-excerpt" id="source-excerpt"></p>
               </section>
 

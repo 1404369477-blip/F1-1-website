@@ -23,6 +23,7 @@
     "worker:source-mock": "node --experimental-strip-types scripts/source-management-worker.ts",
     "rss:collect-once": "node --experimental-strip-types scripts/rss-collect-once.ts",
     "rss:scheduled-run": "node --experimental-strip-types scripts/rss-scheduled-run.ts",
+    "rss:refine-once": "node --experimental-strip-types scripts/rss-refine-once.ts",
     "rss:build-release-manifest": "node --experimental-strip-types scripts/rss-build-release-manifest.ts",
     "rss:install-macos": "node --experimental-strip-types scripts/rss-install-macos.ts",
     "rss:render-plist": "node --experimental-strip-types scripts/rss-install-macos.ts --render-plist",

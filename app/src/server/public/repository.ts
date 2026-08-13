@@ -236,7 +236,7 @@ function buildVerifiedStory(row: ChainRow): VerifiedStory {
       altZh: text(mediaPresentation.alt_zh, 1, 300),
       captionZh: nullableText(mediaPresentation.caption_zh, 300),
       creditDisplay: nullableText(mediaPresentation.credit_display, 120),
-      tone: tone as NonNullable<PublicFeedItemV1["media"]>["tone"]
+      tone: tone as "night" | "blue" | "amber" | "violet" | "slate"
     };
   } else if (mediaPresentation.asset_ref !== null) {
     throw new PublicReadError("PUBLIC_READ_INTEGRITY_FAILED");

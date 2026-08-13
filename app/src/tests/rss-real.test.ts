@@ -32,6 +32,7 @@ function itemXml(input: Readonly<{
   title?: string;
   description?: string;
   published?: string;
+  image?: string;
 }>): string {
   return `<item>
     <guid>${input.id}</guid>
@@ -40,6 +41,7 @@ function itemXml(input: Readonly<{
     <description><![CDATA[<p>${input.description ?? `Excerpt ${input.id}`}</p>]]></description>
     <author>F1 Desk</author>
     <pubDate>${input.published ?? "Wed, 12 Aug 2026 00:00:00 GMT"}</pubDate>
+    ${input.image ? `<enclosure url="${input.image}" type="image/jpeg" length="199697"/>` : ""}
   </item>`;
 }
 
@@ -77,6 +79,20 @@ describe("RSS-REAL-001 focused contract", () => {
     expect(feed.items.map((item) => item.externalId)).toEqual(["guid-a", "guid-b", "guid-c"]);
     expect(feed.items[0].excerpt).toBe("First & safe");
     expect(feed.items.every((item) => /^[0-9a-f]{64}$/.test(item.sourcePayloadHash))).toBe(true);
+  });
+
+  it("captures one allowlisted Motorsport RSS image and binds it into the source hash", () => {
+    const feed = parseRssFeed(rssDocument(itemXml({
+      id: "guid-image",
+      image: "https://cdn-8.motorsport.com/images/amp/68VWODG2/s6/example.jpg"
+    })));
+    expect(feed.items[0].media).toEqual({
+      url: "https://cdn-8.motorsport.com/images/amp/68VWODG2/s6/example.jpg",
+      mimeType: "image/jpeg",
+      declaredBytes: 199697
+    });
+    const withoutImage = parseRssFeed(rssDocument(itemXml({ id: "guid-image" })));
+    expect(feed.items[0].sourcePayloadHash).not.toBe(withoutImage.items[0].sourcePayloadHash);
   });
 
   it("rejects DTD before parser construction, item overflow, and non-allowlist URLs", () => {

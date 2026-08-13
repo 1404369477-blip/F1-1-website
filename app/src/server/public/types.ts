@@ -6,7 +6,7 @@ export const PUBLIC_CONTENT_TYPES = [
 ] as const;
 
 export type PublicContentType = (typeof PUBLIC_CONTENT_TYPES)[number];
-export type PublicState = "available" | "restricted" | "media_missing";
+export type PublicState = "available" | "restricted" | "media_missing" | "ready";
 
 export type PublicOriginalLink =
   | {
@@ -43,6 +43,12 @@ export type PublicFeedItemV1 = {
     captionZh: string | null;
     creditDisplay: string | null;
     tone: "night" | "blue" | "amber" | "violet" | "slate";
+  } | {
+    kind: "source_image";
+    assetRef: string;
+    mimeType: "image/jpeg" | "image/png" | "image/webp" | "image/avif";
+    declaredBytes: number;
+    altZh: string;
   };
   originalLink: PublicOriginalLink;
 };

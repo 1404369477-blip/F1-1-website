@@ -23,6 +23,7 @@ import {
   type RssRunReceipt,
   type SourceValidators
 } from "./types.ts";
+import { assertRssMediaRefinementSchema } from "../review-real/migration.ts";
 
 type SqlRow = Record<string, unknown>;
 
@@ -74,6 +75,18 @@ function normalizedIso(value: string): string {
   const millis = Date.parse(value);
   if (!Number.isFinite(millis)) throw new RssError("RUN_STATE_INVALID");
   return new Date(millis).toISOString();
+}
+
+function requiredCandidateText(row: SqlRow, field: string): string {
+  const value = row[field];
+  if (typeof value !== "string") throw new RssError("RUN_STATE_INVALID");
+  return value;
+}
+
+function requiredCandidateInteger(row: SqlRow, field: string): number {
+  const value = Number(row[field]);
+  if (!Number.isSafeInteger(value)) throw new RssError("RUN_STATE_INVALID");
+  return value;
 }
 
 export function rssSlotKey(scheduledAt: string): number {
@@ -135,10 +148,35 @@ export function applyRssMigration(database: DatabaseSync, sql: string): void {
     ).all() as SqlRow[];
     if (tables.length !== 0) throw new RssError("MIGRATION_DRIFT");
     withImmediateTransaction(database, () => database.exec(sql));
-  } else if (version !== 1) {
+  } else if (version !== 1 && version !== 4) {
     throw new RssError("MIGRATION_DRIFT");
   }
-  assertRssSchema(database);
+  if (version === 4) {
+    try {
+      assertRssMediaRefinementSchema(database);
+    } catch {
+      throw new RssError("MIGRATION_DRIFT");
+    }
+  } else {
+    assertRssSchema(database);
+  }
+}
+
+export function assertRssRuntimeSchema(database: DatabaseSync): void {
+  const version = Number((database.prepare("PRAGMA user_version").get() as SqlRow).user_version);
+  if (version === 1) {
+    assertRssSchema(database);
+    return;
+  }
+  if (version === 4) {
+    try {
+      assertRssMediaRefinementSchema(database);
+      return;
+    } catch {
+      throw new RssError("MIGRATION_DRIFT");
+    }
+  }
+  throw new RssError("MIGRATION_DRIFT");
 }
 
 export function assertRssSchema(database: DatabaseSync): void {
@@ -249,19 +287,26 @@ export class RssRepository {
     }
     return withImmediateTransaction(this.database, () => {
       requireLiveSourceFence(this.database, run);
+      const supportsMedia = Number(
+        (this.database.prepare("PRAGMA user_version").get() as SqlRow).user_version
+      ) === 4;
       let newCount = 0;
       let updatedCount = 0;
       let duplicateCount = 0;
       for (const item of feed.items) {
         const dedupeKey = sha256(`${RSS_SOURCE_ID}\u001f${item.externalId}`);
         const existing = this.database.prepare(
-          "SELECT external_id, source_payload_hash FROM pending_review_candidate WHERE dedupe_key = ?"
+          "SELECT candidate_id, external_id, source_payload_hash, source_revision FROM pending_review_candidate WHERE dedupe_key = ?"
         ).get(dedupeKey) as SqlRow | undefined;
+        let candidateId: string;
+        let sourceRevision: number;
         if (!existing) {
+          candidateId = `rss-candidate-${dedupeKey.slice(0, 32)}`;
+          sourceRevision = 1;
           this.database.prepare(
             "INSERT INTO pending_review_candidate (candidate_id, source_id, external_id, dedupe_key, canonical_url, title, excerpt, author, published_at, source_payload_hash, source_revision, first_seen_at, last_seen_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)"
           ).run(
-            `rss-candidate-${dedupeKey.slice(0, 32)}`,
+            candidateId,
             RSS_SOURCE_ID,
             item.externalId,
             dedupeKey,
@@ -276,6 +321,8 @@ export class RssRepository {
           );
           newCount += 1;
         } else if (existing.source_payload_hash === item.sourcePayloadHash) {
+          candidateId = requiredCandidateText(existing, "candidate_id");
+          sourceRevision = requiredCandidateInteger(existing, "source_revision");
           this.database.prepare(
             "UPDATE pending_review_candidate SET last_seen_at = ? WHERE dedupe_key = ?"
           ).run(finishedAt, dedupeKey);
@@ -294,7 +341,24 @@ export class RssRepository {
             finishedAt,
             dedupeKey
           );
+          candidateId = requiredCandidateText(existing, "candidate_id");
+          sourceRevision = requiredCandidateInteger(existing, "source_revision") + 1;
           updatedCount += 1;
+        }
+        if (supportsMedia && item.media !== null && this.database.prepare(
+          "SELECT 1 AS present FROM rss_media_candidate WHERE candidate_id = ? AND source_revision = ?"
+        ).get(candidateId, sourceRevision) === undefined) {
+          this.database.prepare(
+            "INSERT OR IGNORE INTO rss_media_candidate (candidate_id, source_revision, source_payload_hash, media_url, media_type, declared_bytes, observed_at) VALUES (?, ?, ?, ?, ?, ?, ?)"
+          ).run(
+            candidateId,
+            sourceRevision,
+            item.sourcePayloadHash,
+            item.media.url,
+            item.media.mimeType,
+            item.media.declaredBytes,
+            finishedAt
+          );
         }
       }
       this.database.prepare(

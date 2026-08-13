@@ -66,16 +66,16 @@ function count(database: DatabaseSync, table: string): number {
 }
 
 describe("DATA-REAL-REVIEW-MAP-01", () => {
-  it("keeps the accepted RSS migration and collector implementation byte-pinned", () => {
+  it("keeps the accepted RSS base migration and current collector implementation byte-pinned", () => {
     const pinned = [
       ["../../migrations/rss-real/0001_rss_real.sql", "c03c5c0bd5887e9e74453c91602bae76f6a7c74db513a2d9ff808ad498807ef3"],
-      ["../server/rss/repository.ts", "a4f07610f5cf588a2605c04005736d3d3c681d4db2fb98d39b628b5ceda886c1"],
-      ["../server/rss/parser.ts", "988a6a66fd6e047baabe90b9040cdd332fd80218a7b6786ee421e9498cd2c39e"],
+      ["../server/rss/repository.ts", "c4908efa94e86088a99be1ce4e603de9b07e93c03ca8185898759c90d9a2cc37"],
+      ["../server/rss/parser.ts", "ea96fdf7f1a0e86b3b998f80600882f0f1c085c912b26bd3bc0925a7b37cc606"],
       ["../server/rss/transport.ts", "a55b76fa8899173341671a3c8e13d67c47e6f74d8fd6e0ff68a29e1abc134028"],
-      ["../server/rss/types.ts", "2ec322b51d5dc0c37b9baf3269af6b53972b86c76879029a9f9e092375b13538"],
+      ["../server/rss/types.ts", "e77a9a1a492dae942ad1e8deb9703d68c03bd2e4a81f07b35ac066c3a40f5cb6"],
       ["../server/rss/deployment.ts", "2b09bedf9bc087e79a33e0b48fc25360e432887afd24bdad4de8bd9540f89539"],
       ["../server/rss/release-manifest.ts", "f61f5e1c34b236c16af2649c5a08fc91751e1bc8b851c41681ccab906085ddef"],
-      ["./rss-real.test.ts", "b797fac7a914c075226535c42e4a2c660d666f2ed0a95fe18b9c74fd936400d2"]
+      ["./rss-real.test.ts", "8ab8f0d7b6887726fd2ef86a576fa5c541e6b5041fafc1ef8b82622a1f2842d3"]
     ] as const;
     for (const [path, expected] of pinned) {
       expect(sha256(readFileSync(new URL(path, import.meta.url))), path).toBe(expected);

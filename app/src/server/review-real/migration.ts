@@ -9,6 +9,8 @@ export const REVIEW_REAL_ADMIN_MIGRATION_SHA256 = "1d373f90cf881a58a15966ffe12ed
 export const REVIEW_REAL_FINAL_SCHEMA_SHA256 = "46a714035b59e1d608065922593895cd72c0748ac5ddbef660ae16e99e7f638e";
 export const PROJECTION_DELIVERY_RUNTIME_MIGRATION_SHA256 = "0f9d3908b62006158bf6dab60a4969c0bf65b95787d483b4e365f36199a86848";
 export const PROJECTION_DELIVERY_RUNTIME_SCHEMA_SHA256 = "5d3316653750c8eaafefda7a0d5e3a154ab647a7e77329c048b91ce516a8b84f";
+export const RSS_MEDIA_REFINEMENT_MIGRATION_SHA256 = "070dcd5778c88db85259f083f7272c42d562d30e8c8b2c74bb16d4e36205aeda";
+export const RSS_MEDIA_REFINEMENT_SCHEMA_SHA256 = "40b1b59c8a8dab3413dfe85311b72cb735e3523071dbd70b0c3a42b0b7eb3b7c";
 
 export type ReviewRealSchemaManifestEntry = Readonly<{
   type: "index" | "table" | "trigger" | "view";
@@ -147,4 +149,43 @@ export function applyProjectionDeliveryRuntimeMigration(database: DatabaseSync, 
     throw new ReviewRealError("ADMIN_INTERNAL_FAILURE", 500);
   }
   assertProjectionDeliveryRuntimeSchema(database);
+}
+
+export function assertRssMediaRefinementSchema(database: DatabaseSync): void {
+  const version = Number((database.prepare("PRAGMA user_version").get() as Record<string, unknown>).user_version);
+  if (version !== 4) throw new ReviewRealError("ADMIN_INTERNAL_FAILURE", 500);
+  const foreignKeys = Number((database.prepare("PRAGMA foreign_keys").get() as Record<string, unknown>).foreign_keys);
+  const recursiveTriggers = Number((database.prepare("PRAGMA recursive_triggers").get() as Record<string, unknown>).recursive_triggers);
+  if (foreignKeys !== 1 || recursiveTriggers !== 1) throw new ReviewRealError("ADMIN_INTERNAL_FAILURE", 500);
+  if (reviewRealSchemaFingerprint(database) !== RSS_MEDIA_REFINEMENT_SCHEMA_SHA256) {
+    throw new ReviewRealError("ADMIN_INTERNAL_FAILURE", 500);
+  }
+  if (database.prepare("PRAGMA foreign_key_check").get() !== undefined) {
+    throw new ReviewRealError("ADMIN_INTERNAL_FAILURE", 500);
+  }
+  const databases = database.prepare("PRAGMA database_list").all() as Array<Record<string, unknown>>;
+  if (databases.some((row) => row.name !== "main" && row.name !== "temp")) {
+    throw new ReviewRealError("ADMIN_INTERNAL_FAILURE", 500);
+  }
+  if (database.prepare(
+    "SELECT 1 FROM temp.sqlite_schema WHERE lower(name) NOT GLOB 'sqlite_*' LIMIT 1"
+  ).get() !== undefined) {
+    throw new ReviewRealError("ADMIN_INTERNAL_FAILURE", 500);
+  }
+  const integrity = database.prepare("PRAGMA integrity_check").get() as Record<string, unknown>;
+  if (integrity.integrity_check !== "ok") throw new ReviewRealError("ADMIN_INTERNAL_FAILURE", 500);
+}
+
+export function applyRssMediaRefinementMigration(database: DatabaseSync, migrationSql: string): void {
+  if (sha256(migrationSql) !== RSS_MEDIA_REFINEMENT_MIGRATION_SHA256) {
+    throw new ReviewRealError("ADMIN_INTERNAL_FAILURE", 500);
+  }
+  database.exec("PRAGMA foreign_keys=ON; PRAGMA recursive_triggers=ON;");
+  const version = Number((database.prepare("PRAGMA user_version").get() as Record<string, unknown>).user_version);
+  if (version === 3) {
+    withImmediateTransaction(database, () => database.exec(migrationSql));
+  } else if (version !== 4) {
+    throw new ReviewRealError("ADMIN_INTERNAL_FAILURE", 500);
+  }
+  assertRssMediaRefinementSchema(database);
 }

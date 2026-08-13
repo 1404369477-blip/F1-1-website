@@ -10,7 +10,7 @@ import type {
 } from "../../server/public/types";
 
 const contentTypeSchema = z.enum(["race_news", "driver_social", "legends_history", "paddock_fun"]);
-const publicStateSchema = z.enum(["available", "restricted", "media_missing"]);
+const publicStateSchema = z.enum(["available", "restricted", "media_missing", "ready"]);
 const publicReasonCodeSchema = z.enum([
   "PUBLIC_QUERY_INVALID",
   "PUBLIC_CURSOR_PAIR_REQUIRED",
@@ -54,14 +54,23 @@ const publicFeedItemSchema = z.object({
     byline: z.string().min(1),
     accessStatus: z.enum(["available", "restricted"])
   }).strict(),
-  media: z.object({
-    kind: z.literal("synthetic_placeholder"),
-    assetRef: z.string().min(1),
-    altZh: z.string().min(1),
-    captionZh: z.string().nullable(),
-    creditDisplay: z.string().nullable(),
-    tone: z.enum(["night", "blue", "amber", "violet", "slate"])
-  }).strict().nullable(),
+  media: z.discriminatedUnion("kind", [
+    z.object({
+      kind: z.literal("synthetic_placeholder"),
+      assetRef: z.string().min(1),
+      altZh: z.string().min(1),
+      captionZh: z.string().nullable(),
+      creditDisplay: z.string().nullable(),
+      tone: z.enum(["night", "blue", "amber", "violet", "slate"])
+    }).strict(),
+    z.object({
+      kind: z.literal("source_image"),
+      assetRef: z.string().url(),
+      mimeType: z.enum(["image/jpeg", "image/png", "image/webp", "image/avif"]),
+      declaredBytes: z.number().int().positive(),
+      altZh: z.string().min(1)
+    }).strict()
+  ]).nullable(),
   originalLink: originalLinkSchema
 }).strict();
 
@@ -236,17 +245,21 @@ function mapFeedItem(item: PublicFeedItemV1): PublicStoryCardViewModel {
   const sourceTimestamp = item.sourceTimeStatus === "known" && item.sourcePublishedAt
     ? item.sourcePublishedAt
     : item.publishedAt;
-  const mediaTone = item.media?.tone ?? "slate";
+  const mediaTone = item.media?.kind === "synthetic_placeholder" ? item.media.tone : "slate";
   const mediaDescription = item.media?.altZh ?? "当前公开内容没有可展示的媒体。";
-  const mediaLabel = item.media?.captionZh ?? "公开合成示意";
+  const mediaLabel = item.media?.kind === "synthetic_placeholder" ? item.media.captionZh ?? "公开合成示意" : "来源配图";
   return {
     publicId: item.publicId,
     category: categoryByContentType[item.contentType],
-    state: item.state === "media_missing" ? "media-missing" : item.state,
+    state: item.state === "media_missing" ? "media-missing" : item.state === "ready" ? "available" : item.state,
     mediaTone,
     mediaDescription,
     mediaLabel,
-    images: item.state === "media_missing" ? [] : storyPlaceholderImages(mediaTone, mediaLabel, mediaDescription),
+    images: item.state === "media_missing"
+      ? []
+      : item.media?.kind === "source_image"
+        ? [{ src: item.media.assetRef, alt: item.media.altZh }]
+        : storyPlaceholderImages(mediaTone, mediaLabel, mediaDescription),
     title: item.titleZh,
     summary: item.summaryZh,
     sourceName: item.source.displayName,

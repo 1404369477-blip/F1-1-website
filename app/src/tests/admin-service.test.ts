@@ -336,6 +336,7 @@ describe("independent admin service candidate", () => {
     cpSync(join(process.cwd(), "migrations/rss-real/0001_rss_real.sql"), join(fakeApp, "migrations/rss-real/0001_rss_real.sql"));
     cpSync(join(process.cwd(), "migrations/rss-real/0002_admin_review_publish.sql"), join(fakeApp, "migrations/rss-real/0002_admin_review_publish.sql"));
     cpSync(join(process.cwd(), "migrations/rss-real/0003_projection_delivery_runtime.sql"), join(fakeApp, "migrations/rss-real/0003_projection_delivery_runtime.sql"));
+    cpSync(join(process.cwd(), "migrations/rss-real/0004_rss_media_and_chinese_refinement.sql"), join(fakeApp, "migrations/rss-real/0004_rss_media_and_chinese_refinement.sql"));
     const databasePath = join(fakeApp, ".local/f1plus1-rss-real-private.sqlite");
     const initialDatabase = openRssDatabase(fakeApp);
     applyRssMigration(initialDatabase, readFileSync(join(fakeApp, "migrations/rss-real/0001_rss_real.sql"), "utf8"));
@@ -347,9 +348,8 @@ describe("independent admin service candidate", () => {
       reviewDatabasePath: databasePath,
       reviewDatabaseIdentity: databaseIdentity
     });
-    expect(Number((opened.database.prepare("PRAGMA user_version").get() as Record<string, unknown>).user_version)).toBe(3);
-    expect(reviewRealSchemaFingerprint(opened.database)).toBe("5d3316653750c8eaafefda7a0d5e3a154ab647a7e77329c048b91ce516a8b84f");
-    expect(() => assertProjectionDeliveryRuntimeSchema(opened.database)).not.toThrow();
+    expect(Number((opened.database.prepare("PRAGMA user_version").get() as Record<string, unknown>).user_version)).toBe(4);
+    expect(reviewRealSchemaFingerprint(opened.database)).toBe("40b1b59c8a8dab3413dfe85311b72cb735e3523071dbd70b0c3a42b0b7eb3b7c");
     opened.database.close();
 
     const missingPath = join(fakeApp, ".local/missing/f1plus1-rss-real-private.sqlite");

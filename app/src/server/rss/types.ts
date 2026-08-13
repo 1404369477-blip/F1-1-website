@@ -8,6 +8,7 @@ export const RSS_MAX_RESPONSE_BYTES = 1024 * 1024;
 export const RSS_MAX_ITEMS = 60;
 export const RSS_SELECTED_ITEMS = 20;
 export const RSS_MAX_FIELD_BYTES = 16_384;
+export const RSS_MAX_IMAGE_BYTES = 20 * 1024 * 1024;
 
 export const RSS_REASON_CODES = [
   "OK",
@@ -107,7 +108,14 @@ export type RssItem = Readonly<{
   excerpt: string;
   author: string | null;
   publishedAt: string;
+  media: RssSourceImage | null;
   sourcePayloadHash: string;
+}>;
+
+export type RssSourceImage = Readonly<{
+  url: string;
+  mimeType: "image/jpeg" | "image/png" | "image/webp" | "image/avif";
+  declaredBytes: number;
 }>;
 
 export type ParsedRssFeed = Readonly<{

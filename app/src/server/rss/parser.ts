@@ -5,12 +5,14 @@ import { XMLParser } from "fast-xml-parser";
 import {
   RSS_FEED_HOST,
   RSS_MAX_FIELD_BYTES,
+  RSS_MAX_IMAGE_BYTES,
   RSS_MAX_ITEMS,
   RSS_MAX_RESPONSE_BYTES,
   RSS_SELECTED_ITEMS,
   RssError,
   type ParsedRssFeed,
-  type RssItem
+  type RssItem,
+  type RssSourceImage
 } from "./types.ts";
 
 type JsonRecord = Record<string, unknown>;
@@ -129,6 +131,48 @@ function canonicalArticleUrl(rawValue: string): string {
   return assertField(url.toString(), "ITEM_IDENTITY_INVALID");
 }
 
+function sourceImageFromEntry(entry: JsonRecord): RssSourceImage | null {
+  const candidates = [
+    ...valuesByLocalName(entry, "enclosure"),
+    ...valuesByLocalName(entry, "content")
+  ];
+  for (const candidate of candidates) {
+    const record = asRecord(candidate);
+    if (!record) continue;
+    const rawUrl = typeof record["@_url"] === "string"
+      ? record["@_url"]
+      : typeof record["@_href"] === "string"
+        ? record["@_href"]
+        : "";
+    const rawType = typeof record["@_type"] === "string" ? record["@_type"].trim().toLowerCase() : "";
+    const rawLength = typeof record["@_length"] === "string" || typeof record["@_length"] === "number"
+      ? String(record["@_length"])
+      : "";
+    if (!rawUrl || !["image/jpeg", "image/png", "image/webp", "image/avif"].includes(rawType)) continue;
+    const declaredBytes = Number(rawLength);
+    if (!Number.isSafeInteger(declaredBytes) || declaredBytes < 1 || declaredBytes > RSS_MAX_IMAGE_BYTES) continue;
+    try {
+      const url = new URL(rawUrl.trim());
+      if (
+        url.protocol !== "https:" ||
+        !/^cdn-[0-9]+\.motorsport\.com$/.test(url.hostname) ||
+        (url.port !== "" && url.port !== "443") ||
+        url.username !== "" ||
+        url.password !== "" ||
+        url.hash !== ""
+      ) continue;
+      return {
+        url: assertField(url.toString(), "ITEM_FIELD_INVALID"),
+        mimeType: rawType as RssSourceImage["mimeType"],
+        declaredBytes
+      };
+    } catch {
+      continue;
+    }
+  }
+  return null;
+}
+
 function linkFromEntry(entry: JsonRecord): string {
   const candidates = valuesByLocalName(entry, "link");
   for (const candidate of candidates) {
@@ -161,7 +205,8 @@ function payloadHash(item: Omit<RssItem, "sourcePayloadHash">): string {
     item.title,
     item.excerpt,
     item.author,
-    item.publishedAt
+    item.publishedAt,
+    item.media
   ]);
   return createHash("sha256").update(payload, "utf8").digest("hex");
 }
@@ -179,7 +224,8 @@ function parseItem(entry: JsonRecord): RssItem {
   const publishedMillis = Date.parse(publishedText);
   if (publishedText === "" || !Number.isFinite(publishedMillis)) throw new RssError("ITEM_TIME_INVALID");
   const publishedAt = new Date(publishedMillis).toISOString();
-  const machineFields = { externalId, canonicalUrl, title, excerpt, author, publishedAt };
+  const media = sourceImageFromEntry(entry);
+  const machineFields = { externalId, canonicalUrl, title, excerpt, author, publishedAt, media };
   return { ...machineFields, sourcePayloadHash: payloadHash(machineFields) };
 }
 

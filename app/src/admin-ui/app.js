@@ -61,6 +61,7 @@
     integrityCopy: document.querySelector("#integrity-copy"),
     sourceLink: document.querySelector("#source-link"),
     sourceExcerpt: document.querySelector("#source-excerpt"),
+    sourceImage: document.querySelector("#source-image"),
     evidenceSource: document.querySelector("#evidence-source"),
     evidenceAuthor: document.querySelector("#evidence-author"),
     evidenceTime: document.querySelector("#evidence-time"),
@@ -926,6 +927,17 @@
     elements.sourceLink.href = original ?? "#";
     elements.sourceLink.setAttribute("aria-disabled", String(original === null));
     elements.sourceExcerpt.textContent = safeString(detail.sourceExcerpt, "来源没有提供摘要。" );
+    if (detail.sourceMedia?.kind === "source_image") {
+      elements.sourceImage.src = detail.sourceMedia.url;
+      elements.sourceImage.alt = safeString(detail.machineDraft?.titleZh, safeString(detail.sourceTitle, "RSS 来源图片"));
+      elements.sourceImage.hidden = false;
+      document.querySelector(".media-placeholder").hidden = true;
+    } else {
+      elements.sourceImage.removeAttribute("src");
+      elements.sourceImage.alt = "";
+      elements.sourceImage.hidden = true;
+      document.querySelector(".media-placeholder").hidden = false;
+    }
     elements.evidenceSource.textContent = safeString(detail.sourceDisplayName);
     elements.evidenceAuthor.textContent = safeString(detail.sourceAuthor, "未提供作者");
     elements.evidenceTime.textContent = formatTime(detail.sourcePublishedAt);
@@ -938,8 +950,8 @@
       : detail.publication
         ? `Publication ${detail.publication.status}`
         : "尚未创建 Publication";
-    elements.titleInput.value = safeString(detail.titleZh, safeString(detail.sourceTitle, ""));
-    elements.summaryInput.value = safeString(detail.summaryZh, safeString(detail.sourceExcerpt, ""));
+    elements.titleInput.value = safeString(detail.titleZh, safeString(detail.machineDraft?.titleZh, safeString(detail.sourceTitle, "")));
+    elements.summaryInput.value = safeString(detail.summaryZh, safeString(detail.machineDraft?.summaryZh, safeString(detail.sourceExcerpt, "")));
     elements.notesInput.value = safeString(detail.editorNotes, "");
     const editorEnabled = allowed("revision") && !state.busy;
     elements.titleInput.disabled = !editorEnabled;
@@ -948,7 +960,9 @@
     elements.saveRevision.disabled = !editorEnabled;
     elements.editorBinding.textContent = detail.latestBundle
       ? `当前 Bundle ${detail.latestBundle.versionTag}`
-      : `当前来源 ${safeString(detail.integrity?.versionTag)}`;
+      : detail.machineDraft
+        ? `DeepSeek 草稿 · source r${detail.machineDraft.sourceRevision} · 保存后生效`
+        : `当前来源 ${safeString(detail.integrity?.versionTag)}`;
     state.dirty = false;
     updateCounts();
     renderActions();

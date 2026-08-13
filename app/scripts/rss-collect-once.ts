@@ -1,13 +1,13 @@
-import { readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
+import { homedir } from "node:os";
+import { resolve } from "node:path";
 
 import { parseRssFeed } from "../src/server/rss/parser.ts";
 import {
   RssRepository,
-  applyRssMigration,
-  openRssDatabase,
   rssSlotKey
 } from "../src/server/rss/repository.ts";
+import { readAdminDeploymentManifest } from "../src/server/admin-service/deployment.ts";
+import { openReviewAdminDatabase } from "../src/server/admin-service/runtime.ts";
 import { fetchFixedRss } from "../src/server/rss/transport.ts";
 import {
   RSS_PROFILE_ID,
@@ -19,8 +19,10 @@ import {
   type RssRunReceipt
 } from "../src/server/rss/types.ts";
 
-const appRoot = fileURLToPath(new URL("..", import.meta.url));
-const migrationPath = fileURLToPath(new URL("../migrations/rss-real/0001_rss_real.sql", import.meta.url));
+const adminDeploymentPath = resolve(
+  homedir(),
+  "Library/Application Support/F1Plus1/Admin/deployment.json"
+);
 
 function safeFailureReceipt(error: RssError, scheduledAt: string): RssRunReceipt {
   const slotKey = rssSlotKey(scheduledAt);
@@ -53,14 +55,18 @@ async function main(): Promise<void> {
     return;
   }
 
-  let database: ReturnType<typeof openRssDatabase> | undefined;
+  let database: ReturnType<typeof openReviewAdminDatabase>["database"] | undefined;
   let repository: RssRepository | undefined;
   let run: ClaimedRssRun | undefined;
   let modifiedResponse: RssModifiedResponse | undefined;
   let networkAttempted = false;
   try {
-    database = openRssDatabase(appRoot);
-    applyRssMigration(database, readFileSync(migrationPath, "utf8"));
+    const deployment = readAdminDeploymentManifest(adminDeploymentPath);
+    database = openReviewAdminDatabase({
+      targetReleaseAppRoot: deployment.targetReleaseAppRoot,
+      reviewDatabasePath: deployment.reviewDatabasePath,
+      reviewDatabaseIdentity: deployment.reviewDatabaseIdentity
+    }).database;
     repository = new RssRepository(database);
     run = repository.claimRun(scheduledAt, new Date().toISOString());
     const source = repository.readSource();

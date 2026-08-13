@@ -35,6 +35,36 @@ export const MotorsportCanonicalUrlSchema = z.string().url().refine((value) => {
   }
 }, "canonical URL is outside the Motorsport HTTPS allowlist");
 
+export const MotorsportMediaUrlSchema = z.string().url().refine((value) => {
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" &&
+      /^cdn-[0-9]+\.motorsport\.com$/.test(url.hostname) &&
+      url.username === "" &&
+      url.password === "" &&
+      (url.port === "" || url.port === "443") &&
+      url.hash === "";
+  } catch {
+    return false;
+  }
+}, "media URL is outside the Motorsport CDN HTTPS allowlist");
+
+export const SourceImageSchema = z.object({
+  kind: z.literal("source_image"),
+  url: MotorsportMediaUrlSchema,
+  mimeType: z.enum(["image/jpeg", "image/png", "image/webp", "image/avif"]),
+  declaredBytes: z.number().int().min(1).max(20 * 1024 * 1024)
+}).strict();
+
+export const MachineSummaryDraftSchema = z.object({
+  titleZh: normalizedText(400, 1),
+  summaryZh: normalizedText(1200, 1),
+  keyPointsZh: z.array(normalizedText(240, 1)).min(1).max(3),
+  model: z.literal("deepseek-chat"),
+  generatedAt: UtcTimestampSchema,
+  sourceRevision: z.number().int().positive()
+}).strict();
+
 export const ReviewStateSchema = z.enum([
   "pending_review",
   "source_updated",
@@ -102,7 +132,7 @@ export const ReviewBundlePublicPayloadSchema = z.object({
   contentType: z.literal("race_news"),
   titleZh: normalizedText(400, 1),
   summaryZh: normalizedText(1200, 1),
-  media: z.array(z.never()).length(0),
+  media: z.array(SourceImageSchema).max(1),
   sourceDisplayName: z.literal("Motorsport.com")
 }).strict();
 
@@ -110,7 +140,7 @@ export const PublicProjectionRecordCoreSchema = z.object({
   publicId: z.string().regex(/^public-rss-[0-9a-f]{64}$/),
   publishGeneration: z.literal(1),
   contentType: z.literal("race_news"),
-  state: z.literal("media_missing"),
+  state: z.enum(["media_missing", "ready"]),
   titleZh: normalizedText(400, 1),
   summaryZh: normalizedText(1200, 1),
   publishedAt: UtcTimestampSchema,
@@ -123,7 +153,13 @@ export const PublicProjectionRecordCoreSchema = z.object({
     byline: z.string().min(1).max(16_384),
     accessStatus: z.literal("available")
   }).strict(),
-  media: z.null(),
+  media: z.object({
+    kind: z.literal("source_image"),
+    assetRef: MotorsportMediaUrlSchema,
+    mimeType: z.enum(["image/jpeg", "image/png", "image/webp", "image/avif"]),
+    declaredBytes: z.number().int().min(1).max(20 * 1024 * 1024),
+    altZh: normalizedText(400, 1)
+  }).strict().nullable(),
   originalLink: z.object({
     enabled: z.literal(true),
     url: MotorsportCanonicalUrlSchema,
@@ -132,9 +168,13 @@ export const PublicProjectionRecordCoreSchema = z.object({
   detail: z.object({
     leadZh: normalizedText(1200, 1),
     bodyZh: z.array(normalizedText(1200, 1)).length(1),
-    keyPointsZh: z.array(z.never()).length(0)
+    keyPointsZh: z.array(normalizedText(240, 1)).max(3)
   }).strict()
-}).strict();
+}).strict().superRefine((record, context) => {
+  if ((record.state === "ready") !== (record.media !== null)) {
+    context.addIssue({ code: "custom", message: "media state and payload disagree" });
+  }
+});
 
 export const PublicProjectionRecordSchema = PublicProjectionRecordCoreSchema.extend({
   projectionHash: HashSchema
@@ -192,7 +232,7 @@ const ReviewQueueItemShape = {
   sourcePublishedAt: UtcTimestampSchema,
   sourceDisplayName: z.literal("Motorsport.com"),
   originalUrl: MotorsportCanonicalUrlSchema,
-  mediaState: z.literal("none"),
+  mediaState: z.enum(["none", "source_image"]),
   reviewState: ReviewStateSchema,
   latestBundle: BundleSummarySchema.nullable(),
   decision: DecisionSummarySchema.nullable(),
@@ -214,6 +254,8 @@ export const ReviewDetailSchema = z.object({
   schemaVersion: z.literal("admin-review-v0.2"),
   ...ReviewQueueItemShape,
   sourceExcerpt: z.string().max(16_384),
+  sourceMedia: SourceImageSchema.nullable(),
+  machineDraft: MachineSummaryDraftSchema.nullable(),
   editorNotes: normalizedText(2000).nullable(),
   integrity: z.object({
     status: z.enum(["ok", "blocked"]),
@@ -405,6 +447,8 @@ export const AuditEventPayloadSchema = z.object({
 
 export type CandidateSourceSnapshot = z.infer<typeof CandidateSourceSnapshotSchema>;
 export type ReviewEditable = z.infer<typeof ReviewEditableSchema>;
+export type SourceImage = z.infer<typeof SourceImageSchema>;
+export type MachineSummaryDraft = z.infer<typeof MachineSummaryDraftSchema>;
 export type ReviewBundlePublicPayload = z.infer<typeof ReviewBundlePublicPayloadSchema>;
 export type PublicProjectionRecord = z.infer<typeof PublicProjectionRecordSchema>;
 export type PublicProjectionRecordCore = z.infer<typeof PublicProjectionRecordCoreSchema>;

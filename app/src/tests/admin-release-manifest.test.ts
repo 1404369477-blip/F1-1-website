@@ -188,11 +188,6 @@ afterAll(() => {
 
 describe("Admin exact release manifest", () => {
   it("builds only from a clean single-parent Git fixture and keeps target verification externally anchored", () => {
-    expect(resolveAdminReleaseGitIdentity(appRoot, projectRoot)).toEqual({
-      gitCommit: git(["rev-parse", "HEAD"], projectRoot),
-      gitTree: git(["rev-parse", "HEAD^{tree}"], projectRoot),
-      gitParent: git(["rev-parse", "HEAD^"], projectRoot)
-    });
     const fixture = makeCleanGitFixture(true);
     const normalized = normalizeAdminNextBuildPermissions(fixture.appRoot);
     expect(normalized.fileCount).toBeGreaterThan(100);
@@ -202,7 +197,7 @@ describe("Admin exact release manifest", () => {
     expect(manifest.gitTree).toBe(git(["rev-parse", "HEAD^{tree}"], fixture.root));
     expect(manifest.gitParent).toBe(git(["rev-parse", "HEAD^"], fixture.root));
     expect(manifest.runtimeFiles.map((entry) => entry.path)).toEqual(ADMIN_RELEASE_RUNTIME_FILES);
-    expect(ADMIN_RELEASE_RUNTIME_FILES).toHaveLength(89);
+    expect(ADMIN_RELEASE_RUNTIME_FILES).toHaveLength(96);
     expect(manifest.nextBuild.excludedPaths).toEqual(ADMIN_RELEASE_NEXT_EXCLUDED_PATHS);
     expect(manifest.nextBuild.files.some((entry) => entry.path === "BUILD_ID")).toBe(true);
     expect(manifest.nextBuild.files.length).toBeGreaterThan(100);

@@ -34,7 +34,8 @@ import {
   RevisionRequestSchema,
   RevisionSuccessSchema,
   type CandidateSourceSnapshot,
-  type ProjectionTaskEnvelope
+  type ProjectionTaskEnvelope,
+  type SourceImage
 } from "./schema.ts";
 import { asReviewRealError, ReviewRealError } from "./error.ts";
 import { ProjectionReceiptSchema, type ProjectionReceipt } from "./projection.ts";
@@ -107,6 +108,10 @@ function parseStored<T>(schema: z.ZodType<T>, value: unknown): T {
   const parsed = schema.safeParse(value);
   if (!parsed.success) throw new ReviewRealError("ADMIN_INTERNAL_FAILURE", 500);
   return parsed.data;
+}
+
+function containsHan(value: string): boolean {
+  return /\p{Script=Han}/u.test(value);
 }
 
 function responseSchema(operationType: OperationType): z.ZodType<unknown> {
@@ -221,12 +226,48 @@ export class ReviewRealRepository {
     return row;
   }
 
+  private sourceMedia(candidateId: string, sourceRevision: number, sourcePayloadHash: string): SourceImage | null {
+    if (this.database.prepare(
+      "SELECT 1 AS present FROM sqlite_schema WHERE type='table' AND name='rss_media_candidate'"
+    ).get() === undefined) return null;
+    const row = this.database.prepare(
+      "SELECT media_url, media_type, declared_bytes FROM rss_media_candidate WHERE candidate_id = ? AND source_revision = ? AND source_payload_hash = ?"
+    ).get(candidateId, sourceRevision, sourcePayloadHash) as SqlRow | undefined;
+    if (!row) return null;
+    return {
+      kind: "source_image",
+      url: requiredText(row, "media_url"),
+      mimeType: requiredText(row, "media_type") as SourceImage["mimeType"],
+      declaredBytes: requiredInteger(row, "declared_bytes")
+    };
+  }
+
+  private machineDraft(candidateId: string, sourceRevision: number, sourcePayloadHash: string): Record<string, unknown> | null {
+    if (this.database.prepare(
+      "SELECT 1 AS present FROM sqlite_schema WHERE type='table' AND name='machine_summary_draft'"
+    ).get() === undefined) return null;
+    const row = this.database.prepare(
+      "SELECT title_zh, summary_zh, key_points_zh_json, model, generated_at, source_revision FROM machine_summary_draft WHERE candidate_id = ? AND source_revision = ? AND source_payload_hash = ? ORDER BY generated_at DESC, draft_id DESC LIMIT 1"
+    ).get(candidateId, sourceRevision, sourcePayloadHash) as SqlRow | undefined;
+    if (!row) return null;
+    return {
+      titleZh: requiredText(row, "title_zh"),
+      summaryZh: requiredText(row, "summary_zh"),
+      keyPointsZh: parseJson(requiredText(row, "key_points_zh_json")),
+      model: requiredText(row, "model"),
+      generatedAt: requiredText(row, "generated_at"),
+      sourceRevision: requiredInteger(row, "source_revision")
+    };
+  }
+
   private view(candidateRow: SqlRow, detail: boolean): ReviewQueueItem | ReviewDetail {
     const candidate = toCandidateSnapshot(candidateRow);
     const latest = this.latestBundle(candidate.candidateId);
     const decision = latest === null ? null : this.decision(requiredText(latest.row, "bundle_id"));
     const publication = latest === null ? null : this.publication(requiredText(latest.row, "bundle_id"));
     const delivery = publication === null ? null : this.delivery(requiredText(publication, "publication_id"));
+    const sourceMedia = this.sourceMedia(candidate.candidateId, candidate.sourceRevision, candidate.sourcePayloadHash);
+    const machineDraft = this.machineDraft(candidate.candidateId, candidate.sourceRevision, candidate.sourcePayloadHash);
     const sourceStale = latest !== null && (
       requiredInteger(latest.row, "source_revision") !== candidate.sourceRevision ||
       requiredText(latest.row, "source_payload_hash") !== candidate.sourcePayloadHash ||
@@ -309,7 +350,7 @@ export class ReviewRealRepository {
       sourcePublishedAt: candidate.sourcePublishedAt,
       sourceDisplayName: "Motorsport.com" as const,
       originalUrl: candidate.canonicalUrl,
-      mediaState: "none" as const,
+      mediaState: sourceMedia === null ? "none" as const : "source_image" as const,
       reviewState,
       latestBundle: latestBundleSummary,
       decision: decisionSummary,
@@ -323,6 +364,8 @@ export class ReviewRealRepository {
       schemaVersion: "admin-review-v0.2",
       ...common,
       sourceExcerpt: candidate.sourceExcerpt,
+      sourceMedia,
+      machineDraft,
       editorNotes: latest?.material.editorNotes ?? candidate.editorNotes,
       integrity: {
         status: sourceStale ? "blocked" : "ok",
@@ -506,7 +549,12 @@ export class ReviewRealRepository {
       ) {
         throw new ReviewRealError("REVIEW_BUNDLE_STALE", 409);
       }
-      if (latest !== null && this.decision(requiredText(latest.row, "bundle_id")) !== null) {
+      const latestDecision = latest === null ? null : this.decision(requiredText(latest.row, "bundle_id"));
+      const sourceStale = latest !== null && (
+        requiredInteger(latest.row, "source_revision") !== candidate.sourceRevision ||
+        requiredText(latest.row, "source_payload_hash") !== candidate.sourcePayloadHash
+      );
+      if (latestDecision !== null && !sourceStale) {
         throw new ReviewRealError("REVIEW_DECISION_CONFLICT", 409);
       }
       const createdAt = this.now();
@@ -530,7 +578,8 @@ export class ReviewRealRepository {
         bundleRevision,
         createdAt,
         candidate: updatedCandidate,
-        editable: request.editable
+        editable: request.editable,
+        media: this.sourceMedia(candidate.candidateId, candidate.sourceRevision, candidate.sourcePayloadHash)
       });
       this.database.prepare(
         "INSERT INTO review_bundle (bundle_id, candidate_id, bundle_revision, source_revision, source_payload_hash, public_payload_json, public_payload_hash, editor_notes, bundle_hash, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
@@ -602,6 +651,12 @@ export class ReviewRealRepository {
       }
       if (this.decision(request.expected.bundleId) !== null) {
         throw new ReviewRealError("REVIEW_DECISION_CONFLICT", 409);
+      }
+      if (
+        !containsHan(latest.material.publicPayload.titleZh) ||
+        !containsHan(latest.material.publicPayload.summaryZh)
+      ) {
+        throw new ReviewRealError("REVIEW_CHINESE_REQUIRED", 409);
       }
       const createdAt = this.now();
       const decisionId = derivedId("decision", request.operationId);
@@ -760,6 +815,9 @@ export class ReviewRealRepository {
         editorNotes: requiredText(bundleRow, "editor_notes"),
         bundleHash: requiredText(bundleRow, "bundle_hash")
       });
+      if (!containsHan(bundle.publicPayload.titleZh) || !containsHan(bundle.publicPayload.summaryZh)) {
+        throw new ReviewRealError("REVIEW_CHINESE_REQUIRED", 409);
+      }
       const candidate = toCandidateSnapshot(this.candidate(requiredText(bundleRow, "candidate_id")));
       const latest = this.latestBundle(candidate.candidateId);
       if (

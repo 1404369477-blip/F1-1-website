@@ -21,6 +21,7 @@ import {
   type PublicProjectionRecord,
   type PublicProjectionRecordCore,
   type ReviewBundlePublicPayload,
+  type SourceImage,
   type ReviewEditable
 } from "./schema.ts";
 
@@ -159,6 +160,7 @@ export function buildReviewBundleMaterial(input: Readonly<{
   createdAt: string;
   candidate: CandidateSourceSnapshot;
   editable: ReviewEditable;
+  media?: SourceImage | null;
 }>): ReviewBundleMaterial {
   const bundleId = IdentifierSchema.safeParse(input.bundleId);
   const candidate = CandidateSourceSnapshotSchema.safeParse(input.candidate);
@@ -188,7 +190,7 @@ export function buildReviewBundleMaterial(input: Readonly<{
     contentType: "race_news",
     titleZh: editable.data.titleZh,
     summaryZh: editable.data.summaryZh,
-    media: [],
+    media: input.media ? [input.media] : [],
     sourceDisplayName: "Motorsport.com"
   });
   const publicPayloadJson = canonicalJson(publicPayload);
@@ -282,11 +284,13 @@ export function buildPublicProjectionRecord(input: Readonly<{
   }
   requireEqual(input.publicId, derivePublicId(payload.data.candidateId, bundleHash.data));
 
+  const media = payload.data.media[0] ?? null;
+
   const core = PublicProjectionRecordCoreSchema.parse({
     publicId: input.publicId,
     publishGeneration: 1,
     contentType: "race_news",
-    state: "media_missing",
+    state: media === null ? "media_missing" : "ready",
     titleZh: payload.data.titleZh,
     summaryZh: payload.data.summaryZh,
     publishedAt: publishedAt.data,
@@ -299,7 +303,13 @@ export function buildPublicProjectionRecord(input: Readonly<{
       byline: payload.data.sourceAuthor,
       accessStatus: "available"
     },
-    media: null,
+    media: media === null ? null : {
+      kind: "source_image",
+      assetRef: media.url,
+      mimeType: media.mimeType,
+      declaredBytes: media.declaredBytes,
+      altZh: payload.data.titleZh
+    },
     originalLink: {
       enabled: true,
       url: payload.data.canonicalUrl,
