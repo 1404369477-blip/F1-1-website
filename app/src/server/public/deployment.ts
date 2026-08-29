@@ -12,11 +12,14 @@ import {
   renameSync,
   writeFileSync
 } from "node:fs";
-import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
+import { basename, dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 
 import { z } from "zod";
 
 import { canonicalJson } from "../db/profile.ts";
+import { readVerifiedAdminReleaseManifest } from "../admin-service/release-manifest.ts";
+import { readStableRegularFile } from "../release/local-closure.ts";
+import { assertPublicRuntimeClosure, publicRuntimeClosureSha256 } from "./release-manifest.ts";
 
 export const PUBLIC_PROJECTION_SERVICE_LABEL = "com.f1plus1.public-projection" as const;
 export const PUBLIC_PROJECTION_INTERNAL_ENDPOINT = "http://127.0.0.1:3102/internal/projections" as const;
@@ -31,8 +34,14 @@ const FileIdentitySchema = z.object({
 }).strict();
 
 export const PublicProjectionDeploymentManifestSchema = z.object({
-  schemaVersion: z.literal("public-projection-deployment-v2"),
+  schemaVersion: z.literal("public-projection-deployment-v3"),
   label: z.literal(PUBLIC_PROJECTION_SERVICE_LABEL),
+  targetReleaseManifestPath: AbsolutePathSchema,
+  targetReleaseManifestSha256: z.string().regex(/^[0-9a-f]{64}$/),
+  targetReleaseRootSha256: z.string().regex(/^[0-9a-f]{64}$/),
+  targetNextBuildSha256: z.string().regex(/^[0-9a-f]{64}$/),
+  targetDependenciesSha256: z.string().regex(/^[0-9a-f]{64}$/),
+  publicRuntimeClosureSha256: z.string().regex(/^[0-9a-f]{64}$/),
   targetReleaseAppRoot: AbsolutePathSchema,
   syntheticRollbackAppRoot: AbsolutePathSchema,
   publicDataRoot: AbsolutePathSchema,
@@ -190,6 +199,11 @@ export function renderPublicProjectionPlist(input: Readonly<{
 export function preparePublicProjectionDeployment(input: Readonly<{
   home: string;
   targetReleaseAppRoot: string;
+  targetReleaseManifestPath: string;
+  targetReleaseManifestSha256: string;
+  targetReleaseRootSha256: string;
+  targetNextBuildSha256: string;
+  targetDependenciesSha256: string;
   syntheticRollbackAppRoot: string;
   syntheticRollbackDatabaseIdentity: z.infer<typeof FileIdentitySchema>;
   nodePath: string;
@@ -215,9 +229,30 @@ export function preparePublicProjectionDeployment(input: Readonly<{
   });
   const verifyKeyPath = resolve(input.projectionVerifyKeyPath);
   const targetReleaseAppRoot = resolve(input.targetReleaseAppRoot);
+  const targetReleaseManifestPath = resolve(input.targetReleaseManifestPath);
   const syntheticRollbackAppRoot = resolve(input.syntheticRollbackAppRoot);
   assertPublicOnlyBoundary(canonicalPaths.root, canonicalPaths.projectionRoot, verifyKeyPath);
   assertDeploymentRoots({ targetReleaseAppRoot, syntheticRollbackAppRoot, publicDataRoot: canonicalPaths.root });
+  const runtimeClosureSha256 = publicRuntimeClosureSha256(targetReleaseAppRoot);
+  if (
+    !isAbsolute(input.targetReleaseManifestPath) ||
+    [input.targetReleaseManifestSha256, input.targetReleaseRootSha256, input.targetNextBuildSha256, input.targetDependenciesSha256]
+      .some((value) => value !== value.toLowerCase() || !/^[0-9a-f]{64}$/.test(value))
+  ) {
+    throw new Error("PUBLIC_RELEASE_MANIFEST_SHA_INVALID");
+  }
+  const release = readVerifiedAdminReleaseManifest(
+    targetReleaseAppRoot,
+    targetReleaseManifestPath,
+    input.targetReleaseManifestSha256,
+    resolve(input.nodePath),
+    process.execPath
+  );
+  if (
+    release.releaseRootSha256 !== input.targetReleaseRootSha256 ||
+    release.nextBuild.contentRootSha256 !== input.targetNextBuildSha256 ||
+    release.productionDependencies.contentRootSha256 !== input.targetDependenciesSha256
+  ) throw new Error("PUBLIC_RELEASE_ANCHOR_MISMATCH");
   assertPrivateFile(verifyKeyPath);
   let publicKey;
   try { publicKey = createPublicKey(readFileSync(verifyKeyPath)); }
@@ -231,8 +266,14 @@ export function preparePublicProjectionDeployment(input: Readonly<{
     existsSync(paths.stdoutLog) || existsSync(paths.stderrLog)
   ) throw new Error("PUBLIC_DEPLOYMENT_ALREADY_PREPARED");
   const manifest = PublicProjectionDeploymentManifestSchema.parse({
-    schemaVersion: "public-projection-deployment-v2",
+    schemaVersion: "public-projection-deployment-v3",
     label: PUBLIC_PROJECTION_SERVICE_LABEL,
+    targetReleaseManifestPath,
+    targetReleaseManifestSha256: input.targetReleaseManifestSha256,
+    targetReleaseRootSha256: input.targetReleaseRootSha256,
+    targetNextBuildSha256: input.targetNextBuildSha256,
+    targetDependenciesSha256: input.targetDependenciesSha256,
+    publicRuntimeClosureSha256: runtimeClosureSha256,
     targetReleaseAppRoot,
     syntheticRollbackAppRoot,
     publicDataRoot: canonicalPaths.root,
@@ -273,11 +314,27 @@ export function preparePublicProjectionDeployment(input: Readonly<{
 
 export function readPublicProjectionDeploymentManifest(path: string): PublicProjectionDeploymentManifest {
   assertPrivateFile(path);
-  const raw = readFileSync(path, "utf8");
+  const absolutePath = resolve(path);
+  const raw = readStableRegularFile(dirname(absolutePath), basename(absolutePath)).bytes.toString("utf8");
   let value: unknown;
   try { value = JSON.parse(raw) as unknown; } catch { throw new Error("PUBLIC_DEPLOYMENT_MANIFEST_INVALID"); }
+  if (
+    value && typeof value === "object" && !Array.isArray(value) &&
+    (value as { schemaVersion?: unknown }).schemaVersion === "public-projection-deployment-v2"
+  ) throw new Error("PUBLIC_DEPLOYMENT_V2_REPREPARE_OR_ROLLBACK_REQUIRED");
   const parsed = PublicProjectionDeploymentManifestSchema.safeParse(value);
   if (!parsed.success || raw !== canonicalJson(parsed.data)) throw new Error("PUBLIC_DEPLOYMENT_MANIFEST_INVALID");
+  assertPublicRuntimeClosure(parsed.data.targetReleaseAppRoot, parsed.data.publicRuntimeClosureSha256);
+  const release = readVerifiedAdminReleaseManifest(
+    parsed.data.targetReleaseAppRoot,
+    parsed.data.targetReleaseManifestPath,
+    parsed.data.targetReleaseManifestSha256
+  );
+  if (
+    release.releaseRootSha256 !== parsed.data.targetReleaseRootSha256 ||
+    release.nextBuild.contentRootSha256 !== parsed.data.targetNextBuildSha256 ||
+    release.productionDependencies.contentRootSha256 !== parsed.data.targetDependenciesSha256
+  ) throw new Error("PUBLIC_RELEASE_ANCHOR_MISMATCH");
   const root = resolve(dirname(parsed.data.publicProjectionRoot));
   if (parsed.data.publicDataRoot !== root) throw new Error("PUBLIC_DEPLOYMENT_RESOURCE_BOUNDARY_INVALID");
   assertDeploymentRoots(parsed.data);

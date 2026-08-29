@@ -23,12 +23,20 @@ import {
   type PublicApiFetch
 } from "../features/stories/public-api";
 import {
+  formatTimelineKicker,
+  hasEditorialExtras,
+  isDuplicateEditorialBody,
+  isImageFirstCategory,
+  shouldShowEndOfFeed
+} from "../features/stories/editorial";
+import {
   FeedExperience,
   appendPublicFeedPage,
   formatVisibleStoryCount,
   retainLoadedFeed
 } from "../features/stories/feed-experience";
 import type {
+  PublicBilingualFeedResponseV2,
   PublicContentType,
   PublicFeedItemV1,
   PublicFeedResponseV1,
@@ -98,6 +106,27 @@ const detailResponse: PublicStoryDetailResponseV1 = {
   relatedItems: feedItems.slice(1, 4)
 };
 
+const bilingualFeedResponse: PublicBilingualFeedResponseV2 = {
+  schemaVersion: "public-read-bilingual-v2",
+  items: Array.from({ length: 4 }, (_, index) => ({
+    publicId: `public-bilingual-${index + 1}`,
+    category: contentTypes[index % contentTypes.length],
+    defaultLanguage: "zh-CN",
+    availableLanguages: ["zh-CN", "en"],
+    localized: {
+      "zh-CN": { title: `中文标题 ${index + 1}`, summary: `中文摘要 ${index + 1}`, lead: `中文导语 ${index + 1}`, body: `中文提炼正文 ${index + 1}`, keyPoints: [`中文要点 ${index + 1}`], contentHash: "a".repeat(64) },
+      en: { title: `English title ${index + 1}`, summary: `English summary ${index + 1}`, lead: `English lead ${index + 1}`, body: `English extract body ${index + 1}`, keyPoints: [`English point ${index + 1}`], contentHash: "b".repeat(64) }
+    },
+    source: { name: `Source ${index + 1}`, author: null, publishedAt: `2026-08-2${index + 1}T01:00:00.000Z`, canonicalUrl: `https://example.com/source-${index + 1}` },
+    publishedAt: `2026-08-2${index + 1}T01:00:00.000Z`,
+    updatedAt: `2026-08-2${index + 1}T01:00:01.000Z`,
+    media: []
+  })),
+  page: { limit: 12, nextCursor: null, asOf: "2026-08-25T01:00:00.000Z" },
+  generationId: "generation-public-ui-v2",
+  generationHash: "c".repeat(64)
+};
+
 function problem(status: number, reasonCode: PublicProblemV1["reasonCode"]): PublicProblemV1 {
   return {
     type: "about:blank",
@@ -121,8 +150,8 @@ function integrationFetch(calls: Array<{ input: string; init?: RequestInit }>): 
   return async (input, init) => {
     calls.push({ input, init });
     if (input.startsWith("/api/public/feed")) return jsonResponse(feedResponse);
-    if (input === "/api/public/stories/public-demo-01") return jsonResponse(detailResponse);
-    if (input === "/api/public/stories/public-demo-missing") {
+    if (input === "/api/public/stories/public-demo-01?v=2") return jsonResponse(detailResponse);
+    if (input === "/api/public/stories/public-demo-missing?v=2") {
       return jsonResponse(problem(404, "PUBLIC_STORY_NOT_FOUND"), 404);
     }
     return jsonResponse(problem(500, "PUBLIC_READ_INTEGRITY_FAILED"), 500);
@@ -146,6 +175,19 @@ function contrastRatio(foreground: string, background: string): number {
 }
 
 describe("public frontend API single-source integration", () => {
+  it("maps one signed generation into four rights-aware bilingual cards", async () => {
+    const result = await fetchPublicFeed({ fetchImpl: async () => jsonResponse(bilingualFeedResponse) });
+    expect(result.stories).toHaveLength(4);
+    expect(result.stories.map((story) => story.originalUrl)).toEqual(bilingualFeedResponse.items.map((item) => item.source.canonicalUrl));
+    expect(result.stories.every((story) => story.availableLanguages.join(",") === "zh-CN,en")).toBe(true);
+    expect(result.stories[0]?.localized.en?.title).toBe("English title 1");
+    expect(result.stories[0]?.sourceNotice).toContain("不代表原文或官方翻译");
+    expect(feedSource).toContain("public-language-toggle");
+    expect(detailSource).toContain("public-language-toggle");
+    expect(globalCss).toContain(".lang-pill");
+    expect(feedSource).not.toMatch(/原帖 ↗|前往原文 ↗|原文 ↗/);
+  });
+
   it("loads the closed 12-item feed through a relative no-store request and maps all four categories", async () => {
     const calls: Array<{ input: string; init?: RequestInit }> = [];
     const result = await fetchPublicFeed({ fetchImpl: integrationFetch(calls) });
@@ -157,16 +199,146 @@ describe("public frontend API single-source integration", () => {
     expect(result.stories.filter((story) => story.images.length > 0).every((story) => story.images.length === 1)).toBe(true);
     expect(publicApiSource).not.toContain("PLACEHOLDER_ASPECTS");
     expect(calls).toHaveLength(1);
-    expect(calls[0].input).toBe("/api/public/feed");
+    expect(calls[0].input).toBe("/api/public/feed?v=2&limit=12");
     expect(calls[0].input).not.toMatch(/^https?:|^\/\//);
     expect(calls[0].init).toMatchObject({ method: "GET", cache: "no-store" });
+  });
+
+  it("negotiates synthetic mode to the closed V1 route only on an explicit 406", async () => {
+    const calls: Array<{ input: string; init?: RequestInit }> = [];
+    const unsupportedProblem = problem(406, "PUBLIC_MEDIA_VERSION_UNSUPPORTED");
+    const result = await fetchPublicFeed({
+      contentType: "race_news",
+      fetchImpl: async (input, init) => {
+        calls.push({ input, init });
+        if (input.startsWith("/api/public/feed?v=2")) return jsonResponse(unsupportedProblem, 406);
+        if (input === "/api/public/feed?contentType=race_news") return jsonResponse(feedResponse);
+        throw new Error(`unexpected public fetch ${String(input)}`);
+      }
+    });
+
+    expect(result.stories).toHaveLength(12);
+    expect(result.stories.every((story) => story.localized.en === null)).toBe(true);
+    expect(calls.map((call) => call.input)).toEqual([
+      "/api/public/feed?v=2&limit=12&category=race_news",
+      "/api/public/feed?contentType=race_news"
+    ]);
+  });
+
+  it("keeps a synthetic negotiation failure explicit instead of using a static fallback", async () => {
+    const calls: Array<{ input: string; init?: RequestInit }> = [];
+    const result = await fetchPublicFeed({
+      fetchImpl: async (input, init) => {
+        calls.push({ input, init });
+        if (input === "/api/public/feed?v=2&limit=12") return jsonResponse(problem(406, "PUBLIC_MEDIA_VERSION_UNSUPPORTED"), 406);
+        if (input === "/api/public/feed") return jsonResponse(problem(503, "PUBLIC_PROFILE_UNAVAILABLE"), 503);
+        throw new Error(`unexpected public fetch ${String(input)}`);
+      }
+    }).catch((error: unknown) => error);
+
+    expect(calls.map((call) => call.input)).toEqual(["/api/public/feed?v=2&limit=12", "/api/public/feed"]);
+    expect(result).toBeInstanceOf(PublicApiClientError);
+    if (!(result instanceof PublicApiClientError)) throw new Error("expected a PublicApiClientError");
+    expect(result.status).toBe(503);
+    expect(result.reasonCode).toBe("PUBLIC_PROFILE_UNAVAILABLE");
+  });
+
+  it("renders the signed bilingual v2 payload without a v1 fallback", async () => {
+    const calls: Array<{ input: string; init?: RequestInit }> = [];
+    const result = await fetchPublicFeed({
+      fetchImpl: async (input, init) => {
+        calls.push({ input, init });
+        return jsonResponse(bilingualFeedResponse);
+      }
+    });
+
+    expect(calls.map((call) => call.input)).toEqual(["/api/public/feed?v=2&limit=12"]);
+    expect(result.stories).toHaveLength(4);
+    expect(result.stories[0]?.availableLanguages).toEqual(["zh-CN", "en"]);
+    expect(result.stories[0]?.localized.en?.title).toBe("English title 1");
+  });
+
+  it("falls back to published Chinese v1 only for bilingual v2 integrity failure", async () => {
+    const calls: Array<{ input: string; init?: RequestInit }> = [];
+    const result = await fetchPublicFeed({
+      fetchImpl: async (input, init) => {
+        calls.push({ input, init });
+        if (input === "/api/public/feed?v=2&limit=12") {
+          return jsonResponse(problem(503, "PUBLIC_READ_INTEGRITY_FAILED"), 503);
+        }
+        return jsonResponse(feedResponse);
+      }
+    });
+
+    expect(calls.map((call) => call.input)).toEqual([
+      "/api/public/feed?v=2&limit=12",
+      "/api/public/feed"
+    ]);
+    expect(result.stories).toHaveLength(12);
+    expect(result.page).toEqual({ pageSize: 12, hasMore: false, nextCursor: null });
+    expect(result.stories.every((story) => story.availableLanguages.join(",") === "zh-CN")).toBe(true);
+    expect(result.stories.every((story) => story.localized.en === null)).toBe(true);
+  });
+
+  it("keeps the v1 failure explicit when bilingual v2 integrity fallback also fails", async () => {
+    const calls: Array<{ input: string; init?: RequestInit }> = [];
+    const result = await fetchPublicFeed({
+      fetchImpl: async (input, init) => {
+        calls.push({ input, init });
+        if (input === "/api/public/feed?v=2&limit=12") {
+          return jsonResponse(problem(503, "PUBLIC_READ_INTEGRITY_FAILED"), 503);
+        }
+        return jsonResponse(problem(500, "PUBLIC_DB_BUSY"), 500);
+      }
+    }).catch((error: unknown) => error);
+
+    expect(calls.map((call) => call.input)).toEqual([
+      "/api/public/feed?v=2&limit=12",
+      "/api/public/feed"
+    ]);
+    expect(result).toBeInstanceOf(PublicApiClientError);
+    if (!(result instanceof PublicApiClientError)) throw new Error("expected a PublicApiClientError");
+    expect(result.status).toBe(500);
+    expect(result.reasonCode).toBe("PUBLIC_DB_BUSY");
+  });
+
+  it("does not fall back for other bilingual v2 errors", async () => {
+    const calls: Array<{ input: string; init?: RequestInit }> = [];
+    const result = await fetchPublicFeed({
+      fetchImpl: async (input, init) => {
+        calls.push({ input, init });
+        return jsonResponse(problem(500, "PUBLIC_DB_BUSY"), 500);
+      }
+    }).catch((error: unknown) => error);
+
+    expect(calls.map((call) => call.input)).toEqual(["/api/public/feed?v=2&limit=12"]);
+    expect(result).toBeInstanceOf(PublicApiClientError);
+    if (!(result instanceof PublicApiClientError)) throw new Error("expected a PublicApiClientError");
+    expect(result.status).toBe(500);
+    expect(result.reasonCode).toBe("PUBLIC_DB_BUSY");
+  });
+
+  it("does not fall back for 503 responses with unrelated reason codes", async () => {
+    const calls: Array<{ input: string; init?: RequestInit }> = [];
+    const result = await fetchPublicFeed({
+      fetchImpl: async (input, init) => {
+        calls.push({ input, init });
+        return jsonResponse(problem(503, "PUBLIC_DB_BUSY"), 503);
+      }
+    }).catch((error: unknown) => error);
+
+    expect(calls.map((call) => call.input)).toEqual(["/api/public/feed?v=2&limit=12"]);
+    expect(result).toBeInstanceOf(PublicApiClientError);
+    if (!(result instanceof PublicApiClientError)) throw new Error("expected a PublicApiClientError");
+    expect(result.status).toBe(503);
+    expect(result.reasonCode).toBe("PUBLIC_DB_BUSY");
   });
 
   it("binds category and cursor pairs to the accepted feed query", () => {
     expect(contentTypeForCategory("赛事新闻")).toBe("race_news");
     expect(contentTypeForCategory("名宿历史")).toBe("legends_history");
     expect(contentTypeForCategory("全部")).toBeNull();
-    expect(buildPublicFeedPath({ contentType: "driver_social" })).toBe("/api/public/feed?contentType=driver_social");
+    expect(buildPublicFeedPath({ contentType: "driver_social" })).toBe("/api/public/feed?v=2&limit=12&category=driver_social");
     expect(buildPublicFeedPath({
       contentType: "race_news",
       cursor: { cursorAt: "2026-08-02T12:00:00Z", cursorId: "opaque_cursor" }
@@ -223,7 +395,7 @@ describe("public frontend API single-source integration", () => {
     expect(result.story.keyPoints).toEqual(["关键点一", "关键点二"]);
     expect(result.relatedStories).toHaveLength(3);
     expect(result.relatedStories.every((story) => story.publicId !== result.story.publicId)).toBe(true);
-    expect(calls[0].input).toBe("/api/public/stories/public-demo-01");
+    expect(calls[0].input).toBe("/api/public/stories/public-demo-01?v=2");
     const markup = renderToStaticMarkup(createElement(F1StoryCard, { story: result.story }));
     expect(markup).toContain("原文入口待真实内容接入");
     expect(markup).not.toMatch(/href="https?:/);
@@ -260,6 +432,43 @@ describe("public frontend API single-source integration", () => {
     expect(syntheticMarkup).toContain("public-demo-01");
     expect(syntheticMarkup).toContain("公开合成示意");
     expect(syntheticMarkup).not.toContain('src="https://');
+  });
+
+  it("joins clustered sources on the card and never embeds a tweet iframe", async () => {
+    const clusteredItem: PublicFeedItemV1 = {
+      ...feedItems[0],
+      source: {
+        ...feedItems[0].source,
+        displayName: "Motorsport.com"
+      },
+      originalLink: {
+        enabled: true,
+        url: "https://www.motorsport.com/f1/news/albon-williams/",
+        reason: null
+      },
+      relatedSources: [{
+        publicId: "public-albon-autosport",
+        sourceId: "autosport-f1-news",
+        displayName: "Autosport",
+        originalUrl: "https://www.autosport.com/f1/news/albon-stays/"
+      }]
+    };
+    const result = await fetchPublicFeed({
+      fetchImpl: async () => jsonResponse({
+        ...feedResponse,
+        items: [clusteredItem]
+      })
+    });
+    expect(result.stories[0].sourceName).toBe("Motorsport.com · Autosport");
+    expect(result.stories[0].relatedSources).toEqual([{
+      publicId: "public-albon-autosport",
+      displayName: "Autosport",
+      originalUrl: "https://www.autosport.com/f1/news/albon-stays/"
+    }]);
+    const markup = renderToStaticMarkup(createElement(F1StoryCard, { story: result.stories[0] }));
+    expect(markup).toContain("Motorsport.com · Autosport");
+    expect(feedSource).not.toMatch(/iframe|twitter-wjs|platform\.twitter|syndication\.twitter/);
+    expect(detailSource).not.toMatch(/iframe|twitter-wjs|platform\.twitter|syndication\.twitter/);
   });
 
   it("maps 404 separately and keeps 500 or malformed responses closed with no static fallback", async () => {
@@ -318,7 +527,7 @@ describe("public frontend API single-source integration", () => {
     expect(feedSource).toContain("关闭图片预览");
     expect(feedSource).toContain("handleMediaWheel");
     expect(feedSource).toContain("handleLightboxWheel");
-    expect(feedSource).toContain('block: "center"');
+    expect(feedSource).toContain('block: "start"');
     expect(feedSource).toContain("mediaLockUntilRef");
     expect(feedSource).toContain("event.timeStamp < (mediaSuppressClickUntilRef");
     expect(feedSource).not.toMatch(/mediaSuppressClickUntilRef[\s\S]{0,180}Date\.now/);
@@ -336,6 +545,8 @@ describe("public frontend API single-source integration", () => {
     expect(feedSource).not.toContain('data-id="${openId}"');
     expect(feedSource).toContain("detailRequestedRef.current.delete(openId)");
     expect(feedSource).toContain("detailRequestedRef.current.delete(publicId)");
+    expect(feedSource).not.toContain("if (opened && isImageFirstCategory(opened.category)) return;");
+    expect(feedSource).toContain('className="tl-zh tl-detail-lead">{detailCopy.lead}</p>');
     expect(feedSource).toContain("onClick={() => retryDetail(story.publicId)}");
     expect(feedSource).toMatch(/这条内容已不可用（404）。[\s\S]{0,260}>重试<\/button>/);
     expect(detailSource).toContain('code="404"');
@@ -346,7 +557,7 @@ describe("public frontend API single-source integration", () => {
     expect(shellSource).toContain("queueMicrotask(focusReadingStart)");
     expect(shellSource).toContain("onKeyDown={handleScrollToTopKeyDown}");
     expect(shellSource).toContain('event.key !== "Enter" && event.key !== " "');
-    expect(feedSource).toContain('target?.scrollIntoView({ block: "center", behavior: reducedMotion ? "auto" : "smooth" })');
+    expect(feedSource).toContain('target?.scrollIntoView({ block: "start", behavior: reducedMotion ? "auto" : "smooth" })');
     expect(feedSource).toContain("document.addEventListener(\"click\", handleDocumentClick)");
     expect(feedSource).toContain("isPublicStoryNotFound(error)");
     // 状态矩阵文案与合同 §7 一致
@@ -486,6 +697,8 @@ describe("public frontend API single-source integration", () => {
     expect(finalCss).toMatch(/@media \(max-width: 1100px\)\s*\{[\s\S]*?\.utility-anchor\s*\{[\s\S]*?max-width: 880px;[\s\S]*?max-height: calc\(48px \+ env\(safe-area-inset-bottom, 0px\)\);/);
     expect(finalCss).toMatch(/\.utility-anchor\.is-open\s*\{[\s\S]*?max-height: calc\(440px \+ env\(safe-area-inset-bottom, 0px\)\);/);
     expect(finalCss).toMatch(/@media \(max-width: 1100px\)\s*\{[\s\S]*?scroll-padding-bottom: calc\(72px \+ env\(safe-area-inset-bottom, 0px\)\)/);
+    expect(finalCss).toMatch(/main\.app\s*\{[\s\S]*?height: calc\(100dvh - 128px - env\(safe-area-inset-bottom, 0px\)\);[\s\S]*?overflow-y: auto;/);
+    expect(finalCss).toMatch(/main\.app #tl\s*\{[\s\S]*?padding-bottom: calc\(72px \+ env\(safe-area-inset-bottom, 0px\)\);[\s\S]*?scroll-padding-bottom: calc\(72px \+ env\(safe-area-inset-bottom, 0px\)\);/);
     expect(globalCss).toMatch(/button\s*\{[\s\S]*?padding: 0;[\s\S]*?border: 0;[\s\S]*?background: none;/);
     expect(globalCss).not.toContain(".feed-filters");
     // 状态码 44px display + 触控 44px
@@ -510,10 +723,37 @@ describe("public frontend API single-source integration", () => {
     expect(containerRules).toMatch(/\.tl-time \{ justify-self: start; \}/);
     expect(containerRules).toMatch(/\.ph-main \{ max-width: 100%; max-height: 280px; \}/);
     expect(containerRules).toMatch(/\.ph-thumb \{ width: auto; height: 22px; \}/);
-    expect(containerRules).toMatch(/\.tl-ev \{ flex-wrap: nowrap;/);
+    expect(containerRules).toMatch(/\.tl-ev \{ flex-wrap: wrap;/);
     // @media 兜底与 container 规则同构
     expect(mediaRules).toMatch(/\.ph-main \{ max-width: 100%; max-height: 280px; \}/);
     expect(mediaRules).toMatch(/\.ph-thumb \{ width: auto; height: 22px; \}/);
     expect(shellSource).not.toContain("draft-mark");
+  });
+});
+
+describe("small-publication editorial presentation", () => {
+  it("hides duplicated 中文提炼 and the end-of-feed box on a short live list", () => {
+    expect(isDuplicateEditorialBody("同一段中文摘要", ["同一段中文摘要"])).toBe(true);
+    expect(isDuplicateEditorialBody("导语", ["第一段", "第二段"])).toBe(false);
+    expect(hasEditorialExtras("同一段中文摘要", ["同一段中文摘要"], [])).toBe(false);
+    expect(hasEditorialExtras("同一段中文摘要", ["同一段中文摘要"], ["佩雷斯转会传闻被否认"])).toBe(true);
+    expect(formatTimelineKicker(0)).toBe("F1 中文精选");
+    expect(formatTimelineKicker(1)).toBe("F1 中文精选 · 1 条");
+    expect(shouldShowEndOfFeed(1, false)).toBe(false);
+    expect(shouldShowEndOfFeed(12, false)).toBe(true);
+    expect(isImageFirstCategory("赛事新闻")).toBe(false);
+    expect(isImageFirstCategory("车手社交")).toBe(true);
+    expect(isImageFirstCategory("名宿历史")).toBe(true);
+    expect(isImageFirstCategory("赛场趣事")).toBe(true);
+    expect(feedSource).toContain("isImageFirstCategory(story.category)");
+    expect(feedSource).toContain("imageFirst ? null : media");
+    expect(feedSource).toContain('data-kind={imageFirst ? "image-first" : "event"}');
+    expect(feedSource).toContain("查看原帖");
+    expect(feedSource).not.toMatch(/原帖 ↗|前往原文 ↗/);
+    expect(feedSource).toContain("hasEditorialExtras(detailCopy.lead, detailCopy.body, detailCopy.keyPoints)");
+    expect(feedSource).toContain("shouldShowEndOfFeed(stories.length, page?.hasMore === true)");
+    expect(feedSource).toContain("formatTimelineKicker(stories.length)");
+    expect(detailSource).toContain("hasEditorialExtras(copy.lead, copy.body, copy.keyPoints)");
+    expect(detailSource).not.toContain("信息 + 时间 + 时间线 · 公开详情");
   });
 });

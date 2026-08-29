@@ -1,7 +1,8 @@
 import { generateKeyPairSync, createHash } from "node:crypto";
-import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from "node:fs";
+import { chmodSync, cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
 import { tmpdir } from "node:os";
-import { dirname, join, resolve } from "node:path";
+import { dirname, join, relative, resolve } from "node:path";
 
 import { afterAll, describe, expect, it } from "vitest";
 
@@ -12,8 +13,14 @@ import {
 } from "../../scripts/install-macos-public-beta-core.ts";
 import {
   buildAdminReleaseManifest,
-  canonicalAdminReleaseJson
+  canonicalAdminReleaseJson,
+  adminBuildInputRoot,
+  buildDependencyClosure,
+  deriveAdminBuildInputRecords,
+  normalizeAdminNextBuildPermissions,
+  resolveAdminReleaseGitIdentity
 } from "../server/admin-service/release-manifest.ts";
+import { deriveAdminBuildClosure } from "../server/release/build-closure.ts";
 import {
   publicProjectionDeploymentPaths,
   PUBLIC_PROJECTION_SERVICE_LABEL
@@ -24,9 +31,100 @@ const appRoot = resolve(projectRoot, "app");
 const targetNodePath = "/Users/f1admin/.local/node-v24.18.0-darwin-arm64/bin/node";
 const temporaryRoots: string[] = [];
 
+type CleanReleaseFixture = Readonly<{ root: string; appRoot: string }>;
+
+function runFixtureGit(root: string, args: readonly string[]): void {
+  const result = spawnSync("/usr/bin/git", ["-C", root, ...args], {
+    encoding: "utf8",
+    shell: false,
+    env: {
+      ...process.env,
+      GIT_CONFIG_NOSYSTEM: "1",
+      GIT_CONFIG_GLOBAL: "/dev/null",
+      GIT_AUTHOR_NAME: "Public release test",
+      GIT_AUTHOR_EMAIL: "public-release-test@example.invalid",
+      GIT_COMMITTER_NAME: "Public release test",
+      GIT_COMMITTER_EMAIL: "public-release-test@example.invalid"
+    }
+  });
+  if (result.error || result.status !== 0) throw new Error(result.stderr || "public release fixture git failed");
+}
+
+function makeCleanReleaseFixture(): CleanReleaseFixture {
+  const root = realpathSync(mkdtempSync(join(realpathSync(tmpdir()), "f1-public-release-fixture-")));
+  temporaryRoots.push(root);
+  const cleanAppRoot = join(root, "app");
+  cpSync(appRoot, cleanAppRoot, {
+    recursive: true,
+    filter: (source) => {
+      const relativePath = relative(appRoot, source);
+      return relativePath !== ".env" && relativePath !== ".local" && !relativePath.startsWith(".local/");
+    }
+  });
+  const asset = "data/mvp-contract-v0.6-public-multimedia-pagination-synthetic/runtime-graph.public-multimedia-pagination-synthetic.json";
+  const assetDestination = join(root, asset);
+  mkdirSync(dirname(assetDestination), { recursive: true, mode: 0o700 });
+  cpSync(join(projectRoot, asset), assetDestination);
+  runFixtureGit(root, ["init", "-q"]);
+  writeFileSync(join(root, "parent.txt"), "parent\n", { mode: 0o600 });
+  runFixtureGit(root, ["add", "--", "parent.txt"]);
+  runFixtureGit(root, ["commit", "-qm", "public release fixture parent"]);
+  runFixtureGit(root, ["add", "--", "app", asset]);
+  runFixtureGit(root, ["commit", "-qm", "public release fixture"]);
+  return Object.freeze({ root, appRoot: cleanAppRoot });
+}
+
+const releaseFixtureRoot = makeCleanReleaseFixture();
+normalizeAdminNextBuildPermissions(releaseFixtureRoot.appRoot);
+
 function sha256(bytes: string | Buffer): string {
   return createHash("sha256").update(bytes).digest("hex");
 }
+
+function fixtureBuildProvenance(): Parameters<typeof buildAdminReleaseManifest>[4] {
+  const identity = resolveAdminReleaseGitIdentity(releaseFixtureRoot.appRoot, releaseFixtureRoot.root);
+  const records = deriveAdminBuildInputRecords(releaseFixtureRoot.appRoot, releaseFixtureRoot.root, identity.gitCommit);
+  const closure = deriveAdminBuildClosure(releaseFixtureRoot.appRoot);
+  const environment = { NODE_ENV: "production", NEXT_TELEMETRY_DISABLED: "1", PATH: dirname(process.execPath) };
+  return Object.freeze({
+    schemaVersion: "f1plus1-admin-build-causal-receipt-v1" as const,
+    status: "success" as const,
+    command: "release:build-and-manifest" as const,
+    buildCommand: "next build" as const,
+    nextWasAbsentBeforeBuild: true as const,
+    toolchain: Object.freeze({
+      nodePath: process.execPath,
+      npmPath: resolve(dirname(process.execPath), "npm"),
+      nodeVersion: "24.18.0" as const,
+      nodeSha256: sha256(readFileSync(process.execPath)),
+      npmVersion: "11.16.0" as const,
+      npmLauncherSha256: sha256(readFileSync(resolve(dirname(process.execPath), "npm"))),
+      pathDirectory: dirname(process.execPath),
+      pathDirectoryRootSha256: "0".repeat(64)
+    }),
+    environment: Object.freeze({
+      allowedEnvFiles: closure.allowedEnvFiles,
+      processEnvAllowlist: closure.processEnvAllowlist,
+      valuesSha256: Object.freeze(Object.fromEntries(Object.entries(environment).map(([key, value]) => [key, sha256(value)])))
+    }),
+    buildDependencyClosure: Object.freeze({
+      install: "npm-ci-clean-stage" as const,
+      packageLockSha256: sha256(readFileSync(resolve(releaseFixtureRoot.appRoot, "package-lock.json"))),
+      ...buildDependencyClosure(releaseFixtureRoot.appRoot)
+    }),
+    sealedBuildInputRootSha256: adminBuildInputRoot(records)
+  });
+}
+
+// The release bytes are immutable for this test file. Build them once at module
+// initialization; each test still creates a fresh home, rollback app, key and
+// manifest file so prepare/rollback state never crosses test boundaries.
+const fixtureRelease = Object.freeze((() => {
+  const buildProvenance = fixtureBuildProvenance();
+  const manifest = buildAdminReleaseManifest(releaseFixtureRoot.appRoot, releaseFixtureRoot.root, targetNodePath, process.execPath, buildProvenance);
+  const bytes = `${canonicalAdminReleaseJson(manifest)}\n`;
+  return Object.freeze({ buildProvenance, manifest, bytes, appRoot: releaseFixtureRoot.appRoot, projectRoot: releaseFixtureRoot.root });
+})());
 
 function fixture(): Readonly<{
   home: string;
@@ -45,12 +143,11 @@ function fixture(): Readonly<{
   const keys = generateKeyPairSync("ed25519");
   writeFileSync(verifyKeyPath, keys.publicKey.export({ type: "spki", format: "pem" }), { mode: 0o600 });
   chmodSync(verifyKeyPath, 0o600);
-  const manifest = buildAdminReleaseManifest(appRoot, projectRoot, targetNodePath, process.execPath);
   const manifestRoot = join(home, "release");
   mkdirSync(manifestRoot, { mode: 0o700 });
   chmodSync(manifestRoot, 0o700);
   const manifestPath = join(manifestRoot, "manifest.json");
-  const manifestBytes = `${canonicalAdminReleaseJson(manifest)}\n`;
+  const manifestBytes = fixtureRelease.bytes;
   writeFileSync(manifestPath, manifestBytes, { mode: 0o600 });
   chmodSync(manifestPath, 0o600);
   const rollbackRoot = join(home, "synthetic-rollback-app");
@@ -102,8 +199,8 @@ function prepare(value: ReturnType<typeof fixture>, hooks: Readonly<{
   afterCommit?: (index: number) => void;
 }> = {}) {
   return preparePublicMacAgents({
-    appRoot,
-    projectRoot,
+    appRoot: fixtureRelease.appRoot,
+    projectRoot: fixtureRelease.projectRoot,
     home: value.home,
     nodePath: targetNodePath,
     localNodePath: process.execPath,
@@ -153,14 +250,15 @@ describe("public prepare release anchor and atomic disabled plists", () => {
       expect(plist).toContain("<key>RunAtLoad</key><false/>");
       expect(plist).toContain("<key>KeepAlive</key><false/>");
       expect(plist).not.toContain("launchctl");
-      expect(plist).toContain(appRoot);
+      expect(plist).toContain(fixtureRelease.appRoot);
       expect(plist).not.toContain(value.rollbackRoot);
       expect(existsSync(path)).toBe(true);
     }
     const publicPaths = publicProjectionDeploymentPaths(value.home);
     const manifest = JSON.parse(readFileSync(publicPaths.manifest, "utf8")) as Record<string, unknown>;
-    expect(manifest.schemaVersion).toBe("public-projection-deployment-v2");
-    expect(manifest.targetReleaseAppRoot).toBe(appRoot);
+    expect(manifest.schemaVersion).toBe("public-projection-deployment-v3");
+    expect(manifest.targetReleaseManifestSha256).toBe(value.environment.F1_RELEASE_MANIFEST_SHA256);
+    expect(manifest.targetReleaseAppRoot).toBe(fixtureRelease.appRoot);
     expect(manifest.syntheticRollbackAppRoot).toBe(value.rollbackRoot);
     expect(manifest.publicDataRoot).toBe(publicPaths.root);
     expect(readFileSync(value.livePlists[0], "utf8")).toContain(resolve(publicPaths.root, "logs"));

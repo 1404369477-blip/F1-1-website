@@ -20,6 +20,13 @@ export type PublicOriginalLink =
       reason: null;
     };
 
+export type PublicRelatedSource = {
+  publicId: string;
+  sourceId: string;
+  displayName: string;
+  originalUrl: string | null;
+};
+
 export type PublicFeedItemV1 = {
   publicId: string;
   contentType: PublicContentType;
@@ -51,6 +58,7 @@ export type PublicFeedItemV1 = {
     altZh: string;
   };
   originalLink: PublicOriginalLink;
+  relatedSources?: PublicRelatedSource[];
 };
 
 export type PublicFeedResponseV1 = {
@@ -102,7 +110,71 @@ export type PublicStoryDetailResponseV2 = {
   relatedItems: PublicFeedItemV2[];
 };
 
-export type PublicReadVersion = "public-read-v0.1" | "public-read-v0.2";
+export type PublicBilingualLanguage = "zh-CN" | "en";
+
+export type PublicLocalizedV2 = {
+  title: string;
+  summary: string;
+  lead: string;
+  body: string;
+  keyPoints: string[];
+  contentHash: string;
+};
+
+export type PublicBilingualMediaV2 = {
+  kind: "image";
+  url: string;
+  alt: string;
+  width: number;
+  height: number;
+  rightsPolicyId: string;
+  mediaHash: string;
+};
+
+export type PublicBilingualSourceV2 = {
+  name: string;
+  author: string | null;
+  publishedAt: string | null;
+  canonicalUrl: string;
+};
+
+export type PublicBilingualStoryCardV2 = {
+  publicId: string;
+  category: string;
+  defaultLanguage: "zh-CN";
+  availableLanguages: ["zh-CN", "en"];
+  localized: { "zh-CN": PublicLocalizedV2; en: PublicLocalizedV2 };
+  source: PublicBilingualSourceV2;
+  publishedAt: string;
+  updatedAt: string;
+  media: PublicBilingualMediaV2[];
+};
+
+export type PublicBilingualStoryV2 = PublicBilingualStoryCardV2;
+
+export type PublicPageMetaV2 = {
+  limit: number;
+  nextCursor: string | null;
+  asOf: string;
+};
+
+export type PublicBilingualFeedResponseV2 = {
+  schemaVersion: "public-read-bilingual-v2";
+  items: PublicBilingualStoryCardV2[];
+  page: PublicPageMetaV2;
+  generationId: string;
+  generationHash: string;
+};
+
+export type PublicBilingualStoryDetailResponseV2 = {
+  schemaVersion: "public-read-bilingual-v2";
+  story: PublicBilingualStoryV2;
+  relatedItems: PublicBilingualStoryCardV2[];
+  generationId: string;
+  generationHash: string;
+};
+
+export type PublicReadVersion = "public-read-v0.1" | "public-read-v0.2" | "public-read-bilingual-v2";
 
 export type PublicReasonCodeV1 =
   | "PUBLIC_QUERY_INVALID"
@@ -127,10 +199,10 @@ export type PublicProblemV1 = {
   traceId: string;
 };
 
-export type PublicCursorPayloadV1 = {
-  v: 1;
+export type PublicCursorPayloadV2 = {
+  v: 2;
   publicId: string;
-  publishedAt: string;
+  timelineAt: string;
   source: string | null;
   contentType: PublicContentType | null;
 };
@@ -138,5 +210,8 @@ export type PublicCursorPayloadV1 = {
 export type PublicFeedQuery = {
   source: string | null;
   contentType: PublicContentType | null;
-  cursor: PublicCursorPayloadV1 | null;
+  cursor: PublicCursorPayloadV2 | null;
+  limit?: number;
+  category?: string | null;
+  bilingualCursor?: string | null;
 };

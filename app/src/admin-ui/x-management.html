@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark" data-mobile-view="list">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="F1+1 私有 X 人工信源与投稿管理台。">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; font-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
+  <title>F1+1 · X 人工管理</title>
+  <link rel="stylesheet" href="/admin/assets/app.css">
+  <script defer src="/admin/assets/x-management.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#x-admin-main">跳到管理内容</a>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">F1+1</span>
+      <span class="route" id="route-label">私有 Admin</span>
+    </div>
+    <div class="top-actions">
+      <span class="connection-state" id="connection-state" aria-live="polite">正在检查会话</span>
+      <button class="icon-button" id="theme-toggle" type="button" aria-label="当前深色主题，切换主题">深</button>
+    </div>
+  </header>
+
+  <main id="x-admin-main">
+    <section class="auth-shell" id="auth-view" aria-labelledby="auth-title">
+      <div class="auth-card">
+        <p class="eyebrow">Private operator access</p>
+        <h1 id="auth-title">进入 X 人工管理台</h1>
+        <p class="auth-intro">此入口只处理钉死的 59 个 X 人工信源和单条公开 status URL。不会轮询、搜索或调用 oEmbed。</p>
+        <div class="auth-status" id="auth-status" role="status">
+          <span class="spinner" aria-hidden="true"></span>
+          <div>
+            <strong>正在检查会话</strong>
+            <span>等待同源 Admin 服务响应。</span>
+          </div>
+        </div>
+        <div class="auth-actions" id="auth-actions" hidden>
+          <button class="primary-button" id="login-passkey" type="button">使用通行密钥登录</button>
+          <a class="secondary-button x-link-button" href="/admin/reviews">首次配置请前往审核台</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="x-admin-app" id="app-view" hidden aria-label="X 人工管理工作区">
+      <nav class="x-admin-nav" aria-label="Admin 主要区域">
+        <a href="/admin/reviews">审核</a>
+        <a href="/admin/sources" id="nav-sources">X 信源</a>
+        <a href="/admin/x-submissions" id="nav-submissions">人工投稿</a>
+      </nav>
+
+      <section class="x-admin-list-panel" aria-labelledby="workspace-title">
+        <div class="x-admin-heading">
+          <div>
+            <p class="eyebrow" id="workspace-kicker">Manual X boundary</p>
+            <h1 id="workspace-title">X 信源</h1>
+            <p class="queue-summary" id="workspace-summary">正在读取</p>
+          </div>
+          <button class="icon-button" id="refresh-list" type="button" aria-label="刷新列表">↻</button>
+        </div>
+
+        <form class="x-submit-card" id="submit-form" hidden>
+          <label for="submitted-url">人工提交公开 X status URL</label>
+          <div class="x-submit-row">
+            <input class="text-field" id="submitted-url" name="submitted-url" type="url" inputmode="url" autocomplete="url" placeholder="https://x.com/handle/status/123…" required>
+            <button class="primary-button" id="submit-url" type="submit">提交</button>
+          </div>
+          <p class="field-help">只接受 x.com 或 twitter.com 的公开 status URL；查询参数会在服务端规范化。无 oEmbed、无自动发布。</p>
+          <p class="field-error" id="submit-error" role="alert"></p>
+        </form>
+
+        <div class="x-list-controls">
+          <input class="text-field" id="list-search" type="search" placeholder="搜索 handle、ID 或状态" aria-label="搜索当前列表">
+        </div>
+        <div class="x-list-state" id="list-state" role="status">
+          <span class="spinner" aria-hidden="true"></span>
+          <span>正在载入</span>
+        </div>
+        <ul class="x-admin-list" id="item-list" aria-label="管理对象列表"></ul>
+      </section>
+
+      <section class="x-admin-detail-panel" aria-label="管理对象详情">
+        <button class="mobile-back" id="mobile-back" type="button">← 返回列表</button>
+        <div class="x-detail-state" id="detail-state" role="status">
+          <span class="x-empty-symbol" aria-hidden="true">◇</span>
+          <h2 id="detail-state-title">选择一项查看详情</h2>
+          <p id="detail-state-copy">列表和详情均来自当前私有 Admin 会话。</p>
+          <button class="secondary-button" id="detail-retry" type="button" hidden>重试</button>
+        </div>
+        <article class="x-detail" id="detail-content" hidden>
+          <header class="x-detail-header">
+            <div>
+              <p class="eyebrow" id="detail-kicker">X manual</p>
+              <h2 id="detail-title">详情</h2>
+              <p class="detail-meta" id="detail-meta"></p>
+            </div>
+            <span class="x-status-pill" id="detail-status">—</span>
+          </header>
+          <dl class="x-detail-grid" id="detail-grid"></dl>
+          <section class="x-safety-card" id="safety-card">
+            <strong>Manual-only safety</strong>
+            <span>externalCalls=0 · automaticReview=false · automaticPublish=false</span>
+          </section>
+          <div class="x-detail-actions" id="detail-actions"></div>
+          <div class="operation-status" id="operation-status" hidden role="status"></div>
+        </article>
+      </section>
+    </section>
+  </main>
+
+  <dialog class="confirm-dialog" id="retire-dialog" aria-labelledby="retire-title" aria-describedby="retire-copy">
+    <form method="dialog" id="retire-form">
+      <p class="eyebrow">Fresh confirmation</p>
+      <h2 id="retire-title">确认退役这条人工投稿？</h2>
+      <p id="retire-copy">退役是终态操作，需要再次验证通行密钥。</p>
+      <div class="dialog-summary" id="retire-summary"></div>
+      <label for="retire-reason">原因</label>
+      <select class="text-field" id="retire-reason">
+        <option value="OPERATOR_REQUEST">运营者请求</option>
+        <option value="RETIREMENT">生命周期退役</option>
+      </select>
+      <div class="dialog-actions">
+        <button class="secondary-button" id="retire-cancel" type="button">取消</button>
+        <button class="danger-button" id="retire-confirm" type="submit">验证并退役</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

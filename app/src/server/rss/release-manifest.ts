@@ -9,37 +9,105 @@ import {
 import { isAbsolute, relative, resolve, sep } from "node:path";
 
 import { assertNodeVersion, ConfigError } from "../config/env.ts";
+import { assertRuntimeGitClosure, assertRuntimeLocalClosure, deriveRuntimeLocalClosure, readStableRegularFile } from "../release/local-closure.ts";
 
 export const RSS_RELEASE_MANIFEST_SCHEMA = "rss-real-release-manifest-v1" as const;
 export const RSS_RELEASE_MANIFEST_PATH = ".local/release/rss-real-release-manifest.json" as const;
 
 export const RSS_RELEASE_RUNTIME_FILES = [
   "migrations/rss-real/0001_rss_real.sql",
+  "migrations/rss-real/0002_admin_review_publish.sql",
+  "migrations/rss-real/0003_projection_delivery_runtime.sql",
+  "migrations/rss-real/0004_rss_media_and_chinese_refinement.sql",
+  "migrations/rss-real/0005_second_rss_autosport.sql",
+  "migrations/rss-real/0006_independent_rss_racefans_the_race.sql",
   "package-lock.json",
   "package.json",
   "scripts/rss-build-release-manifest.ts",
   "scripts/rss-collect-once.ts",
+  "scripts/rss-refine-once.ts",
   "scripts/rss-control.ts",
   "scripts/rss-install-macos.ts",
   "scripts/rss-scheduled-run.ts",
   "src/server/config/env.ts",
+  "src/server/admin-service/auth.ts",
+  "src/server/admin-service/deployment.ts",
+  "src/server/admin-service/runtime.ts",
+  "src/server/admin-service/server.ts",
+  "src/server/admin-service/storage.ts",
+  "src/server/admin-service/webauthn.ts",
   "src/server/db/database.ts",
+  "src/server/db/profile.ts",
+  "src/server/providers/source-fixture.ts",
+  "src/server/release/local-closure.ts",
+  "src/server/review-real/backend.ts",
+  "src/server/review-real/error.ts",
+  "src/server/review-real/mapping.ts",
+  "src/server/review-real/migration.ts",
+  "src/server/review-real/projection.ts",
+  "src/server/review-real/repository.ts",
+  "src/server/review-real/routes.ts",
+  "src/server/review-real/schema.ts",
+  "src/server/review-real/security.ts",
+  "src/server/review-real/sender.ts",
+  "src/server/rss/article-batch.ts",
   "src/server/rss/deployment.ts",
   "src/server/rss/parser.ts",
   "src/server/rss/release-manifest.ts",
   "src/server/rss/repository.ts",
+  "src/server/rss/refinement.ts",
+  "src/server/rss/sources.ts",
   "src/server/rss/transport.ts",
   "src/server/rss/types.ts",
   "src/server/runtime-config.ts",
   "src/server/security/cli.ts",
-  "src/server/security/log.ts"
+  "src/server/security/log.ts",
+  "src/server/source-management/security.ts",
+  "src/server/source-management/types.ts",
+  "tsconfig.json"
 ] as const;
+
+if (new Set(RSS_RELEASE_RUNTIME_FILES).size !== RSS_RELEASE_RUNTIME_FILES.length) {
+  throw new ConfigError("RELEASE_IDENTITY", "runtime file closure contains duplicate paths");
+}
+
+export const RSS_RUNTIME_CLOSURE_SPEC = Object.freeze({
+  entrypoints: Object.freeze([
+    "scripts/rss-build-release-manifest.ts",
+    "scripts/rss-collect-once.ts",
+    "scripts/rss-control.ts",
+    "scripts/rss-install-macos.ts",
+    "scripts/rss-refine-once.ts",
+    "scripts/rss-scheduled-run.ts"
+  ]),
+  requiredFiles: Object.freeze([
+    "src/server/rss/sources.ts",
+    "src/server/review-real/migration.ts",
+    "src/server/admin-service/runtime.ts",
+    "tsconfig.json",
+    "package.json",
+    "package-lock.json"
+  ]),
+  migrations: Object.freeze([
+    "migrations/rss-real/0001_rss_real.sql",
+    "migrations/rss-real/0002_admin_review_publish.sql",
+    "migrations/rss-real/0003_projection_delivery_runtime.sql",
+    "migrations/rss-real/0004_rss_media_and_chinese_refinement.sql",
+    "migrations/rss-real/0005_second_rss_autosport.sql",
+    "migrations/rss-real/0006_independent_rss_racefans_the_race.sql"
+  ])
+});
 
 type FileRecord = Readonly<{
   path: string;
   mode: number;
   size: number;
   sha256: string;
+}>;
+
+type RuntimeClosureRecord = Readonly<{
+  generator: "build-time-typescript-ast-v1";
+  filesSha256: string;
 }>;
 
 type DependencyRecord = Readonly<{
@@ -50,12 +118,19 @@ type DependencyRecord = Readonly<{
   contentRootSha256: string;
 }>;
 
+export const RSS_PRODUCTION_DEPENDENCY_ROOTS = [
+  "@simplewebauthn/server",
+  "fast-xml-parser",
+  "zod"
+] as const;
+
 export type RssReleaseManifest = Readonly<{
   schemaVersion: typeof RSS_RELEASE_MANIFEST_SCHEMA;
   gitCommit: string;
   runtimeFiles: readonly FileRecord[];
+  runtimeClosure: RuntimeClosureRecord;
   productionDependencies: Readonly<{
-    root: "fast-xml-parser";
+    roots: typeof RSS_PRODUCTION_DEPENDENCY_ROOTS;
     packages: readonly DependencyRecord[];
     contentRootSha256: string;
   }>;
@@ -95,20 +170,41 @@ function currentUid(): number {
 }
 
 function fileRecord(root: string, path: string): FileRecord {
-  const absolute = resolve(root, path);
-  const stat = lstatSync(absolute);
-  if (
-    !stat.isFile() || stat.isSymbolicLink() || stat.nlink !== 1 || stat.uid !== currentUid() ||
-    (stat.mode & 0o022) !== 0 || realpathSync(absolute) !== absolute
-  ) {
-    throw new ConfigError("RELEASE_IDENTITY", `${path} is not an owner-controlled single-link release file`);
-  }
-  const bytes = readFileSync(absolute);
-  return { path, mode: stat.mode & 0o777, size: stat.size, sha256: sha256(bytes) };
+  const snapshot = readStableRegularFile(root, path);
+  return { path, mode: snapshot.mode, size: snapshot.size, sha256: sha256(snapshot.bytes) };
 }
 
-function runtimeFiles(appRoot: string): readonly FileRecord[] {
-  return RSS_RELEASE_RUNTIME_FILES.map((path) => fileRecord(appRoot, path));
+function buildRuntimeFiles(appRoot: string): readonly FileRecord[] {
+  const expected = deriveRuntimeLocalClosure(appRoot, RSS_RUNTIME_CLOSURE_SPEC);
+  const paths = [...new Set([...RSS_RELEASE_RUNTIME_FILES, ...expected])].sort();
+  assertRuntimeLocalClosure(appRoot, paths, RSS_RUNTIME_CLOSURE_SPEC);
+  return paths.map((path) => fileRecord(appRoot, path));
+}
+
+function runtimeClosureRecord(runtime: readonly FileRecord[]): RuntimeClosureRecord {
+  return Object.freeze({
+    generator: "build-time-typescript-ast-v1",
+    filesSha256: sha256(canonicalReleaseJson(runtime))
+  });
+}
+
+function verifyRecordedRuntimeFiles(appRoot: string, records: readonly FileRecord[]): readonly FileRecord[] {
+  const paths = records.map((entry) => entry.path);
+  if (new Set(paths).size !== paths.length || paths.some((path, index) => index > 0 && paths[index - 1] >= path)) {
+    throw new ConfigError("RELEASE_MANIFEST", "RSS runtime closure paths are not unique and sorted");
+  }
+  const recorded = new Set(paths);
+  const missingRequired = RSS_RELEASE_RUNTIME_FILES.filter((path) => !recorded.has(path));
+  if (missingRequired.length > 0) {
+    throw new ConfigError("RELEASE_MANIFEST", `recorded RSS runtime closure omits required files: ${missingRequired.join(",")}`);
+  }
+  return Object.freeze(records.map((record) => {
+    const actual = fileRecord(appRoot, record.path);
+    if (canonicalReleaseJson(actual) !== canonicalReleaseJson(record)) {
+      throw new ConfigError("RELEASE_MANIFEST", `RSS runtime file changed: ${record.path}`);
+    }
+    return record;
+  }));
 }
 
 function dependencyFiles(packageRoot: string): readonly FileRecord[] {
@@ -143,6 +239,7 @@ type LockPackage = Readonly<{
   version?: unknown;
   integrity?: unknown;
   dependencies?: Record<string, unknown>;
+  optionalDependencies?: Record<string, unknown>;
 }>;
 
 function productionDependencies(appRoot: string): RssReleaseManifest["productionDependencies"] {
@@ -159,8 +256,9 @@ function productionDependencies(appRoot: string): RssReleaseManifest["production
     }
     names.add(name);
     for (const dependency of Object.keys(entry.dependencies ?? {}).sort()) visit(dependency);
+    for (const dependency of Object.keys(entry.optionalDependencies ?? {}).sort()) visit(dependency);
   };
-  visit("fast-xml-parser");
+  for (const root of RSS_PRODUCTION_DEPENDENCY_ROOTS) visit(root);
   const packages = [...names].sort().map((name): DependencyRecord => {
     const entry = lock.packages?.[`node_modules/${name}`];
     if (!entry || typeof entry.version !== "string" || typeof entry.integrity !== "string") {
@@ -176,7 +274,7 @@ function productionDependencies(appRoot: string): RssReleaseManifest["production
     };
   });
   return {
-    root: "fast-xml-parser",
+    roots: RSS_PRODUCTION_DEPENDENCY_ROOTS,
     packages,
     contentRootSha256: sha256(canonicalReleaseJson(packages.map(({ files: _files, ...identity }) => identity)))
   };
@@ -185,7 +283,10 @@ function productionDependencies(appRoot: string): RssReleaseManifest["production
 function assertTargetNodePath(value: string): void {
   if (
     !isAbsolute(value) || value.includes("\0") ||
-    !value.endsWith("/.local/node-v24.18.0-darwin-arm64/bin/node")
+    !(
+      value.endsWith("/.local/node-v24.18.0-darwin-arm64/bin/node") ||
+      value.endsWith("/.local/toolchains/node-v24.18.0-darwin-arm64/bin/node")
+    )
   ) {
     throw new ConfigError("RELEASE_NODE", "target Node path must be the fixed absolute Node 24 arm64 path");
   }
@@ -194,11 +295,13 @@ function assertTargetNodePath(value: string): void {
 function roots(input: Readonly<{
   gitCommit: string;
   runtimeFiles: readonly FileRecord[];
+  runtimeClosure: RuntimeClosureRecord;
   productionDependencies: RssReleaseManifest["productionDependencies"];
   node: RssReleaseManifest["node"];
 }>): Readonly<{ contentRootSha256: string; releaseSha256: string }> {
   const contentRootSha256 = sha256(canonicalReleaseJson({
     runtimeFiles: input.runtimeFiles,
+    runtimeClosure: input.runtimeClosure,
     productionDependencies: input.productionDependencies,
     node: input.node
   }));
@@ -219,7 +322,11 @@ function gitOutput(projectRoot: string, arguments_: readonly string[]): string {
 }
 
 function cleanGitCommit(appRoot: string, projectRoot: string): string {
-  const gitPaths = RSS_RELEASE_RUNTIME_FILES.map((path) => `app/${path}`);
+  const expectedClosure = deriveRuntimeLocalClosure(appRoot, RSS_RUNTIME_CLOSURE_SPEC);
+  assertRuntimeGitClosure(projectRoot, [...new Set([...RSS_RELEASE_RUNTIME_FILES, ...expectedClosure])]);
+  const gitPaths = [...new Set([...RSS_RELEASE_RUNTIME_FILES, ...expectedClosure])]
+    .sort()
+    .map((path) => `app/${path}`);
   const commit = gitOutput(projectRoot, ["rev-parse", "--verify", "HEAD"]);
   if (!/^[0-9a-f]{40}$/.test(commit)) throw new ConfigError("RELEASE_GIT", "Git HEAD is not one exact commit");
   gitOutput(projectRoot, ["ls-files", "--error-unmatch", "--", ...gitPaths]);
@@ -240,10 +347,18 @@ export function buildRssReleaseManifest(appRoot: string, projectRoot: string, ta
     version: "24.18.0" as const,
     sha256: sha256(readFileSync(process.execPath))
   };
+  const gitCommit = cleanGitCommit(appRoot, projectRoot);
+  const runtime = buildRuntimeFiles(appRoot);
+  const runtimeClosure = runtimeClosureRecord(runtime);
+  const dependencies = productionDependencies(appRoot);
+  if (cleanGitCommit(appRoot, projectRoot) !== gitCommit) {
+    throw new ConfigError("RELEASE_GIT", "Git commit changed while RSS release manifest was being assembled");
+  }
   const input = {
-    gitCommit: cleanGitCommit(appRoot, projectRoot),
-    runtimeFiles: runtimeFiles(appRoot),
-    productionDependencies: productionDependencies(appRoot),
+    gitCommit,
+    runtimeFiles: runtime,
+    runtimeClosure,
+    productionDependencies: dependencies,
     node
   };
   return { schemaVersion: RSS_RELEASE_MANIFEST_SCHEMA, ...input, ...roots(input) };
@@ -283,15 +398,26 @@ export function readVerifiedRssReleaseManifest(
   if (
     candidate.schemaVersion !== RSS_RELEASE_MANIFEST_SCHEMA ||
     typeof candidate.gitCommit !== "string" || !/^[0-9a-f]{40}$/.test(candidate.gitCommit) ||
+    !Array.isArray(candidate.runtimeFiles) ||
     !node || node.targetPath !== process.execPath || node.version !== "24.18.0" ||
     node.sha256 !== sha256(readFileSync(process.execPath))
   ) {
     throw new ConfigError("RELEASE_MANIFEST", "release manifest Node or commit identity is invalid");
   }
   assertTargetNodePath(node.targetPath);
+  const runtime = verifyRecordedRuntimeFiles(appRoot, candidate.runtimeFiles);
+  const runtimeClosure = candidate.runtimeClosure;
+  if (
+    !runtimeClosure ||
+    runtimeClosure.generator !== "build-time-typescript-ast-v1" ||
+    runtimeClosure.filesSha256 !== sha256(canonicalReleaseJson(runtime))
+  ) {
+    throw new ConfigError("RELEASE_MANIFEST", "RSS static runtime closure receipt is invalid");
+  }
   const input = {
     gitCommit: candidate.gitCommit,
-    runtimeFiles: runtimeFiles(appRoot),
+    runtimeFiles: runtime,
+    runtimeClosure,
     productionDependencies: productionDependencies(appRoot),
     node
   };

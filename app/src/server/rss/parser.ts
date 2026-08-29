@@ -3,8 +3,8 @@ import { createHash } from "node:crypto";
 import { XMLParser } from "fast-xml-parser";
 
 import {
-  RSS_FEED_HOST,
   RSS_MAX_FIELD_BYTES,
+  RSS_MAX_HTML_BYTES,
   RSS_MAX_IMAGE_BYTES,
   RSS_MAX_ITEMS,
   RSS_MAX_RESPONSE_BYTES,
@@ -14,6 +14,13 @@ import {
   type RssItem,
   type RssSourceImage
 } from "./types.ts";
+import {
+  LIVE_RSS_SOURCES,
+  MOTORSPORT_SOURCE_ID,
+  isLiveRssMediaUrl,
+  liveRssSource,
+  type LiveRssSource
+} from "./sources.ts";
 
 type JsonRecord = Record<string, unknown>;
 
@@ -110,7 +117,7 @@ function sanitizedField(
   return assertField(plainText(raw), reasonCode, allowEmpty);
 }
 
-function canonicalArticleUrl(rawValue: string): string {
+function canonicalArticleUrl(rawValue: string, source: LiveRssSource): string {
   const raw = assertField(rawValue.trim(), "ITEM_IDENTITY_INVALID");
   let url: URL;
   try {
@@ -120,7 +127,7 @@ function canonicalArticleUrl(rawValue: string): string {
   }
   if (
     url.protocol !== "https:" ||
-    url.hostname !== RSS_FEED_HOST ||
+    url.hostname !== source.articleHost ||
     (url.port !== "" && url.port !== "443") ||
     url.username !== "" ||
     url.password !== ""
@@ -131,7 +138,87 @@ function canonicalArticleUrl(rawValue: string): string {
   return assertField(url.toString(), "ITEM_IDENTITY_INVALID");
 }
 
-function sourceImageFromEntry(entry: JsonRecord): RssSourceImage | null {
+const ALLOWED_IMAGE_MIME = ["image/jpeg", "image/png", "image/webp", "image/avif"] as const;
+
+function mimeFromPathname(pathname: string): RssSourceImage["mimeType"] | null {
+  const lower = pathname.toLowerCase();
+  if (lower.endsWith(".jpg") || lower.endsWith(".jpeg")) return "image/jpeg";
+  if (lower.endsWith(".png")) return "image/png";
+  if (lower.endsWith(".webp")) return "image/webp";
+  if (lower.endsWith(".avif")) return "image/avif";
+  return null;
+}
+
+function imageMimeFromCandidate(record: JsonRecord, pathname: string): RssSourceImage["mimeType"] | null {
+  const rawType = typeof record["@_type"] === "string" ? record["@_type"].trim().toLowerCase() : "";
+  if ((ALLOWED_IMAGE_MIME as readonly string[]).includes(rawType)) {
+    return rawType as RssSourceImage["mimeType"];
+  }
+  const medium = typeof record["@_medium"] === "string" ? record["@_medium"].trim().toLowerCase() : "";
+  if (medium !== "image") return null;
+  return mimeFromPathname(pathname);
+}
+
+function declaredBytesFromCandidate(record: JsonRecord): number | null {
+  const rawLength = typeof record["@_length"] === "string" || typeof record["@_length"] === "number"
+    ? String(record["@_length"]).trim()
+    : "";
+  if (rawLength === "") return 1;
+  const declaredBytes = Number(rawLength);
+  if (!Number.isSafeInteger(declaredBytes) || declaredBytes < 1) return 1;
+  if (declaredBytes > RSS_MAX_IMAGE_BYTES) return null;
+  return declaredBytes;
+}
+
+function htmlMetaAttribute(tag: string, name: string): string | null {
+  const pattern = new RegExp(`${name}\\s*=\\s*("([^"]*)"|'([^']*)')`, "i");
+  const match = pattern.exec(tag);
+  if (!match) return null;
+  return decodeSafeEntities(match[2] ?? match[3] ?? "").trim();
+}
+
+export function ogImageFromHtml(html: string, source: LiveRssSource): RssSourceImage | null {
+  if (Buffer.byteLength(html, "utf8") > RSS_MAX_HTML_BYTES) return null;
+  const tags = html.match(/<meta\b[^>]*>/gi) ?? [];
+  for (const tag of tags) {
+    const property = (htmlMetaAttribute(tag, "property") ?? htmlMetaAttribute(tag, "name") ?? "").toLowerCase();
+    if (property !== "og:image") continue;
+    const content = htmlMetaAttribute(tag, "content");
+    if (content === null || content === "") continue;
+    try {
+      const url = new URL(content);
+      if (
+        !source.mediaHostPattern.test(url.hostname) ||
+        !isLiveRssMediaUrl(url.toString())
+      ) continue;
+      const mimeType = mimeFromPathname(url.pathname);
+      if (mimeType === null) continue;
+      return {
+        url: assertField(url.toString(), "ITEM_FIELD_INVALID"),
+        mimeType,
+        declaredBytes: 1
+      };
+    } catch {
+      continue;
+    }
+  }
+  return null;
+}
+
+export function rssItemWithMedia(item: RssItem, media: RssSourceImage | null): RssItem {
+  const machineFields = {
+    externalId: item.externalId,
+    canonicalUrl: item.canonicalUrl,
+    title: item.title,
+    excerpt: item.excerpt,
+    author: item.author,
+    publishedAt: item.publishedAt,
+    media
+  };
+  return { ...machineFields, sourcePayloadHash: payloadHash(machineFields) };
+}
+
+function sourceImageFromEntry(entry: JsonRecord, source: LiveRssSource): RssSourceImage | null {
   const candidates = [
     ...valuesByLocalName(entry, "enclosure"),
     ...valuesByLocalName(entry, "content")
@@ -144,18 +231,17 @@ function sourceImageFromEntry(entry: JsonRecord): RssSourceImage | null {
       : typeof record["@_href"] === "string"
         ? record["@_href"]
         : "";
-    const rawType = typeof record["@_type"] === "string" ? record["@_type"].trim().toLowerCase() : "";
-    const rawLength = typeof record["@_length"] === "string" || typeof record["@_length"] === "number"
-      ? String(record["@_length"])
-      : "";
-    if (!rawUrl || !["image/jpeg", "image/png", "image/webp", "image/avif"].includes(rawType)) continue;
-    const declaredBytes = Number(rawLength);
-    if (!Number.isSafeInteger(declaredBytes) || declaredBytes < 1 || declaredBytes > RSS_MAX_IMAGE_BYTES) continue;
+    if (!rawUrl) continue;
     try {
       const url = new URL(rawUrl.trim());
+      const mimeType = imageMimeFromCandidate(record, url.pathname);
+      const declaredBytes = declaredBytesFromCandidate(record);
       if (
+        mimeType === null ||
+        declaredBytes === null ||
         url.protocol !== "https:" ||
-        !/^cdn-[0-9]+\.motorsport\.com$/.test(url.hostname) ||
+        !source.mediaHostPattern.test(url.hostname) ||
+        !isLiveRssMediaUrl(url.toString()) ||
         (url.port !== "" && url.port !== "443") ||
         url.username !== "" ||
         url.password !== "" ||
@@ -163,7 +249,7 @@ function sourceImageFromEntry(entry: JsonRecord): RssSourceImage | null {
       ) continue;
       return {
         url: assertField(url.toString(), "ITEM_FIELD_INVALID"),
-        mimeType: rawType as RssSourceImage["mimeType"],
+        mimeType,
         declaredBytes
       };
     } catch {
@@ -211,8 +297,8 @@ function payloadHash(item: Omit<RssItem, "sourcePayloadHash">): string {
   return createHash("sha256").update(payload, "utf8").digest("hex");
 }
 
-function parseItem(entry: JsonRecord): RssItem {
-  const canonicalUrl = canonicalArticleUrl(linkFromEntry(entry));
+function parseItem(entry: JsonRecord, source: LiveRssSource): RssItem {
+  const canonicalUrl = canonicalArticleUrl(linkFromEntry(entry), source);
   const identityValue = firstValue(entry, ["guid", "id"]);
   const identityText = sanitizedField(identityValue, "ITEM_IDENTITY_INVALID", true);
   const externalId = assertField(identityText === "" ? canonicalUrl : identityText, "ITEM_IDENTITY_INVALID");
@@ -224,7 +310,7 @@ function parseItem(entry: JsonRecord): RssItem {
   const publishedMillis = Date.parse(publishedText);
   if (publishedText === "" || !Number.isFinite(publishedMillis)) throw new RssError("ITEM_TIME_INVALID");
   const publishedAt = new Date(publishedMillis).toISOString();
-  const media = sourceImageFromEntry(entry);
+  const media = sourceImageFromEntry(entry, source);
   const machineFields = { externalId, canonicalUrl, title, excerpt, author, publishedAt, media };
   return { ...machineFields, sourcePayloadHash: payloadHash(machineFields) };
 }
@@ -273,7 +359,10 @@ function feedEntries(parsed: unknown): JsonRecord[] {
   throw new RssError("XML_PARSE_REJECTED");
 }
 
-export function parseRssFeed(body: Uint8Array): ParsedRssFeed {
+export function parseRssFeed(
+  body: Uint8Array,
+  sourceId: keyof typeof LIVE_RSS_SOURCES = MOTORSPORT_SOURCE_ID
+): ParsedRssFeed {
   if (body.byteLength > RSS_MAX_RESPONSE_BYTES) throw new RssError("RESPONSE_TOO_LARGE");
   let xml: string;
   try {
@@ -311,7 +400,8 @@ export function parseRssFeed(body: Uint8Array): ParsedRssFeed {
   countXmlNodes(parsed);
   const entries = feedEntries(parsed);
   if (entries.length > RSS_MAX_ITEMS) throw new RssError("ITEM_LIMIT");
-  const items = entries.map(parseItem).sort((left, right) => {
+  const source = liveRssSource(sourceId);
+  const items = entries.map((entry) => parseItem(entry, source)).sort((left, right) => {
     const timeOrder = Date.parse(right.publishedAt) - Date.parse(left.publishedAt);
     return timeOrder === 0 ? compareCodePoints(left.externalId, right.externalId) : timeOrder;
   });

@@ -1,4 +1,10 @@
-import { mkdirSync, mkdtempSync, rmSync } from "node:fs";
+import { Buffer } from "node:buffer";
+import {
+  mkdirSync,
+  mkdtempSync,
+  rmSync,
+  realpathSync
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -12,6 +18,7 @@ import { seedSourceFixture } from "../server/db/source";
 import { encodePublicCursor } from "../server/public/cursor";
 import { handlePublicFeed, handlePublicStory, publicProblem } from "../server/public/http";
 import { PublicStoryRepository } from "../server/public/repository";
+import { comparePublicTimelineDescending, publicTimelineAt } from "../server/public/timeline";
 import type { PublicContentType, PublicFeedResponseV1, PublicProblemV1, PublicStoryDetailResponseV1 } from "../server/public/types";
 
 const appRoot = resolve(fileURLToPath(new URL(".", import.meta.url)), "../..");
@@ -54,7 +61,7 @@ type Runtime = {
 };
 
 function publicRuntime(): Runtime {
-  const root = mkdtempSync(join(tmpdir(), "f1plus1-public-api-"));
+  const root = mkdtempSync(join(realpathSync(tmpdir()), "f1plus1-public-api-"));
   mkdirSync(root, { mode: 0o700, recursive: true });
   const profile = config("public-synthetic");
   const database = openSafeDatabase(join(root, "f1plus1-public-synthetic.sqlite"), { appRoot: root, allowTestRoot: root });
@@ -115,9 +122,7 @@ describe("public feed and detail API v0.1", () => {
       expect(body.page).toEqual({ pageSize: 12, hasMore: false, nextCursor: null });
       expect(new Set(body.items.map((item) => item.publicId)).size).toBe(12);
       expect(body.items.every((item) => item.publicId.startsWith("public-demo-"))).toBe(true);
-      expect(body.items).toEqual([...body.items].sort((left, right) =>
-        right.publishedAt.localeCompare(left.publishedAt) || right.publicId.localeCompare(left.publicId)
-      ));
+      expect(body.items).toEqual([...body.items].sort(comparePublicTimelineDescending));
 
       const itemKeys = ["publicId", "contentType", "state", "titleZh", "summaryZh", "publishedAt", "sourcePublishedAt", "sourceTimeStatus", "source", "media", "originalLink"];
       for (const item of body.items) {
@@ -133,25 +138,40 @@ describe("public feed and detail API v0.1", () => {
       expect((await json<PublicFeedResponseV1>(handlePublicFeed(feedRequest("?source=src-missing"), runtime.repository))).items).toHaveLength(0);
 
       const first = body.items[0];
-      const cursorId = encodePublicCursor({ v: 1, publicId: first.publicId, publishedAt: first.publishedAt, source: null, contentType: null });
+      const firstTimelineAt = publicTimelineAt(first);
+      const cursorId = encodePublicCursor({ v: 2, publicId: first.publicId, timelineAt: firstTimelineAt, source: null, contentType: null });
       const continued = await json<PublicFeedResponseV1>(handlePublicFeed(
-        feedRequest(`?cursorAt=${encodeURIComponent(first.publishedAt)}&cursorId=${cursorId}`),
+        feedRequest(`?cursorAt=${encodeURIComponent(firstTimelineAt)}&cursorId=${cursorId}`),
         runtime.repository
       ));
       expect(continued.items).toHaveLength(11);
       expect(continued.items.some((item) => item.publicId === first.publicId)).toBe(false);
       const scopeMismatch = handlePublicFeed(
-        feedRequest(`?source=src-active&cursorAt=${encodeURIComponent(first.publishedAt)}&cursorId=${cursorId}`),
+        feedRequest(`?source=src-active&cursorAt=${encodeURIComponent(firstTimelineAt)}&cursorId=${cursorId}`),
         runtime.repository
       );
       expect(scopeMismatch.status).toBe(400);
       expect((await json<PublicProblemV1>(scopeMismatch)).reasonCode).toBe("PUBLIC_CURSOR_SCOPE_MISMATCH");
-      const unknownCursor = encodePublicCursor({ v: 1, publicId: "public-demo-missing", publishedAt: first.publishedAt, source: null, contentType: null });
+      const unknownCursor = encodePublicCursor({ v: 2, publicId: "public-demo-missing", timelineAt: firstTimelineAt, source: null, contentType: null });
       const unknownTarget = handlePublicFeed(
-        feedRequest(`?cursorAt=${encodeURIComponent(first.publishedAt)}&cursorId=${unknownCursor}`),
+        feedRequest(`?cursorAt=${encodeURIComponent(firstTimelineAt)}&cursorId=${unknownCursor}`),
         runtime.repository
       );
       expect((await json<PublicProblemV1>(unknownTarget)).reasonCode).toBe("PUBLIC_CURSOR_INVALID");
+
+      const legacyV1 = Buffer.from(JSON.stringify({
+        contentType: null,
+        publicId: first.publicId,
+        publishedAt: first.publishedAt,
+        source: null,
+        v: 1
+      }), "utf8").toString("base64url");
+      const legacyResponse = handlePublicFeed(
+        feedRequest(`?cursorAt=${encodeURIComponent(first.publishedAt)}&cursorId=${legacyV1}`),
+        runtime.repository
+      );
+      expect(legacyResponse.status).toBe(400);
+      expect((await json<PublicProblemV1>(legacyResponse)).reasonCode).toBe("PUBLIC_CURSOR_INVALID");
     } finally {
       runtime.cleanup();
     }
@@ -244,7 +264,7 @@ describe("public feed and detail API v0.1", () => {
   });
 
   it("rejects m3-shadow public reads and exposes the bounded busy Problem header", async () => {
-    const root = mkdtempSync(join(tmpdir(), "f1plus1-public-api-m3-"));
+    const root = mkdtempSync(join(realpathSync(tmpdir()), "f1plus1-public-api-m3-"));
     const m3Config = config("m3-shadow");
     const database = openSafeDatabase(join(root, "f1plus1.sqlite"), { appRoot: root, allowTestRoot: root });
     try {

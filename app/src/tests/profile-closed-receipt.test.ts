@@ -13,7 +13,8 @@ import {
   rmSync,
   symlinkSync,
   unlinkSync,
-  writeFileSync
+  writeFileSync,
+  realpathSync
 } from "node:fs";
 import { createHash } from "node:crypto";
 import { spawnSync } from "node:child_process";
@@ -46,7 +47,7 @@ const canonicalProjectRoot = resolve(canonicalAppRoot, "..");
 const temporaryRoots: string[] = [];
 
 function tempProject(prefix: string): { appRoot: string; projectRoot: string } {
-  const projectRoot = mkdtempSync(join(tmpdir(), prefix));
+  const projectRoot = mkdtempSync(join(realpathSync(tmpdir()), prefix));
   const appRoot = join(projectRoot, "app");
   mkdirSync(join(appRoot, ".local"), { recursive: true, mode: 0o700 });
   temporaryRoots.push(projectRoot);
@@ -379,7 +380,7 @@ describe("profile-scoped closed receipts", () => {
     preparePinnedWorkspace(roots);
     createPublicDatabase(roots);
 
-    const isolated = mkdtempSync(join(tmpdir(), "f1plus1-attach-"));
+    const isolated = mkdtempSync(join(realpathSync(tmpdir()), "f1plus1-attach-"));
     temporaryRoots.push(isolated);
     const database = openSafeDatabase(join(isolated, "state.sqlite"), { appRoot: isolated, allowTestRoot: isolated });
     try {

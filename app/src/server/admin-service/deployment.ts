@@ -25,6 +25,9 @@ import { z } from "zod";
 
 import { canonicalJson } from "../db/profile.ts";
 import { inspectExistingPrivateDatabase } from "../db/database.ts";
+import { loadReleaseRuntimeGate } from "../internal-operation/release.ts";
+import { SOURCE_REGISTRY_SCHEMA10_SHA256 } from "../rss/source-registry-migration.ts";
+import { readVerifiedAdminReleaseManifest } from "./release-manifest.ts";
 import { assertPrivateDirectory, assertPrivateFile, BootstrapTokenStore } from "./storage.ts";
 import { ADMIN_BIND_HOST, ADMIN_BIND_PORT } from "./server.ts";
 
@@ -38,6 +41,7 @@ export const PublicReadModeSchema = z.enum([
   "public-multimedia-synthetic",
   "public-real-snapshot"
 ]);
+export const AdminReleaseRoleSchema = z.enum(["full_v10", "manual_only_fallback_v10"]);
 
 const DeploymentIdentitySchema = z.string()
   .min(1)
@@ -101,9 +105,19 @@ export const AdminDeploymentManifestSchema = z.object({
   tailscaleAppCapabilityId: TailscaleAppCapabilityIdSchema,
   trustedIdentities: z.array(AdminTrustedIdentityDeploymentSchema).length(1),
   targetReleaseAppRoot: AbsolutePathSchema,
+  activeReleaseRole: AdminReleaseRoleSchema,
+  fullReleaseManifestPath: AbsolutePathSchema,
+  fullReleaseManifestSha256: z.string().regex(/^[0-9a-f]{64}$/),
+  fallbackReleaseManifestPath: AbsolutePathSchema,
+  fallbackReleaseManifestSha256: z.string().regex(/^[0-9a-f]{64}$/),
+  releasePairReceiptPath: AbsolutePathSchema,
+  releasePairReceiptSha256: z.string().regex(/^[0-9a-f]{64}$/),
+  officialReleaseManifestPath: AbsolutePathSchema,
+  officialReleaseManifestSha256: z.string().regex(/^[0-9a-f]{64}$/),
   reviewDatabasePath: z.literal(ADMIN_REVIEW_DATABASE_PATH),
   reviewDatabaseIdentity: ReviewDatabaseIdentitySchema,
-  reviewSchemaTarget: z.literal(4),
+  reviewSchemaTarget: z.literal(10),
+  reviewSchemaSha256: z.literal(SOURCE_REGISTRY_SCHEMA10_SHA256),
   dataRoot: AbsolutePathSchema,
   staticRoot: AbsolutePathSchema,
   sessionHashKeyPath: AbsolutePathSchema,
@@ -260,6 +274,10 @@ function assertEd25519KeyPair(privateKeyPath: string, verifyKeyPath: string): vo
 function assertManifestResourceBoundary(manifest: AdminDeploymentManifest): void {
   for (const path of [
     manifest.targetReleaseAppRoot,
+    manifest.fullReleaseManifestPath,
+    manifest.fallbackReleaseManifestPath,
+    manifest.releasePairReceiptPath,
+    manifest.officialReleaseManifestPath,
     manifest.reviewDatabasePath,
     manifest.dataRoot,
     manifest.staticRoot,
@@ -280,6 +298,10 @@ function assertManifestResourceBoundary(manifest: AdminDeploymentManifest): void
   }
   if (
     !pathContains(manifest.targetReleaseAppRoot, manifest.staticRoot) ||
+    !pathContains(manifest.targetReleaseAppRoot, manifest.fullReleaseManifestPath) ||
+    !pathContains(manifest.targetReleaseAppRoot, manifest.fallbackReleaseManifestPath) ||
+    !pathContains(manifest.targetReleaseAppRoot, manifest.releasePairReceiptPath) ||
+    !pathContains(manifest.targetReleaseAppRoot, manifest.officialReleaseManifestPath) ||
     !pathContains(manifest.dataRoot, manifest.sessionHashKeyPath) ||
     !pathContains(manifest.dataRoot, manifest.recoveryFencePath)
   ) {
@@ -313,7 +335,7 @@ export function renderAdminServicePlist(input: Readonly<{
 <key>Label</key><string>${ADMIN_SERVICE_LABEL}</string>
 <key>ProgramArguments</key><array>
 <string>${xml(input.nodePath)}</string>
-<string>--experimental-strip-types</string>
+<string>--experimental-transform-types</string>
 <string>${xml(join(input.targetReleaseAppRoot, "scripts/admin-service.ts"))}</string>
 <string>--manifest</string><string>${xml(input.manifestPath)}</string>
 </array>
@@ -331,6 +353,15 @@ export function renderAdminServicePlist(input: Readonly<{
 export function prepareAdminDeployment(input: Readonly<{
   home: string;
   targetReleaseAppRoot: string;
+  activeReleaseRole: z.infer<typeof AdminReleaseRoleSchema>;
+  fullReleaseManifestPath: string;
+  fullReleaseManifestSha256: string;
+  fallbackReleaseManifestPath: string;
+  fallbackReleaseManifestSha256: string;
+  releasePairReceiptPath: string;
+  releasePairReceiptSha256: string;
+  officialReleaseManifestPath: string;
+  officialReleaseManifestSha256: string;
   reviewDatabasePath: string;
   reviewDatabaseExpectedDev: number;
   reviewDatabaseExpectedIno: number;
@@ -363,12 +394,22 @@ export function prepareAdminDeployment(input: Readonly<{
     !Number.isSafeInteger(input.reviewDatabaseExpectedDev) || input.reviewDatabaseExpectedDev < 0 ||
     !Number.isSafeInteger(input.reviewDatabaseExpectedIno) || input.reviewDatabaseExpectedIno < 0
   ) throw new Error("ADMIN_REVIEW_DATABASE_RECEIPT_INVALID");
-  if (resolve(input.targetReleaseAppRoot) !== input.targetReleaseAppRoot ||
-      resolve(input.reviewDatabasePath) !== input.reviewDatabasePath) {
+  if ([
+    input.targetReleaseAppRoot,
+    input.reviewDatabasePath,
+    input.fullReleaseManifestPath,
+    input.fallbackReleaseManifestPath,
+    input.releasePairReceiptPath,
+    input.officialReleaseManifestPath
+  ].some((path) => resolve(path) !== path)) {
     throw new Error("ADMIN_DEPLOYMENT_INPUT_PATH_INVALID");
   }
   const paths = adminDeploymentPaths(input.home);
   const targetReleaseAppRoot = resolve(input.targetReleaseAppRoot);
+  const fullReleaseManifestPath = resolve(input.fullReleaseManifestPath);
+  const fallbackReleaseManifestPath = resolve(input.fallbackReleaseManifestPath);
+  const releasePairReceiptPath = resolve(input.releasePairReceiptPath);
+  const officialReleaseManifestPath = resolve(input.officialReleaseManifestPath);
   const reviewDatabasePath = resolve(input.reviewDatabasePath);
   const reviewDatabaseIdentity = inspectExistingReviewDatabase(reviewDatabasePath);
   if (
@@ -405,9 +446,19 @@ export function prepareAdminDeployment(input: Readonly<{
     tailscaleAppCapabilityId: input.tailscaleAppCapabilityId,
     trustedIdentities: input.trustedIdentities,
     targetReleaseAppRoot,
+    activeReleaseRole: input.activeReleaseRole,
+    fullReleaseManifestPath,
+    fullReleaseManifestSha256: input.fullReleaseManifestSha256,
+    fallbackReleaseManifestPath,
+    fallbackReleaseManifestSha256: input.fallbackReleaseManifestSha256,
+    releasePairReceiptPath,
+    releasePairReceiptSha256: input.releasePairReceiptSha256,
+    officialReleaseManifestPath,
+    officialReleaseManifestSha256: input.officialReleaseManifestSha256,
     reviewDatabasePath,
     reviewDatabaseIdentity,
-    reviewSchemaTarget: 4,
+    reviewSchemaTarget: 10,
+    reviewSchemaSha256: SOURCE_REGISTRY_SCHEMA10_SHA256,
     dataRoot: paths.dataRoot,
     staticRoot: resolve(targetReleaseAppRoot, "src/admin-ui"),
     sessionHashKeyPath: paths.sessionHashKey,
@@ -428,6 +479,33 @@ export function prepareAdminDeployment(input: Readonly<{
   assertManifestResourceBoundary(manifest);
   if (!existsSync(targetReleaseAppRoot) || !lstatSync(targetReleaseAppRoot).isDirectory()) {
     throw new Error("ADMIN_TARGET_RELEASE_ROOT_INVALID");
+  }
+  const official = readVerifiedAdminReleaseManifest(
+    targetReleaseAppRoot,
+    officialReleaseManifestPath,
+    input.officialReleaseManifestSha256,
+    undefined,
+    resolve(input.nodePath)
+  );
+  const release = loadReleaseRuntimeGate({
+    releaseRoot: targetReleaseAppRoot,
+    fullManifestPath: fullReleaseManifestPath,
+    fullManifestSha256: input.fullReleaseManifestSha256,
+    fallbackManifestPath: fallbackReleaseManifestPath,
+    fallbackManifestSha256: input.fallbackReleaseManifestSha256,
+    pairReceiptPath: releasePairReceiptPath,
+    pairReceiptSha256: input.releasePairReceiptSha256,
+    expectedSourceCommitSha1: official.gitCommit,
+    expectedSourceTreeSha1: official.gitTree,
+    expectedPackageRootSha256: official.releaseRootSha256,
+    activeRole: input.activeReleaseRole,
+    activatedAt: new Date(now).toISOString(),
+    previousActivationId: null
+  });
+  const rollback = input.activeReleaseRole === "full_v10" ? release.fallback : release.full;
+  const rollbackHash = input.activeReleaseRole === "full_v10" ? release.pair.fallbackManifestSha256 : release.pair.fullManifestSha256;
+  if (input.syntheticRollbackRelease !== rollback.releaseId || input.syntheticRollbackHash !== rollbackHash) {
+    throw new Error("ADMIN_ROLLBACK_RELEASE_IDENTITY_INVALID");
   }
   ensurePrivateDirectory(paths.dataRoot);
   ensurePrivateDirectory(paths.publicProjectionRoot);

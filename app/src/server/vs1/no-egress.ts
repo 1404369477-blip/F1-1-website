@@ -113,19 +113,18 @@ export function installNoEgressGuard(): NoEgressGuard {
       target[key] = denied;
     }
   };
-  const patch = (moduleName: string, keys: readonly string[]): MutableModule => {
-    const target = require(moduleName) as MutableModule;
+  const patch = (target: MutableModule, keys: readonly string[]): MutableModule => {
     patchTarget(target, keys);
     return target;
   };
-  const net = patch("node:net", ["connect", "createConnection"]);
+  const net = patch(require("node:net") as MutableModule, ["connect", "createConnection"]);
   const socket = net.Socket as { prototype?: MutableModule } | undefined;
   if (socket?.prototype) patchTarget(socket.prototype, ["connect"]);
-  patch("node:http", ["request", "get"]);
-  patch("node:https", ["request", "get"]);
-  patch("node:http2", ["connect"]);
-  patch("node:tls", ["connect"]);
-  const dns = patch("node:dns", DNS_CALLBACK_METHODS);
+  patch(require("node:http") as MutableModule, ["request", "get"]);
+  patch(require("node:https") as MutableModule, ["request", "get"]);
+  patch(require("node:http2") as MutableModule, ["connect"]);
+  patch(require("node:tls") as MutableModule, ["connect"]);
+  const dns = patch(require("node:dns") as MutableModule, DNS_CALLBACK_METHODS);
   const resolver = dns.Resolver as { prototype?: MutableModule } | undefined;
   if (resolver?.prototype) patchTarget(resolver.prototype, DNS_RESOLVER_METHODS);
   patches.push({ target: dns, key: "lookup", value: dns.lookup });
@@ -139,13 +138,13 @@ export function installNoEgressGuard(): NoEgressGuard {
     const result = [{ address: current.host, family: current.family }];
     process.nextTick(() => callback(null, result));
   };
-  const dnsPromises = patch("node:dns/promises", ["lookup", ...DNS_CALLBACK_METHODS]);
+  const dnsPromises = patch(require("node:dns/promises") as MutableModule, ["lookup", ...DNS_CALLBACK_METHODS]);
   const promisesResolver = dnsPromises.Resolver as { prototype?: MutableModule } | undefined;
   if (promisesResolver?.prototype) patchTarget(promisesResolver.prototype, DNS_RESOLVER_METHODS);
-  patch("node:dgram", ["createSocket"]);
-  patch("node:child_process", ["exec", "execFile", "execFileSync", "execSync", "fork", "spawn", "spawnSync"]);
-  patch("node:cluster", ["fork"]);
-  patch("node:worker_threads", ["Worker"]);
+  patch(require("node:dgram") as MutableModule, ["createSocket"]);
+  patch(require("node:child_process") as MutableModule, ["exec", "execFile", "execFileSync", "execSync", "fork", "spawn", "spawnSync"]);
+  patch(require("node:cluster") as MutableModule, ["fork"]);
+  patch(require("node:worker_threads") as MutableModule, ["Worker"]);
   const previousFetch = globalThis.fetch;
   const previousWebSocket = globalThis.WebSocket;
   globalThis.fetch = denied;

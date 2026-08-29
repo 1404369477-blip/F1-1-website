@@ -1,5 +1,10 @@
 import { createHash } from "node:crypto";
-import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import {
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  realpathSync
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
@@ -62,7 +67,7 @@ function config() {
 }
 
 function fixture(): { database: SqliteDatabase; root: string } {
-  const root = mkdtempSync(join(tmpdir(), "f1plus1-source-management-"));
+  const root = mkdtempSync(join(realpathSync(tmpdir()), "f1plus1-source-management-"));
   roots.push(root);
   const database = openSafeDatabase(join(root, "f1plus1-source-management-synthetic.sqlite"), { appRoot, allowTestRoot: root });
   migrateSourceManagementDatabase(database, appRoot);

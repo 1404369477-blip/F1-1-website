@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 import { readAdminDeploymentManifest } from "../src/server/admin-service/deployment.ts";
-import { openReviewAdminDatabase } from "../src/server/admin-service/runtime.ts";
+import { adminRuntimeConfigFromDeployment, openReviewAdminDatabase } from "../src/server/admin-service/runtime.ts";
 import { ProjectionHttpTransport, ProjectionSender } from "../src/server/review-real/sender.ts";
 import { runSafeCli } from "../src/server/security/cli.ts";
 
@@ -14,10 +14,14 @@ await runSafeCli(async () => {
     throw new Error("CLI_ARGUMENTS_FORBIDDEN");
   }
   const manifest = readAdminDeploymentManifest(resolve(arguments_[1]));
+  const config = adminRuntimeConfigFromDeployment(manifest);
   const runtime = openReviewAdminDatabase({
     targetReleaseAppRoot: manifest.targetReleaseAppRoot,
     reviewDatabasePath: manifest.reviewDatabasePath,
-    reviewDatabaseIdentity: manifest.reviewDatabaseIdentity
+    reviewDatabaseIdentity: manifest.reviewDatabaseIdentity,
+    requiredSchemaVersion: 10,
+    ownerProcess: "projection_sender",
+    releaseGate: config.releaseGate
   });
   try {
     const sender = new ProjectionSender({
@@ -28,15 +32,18 @@ await runSafeCli(async () => {
       }),
       signingKeyId: manifest.projectionSigningKeyId,
       privateKey: createPrivateKey(readFileSync(manifest.projectionSigningPrivateKeyPath, "utf8")),
-      actorRef: manifest.projectionSenderServiceIdentity
+      actorRef: manifest.projectionSenderServiceIdentity,
+      externalAttempt: runtime.mutationPort?.runExternal?.bind(runtime.mutationPort),
+      externalReconcile: runtime.mutationPort?.runReconcile?.bind(runtime.mutationPort)
     });
     process.stdout.write(`${JSON.stringify({
       command: "projection:sender-once",
-      ...(await sender.tick()),
+      ...(await config.releaseGate!.run("delivery_sender", () => sender.tick())),
       externalCalls: 0,
       loopbackCallsMaximum: 1
     })}\n`);
   } finally {
+    runtime.gateway?.close();
     runtime.database.close();
   }
 });

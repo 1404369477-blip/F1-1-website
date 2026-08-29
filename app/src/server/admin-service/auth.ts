@@ -3,12 +3,17 @@ import { randomBytes as nodeRandomBytes } from "node:crypto";
 import { z } from "zod";
 
 import type { RawAdminContext } from "../source-management/security.ts";
-import { preparePublishMutation } from "../review-real/backend.ts";
+import { prepareFreshPublishBinding } from "../review-real/backend.ts";
 import { ReviewRealError } from "../review-real/error.ts";
-import { PublishRequestSchema } from "../review-real/schema.ts";
+import {
+  XManualRetireMutationSchema,
+  prepareXManualRetireMutation
+} from "../review-real/routes.ts";
+import { PublishRequestSchema, ReleaseNowRequestSchema } from "../review-real/schema.ts";
 import { ReviewAdminSecurity } from "../review-real/security.ts";
 import { BootstrapTokenStore, PasskeyCredentialStore, type StoredPasskeyCredential } from "./storage.ts";
 import type { AdminWebAuthnAdapter } from "./webauthn.ts";
+import { AuthorityMutationSchema, MutationSchema as BilingualMutationSchema, SourceRegistryMutationSchema, prepareAuthorityMutation, prepareBilingualMutation, prepareSourceRegistryMutation } from "./bilingual-admin.ts";
 
 const TOKEN_PATTERN = /^[A-Za-z0-9_-]{43}$/;
 const CHALLENGE_TTL_MS = 2 * 60 * 1000;
@@ -35,12 +40,12 @@ export const LoginVerifyRequestSchema = z.object({
 
 export const FreshOptionsRequestSchema = z.object({
   schemaVersion: z.literal("admin-auth-fresh-options-v1"),
-  mutation: PublishRequestSchema
+  mutation: z.union([ReleaseNowRequestSchema, PublishRequestSchema, XManualRetireMutationSchema, AuthorityMutationSchema, SourceRegistryMutationSchema, BilingualMutationSchema])
 }).strict();
 
 export const FreshVerifyRequestSchema = z.object({
   schemaVersion: z.literal("admin-auth-fresh-verify-v1"),
-  mutation: PublishRequestSchema,
+  mutation: z.union([ReleaseNowRequestSchema, PublishRequestSchema, XManualRetireMutationSchema, AuthorityMutationSchema, SourceRegistryMutationSchema, BilingualMutationSchema]),
   response: z.unknown()
 }).strict();
 
@@ -58,9 +63,9 @@ type ChallengeRecord = Readonly<{
   challenge: string;
   expiresAt: number;
   webauthnUserId?: string;
-  publishBinding?: Readonly<{
+  freshBinding?: Readonly<{
     operationId: string;
-    action: "publish";
+    action: "publish" | "SOURCE_RETIRE" | "AUTHORITY_ACTIVATE" | "BILINGUAL_SAFETY_REVIEW" | "BILINGUAL_CORRECT" | "BILINGUAL_WITHDRAW";
     resourceHash: string;
   }>;
 }>;
@@ -168,6 +173,55 @@ export class AdminPasskeyAuth {
 
   private challengeKey(purpose: ChallengePurpose, identity: AdminTrustedIdentity): string {
     return `${purpose}\u001f${this.identityKey(identity)}`;
+  }
+
+  private prepareFreshBinding(value: unknown): Readonly<{
+    binding: Readonly<{
+      operationId: string;
+      action: "publish" | "SOURCE_RETIRE" | "AUTHORITY_ACTIVATE" | "BILINGUAL_SAFETY_REVIEW" | "BILINGUAL_CORRECT" | "BILINGUAL_WITHDRAW";
+      resourceHash: string;
+    }>;
+  }> {
+    const authority = AuthorityMutationSchema.safeParse(value);
+    if (authority.success) {
+      const prepared = prepareAuthorityMutation(authority.data);
+      return { binding: { operationId: prepared.binding.operationId, action: "AUTHORITY_ACTIVATE", resourceHash: prepared.binding.resourceHash } };
+    }
+    const source = SourceRegistryMutationSchema.safeParse(value);
+    if (source.success && source.data.action === "retire") {
+      const prepared = prepareSourceRegistryMutation(source.data);
+      if (prepared.binding.freshAction !== "SOURCE_RETIRE" || !prepared.binding.resourceHash) throw new ReviewRealError("ADMIN_INTERNAL_FAILURE", 500);
+      return { binding: { operationId: prepared.binding.operationId, action: "SOURCE_RETIRE", resourceHash: prepared.binding.resourceHash } };
+    }
+    try {
+      const bilingual = prepareBilingualMutation(value);
+      if (bilingual.binding.freshAction && bilingual.binding.resourceHash) {
+        return { binding: { operationId: bilingual.binding.operationId, action: bilingual.binding.freshAction, resourceHash: bilingual.binding.resourceHash } };
+      }
+    } catch { /* continue to other fresh mutation schemas */ }
+    const xRetire = XManualRetireMutationSchema.safeParse(value);
+    if (xRetire.success) {
+      const prepared = prepareXManualRetireMutation(xRetire.data);
+      if (prepared.binding.freshAction !== "SOURCE_RETIRE" || !prepared.binding.resourceHash) {
+        throw new ReviewRealError("ADMIN_INTERNAL_FAILURE", 500);
+      }
+      return {
+        binding: {
+          operationId: prepared.binding.operationId,
+          action: "SOURCE_RETIRE",
+          resourceHash: prepared.binding.resourceHash
+        }
+      };
+    }
+    const prepared = prepareFreshPublishBinding(value);
+    if (!prepared.binding.resourceHash) throw new ReviewRealError("ADMIN_INTERNAL_FAILURE", 500);
+    return {
+      binding: {
+        operationId: prepared.binding.operationId,
+        action: "publish",
+        resourceHash: prepared.binding.resourceHash
+      }
+    };
   }
 
   private remember(record: ChallengeRecord): void {
@@ -300,8 +354,7 @@ export class AdminPasskeyAuth {
     this.security.authorizeBoundIdentity(context, identity);
     const credentials = this.credentialStore.activeCredentials();
     if (credentials.length === 0) throw new ReviewRealError("ADMIN_REAUTH_REQUIRED", 403);
-    const prepared = preparePublishMutation(request.data.mutation);
-    if (!prepared.binding.resourceHash) throw new ReviewRealError("ADMIN_INTERNAL_FAILURE", 500);
+    const prepared = this.prepareFreshBinding(request.data.mutation);
     const now = this.time();
     const publicKey = await this.webauthn.authenticationOptions({ rpId: this.rpId, credentials });
     this.remember({
@@ -309,11 +362,7 @@ export class AdminPasskeyAuth {
       identityKey: this.identityKey(identity),
       challenge: publicKey.challenge,
       expiresAt: now + CHALLENGE_TTL_MS,
-      publishBinding: {
-        operationId: prepared.binding.operationId,
-        action: "publish",
-        resourceHash: prepared.binding.resourceHash
-      }
+      freshBinding: prepared.binding
     });
     return { schemaVersion: "admin-auth-fresh-options-v1", publicKey };
   }
@@ -331,11 +380,12 @@ export class AdminPasskeyAuth {
     if (!request.success) throw new ReviewRealError("ADMIN_REQUEST_INVALID", 400);
     this.security.authorizeBoundIdentity(context, identity);
     const record = this.consume("fresh", identity);
-    const prepared = preparePublishMutation(request.data.mutation);
+    const prepared = this.prepareFreshBinding(request.data.mutation);
     if (
-      !record.publishBinding ||
-      prepared.binding.operationId !== record.publishBinding.operationId ||
-      prepared.binding.resourceHash !== record.publishBinding.resourceHash
+      !record.freshBinding ||
+      prepared.binding.operationId !== record.freshBinding.operationId ||
+      prepared.binding.action !== record.freshBinding.action ||
+      prepared.binding.resourceHash !== record.freshBinding.resourceHash
     ) {
       throw new ReviewRealError("ADMIN_REAUTH_REQUIRED", 403);
     }
@@ -356,7 +406,7 @@ export class AdminPasskeyAuth {
       backedUp: verification.credentialBackedUp,
       now: new Date(this.time()).toISOString()
     });
-    const fresh = this.security.acceptVerifiedFreshReauth(context, record.publishBinding);
+    const fresh = this.security.acceptVerifiedFreshReauth(context, record.freshBinding);
     return {
       body: {
         schemaVersion: "admin-auth-fresh-verify-v1",

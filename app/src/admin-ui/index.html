@@ -54,7 +54,7 @@
           </div>
         </form>
 
-        <p class="auth-footnote">Mac 与 iPhone 使用同一操作语义。发布仍需一次新的通行密钥验证。</p>
+        <p class="auth-footnote">Mac 与 iPhone 使用同一操作语义。「通过并发布」和批量发布只需一次通行密钥。队列左侧复选框已启用。</p>
       </div>
     </section>
 
@@ -68,6 +68,19 @@
         <div class="queue-controls">
           <input class="text-field" id="queue-search" type="search" placeholder="搜索标题或来源" aria-label="搜索审核队列">
           <button class="icon-button" id="refresh-queue" type="button" aria-label="刷新审核队列">↻</button>
+          <select class="text-field queue-status-filter" id="queue-status-filter" aria-label="筛选审核状态">
+            <option value="pending">待处理</option>
+            <option value="published">已发布</option>
+            <option value="rejected">已拒绝</option>
+            <option value="all">全部</option>
+          </select>
+        </div>
+        <div class="batch-bar" id="batch-bar">
+          <label class="batch-select-all">
+            <input id="select-all-eligible" type="checkbox">
+            <span>选择本批（最多 20 条）</span>
+          </label>
+          <button class="primary-button" id="batch-release" type="button" disabled>批量通过并发布</button>
         </div>
         <div class="queue-notice" id="queue-notice" hidden role="status"></div>
         <ul class="queue-list" id="queue-list"></ul>
@@ -126,6 +139,108 @@
                 </dl>
               </section>
 
+              <section class="content-section draft-card" id="machine-draft-card" hidden aria-labelledby="machine-draft-title">
+                <div class="section-heading">
+                  <h3 id="machine-draft-title">DeepSeek 草稿要点</h3>
+                  <span>保存修订后才会进入待审核版本</span>
+                </div>
+                <ul class="draft-points" id="machine-draft-points"></ul>
+              </section>
+
+              <section class="content-section bilingual-card" id="bilingual-card" aria-labelledby="bilingual-title">
+                <div class="section-heading">
+                  <div>
+                    <h3 id="bilingual-title">双语内容</h3>
+                    <span id="bilingual-authority">正在读取 schema 10 双语权限真值</span>
+                  </div>
+                  <div class="language-tabs" role="tablist" aria-label="双语内容视图">
+                    <button type="button" role="tab" data-language-tab="zh" aria-selected="true">中文</button>
+                    <button type="button" role="tab" data-language-tab="en" aria-selected="false">English</button>
+                    <button type="button" role="tab" data-language-tab="both" aria-selected="false">双栏</button>
+                  </div>
+                </div>
+                <div class="rights-strip" id="bilingual-rights" aria-live="polite">版权、复制风险与删除状态正在读取</div>
+                <div class="bilingual-loading" id="bilingual-loading" role="status">正在读取中文与英文详情…</div>
+                <div class="bilingual-error" id="bilingual-error" role="alert" hidden></div>
+                <div class="bilingual-columns" id="bilingual-columns" data-language-view="zh" hidden>
+                  <article data-language-panel="zh"><strong>中文</strong><h4 id="bilingual-zh-title">尚无草稿</h4><p id="bilingual-zh-copy">等待权限真值与结构化写入链同时就绪。</p></article>
+                  <article data-language-panel="en"><strong>English</strong><h4 id="bilingual-en-title">No draft</h4><p id="bilingual-en-copy">Waiting for authority truth and the structured write path.</p></article>
+                </div>
+                <div class="bilingual-actions" aria-label="双语人工操作">
+                  <button type="button" disabled>重试中文</button><button type="button" disabled>Retry English</button>
+                  <button type="button" disabled>人工复核</button><button type="button" disabled>批准</button>
+                  <button type="button" disabled>拒绝</button><button type="button" disabled>发布</button>
+                  <button type="button" disabled>撤回</button>
+                </div>
+                <p class="form-note">双语人工动作只在 schema 10 权限真值、结构化 gateway、当前版本和安全收据全部有效时开放；重试/重跑一次只绑定一种语言；整包双语纠错须先编辑、复核并批准新版本，再替换已发布版本；自动复核与自动发布注册数始终为 0。</p>
+              </section>
+
+              <section class="content-section recent-three-card" aria-labelledby="recent-three-title">
+                <div class="section-heading"><h3 id="recent-three-title">最近 3 条一次性回填控制</h3><button class="quiet-button" id="recent-three-refresh" type="button">刷新只读预览</button></div>
+                <p id="recent-three-status" role="status">仅允许读取已发布记录；写入目标必须是独立 disposable DB。</p>
+                <ol id="recent-three-list"></ol>
+                <button class="secondary-button" type="button" disabled>写入 disposable DB（仅后继 deployment gate）</button>
+              </section>
+
+              <section class="content-section operations-card" aria-labelledby="operations-title">
+                <div class="section-heading"><h3 id="operations-title">来源与运行监控</h3><button class="quiet-button" id="operations-refresh" type="button">刷新</button></div>
+                <p id="operations-status" role="status">正在读取 schema 10 来源、权限、采集与运行真值…</p>
+                <div class="operations-grid" id="operations-grid" hidden>
+                  <article>
+                    <strong>运行总览</strong>
+                    <dl class="operation-facts">
+                      <dt>generatedAt</dt><dd id="operations-generated">—</dd>
+                      <dt>Admin uptime</dt><dd id="operations-uptime">—</dd>
+                      <dt>control</dt><dd id="operations-control">—</dd>
+                    </dl>
+                  </article>
+                  <article>
+                    <strong>健康 / 前后端 / API</strong>
+                    <p id="operations-health">—</p>
+                    <ul class="compact-list" id="operations-api-list"></ul>
+                  </article>
+                  <article>
+                    <strong>来源分类与状态</strong>
+                    <p id="operations-source-stats">—</p>
+                  </article>
+                  <article>
+                    <strong>采集 / 队列</strong>
+                    <dl class="operation-facts">
+                      <dt>Outbox pending</dt><dd id="operations-outbox-pending">0</dd>
+                      <dt>Outbox failed</dt><dd id="operations-outbox-failed">0</dd>
+                      <dt>Leased / cancelled</dt><dd id="operations-outbox-transit">0 / 0</dd>
+                      <dt>Auto review/publish</dt><dd>0 / 0</dd>
+                    </dl>
+                  </article>
+                  <article class="wide-card">
+                    <strong>错误与最近审计日志</strong>
+                    <p id="operations-errors">—</p>
+                    <table class="operations-table">
+                      <thead><tr><th>时间</th><th>事件</th><th>操作</th><th>Actor</th></tr></thead>
+                      <tbody id="operations-audit-body"></tbody>
+                    </table>
+                  </article>
+                  <article class="wide-card">
+                    <strong>失败 / 取消 operation（20）</strong>
+                    <table class="operations-table">
+                      <thead><tr><th>更新</th><th>ID</th><th>类型</th><th>状态</th></tr></thead>
+                      <tbody id="operations-failure-body"></tbody>
+                    </table>
+                  </article>
+                  <article>
+                    <strong>访客流量 / 成本 / 备份 / Release</strong>
+                    <ul class="compact-list unavailable-list" id="operations-producers"></ul>
+                  </article>
+                </div>
+                <div class="bilingual-actions authority-actions" aria-label="schema 10 权限启用">
+                  <button type="button" data-authority-capability="bilingual_auto_refine" disabled>启用自动双语精炼</button>
+                  <button type="button" data-authority-capability="bilingual_manual_mutation" disabled>启用双语人工操作</button>
+                  <button type="button" data-authority-capability="source_registry_management" disabled>启用来源管理</button>
+                </div>
+                <p class="form-note">来源变更只在 control phase=paused 且 source_registry_management 五项真值有效时开放；退役操作要求新鲜通行密钥。</p>
+                <ul class="source-registry-list" id="source-registry-list"></ul>
+              </section>
+
               <form class="editor" id="editor-form" aria-labelledby="editor-title">
                 <div class="section-heading">
                   <h3 id="editor-title">中文标题、摘要与私有备注</h3>
@@ -155,7 +270,7 @@
                 <p id="action-copy">载入详情并通过完整性检查后，才会显示可执行动作。</p>
                 <div class="action-stack" id="action-stack"></div>
                 <div class="operation-status" id="operation-status" hidden role="status"></div>
-                <p class="safety-note">批准只记录当前审核决定；手动发布是批准后的第二次显式动作，并要求新鲜通行密钥验证。</p>
+                <p class="safety-note">「通过并发布」会保存当前中文稿、批准并提交公开投递，只需一次通行密钥。拒绝和仅批准仍可单独使用。</p>
               </section>
             </aside>
           </div>

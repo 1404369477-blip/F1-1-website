@@ -5,7 +5,7 @@ import { dirname } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 
 import { appRoot } from "../src/server/runtime-config.ts";
-import { encodePublicCursor } from "../src/server/public/cursor.ts";
+import { encodePublicCursor, isCanonicalUtc } from "../src/server/public/cursor.ts";
 import { runSafeCli } from "../src/server/security/cli.ts";
 
 const PUBLIC_HOST = "127.0.0.1";
@@ -90,6 +90,19 @@ function str(value: unknown): string {
 
 function recordArray(value: unknown): Array<Record<string, unknown>> {
   return Array.isArray(value) ? (value as Array<Record<string, unknown>>) : [];
+}
+
+function feedTimelineAt(item: Record<string, unknown>): string | null {
+  if (typeof item.publishedAt !== "string" || !isCanonicalUtc(item.publishedAt)) return null;
+  if (item.sourceTimeStatus === "known") {
+    return typeof item.sourcePublishedAt === "string" && isCanonicalUtc(item.sourcePublishedAt)
+      ? item.sourcePublishedAt
+      : null;
+  }
+  if (item.sourceTimeStatus === "unknown" && item.sourcePublishedAt === null) {
+    return item.publishedAt;
+  }
+  return null;
 }
 
 async function waitForReady(child: ChildProcess): Promise<Record<string, unknown>> {
@@ -301,9 +314,20 @@ await runSafeCli(async () => {
       "feed:itemKeys",
       feedItems.every((item) => Object.keys(item).length === FEED_ITEM_KEYS.length && FEED_ITEM_KEYS.every((key) => key in item))
     );
+    const timelineValues = feedItems.map(feedTimelineAt);
+    check("feed:sourceTimeIntegrity", timelineValues.every((value) => value !== null));
     const actualIds = feedItems.map((item) => str(item.publicId));
     const sortedIds = [...feedItems]
-      .sort((left, right) => str(right.publishedAt).localeCompare(str(left.publishedAt)) || str(right.publicId).localeCompare(str(left.publicId)))
+      .sort((left, right) => {
+        const leftTimelineAt = feedTimelineAt(left) ?? "";
+        const rightTimelineAt = feedTimelineAt(right) ?? "";
+        const timestamp = Date.parse(rightTimelineAt) - Date.parse(leftTimelineAt);
+        if (timestamp !== 0) return timestamp;
+        const leftId = str(left.publicId);
+        const rightId = str(right.publicId);
+        if (leftId === rightId) return 0;
+        return leftId < rightId ? 1 : -1;
+      })
       .map((item) => str(item.publicId));
     check("feed:sorted", actualIds.join("|") === sortedIds.join("|"));
     check(
@@ -340,15 +364,16 @@ await runSafeCli(async () => {
 
     const firstItem = feedItems[0];
     const firstId = str(firstItem?.publicId);
-    const firstPublishedAt = str(firstItem?.publishedAt);
+    const firstTimelineAt = firstItem ? feedTimelineAt(firstItem) : null;
+    if (firstTimelineAt === null) throw new Error("CLI_INTERNAL_ERROR");
     const cursorId = encodePublicCursor({
-      v: 1,
+      v: 2,
       publicId: firstId,
-      publishedAt: firstPublishedAt,
+      timelineAt: firstTimelineAt,
       source: null,
       contentType: null
     });
-    const cursorQuery = `?cursorAt=${encodeURIComponent(firstPublishedAt)}&cursorId=${encodeURIComponent(cursorId)}`;
+    const cursorQuery = `?cursorAt=${encodeURIComponent(firstTimelineAt)}&cursorId=${encodeURIComponent(cursorId)}`;
     const cursorPage = await httpGet(`/api/public/feed${cursorQuery}`);
     const cursorBody = jsonRecord(cursorPage.body);
     walk(cursorBody);
@@ -358,7 +383,7 @@ await runSafeCli(async () => {
     check("cursor:11items", cursorItems.length === 11);
     check("cursor:firstExcluded", !cursorItems.some((item) => str(item.publicId) === firstId));
 
-    const scopeQuery = `?source=src-active&cursorAt=${encodeURIComponent(firstPublishedAt)}&cursorId=${encodeURIComponent(cursorId)}`;
+    const scopeQuery = `?source=src-active&cursorAt=${encodeURIComponent(firstTimelineAt)}&cursorId=${encodeURIComponent(cursorId)}`;
     const scopeResponse = await httpGet(`/api/public/feed${scopeQuery}`);
     const scopeBody = jsonRecord(scopeResponse.body);
     walk(scopeBody);

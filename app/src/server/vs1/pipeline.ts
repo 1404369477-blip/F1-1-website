@@ -4,6 +4,7 @@ import {
   existsSync,
   lstatSync,
   mkdtempSync,
+  realpathSync,
   readFileSync,
   readdirSync,
   rmSync,
@@ -1276,7 +1277,7 @@ function vopLines(reasonCode: string, artifactHash: string | null): [Vs1VopLine,
 }
 
 function makeTaskRoot(): string {
-  const root = mkdtempSync(join(tmpdir(), "TASK-20260809-D6114C-"));
+  const root = mkdtempSync(join(realpathSync(tmpdir()), "TASK-20260809-D6114C-"));
   chmodSync(root, 0o700);
   const stat = lstatSync(root);
   if (!stat.isDirectory() || stat.isSymbolicLink() || (stat.mode & 0o077) !== 0) throw new PipelineFailure("DB_CORRUPTION");
@@ -1454,7 +1455,7 @@ export function replaySucceededReceipt(appRoot: string, result: Vs1RunResult): {
 
 export function cleanupVs1TaskRoot(taskRoot: string): void {
   const resolved = resolve(taskRoot);
-  const allowedPrefix = resolve(tmpdir(), "TASK-20260809-D6114C-");
-  if (!resolved.startsWith(allowedPrefix) || resolved === resolve(tmpdir())) throw new PipelineFailure("DB_CORRUPTION");
+  const allowedPrefix = resolve(realpathSync(tmpdir()), "TASK-20260809-D6114C-");
+  if (!resolved.startsWith(allowedPrefix) || resolved === resolve(realpathSync(tmpdir()))) throw new PipelineFailure("DB_CORRUPTION");
   rmSync(resolved, { recursive: true, force: false });
 }

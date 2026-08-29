@@ -16,8 +16,15 @@ import { createHash } from "node:crypto";
 import { basename, dirname, isAbsolute, relative, resolve, sep } from "node:path";
 
 import { ConfigError, assertNodeVersion } from "../config/env.ts";
+import { installSqliteAuthorizer } from "../internal-operation/authorizer.ts";
+import { assertQuiesceLeaseAbsent, type QuiesceAbsenceGuard } from "../admin-service/quiesce-absence-guard.ts";
 
 export type SqliteDatabase = DatabaseSync;
+
+export type DbOpenTestHooks = Readonly<{
+  betweenOpenAndPostGuard?: (dbPath: string) => void;
+  beforeFinalAdmission?: (dbPath: string) => void;
+}>;
 
 export type DatabaseOptions = {
   appRoot: string;
@@ -346,15 +353,17 @@ export function inspectExistingPrivateDatabase(
   }
 }
 
-export function openExistingSafeDatabase(
+function openExistingSafeDatabaseInternal(
   path: string,
   expectedBasename: string,
   expectedIdentity: ExistingDatabaseIdentity,
-  acceptedUserVersions: readonly number[]
+  acceptedUserVersions: readonly number[],
+  hooks: DbOpenTestHooks | undefined
 ): SqliteDatabase {
   assertNodeVersion();
   process.umask(0o077);
   const absolutePath = resolve(/* turbopackIgnore: true */ path);
+  const quiesceGuard = assertQuiesceLeaseAbsent(absolutePath);
   const inspected = inspectExistingPrivateDatabase(absolutePath, expectedBasename);
   if (
     inspected.dev !== expectedIdentity.dev || inspected.ino !== expectedIdentity.ino ||
@@ -370,24 +379,30 @@ export function openExistingSafeDatabase(
   let database: SqliteDatabase | undefined;
   try {
     database = new DatabaseSync(absolutePath, { allowExtension: false, timeout: 250 });
+    hooks?.betweenOpenAndPostGuard?.(absolutePath);
+    quiesceGuard.assertAbsent();
     database.prepare("PRAGMA schema_version").get();
     assertSqliteConnectionIdentity(database, absolutePath, opened.identity, guardedDescriptorCount);
-    const securityConstants = sqliteConstants as unknown as Record<string, number>;
-    const authorizerDatabase = database as SqliteDatabase & {
-      setAuthorizer(callback: (actionCode: number) => number): void;
-    };
-    authorizerDatabase.setAuthorizer((actionCode) =>
-      actionCode === securityConstants.SQLITE_ATTACH || actionCode === securityConstants.SQLITE_DETACH
-        ? securityConstants.SQLITE_DENY
-        : securityConstants.SQLITE_OK
-    );
     const initialVersion = Number(
       (database.prepare("PRAGMA user_version").get() as Record<string, unknown>).user_version
     );
     if (!acceptedUserVersions.includes(initialVersion)) {
       throw new ConfigError("MIGRATION_VERSION", `database user_version ${initialVersion} is not accepted`);
     }
+    const installWorkerAuthorizer = initialVersion >= 7;
+    if (!installWorkerAuthorizer) {
+      const securityConstants = sqliteConstants as unknown as Record<string, number>;
+      const authorizerDatabase = database as SqliteDatabase & {
+        setAuthorizer(callback: (actionCode: number) => number): void;
+      };
+      authorizerDatabase.setAuthorizer((actionCode) =>
+        actionCode === securityConstants.SQLITE_ATTACH || actionCode === securityConstants.SQLITE_DETACH
+          ? securityConstants.SQLITE_DENY
+          : securityConstants.SQLITE_OK
+      );
+    }
     database.exec("PRAGMA foreign_keys=ON;");
+    database.exec("PRAGMA recursive_triggers=ON;");
     database.exec("PRAGMA journal_mode=WAL;");
     database.exec("PRAGMA synchronous=FULL;");
     database.exec("PRAGMA busy_timeout=250;");
@@ -408,6 +423,16 @@ export function openExistingSafeDatabase(
         !sameDirectoryIdentity(before.parentIdentity, after.parentIdentity)) {
       throw new ConfigError("DB_PATH", "existing database or parent changed while applying SQLite pragmas");
     }
+    if (installWorkerAuthorizer) {
+      // Install only after connection pragmas are fixed; the worker profile is
+      // intentionally unable to change them and therefore cannot block the
+      // secure-open sequence itself.
+      installSqliteAuthorizer(database, "worker_or_repository");
+    }
+    hooks?.beforeFinalAdmission?.(absolutePath);
+    quiesceGuard.assertAbsent();
+    if (quiesceAdmissions.has(database)) throw new ConfigError("QUIESCE_WRITER_ADMISSION_CONFLICT", "existing database already carries a different quiesce admission");
+    quiesceAdmissions.set(database, quiesceGuard);
     return database;
   } catch (error) {
     if (database) database.close();
@@ -415,6 +440,26 @@ export function openExistingSafeDatabase(
   } finally {
     closeSync(opened.guardFd);
   }
+}
+
+export function openExistingSafeDatabase(
+  path: string,
+  expectedBasename: string,
+  expectedIdentity: ExistingDatabaseIdentity,
+  acceptedUserVersions: readonly number[]
+): SqliteDatabase {
+  return openExistingSafeDatabaseInternal(path, expectedBasename, expectedIdentity, acceptedUserVersions, undefined);
+}
+
+export function openExistingSafeDatabaseForTest(
+  path: string,
+  expectedBasename: string,
+  expectedIdentity: ExistingDatabaseIdentity,
+  acceptedUserVersions: readonly number[],
+  hooks: DbOpenTestHooks
+): SqliteDatabase {
+  if (process.env.NODE_ENV !== "test") throw new ConfigError("TEST_HOOKS_FORBIDDEN", "db open test hooks only allowed under NODE_ENV=test");
+  return openExistingSafeDatabaseInternal(path, expectedBasename, expectedIdentity, acceptedUserVersions, hooks);
 }
 
 function countMatchingDescriptors(identity: FileIdentity): number {
@@ -460,7 +505,7 @@ function assertSqliteConnectionIdentity(
   }
 }
 
-export function openSafeDatabase(dbPath: string, options: DatabaseOptions): SqliteDatabase {
+function openSafeDatabaseInternal(dbPath: string, options: DatabaseOptions, hooks: DbOpenTestHooks | undefined): SqliteDatabase {
   assertNodeVersion();
   process.umask(0o077);
   const appRoot = resolve(/* turbopackIgnore: true */ options.appRoot);
@@ -494,6 +539,7 @@ export function openSafeDatabase(dbPath: string, options: DatabaseOptions): Sqli
   // Valid private WAL/SHM files may remain after a crash or belong to another
   // local connection. Validate them before SQLite can perform recovery.
   assertPrivateSidecars(absolutePath);
+  const quiesceGuard = assertQuiesceLeaseAbsent(absolutePath);
   const opened = openStableDatabasePath(absolutePath);
   const guardedDescriptorCount = countMatchingDescriptors(opened.identity);
   let database: SqliteDatabase | undefined;
@@ -505,6 +551,8 @@ export function openSafeDatabase(dbPath: string, options: DatabaseOptions): Sqli
     } as ConstructorParameters<typeof DatabaseSync>[1]);
     database.prepare("PRAGMA schema_version").get();
     assertSqliteConnectionIdentity(database, absolutePath, opened.identity, guardedDescriptorCount);
+    hooks?.betweenOpenAndPostGuard?.(absolutePath);
+    quiesceGuard.assertAbsent();
     const appRootAfterOpen = readDirectoryIdentity(appRoot, "app root");
     const rootAfterOpen = assertPrivateDirectoryIdentity(rootForPath, "database root");
     const parentAfter = assertPrivateDirectoryIdentity(parent, "database parent");
@@ -574,6 +622,15 @@ export function openSafeDatabase(dbPath: string, options: DatabaseOptions): Sqli
   }
 }
 
+export function openSafeDatabase(dbPath: string, options: DatabaseOptions): SqliteDatabase {
+  return openSafeDatabaseInternal(dbPath, options, undefined);
+}
+
+export function openSafeDatabaseForTest(dbPath: string, options: DatabaseOptions, hooks: DbOpenTestHooks): SqliteDatabase {
+  if (process.env.NODE_ENV !== "test") throw new ConfigError("TEST_HOOKS_FORBIDDEN", "db open test hooks only allowed under NODE_ENV=test");
+  return openSafeDatabaseInternal(dbPath, options, hooks);
+}
+
 export function readSqliteRuntime(database: SqliteDatabase): SqliteRuntime {
   const versionRow = database.prepare("SELECT sqlite_version() AS sqlite_version").get() as Record<string, unknown>;
   const journalRow = database.prepare("PRAGMA journal_mode").get() as Record<string, unknown>;
@@ -626,6 +683,50 @@ export function withImmediateTransaction<T>(database: SqliteDatabase, callback: 
     }
     throw error;
   }
+}
+
+// Module-private admission binding. A successful existing-database open
+// registers the exact quiesce-absence guard that was established and
+// post-checked during open. It is intentionally NOT exposed as an attach API;
+// the only production surface is withGuardedWriteTransaction, which refuses any
+// connection that was not opened through the guarded existing opener.
+const quiesceAdmissions = new WeakMap<SqliteDatabase, QuiesceAbsenceGuard>();
+
+export type GuardedWriteTestHooks = Readonly<{
+  betweenBeginAndCallback?: (leasePath: string) => void;
+}>;
+
+function requireQuiesceAdmission(database: SqliteDatabase): QuiesceAbsenceGuard {
+  const guard = quiesceAdmissions.get(database);
+  if (guard === undefined) throw new ConfigError("QUIESCE_WRITER_ADMISSION_UNAVAILABLE", "connection was not opened through the guarded existing database opener");
+  return guard;
+}
+
+function withGuardedWriteTransactionInternal<T>(
+  database: SqliteDatabase,
+  callback: () => T,
+  hooks: GuardedWriteTestHooks | undefined
+): T {
+  const guard = requireQuiesceAdmission(database);
+  guard.assertAbsent();
+  return withImmediateTransaction(database, () => {
+    hooks?.betweenBeginAndCallback?.(guard.leasePath);
+    guard.assertAbsent();
+    return callback();
+  });
+}
+
+export function withGuardedWriteTransaction<T>(database: SqliteDatabase, callback: () => T): T {
+  return withGuardedWriteTransactionInternal(database, callback, undefined);
+}
+
+export function withGuardedWriteTransactionForTest<T>(
+  database: SqliteDatabase,
+  callback: () => T,
+  hooks: GuardedWriteTestHooks
+): T {
+  if (process.env.NODE_ENV !== "test") throw new ConfigError("TEST_HOOKS_FORBIDDEN", "guarded write test hooks only allowed under NODE_ENV=test");
+  return withGuardedWriteTransactionInternal(database, callback, hooks);
 }
 
 export type MigrationResult = {

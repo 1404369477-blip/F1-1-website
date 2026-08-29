@@ -9,7 +9,7 @@ import { assertNoAdditionalCliArguments, runSafeCli } from "../src/server/securi
 
 type ServeMode = "dev" | "start";
 type StopSignal = "SIGINT" | "SIGTERM";
-type StartupStage = "spawn" | "readiness" | "early_exit" | "timeout";
+type StartupStage = "spawn" | "readiness" | "early_exit" | "timeout" | "proxy-setup";
 type NormalizedExitCode = "zero" | "nonzero" | "unavailable";
 type AllowlistedSignal = StopSignal | "SIGKILL" | "other" | "none";
 type ElapsedBucket = "lt_1s" | "1_to_5s" | "5_to_15s" | "gte_15s";
@@ -27,7 +27,7 @@ type StartupFailureReceipt = {
 const NEXT_HOSTNAME = "127.0.0.1";
 const PUBLIC_PORT = 3000;
 const NEXT_INTERNAL_PORT = 3001;
-const STARTUP_TIMEOUT_MS = 15_000;
+const STARTUP_TIMEOUT_MS = 45_000;
 const READINESS_POLL_MS = 50;
 
 function elapsedBucket(startedAt: number): ElapsedBucket {
@@ -199,17 +199,24 @@ async function runNextProcess(mode: ServeMode, profileLabel: ProfileLabel, start
         probing = false;
         if (concluded || !ready) return;
         startingProxy = true;
-        proxy = createFinalResponseProxy(mode === "start" && profileLabel === "public-multimedia-synthetic");
-        proxy.once("error", () => {
-          rejectWithReceipt("spawn", null, null);
+        try {
+          proxy = createFinalResponseProxy(mode === "start" && profileLabel === "public-multimedia-synthetic");
+          proxy.once("error", (err) => {
+            rejectWithReceipt("spawn", null, null);
+            stopChild(child, "SIGTERM");
+          });
+          proxy.listen(PUBLIC_PORT, NEXT_HOSTNAME, () => {
+            if (concluded) return closeProxy(proxy);
+            readyReached = true;
+            clearInterval(readinessPoll);
+            clearTimeout(startupTimeout);
+          });
+        } catch (err) {
+          rejectWithReceipt("proxy-setup", null, null);
           stopChild(child, "SIGTERM");
-        });
-        proxy.listen(PUBLIC_PORT, NEXT_HOSTNAME, () => {
-          if (concluded) return closeProxy(proxy);
-          readyReached = true;
-          clearInterval(readinessPoll);
-          clearTimeout(startupTimeout);
-        });
+        }
+      }).catch((err) => {
+        rejectWithReceipt("readiness", null, null);
       });
     }, READINESS_POLL_MS);
 
@@ -270,6 +277,13 @@ await runSafeCli(async () => {
   let profileLabel: ProfileLabel = "unknown";
   try {
     const config = loadRuntimeConfig();
+    if (mode === "start" && (config.dataProfile === "public-synthetic" || config.dataProfile === "public-multimedia-synthetic")) {
+      const deploymentPath = process.env.F1_PUBLIC_DEPLOYMENT_MANIFEST_PATH;
+      if (!deploymentPath?.startsWith("/")) throw new Error("PUBLIC_DEPLOYMENT_MANIFEST_REQUIRED");
+      const { readPublicProjectionDeploymentManifest } = await import("../src/server/public/deployment.ts");
+      const deployment = readPublicProjectionDeploymentManifest(deploymentPath);
+      if (deployment.targetReleaseAppRoot !== appRoot) throw new Error("PUBLIC_RELEASE_ROOT_MISMATCH");
+    }
     if (config.dataProfile === "source-management-synthetic") {
       const { installNoEgressGuard } = await import("../src/server/vs1/no-egress.ts");
       const guard = installNoEgressGuard();

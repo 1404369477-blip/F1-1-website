@@ -12,6 +12,7 @@ import {
   type PublishRequest,
   type PublishSuccess,
   type RejectRequest,
+  type ReleaseNowRequest,
   type RejectSuccess,
   ReviewRealRepository,
   type ReviewDetail,
@@ -23,6 +24,7 @@ import {
   ApproveRequestSchema,
   PublishRequestSchema,
   RejectRequestSchema,
+  ReleaseNowRequestSchema,
   RevisionRequestSchema
 } from "./schema.ts";
 import { ReviewAdminSecurity, type ReviewMutationBinding } from "./security.ts";
@@ -112,6 +114,30 @@ export function preparePublishMutation(value: unknown): PreparedMutation<Publish
   };
 }
 
+export function prepareReleaseNowMutation(value: unknown): PreparedMutation<ReleaseNowRequest> {
+  const request = parseRequest(ReleaseNowRequestSchema, value, "ADMIN_REQUEST_INVALID");
+  return {
+    request,
+    binding: {
+      method: "POST",
+      path: "/api/admin/reviews/release",
+      operationId: request.operationId,
+      bodyHash: bodyHash(request),
+      freshAction: "publish",
+      resourceHash: bodyHash({
+        items: request.expected.items,
+        editable: request.editable
+      })
+    }
+  };
+}
+
+export function prepareFreshPublishBinding(value: unknown): PreparedMutation<PublishRequest> | PreparedMutation<ReleaseNowRequest> {
+  const release = ReleaseNowRequestSchema.safeParse(value);
+  if (release.success) return prepareReleaseNowMutation(value);
+  return preparePublishMutation(value);
+}
+
 export class ReviewAdminBackend {
   private readonly repository: ReviewRealRepository;
   private readonly security: ReviewAdminSecurity;
@@ -177,6 +203,14 @@ export class ReviewAdminBackend {
     const prepared = preparePublishMutation(value);
     const authorization = this.security.authorizeMutation(context, prepared.binding);
     const response = this.repository.publish(prepared.request, prepared.binding.path, authorization.actorRef);
+    this.security.commitMutation(authorization);
+    return response;
+  }
+
+  releaseNow(context: RawAdminContext, value: unknown): PublishSuccess {
+    const prepared = prepareReleaseNowMutation(value);
+    const authorization = this.security.authorizeMutation(context, prepared.binding);
+    const response = this.repository.releaseNow(prepared.request, prepared.binding.path, authorization.actorRef);
     this.security.commitMutation(authorization);
     return response;
   }

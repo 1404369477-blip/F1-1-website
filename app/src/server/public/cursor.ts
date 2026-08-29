@@ -2,7 +2,7 @@ import { Buffer } from "node:buffer";
 
 import { canonicalJson } from "../db/profile.ts";
 import { PublicReadError } from "./error.ts";
-import { PUBLIC_CONTENT_TYPES, type PublicContentType, type PublicCursorPayloadV1 } from "./types.ts";
+import { PUBLIC_CONTENT_TYPES, type PublicContentType, type PublicCursorPayloadV2 } from "./types.ts";
 
 const PUBLIC_ID_PATTERN = /^public-[a-z0-9-]{1,120}$/;
 const SOURCE_ID_PATTERN = /^[a-z][a-z0-9-]{0,127}$/;
@@ -28,11 +28,11 @@ export function isPublicContentType(value: string): value is PublicContentType {
   return (PUBLIC_CONTENT_TYPES as readonly string[]).includes(value);
 }
 
-export function encodePublicCursor(payload: PublicCursorPayloadV1): string {
+export function encodePublicCursor(payload: PublicCursorPayloadV2): string {
   return Buffer.from(canonicalJson(payload), "utf8").toString("base64url");
 }
 
-export function decodePublicCursor(value: string): PublicCursorPayloadV1 {
+export function decodePublicCursor(value: string): PublicCursorPayloadV2 {
   if (Buffer.byteLength(value, "utf8") > 512 || !/^[A-Za-z0-9_-]+$/.test(value)) {
     throw new PublicReadError("PUBLIC_CURSOR_INVALID");
   }
@@ -50,21 +50,21 @@ export function decodePublicCursor(value: string): PublicCursorPayloadV1 {
   }
   const record = parsed as Record<string, unknown>;
   const keys = Object.keys(record).sort();
-  const expected = ["contentType", "publicId", "publishedAt", "source", "v"];
+  const expected = ["contentType", "publicId", "source", "timelineAt", "v"];
   if (keys.length !== expected.length || keys.some((key, index) => key !== expected[index])) {
     throw new PublicReadError("PUBLIC_CURSOR_INVALID");
   }
   if (
-    record.v !== 1 ||
+    record.v !== 2 ||
     typeof record.publicId !== "string" ||
     !isPublicId(record.publicId) ||
-    typeof record.publishedAt !== "string" ||
-    !isCanonicalUtc(record.publishedAt) ||
+    typeof record.timelineAt !== "string" ||
+    !isCanonicalUtc(record.timelineAt) ||
     (record.source !== null && (typeof record.source !== "string" || !isSourceId(record.source))) ||
     (record.contentType !== null && (typeof record.contentType !== "string" || !isPublicContentType(record.contentType))) ||
     canonicalJson(record) !== bytes.toString("utf8")
   ) {
     throw new PublicReadError("PUBLIC_CURSOR_INVALID");
   }
-  return record as PublicCursorPayloadV1;
+  return record as PublicCursorPayloadV2;
 }

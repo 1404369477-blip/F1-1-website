@@ -1,5 +1,11 @@
 import { createHash } from "node:crypto";
-import { mkdirSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import {
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  realpathSync
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
@@ -69,7 +75,7 @@ function publicSyntheticConfig() {
 }
 
 function tempDatabase(): { root: string; path: string; database: SqliteDatabase } {
-  const root = mkdtempSync(join(tmpdir(), "f1plus1-public-mm-"));
+  const root = mkdtempSync(join(realpathSync(tmpdir()), "f1plus1-public-mm-"));
   tempRoots.push(root);
   mkdirSync(root, { recursive: true, mode: 0o700 });
   const path = join(root, "f1plus1-public-multimedia-synthetic.sqlite");

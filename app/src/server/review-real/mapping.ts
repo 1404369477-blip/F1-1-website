@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import type { z } from "zod";
 
 import { canonicalJson } from "../db/profile.ts";
+import { liveRssDisplayName } from "../rss/sources.ts";
 import {
   ADMIN_REVIEW_DTO_SCHEMAS,
   AuditEventPayloadSchema,
@@ -177,7 +178,8 @@ export function buildReviewBundleMaterial(input: Readonly<{
     throw new ReviewDataError("REVIEW_DATA_INVALID");
   }
 
-  const sourceAuthor = candidate.data.sourceAuthor?.trim() || "Motorsport.com";
+  const sourceDisplayName = liveRssDisplayName(candidate.data.sourceId);
+  const sourceAuthor = candidate.data.sourceAuthor?.trim() || sourceDisplayName;
   const publicPayload = ReviewBundlePublicPayloadSchema.parse({
     candidateId: candidate.data.candidateId,
     sourceId: candidate.data.sourceId,
@@ -191,7 +193,7 @@ export function buildReviewBundleMaterial(input: Readonly<{
     titleZh: editable.data.titleZh,
     summaryZh: editable.data.summaryZh,
     media: input.media ? [input.media] : [],
-    sourceDisplayName: "Motorsport.com"
+    sourceDisplayName
   });
   const publicPayloadJson = canonicalJson(publicPayload);
   const publicPayloadHash = sha256(publicPayloadJson);
@@ -270,11 +272,25 @@ function projectionHash(core: PublicProjectionRecordCore): string {
   return sha256(canonicalJson(core));
 }
 
+export function normalizeProjectionKeyPoints(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  const points: string[] = [];
+  for (const item of value) {
+    if (typeof item !== "string") continue;
+    const point = item.replace(/\r\n?/g, "\n").trim();
+    if (point.length < 1 || [...point].length > 240) continue;
+    points.push(point);
+    if (points.length === 3) break;
+  }
+  return points;
+}
+
 export function buildPublicProjectionRecord(input: Readonly<{
   publicId: string;
   bundleHash: string;
   publishedAt: string;
   publicPayload: ReviewBundlePublicPayload;
+  keyPointsZh?: readonly string[];
 }>): PublicProjectionRecord {
   const payload = ReviewBundlePublicPayloadSchema.safeParse(input.publicPayload);
   const publishedAt = UtcTimestampSchema.safeParse(input.publishedAt);
@@ -318,7 +334,7 @@ export function buildPublicProjectionRecord(input: Readonly<{
     detail: {
       leadZh: payload.data.summaryZh,
       bodyZh: [payload.data.summaryZh],
-      keyPointsZh: []
+      keyPointsZh: normalizeProjectionKeyPoints(input.keyPointsZh)
     }
   });
   return PublicProjectionRecordSchema.parse({ ...core, projectionHash: projectionHash(core) });

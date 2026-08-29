@@ -1,12 +1,17 @@
 import { createPublicKey, type KeyObject } from "node:crypto";
 import { readFileSync } from "node:fs";
 
+import { findEventCluster, materializeClusteredItem, pageClusteredItems } from "../../modules/story/event-cluster.ts";
 import { readProjectionSnapshot } from "../review-real/projection.ts";
 import type { ProjectionSnapshot, PublicProjectionRecord } from "../review-real/schema.ts";
 import { encodePublicCursor } from "./cursor.ts";
 import { PublicReadError } from "./error.ts";
 import type { PublicStoryReader } from "./http.ts";
+import { comparePublicTimelineDescending, publicTimelineAt } from "./timeline.ts";
+import { publicBilingualCard, readPublicBilingualSnapshot, selectPublicBilingualRecords } from "./bilingual-snapshot.ts";
 import type {
+  PublicBilingualFeedResponseV2,
+  PublicBilingualStoryDetailResponseV2,
   PublicFeedItemV1,
   PublicFeedQuery,
   PublicFeedResponseV1,
@@ -19,16 +24,6 @@ export type PublicRealSnapshotConfig = Readonly<{
   signingKeyId: string;
   verifyKeyPath: string;
 }>;
-
-function compareUnicodeCodePoints(left: string, right: string): number {
-  const leftPoints = Array.from(left, (value) => value.codePointAt(0) ?? 0);
-  const rightPoints = Array.from(right, (value) => value.codePointAt(0) ?? 0);
-  const length = Math.min(leftPoints.length, rightPoints.length);
-  for (let index = 0; index < length; index += 1) {
-    if (leftPoints[index] !== rightPoints[index]) return leftPoints[index] - rightPoints[index];
-  }
-  return leftPoints.length - rightPoints.length;
-}
 
 function toItem(record: PublicProjectionRecord): PublicFeedItemV1 {
   return {
@@ -47,14 +42,7 @@ function toItem(record: PublicProjectionRecord): PublicFeedItemV1 {
 }
 
 function orderRecords(records: readonly PublicProjectionRecord[]): PublicProjectionRecord[] {
-  return [...records].sort((left, right) => {
-    const timestamp = Date.parse(right.publishedAt) - Date.parse(left.publishedAt);
-    return timestamp !== 0 ? timestamp : -compareUnicodeCodePoints(left.publicId, right.publicId);
-  });
-}
-
-function assertV1(version: PublicReadVersion): void {
-  if (version !== "public-read-v0.1") throw new PublicReadError("PUBLIC_MEDIA_VERSION_UNSUPPORTED");
+  return [...records].sort(comparePublicTimelineDescending);
 }
 
 export class PublicRealSnapshotReader implements PublicStoryReader {
@@ -84,11 +72,26 @@ export class PublicRealSnapshotReader implements PublicStoryReader {
     }
   }
 
+  private readBilingualSnapshot() {
+    return readPublicBilingualSnapshot({ root: this.config.projectionRoot, signingKeyId: this.config.signingKeyId, publicKey: this.publicKey });
+  }
+
   getFeed(
     query: PublicFeedQuery,
     version: PublicReadVersion = "public-read-v0.1"
-  ): PublicFeedResponseV1 {
-    assertV1(version);
+  ): PublicFeedResponseV1 | PublicBilingualFeedResponseV2 {
+    if (version === "public-read-bilingual-v2") {
+      const snapshot = this.readBilingualSnapshot();
+      const page = selectPublicBilingualRecords(snapshot, query);
+      return {
+        schemaVersion: "public-read-bilingual-v2",
+        items: page.records.map(publicBilingualCard),
+        page: { limit: page.limit, nextCursor: page.nextCursor, asOf: snapshot.body.generatedAt },
+        generationId: snapshot.body.generationId,
+        generationHash: snapshot.generationHash
+      };
+    }
+    if (version !== "public-read-v0.1") throw new PublicReadError("PUBLIC_MEDIA_VERSION_UNSUPPORTED");
     const snapshot = this.readSnapshot();
     if (snapshot === null) {
       return {
@@ -101,22 +104,18 @@ export class PublicRealSnapshotReader implements PublicStoryReader {
     if (query.cursor) {
       const cursorRecord = graph.get(query.cursor.publicId);
       if (
-        cursorRecord?.publishedAt !== query.cursor.publishedAt ||
+        !cursorRecord ||
+        publicTimelineAt(cursorRecord) !== query.cursor.timelineAt ||
         (query.source !== null && cursorRecord.source.sourceId !== query.source) ||
         (query.contentType !== null && cursorRecord.contentType !== query.contentType)
       ) throw new PublicReadError("PUBLIC_CURSOR_INVALID");
     }
-    const selected = orderRecords(snapshot.records).filter((record) => {
+    const filtered = orderRecords(snapshot.records).filter((record) => {
       if (query.source !== null && record.source.sourceId !== query.source) return false;
       if (query.contentType !== null && record.contentType !== query.contentType) return false;
-      if (query.cursor === null) return true;
-      return record.publishedAt < query.cursor.publishedAt || (
-        record.publishedAt === query.cursor.publishedAt &&
-        compareUnicodeCodePoints(record.publicId, query.cursor.publicId) < 0
-      );
-    }).slice(0, 13);
-    const hasMore = selected.length > 12;
-    const items = selected.slice(0, 12).map(toItem);
+      return true;
+    }).map(toItem);
+    const { items, hasMore } = pageClusteredItems(filtered, query, 12);
     const last = items.at(-1);
     return {
       schemaVersion: "public-read-v0.1",
@@ -125,11 +124,11 @@ export class PublicRealSnapshotReader implements PublicStoryReader {
         pageSize: 12,
         hasMore,
         nextCursor: hasMore && last ? {
-          cursorAt: last.publishedAt,
+          cursorAt: publicTimelineAt(last),
           cursorId: encodePublicCursor({
-            v: 1,
+            v: 2,
             publicId: last.publicId,
-            publishedAt: last.publishedAt,
+            timelineAt: publicTimelineAt(last),
             source: query.source,
             contentType: query.contentType
           })
@@ -141,21 +140,47 @@ export class PublicRealSnapshotReader implements PublicStoryReader {
   getDetail(
     publicId: string,
     version: PublicReadVersion = "public-read-v0.1"
-  ): PublicStoryDetailResponseV1 | null {
-    assertV1(version);
+  ): PublicStoryDetailResponseV1 | PublicBilingualStoryDetailResponseV2 | null {
+    if (version === "public-read-bilingual-v2") {
+      const snapshot = this.readBilingualSnapshot();
+      const record = snapshot.body.records.find((candidate) => candidate.payload.publicId === publicId);
+      if (!record) return null;
+      const ordered = snapshot.body.records
+        .filter((candidate) => candidate.payload.publicId !== publicId)
+        .sort((left, right) => right.payload.publishedAt.localeCompare(left.payload.publishedAt) || right.payload.publicId.localeCompare(left.payload.publicId));
+      const related = [
+        ...ordered.filter((candidate) => candidate.payload.category === record.payload.category),
+        ...ordered.filter((candidate) => candidate.payload.category !== record.payload.category)
+      ].slice(0, 12);
+      return {
+        schemaVersion: "public-read-bilingual-v2",
+        story: publicBilingualCard(record),
+        relatedItems: related.map(publicBilingualCard),
+        generationId: snapshot.body.generationId,
+        generationHash: snapshot.generationHash
+      };
+    }
+    if (version !== "public-read-v0.1") throw new PublicReadError("PUBLIC_MEDIA_VERSION_UNSUPPORTED");
     const snapshot = this.readSnapshot();
     if (snapshot === null) return null;
     const record = snapshot.records.find((candidate) => candidate.publicId === publicId);
     if (!record) return null;
+    const allItems = snapshot.records.map(toItem);
+    const cluster = findEventCluster(allItems, publicId);
+    const siblings = cluster.filter((member) => member.publicId !== publicId);
+    const siblingIds = new Set(siblings.map((member) => member.publicId));
     const ordered = orderRecords(snapshot.records).filter((candidate) => candidate.publicId !== publicId);
     const related = [
-      ...ordered.filter((candidate) => candidate.contentType === record.contentType),
-      ...ordered.filter((candidate) => candidate.contentType !== record.contentType)
-    ].slice(0, 3).map(toItem);
+      ...siblings,
+      ...[
+        ...ordered.filter((candidate) => candidate.contentType === record.contentType),
+        ...ordered.filter((candidate) => candidate.contentType !== record.contentType)
+      ].map(toItem).filter((item) => !siblingIds.has(item.publicId))
+    ].slice(0, 3);
     return {
       schemaVersion: "public-read-v0.1",
       story: {
-        ...toItem(record),
+        ...materializeClusteredItem(toItem(record), cluster),
         leadZh: record.detail.leadZh,
         bodyZh: record.detail.bodyZh,
         keyPointsZh: record.detail.keyPointsZh

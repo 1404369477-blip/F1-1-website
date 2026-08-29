@@ -5,7 +5,8 @@ import {
   readFileSync,
   rmSync,
   symlinkSync,
-  writeFileSync
+  writeFileSync,
+  realpathSync
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -92,7 +93,7 @@ function signedGeneration(root: string) {
 
 describe("ADR-M5-REAL-PROJECTION-RUNTIME-002 public B", () => {
   it("closes loopback POST/receipt GET and reads one verified generation without fallback", async () => {
-    const root = mkdtempSync(join(tmpdir(), "f1-public-real-http-"));
+    const root = mkdtempSync(join(realpathSync(tmpdir()), "f1-public-real-http-"));
     chmodSync(root, 0o700);
     const fixture = signedGeneration(join(root, "projection"));
     const server = createProjectionReceiverServer({
@@ -144,7 +145,7 @@ describe("ADR-M5-REAL-PROJECTION-RUNTIME-002 public B", () => {
   });
 
   it("keeps no-active empty, corruption 503, symlink fail-closed, and v2 rejects v1 deployment", async () => {
-    const root = mkdtempSync(join(tmpdir(), "f1-public-real-boundary-"));
+    const root = mkdtempSync(join(realpathSync(tmpdir()), "f1-public-real-boundary-"));
     chmodSync(root, 0o700);
     const fixture = signedGeneration(join(root, "empty"));
     const keyPath = join(root, "verify.pem");
@@ -181,7 +182,7 @@ describe("ADR-M5-REAL-PROJECTION-RUNTIME-002 public B", () => {
   });
 
   it("starts real snapshot mode without a synthetic fixture or database", () => {
-    const root = mkdtempSync(join(tmpdir(), "f1-public-real-readiness-"));
+    const root = mkdtempSync(join(realpathSync(tmpdir()), "f1-public-real-readiness-"));
     chmodSync(root, 0o700);
     const fixture = signedGeneration(join(root, "projection"));
     fixture.receiver.receive(fixture.packageValue);

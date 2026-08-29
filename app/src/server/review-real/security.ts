@@ -46,8 +46,9 @@ type FreshRecord = {
   digest: string;
   sessionDigest: string;
   operationId: string;
-  action: "publish";
+  action: "publish" | "SOURCE_RETIRE" | "AUTHORITY_ACTIVATE" | "BILINGUAL_SAFETY_REVIEW" | "BILINGUAL_CORRECT" | "BILINGUAL_WITHDRAW";
   resourceHash: string;
+  verifiedAt: number;
   expiresAt: number;
   state: OneTimeState;
 };
@@ -63,6 +64,7 @@ export type AuthorizedReviewMutation = Readonly<{
   sessionDigest: string;
   csrfDigest: string;
   freshDigest: string | null;
+  freshVerifiedAt: string | null;
   operationId: string;
   bodyHash: string;
 }>;
@@ -72,7 +74,7 @@ export type ReviewMutationBinding = Readonly<{
   path: string;
   operationId: string;
   bodyHash: string;
-  freshAction?: "publish";
+  freshAction?: "publish" | "SOURCE_RETIRE" | "AUTHORITY_ACTIVATE" | "BILINGUAL_SAFETY_REVIEW" | "BILINGUAL_CORRECT" | "BILINGUAL_WITHDRAW";
   resourceHash?: string;
 }>;
 
@@ -305,7 +307,7 @@ export class ReviewAdminSecurity {
 
   acceptVerifiedFreshReauth(
     context: RawAdminContext,
-    binding: Readonly<{ operationId: string; action: "publish"; resourceHash: string }>
+    binding: Readonly<{ operationId: string; action: "publish" | "SOURCE_RETIRE" | "AUTHORITY_ACTIVATE" | "BILINGUAL_SAFETY_REVIEW" | "BILINGUAL_CORRECT" | "BILINGUAL_WITHDRAW"; resourceHash: string }>
   ): Readonly<{ setCookie: string; cookieHeader: string; freshReceipt: string }> {
     this.assertOrigin(context);
     const oldSession = this.session(context);
@@ -335,6 +337,7 @@ export class ReviewAdminSecurity {
       operationId: binding.operationId,
       action: binding.action,
       resourceHash: binding.resourceHash,
+      verifiedAt: now,
       expiresAt: now + FRESH_TTL_MS,
       state: "issued"
     });
@@ -378,6 +381,7 @@ export class ReviewAdminSecurity {
     }
 
     let freshDigest: string | null = null;
+    let freshVerifiedAt: string | null = null;
     if (binding.freshAction !== undefined) {
       const token = singleRawHeader(context, "x-f1-fresh-reauth");
       if (
@@ -401,12 +405,14 @@ export class ReviewAdminSecurity {
       ) {
         throw new ReviewRealError("ADMIN_REAUTH_REQUIRED", 403);
       }
+      freshVerifiedAt = new Date(fresh.verifiedAt).toISOString();
     }
     return {
       actorRef: session.operatorRef,
       sessionDigest: session.digest,
       csrfDigest,
       freshDigest,
+      freshVerifiedAt,
       operationId: binding.operationId,
       bodyHash: binding.bodyHash
     };

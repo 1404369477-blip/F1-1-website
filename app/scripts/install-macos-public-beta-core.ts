@@ -220,6 +220,7 @@ export function preparePublicMacAgents(input: PublicMacPrepareInput): Readonly<{
       "APP_ENV=local", "APP_PORT=3000", "APP_BIND_HOST=127.0.0.1", "APP_PUBLIC_ORIGIN=http://127.0.0.1:3000",
       "F1_DATA_PROFILE=public-multimedia-synthetic", "F1_DB_PATH=.local/f1plus1-public-multimedia-synthetic.sqlite",
       `F1_PUBLIC_READ_MODE=${readMode}`,
+      `F1_PUBLIC_DEPLOYMENT_MANIFEST_PATH=${publicPaths.manifest}`,
       ...(readMode === "public-real-snapshot" ? [
         `F1_PUBLIC_PROJECTION_ROOT=${publicProjectionRootForHome(input.home)}`,
         `F1_PUBLIC_VERIFY_KEY_PATH=${verifyKeyPath}`,
@@ -251,6 +252,11 @@ export function preparePublicMacAgents(input: PublicMacPrepareInput): Readonly<{
     const projection = preparePublicProjectionDeployment({
       home: input.home,
       targetReleaseAppRoot: input.appRoot,
+      targetReleaseManifestPath: manifestPath,
+      targetReleaseManifestSha256: manifestSha256,
+      targetReleaseRootSha256: release.releaseRootSha256,
+      targetNextBuildSha256: release.nextBuild.contentRootSha256,
+      targetDependenciesSha256: release.productionDependencies.contentRootSha256,
       syntheticRollbackAppRoot,
       syntheticRollbackDatabaseIdentity: {
         dev: rollbackDatabaseStat.dev,

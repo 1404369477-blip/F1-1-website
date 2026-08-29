@@ -28,6 +28,14 @@ import {
   type PublicStoryImage,
   type StoryCategory
 } from "./public-api";
+import {
+  formatCardKicker,
+  formatTimelineKicker,
+  hasEditorialExtras,
+  isDuplicateEditorialBody,
+  isImageFirstCategory,
+  shouldShowEndOfFeed
+} from "./editorial";
 import { readHashParam, setHashParams } from "./hash-params";
 import { getTimelineSearchQuery, setTimelineSearchQuery, subscribeTimelineSearch } from "./timeline-search";
 
@@ -68,6 +76,25 @@ type SwipeState = {
 };
 
 type WheelState = { accumulated: number; lastAt: number; flipped: boolean };
+
+type ViewMode = "timeline" | "cards";
+
+const MOBILE_QUERY = "(max-width: 700px)";
+
+function subscribeMobileQuery(onStoreChange: () => void): () => void {
+  if (typeof window === "undefined") return () => undefined;
+  const mql = window.matchMedia(MOBILE_QUERY);
+  mql.addEventListener("change", onStoreChange);
+  return () => mql.removeEventListener("change", onStoreChange);
+}
+
+function getMobileQuerySnapshot(): boolean {
+  return typeof window !== "undefined" && window.matchMedia(MOBILE_QUERY).matches;
+}
+
+function getMobileQueryServerSnapshot(): boolean {
+  return false;
+}
 
 function subscribeOnlineStatus(onStoreChange: () => void): () => void {
   if (typeof window === "undefined") return () => undefined;
@@ -191,6 +218,163 @@ function TimelineSkeleton() {
   );
 }
 
+type CardDeckProps = {
+  stories: PublicStoryCardViewModel[];
+  onOpenLightbox: (images: PublicStoryImage[], index: number, trigger: HTMLElement, publicId: string) => void;
+  onLoadMore: (() => void) | null;
+};
+
+function CardDeck({ stories, onOpenLightbox, onLoadMore }: CardDeckProps): ReactNode {
+  const deckRef = useRef<HTMLDivElement | null>(null);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!onLoadMore || !sentinelRef.current) return;
+    const sentinel = sentinelRef.current;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) onLoadMore();
+      },
+      { root: deckRef.current, rootMargin: "200px", threshold: 0 }
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [onLoadMore]);
+
+  const handleImageClick = useCallback(
+    (event: React.MouseEvent<HTMLImageElement>, story: PublicStoryCardViewModel, index: number): void => {
+      onOpenLightbox(story.images, index, event.currentTarget, story.publicId);
+    },
+    [onOpenLightbox]
+  );
+
+  if (stories.length === 0) {
+    return (
+      <div className="card-deck-empty" role="status">
+        <p>暂无可浏览的内容</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="card-deck" ref={deckRef} aria-label="沉浸卡片流">
+      {stories.map((story, storyIndex) => {
+        const storyCopy = story.localized["zh-CN"] ?? { title: story.title, summary: story.summary, lead: story.summary, body: [], keyPoints: [] };
+        const mainImage = story.images[0] ?? null;
+        const imageFirst = isImageFirstCategory(story.category);
+        const hasImage = mainImage !== null;
+        const clock = formatClock(story.publishedAtIso);
+        const date = formatDate(story.publishedAtIso);
+
+        return (
+          <article
+            className={`card-snap${hasImage ? "" : " card-snap--no-image"}`}
+            key={story.publicId}
+            data-tone={story.mediaTone}
+          >
+            <div className="card-snap-header">
+              <span className="card-snap-cat">{story.category}</span>
+              <span className="card-snap-counter" aria-label="卡片位置">
+                {formatCardKicker(stories.length, storyIndex)}
+              </span>
+              <time className="card-snap-time" dateTime={story.publishedAtIso}>
+                {date} {clock}
+              </time>
+            </div>
+
+            {hasImage ? (
+              <div className="card-snap-visual">
+                <img
+                  className="card-snap-img"
+                  src={mainImage.src}
+                  alt={mainImage.alt}
+                  loading={storyIndex <= 2 ? "eager" : "lazy"}
+                  decoding="async"
+                  referrerPolicy="no-referrer"
+                  onClick={(event) => handleImageClick(event, story, 0)}
+                />
+                {story.images.length > 1 ? (
+                  <span className="card-snap-img-count" aria-label={`${story.images.length} 张图片`}>
+                    {story.images.length} 图
+                  </span>
+                ) : null}
+              </div>
+            ) : (
+              <div className={`card-snap-visual card-snap-gradient card-snap-gradient--${story.mediaTone}`}>
+                <span className="card-snap-gradient-label" aria-hidden="true">
+                  {imageFirst ? "暂无配图" : story.mediaLabel}
+                </span>
+              </div>
+            )}
+
+            <div className="card-snap-body">
+              <h2 className="card-snap-title">{storyCopy.title}</h2>
+              <p className="card-snap-summary">{storyCopy.summary}</p>
+
+              {storyCopy.keyPoints.length > 0 ? (
+                <ul className="card-snap-keypoints">
+                  {storyCopy.keyPoints.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              ) : null}
+
+              <footer className="card-snap-source">
+                <span className="card-snap-source-name">
+                  {story.sourceName}
+                  {story.author && story.author !== story.sourceName ? ` · ${story.author}` : ""}
+                </span>
+                {story.originalUrl ? (
+                  <a
+                    className="card-snap-original"
+                    href={story.originalUrl}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    {imageFirst ? "查看原帖 →" : "查看原文 →"}
+                  </a>
+                ) : null}
+              </footer>
+            </div>
+          </article>
+        );
+      })}
+
+      <div ref={sentinelRef} className="card-deck-sentinel" aria-hidden="true" />
+    </div>
+  );
+}
+
+function getEnglishFallback(story: PublicStoryCardViewModel): { title: string; summary: string; lead: string; body: string[]; keyPoints: string[] } {
+  if (story.localized.en) return story.localized.en;
+  let derivedTitle = "";
+  if (story.originalUrl) {
+    try {
+      const url = new URL(story.originalUrl);
+      const segments = url.pathname.split("/").filter(Boolean);
+      const slug = segments.find((s) => s.includes("-") && s.length > 8);
+      if (slug) {
+        derivedTitle = slug
+          .replace(/-/g, " ")
+          .replace(/\b\w/g, (c) => c.toUpperCase());
+      }
+    } catch {}
+  }
+  const title = derivedTitle || `Original coverage: ${story.title}`;
+  const authorText = story.author && story.author.trim() !== story.sourceName.trim() ? ` by ${story.author}` : "";
+  const lead = `Original English reporting published by ${story.sourceName}${authorText}. Full quotes, technical insights, and paddock statements are available at the official publication.`;
+  const body = [
+    `This report is syndicated from ${story.sourceName}. You can read the original English coverage directly at the publisher's official link below.`,
+    `Published: ${story.publishedAt}`
+  ];
+  const keyPoints = [
+    `Publisher: ${story.sourceName}`,
+    `Byline: ${story.author || "Editorial Team"}`,
+    `Direct link: Read full English article on official site`
+  ];
+  return { title, summary: lead, lead, body, keyPoints };
+}
+
 export function FeedExperience() {
   const [feedState, setFeedState] = useState<FeedRequestState>({ status: "loading" });
   const [activeCategory, setActiveCategory] = useState<StoryCategory | "全部">("全部");
@@ -207,6 +391,43 @@ export function FeedExperience() {
   const [mediaIndex, setMediaIndex] = useState<Record<string, number>>({});
   /** 每条内容临时悬停预览的索引;null 表示无悬停。 */
   const [mediaHover, setMediaHover] = useState<Record<string, number | null>>({});
+  const [languageByPublicId, setLanguageByPublicId] = useState<Record<string, "zh-CN" | "en">>({});
+  const isMobile = useSyncExternalStore(subscribeMobileQuery, getMobileQuerySnapshot, getMobileQueryServerSnapshot);
+  const [viewMode, setViewMode] = useState<ViewMode>(() => {
+    if (typeof window === "undefined") return "timeline";
+    const fromHash = readHashParam("mode");
+    if (fromHash === "cards") return "cards";
+    if (fromHash === "timeline") return "timeline";
+    try {
+      return window.localStorage?.getItem("f1_view_mode") === "cards" ? "cards" : "timeline";
+    } catch {
+      return "timeline";
+    }
+  });
+
+  useEffect(() => {
+    const handleModeChange = () => {
+      const fromHash = readHashParam("mode");
+      if (fromHash === "cards") {
+        setViewMode("cards");
+        return;
+      }
+      if (fromHash === "timeline") {
+        setViewMode("timeline");
+        return;
+      }
+      try {
+        const stored = window.localStorage?.getItem("f1_view_mode");
+        setViewMode(stored === "cards" ? "cards" : "timeline");
+      } catch {}
+    };
+    window.addEventListener("hashchange", handleModeChange);
+    window.addEventListener("storage", handleModeChange);
+    return () => {
+      window.removeEventListener("hashchange", handleModeChange);
+      window.removeEventListener("storage", handleModeChange);
+    };
+  }, []);
 
   const loadMoreControllerRef = useRef<AbortController | null>(null);
   const pendingFeedRecoveryFocusRef = useRef(false);
@@ -304,6 +525,7 @@ export function FeedExperience() {
 
   useEffect(() => {
     if (!openId) return;
+    if (feedState.status !== "ready") return;
     if (detailRequestedRef.current.has(openId)) return;
     detailRequestedRef.current.add(openId);
     const controller = new AbortController();
@@ -330,24 +552,15 @@ export function FeedExperience() {
         setDetailStates((current) => ({ ...current, [openId]: { status: "error" } }));
       });
     return () => controller.abort();
-  }, [detailRequestVersion, openId]);
+  }, [detailRequestVersion, feedState, openId]);
 
   useEffect(() => {
     if (!openId) return;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const runScroll = (): void => {
-      // 滚动到该条目的整体(而非展开详情),保证标题与展开内容都可见(demo 同款行为)。
-      const target = Array.from(document.querySelectorAll<HTMLElement>(".tl-item"))
-        .find((item) => item.dataset.id === openId);
-      target?.scrollIntoView({ block: "center", behavior: reducedMotion ? "auto" : "smooth" });
-    };
-    if (reducedMotion) {
-      runScroll();
-      return;
-    }
-    const timer = window.setTimeout(runScroll, 260);
-    return () => window.clearTimeout(timer);
-  }, [detailStates, openId]);
+    const target = Array.from(document.querySelectorAll<HTMLElement>(".tl-item"))
+      .find((item) => item.dataset.id === openId);
+    target?.scrollIntoView({ block: "start", behavior: reducedMotion ? "auto" : "smooth" });
+  }, [openId]);
 
   useEffect(() => {
     const handleDocumentClick = (event: MouseEvent): void => {
@@ -418,6 +631,23 @@ export function FeedExperience() {
       document.body.classList.remove("lb-open");
     };
   }, [lightbox]);
+
+  const closeModal = useCallback((): void => {
+    setOpenId(null);
+    setHashParams({ open: undefined });
+  }, []);
+
+  useEffect(() => {
+    if (!openId) return;
+    const handleKeyDown = (event: KeyboardEvent): void => {
+      if (event.key === "Escape") {
+        setOpenId(null);
+        setHashParams({ open: undefined });
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [openId, setHashParams]);
 
   const toggleItem = useCallback((publicId: string): void => {
     const next = openId === publicId ? null : publicId;
@@ -551,6 +781,11 @@ export function FeedExperience() {
 
   const scrollToTop = useCallback((): void => {
     window.scrollTo({ top: 0, behavior: "auto" });
+  }, []);
+
+  const toggleViewMode = useCallback((mode: ViewMode): void => {
+    setViewMode(mode);
+    setHashParams({ mode: mode === "cards" ? "cards" : undefined });
   }, []);
 
   const loadMore = useCallback(async (): Promise<void> => {
@@ -782,11 +1017,12 @@ export function FeedExperience() {
   const trimmedQuery = query.trim().toLowerCase();
   const filteredStories = useMemo(() => {
     if (!trimmedQuery) return stories;
-    return stories.filter((story) =>
-      `${story.title} ${story.summary} ${story.sourceName} ${story.author} ${story.category} ${story.publishedAt}`
+    return stories.filter((story) => {
+      const localized = Object.values(story.localized).filter((value) => value !== null);
+      return `${localized.map((value) => `${value.title} ${value.summary}`).join(" ")} ${story.sourceName} ${story.author} ${story.category} ${story.publishedAt}`
         .toLowerCase()
-        .includes(trimmedQuery)
-    );
+        .includes(trimmedQuery);
+    });
   }, [stories, trimmedQuery]);
 
   let displayState: DisplayState;
@@ -814,30 +1050,27 @@ export function FeedExperience() {
     const mainImage = images[activeIndex] ?? null;
     const author = hasAuthor(story.author) && story.author.trim() !== story.sourceName.trim() ? story.author : null;
     const hasOriginalUrl = story.originalUrl !== null && story.originalUrl !== "";
+    const imageFirst = isImageFirstCategory(story.category);
+    const requestedLanguage = languageByPublicId[story.publicId] ?? story.defaultLanguage;
+    const selectedLanguage = requestedLanguage;
+    const enFallback = getEnglishFallback(story);
+    const storyCopy = selectedLanguage === "en"
+      ? (story.localized.en ?? enFallback)
+      : (story.localized["zh-CN"] ?? { title: story.title, summary: story.summary, lead: story.summary, body: [], keyPoints: [] });
+    const detailCopy = detail?.status === "ready"
+      ? (selectedLanguage === "en"
+          ? (detail.data.localized?.en ?? enFallback)
+          : (detail.data.localized?.["zh-CN"] ?? {
+              title: detail.data.title,
+              summary: detail.data.summary,
+              lead: detail.data.lead,
+              body: detail.data.body,
+              keyPoints: detail.data.keyPoints
+            }))
+      : null;
+    const originalLabel = selectedLanguage === "en" ? "View source" : imageFirst ? "查看原帖" : "查看原文";
 
-    return (
-      <li className={`tl-item${open ? " is-open" : ""}`} data-id={story.publicId} key={story.publicId}>
-        <div className="tl-time" aria-hidden="true">
-          <span className="tl-t">{clock}</span>
-          <span className="tl-d">{date}</span>
-        </div>
-        <div className="tl-entry">
-          <button
-            type="button"
-            className={`tl-summary-btn${open ? " is-open" : ""}`}
-            aria-expanded={open}
-            aria-controls={`det-${story.publicId}`}
-            onClick={() => toggleItem(story.publicId)}
-          >
-            <span className="tl-head">
-              <span className="tl-cat">{story.category}</span>
-              <span className="tl-caret" aria-hidden="true" />
-            </span>
-            <span className="tl-title">{story.title}</span>
-            <span className="tl-lead">{story.summary}</span>
-          </button>
-
-          {mainImage ? (
+    const media = mainImage ? (
             <span
               className={`tl-media${images.length > 1 ? " multi" : ""}`}
               data-cur={activeIndex}
@@ -867,41 +1100,103 @@ export function FeedExperience() {
                 onKeyDown={(event) => handleMainImageKeyDown(event, images, activeIndex, event.currentTarget, story.publicId)}
               />
             </span>
-          ) : null}
+          ) : null;
+
+    return (
+      <li
+        className={`tl-item${open ? " is-open" : ""}`}
+        data-id={story.publicId}
+        data-kind={imageFirst ? "image-first" : "event"}
+        key={story.publicId}
+      >
+        <div className="tl-time" aria-hidden="true">
+          <span className="tl-t">{clock}</span>
+          <span className="tl-d">{date}</span>
+        </div>
+        <div className="tl-entry">
+          {imageFirst ? media : null}
+          <button
+            type="button"
+            className={`tl-summary-btn${open ? " is-open" : ""}`}
+            aria-expanded={open}
+            aria-controls={`det-${story.publicId}`}
+            onClick={() => toggleItem(story.publicId)}
+          >
+            <span className="tl-head">
+              <span className="tl-cat">{story.category}</span>
+              <span className="tl-caret" aria-hidden="true" />
+            </span>
+            <span className="tl-title">{storyCopy?.title ?? story.title}</span>
+            <span className="tl-lead">{storyCopy?.summary ?? story.summary}</span>
+          </button>
+          {imageFirst ? null : media}
 
           <div className={`tl-collapse${open ? " is-open" : ""}`}>
             <div className="tl-detail" id={`det-${story.publicId}`}>
-              <span className="tl-zh-label">中文提炼</span>
-              {detail?.status === "loading" ? (
-                <p className="tl-zh tl-zh-pending" aria-live="polite">正在读取提炼内容…</p>
-              ) : detail?.status === "error" ? (
-                <p className="tl-zh tl-zh-error" role="alert">
-                  提炼内容暂不可用。
+              <div className="tl-zh-head">
+                <span className="tl-zh-label">{selectedLanguage === "en" ? "English extract" : "中文提炼"}</span>
+                <div className="public-language-toggle lang-pill" role="group" aria-label="提炼语言">
                   <button
                     type="button"
-                    className="tl-detail-retry"
-                    onClick={() => retryDetail(story.publicId)}
-                  >重试</button>
-                </p>
-              ) : detail?.status === "not-found" ? (
-                <p className="tl-zh tl-zh-error" role="alert">
-                  这条内容已不可用（404）。
+                    className={`lang-pill-btn${selectedLanguage === "zh-CN" ? " is-active" : ""}`}
+                    aria-pressed={selectedLanguage === "zh-CN"}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setLanguageByPublicId((current) => ({ ...current, [story.publicId]: "zh-CN" }));
+                    }}
+                  >中</button>
+                  <span className="lang-pill-sep" aria-hidden="true">/</span>
                   <button
                     type="button"
-                    className="tl-detail-retry"
-                    onClick={() => retryDetail(story.publicId)}
-                  >重试</button>
-                </p>
-              ) : detail?.status === "ready" ? (
-                <>
-                  {detail.data.body.map((paragraph) => <p className="tl-zh" key={paragraph}>{paragraph}</p>)}
-                  {detail.data.keyPoints.length > 0 ? (
-                    <ul className="tl-keypoints">
-                      {detail.data.keyPoints.map((point) => <li key={point}>{point}</li>)}
-                    </ul>
+                    className={`lang-pill-btn${selectedLanguage === "en" ? " is-active" : ""}`}
+                    aria-pressed={selectedLanguage === "en"}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setLanguageByPublicId((current) => ({ ...current, [story.publicId]: "en" }));
+                    }}
+                  >EN</button>
+                </div>
+              </div>
+                  {detail?.status === "loading" ? (
+                    <>
+                      {storyCopy?.summary ? <p className="tl-zh tl-detail-lead">{storyCopy.summary}</p> : null}
+                      <p className="tl-zh tl-zh-pending" aria-live="polite">正在读取深度要点…</p>
+                    </>
+                  ) : detail?.status === "error" ? (
+                    <p className="tl-zh tl-zh-error" role="alert">
+                      提炼内容暂不可用。
+                      <button
+                        type="button"
+                        className="tl-detail-retry"
+                        onClick={() => retryDetail(story.publicId)}
+                      >重试</button>
+                    </p>
+                  ) : detail?.status === "not-found" ? (
+                    <p className="tl-zh tl-zh-error" role="alert">
+                      这条内容已不可用（404）。
+                      <button
+                        type="button"
+                        className="tl-detail-retry"
+                        onClick={() => retryDetail(story.publicId)}
+                      >重试</button>
+                    </p>
+                  ) : detail?.status === "ready" ? (
+                    detailCopy && hasEditorialExtras(detailCopy.lead, detailCopy.body, detailCopy.keyPoints) ? (
+                      <>
+                        <p className="tl-zh tl-detail-lead">{detailCopy.lead}</p>
+                        {!isDuplicateEditorialBody(detailCopy.lead, detailCopy.body)
+                          ? detailCopy.body.map((paragraph) => <p className="tl-zh" key={paragraph}>{paragraph}</p>)
+                          : null}
+                        {detailCopy.keyPoints.length > 0 ? (
+                          <ul className="tl-keypoints">
+                            {detailCopy.keyPoints.map((point) => <li key={point}>{point}</li>)}
+                          </ul>
+                        ) : null}
+                      </>
+                    ) : (
+                      <p className="tl-zh tl-zh-pending">展开后可核对应中文摘要与原文。当前没有额外提炼。</p>
+                    )
                   ) : null}
-                </>
-              ) : null}
             </div>
           </div>
 
@@ -920,10 +1215,19 @@ export function FeedExperience() {
                   href={story.originalUrl ?? ""}
                   rel="noopener noreferrer"
                   target="_blank"
-                >前往原文 ↗</a>
+                >{originalLabel}</a>
               ) : (
                 <span className="tl-original-disabled">原文暂不可用</span>
               )}
+              {story.relatedSources.map((source) => source.originalUrl ? (
+                <a
+                  key={source.publicId}
+                  className="tl-original-link"
+                  href={source.originalUrl}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >{source.displayName} {selectedLanguage === "en" ? "source" : "原文"}</a>
+              ) : null)}
               {images.length > 1 ? (
                 <span className="ph-thumbs" aria-label="图片导航">
                   {images.map((image, index) => (
@@ -951,6 +1255,7 @@ export function FeedExperience() {
               ) : null}
             </span>
           </div>
+          <p className="tl-source-notice">{story.sourceNotice}</p>
         </div>
       </li>
     );
@@ -992,10 +1297,10 @@ export function FeedExperience() {
   };
 
   return (
-    <main className="app" id="main-content" tabIndex={-1}>
+    <main className={`app${openId ? " is-focusing" : ""}`} id="main-content" tabIndex={-1}>
       <div className="shell">
         <section className="timeline" aria-label="F1+1 信息时间线">
-          <p className="timeline-kicker">信息 + 时间 + 时间线 · {formatVisibleStoryCount(stories.length)} · 倒序</p>
+          <p className="timeline-kicker">{formatTimelineKicker(stories.length)}</p>
 
           {displayState === "loading" ? <TimelineSkeleton /> : null}
 
@@ -1028,43 +1333,57 @@ export function FeedExperience() {
                 <p id="search-empty" className="search-empty" role="status">没有匹配的条目</p>
               ) : null}
 
-              <ol
-                className={`tl${openId ? " is-focusing" : ""}`}
-                id="tl"
-                aria-label="公开资讯时间线"
-                aria-live="polite"
-                aria-busy={loadingMore}
-              >
-                {filteredStories.map((story) => renderItem(story))}
-              </ol>
+              {/* Card deck mode (mobile only) */}
+              {isMobile && viewMode === "cards" && filteredStories.length > 0 ? (
+                <CardDeck
+                  stories={filteredStories}
+                  onOpenLightbox={openLightbox}
+                  onLoadMore={page?.hasMore && page.nextCursor && !loadingMore ? () => void loadMore() : null}
+                />
+              ) : null}
 
-              {!(trimmedQuery && filteredStories.length === 0) ? (
+              {/* Standard timeline mode (or desktop always) */}
+              {(!isMobile || viewMode === "timeline") ? (
                 <>
-                  {loadMoreFailed ? (
-                    <StateBox
-                      id="partial-box"
-                      code={STATE_COPY.partial.code}
-                      title={STATE_COPY.partial.title}
-                      message={STATE_COPY.partial.message}
-                      actionLabel={STATE_COPY.partial.action}
-                      onAction={() => handleStateAction("partial")}
-                    />
-                  ) : page?.hasMore && page.nextCursor ? (
-                    <div className="load-more-wrap">
-                      <button className="load-more" type="button" disabled={loadingMore} onClick={() => void loadMore()}>
-                        {loadingMore ? "正在加载" : "加载更多"}
-                      </button>
-                    </div>
-                  ) : (
-                    <StateBox
-                      id="nomore-box"
-                      code={STATE_COPY.nomore.code}
-                      title={STATE_COPY.nomore.title}
-                      message={STATE_COPY.nomore.message}
-                      actionLabel={STATE_COPY.nomore.action}
-                      onAction={() => handleStateAction("nomore")}
-                    />
-                  )}
+                  <ol
+                    className={`tl${openId ? " is-focusing" : ""}`}
+                    id="tl"
+                    aria-label="公开资讯时间线"
+                    aria-live="polite"
+                    aria-busy={loadingMore}
+                  >
+                    {filteredStories.map((story) => renderItem(story))}
+                  </ol>
+
+                  {!(trimmedQuery && filteredStories.length === 0) ? (
+                    <>
+                      {loadMoreFailed ? (
+                        <StateBox
+                          id="partial-box"
+                          code={STATE_COPY.partial.code}
+                          title={STATE_COPY.partial.title}
+                          message={STATE_COPY.partial.message}
+                          actionLabel={STATE_COPY.partial.action}
+                          onAction={() => handleStateAction("partial")}
+                        />
+                      ) : page?.hasMore && page.nextCursor ? (
+                        <div className="load-more-wrap">
+                          <button className="load-more" type="button" disabled={loadingMore} onClick={() => void loadMore()}>
+                            {loadingMore ? "正在加载" : "加载更多"}
+                          </button>
+                        </div>
+                      ) : shouldShowEndOfFeed(stories.length, page?.hasMore === true) ? (
+                        <StateBox
+                          id="nomore-box"
+                          code={STATE_COPY.nomore.code}
+                          title={STATE_COPY.nomore.title}
+                          message={STATE_COPY.nomore.message}
+                          actionLabel={STATE_COPY.nomore.action}
+                          onAction={() => handleStateAction("nomore")}
+                        />
+                      ) : null}
+                    </>
+                  ) : null}
                 </>
               ) : null}
             </>

@@ -8,7 +8,8 @@ import {
   readdirSync,
   rmSync,
   statSync,
-  writeFileSync
+  writeFileSync,
+  realpathSync
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { basename, join, resolve } from "node:path";
@@ -66,7 +67,7 @@ function config(profile: "m3-shadow" | "public-synthetic", roots = { appRoot, pr
 }
 
 function tempRoot(prefix: string): string {
-  return mkdtempSync(join(tmpdir(), prefix));
+  return mkdtempSync(join(realpathSync(tmpdir()), prefix));
 }
 
 function openProfile(root: string, profileConfig: AppConfig): SqliteDatabase {

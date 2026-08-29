@@ -11,7 +11,8 @@ import {
   statSync,
   symlinkSync,
   truncateSync,
-  writeFileSync
+  writeFileSync,
+  realpathSync
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
@@ -70,7 +71,7 @@ function configForFixture(dbPath = ".local/f1plus1.sqlite") {
 }
 
 function freshDatabaseRoot(prefix: string): string {
-  return mkdtempSync(join(tmpdir(), prefix));
+  return mkdtempSync(join(realpathSync(tmpdir()), prefix));
 }
 
 describe("VS-0 fail-closed configuration", () => {

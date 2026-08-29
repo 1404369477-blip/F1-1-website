@@ -1,6 +1,10 @@
 import { z } from "zod";
 
 import type {
+  PublicBilingualFeedResponseV2,
+  PublicBilingualStoryCardV2,
+  PublicBilingualStoryDetailResponseV2,
+  PublicBilingualLanguage,
   PublicContentType,
   PublicFeedItemV1,
   PublicFeedResponseV1,
@@ -71,7 +75,13 @@ const publicFeedItemSchema = z.object({
       altZh: z.string().min(1)
     }).strict()
   ]).nullable(),
-  originalLink: originalLinkSchema
+  originalLink: originalLinkSchema,
+  relatedSources: z.array(z.object({
+    publicId: z.string().min(1),
+    sourceId: z.string().min(1),
+    displayName: z.string().min(1),
+    originalUrl: z.string().url().nullable()
+  }).strict()).min(1).optional()
 }).strict();
 
 const publicFeedResponseSchema = z.object({
@@ -93,6 +103,30 @@ const publicStoryDetailResponseSchema = z.object({
   }).strict(),
   relatedItems: z.array(publicFeedItemSchema).max(3)
 }).strict();
+
+const hashSchema = z.string().regex(/^[0-9a-f]{64}$/u);
+const localizedV2Schema = z.object({
+  title: z.string().min(1).max(200), summary: z.string().min(1).max(600), lead: z.string().min(1).max(600),
+  body: z.string().min(1).max(12_000), keyPoints: z.array(z.string().min(1).max(240)).min(1).max(8), contentHash: hashSchema
+}).strict();
+const bilingualCardSchema = z.object({
+  publicId: z.string().min(1).max(256), category: z.string().min(1).max(80), defaultLanguage: z.literal("zh-CN"),
+  availableLanguages: z.tuple([z.literal("zh-CN"), z.literal("en")]), localized: z.object({ "zh-CN": localizedV2Schema, en: localizedV2Schema }).strict(),
+  source: z.object({ name: z.string().min(1).max(200), author: z.string().min(1).max(200).nullable(), publishedAt: z.string().nullable(), canonicalUrl: z.string().url() }).strict(),
+  publishedAt: z.string().min(1), updatedAt: z.string().min(1),
+  media: z.array(z.object({ kind: z.literal("image"), url: z.string().url(), alt: z.string().min(1).max(300), width: z.number().int().positive(), height: z.number().int().positive(), rightsPolicyId: z.string().min(1), mediaHash: hashSchema }).strict()).max(4)
+}).strict();
+const bilingualFeedResponseSchema = z.object({
+  schemaVersion: z.literal("public-read-bilingual-v2"), items: z.array(bilingualCardSchema).max(50),
+  page: z.object({ limit: z.number().int().min(1).max(50), nextCursor: z.string().min(1).max(2048).nullable(), asOf: z.string().min(1) }).strict(),
+  generationId: z.string().min(1).max(256), generationHash: hashSchema
+}).strict();
+const bilingualDetailResponseSchema = z.object({
+  schemaVersion: z.literal("public-read-bilingual-v2"), story: bilingualCardSchema, relatedItems: z.array(bilingualCardSchema).max(12),
+  generationId: z.string().min(1).max(256), generationHash: hashSchema
+}).strict();
+const publicFeedAnySchema = z.union([bilingualFeedResponseSchema, publicFeedResponseSchema]);
+const publicDetailAnySchema = z.union([bilingualDetailResponseSchema, publicStoryDetailResponseSchema]);
 
 const publicProblemSchema = z.object({
   type: z.string(),
@@ -170,6 +204,15 @@ export type PublicStoryCardViewModel = {
   platform: PublicFeedItemV1["source"]["platform"];
   originalReason: PublicFeedItemV1["originalLink"]["reason"];
   originalUrl: PublicFeedItemV1["originalLink"]["url"];
+  relatedSources: Array<{
+    publicId: string;
+    displayName: string;
+    originalUrl: string | null;
+  }>;
+  defaultLanguage: PublicBilingualLanguage;
+  availableLanguages: PublicBilingualLanguage[];
+  localized: Record<PublicBilingualLanguage, null | { title: string; summary: string; lead: string; body: string[]; keyPoints: string[] }>;
+  sourceNotice: string;
 };
 
 export type PublicStoryDetailViewModel = PublicStoryCardViewModel & {
@@ -232,6 +275,51 @@ export function buildPublicFeedPath({
   cursor?: PublicFeedResponseV1["page"]["nextCursor"];
 }): string {
   const search = new URLSearchParams();
+  search.set("v", "2");
+  search.set("limit", "12");
+  if (contentType) search.set("category", contentType);
+  if (cursor) {
+    if (cursor.cursorId.startsWith("bilingual:")) search.set("cursor", cursor.cursorId.slice("bilingual:".length));
+    else {
+      search.delete("v"); search.delete("limit"); search.delete("category");
+      if (contentType) search.set("contentType", contentType);
+      search.set("cursorAt", cursor.cursorAt); search.set("cursorId", cursor.cursorId);
+    }
+  }
+  const query = search.toString();
+  return `/api/public/feed${query ? `?${query}` : ""}`;
+}
+
+function isSyntheticVersionUnavailable(error: unknown): boolean {
+  return error instanceof PublicApiClientError
+    && error.status === 406
+    && error.reasonCode === "PUBLIC_MEDIA_VERSION_UNSUPPORTED";
+}
+
+/**
+ * The signed bilingual V2 snapshot is an independent fail-closed artifact.
+ * When it is absent or corrupt, the already-published Chinese V1 payload can
+ * still be rendered; every unrelated V2 error remains explicit.
+ */
+function isBilingualIntegrityUnavailable(error: unknown): boolean {
+  return error instanceof PublicApiClientError
+    && error.status === 503
+    && error.reasonCode === "PUBLIC_READ_INTEGRITY_FAILED";
+}
+
+/**
+ * Synthetic mode has no signed bilingual generation. The server reports that
+ * condition with the closed problem DTO; this one-time negotiation switches to
+ * the legacy V1 route. Every other API error stays on its explicit caller path.
+ */
+function buildSyntheticFallbackFeedPath({
+  contentType,
+  cursor
+}: {
+  contentType?: PublicContentType | null;
+  cursor?: PublicFeedResponseV1["page"]["nextCursor"];
+} = {}): string {
+  const search = new URLSearchParams();
   if (contentType) search.set("contentType", contentType);
   if (cursor) {
     search.set("cursorAt", cursor.cursorAt);
@@ -239,6 +327,11 @@ export function buildPublicFeedPath({
   }
   const query = search.toString();
   return `/api/public/feed${query ? `?${query}` : ""}`;
+}
+
+function formatSourceName(item: PublicFeedItemV1): string {
+  const names = [item.source.displayName, ...(item.relatedSources ?? []).map((source) => source.displayName)];
+  return [...new Set(names)].join(" · ");
 }
 
 function mapFeedItem(item: PublicFeedItemV1): PublicStoryCardViewModel {
@@ -262,13 +355,40 @@ function mapFeedItem(item: PublicFeedItemV1): PublicStoryCardViewModel {
         : storyPlaceholderImages(mediaTone, mediaLabel, mediaDescription),
     title: item.titleZh,
     summary: item.summaryZh,
-    sourceName: item.source.displayName,
+    sourceName: formatSourceName(item),
     author: item.source.byline,
     publishedAt: `${formatTimestamp(sourceTimestamp)}${item.sourceTimeStatus === "unknown" ? "（公开时间）" : ""}`,
     publishedAtIso: sourceTimestamp,
     platform: item.source.platform,
     originalReason: item.originalLink.reason,
-    originalUrl: item.originalLink.url
+    originalUrl: item.originalLink.url,
+    relatedSources: (item.relatedSources ?? []).map((source) => ({
+      publicId: source.publicId,
+      displayName: source.displayName,
+      originalUrl: source.originalUrl
+    })),
+    defaultLanguage: "zh-CN",
+    availableLanguages: ["zh-CN"],
+    localized: { "zh-CN": { title: item.titleZh, summary: item.summaryZh, lead: item.summaryZh, body: [], keyPoints: [] }, en: null },
+    sourceNotice: item.originalLink.enabled ? "本站仅展示原创提炼；完整原文请前往来源网站。" : "来源链接当前不可公开；本站保留已验证的中文提炼。"
+  };
+}
+
+function mapBilingualItem(item: PublicBilingualStoryCardV2): PublicStoryCardViewModel {
+  const category = categoryByContentType[item.category as PublicContentType] ?? "赛事新闻";
+  const images = item.media.map((media) => ({ src: media.url, alt: media.alt }));
+  return {
+    publicId: item.publicId, category, state: images.length > 0 ? "available" : "media-missing", mediaTone: "slate",
+    mediaDescription: images[0]?.alt ?? "当前公开内容没有已获许可的媒体。", mediaLabel: images.length > 0 ? "来源配图" : "零媒体发布",
+    images, title: item.localized["zh-CN"].title, summary: item.localized["zh-CN"].summary,
+    sourceName: item.source.name, author: item.source.author ?? "", publishedAt: formatTimestamp(item.source.publishedAt ?? item.publishedAt),
+    publishedAtIso: item.source.publishedAt ?? item.publishedAt, platform: "rss", originalReason: null, originalUrl: item.source.canonicalUrl,
+    relatedSources: [], defaultLanguage: "zh-CN", availableLanguages: [...item.availableLanguages],
+    localized: {
+      "zh-CN": { title: item.localized["zh-CN"].title, summary: item.localized["zh-CN"].summary, lead: item.localized["zh-CN"].lead, body: item.localized["zh-CN"].body.split("\n").filter(Boolean), keyPoints: item.localized["zh-CN"].keyPoints },
+      en: { title: item.localized.en.title, summary: item.localized.en.summary, lead: item.localized.en.lead, body: item.localized.en.body.split("\n").filter(Boolean), keyPoints: item.localized.en.keyPoints }
+    },
+    sourceNotice: "本站展示经审核的中文与英文原创提炼；英文内容为独立提炼，不代表原文或官方翻译，完整原文请前往来源网站。"
   };
 }
 
@@ -324,12 +444,26 @@ export async function fetchPublicFeed({
   signal?: AbortSignal;
   fetchImpl?: PublicApiFetch;
 } = {}): Promise<PublicFeedViewModel> {
-  const response = await requestClosedJson<PublicFeedResponseV1>({
-    path: buildPublicFeedPath({ contentType, cursor }),
-    schema: publicFeedResponseSchema,
-    fetchImpl,
-    signal
-  });
+  let response: PublicFeedResponseV1 | PublicBilingualFeedResponseV2;
+  try {
+    response = await requestClosedJson<PublicFeedResponseV1 | PublicBilingualFeedResponseV2>({
+      path: buildPublicFeedPath({ contentType, cursor }),
+      schema: publicFeedAnySchema,
+      fetchImpl,
+      signal
+    });
+  } catch (error) {
+    if (!isSyntheticVersionUnavailable(error) && !isBilingualIntegrityUnavailable(error)) throw error;
+    response = await requestClosedJson<PublicFeedResponseV1>({
+      path: buildSyntheticFallbackFeedPath({ contentType, cursor }),
+      schema: publicFeedResponseSchema,
+      fetchImpl,
+      signal
+    });
+  }
+  if (response.schemaVersion === "public-read-bilingual-v2") {
+    return { stories: response.items.map(mapBilingualItem), page: { pageSize: 12, hasMore: response.page.nextCursor !== null, nextCursor: response.page.nextCursor ? { cursorAt: response.page.asOf, cursorId: `bilingual:${response.page.nextCursor}` } : null } };
+  }
   return { stories: response.items.map(mapFeedItem), page: response.page };
 }
 
@@ -342,18 +476,45 @@ export async function fetchPublicStory({
   signal?: AbortSignal;
   fetchImpl?: PublicApiFetch;
 }): Promise<PublicStoryDetailPageViewModel> {
-  const response = await requestClosedJson<PublicStoryDetailResponseV1>({
-    path: `/api/public/stories/${encodeURIComponent(publicId)}`,
-    schema: publicStoryDetailResponseSchema,
-    fetchImpl,
-    signal
-  });
+  let response: PublicStoryDetailResponseV1 | PublicBilingualStoryDetailResponseV2;
+  try {
+    response = await requestClosedJson<PublicStoryDetailResponseV1 | PublicBilingualStoryDetailResponseV2>({
+      path: `/api/public/stories/${encodeURIComponent(publicId)}?v=2`,
+      schema: publicDetailAnySchema,
+      fetchImpl,
+      signal
+    });
+  } catch (error) {
+    if (!isSyntheticVersionUnavailable(error) && !isBilingualIntegrityUnavailable(error)) throw error;
+    response = await requestClosedJson<PublicStoryDetailResponseV1>({
+      path: `/api/public/stories/${encodeURIComponent(publicId)}`,
+      schema: publicStoryDetailResponseSchema,
+      fetchImpl,
+      signal
+    });
+  }
+  if (response.schemaVersion === "public-read-bilingual-v2") {
+    const story = mapBilingualItem(response.story);
+    const zh = story.localized["zh-CN"]!;
+    return { story: { ...story, lead: zh.lead, body: zh.body, keyPoints: zh.keyPoints }, relatedStories: response.relatedItems.map(mapBilingualItem) };
+  }
+  const base = mapFeedItem(response.story);
   return {
     story: {
-      ...mapFeedItem(response.story),
+      ...base,
       lead: response.story.leadZh,
       body: response.story.bodyZh,
-      keyPoints: response.story.keyPointsZh
+      keyPoints: response.story.keyPointsZh,
+      localized: {
+        "zh-CN": {
+          title: response.story.titleZh,
+          summary: response.story.summaryZh,
+          lead: response.story.leadZh,
+          body: response.story.bodyZh,
+          keyPoints: response.story.keyPointsZh
+        },
+        en: null
+      }
     },
     relatedStories: response.relatedItems.map(mapFeedItem)
   };

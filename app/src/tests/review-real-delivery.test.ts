@@ -1,5 +1,13 @@
 import { createHash, generateKeyPairSync } from "node:crypto";
-import { chmodSync, mkdtempSync, readFileSync, rmSync, unlinkSync, writeFileSync } from "node:fs";
+import {
+  chmodSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  unlinkSync,
+  writeFileSync,
+  realpathSync
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
@@ -139,7 +147,7 @@ class ReceiverTransport implements ProjectionSenderTransport {
 
 describe("ADR-M5-REAL-PROJECTION-RUNTIME-002 sender A", () => {
   it("leases one stored package, reconciles response loss, retries the same package after exact 404, and terminalizes semantic conflicts", async () => {
-    const root = mkdtempSync(join(tmpdir(), "f1-projection-sender-"));
+    const root = mkdtempSync(join(realpathSync(tmpdir()), "f1-projection-sender-"));
     chmodSync(root, 0o700);
     const { privateKey, publicKey } = generateKeyPairSync("ed25519");
     const databases: DatabaseSync[] = [];
@@ -199,7 +207,7 @@ describe("ADR-M5-REAL-PROJECTION-RUNTIME-002 sender A", () => {
 
   it("bootstraps only a valid signed generation 1 and makes activation-lock contention fail closed", () => {
     const fixture = publishedFixture("bootstrap");
-    const root = mkdtempSync(join(tmpdir(), "f1-projection-bootstrap-"));
+    const root = mkdtempSync(join(realpathSync(tmpdir()), "f1-projection-bootstrap-"));
     chmodSync(root, 0o700);
     const { privateKey, publicKey } = generateKeyPairSync("ed25519");
     const { publicKey: wrongPublicKey } = generateKeyPairSync("ed25519");

@@ -7,11 +7,13 @@ import { afterAll, describe, expect, it, vi } from "vitest";
 import { AdminPasskeyAuth, type AdminTrustedIdentity } from "../server/admin-service/auth.ts";
 import {
   ADMIN_REVIEW_DATABASE_PATH,
+  AdminDeploymentManifestSchema,
   AdminTrustedIdentityDeploymentSchema,
   adminDeploymentPaths,
   prepareAdminDeployment,
   TailscaleAppCapabilityIdSchema
 } from "../server/admin-service/deployment.ts";
+import { SOURCE_REGISTRY_SCHEMA10_SHA256 } from "../server/rss/source-registry-migration.ts";
 import { openReviewAdminDatabase } from "../server/admin-service/runtime.ts";
 import { inspectExistingPrivateDatabase } from "../server/db/database.ts";
 import {
@@ -33,8 +35,22 @@ import type {
   RegistrationVerification
 } from "../server/admin-service/webauthn.ts";
 import { preparePublishMutation } from "../server/review-real/backend.ts";
-import { assertProjectionDeliveryRuntimeSchema, reviewRealSchemaFingerprint } from "../server/review-real/migration.ts";
+import {
+  applyInternalOperationMigration,
+  applyIndependentRssSourcesMigration,
+  applyProjectionDeliveryRuntimeMigration,
+  applyReviewRealAdminMigration,
+  applyRssMediaRefinementMigration,
+  applySecondRssAutosportMigration,
+  assertProjectionDeliveryRuntimeSchema,
+  reviewRealSchemaFingerprint
+} from "../server/review-real/migration.ts";
 import { applyRssMigration, openRssDatabase } from "../server/rss/repository.ts";
+import {
+  applyXManualInboxMigration,
+  readXManualInboxMigrationSql,
+  X_MANUAL_INBOX_SCHEMA_SHA256
+} from "../server/tweet-inbox/repository.ts";
 import { ReviewAdminSecurity } from "../server/review-real/security.ts";
 import type { RawAdminContext } from "../server/source-management/security.ts";
 
@@ -156,6 +172,55 @@ afterAll(() => {
 });
 
 describe("independent admin service candidate", () => {
+  it("pins deployment manifests to the existing schema10 authority identity and rejects schema4 or stale receipts", () => {
+    const manifest = {
+      schemaVersion: "admin-service-deployment-v3",
+      label: "com.f1plus1.admin-service",
+      bindHost: "127.0.0.1",
+      bindPort: 3101,
+      canonicalOrigin: "https://f1-admin.example.ts.net",
+      rpName: "F1+1 Admin",
+      operatorRef: "operator-primary",
+      tailscaleAppCapabilityId: "admin.example.com/cap/f1-admin-device",
+      trustedIdentities: [{ login: "owner@example.com", operatorRef: "operator-primary", sourceRefs: ["A".repeat(43), "B".repeat(43), "C".repeat(43)] }],
+      targetReleaseAppRoot: "/Users/f1admin/releases/full_v10",
+      activeReleaseRole: "full_v10",
+      fullReleaseManifestPath: "/Users/f1admin/releases/full_v10/.local/release/full_v10.manifest.json",
+      fullReleaseManifestSha256: "b".repeat(64),
+      fallbackReleaseManifestPath: "/Users/f1admin/releases/full_v10/.local/release/manual_only_fallback_v10.manifest.json",
+      fallbackReleaseManifestSha256: "c".repeat(64),
+      releasePairReceiptPath: "/Users/f1admin/releases/full_v10/.local/release/release-pair.receipt.json",
+      releasePairReceiptSha256: "d".repeat(64),
+      officialReleaseManifestPath: "/Users/f1admin/releases/full_v10/.local/release/admin-service-release-manifest.json",
+      officialReleaseManifestSha256: "e".repeat(64),
+      reviewDatabasePath: ADMIN_REVIEW_DATABASE_PATH,
+      reviewDatabaseIdentity: { dev: 1, ino: 2, uid: 3, nlink: 1 },
+      reviewSchemaTarget: 10,
+      reviewSchemaSha256: SOURCE_REGISTRY_SCHEMA10_SHA256,
+      dataRoot: "/Users/f1admin/Library/Application Support/F1Plus1/Admin",
+      staticRoot: "/Users/f1admin/releases/full_v10/src/admin-ui",
+      sessionHashKeyPath: "/Users/f1admin/Library/Application Support/F1Plus1/Admin/session-hash-key",
+      recoveryFencePath: "/Users/f1admin/Library/Application Support/F1Plus1/Admin/recovery-fence.json",
+      publicProjectionRoot: "/Users/f1admin/Library/Application Support/F1Plus1/Public/projection",
+      projectionSigningKeyId: "projection-key-v10",
+      projectionSigningPrivateKeyPath: "/Users/f1admin/Library/Application Support/F1Plus1/Keys/projection-private.pem",
+      projectionVerifyKeyPath: "/Users/f1admin/Library/Application Support/F1Plus1/PublicKeys/projection-public.pem",
+      projectionInternalEndpoint: "http://127.0.0.1:3102/internal/projections",
+      publicReadMode: "public-real-snapshot",
+      syntheticRollbackRelease: "manual_only_fallback_v10",
+      syntheticRollbackHash: "a".repeat(64),
+      projectionSenderServiceIdentity: "projection-sender-v10",
+      projectionReceiverServiceIdentity: "projection-receiver-v10",
+      preparedAt: "2026-08-25T00:00:00.000Z",
+      serviceState: "disabled"
+    } as const;
+    expect(AdminDeploymentManifestSchema.parse(manifest).reviewSchemaSha256).toBe(SOURCE_REGISTRY_SCHEMA10_SHA256);
+    expect(AdminDeploymentManifestSchema.safeParse({ ...manifest, reviewSchemaTarget: 4 }).success).toBe(false);
+    expect(AdminDeploymentManifestSchema.safeParse({ ...manifest, reviewSchemaSha256: "0".repeat(64) }).success).toBe(false);
+    const { reviewSchemaSha256: _removed, ...missingPin } = manifest;
+    expect(AdminDeploymentManifestSchema.safeParse(missingPin).success).toBe(false);
+  });
+
   it("rejects a second owner-private same-name review database before creating Admin artifacts", () => {
     process.umask(0o077);
     expect(ADMIN_REVIEW_DATABASE_PATH).toBe(
@@ -178,6 +243,15 @@ describe("independent admin service candidate", () => {
     expect(() => prepareAdminDeployment({
       home,
       targetReleaseAppRoot: join(root, "release"),
+      activeReleaseRole: "full_v10",
+      fullReleaseManifestPath: join(root, "release/.local/release/full_v10.manifest.json"),
+      fullReleaseManifestSha256: "b".repeat(64),
+      fallbackReleaseManifestPath: join(root, "release/.local/release/manual_only_fallback_v10.manifest.json"),
+      fallbackReleaseManifestSha256: "c".repeat(64),
+      releasePairReceiptPath: join(root, "release/.local/release/release-pair.receipt.json"),
+      releasePairReceiptSha256: "d".repeat(64),
+      officialReleaseManifestPath: join(root, "release/.local/release/admin-service-release-manifest.json"),
+      officialReleaseManifestSha256: "e".repeat(64),
       reviewDatabasePath: secondDatabasePath,
       reviewDatabaseExpectedDev: secondIdentity.dev,
       reviewDatabaseExpectedIno: secondIdentity.ino,
@@ -337,10 +411,32 @@ describe("independent admin service candidate", () => {
     cpSync(join(process.cwd(), "migrations/rss-real/0002_admin_review_publish.sql"), join(fakeApp, "migrations/rss-real/0002_admin_review_publish.sql"));
     cpSync(join(process.cwd(), "migrations/rss-real/0003_projection_delivery_runtime.sql"), join(fakeApp, "migrations/rss-real/0003_projection_delivery_runtime.sql"));
     cpSync(join(process.cwd(), "migrations/rss-real/0004_rss_media_and_chinese_refinement.sql"), join(fakeApp, "migrations/rss-real/0004_rss_media_and_chinese_refinement.sql"));
+    cpSync(join(process.cwd(), "migrations/rss-real/0005_second_rss_autosport.sql"), join(fakeApp, "migrations/rss-real/0005_second_rss_autosport.sql"));
+    cpSync(join(process.cwd(), "migrations/rss-real/0006_independent_rss_racefans_the_race.sql"), join(fakeApp, "migrations/rss-real/0006_independent_rss_racefans_the_race.sql"));
+    cpSync(join(process.cwd(), "migrations/rss-real/0007_internal_operation_recovery_phase.sql"), join(fakeApp, "migrations/rss-real/0007_internal_operation_recovery_phase.sql"));
+    cpSync(join(process.cwd(), "migrations/rss-real/0008_x_manual_inbox.sql"), join(fakeApp, "migrations/rss-real/0008_x_manual_inbox.sql"));
     const databasePath = join(fakeApp, ".local/f1plus1-rss-real-private.sqlite");
     const initialDatabase = openRssDatabase(fakeApp);
     applyRssMigration(initialDatabase, readFileSync(join(fakeApp, "migrations/rss-real/0001_rss_real.sql"), "utf8"));
+    applyReviewRealAdminMigration(initialDatabase, readFileSync(join(fakeApp, "migrations/rss-real/0002_admin_review_publish.sql"), "utf8"));
+    applyProjectionDeliveryRuntimeMigration(initialDatabase, readFileSync(join(fakeApp, "migrations/rss-real/0003_projection_delivery_runtime.sql"), "utf8"));
+    applyRssMediaRefinementMigration(initialDatabase, readFileSync(join(fakeApp, "migrations/rss-real/0004_rss_media_and_chinese_refinement.sql"), "utf8"));
+    applySecondRssAutosportMigration(initialDatabase, readFileSync(join(fakeApp, "migrations/rss-real/0005_second_rss_autosport.sql"), "utf8"));
+    applyIndependentRssSourcesMigration(initialDatabase, readFileSync(join(fakeApp, "migrations/rss-real/0006_independent_rss_racefans_the_race.sql"), "utf8"));
     initialDatabase.close();
+    const schema6App = join(root, "schema6-app");
+    cpSync(fakeApp, schema6App, { recursive: true });
+    const schema6DatabasePath = join(schema6App, ".local/f1plus1-rss-real-private.sqlite");
+    const schema6Identity = inspectExistingPrivateDatabase(schema6DatabasePath, "f1plus1-rss-real-private.sqlite");
+    expect(() => openReviewAdminDatabase({
+      targetReleaseAppRoot: schema6App,
+      reviewDatabasePath: schema6DatabasePath,
+      reviewDatabaseIdentity: schema6Identity
+    })).toThrow("MIGRATION_VERSION");
+    const upgradeDatabase = openRssDatabase(fakeApp);
+    applyInternalOperationMigration(upgradeDatabase, readFileSync(join(fakeApp, "migrations/rss-real/0007_internal_operation_recovery_phase.sql"), "utf8"));
+    applyXManualInboxMigration(upgradeDatabase, readXManualInboxMigrationSql());
+    upgradeDatabase.close();
     chmodSync(databasePath, 0o600);
     const databaseIdentity = inspectExistingPrivateDatabase(databasePath, "f1plus1-rss-real-private.sqlite");
     const opened = openReviewAdminDatabase({
@@ -348,15 +444,15 @@ describe("independent admin service candidate", () => {
       reviewDatabasePath: databasePath,
       reviewDatabaseIdentity: databaseIdentity
     });
-    expect(Number((opened.database.prepare("PRAGMA user_version").get() as Record<string, unknown>).user_version)).toBe(4);
-    expect(reviewRealSchemaFingerprint(opened.database)).toBe("40b1b59c8a8dab3413dfe85311b72cb735e3523071dbd70b0c3a42b0b7eb3b7c");
+    expect(Number((opened.database.prepare("PRAGMA user_version").get() as Record<string, unknown>).user_version)).toBe(8);
+    expect(reviewRealSchemaFingerprint(opened.database)).toBe(X_MANUAL_INBOX_SCHEMA_SHA256);
     opened.database.close();
     const reopened = openReviewAdminDatabase({
       targetReleaseAppRoot: fakeApp,
       reviewDatabasePath: databasePath,
       reviewDatabaseIdentity: databaseIdentity
     });
-    expect(Number((reopened.database.prepare("PRAGMA user_version").get() as Record<string, unknown>).user_version)).toBe(4);
+    expect(Number((reopened.database.prepare("PRAGMA user_version").get() as Record<string, unknown>).user_version)).toBe(8);
     reopened.database.close();
 
     const missingPath = join(fakeApp, ".local/missing/f1plus1-rss-real-private.sqlite");
@@ -484,6 +580,11 @@ describe("independent admin service candidate", () => {
     expect(ADMIN_BIND_HOST).toBe("127.0.0.1");
     expect(ADMIN_BIND_PORT).toBe(3101);
     expect(adminServiceOwnsPath("/admin/reviews")).toBe(true);
+    expect(adminServiceOwnsPath("/admin/sources")).toBe(true);
+    expect(adminServiceOwnsPath("/admin/x-submissions")).toBe(true);
+    expect(adminServiceOwnsPath("/admin/sources/x_ferrari")).toBe(true);
+    expect(adminServiceOwnsPath("/admin/x-submissions/xsub_12345678")).toBe(true);
+    expect(adminServiceOwnsPath("/admin/assets/x-management.js")).toBe(true);
     expect(adminServiceOwnsPath("/api/admin/reviews")).toBe(true);
     expect(adminServiceOwnsPath("/internal/projections")).toBe(false);
     expect(adminServiceOwnsPath("/")).toBe(false);

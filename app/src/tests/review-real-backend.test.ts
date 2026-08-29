@@ -1,5 +1,11 @@
 import { createHash, generateKeyPairSync } from "node:crypto";
-import { chmodSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import {
+  chmodSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  realpathSync
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
@@ -98,7 +104,7 @@ function expectReason(action: () => unknown, reasonCode: string): void {
 describe("DEV-REAL-REVIEW-BE-01", () => {
   it("keeps approval private until a fresh-authenticated manual publish activates one signed full snapshot", () => {
     const database = new DatabaseSync(":memory:");
-    const temporaryRoot = mkdtempSync(join(tmpdir(), "f1-review-backend-"));
+    const temporaryRoot = mkdtempSync(join(realpathSync(tmpdir()), "f1-review-backend-"));
     chmodSync(temporaryRoot, 0o700);
     try {
       const schemaProbePath = join(temporaryRoot, "schema-fingerprint.sqlite");

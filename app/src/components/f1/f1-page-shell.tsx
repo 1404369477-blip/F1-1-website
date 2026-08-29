@@ -93,6 +93,50 @@ export function F1PageShell({
   const utilityRef = useRef<HTMLDivElement | null>(null);
   const scrollRestoreCleanupRef = useRef<(() => void) | null>(null);
   const searchValue = useSyncExternalStore(subscribeTimelineSearch, getTimelineSearchQuery, () => "");
+  const [mobileViewMode, setMobileViewMode] = useState<"timeline" | "cards">(() => {
+    if (typeof window === "undefined") return "timeline";
+    const fromHash = readHashParam("mode");
+    if (fromHash === "cards") return "cards";
+    if (fromHash === "timeline") return "timeline";
+    try {
+      return window.localStorage?.getItem("f1_view_mode") === "cards" ? "cards" : "timeline";
+    } catch {
+      return "timeline";
+    }
+  });
+
+  useEffect(() => {
+    const handleModeChange = () => {
+      const fromHash = readHashParam("mode");
+      if (fromHash === "cards") {
+        setMobileViewMode("cards");
+        return;
+      }
+      if (fromHash === "timeline") {
+        setMobileViewMode("timeline");
+        return;
+      }
+      try {
+        const stored = window.localStorage?.getItem("f1_view_mode");
+        setMobileViewMode(stored === "cards" ? "cards" : "timeline");
+      } catch {}
+    };
+    window.addEventListener("hashchange", handleModeChange);
+    window.addEventListener("storage", handleModeChange);
+    return () => {
+      window.removeEventListener("hashchange", handleModeChange);
+      window.removeEventListener("storage", handleModeChange);
+    };
+  }, []);
+
+  const handleViewModeChange = (mode: "timeline" | "cards") => {
+    setMobileViewMode(mode);
+    setHashParams({ mode: mode === "cards" ? "cards" : undefined });
+    try {
+      window.localStorage?.setItem("f1_view_mode", mode);
+    } catch {}
+    window.dispatchEvent(new Event("storage"));
+  };
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -226,13 +270,27 @@ export function F1PageShell({
               <strong>设置</strong>
               <span>本地显示</span>
             </div>
-            <div className="settings-list" aria-label="尚未开放的设置项">
-              <div className="settings-item"><span>语言</span><span>简体中文 <em>占位</em></span></div>
+            <div className="settings-list" aria-label="页面显示设置项">
+              <div className="settings-item">
+                <span>手机视图</span>
+                <span className="settings-mode-seg" role="group" aria-label="移动端视图模式">
+                  <button
+                    type="button"
+                    className={`settings-mode-btn${mobileViewMode === "timeline" ? " is-active" : ""}`}
+                    onClick={() => handleViewModeChange("timeline")}
+                  >时间线</button>
+                  <button
+                    type="button"
+                    className={`settings-mode-btn${mobileViewMode === "cards" ? " is-active" : ""}`}
+                    onClick={() => handleViewModeChange("cards")}
+                  >沉浸卡片</button>
+                </span>
+              </div>
+              <div className="settings-item"><span>语言</span><span>简体中文 <em>已就绪</em></span></div>
               <div className="settings-item"><span>来源偏好</span><span>全部来源 <em>占位</em></span></div>
               <div className="settings-item"><span>通知</span><span>关闭 <em>占位</em></span></div>
-              <div className="settings-item"><span>显示密度</span><span>标准 <em>占位</em></span></div>
             </div>
-            <p className="settings-note">这些选项暂不保存，也不会调用 API。主题可通过下方独立按钮切换。</p>
+            <p className="settings-note">手机端可在「时间线」与「沉浸卡片」间切换。这些选项暂不保存，也不会调用 API。主题可通过下方独立按钮切换。</p>
           </aside>
 
           <div className="utility-row" role="group" aria-label="页面工具">

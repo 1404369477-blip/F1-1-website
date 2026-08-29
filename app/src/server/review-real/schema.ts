@@ -1,6 +1,8 @@
 import { z } from "zod";
 
-import { RSS_SOURCE_ID } from "../rss/types.ts";
+import { LIVE_RSS_ARTICLE_HOSTS, LIVE_RSS_DISPLAY_NAMES, LIVE_RSS_SOURCE_IDS, isLiveRssMediaUrl } from "../rss/sources.ts";
+
+export const LiveRssSourceIdSchema = z.enum(LIVE_RSS_SOURCE_IDS);
 
 const HASH_PATTERN = /^[0-9a-f]{64}$/;
 const VERSION_TAG_PATTERN = /^[0-9a-f]{12}$/;
@@ -19,13 +21,18 @@ function normalizedText(maximum: number, minimum = 0): z.ZodType<string> {
 export const HashSchema = z.string().regex(HASH_PATTERN);
 export const VersionTagSchema = z.string().regex(VERSION_TAG_PATTERN);
 export const IdentifierSchema = z.string().min(1).max(256);
-export const UtcTimestampSchema = z.string().regex(UTC_PATTERN).refine((value) => Number.isFinite(Date.parse(value)));
+export const UtcTimestampSchema = z.string().regex(UTC_PATTERN).refine((value) => {
+  const time = Date.parse(value);
+  if (!Number.isFinite(time)) return false;
+  const normalized = new Date(time).toISOString();
+  return value === normalized || (normalized.endsWith(".000Z") && value === normalized.replace(".000Z", "Z"));
+});
 
 export const MotorsportCanonicalUrlSchema = z.string().url().refine((value) => {
   try {
     const url = new URL(value);
     return url.protocol === "https:" &&
-      url.hostname === "www.motorsport.com" &&
+      LIVE_RSS_ARTICLE_HOSTS.has(url.hostname) &&
       url.username === "" &&
       url.password === "" &&
       (url.port === "" || url.port === "443") &&
@@ -33,13 +40,12 @@ export const MotorsportCanonicalUrlSchema = z.string().url().refine((value) => {
   } catch {
     return false;
   }
-}, "canonical URL is outside the Motorsport HTTPS allowlist");
+}, "canonical URL is outside the live RSS HTTPS allowlist");
 
 export const MotorsportMediaUrlSchema = z.string().url().refine((value) => {
   try {
     const url = new URL(value);
-    return url.protocol === "https:" &&
-      /^cdn-[0-9]+\.motorsport\.com$/.test(url.hostname) &&
+    return isLiveRssMediaUrl(value) &&
       url.username === "" &&
       url.password === "" &&
       (url.port === "" || url.port === "443") &&
@@ -47,7 +53,7 @@ export const MotorsportMediaUrlSchema = z.string().url().refine((value) => {
   } catch {
     return false;
   }
-}, "media URL is outside the Motorsport CDN HTTPS allowlist");
+}, "media URL is outside the live RSS CDN HTTPS allowlist");
 
 export const SourceImageSchema = z.object({
   kind: z.literal("source_image"),
@@ -90,7 +96,7 @@ export const AllowedActionSchema = z.enum([
 
 export const CandidateSourceSnapshotSchema = z.object({
   candidateId: IdentifierSchema,
-  sourceId: z.literal(RSS_SOURCE_ID),
+  sourceId: LiveRssSourceIdSchema,
   sourceRevision: z.number().int().positive(),
   sourcePayloadHash: HashSchema,
   canonicalUrl: MotorsportCanonicalUrlSchema,
@@ -122,7 +128,7 @@ export const ReviewEditableSchema = z.object({
 
 export const ReviewBundlePublicPayloadSchema = z.object({
   candidateId: IdentifierSchema,
-  sourceId: z.literal(RSS_SOURCE_ID),
+  sourceId: LiveRssSourceIdSchema,
   sourceRevision: z.number().int().positive(),
   sourcePayloadHash: HashSchema,
   canonicalUrl: MotorsportCanonicalUrlSchema,
@@ -133,7 +139,7 @@ export const ReviewBundlePublicPayloadSchema = z.object({
   titleZh: normalizedText(400, 1),
   summaryZh: normalizedText(1200, 1),
   media: z.array(SourceImageSchema).max(1),
-  sourceDisplayName: z.literal("Motorsport.com")
+  sourceDisplayName: z.enum(LIVE_RSS_DISPLAY_NAMES)
 }).strict();
 
 export const PublicProjectionRecordCoreSchema = z.object({
@@ -147,9 +153,9 @@ export const PublicProjectionRecordCoreSchema = z.object({
   sourcePublishedAt: UtcTimestampSchema,
   sourceTimeStatus: z.literal("known"),
   source: z.object({
-    sourceId: z.literal(RSS_SOURCE_ID),
+    sourceId: LiveRssSourceIdSchema,
     platform: z.literal("rss"),
-    displayName: z.literal("Motorsport.com"),
+    displayName: z.enum(LIVE_RSS_DISPLAY_NAMES),
     byline: z.string().min(1).max(16_384),
     accessStatus: z.literal("available")
   }).strict(),
@@ -222,7 +228,7 @@ export const DeliverySummarySchema = z.object({
 
 const ReviewQueueItemShape = {
   candidateId: IdentifierSchema,
-  sourceId: z.literal(RSS_SOURCE_ID),
+  sourceId: LiveRssSourceIdSchema,
   sourceRevision: z.number().int().positive(),
   editorBasedOnSourceRevision: z.number().int().positive().nullable(),
   sourceTitle: z.string().min(1).max(16_384),
@@ -230,7 +236,7 @@ const ReviewQueueItemShape = {
   summaryZh: normalizedText(1200, 1).nullable(),
   sourceAuthor: z.string().max(16_384).nullable(),
   sourcePublishedAt: UtcTimestampSchema,
-  sourceDisplayName: z.literal("Motorsport.com"),
+  sourceDisplayName: z.enum(LIVE_RSS_DISPLAY_NAMES),
   originalUrl: MotorsportCanonicalUrlSchema,
   mediaState: z.enum(["none", "source_image"]),
   reviewState: ReviewStateSchema,
@@ -274,6 +280,7 @@ export const OperationReceiptSchema = z.object({
   requestVersionTag: VersionTagSchema,
   responseVersionTag: VersionTagSchema,
   candidateId: IdentifierSchema.nullable(),
+  candidateIds: z.array(IdentifierSchema).min(1).max(20).optional(),
   bundleId: IdentifierSchema.nullable(),
   publicId: z.string().regex(/^public-rss-[0-9a-f]{64}$/).nullable(),
   deliveryId: IdentifierSchema.nullable(),
@@ -337,6 +344,35 @@ export const PublishRequestSchema = z.object({
     approvedBundleVersionTag: VersionTagSchema
   }).strict()
 }).strict();
+
+export const ReleaseNowItemSchema = z.object({
+  candidateId: IdentifierSchema,
+  sourceRevision: z.number().int().positive(),
+  sourceVersionTag: VersionTagSchema,
+  latestBundleId: IdentifierSchema.nullable(),
+  latestBundleVersionTag: VersionTagSchema.nullable()
+}).strict().superRefine((item, context) => {
+  if ((item.latestBundleId === null) !== (item.latestBundleVersionTag === null)) {
+    context.addIssue({ code: "custom", message: "latest bundle id and version tag must be present together" });
+  }
+});
+
+export const ReleaseNowRequestSchema = z.object({
+  schemaVersion: z.literal("admin-review-v0.2"),
+  operationId: IdentifierSchema,
+  expected: z.object({
+    items: z.array(ReleaseNowItemSchema).min(1).max(20)
+  }).strict(),
+  editable: ReviewEditableSchema.nullable()
+}).strict().superRefine((request, context) => {
+  const ids = request.expected.items.map((item) => item.candidateId);
+  if (new Set(ids).size !== ids.length) {
+    context.addIssue({ code: "custom", message: "release items must be unique" });
+  }
+  if (request.editable !== null && request.expected.items.length !== 1) {
+    context.addIssue({ code: "custom", message: "editable release is only allowed for a single candidate" });
+  }
+});
 
 export const RevisionSuccessSchema = z.object({
   schemaVersion: z.literal("admin-review-v0.2"),

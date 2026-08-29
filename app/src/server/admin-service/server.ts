@@ -13,7 +13,8 @@ import { isIP } from "node:net";
 import type { RawAdminContext } from "../source-management/security.ts";
 import { asReviewRealError, ReviewRealError } from "../review-real/error.ts";
 import type { ProjectionReceipt } from "../review-real/projection.ts";
-import type { ReviewAdminRoutes } from "../review-real/routes.ts";
+import type { ReviewAdminRouteResult } from "../review-real/routes.ts";
+import type { BilingualAdminRoutes } from "./bilingual-admin.ts";
 import type { ReviewAdminSecurity } from "../review-real/security.ts";
 import {
   AdminPasskeyAuth,
@@ -36,7 +37,8 @@ export type AdminServiceDependencies = Readonly<{
   tailscaleAppCapabilityId: string;
   trustedIdentities: readonly TrustedTailnetIdentity[];
   auth: AdminPasskeyAuth;
-  reviewRoutes: ReviewAdminRoutes;
+  reviewRoutes: Readonly<{ handle(context: RawAdminContext, body?: unknown): ReviewAdminRouteResult }>;
+  bilingualRoutes?: BilingualAdminRoutes;
   security: ReviewAdminSecurity;
   projectionDeliveryReceipt: (deliveryId: string) => ProjectionReceipt;
   staticRoot: string;
@@ -292,11 +294,17 @@ function staticFile(path: string, staticRoot: string): Readonly<{ path: string; 
   if (path === "/admin/reviews" || path === "/admin/reviews/") {
     return { path: join(staticRoot, "index.html"), type: "text/html; charset=utf-8" };
   }
+  if (/^\/admin\/(?:sources|x-submissions)(?:\/[a-z0-9][a-z0-9_-]{1,63})?\/?$/.test(path)) {
+    return { path: join(staticRoot, "x-management.html"), type: "text/html; charset=utf-8" };
+  }
   if (path === "/admin/assets/app.css") {
     return { path: join(staticRoot, "app.css"), type: "text/css; charset=utf-8" };
   }
   if (path === "/admin/assets/app.js") {
     return { path: join(staticRoot, "app.js"), type: "text/javascript; charset=utf-8" };
+  }
+  if (path === "/admin/assets/x-management.js") {
+    return { path: join(staticRoot, "x-management.js"), type: "text/javascript; charset=utf-8" };
   }
   return null;
 }
@@ -376,6 +384,16 @@ async function dispatch(
   if (context.path.startsWith("/api/admin/")) {
     dependencies.security.authorizeBoundIdentity(context, identity);
     const body = context.method === "POST" ? await readJson(request, REVIEW_BODY_LIMIT) : undefined;
+    const bilingualAsyncResult = await dependencies.bilingualRoutes?.tryHandleAsync(context, body) ?? null;
+    if (bilingualAsyncResult !== null) {
+      writeJson(response, bilingualAsyncResult.status, bilingualAsyncResult.body);
+      return;
+    }
+    const bilingualResult = dependencies.bilingualRoutes?.tryHandle(context, body) ?? null;
+    if (bilingualResult !== null) {
+      writeJson(response, bilingualResult.status, bilingualResult.body);
+      return;
+    }
     const result = dependencies.reviewRoutes.handle(context, body);
     writeJson(response, result.status, result.body);
     return;

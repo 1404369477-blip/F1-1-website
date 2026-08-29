@@ -1,4 +1,9 @@
-import { chmodSync, mkdtempSync, writeFileSync } from "node:fs";
+import {
+  chmodSync,
+  mkdtempSync,
+  writeFileSync,
+  realpathSync
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
@@ -28,7 +33,7 @@ describe("RSS Chinese refinement", () => {
         'Cadillac names new F1 team boss', 'Graeme Lowdon leaves the role after a leadership change.',
         'F1 Desk', '2026-08-13T00:00:00.000Z', ?, 1, '2026-08-13T00:00:00.000Z', '2026-08-13T00:00:00.000Z')
     `).run("rss-candidate-refine", "a".repeat(64), "b".repeat(64));
-    const root = mkdtempSync(join(tmpdir(), "f1-refine-"));
+    const root = mkdtempSync(join(realpathSync(tmpdir()), "f1-refine-"));
     const keyPath = join(root, "deepseek-api-key");
     writeFileSync(keyPath, `sk-${"x".repeat(30)}`, { mode: 0o600 });
     chmodSync(keyPath, 0o600);
@@ -94,6 +99,33 @@ describe("RSS Chinese refinement", () => {
       mimeType: "image/jpeg",
       declaredBytes: 199697
     }]);
+    database.prepare(`
+      UPDATE pending_review_candidate
+      SET source_revision = 2,
+          source_payload_hash = ?,
+          title = 'Cadillac updates its F1 leadership announcement',
+          excerpt = 'The approved source received a newer revision.',
+          review_status = 'approved',
+          last_seen_at = '2026-08-13T02:00:00.000Z'
+      WHERE candidate_id = ?
+    `).run("c".repeat(64), "rss-candidate-refine");
+    const updatedReceipt = await refineOneCandidate({
+      database,
+      apiKeyPath: keyPath,
+      now: () => new Date("2026-08-13T02:01:00.000Z"),
+      fetchImpl: async () => new Response(JSON.stringify({
+        choices: [{ message: { content: JSON.stringify({
+          titleZh: "凯迪拉克更新F1车队管理层公告",
+          summaryZh: "已经批准的来源出现新版本，系统重新生成与当前来源版本绑定的中文整理草稿。",
+          keyPointsZh: ["来源版本已经更新", "中文草稿重新生成"]
+        }) } }],
+        usage: { prompt_tokens: 72, completion_tokens: 48 }
+      }), { status: 200, headers: { "content-type": "application/json" } })
+    });
+    expect(updatedReceipt).toMatchObject({ status: "generated", sourceRevision: 2, externalCalls: 1 });
+    expect(database.prepare(
+      "SELECT COUNT(*) AS count FROM machine_summary_draft WHERE candidate_id = ?"
+    ).get("rss-candidate-refine")).toMatchObject({ count: 2 });
     database.close();
   });
 });

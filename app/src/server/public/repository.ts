@@ -6,8 +6,10 @@ import { assertPublicSyntheticSeeded } from "../db/public-synthetic.ts";
 import { assertPublicMultimediaSeeded } from "../db/public-multimedia-synthetic.ts";
 import { canonicalJson } from "../db/profile.ts";
 import type { SqliteDatabase } from "../db/database.ts";
+import { pageClusteredItems } from "../../modules/story/event-cluster.ts";
 import { encodePublicCursor, isCanonicalUtc, isPublicContentType, isPublicId } from "./cursor.ts";
 import { asPublicReadError, PublicReadError } from "./error.ts";
+import { comparePublicTimelineDescending, publicTimelineAt } from "./timeline.ts";
 import type {
   PublicContentType,
   PublicFeedItemV1,
@@ -208,7 +210,10 @@ function buildVerifiedStory(row: ChainRow): VerifiedStory {
   if (sourceTimeStatus !== "known" && sourceTimeStatus !== "unknown") throw new PublicReadError("PUBLIC_READ_INTEGRITY_FAILED");
   equal(sourceTimeStatus, contentSnapshot.source_time_status);
   const sourcePublishedAt = time.source_published_at === null ? null : text(time.source_published_at, 1, 40);
-  if ((sourceTimeStatus === "known") !== (sourcePublishedAt !== null)) throw new PublicReadError("PUBLIC_READ_INTEGRITY_FAILED");
+  if (
+    (sourceTimeStatus === "known") !== (sourcePublishedAt !== null) ||
+    (sourcePublishedAt !== null && !isCanonicalUtc(sourcePublishedAt))
+  ) throw new PublicReadError("PUBLIC_READ_INTEGRITY_FAILED");
 
   const contentAccess = text(access.content_access_status, 1, 30);
   if (contentAccess !== "available" && contentAccess !== "source_restricted") {
@@ -329,6 +334,13 @@ const CHAIN_SQL_V1 = CHAIN_SQL.replace(
   "b.media_presentations_json AS b_media_presentations_json,",
   "NULL AS b_media_presentations_json,"
 );
+
+const TIMELINE_AT_SQL = `CASE
+  WHEN json_extract(b.payload_json, '$.canonical_payload.time_snapshot.source_time_status') = 'known'
+   AND json_type(b.payload_json, '$.canonical_payload.time_snapshot.source_published_at') = 'text'
+  THEN json_extract(b.payload_json, '$.canonical_payload.time_snapshot.source_published_at')
+  ELSE u.published_at
+END`;
 
 function buildVerifiedMultimediaStory(row: ChainRow, database: SqliteDatabase): VerifiedStory {
   const projection = parsePayload(row.projection_json);
@@ -457,8 +469,12 @@ function buildVerifiedMultimediaStory(row: ChainRow, database: SqliteDatabase): 
   if (!isCanonicalUtc(publishedAt)) throw new PublicReadError("PUBLIC_READ_INTEGRITY_FAILED");
   const sourceTimeStatus = text(time.source_time_status, 1, 20);
   if (sourceTimeStatus !== "known" && sourceTimeStatus !== "unknown") throw new PublicReadError("PUBLIC_READ_INTEGRITY_FAILED");
+  equal(sourceTimeStatus, contentSnapshot.source_time_status);
   const sourcePublishedAt = time.source_published_at === null ? null : text(time.source_published_at, 1, 40);
-  if ((sourceTimeStatus === "known") !== (sourcePublishedAt !== null)) throw new PublicReadError("PUBLIC_READ_INTEGRITY_FAILED");
+  if (
+    (sourceTimeStatus === "known") !== (sourcePublishedAt !== null) ||
+    (sourcePublishedAt !== null && !isCanonicalUtc(sourcePublishedAt))
+  ) throw new PublicReadError("PUBLIC_READ_INTEGRITY_FAILED");
   const contentAccess = text(access.content_access_status, 1, 30);
   if (contentAccess !== "available" && contentAccess !== "source_restricted") throw new PublicReadError("PUBLIC_READ_INTEGRITY_FAILED");
   const reason = text(access.original_link_reason, 1, 30);
@@ -518,6 +534,17 @@ export class PublicStoryRepository {
     private readonly projectRoot: string
   ) {}
 
+  /**
+   * Synthetic profiles have no signed bilingual generation.  Rejecting v2 at the
+   * reader boundary makes the incompatible mode explicit so clients can use the
+   * declared V1 fallback without treating integrity or profile errors as success.
+   */
+  private assertSyntheticReadVersion(version: PublicReadVersion): void {
+    if (version === "public-read-bilingual-v2") {
+      throw new PublicReadError("PUBLIC_MEDIA_VERSION_UNSUPPORTED");
+    }
+  }
+
   private loadGraph(): Map<string, VerifiedStory> {
     if (this.config.dataProfile !== "public-synthetic" && this.config.dataProfile !== "public-multimedia-synthetic") {
       throw new PublicReadError("PUBLIC_PROFILE_UNAVAILABLE");
@@ -553,13 +580,14 @@ export class PublicStoryRepository {
   }
 
   getFeed(query: PublicFeedQuery, version: PublicReadVersion = "public-read-v0.1"): PublicFeedResponseV1 | PublicFeedResponseV2 {
+    this.assertSyntheticReadVersion(version);
     if (version === "public-read-v0.2" && this.config.dataProfile !== "public-multimedia-synthetic") {
       throw new PublicReadError("PUBLIC_MEDIA_VERSION_UNSUPPORTED");
     }
     const graph = this.loadGraph();
     if (query.cursor) {
       const target = graph.get(query.cursor.publicId);
-      if (!target || target.item.publishedAt !== query.cursor.publishedAt) {
+      if (!target || publicTimelineAt(target.item) !== query.cursor.timelineAt) {
         throw new PublicReadError("PUBLIC_CURSOR_INVALID");
       }
       if (target.item.source.sourceId !== (query.source ?? target.item.source.sourceId) || target.item.contentType !== (query.contentType ?? target.item.contentType)) {
@@ -577,16 +605,20 @@ export class PublicStoryRepository {
       parameters.push(query.contentType);
     }
     if (query.cursor) {
-      where.push("(u.published_at < ? OR (u.published_at = ? AND p.public_id < ?))");
-      parameters.push(query.cursor.publishedAt, query.cursor.publishedAt, query.cursor.publicId);
+      where.push(`(
+        julianday(${TIMELINE_AT_SQL}) < julianday(?) OR
+        (julianday(${TIMELINE_AT_SQL}) = julianday(?) AND p.public_id < ?)
+      )`);
+      parameters.push(query.cursor.timelineAt, query.cursor.timelineAt, query.cursor.publicId);
     }
     const sql = `
-      SELECT p.public_id
+      SELECT p.public_id, ${TIMELINE_AT_SQL} AS timeline_at
       FROM published_projection AS p
       JOIN public_publication AS u ON u.public_id = p.public_id
+      JOIN public_release_bundle AS b ON b.release_bundle_id = p.release_bundle_id
       JOIN public_content AS c ON c.content_id = p.content_id
       ${where.length === 0 ? "" : `WHERE ${where.join(" AND ")}`}
-      ORDER BY u.published_at DESC, p.public_id DESC
+      ORDER BY julianday(timeline_at) DESC, p.public_id DESC
       LIMIT 13`;
     let rows: Array<Record<string, unknown>>;
     try {
@@ -597,34 +629,63 @@ export class PublicStoryRepository {
     const selected = rows.map((row) => {
       const story = graph.get(String(row.public_id));
       if (!story) throw new PublicReadError("PUBLIC_READ_INTEGRITY_FAILED");
+      if (row.timeline_at !== publicTimelineAt(story.item)) {
+        throw new PublicReadError("PUBLIC_READ_INTEGRITY_FAILED");
+      }
       if (version === "public-read-v0.2") {
         if (!story.itemV2) throw new PublicReadError("PUBLIC_READ_INTEGRITY_FAILED");
         return story.itemV2;
       }
       return story.item;
     });
-    const hasMore = selected.length > 12;
-    const items = selected.slice(0, 12);
+    if (version === "public-read-v0.2") {
+      const hasMore = selected.length > 12;
+      const items = selected.slice(0, 12) as PublicFeedItemV2[];
+      const last = items.at(-1);
+      const nextCursor = hasMore && last
+        ? {
+            cursorAt: publicTimelineAt(last),
+            cursorId: encodePublicCursor({
+              v: 2,
+              publicId: last.publicId,
+              timelineAt: publicTimelineAt(last),
+              source: query.source,
+              contentType: query.contentType
+            })
+          }
+        : null;
+      return {
+        schemaVersion: "public-read-v0.2",
+        items,
+        page: { pageSize: 12, hasMore, nextCursor }
+      };
+    }
+    const { items, hasMore } = pageClusteredItems(selected as PublicFeedItemV1[], {
+      source: query.source,
+      cursor: null
+    }, 12);
     const last = items.at(-1);
     const nextCursor = hasMore && last
       ? {
-          cursorAt: last.publishedAt,
+          cursorAt: publicTimelineAt(last),
           cursorId: encodePublicCursor({
-            v: 1,
+            v: 2,
             publicId: last.publicId,
-            publishedAt: last.publishedAt,
+            timelineAt: publicTimelineAt(last),
             source: query.source,
             contentType: query.contentType
           })
         }
       : null;
-    const page = { pageSize: 12 as const, hasMore, nextCursor };
-    return version === "public-read-v0.2"
-      ? { schemaVersion: "public-read-v0.2", items: items as PublicFeedItemV2[], page }
-      : { schemaVersion: "public-read-v0.1", items: items as PublicFeedItemV1[], page };
+    return {
+      schemaVersion: "public-read-v0.1",
+      items,
+      page: { pageSize: 12, hasMore, nextCursor }
+    };
   }
 
   getDetail(publicId: string, version: PublicReadVersion = "public-read-v0.1"): PublicStoryDetailResponseV1 | PublicStoryDetailResponseV2 | null {
+    this.assertSyntheticReadVersion(version);
     if (version === "public-read-v0.2" && this.config.dataProfile !== "public-multimedia-synthetic") {
       throw new PublicReadError("PUBLIC_MEDIA_VERSION_UNSUPPORTED");
     }
@@ -632,7 +693,7 @@ export class PublicStoryRepository {
     const selected = graph.get(publicId);
     if (!selected) return null;
     const ordered = [...graph.values()].sort((left, right) =>
-      right.item.publishedAt.localeCompare(left.item.publishedAt) || right.item.publicId.localeCompare(left.item.publicId)
+      comparePublicTimelineDescending(left.item, right.item)
     );
     const sameType = ordered.filter((story) => story.item.publicId !== publicId && story.item.contentType === selected.item.contentType);
     const other = ordered.filter((story) => story.item.publicId !== publicId && story.item.contentType !== selected.item.contentType);

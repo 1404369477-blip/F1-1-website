@@ -17,6 +17,7 @@ import {
   openRssDatabase
 } from "../src/server/rss/repository.ts";
 import { RSS_SOURCE_ID } from "../src/server/rss/types.ts";
+import type { GatewayMutationPort } from "../src/server/internal-operation/mutation-port.ts";
 import { runSafeCli } from "../src/server/security/cli.ts";
 import { appRoot } from "../src/server/runtime-config.ts";
 
@@ -77,15 +78,26 @@ function tryReadSource(databasePath: string): SourceState | null {
   }
 }
 
-function setSourceEnabled(enabled: boolean, incrementEpoch: boolean, verifySchema: boolean): SourceState {
+function setSourceEnabled(enabled: boolean, incrementEpoch: boolean, verifySchema: boolean, mutationPort?: GatewayMutationPort): SourceState {
   const database = openRssDatabase(appRoot);
   try {
     if (verifySchema) assertRssSchema(database);
     return withImmediateTransaction(database, () => {
-      const result = database.prepare(
-        "UPDATE source SET enabled = ?, stop_epoch = stop_epoch + ? WHERE source_id = ?"
-      ).run(enabled ? 1 : 0, incrementEpoch ? 1 : 0, RSS_SOURCE_ID);
-      if (Number(result.changes) !== 1) throw new ConfigError("RSS_SOURCE", "fixed RSS source update failed");
+      const result = mutationPort === undefined
+        ? database.prepare("UPDATE source SET enabled = ?, stop_epoch = stop_epoch + ? WHERE source_id = ?").run(enabled ? 1 : 0, incrementEpoch ? 1 : 0, RSS_SOURCE_ID).changes
+        : mutationPort.mutate({
+          operationId: `gateway-source-update-${Date.now()}`,
+          operationKind: "source_update",
+          entityKind: "source",
+          entityId: RSS_SOURCE_ID,
+          mutationKind: "update",
+          statement: "UPDATE source SET enabled = ?, stop_epoch = stop_epoch + ? WHERE source_id = ?",
+          parameters: [enabled ? 1 : 0, incrementEpoch ? 1 : 0, RSS_SOURCE_ID],
+          identity: { sourceId: RSS_SOURCE_ID, candidateId: null, publicationId: null, publicId: null },
+          capabilityClass: "control",
+          egressClass: "none"
+        });
+      if (Number(result) !== 1) throw new ConfigError("RSS_SOURCE", "fixed RSS source update failed");
       const row = database.prepare("SELECT enabled, stop_epoch FROM source WHERE source_id = ?").get(RSS_SOURCE_ID) as {
         enabled: number;
         stop_epoch: number;

@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import {
   AdminTrustedIdentityDeploymentSchema,
+  AdminReleaseRoleSchema,
   adminDeploymentPaths,
   adminDeploymentStatus,
   PublicReadModeSchema,
@@ -89,6 +90,15 @@ await runSafeCli(() => {
   const prepared = prepareAdminDeployment({
     home: homedir(),
     targetReleaseAppRoot: appRoot,
+    activeReleaseRole: AdminReleaseRoleSchema.parse(required("F1_ADMIN_ACTIVE_RELEASE_ROLE")),
+    fullReleaseManifestPath: resolve(required("F1_ADMIN_FULL_RELEASE_MANIFEST_PATH")),
+    fullReleaseManifestSha256: required("F1_ADMIN_FULL_RELEASE_MANIFEST_SHA256"),
+    fallbackReleaseManifestPath: resolve(required("F1_ADMIN_FALLBACK_RELEASE_MANIFEST_PATH")),
+    fallbackReleaseManifestSha256: required("F1_ADMIN_FALLBACK_RELEASE_MANIFEST_SHA256"),
+    releasePairReceiptPath: resolve(required("F1_ADMIN_RELEASE_PAIR_RECEIPT_PATH")),
+    releasePairReceiptSha256: required("F1_ADMIN_RELEASE_PAIR_RECEIPT_SHA256"),
+    officialReleaseManifestPath: resolve(required("F1_ADMIN_OFFICIAL_RELEASE_MANIFEST_PATH")),
+    officialReleaseManifestSha256: required("F1_ADMIN_OFFICIAL_RELEASE_MANIFEST_SHA256"),
     reviewDatabasePath: required("F1_ADMIN_REVIEW_DATABASE_PATH"),
     reviewDatabaseExpectedDev: requiredReceiptInteger("F1_ADMIN_REVIEW_DATABASE_DEV"),
     reviewDatabaseExpectedIno: requiredReceiptInteger("F1_ADMIN_REVIEW_DATABASE_INO"),
