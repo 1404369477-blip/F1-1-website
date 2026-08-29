@@ -1,0 +1,42 @@
+{
+  "acceptance_exit": "安全部final报告，绑定候选SHA，裁定PASS或FAIL与P0/P1/P2；逐项说明两个accepted合同是否CLOSED；TASK_STATE_OK。",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-6320CD-四根解耦与Serve-app-cap最终静态对抗复审报告.md"
+  ],
+  "authorization_evidence": "",
+  "authorization_history": [],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "安全部/internal-agent:deploy_identity_review",
+  "completion_class": "audit",
+  "confirmation": "无需额外确认",
+  "created_at": "2026-08-12T16:25+08:00",
+  "department": "安全部",
+  "details": "独立只读复审ACK的F3FA8B四根解耦候选和B5FA49 Serve app-cap身份候选，精确回读两个accepted ADR、开发报告、目标生产SHA与测试收据。重点对抗：existing-only opener是否仍可missing-create、任意绝对路径、symlink、TOCTOU、ATTACH、身份漂移；Admin与sender是否同manifest路径；public target、rollback、data root是否真正分离且失败live零写；deployment v3旧schema拒绝；raw header重复、合并、大小、JSON prototype、未知字段、login-ref交叉、遗留X头；sourceRef三元session跨端重放；release overlay是否覆盖运行字节。只读，不改候选，不运行测试、typecheck、build、SSH、DB或tailnet。首个P1即可停止扩展并给最小successor；若P0/P1=0才放行新build/release与M1 fresh stage，不能放行load/cutover。",
+  "domain_stage": "review",
+  "event_receipts": [],
+  "execution_state": "completed",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一冻结SHA漂移立即FAIL；发现P1停止扩展并给最小修正，保持未读层Unknown；不得运行动态链或修改代码自证。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已区分F3FA8B前置SHA与B5FA49后继重叠SHA；未把existing-only局部no-create/no-follow谓词扩大为唯一路径闭合；未把未审Serve合同宣告CLOSED；未放行build/stage/prepare/load/cutover。",
+  "node": "M5-DEPLOY-V3-IDENTITY-SECURITY-GATE",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-3CDDF8-F3FA8B-四根解耦deployment-v3与existing-only私库实现报告.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-12-6320CD-四根解耦与Serve-app-cap最终静态对抗复审报告.md",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-6320CD",
+  "title": "四根解耦与Serve-app-cap两项候选最终静态对抗复审",
+  "unverified": [
+    "依任务首P1即停：public rollback/data-root事务、旧schema全入口、Admin/sender全部调用、Serve raw header/JSON/login-sourceRef/session replay、89项release overlay保持Unknown；0测试/build/typecheck/网络/SSH/DB/tailnet/服务。"
+  ],
+  "updated_at": "2026-08-12T16:40+08:00",
+  "verified": [
+    "只读独立实算组合候选与两份开发报告/accepted ADR SHA；确认所有列明当前SHA匹配；直接回读Admin prepare、existing-only inspector及accepted唯一路径合同，确认任意第二同名私库可随自洽dev/ino被同一环境选择并固化，P0=0/P1=1/P2=0，四根合同OPEN。"
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "acceptance_exit": "TASK_STATE_OK；新manifest targetPath精确[M1-HOME]/...；Node SHA/runtime/next/deps/content所有非目标字段零漂移；给新manifest SHA/release root/绝对路径；0源码改动/0build/test/typecheck/SSH/M1。",
+  "artifacts": [],
+  "authorization_evidence": "用户：可以直接部署到M1 MacBook；直接用SSH。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T13:13+08:00",
+      "evidence": "用户：可以直接部署到M1 MacBook；直接用SSH。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "BUILDER_CONTENT_ROOT_CHANGED_WITH_NODE_TARGET_PATH_CONTRACT_CONTRADICTION",
+  "claimed_by": "开发部/internal-agent:projection_runtime_m1_manifest_finalizer",
+  "completion_class": "standard",
+  "confirmation": "用户已授权固定M1部署；此任务仅修目标路径元数据。",
+  "created_at": "2026-08-12T13:13+08:00",
+  "department": "开发部",
+  "details": "继承blocked TASK-20260812-4F7345本地硬门与FA5D66/0E594C冻结候选。唯一差异：现有ignored manifest node.targetPath=/Users/f1admin/.local/node-v24.18.0-darwin-arm64/bin/node，固定M1实际目标=[M1-HOME]/.local/node-v24.18.0-darwin-arm64/bin/node；Node字节SHA均ee6fb0e0...。禁止重build、改production/test/package/runbook或任何运行字节。只用现有builder对当前已冻结production build与源码/依赖闭包运行一次，显式target-node传M1固定路径、local-node仍当前固定Node，生成新的唯一外部manifest；复核除node.targetPath、由此确定性变化的release/manifest root外，runtime89、next322/13,373,354/nextRoot b11ef505...、packages44/dependencyRoot517c29e4...、content e9eee919...及所有文件记录逐字不变。随后只运行现有target verifier的本地路径形状/manifest parse机械检查一次，不伪装M1实际path；限定diff-check只确认0源码漂移，不跑Vitest/typecheck/build。",
+  "domain_stage": "deployment-prep",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "builder发现任何源码/.next/deps/content漂移立即停；除targetPath/releaseRoot/manifestSha外字段变化立即block；若builder必须重build或修改源码则停止；禁止用旧manifest或放宽target verifier。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "M1首版上线/真实投影release/M1 manifest finalizer",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-4F7345.json"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-D1A0A8",
+  "title": "固定M1 Node targetPath manifest-only重建",
+  "unverified": [],
+  "updated_at": "2026-08-12T13:14+08:00",
+  "verified": []
+}

@@ -1,0 +1,55 @@
+{
+  "acceptance_exit": "本地从精确54e694c可生成一份确定性Admin release manifest，fresh stage verifier精确PASS，列出runtime files/22 packages/dependency files/contentRoot/releaseRoot/Node/commit/tree；没有秘密/DB/测试/协作文件；package/runbook/报告与TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "用户批准继续固定M1部署；42DB75只读preflight放行下一步精确release同步。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T10:00+08:00",
+      "evidence": "用户批准继续固定M1部署；42DB75只读preflight放行下一步精确release同步。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "限定聚焦Vitest唯一1/1首错：RELEASE_NODE；测试把本机process.execPath（app/.local/toolchains/node-v24.18.0-darwin-arm64/bin/node）作为目标，而合同仅允许M1形态/.local/node-v24.18.0-darwin-arm64/bin/node。按任务首错即停，未修改、未重跑、未执行typecheck/diff-check/SSH/M1/prepare/load。",
+  "claimed_by": "开发部/internal-agent:admin_release",
+  "completion_class": "standard",
+  "confirmation": "用户已授权继续并部署固定M1；本任务仅创建本地可验签release候选，不执行外部部署。",
+  "created_at": "2026-08-12T10:00+08:00",
+  "department": "开发部",
+  "details": "前置：M1只读preflight TASK-20260812-42DB75 PASS；M1运行根无.git，Admin/3101全空；现有public/RSS健康。以GitHub已推精确commit 54e694c13b7369819448a2c3b072cb0fbbc49b7b/tree e5b1d165e1ba6aaca820d15d29be9428dcc6661a/parent 5d596367为源码锚，参考现有RSS release-manifest模式，实现Admin release manifest builder/verifier，覆盖M1必需Admin运行文件、复用模块、0001/0002、package/lock、Admin UI和@simplewebauthn/server@13.3.2递归22包的lock version/integrity与实际node_modules内容/mode；绑定固定Node24 SHA、commit/tree与确定性content/release root。不得把测试、协作文档、脏工作树、SQLite、密钥、缓存、.git纳入运行包。只在本机实现/验证候选，暂不SSH、不传M1、不prepare/load。需同步package script与runbook，交开发报告。最小验证仅一次聚焦manifest测试或builder+verifier、一次Node24 typecheck、一次diff-check；首错即停。产品96F40F若在开发前完成，回读其successor但本任务只做release闭包，不实现sender。",
+  "domain_stage": "开发/Admin release闭包",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "commit/tree/文件SHA/lock integrity或node_modules闭包漂移，立即停止不生成可部署结论。",
+    "发现运行时仍有未纳入相对import/动态资产/生产包，补入单一闭包并重做静态清单；若无法确定则block。",
+    "任一限定验证首错即停，不重跑、不SSH、不传输、不触M1。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "第一版后台/Admin release闭包",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-42DB75-固定M1-Admin部署与私有入口只读preflight报告.md"
+  ],
+  "report": "",
+  "resolution": {
+    "evidence": "docs/当前生产状态与执行待办.md",
+    "reason": "2026-08-29 schema10生产恢复、27个X信源和完整Admin路线已形成新的当前闭包；旧任务绑定过时schema/release/plist/视觉或运行时态，继续领取会造成重复或错误执行。",
+    "receipt_id": "RES-20260829T235604-2DCFB94A",
+    "replacement_revision": 3,
+    "replacement_state": "blocked",
+    "replacement_task_id": "TASK-20260829-BBFF2A",
+    "resolved_at": "2026-08-29T23:56+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "superseded",
+    "target_revision_before": 3
+  },
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-5DA73D",
+  "title": "生成Admin精确release manifest与M1增量同步候选",
+  "unverified": [],
+  "updated_at": "2026-08-29T23:56+08:00",
+  "verified": []
+}

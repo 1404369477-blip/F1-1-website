@@ -1,0 +1,56 @@
+{
+  "acceptance_exit": "形成单一可实施合同：用户在私有/admin/reviews处理真实候选并显式发布后，公开/与/stories/{publicId}读取独立投影；开发可按精确Function ID开工，未确认视觉只阻断UI/CSS，不阻断确定的后端最小纵切。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/spec/F1+1-真实RSS人工审核与公开投影最小实施合同-v0.1.md",
+    "docs/decisions/system/2026-08-12-F1+1-真实RSS人工审核与公开投影最小纵切-successor-accepted.md",
+    "docs/spec.md",
+    "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md",
+    "docs/spec/README.md",
+    "docs/progress.md",
+    "docs/collaboration/部门/产品部/交接班文档.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-12-真实RSS人工审核与公开投影最小纵切successor产品报告.md"
+  ],
+  "authorization_evidence": "用户要求持续搭建到前后端数据库核心功能初版落地，并明确初期人工审核、禁止自动发布。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T05:55+08:00",
+      "evidence": "用户要求持续搭建到前后端数据库核心功能初版落地，并明确初期人工审核、禁止自动发布。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/internal-agent:admin_product_successor",
+  "completion_class": "standard",
+  "confirmation": "统筹部核收合同后派开发实现后端；可视化候选交用户确认后实现UI。",
+  "created_at": "2026-08-12T05:55+08:00",
+  "department": "产品部",
+  "details": "输入：accepted RSS-REAL-001及当前真实表source/ingest_run/pending_review_candidate；C682F8/B92A75成功收据；现有proposed docs/spec/F1+1-M5最小人工审核台纵切产品合同-v0.1.md、11 DTO映射、admin reviews视觉候选、双主机/专用Mac合同；当前公开App继续public-multimedia-synthetic且真实候选尚不可见。目标按奥卡姆剃刀给唯一最小successor：Mac/iPhone私有入口的/admin/reviews读取真实RSS候选，编辑中文标题/摘要/备注，保存时绑定source_revision，批准或拒绝，批准后必须再次显式手动发布；发布只投影approved且编辑字段完整的allowlist到独立公开只读投影，不让公开服务直接读取private审核库，不覆盖现有synthetic或自动发布。明确是否新增最小migration/table/outbox/snapshot、API DTO、session/CSRF、幂等/CAS、published publicId、图片0图、原文链接、failure/reconcile/rollback、从当前单M1到双主机演进。必须给阶段切片和第一开发任务可直接实施的文件/路由/验收；若完整发布闭环本轮仍需用户视觉确认，允许后端先行边界，但不得把真实内容静默公开。同步更新Spec/功能矩阵/accepted或successor ADR所需文档和产品报告；不改app/design，不外联。",
+  "domain_stage": "真实审核发布产品合同",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "现有public schema无法承载真实候选且需要新领域实体时，明确最小新增及迁移/回退，不从UI猜字段。",
+    "跨DB发布无法原子闭合时必须使用唯一outbox/reconcile或快照切换，禁止双写成功误报和直接ATTACH混库。",
+    "缺少中文编辑、批准、显式发布任一门时保持pending/approved不可公开，不自动降级发布。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未把approve等同publish，未把private published等同public active，未把旧111槽位映射当当前物理事实，未把一个自然周期外推长期稳定，未把视觉候选写成已确认，未修改app/design/accepted旧合同或外联；独立安全/测试/设计门留给后继任务",
+  "node": "基于M1已运行的20条pending_review真实候选，冻结可快速实现的审核、批准/拒绝、显式手动发布与公开页闭环",
+  "pointers": [],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-12-真实RSS人工审核与公开投影最小纵切successor产品报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-28FA62",
+  "title": "真实RSS候选人工审核到公开投影最小落地successor",
+  "unverified": [
+    "0002七表、真实Review Repository/API、投影包/receiver/public reader尚未实现；20条候选未人工编辑/决定/发布；未来每个900秒周期及已有非空人工字段遇真实更新的动态保护未证明；Admin视觉、Mac/iPhone私有入口、生产认证/备份/双主机/公网切换未验证；真实媒体与AI关闭"
+  ],
+  "updated_at": "2026-08-12T06:18+08:00",
+  "verified": [
+    "已对照现行RSS三表、C682F8/B92A75及并发到达且已ACK的BAF2E6收据、旧Admin语义映射和accepted双主机合同；唯一candidate-first链已冻结到七表、事务、DTO、错误、Function ID、实施波次与回退；50个Function机械计数complete20/user-gated7/P1-blocker23；文档路径/尾随空白/diff-check通过；本轮app/design/externalCalls均为0"
+  ]
+}

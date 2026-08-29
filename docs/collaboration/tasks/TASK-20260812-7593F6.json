@@ -1,0 +1,42 @@
+{
+  "acceptance_exit": "M1第二release正式验签通过，唯一真实RSS采集产生明确HTTP/解析/候选收据并立即停采；公开站和既有服务零漂移。",
+  "artifacts": [],
+  "authorization_evidence": "用户已授权M1真实采集和快速推进；817BA9确认无任何写入，345AB2已放行相同恢复逻辑。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T04:24+08:00",
+      "evidence": "用户已授权M1真实采集和快速推进；817BA9确认无任何写入，345AB2已放行相同恢复逻辑。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "VERIFIER_REMOTE_SHELL_QUOTING_PREEXEC",
+  "claimed_by": "开发部/internal-agent:rss_real",
+  "completion_class": "standard",
+  "confirmation": "统筹部核对实施结果后派安全部执行既有TASK-20260812-1AA1BB；独立PASS前不启用900秒。",
+  "created_at": "2026-08-12T04:24+08:00",
+  "department": "开发部",
+  "details": "前置：817BA9 blocked/MODE_RESTORE_SCRIPT_SYNTAX_PREWRITE，Node在任何语句前退出，fchmod/verifier/overlay/prepare/请求均0；345AB2安全裁定继续有效。严禁重builder/打包/传输、改manifest或重跑已失败的内联脚本。将相同安全逻辑写为任务专属scratch脚本，先用固定Node24执行node --check恰一次，记录SHA；以同SHA传至M1任务root，远端node --check恰一次，只有两端均PASS且SHA一致才执行脚本恰一次。脚本必须先完成全量只读preflight：固定stage/root/manifest SHA34c1032c…c8d95、137唯一安全相对路径、恰manifest+137文件、无symlink/逃逸/特殊节点/缺失/额外闭包、UID501/nlink1、SHA+size全匹配；再O_NOFOLLOW打开、逐项fstat并fchmod为manifest精确mode，后验SHA/size/manifest不变。之后现有release verifier只运行一次并要求content2aae0486…8c153/release6d402a5d…59eb02。通过后按817BA9原合同继续任务专属backup/overlay/正式验签、prepare-only、source disabled epoch3 job unloaded门、单事务one-shot enable、verified wrapper恰一次且真实RSS最多1次、wrapper后第一控制动作stop恰一次、20秒零新增和public零漂移；不加载900秒。成功后清理任务scratch/stage/tar/backup与不再需要的772F48 Trash，失败按首错停止并保留可恢复证据。",
+  "domain_stage": "M1部署语法机械后继与真实采集",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "本地或远端语法检查、脚本SHA、全量写前preflight任一失败时fchmod=0并停止。",
+    "唯一mode脚本或唯一verifier/overlay/prepare任一失败时不启用source，按可验证backup恢复或保持正式路径原状。",
+    "唯一wrapper失败时不重试并第一动作stop；公开DB/服务漂移时立即阻断。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "将817BA9的纯解析错误机械修正为一份可校验脚本，复用原stage继续同一release和唯一真实采集",
+  "pointers": [],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-7593F6",
+  "title": "M1第二release mode恢复脚本语法机械后继与真实采集",
+  "unverified": [],
+  "updated_at": "2026-08-12T04:27+08:00",
+  "verified": []
+}

@@ -1,0 +1,45 @@
+{
+  "acceptance_exit": "xattr兼容探针与全部身份门PASS；三精确空目录各rmdir一次且absent；builder唯一一次PASS；manifest git/runtime89/Next/packages/Node/content/release roots及0600身份收据；harness check/实际验签各一次PASS；报告/TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "scratch/TASK-20260812-F055A6/verify-m1-target-manifest.mjs",
+    "docs/collaboration/部门/开发部/报告/2026-08-12-F055A6-Next空目录xattr探针兼容与manifest验签报告.md"
+  ],
+  "authorization_evidence": "",
+  "authorization_history": [],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:next_empty_dir_xattr_finalizer",
+  "completion_class": "standard",
+  "confirmation": "无需用户确认；只修探针平台兼容，删除已由69A83A独立安全裁定，仍限精确空目录非递归rmdir。",
+  "created_at": "2026-08-12T20:38+08:00",
+  "department": "开发部",
+  "details": "继承047E93，三目标仍全部present且rmdir=0、builder=0、harness=0、production build不重跑。唯一机械改动为probe使用macOS `/usr/bin/xattr`（shell=false/精确argv）检查目标xattr列表为空，禁止Python os.listxattr；ACL/flags/mount等其余69A83A谓词、descriptor二次门、三路径顺序与各唯一一次非递归rmdir不变。三项absent后核正常同名目录未变、HEAD/index/89 runtime/Node24。然后builder唯一一次、manifest身份/fields/SHA，闭包外scratch harness apply_patch创建/0700/0600，Node check一次、实际M1-target验签一次。禁止重build、Git/push/SSH/M1/DB/prepare/load/cutover。",
+  "domain_stage": "development",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "xattr命令缺失/非空/退出异常或任一身份门失败立即block且0/部分删除如实记录；rmdir首错停；builder/harness首错停；禁止重试与范围扩张。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "Used /usr/bin/xattr exact argv with shell=false; no Python os.listxattr; exact three-path whitelist and non-recursive rmdir only; no retry/rerun; harness is git-ignored with parent0700/file0600 and uses external manifest SHA plus explicit M1 target path.",
+  "node": "NEXT-EMPTY-DIR-XATTR-PROBE-FINALIZER",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-047E93.json",
+    "docs/collaboration/部门/安全部/报告/2026-08-12-69A83A-fresh-Next三项重复空目录只读安全裁定报告.md"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-F055A6-Next空目录xattr探针兼容与manifest验签报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-F055A6",
+  "title": "Next空目录xattr探针兼容finalizer",
+  "unverified": [
+    "No new build/Git write/push/SSH/M1/DB/prepare/load/cutover/delta/transfer; manifest has not yet been verified on a fresh M1 stage."
+  ],
+  "updated_at": "2026-08-12T20:42+08:00",
+  "verified": [
+    "Three exact empty directories passed fresh identity/xattr/ACL/flags/mount and descriptor gates, each non-recursive rmdir exactly once and absent; normal named directories remained nonempty. Production build was not rerun. M1-target builder exactly once PASS built-from-fixed-git-identity externalCalls0. Manifest uid501/mode0600/nlink1/realpath exact/canonical, SHA256 6f4642999797aea6d220cc01ec4d9500416a37a5db7de8eaafc573991bff770d, runtime89, Next322/13399239/root40746f5f, packages44/depsRoot517c29e4, Node ee6fb0e0, content d42c42cb, release d186e428. Outside-closure harness Node check once and actual verification once PASS."
+  ]
+}

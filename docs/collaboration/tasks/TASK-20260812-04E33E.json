@@ -1,0 +1,42 @@
+{
+  "acceptance_exit": "TASK_STATE_OK；原local tar身份匹配；chunk manifest与全部local/remote块逐块SHA/size匹配；reassembled tar aggregate SHA/size匹配；全新stage target verifier一次PASS（manifest/content/release roots匹配）；public/RSS零漂移；0 formal/prepare/load/DB写。报告列所有task路径和保留证据。",
+  "artifacts": [],
+  "authorization_evidence": "用户：可以直接部署到M1 MacBook；直接用SSH；继续。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T13:33+08:00",
+      "evidence": "用户：可以直接部署到M1 MacBook；直接用SSH；继续。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "CHUNK_000008_TRANSFER_SHELL_STOPPED_BEFORE_IDENTITY_RECEIPT",
+  "claimed_by": "开发部/internal-agent:projection_runtime_m1_chunk_transfer",
+  "completion_class": "standard",
+  "confirmation": "用户已授权M1 SSH部署；分块只为解决已证实大文件截断，不扩大部署权限。",
+  "created_at": "2026-08-12T13:33+08:00",
+  "department": "开发部",
+  "details": "继承blocked C5E892已通过M1 baseline与保留证据。原local tar SHA aad604e9... size399386112，首次远端截断archive/stage保留且禁止复用/覆盖/清理。本任务先只读精确定位 retained local tar 并复算SHA/size匹配；若不存在或漂移立即停，禁止重build/rebuilder/重打包。用固定16MiB将原archive分割到全新本地task chunk root，chunk名固定000000起连续，生成canonical JSON manifest（每块name/size/SHA与aggregate tar SHA/size）且0600；新M1 task root必须真实absent。逐块scp到全新remote chunk root，每块仅1次，上传后立即独立SHA/size/mode/uid/nlink核对，任一首错停，已成功块保留供后继续传。全部块到齐后传一个task-owned Node reassembler/verifier脚本（local/remote Node --check与SHA门各一次）：拒绝缺块/额外块/symlink/异主/nlink!=1/mode非0600/size或SHA错，按manifest顺序O_EXCL写archive.tmp→fsync→rename为release.tar，复核aggregate SHA/size。然后仅在全新stage解包，逐项身份门，external manifest SHA58b6da...，固定M1 Node运行target verifier恰一次。禁止formal overlay/prepare/plist/DB/key/load/cutover/cleanup；继承C5E892 RSS/public baseline，完成后再只读复核public/RSS零漂移。",
+  "domain_stage": "deployment-prep",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "retained local tar不匹配立即停；任一块传输/远端SHA失败立即停不重传且保留已成功块；reassembler check/身份/aggregate或extract/verifier任一首错停，不改块/不重组第二次；新root已存在或旧partial evidence被触碰立即停。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "M1首版上线/真实投影部署/chunked fresh-stage",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-C5E892.json"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-04E33E",
+  "title": "M1 release归档16MiB分块传输与fresh-stage验签",
+  "unverified": [],
+  "updated_at": "2026-08-12T13:36+08:00",
+  "verified": []
+}

@@ -1,0 +1,43 @@
+{
+  "acceptance_exit": "安全部final报告，绑定最终SHA，明确6320CD P1 CLOSED与app-cap合同CLOSED/OPEN；PASS/FAIL、P0/P1/P2；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-34285A-精确DB路径与app-cap候选最终限定复审报告.md"
+  ],
+  "authorization_evidence": "",
+  "authorization_history": [],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "安全部/internal-agent:deploy_identity_final",
+  "completion_class": "audit",
+  "confirmation": "无需额外确认",
+  "created_at": "2026-08-12T16:52+08:00",
+  "department": "安全部",
+  "details": "承接6320CD和B91E89。先精确核对deployment/admin-install/test新SHA与6320CD其余候选SHA；限定复审P1-01是否以固定production exact path、inspection前拒绝、第二同名库零工件闭合。随后继续6320CD因fail-first未审的Serve app-cap层：raw header field重复/Node合并、长度与ASCII、JSON普通object/prototype/未知字段、login/sourceRef交叉、遗留X头值不读、session跨source三元绑定、旧schema拒绝。只读0测试/build/SSH/DB/tailnet/修改。P0/P1=0才放行唯一新build/release与M1 fresh stage；prepare/load/cutover仍后继。",
+  "domain_stage": "review",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任何SHA漂移或新P1立即FAIL并给最小successor；保持未读层Unknown；不得运行动态链或改候选。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未把开发测试当作直接证据；未把本地代码合同CLOSED扩大为真实tailnet或生产就绪；识别legacy头内部脱敏reason缺失为P2且未忽略；只放行new build/release与M1 fresh stage，不放行prepare/load/cutover。",
+  "node": "M5-DEPLOY-V3-IDENTITY-SECURITY-FINAL",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-B91E89-唯一review-DB精确路径先验锚定报告.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-12-34285A-精确DB路径与app-cap候选最终限定复审报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-34285A",
+  "title": "精确DB路径P1关闭与app-cap候选最终限定复审",
+  "unverified": [
+    "0测试/build/typecheck/网络/SSH/DB/tailnet/服务；真实M1固定DB身份、tailnet policy/Serve头字节、Mac/iPhone Passkey/撤销、新build release闭包、prepare/load/cutover均未验证。"
+  ],
+  "updated_at": "2026-08-12T17:10+08:00",
+  "verified": [
+    "只读实算B91E89后继与6320CD组合SHA全部匹配；确认production exact path常量、prepare inspection前逐字拒绝与manifest literal关闭6320CD P1-01；直接回读rawHeaders parser、JSON闭集、login/sourceRef匹配、auth challenge与server-side session/fresh三元绑定，app-cap本地代码合同CLOSED；P0=0/P1=0/P2=1。"
+  ]
+}

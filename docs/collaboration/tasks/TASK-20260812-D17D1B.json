@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "安全部正式报告+TASK_STATE_OK；明确PASS/FAIL与P0/P1/P2；逐层裁定：可提交精确Git候选、可同步M1 stage、可执行prepare-only、可load internal receiver/Admin、可切public read-mode；只有P0=0/P1=0才放行下一层。报告列精确SHA与Unknown。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-D17D1B-真实投影A+B与release闭包最终独立安全复审报告.md"
+  ],
+  "authorization_evidence": "用户本会话：继续；快速上线第一版；减少冗余测试。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T12:12+08:00",
+      "evidence": "用户本会话：继续；快速上线第一版；减少冗余测试。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/internal-agent:projection_security_final",
+  "completion_class": "audit",
+  "confirmation": "用户授权继续快速上线；安全审查限一次高价值静态门。",
+  "created_at": "2026-08-12T12:12+08:00",
+  "department": "安全部",
+  "details": "严格只读复审已ACK的A段TASK-20260812-39D4DD与B最终TASK-20260812-6996D6及完整报告SHA 71d03dd9...，绑定release-manifest SHA 2378be0e...、public repository SHA 2b5ef415...、builder产物runtime88/overlay29/base59/packages44/manifest SHA 7c318e84...。只审真实上线最可能的闭包：(1) sender lease/unknown→receipt GET/404同包重投/3次上限、receipt与audit事务；(2) receiver 127.0.0.1:3102 Host+service identity、Ed25519、空根gen1/null previous、O_EXCL、连续链；(3) public-only manifest不得含/读取Admin私钥或私库，snapshot每请求active→committed→签名/manifest/records，empty合法、corrupt503、V2 406、无fallback；(4) Admin/public deployment-v2根/权限/keypair/身份隔离、prepare-only不load，旧v1拒绝；(5) release base/overlay/生产依赖/Node/文件身份与public .bin symlink精确排除是否安全；(6)现有public route是否真的通过显式read-mode到reader，原文URL出口仍限MotorSport HTTPS且无视觉结构漂移；(7)installer是否会意外覆盖/加载现有public服务，回退能否保持旧synthetic与上一active。0修改/0测试/0typecheck/0网络/0SSH/0DB写。先看P0/P1，发现首个阻断即给最小修正，不进行无限审查。",
+  "domain_stage": "review",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一冻结SHA/闭包计数不匹配立即fail；发现私钥/私库跨读、公网internal listener、签名/链/receipt绕过、请求级fallback、installer意外load或无法保留synthetic回退时判P1/P0并停止；无法静态证明的运行项保持Unknown，不以推断放行。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "严格静态只读；0 test、0 typecheck、0 network、0 SSH、0 DB读写、0 service/launchctl；未输出秘密；未把installer磁盘改写扩大成已load；只写安全部正式报告并用任务工具落账。",
+  "node": "M1首版上线/真实投影运行门/安全放行",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-B78DAF真实投影B段HTTP公开快照与release-successor实现报告.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-12-D17D1B-真实投影A+B与release闭包最终独立安全复审报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-D17D1B",
+  "title": "真实投影A+B与release闭包最终独立安全复审",
+  "unverified": [
+    "M1 fresh stage、真实key/DB/listener、sender到active、公开feed/detail与公网路由、上一active及上一synthetic release回退均Unknown；因首个P1按任务规则停止。"
+  ],
+  "updated_at": "2026-08-12T12:25+08:00",
+  "verified": [
+    "FAIL；P0=0/P1=1/P2=0。A/B报告、accepted ADR、release源码、公库与builder manifest SHA匹配；runtime88/overlay29/base59/packages44、Node/deps根匹配。首个P1：公开Next实际消费.next，但manifest记录0项.next；public installer未消费外部manifest锚点，且在projection prepare成功前替换真实LaunchAgents plist。五层发布门全部不放行。报告SHA-256=9d1e65d70fd4bcbbd15d46ea7a9f101f7c9cdbd5b72126a59d3a605dd8c9b25f。"
+  ]
+}

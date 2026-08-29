@@ -1,0 +1,36 @@
+{
+  "acceptance_exit": "唯一测试变量改名；聚焦Vitest/Node24 typecheck/限定diff-check各最多一次PASS；生产候选字节领取前后不变；报告如实列继承与新收据；TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "",
+  "authorization_history": [],
+  "authorization_state": "none",
+  "block_reason": "FOCUSED_VITEST_TEST_FIXTURE_NONCANONICAL_TMP_PARENT",
+  "claimed_by": "开发部/internal-agent:data_root_finalizer",
+  "completion_class": "standard",
+  "confirmation": "无需额外确认",
+  "created_at": "2026-08-12T15:30+08:00",
+  "department": "开发部",
+  "details": "承接blocked TASK-20260812-3CDDF8，只做fixture机械修正：将app/src/tests/admin-service.test.ts同一作用域重复局部变量identity改为无冲突名称并同步其局部引用；生产代码、断言语义及其他文件不改。先核对3CDDF8候选SHA/首错，随后新预算运行聚焦Vitest一次、固定Node24 typecheck一次、限定diff-check一次；首错即停。若三门PASS，修正/落开发报告并complete。",
+  "domain_stage": "candidate",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任何SHA漂移或新首错立即block且不重跑；不得顺手修生产代码、build、SSH/M1/真实DB/launchctl/cutover。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "M5-REAL-PROJECTION-RUNTIME-003-CODE-FINAL",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-3CDDF8.json"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-C59E17",
+  "title": "四根解耦测试变量名机械finalizer",
+  "unverified": [],
+  "updated_at": "2026-08-12T15:36+08:00",
+  "verified": []
+}

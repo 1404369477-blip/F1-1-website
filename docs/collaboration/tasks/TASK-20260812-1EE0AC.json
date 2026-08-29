@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "三份产品真值逐项同步且不改变50个Function总数；明确当前Known/Unknown、唯一用户管理面门、下一开发/部署动作；git diff --check限定三文件PASS；产品报告落盘并TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/spec.md",
+    "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md",
+    "docs/progress.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-12-1EE0AC-M1-Admin投影当前时态产品报告.md"
+  ],
+  "authorization_evidence": "",
+  "authorization_history": [],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "产品部/internal-agent:data_path_contract",
+  "completion_class": "standard",
+  "confirmation": "无需额外确认；仅同步已验证事实",
+  "created_at": "2026-08-12T18:52+08:00",
+  "department": "产品部",
+  "details": "仅回读已ACK的F3FA8B、B5FA49、B91E89、34285A、F031E2、C0BACB及accepted ADR，修正 docs/spec.md、docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md、docs/progress.md 的事实漂移：deployment-v3/existing-only opener、app-cap parser、Admin UI本地候选和8e70 M1版本release已经实现/验签，但真实Tailscale管理面、prepare/load/passkey双端、generation1/manual publish/public cutover仍未完成。保持Function状态完整性，不把本地代码PASS升级为用户出口complete；不改app、其他ADR或历史报告。",
+  "domain_stage": "product",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若历史报告/任务SHA或accepted ADR互相冲突立即block；若需改变Function ID/范围或用户确认状态立即block，不自行改义；不得把M1未load候选写成可用Admin。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "仅同步三份产品真值并落短报告；未改app/ADR/历史报告，未SSH/部署；未以本地PASS或未加载release升级用户出口状态；限定diff-check只执行一次",
+  "node": "PRODUCT-TRUTH-SYNC-M1-ADMIN",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-C0BACB-M1新release-prepare输入只读核对报告.md"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-12-1EE0AC-M1-Admin投影当前时态产品报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-1EE0AC",
+  "title": "同步真实RSS Admin投影与M1新release当前时态",
+  "unverified": [
+    "真实Tailscale管理面、prepare/load、Passkey Mac/iPhone、generation 1/manual publish、delivery active、public cutover与真实rollback仍未运行"
+  ],
+  "updated_at": "2026-08-12T19:12+08:00",
+  "verified": [
+    "F3FA8B/B5FA49/B91E89/34285A已ACK：deployment-v3、existing-only唯一review DB opener、四根解耦与app-cap parser本地候选闭合",
+    "F031E2已ACK：M1 8e70b2b7…30a release原子固化且target verifier PASS，未load、旧live不变",
+    "C0BACB已ACK：唯一review DB v1/integrity ok、rollback/live anchors已读回；Admin/Public roots、keypair、deployment不存在，CertDomains=0、Serve/Funnel空、目标app-cap=0，prepare BLOCKED",
+    "限定三产品文件唯一一次git diff --check PASS；50项Function计数保持20/6/24"
+  ]
+}

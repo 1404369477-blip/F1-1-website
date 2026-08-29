@@ -1,0 +1,51 @@
+{
+  "acceptance_exit": "固定M1 source为enabled且com.f1plus1.rss-collector loaded，StartInterval900正式运行；RunAtLoad结果可判定，公开站继续健康。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-B92A75-M1真实RSS-900秒调度启用与RunAtLoad收据.md"
+  ],
+  "authorization_evidence": "用户已明确要求15分钟内自动采集并授权M1部署；唯一实采与独立安全门已PASS。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T05:48+08:00",
+      "evidence": "用户已明确要求15分钟内自动采集并授权M1部署；唯一实采与独立安全门已PASS。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:rss_real",
+  "completion_class": "standard",
+  "confirmation": "统筹部核收后进入15分钟自然运行监测；不再需要用户手动操作。",
+  "created_at": "2026-08-12T05:48+08:00",
+  "department": "开发部",
+  "details": "前置TASK-20260812-3EB28F已ACK：PASS/P0=0/P1=0/P2=1，放行调度；最新独立状态release/deployment/plist/Node匹配，private integrity ok，source disabled/epoch4、job unloaded、run3/running0/candidate20，公开零漂移。只复用仓内scripts/rss-control.ts和固定runbook，0新脚本/0inline Node/0grep-pipe。白名单：1) 以RSS_EXPECTED_RELEASE_MANIFEST_SHA256=34c1032c…c8d95运行control status恰1，必须disabled epoch4/unloaded；2) 同外部锚运行control resume恰1，只有source enabled且launchState loaded的成功收据才继续；resume内部任何失败必须按产品实现安全停回；3) 等待不超过30秒让RunAtLoad收口；4) 同锚control status恰1，必须enabled/loaded；5) 只读tail collector stdout/stderr各最多5行并脱敏核对，若同slotSLOT_ALREADY_RECORDED/externalCalls0属于预期去重，不重试；若产生新run也只记录，不手动触发。6) 核对公开DB身份及local/public home/detail和三服务未漂移。不得手动wrapper、stop、第二次resume、删除收据/backup、自动发布或Admin操作。任何身份/状态/公开漂移首错停止；若resume后状态不安全，唯一允许调用control stop恰1。",
+  "domain_stage": "M1 15分钟调度启用",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "pre-status不符时不resume。",
+    "resume非成功或post-status非enabled/loaded时执行唯一stop并保持调度关闭。",
+    "公开DB/页面/服务漂移时立即stop并保留回退证据。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未新增脚本或inline Node；未手动wrapper、未第二次resume、未stop；未删收据/backup/DB/manifest/plist/log，未发布或Admin操作；collector stdout/stderr各读取不超过5行，公开面健康核对无写操作。",
+  "node": "在3EB28F独立PASS后，以既有control resume启用15分钟LaunchAgent并核对loaded/enabled与RunAtLoad收据",
+  "pointers": [],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-B92A75-M1真实RSS-900秒调度启用与RunAtLoad收据.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-B92A75",
+  "title": "M1真实RSS 900秒调度启用与即时状态回读",
+  "unverified": [
+    "后续每个900秒自然周期的持续稳定性、未来上游网络可用性、既有非空人工字段遇真实更新时的动态保持，留待自然运行监测。"
+  ],
+  "updated_at": "2026-08-12T05:53+08:00",
+  "verified": [
+    "pre-status恰1次：disabled/stopEpoch4/unloaded；resume恰1次：resumed-confirmed、enabled/stopEpoch4/loaded；等待20秒；post-status恰1次：enabled/stopEpoch4/loaded；control externalCalls均0。",
+    "RunAtLoad恰1次：launchctl runs1、last exit0、properties runatload、run interval900 seconds；collector收据 succeeded/OK/externalCalls1/item50/selected20/new0/updated0/duplicate20；手动wrapper0、第二resume0、stop0。",
+    "公开核对1轮：DB SHA 949c78d505e4c032d2495174deaf62d24f9d99b76284ad7ba6fb29a5ac83bb50、size737280/inode24546198/mode0600/uid501/nlink1；local/public home/detail均200；public-beta PID52089、quick-tunnel PID53446、receipt-refresh last exit0，零漂移。"
+  ]
+}

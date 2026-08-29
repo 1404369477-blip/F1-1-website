@@ -1,0 +1,42 @@
+{
+  "acceptance_exit": "精确SHA匹配；7920C6三项逐项CLOSED或给出唯一直接反例；P0/P1/P2明确；无P0/P1则最终放行数据层供backend使用；报告落盘，TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "用户要求复杂任务后多Agent审查且避免冗余；本轮只复核已知绕过。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T07:15+08:00",
+      "evidence": "用户要求复杂任务后多Agent审查且避免冗余；本轮只复核已知绕过。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "首条SHA失败路径：0002/test/mapping匹配，但schema实际SHA=2c00bfc6916f4fded2d8e09f96193c428c157c0797c10081e749aba7620b2fde，任务冻结要求D8A278 389245a0c7f56140f673e171842934a4c62d9fbe6511a3a4a725d2b45e9e456b；混合候选不得复审或放行。已停止，0测试0修改0网络0DB写。",
+  "claimed_by": "安全部/internal-agent:admin_data_final_review",
+  "completion_class": "audit",
+  "confirmation": "这是数据层最后一次限定静态复审，结论后不再展开新的数据审查轮次。",
+  "created_at": "2026-08-12T07:15+08:00",
+  "department": "安全部",
+  "details": "只读核对最终数据候选：0002 SHA 1d373f90cf881a58a15966ffe12ed01c3a651380d5f4f5aa9de468d79a798263；test SHA ccbe2938c653346e82241ef17fecda74b3ba2c446eeeaa1d51023f8c4fad7b4b；mapping/schema保持D8A278冻结值。只裁定7920C6残留：Publication/Outbox/Audit INSERT OR REPLACE是否在SQLite默认recursive_triggers下被BEFORE INSERT显式拒绝；Audit低位空闲seq分叉是否被MAX+1/latest guard拒绝；并阅读四个负例结果3/3 PASS和全项目typecheck PASS作为证据。0修改/0测试/0typecheck/0网络/0DB写。不得扩展新审查轮次；snapshot generation-parent P2继续交给backend最终审查。",
+  "domain_stage": "安全/最终复审",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "SHA漂移或存在同一路径可复现绕过：立即FAIL并给唯一最小反例，不扩展。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "第一版后台/数据层最终安全门",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-7920C6-D8A278三项P1修复限定静态复审报告.md"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-B88335",
+  "title": "AA08F9 REPLACE与Audit分叉最终限定复审",
+  "unverified": [],
+  "updated_at": "2026-08-12T07:16+08:00",
+  "verified": []
+}

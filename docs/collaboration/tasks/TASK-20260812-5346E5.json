@@ -1,0 +1,54 @@
+{
+  "acceptance_exit": "合同与schema字段名一致；状态数字/描述不夸大；已实现和未部署边界清晰；app/design零改；报告落盘，TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/spec/F1+1-真实RSS人工审核与公开投影最小实施合同-v0.1.md",
+    "docs/spec.md",
+    "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md",
+    "docs/progress.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-12-真实RSS人工审核与公开投影最小纵切successor产品报告.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-12-真实审核后端实现后产品真值机械同步报告.md"
+  ],
+  "authorization_evidence": "后端本地候选与最终安全门已完成，需保持项目真值可交接。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T07:51+08:00",
+      "evidence": "后端本地候选与最终安全门已完成，需保持项目真值可交接。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/internal-agent:admin_backend_truth_sync",
+  "completion_class": "standard",
+  "confirmation": "纯文档同步，后端代码与M1均不操作。",
+  "created_at": "2026-08-12T07:51+08:00",
+  "department": "产品部",
+  "details": "只做文档机械同步，不改app/design。依据C334CE、739DF6、7B47E0已放行实现，把产品合同Mutation DTO三处客户端CAS字段从含混hash命名统一为latestBundleVersionTag/bundleVersionTag/approvedBundleVersionTag（12位，完整64位hash仅服务端），保持合同§270语义；在docs/spec.md、功能矩阵、docs/progress.md和产品报告中登记：数据七表/映射/后端Repository/Routes/ProjectionReceiver/PublicSnapshotReader已本地实现并通过唯一端到端测试+typecheck+最终安全门；正式M1迁移、HTTP server接线、Tailscale/passkey、UI、public切换仍未验证。不得把本地候选写成已部署。只做一次引用/字段名/diff机械检查。",
+  "domain_stage": "产品/文档同步",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "发现实现与accepted产品语义除versionTag外冲突：停止并BLOCK，列精确冲突。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未把本地候选写成部署或公开；未把12位VersionTag写成完整hash/持久身份；未改变Function状态计数；未修改app/design/M1或外联；未扩展产品范围或运行测试",
+  "node": "第一版后台/产品真值同步",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-7B47E0-完整sqlite_schema指纹唯一P1最终限定复审报告.md"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-12-真实审核后端实现后产品真值机械同步报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-5346E5",
+  "title": "真实审核后端实现后产品合同与进度机械对齐",
+  "unverified": [
+    "固定M1真实库0002迁移、正式opener/HTTP server/Next Route Handler、delivery查询与sender/receipt回写、response-loss/crash replay、Tailscale/passkey、Admin UI、Mac/iPhone、public origin切换均未验证"
+  ],
+  "updated_at": "2026-08-12T08:00+08:00",
+  "verified": [
+    "合同三个客户端CAS字段已统一为latestBundleVersionTag/bundleVersionTag/approvedBundleVersionTag且均明确12位；完整64位hash保持服务端；spec/matrix/progress/原产品报告已登记本地七表/mapping/Repository/route facade/ProjectionReceiver/PublicSnapshotRepository、唯一端到端/typecheck/最终限定安全收据；矩阵仍20/7/23；一次字段/引用/diff检查通过；app/design/M1/网络改动均为0"
+  ]
+}

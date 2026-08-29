@@ -1,0 +1,42 @@
+{
+  "acceptance_exit": "base/preflight PASS；delta两文件传输各一次SHA匹配；全新stage clone+apply一次；M1 target verifier一次PASS roots d14ee602/35021046/8e70b2b7；原子固化新版本release且文件/目录/身份闭合；旧base/live/public/RSS语义无任务漂移；TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "用户明确要求直接部署到固定M1并持续继续推进，当前仅创建未加载版本release",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T17:43+08:00",
+      "evidence": "用户明确要求直接部署到固定M1并持续继续推进，当前仅创建未加载版本release",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "M1_PREFLIGHT_FIRST_ERROR: IDENTITY_MODE_INVALID:[M1-HOME]/Library/LaunchAgents/com.f1plus1.quick-tunnel.plist; preflight stopped before stage/clone/delta transfer/apply/verifier/finalize; no retry per task contract",
+  "claimed_by": "开发部/internal-agent:m1_delta_release",
+  "completion_class": "standard",
+  "confirmation": "无需额外确认",
+  "created_at": "2026-08-12T17:43+08:00",
+  "department": "开发部",
+  "details": "用户已授权固定M1直接部署。以M1既有只读验签release [M1-HOME]/F1-1-website/releases/f868497562332e6b365479f48105aba298783aa23513a0b962ac2ba318f462a6/app 为唯一base。先只读preflight核其旧manifest58b6da...与target verifier/公网页面/DB/plist/listener/RSS语义。创建全新任务stage sibling，不覆盖base或live；优先APFS clonefile/ditto clone到stage，失败即停，不降级全量慢copy。唯一scp传输delta manifest cbf42a5f...和archive92d4dd5a...，逐项身份/SHA；用任务专属文件化Node脚本严格校验base/target roots、changed/deleted闭集、路径无逃逸/symlink、changed SHA/size/mode，再对stage执行changed原子替换+3精确删除；任务失败恢复只删除全新stage。随后在stage以external target manifest d14ee602...运行唯一M1 target verifier；PASS后同盘原子rename至 [M1-HOME]/F1-1-website/releases/8e70b2b745e3013d4667b7eb646c91f5286e8906b9254deaef5fffb6666ff30a/app。新final必须此前absent。0 prepare/DB写/launchctl/load/cutover；旧base/live不改。后置public/RSS语义核对。首错即停、不重传/重apply/verifier。",
+  "domain_stage": "candidate",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "base/final/stage/传输/apply/verifier任一首错立即block且不重试；不得覆盖或删除旧base/live、不得prepare/DB写/launchctl/load/cutover；若APFS clone不支持立即停并回报，不允许隐式399MB逐文件copy。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "M5-DEPLOY-V3-IDENTITY-M1-DELTA-STAGE",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-50B654-两个空Next目录清理与release验签delta收口报告.md"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-85E90D",
+  "title": "M1旧验签release克隆应用4.34MB差量并固化新release",
+  "unverified": [],
+  "updated_at": "2026-08-12T17:55+08:00",
+  "verified": []
+}

@@ -99,6 +99,20 @@
       "thread_id": "019fb368-828c-7461-bc1e-debc14d1cd1c",
       "updated_at": "2026-07-30T22:24+08:00"
     },
+    "自动化部": {
+      "active": true,
+      "evidence": "registered_by_root_from_user_confirmed_m1_codex_uri onboardingStatus=READY thread=01a00560-4fca-7221-9bbb-382a9c2f6195",
+      "failed_from": "",
+      "lifecycle_history": [],
+      "note": "正式登记为自动化部M1运行办公室当前会话；后续仅按正式TASK合同领取工作",
+      "notification_mode": "auto",
+      "operation_id": "INIT-35829B4C94",
+      "previous_thread_id": "",
+      "role_id": "auto",
+      "step": "registered",
+      "thread_id": "01a00560-4fca-7221-9bbb-382a9c2f6195",
+      "updated_at": "2026-08-15T20:33+08:00"
+    },
     "设计部": {
       "active": true,
       "evidence": "thread_id=019fb36e-c81c-7991-9357-e19a1df6ba23 archived=true host=local",
@@ -124,9 +138,10 @@
     "data",
     "dev",
     "security",
-    "test"
+    "test",
+    "auto"
   ],
   "schema_version": 1,
   "session_mode": "auto",
-  "updated_at": "2026-07-30"
+  "updated_at": "2026-08-15"
 }

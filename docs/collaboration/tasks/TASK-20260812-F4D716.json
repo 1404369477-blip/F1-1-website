@@ -1,0 +1,51 @@
+{
+  "acceptance_exit": "闭包外M1-target harness匹配manifest SHA/commit/runtime/Next/deps/Node/content/release；M1新release原子固化且target verifier PASS；PrepareInputs/Admin manifest精确三独立roles/refs/selectors，Admin prepared-disabled、plist RunAtLoad=false KeepAlive=false；3101/3102 absent，DB inode/version与live jobs/plists零任务引起漂移。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-F4D716-三设备M1-release与Admin-reprepare-finalizer报告.md"
+  ],
+  "authorization_evidence": "本线程用户确认同时给iPad；2C5185 build/builder PASS且仅verifier入口失败；2026-08-12",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T23:09+08:00",
+      "evidence": "本线程用户确认同时给iPad；2C5185 build/builder PASS且仅verifier入口失败；2026-08-12",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:three_device_release_finalizer",
+  "completion_class": "standard",
+  "confirmation": "用户授权M5+iPhone+iPad三设备；本task为2C5185机械finalizer，继续保持disabled与0DB写。",
+  "created_at": "2026-08-12T23:09+08:00",
+  "department": "开发部",
+  "details": "承接2C5185已完成且不得重跑的checkpoint/push/build/builder：commit b5d3d7c、tree9f190eb、manifest SHA6e677789、content54923d5f、release74580c8a、Next322/13399239/root40746f5f/packages44。当前唯一失败是本地正式CLI target verifier以本机process.execPath语义返回CLI_INTERNAL_ERROR；不得修改runtime verifier或重build/builder。仅先只读确认manifest内targetNodePath为固定M1 `[M1-HOME]/.local/node-v24.18.0-darwin-arm64/bin/node`，随后使用既有模式的git-ignored闭包外harness显式传targetNodePath=M1、localNode=固定本机Node24，check一次/验签一次。PASS后生成最小delta，将74580c8a release同步固定M1并target verifier，更新PrepareInputs三refs与m5/new-iPhone/old-iPad三selector映射，重新Admin deployment-v3 prepare disabled；Public仅若new release root绑定要求则机械reprepare。0load/DB打开或迁移/Serve/Grant/Funnel/cutover。",
+  "domain_stage": "admin_three_device_m1_finalizer",
+  "event_receipts": [
+    "FINALIZER_PASS:manifest=6e677789;release=74580c8a;content=54923d5f;delta=3/0;m1-verifier=pass;admin=9933b90e;inputs=866599f3;refs=3-unique;db-inode=unchanged;ports=absent;disabled=true"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "manifest targetPath非固定M1或harness不匹配则停且不重build；delta/M1 verifier任一首错停在未激活release；三refs重复/泄露/selector错绑则不prepare；任何load/DB/Serve/Grant/cutover调用立即停止。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "No secret ref/login/selector/key values in report/Git. Two scratch-script mechanical failures occurred before new Admin prepare and did not open/write DB or load service; old two-device Admin root retained. No rebuild/builder rerun, no load/bootstrap/Serve/Grant/Funnel/cutover.",
+  "node": "ADMIN_THREE_DEVICE_VERIFIER_M1_FINALIZER",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-2C5185.json"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-F4D716-三设备M1-release与Admin-reprepare-finalizer报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-F4D716",
+  "title": "三设备manifest闭包外M1-target验签与M1-reprepare finalizer",
+  "unverified": [
+    "New Admin/receiver/sender not loaded; Tailscale approval/Grant/Serve, loopback HTTP/Passkey, projection delivery and public cutover remain pending."
+  ],
+  "updated_at": "2026-08-12T23:17+08:00",
+  "verified": [
+    "Reused build/manifest without rerun. Outside-closure M1-target harness check1/verify1 PASS for manifest6e677789 commitb5d3d7c runtime89 Next322 packages44 release74580c. Delta3/0 applied to APFS stage, M1 verifier PASS, atomically finalized new release. PrepareInputs now has three unique m5/iphone/ipad refs; Admin deployment-v3 reprepare disabled manifest9933b90e targets new release, plist disabled, DB inode unchanged, 3101/3102 absent."
+  ]
+}

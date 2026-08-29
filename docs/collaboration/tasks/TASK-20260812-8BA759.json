@@ -1,0 +1,43 @@
+{
+  "acceptance_exit": "提交开发部只读勘察报告：包含精确文件/行/调用链、已证实与Unknown、最小改动文件集；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-8BA759-不可变release与唯一数据根现状只读勘察报告.md"
+  ],
+  "authorization_evidence": "",
+  "authorization_history": [],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:data_path_audit",
+  "completion_class": "standard",
+  "confirmation": "无需额外确认",
+  "created_at": "2026-08-12T14:07+08:00",
+  "department": "开发部",
+  "details": "只读勘察当前 Admin runtime、review DB opener、public prepare/install、public synthetic rollback、projection data roots 和 LaunchAgent 参数的真实路径耦合。逐文件列出：哪个进程从哪个 appRoot 推导哪个持久路径；版本化 release 运行时是否会创建第二数据库；public prepare是否把新代码根误当旧synthetic回退根；提出不改语义的最小代码改动面和受影响测试/manifest/installer文件。不得修改任何文件、不得运行测试/build/SSH/DB写。",
+  "domain_stage": "candidate",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若产品合同尚未冻结则仍可完成事实勘察但不得自行定案；若发现现状其实已支持显式dataRoot则给出反证并停止扩展；任何写操作视为失败并立即block。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "严格区分静态已证实与Unknown；未将产品任务意图写成accepted决定；除只读勘察报告和任务状态收据外未改代码/Spec/ADR。",
+  "node": "M5-REAL-PROJECTION-RUNTIME-003-DATA-PATH",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-0196EB.json"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-8BA759-不可变release与唯一数据根现状只读勘察报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-8BA759",
+  "title": "不可变release与唯一数据根现状只读代码勘察",
+  "unverified": [
+    "未SSH读取真实M1 plist/DB；产品部0196EB successor字段选择和长期Application Support迁移尚未定案；未运行任何测试/build。"
+  ],
+  "updated_at": "2026-08-12T14:14+08:00",
+  "verified": [
+    "逐文件静态核对Admin runtime/DB opener、RSS deployment/LaunchAgent、public prepare/synthetic rollback、public projection root与Next reader调用链；确认Admin与RSS数据库仍由release appRoot派生，public rollback根与target release根混用，public projection root已home-scoped解耦。"
+  ]
+}

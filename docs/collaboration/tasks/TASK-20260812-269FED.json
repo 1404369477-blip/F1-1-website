@@ -1,0 +1,44 @@
+{
+  "acceptance_exit": "测试唯一最小改动；Vitest 1 file/2 tests唯一一次PASS；Node24 typecheck唯一一次PASS；单文件diff-check唯一一次PASS；89 runtime生产SHA集合零漂移；报告/TASK_STATE_OK；列测试文件新SHA和精确后继commit要求。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/src/tests/admin-release-manifest.test.ts",
+    "docs/collaboration/部门/开发部/报告/2026-08-12-269FED-post-commit旧断言fixture-only修复报告.md"
+  ],
+  "authorization_evidence": "",
+  "authorization_history": [],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:post_commit_fixture_finalizer",
+  "completion_class": "standard",
+  "confirmation": "无需用户确认；机械更新post-commit后已过时的测试前提。",
+  "created_at": "2026-08-12T20:14+08:00",
+  "department": "开发部",
+  "details": "继承8C8DB6：生产runtime89门已真实PASS，唯一测试首错为admin-release-manifest.test.ts约line191仍断言当前project resolveGitIdentity应因dirty抛错。仅改这一测试文件，将旧pre-commit throw断言替换为当前clean HEAD动态身份断言（commit=git rev-parse HEAD、tree=HEAD^{tree}、parent=HEAD^，不得硬编码2ff）；不得改生产代码/运行闭包/runbook/.gitignore。固定Node24新预算顺序各一次：focused Vitest；typecheck；限定本测试文件diff-check。通过后先报告/TASK_STATE_OK，暂不stage/commit/push/build。",
+  "domain_stage": "development",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若需改生产文件立即block；当前clean identity断言不能动态成立立即block；任一验证首错停且不重跑；不得stage/commit/push/build/SSH/M1。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "Only obsolete test assertion changed; Git identity expectations are dynamic via rev-parse HEAD/HEAD^{tree}/HEAD^ and do not hard-code 2ff; production/runbook/gitignore bytes unchanged; no validation rerun.",
+  "node": "POST-COMMIT-CLEAN-HEAD-ASSERTION-FINALIZER",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-8C8DB6.json"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-269FED-post-commit旧断言fixture-only修复报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-269FED",
+  "title": "post-commit旧断言fixture-only修复与三门验证",
+  "unverified": [
+    "No stage/commit/push/build/builder/SSH/M1; test SHA 3f44895f66184512e9d22cbd47b719bacec0c4e6bd15eb504186672b1f2d5082 still requires exact single-file successor commit and fresh 89-runtime clean-HEAD receipt before production build."
+  ],
+  "updated_at": "2026-08-12T20:17+08:00",
+  "verified": [
+    "Focused Vitest exactly once PASS: 1 file/2 tests, 13.60s; fixed Node24 typecheck exactly once PASS; single-test-file diff-check exactly once PASS; production release-manifest SHA unchanged 075d11bca11675948bb302a957ac9e071f3e5d733d9b1752fa60297c9004581a; non-test runtime status empty."
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "acceptance_exit": "报告逐项附权威直链、页面发布日期/访问时态、M1/M5/iPhone动作清单、SSH可做与必须人在设备前两栏、Serve与Funnel/Grant验收命令、回退步骤和Unknown；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/研究部/报告/2026-08-12-M1-M5-iPhone-Tailscale私有Admin官方实施核验.md"
+  ],
+  "authorization_evidence": "用户此前明确接受安装，当前要求继续推进固定M1第一版。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T09:46+08:00",
+      "evidence": "用户此前明确接受安装，当前要求继续推进固定M1第一版。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "研究部/internal-agent:tailscale_official",
+  "completion_class": "standard",
+  "confirmation": "用户已接受安装私有网络客户端并要求提前规划固定M1；本任务只读研究，不做外部状态变更。",
+  "created_at": "2026-08-12T09:46+08:00",
+  "department": "研究部",
+  "details": "仅查阅截至2026-08-12可访问的Tailscale官方文档、GitHub官方发布/仓库与Apple官方资料，核验固定M1 macOS 26.5.1、移动M5 macOS26.6和iPhone的最小安装/登录/设备批准步骤；重点核验Standalone/App Store/CLI差异、SSH远程能否完成安装、哪些步骤必须本机GUI/系统授权、Serve将127.0.0.1:3101暴露为tailnet-only HTTPS的精确命令与前置、Serve identity headers可信边界、Funnel关闭核验、deny-by-default Grant最小例、设备撤销、开机自启、离网/重连行为与中国大陆可达性证据边界。不得引用百度或第三方教程作事实依据；若官方未承诺中国大陆可用必须明确Unknown。只产研究报告和可执行清单，不安装、不登录、不修改tailnet。",
+  "domain_stage": "研究/Tailscale实施证据",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "官方文档版本/产品形态矛盾时并列证据并标Unknown，不自行猜测。",
+    "需要真实登录、购买、设备批准或网络测试的步骤只列后继用户门，不实际执行。",
+    "找不到中国大陆稳定性官方承诺时明确无承诺，不用社区个案外推。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查未用百度或第三方教程填充事实；已把Serve页与Funnel专页的默认值表述差异并列并改为实际配置回读硬门；未把relay存在推导为中国大陆可用，未把SSH可安装pkg误写成可无人完成首次系统授权。",
+  "node": "第一版后台/私有网络实施证据",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-87555F-M1后台私有入口最小安全合同-v0.1.md"
+  ],
+  "report": "docs/collaboration/部门/研究部/报告/2026-08-12-M1-M5-iPhone-Tailscale私有Admin官方实施核验.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-22B680",
+  "title": "核验M1与iPhone私有Admin入口的Tailscale官方实施步骤",
+  "unverified": [
+    "没有安装、登录、批准设备、修改tailnet policy、启用Serve/Funnel或运行真实网络探针；真实tailnet/身份/套餐、M1/M5/iPhone实际版本、中国大陆家庭/异地/蜂窝可达、无人重连、CT名称、撤销总时延、UU/FileVault/RPO/RTO均保持Unknown。"
+  ],
+  "updated_at": "2026-08-12T10:13+08:00",
+  "verified": [
+    "截至2026-08-12访问并核验Tailscale官方macOS/iOS安装、macOS变体与system extension、CLI、Serve、Funnel、HTTPS、Grants、device approval、tags/key expiry、连接类型/DERP与设备移除文档，辅以官方包服务器、GitHub仓库和Apple配置描述文件资料；已形成M1/M5/iPhone动作清单、SSH/GUI边界、Serve/Funnel/Grant验收与回退。"
+  ]
+}

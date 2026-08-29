@@ -1,0 +1,48 @@
+{
+  "acceptance_exit": "给出PASS/FAIL与P0/P1/P2；只有两项P1 CLOSED且无新P0/P1才放行按baseline→execute→postflight执行一次。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-12EAF7-M1实采执行器两项P1修复限定复审报告.md"
+  ],
+  "authorization_evidence": "用户授权真实采集与独立审查；本轮只读限定复审。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T05:28+08:00",
+      "evidence": "用户授权真实采集与独立审查；本轮只读限定复审。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/internal-agent:rss_static_review",
+  "completion_class": "audit",
+  "confirmation": "统筹部据报告决定是否执行唯一M1实采；本任务无执行权限。",
+  "created_at": "2026-08-12T05:28+08:00",
+  "department": "安全部",
+  "details": "输入脚本=/var/folders/dz/l8yd2gqj22z1xgrcl1z_wbkr0000gn/T/TASK-20260812-B57F41-executor.h1qmBj/controlled-rss-run.mjs，SHA=9067b5a08ead7282ea558c57cfbebcaed6d0ed0b71c9b4d22944fc041c9c38be；开发TASK-20260812-ECCD2E已ACK，Node check PASS。仅复审P1-01统一finally停采/stop先持久化/紧急refence/最终disabled epoch增加 unloaded；P1-02 slot剩余≥60秒和enable TTL≤15秒；并检查这些改动直接引入的新同级P0/P1/P2。不得扩展旧已PASS逻辑，0SSH/0测试/0修改。",
+  "domain_stage": "真实采集执行器修复复审",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "脚本SHA不匹配或任一enable后路径仍可能跳过安全停采时FAIL。",
+    "时间门在enable后失败未进入finally、或紧急refence/最终回读可误报安全时FAIL。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未将Node check外推动态成功；安全后置以最终source/job回读为准；未把bootout进程结果单独当unloaded；仅审2A54AD两项P1及直接新增；0SSH/0测试/0执行/0修改",
+  "node": "只读复审9067执行器是否关闭2A54AD两项P1并可进入唯一M1实采",
+  "pointers": [],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-12-12EAF7-M1实采执行器两项P1修复限定复审报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-12EAF7",
+  "title": "M1实采执行器两项P1修复限定复审",
+  "unverified": [
+    "远端实时SHA/mode与M1 source/job/DB/public状态、stop/emergency/timeout/clock动态行为、唯一真实RSS与gap/run/candidate/manual/20秒/public收据均Unknown"
+  ],
+  "updated_at": "2026-08-12T05:31+08:00",
+  "verified": [
+    "脚本SHA 9067b5a08ead7282ea558c57cfbebcaed6d0ed0b71c9b4d22944fc041c9c38be MATCH；P1-01统一post-enable finally、stop进程/收据先持久化、紧急refence+bootout及最终disabled/epoch增加/unloaded回读CLOSED；P1-02 slot剩余>=60秒与enable TTL<=15秒CLOSED；未发现直接新增P0/P1/P2；最终P0=0/P1=0/P2=0"
+  ]
+}

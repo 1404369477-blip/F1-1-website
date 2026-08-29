@@ -1,0 +1,50 @@
+{
+  "acceptance_exit": "四SHA/manifest匹配；接口与安全/视觉逐项PASS/FAIL；P0/P1/P2清楚；无P0/P1则放行与3101服务集成，存在P0/P1给精确最小修正；报告落盘，TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-08-12-338928-0C206C正式Admin-UI独立接口与安全静态验收报告.md"
+  ],
+  "authorization_evidence": "用户确认继续正式UI，设计部已交付固定截图和实现。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T08:41+08:00",
+      "evidence": "用户确认继续正式UI，设计部已交付固定截图和实现。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "测试部/internal-agent:admin_ui_review",
+  "completion_class": "audit",
+  "confirmation": "0重跑、0修改，只读静态验收。",
+  "created_at": "2026-08-12T08:41+08:00",
+  "department": "测试部",
+  "details": "绑定正式UI SHA：index 5a617b38e3b38f19bbabb89a7ea16f79d1aceab1f8cc5fc7940726e79c747dda；CSS be18bccf9ada2efad5fd00d8351888cd877fe708bbc0ad78990211578292468d；JS 1123845193308472ff75b93701569306055f67cbf4a6f791f13cd9f5560c09ec；manifest b9e45ac8…0675。严格只读核对：UI不在public Next route；六个passkey端点、fresh完整PublishRequest、cookie旋转→CSRF→publish双头、sourceVersionTag、revision/approve/reject/manual publish/operation/delivery流程与服务合同一致；DOM写入无innerHTML/XSS、原文链接验证/rel、无token/notes进localStorage/日志、fixture只在显式file/loopback且有持续警告；401/409/503/empty/loading和重复提交保护；Mac/iPhone动作等价、44px/焦点/aria/safe-area/横向溢出证据。只阅读既有截图/manifest，不重跑浏览器、不改文件、不联网。",
+  "domain_stage": "测试/UI静态验收",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "发现XSS、fixture可能进入真实入口、认证token泄露、批准自动触发publish或API字段不匹配：立即FAIL并通知。",
+    "真机/真实服务才能证明的项保持Unknown/P2。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未运行浏览器/服务/测试/build/SSH/网络；未修改App/设计/Spec/ADR/证据；未采信执行部自述为测试结论；fixture未冒充真实能力；P1已即时通知统筹，重复submit按服务端CAS边界保持P2。",
+  "node": "第一版后台/UI验收门",
+  "pointers": [
+    "docs/collaboration/部门/设计部/报告/2026-08-12-0C206C-独立静态Admin-UI实现报告.md"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-08-12-338928-0C206C正式Admin-UI独立接口与安全静态验收报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-338928",
+  "title": "0C206C正式Admin UI独立接口与安全静态验收",
+  "unverified": [
+    "固定M1 3101、Tailscale/真实origin与identity、真实passkey/cookie、真实RSS mutation/delivery/公开切换、1024及Mac/iPhone真机辅助技术继续Unknown；任务约束下0浏览器重跑、0测试、0网络。"
+  ],
+  "updated_at": "2026-08-12T08:50+08:00",
+  "verified": [
+    "四项冻结SHA与五张PNG/manifest一致；UI独立静态根、六个passkey端点、完整PublishRequest fresh→cookie旋转→CSRF→publish、sourceVersionTag、批准/拒绝/手动发布分离、textContent DOM/XSS边界、原链rel、显式loopback fixture、主要状态与1440/390既有响应式证据均已只读核对。结论FAIL：P0=0/P1=2/P2=2；P1为delivery receipt端点未接与401重登录覆盖未保存草稿。"
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "acceptance_exit": "三设备selector与sourceRef一一对应且互异；生成可单次提交的restricted policy patch、Serve命令、pre/post验证和精确回退输入；现有policy可见性与冲突Known，无法通过CLI读取则明确需Chrome管理台只读；Funnel/Serve/tailnet/服务/DB写均0。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-C1FBDB-三设备最小Grant与Serve提交前只读收敛.md",
+    "scratch/TASK-20260812-C1FBDB/three-device-grant-serve-package-final.json"
+  ],
+  "authorization_evidence": "本线程用户说同时给ipad吧并已连接Tailscale；2026-08-12",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T23:18+08:00",
+      "evidence": "本线程用户说同时给ipad吧并已连接Tailscale；2026-08-12",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:grant_serve_package",
+  "completion_class": "standard",
+  "confirmation": "用户明确要求授权新iPhone并同时给iPad；当前只做提交前只读收敛，不执行权限变更。",
+  "created_at": "2026-08-12T23:18+08:00",
+  "department": "开发部",
+  "details": "快速主线、严格只读。吸收F4D716三设备PrepareInputs/Admin manifest与9B0DB6 identity证据，读取M1当前tailscale status/CertDomain/Serve/Funnel、本地可见policy/grants能力和三设备M5/new-iPhone/old-iPad精确selector候选，构造一次管理面最小变更的canonical policy patch与M1 Serve命令：只允许三个精确设备到M1 tcp:443；app capability固定1404369477-blip.github.io/cap/f1-admin-device，三设备分别注入各自sourceRef；Serve必须accept-app-caps并仅443转发127.0.0.1:3101，Funnel保持关闭。检查现有policy是否存在宽规则/合并冲突，给出前后hash、验证与回退命令。不得写tailnet policy/Serve/Funnel、不得approve/rename设备、不得load服务/打开DB。普通报告不含原始sourceRef/login/node key；精确秘密补丁只可进入0700/0600 git-ignored restricted artifact。",
+  "domain_stage": "tailscale_policy_preflight",
+  "event_receipts": [
+    "TASK_STATE_OK; restricted-package-sha256=51546a89c9a702247ba48a42185556ef7345442cea4875271804fa5bea0bea3f; selectors=3-unique; sourceRefs=3-unique; grants=3; writes=0; only-blocker=management-console-readonly-export"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "设备selector不唯一/身份漂移、现有宽Grant无法安全合并、policy无法读且无法构造可验证补丁则停止并列唯一用户动作；任何外部写调用立即停止；任何秘密进入普通报告/Git则隔离停止。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "原始login/selector/sourceRef/node信息仅进入0700/0600 ignored restricted artifacts，普通报告只留hash；未把peer map当作approval或policy权威；未执行policy/Serve/Funnel/device/service/DB写；回退固定先Serve reset、再恢复pre policy原字节并核pre-hash。",
+  "node": "TAILSCALE_THREE_DEVICE_POLICY_PREFLIGHT",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-F4D716-三设备M1-release与Admin-reprepare-finalizer报告.md"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-C1FBDB-三设备最小Grant与Serve提交前只读收敛.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-C1FBDB",
+  "title": "三设备最小Grant与Serve一次提交前只读收敛",
+  "unverified": [
+    "本地CLI不可读取当前管理面policy/Grants正文与canonical hash，故现有宽规则、capability冲突、三设备device approval及真实selector语法仍Unknown；唯一下一动作是登录中的Chrome管理台只读导出policy/Grants和device approval，保存restricted并形成pre-hash。"
+  ],
+  "updated_at": "2026-08-12T23:25+08:00",
+  "verified": [
+    "M1 fresh peer map与受限freeze逐设备匹配；三条selector及三条sourceRef均精确3项且互异；restricted final package SHA-256=51546a89c9a702247ba48a42185556ef7345442cea4875271804fa5bea0bea3f，0600/uid501/nlink1/Git ignored；当前Serve={}、Funnel={}；Serve argv固定HTTPS443到127.0.0.1:3101并accept精确app capability；tailnet/Serve/Funnel/service/DB写=0。"
+  ]
+}

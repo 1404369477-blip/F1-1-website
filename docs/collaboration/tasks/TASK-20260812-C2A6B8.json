@@ -1,0 +1,46 @@
+{
+  "acceptance_exit": "新accepted successor ADR存在且旧合同superseded或增量指针清楚；Spec/矩阵时态同步；给出开发精确输入输出、用户仍需提供/确认的capability命名与真实tailnet配置边界；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/decisions/system/2026-08-12-F1+1-Tailscale-Serve-app-cap私有入口身份-successor-accepted.md",
+    "docs/spec.md",
+    "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-12-C2A6B8-Tailscale-Serve-app-cap私有入口身份产品报告.md"
+  ],
+  "authorization_evidence": "",
+  "authorization_history": [],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "产品部/internal-agent:tailscale_identity_contract",
+  "completion_class": "standard",
+  "confirmation": "无需额外确认",
+  "created_at": "2026-08-12T14:31+08:00",
+  "department": "产品部",
+  "details": "吸收研究部TASK-20260812-9D64EC官方报告与已ACK的87555F私有入口合同，冻结真实Mac/iPhone浏览器可达的唯一最小身份链：loopback-only 3101 + Serve Tailscale-User-Login + 精确source Grant注入Tailscale-App-Capabilities sourceRef + Passkey/session/CSRF/fresh re-auth。移除x-f1-approved-device-ref的安全语义，定义capability ID/runtime restricted manifest、sourceRef脱敏闭集、header解析、缺失/重复/伪造/撤销/直连失败、Mac/iPhone等价入口与Serve配置前置。LocalAPI WhoIs/PROXY/Funnel/公网Admin继续不做。只改系统ADR/Spec/矩阵/产品报告，不改app或tailnet。",
+  "domain_stage": "candidate",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若用户控制capability域名无法从现有信息唯一确定，合同保持runtime显式输入并列user_required部署门，不臆造；若官方报告与现有安全合同冲突，以successor显式取代对应字段；不得配置tailnet或修改app。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未把sourceRef冒充Tailscale原生设备ID；未保留x-f1头安全语义；未引入WhoIs/PROXY/Funnel/公网Admin；未把合同accepted外推为实现或生产PASS；Function计数未变。",
+  "node": "M5-ADMIN-PRIVATE-IDENTITY-002",
+  "pointers": [
+    "docs/collaboration/部门/研究部/报告/2026-08-12-Tailscale-Serve可信身份头与设备身份官方核验.md"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-12-C2A6B8-Tailscale-Serve-app-cap私有入口身份产品报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-C2A6B8",
+  "title": "Tailscale Serve app-cap设备入口身份successor合同",
+  "unverified": [
+    "真实capability域名/login/source selector/policy/device approval/shared node、M1实际Serve头字节/重启/撤销、Mac/iPhone真机及中国大陆链路均Unknown；app/tailnet未修改。"
+  ],
+  "updated_at": "2026-08-12T15:01+08:00",
+  "verified": [
+    "9D64EC官方报告确认Serve只提供可信User Login/App Capabilities、无x-f1设备头；successor已冻结loopback+精确login/app-cap sourceRef+Passkey三元绑定、旧87555F身份细节取代指针、Spec/矩阵同步与精确开发输入输出。"
+  ]
+}

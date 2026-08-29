@@ -1,0 +1,57 @@
+{
+  "acceptance_exit": "交付四张与当前HTML SHA绑定的可见PNG、机器manifest与用户确认说明；尺寸、深浅主题、1440固定actions/横向控制、390卡片/全屏动作入口、页面级零横溢均有收据；明确图片只证明视觉候选不证明真实API；P0=0/P1=0、已验证/未验证/错题自检齐全并TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "本线程历史用户已授权设计候选与视觉样板；2026-08-11持续目标要求推进到可用初版。",
+  "authorization_history": [
+    {
+      "at": "2026-08-11T12:21+08:00",
+      "evidence": "本线程历史用户已授权设计候选与视觉样板；2026-08-11持续目标要求推进到可用初版。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "固定输入SHA一致，但一次本地Chrome四图批次退出码134且未产物；一次Quick Look兜底仅生成非等价1440x1440缩略图，无法提供规定的四张当前字节PNG、运行时尺寸和操作可达性收据；按任务失败路径停止，未复用旧PNG。",
+  "claimed_by": "设计部/当前正式会话",
+  "completion_class": "standard",
+  "confirmation": "用户此前明确要求设计部重做视觉、制作视觉样板并持续推进；当前任务只生成已冻结候选的确认图，不改变方向。",
+  "created_at": "2026-08-11T12:21+08:00",
+  "department": "设计部",
+  "details": "承接blocked TASK-20260809-133584中仅SOURCE-MGMT用户确认需求。固定统筹v2视觉manifest：docs/collaboration/部门/统筹部/报告/2026-08-09-SOURCE-MGMT-001视觉候选统筹冻结manifest.json，SHA-256=7686511f56f65ca5838ee9c907a24ac930d92974397d9b398d0d9ac90495f155；固定HTML：design/ui/F1+1-M5-admin-sources-preview-v0.1/index.html，SHA-256=0d73ea294972627a7a832b42d999381da1fc4c8ea602b9fdbd04b11985156d68。使用本地file或loopback静态服务渲染current HTML的active状态，生成1440x900 dark/light与390x844 dark/light四张新PNG，必须能看见桌面固定actions/横向浏览提示，以及移动卡片/新增入口/查看详情动作；记录document scrollWidth/innerWidth和候选SHA。只允许一次首选渲染批次；首选能力不可用时最多一次本地兜底，仍失败即block，不重复长测。不得修改候选HTML、设计说明、App、Spec、ADR、合同或旧证据；不得访问外部网络、真实URL、字体、图片或服务。输出独立版本目录、机器manifest和一页用户确认说明，只提出SOURCE视觉方向一个问题。",
+  "domain_stage": "M5-SOURCE-MGMT视觉用户确认准备",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "v2 manifest或HTML SHA漂移：不渲染，立即block并回报新SHA。",
+    "首选渲染能力失败时仅允许一次本地兜底；仍无图、尺寸错误、页面横溢或关键动作不可见则block，禁止复用旧PNG冒充。",
+    "渲染触发外部请求、候选修改、正式App启动或真实数据访问：立即停止并block，清理本地进程与临时产物。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "只渲染已冻结/current HTML，生成Mac与iPhone深浅四图；不改视觉、不包含Reviews候选",
+  "pointers": [
+    "docs/collaboration/部门/统筹部/报告/2026-08-09-SOURCE-MGMT-001视觉候选统筹冻结manifest.json",
+    "design/ui/F1+1-M5-admin-sources-preview-v0.1/index.html",
+    "docs/collaboration/tasks/TASK-20260809-133584.json"
+  ],
+  "report": "",
+  "resolution": {
+    "evidence": "docs/collaboration/部门/设计部/报告/2026-08-11-SOURCE-MGMT当前字节双端视觉确认图包阻断报告.md",
+    "reason": "设计部原本地 CLI 渲染路径以 exit 134 阻断；同一固定 HTML 的四图目标改由测试部采用已验证可 apply 的隔离 Playwright/headless-shell 执行面恢复，禁止复用旧图或修改候选。",
+    "receipt_id": "RES-20260811T124658-EA2E9588",
+    "replacement_revision": 2,
+    "replacement_state": "claimed",
+    "replacement_task_id": "TASK-20260811-E1DCF2",
+    "resolved_at": "2026-08-11T12:46+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "superseded",
+    "target_revision_before": 3
+  },
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260811-A32E0E",
+  "title": "生成当前SOURCE-MGMT视觉候选双端用户确认图包",
+  "unverified": [],
+  "updated_at": "2026-08-11T12:46+08:00",
+  "verified": []
+}

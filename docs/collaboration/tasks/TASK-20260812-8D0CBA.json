@@ -1,0 +1,42 @@
+{
+  "acceptance_exit": "TASK_STATE_OK；仅测试timeout机械变化；同一聚焦Vitest、Node24 typecheck、限定diff-check各一次PASS；冻结全部B段产物SHA/闭包计数/报告，正式移交独立安全复审。",
+  "artifacts": [],
+  "authorization_evidence": "用户本会话：继续；先完成再完美；不要冗余测试。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T12:02+08:00",
+      "evidence": "用户本会话：继续；先完成再完美；不要冗余测试。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "NODE24_TYPECHECK_FIRST_RUN_FAILED after focused Vitest PASS: src/server/public/repository.ts(485,5) TS2322 because disabled originalLink reason is typed as PublicFeedItemV1[originalLink][reason], which now includes null from enabled real links and is not assignable to the disabled-link union. Per first-error rule stopped; limited diff-check not run; no rerun.",
+  "claimed_by": "开发部/internal-agent:projection_runtime_timeout_finalizer",
+  "completion_class": "standard",
+  "confirmation": "用户要求快速上线并减少冗余测试；只修已证实夹具预算不足。",
+  "created_at": "2026-08-12T12:02+08:00",
+  "department": "开发部",
+  "details": "继承blocked TASK-20260812-1BCF11候选与唯一新Vitest收据：public active/no-active、A sender、Admin、vs0均PASS；唯一首错为admin-release-manifest.test.ts真实fresh-stage闭包测试5623ms超过继承5000ms。只允许在该单一测试定义上显式设置合理固定timeout=15000ms；不得改生产代码、安全门、断言、测试数据或全局Vitest配置。随后固定Node24同一聚焦Vitest一次、typecheck一次、父候选限定diff-check一次；首错即停。0SSH/M1/网络/DB/cutover/load。",
+  "domain_stage": "implementation",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若fresh-stage在15000ms内仍失败或出现任何新断言/类型/diff首错，立即block且不重跑；不得继续抬高timeout或缩减断言；生产文件若发生非预期漂移立即停止。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "M1首版上线/真实投影B段/验证夹具finalizer",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-1BCF11.json"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-8D0CBA",
+  "title": "投影B段release重型夹具超时机械收口",
+  "unverified": [],
+  "updated_at": "2026-08-12T12:03+08:00",
+  "verified": []
+}

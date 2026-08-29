@@ -1,0 +1,46 @@
+{
+  "acceptance_exit": "精确路径固定锚+第二同名库工件零写负例；非目标生产SHA零漂移；三门各最多一次PASS；报告与TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/src/server/admin-service/deployment.ts",
+    "app/scripts/admin-install-macos.ts",
+    "app/src/tests/admin-service.test.ts",
+    "docs/collaboration/部门/开发部/报告/2026-08-12-B91E89-唯一review-DB精确路径先验锚定报告.md"
+  ],
+  "authorization_evidence": "",
+  "authorization_history": [],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:exact_db_path",
+  "completion_class": "standard",
+  "confirmation": "无需额外确认",
+  "created_at": "2026-08-12T16:40+08:00",
+  "department": "开发部",
+  "details": "承接安全部6320CD唯一P1。仅修Admin prepare路径锚：首版唯一review DB路径以生产代码固定常量精确为[M1-HOME]/F1-1-website/app/.local/f1plus1-rss-real-private.sqlite；F1_ADMIN_REVIEW_DATABASE_PATH若保留只允许逐字匹配该常量，任何inspection、dataRoot/plist/manifest/bootstrap工件创建前先拒绝其他路径。DEV/INO继续只作为固定路径身份收据，不可与任意路径组合成为授权。既有existing-only opener/runtime/sender/public四根/app-cap实现其余字节不改。聚焦负例创建另一owner-private同名安全DB并证明在任何Admin工件创建前失败。只跑该聚焦Vitest一次、Node24 typecheck一次、限定diff一次，首错停；不build/SSH/M1/DB写。",
+  "domain_stage": "candidate",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任何新首错立即block且不重跑；不得把路径做成环境可配置白名单或允许前缀；不得改长期迁移路径、app-cap、UI、public行为。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查dev/ino只作固定路径身份收据；未允许前缀/白名单/多路径；未改app-cap/session/public/UI/审核语义；未扩大为真实M1放行",
+  "node": "M5-REAL-PROJECTION-RUNTIME-003-EXACT-DB-PATH",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-6320CD-四根解耦与Serve-app-cap最终静态对抗复审报告.md"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-B91E89-唯一review-DB精确路径先验锚定报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-B91E89",
+  "title": "唯一review DB精确路径先验锚定successor",
+  "unverified": [
+    "未build/SSH/M1/真实installer/prepare/DB写/load/cutover；固定M1路径当前存在性及真实dev/ino待后继受控preflight"
+  ],
+  "updated_at": "2026-08-12T16:51+08:00",
+  "verified": [
+    "固定路径常量、manifest literal和inspection前拒绝已实现；第二owner-private同名SQLite+自洽dev/ino零工件负例PASS；focused Vitest唯一一次1 file/4 tests PASS；Node24 typecheck唯一一次PASS；三目标限定diff-check唯一一次PASS；非目标组合候选SHA零漂移"
+  ]
+}

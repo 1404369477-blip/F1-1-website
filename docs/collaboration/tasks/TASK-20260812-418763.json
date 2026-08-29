@@ -1,0 +1,42 @@
+{
+  "acceptance_exit": "TASK_STATE_OK；版本化release目录精确存在且source stage仍在；复制目标target verifier唯一一次PASS，manifest/content/release/Next/deps roots匹配；live app/public/RSS/plist/listener零漂移；0prepare/load/cutover/cleanup。报告给正式release绝对路径与后继prepare输入。",
+  "artifacts": [],
+  "authorization_evidence": "用户：可以直接部署到M1 MacBook；直接用SSH；继续。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T13:47+08:00",
+      "evidence": "用户：可以直接部署到M1 MacBook；直接用SSH；继续。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "COPY_SCRIPT_TEMP_PARENT_PRECONDITION_MISSING",
+  "claimed_by": "开发部/internal-agent:projection_runtime_m1_versioned_release",
+  "completion_class": "standard",
+  "confirmation": "用户已授权直接部署固定M1；此任务只创建非live版本目录。",
+  "created_at": "2026-08-12T13:47+08:00",
+  "department": "开发部",
+  "details": "继承已ACK A156EC。只从已验签source stage `[M1-HOME]/F1-1-website/.projection-release-TASK-20260812-D9A84D/stage/app` 固化到全新版本目录 `[M1-HOME]/F1-1-website/releases/f868497562332e6b365479f48105aba298783aa23513a0b962ac2ba318f462a6/app`；目标及父release-id目录必须真实absent，`releases`根仅允许当前UID真实目录。先只读复核source stage external manifest SHA58b6da...、target verifier上次receipt指针、目录身份及公开/RSS基线。使用M1本地task-owned copy脚本：local source→同filesystem全新temporary release sibling，逐项拒绝symlink/异主/multilink/特殊文件，复制普通文件保留精确mode/size，fsync files/dirs；复制后用固定M1 Node、external manifest SHA调用target verifier恰一次，PASS后用rename将temporary目录提交为精确release-id目录；提交后只读再次核对release root路径/owner/mode/no symlink以及manifest SHA，不重复verifier。禁止修改/替换`[M1-HOME]/F1-1-website/app`、plist/DB/key、launchctl、load、cutover、公开read-mode；source stage/tar/chunks保留，0cleanup。任一首错停且保留temporary供证据。",
+  "domain_stage": "deployment-prep",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "目标路径或release-id已存在立即停；source stage/manifest身份漂移停；copy脚本遇symlink/异主/multilink/特殊文件、mode/hash或verifier首错立即停，不覆盖/重试；rename前后任何live app/public/RSS/plist变化立即停。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "M1首版上线/真实投影部署/versioned release",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-A156EC-M1-fresh-stage分块传输与目标验签最终报告.md"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-418763",
+  "title": "M1已验签stage固化为不可变版本化release目录",
+  "unverified": [],
+  "updated_at": "2026-08-12T13:50+08:00",
+  "verified": []
+}

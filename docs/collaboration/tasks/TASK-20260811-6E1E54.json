@@ -1,0 +1,52 @@
+{
+  "acceptance_exit": "测试文件唯一successor增量为明确fail-closed断言且import保留；报告与manifest诚实记录一次5/5、两受控刷新、canonical oracle PASS及其证据来源，冻结root 712fe5d6e9d693eaf0d531b481253374d9c5a8b4d912ab4f05157700879f57f2、三receipt两marker、自哈希/权限/freshness、两个legacy DB和package-lock零漂移；task-owned legacy transaction与sidecar零残留；两份pre-existing multimedia备份列为范围外P2与未验证；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-11-6E1E54-fail-closed测试夹具与legacy-receipt刷新证据核收报告.md",
+    "app/evidence/TASK-20260811-6E1E54/manifest.json"
+  ],
+  "authorization_evidence": "用户2026-08-11明确：Codex桌面端重启后继续推进。",
+  "authorization_history": [
+    {
+      "at": "2026-08-11T20:15+08:00",
+      "evidence": "用户2026-08-11明确：Codex桌面端重启后继续推进。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:receipt_formalizer",
+  "completion_class": "standard",
+  "confirmation": "用户已授权桌面端重启后继续推进；本任务仅吸收已完成的受控本地执行并纠正任务真值。",
+  "created_at": "2026-08-11T20:15+08:00",
+  "department": "开发部",
+  "details": "承接0F3F80但修正其合同偏差：只允许当前app/src/tests/profile-closed-receipt.test.ts将/tmp动态迁移DB的canonical正向调用替换为明确RECEIPT_TAMPER fail-closed断言，并保留实际使用的assertLegacyClosedReceipts import；禁止修改生产冻结常量或实现。吸收已完成的一次固定Node24聚焦5/5、M3/public受控刷新各一次与真实canonical oracle一次PASS证据；只做必要的只读hash/envelope/权限/残留复核和报告/manifest落盘，不得重跑测试、刷新、build、0F65C1、Web服务或网络。清理结论仅限本任务legacy receipt transaction/journal/tmp/lock/candidate/rollback及两个legacy DB sidecar；两份执行前已存在public-multimedia backup/pre-update继续登记P2且不删除。",
+  "domain_stage": "M5-local-public-runtime-preflight",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 当前测试字节或生产冻结root/receipt/marker与已执行证据不一致：block且不重跑；2) 必须删除已有multimedia备份或扩大到生产实现才能完成：block并保留P2；3) 无法诚实区分fallback执行证据与本任务只读核验：block，不伪造正式部门执行。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "诚实记录internal fallback身份，严格区分动态executor与只读formalizer；首次self-hash命令误含jq换行后用jq -cjS只读纠正；清理结论仅限task-owned legacy artifacts，未删除既有multimedia备份。",
+  "node": "吸收内部fallback已完成字节并按真实边界正式落账",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260811-0F3F80.json",
+    "app/src/tests/profile-closed-receipt.test.ts",
+    "docs/collaboration/部门/安全部/报告/2026-08-11-CLI_INTERNAL_ERROR与legacy-receipt验证器漂移独立安全诊断报告.md"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-11-6E1E54-fail-closed测试夹具与legacy-receipt刷新证据核收报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260811-6E1E54",
+  "title": "核收fail-closed测试夹具修复与legacy receipt刷新证据",
+  "unverified": [
+    "formalizer未重跑动态链；两份pre-existing public-multimedia备份无before SHA且保留范围外P2；0F65C1、lint/typecheck/build/production HTTP、浏览器和外部能力均未运行；不替代后续独立测试/安全/设计复验。"
+  ],
+  "updated_at": "2026-08-11T21:56+08:00",
+  "verified": [
+    "fallback executor收据记录固定Node24聚焦5/5、M3/public受控刷新各一次和真实canonical oracle PASS；formalizer独立只读确认唯一fail-closed测试增量、validator root、三receipt两marker、自哈希/权限/freshness、两个legacy DB及package-lock零漂移、task-owned transaction/sidecar零残留，externalCalls=0。"
+  ]
+}

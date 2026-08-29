@@ -1,0 +1,36 @@
+{
+  "acceptance_exit": "相关生产代码、聚焦测试、runbook/报告落盘；证明不同代码/私库/rollback根正例，missing私库不创建、身份错/rollback错live plist零写、Admin/sender同路径、real-mode无synthetic依赖；固定Node24聚焦测试/typecheck/diff-check各最多一次PASS；TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "",
+  "authorization_history": [],
+  "authorization_state": "none",
+  "block_reason": "FOCUSED_VITEST_PARSE_ERROR_DUPLICATE_IDENTITY_DECLARATION",
+  "claimed_by": "开发部/internal-agent:data_root_successor",
+  "completion_class": "standard",
+  "confirmation": "无需额外确认",
+  "created_at": "2026-08-12T14:32+08:00",
+  "department": "开发部",
+  "details": "严格按ACK的ADR-M5-REAL-PROJECTION-RUNTIME-003实现最小代码闭包：Admin deployment v3显式targetReleaseAppRoot/reviewDatabasePath+dev/ino/uid/nlink；Admin runtime与sender共用existing-only窄opener，缺失禁建、O_NOFOLLOW/fstat/精确父根、无ATTACH、schema/integrity门；public prepare将targetRelease与syntheticRollbackAppRoot/BUILD_ID/DB identity分开，新plist仅指target release、日志移至publicDataRoot，real-mode不依赖新release synthetic DB。不得改审核领域语义、UI、Tailscale身份、RSS collector plist；先只实现本合同，不部署。只运行一组聚焦Vitest、一次固定Node24 typecheck、一次限定diff-check，首错即停。release-manifest successor元数据若因代码改动必须同步应纳入同任务；禁止build，因为Next重建由后继release任务执行。",
+  "domain_stage": "candidate",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一首错立即block且不重跑；若accepted合同与现有安全门无法类型安全实现则原样保留候选并报告首冲突；不得SSH/M1/真实DB/launchctl/build/cutover，不得放宽通用safe opener为任意绝对路径。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "M5-REAL-PROJECTION-RUNTIME-003-CODE",
+  "pointers": [
+    "docs/decisions/system/2026-08-12-F1+1-不可变release与唯一持久数据回退根解耦-successor-accepted.md"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-3CDDF8",
+  "title": "四根解耦deployment-v3与existing-only私库实现",
+  "unverified": [],
+  "updated_at": "2026-08-12T15:28+08:00",
+  "verified": []
+}

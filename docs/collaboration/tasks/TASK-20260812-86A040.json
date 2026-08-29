@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "本地amended单一commit含34白名单文件且唯一新增installer；远端以非force smart-HTTP从5d5963快进到精确相同commit/tree/parent；非白名单脏改保留；报告/TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-86A040-Admin第一版运行闭包amend与smart-HTTP同步报告.md"
+  ],
+  "authorization_evidence": "用户要求继续并长期维护目标GitHub；闭包审查确认唯一漏项且远端未包含95b21d。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T09:36+08:00",
+      "evidence": "用户要求继续并长期维护目标GitHub；闭包审查确认唯一漏项且远端未包含95b21d。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:admin_git_final",
+  "completion_class": "standard",
+  "confirmation": "amend获授权，因为95b21d尚未推送且是单一检查点闭包修复；不创建第二业务commit。",
+  "created_at": "2026-08-12T09:36+08:00",
+  "department": "开发部",
+  "details": "前置事实：远端codex/first-public-release仍5d596367父；本地未推95b21d遗漏唯一运行闭包文件app/scripts/admin-install-macos.ts（SHA256 6ea70cf82d402af8e156113c6c28f96910ad6a5f70c5196071480172e55f5a67）；GitHub REST commit SHA差异由末尾LF规范化，推荐smart-HTTP。先只读再次确认远端父未漂移、installer普通文件/4099 bytes/无高置信凭据且工作树SHA匹配。只stage该一个文件，git diff --cached清单必须仅1文件且check PASS；使用`git commit --amend --no-edit`修复当前未推提交，保留原message/author/committer identity/time若Git允许，记录新commit/tree/parent并确认34文件闭包。随后配置的GitHub凭据用普通Git smart-HTTP将`HEAD:refs/heads/codex/first-public-release`非force推送；禁止force，远端父门/失败即停。推后回读远端ref/tree/parent必须与本地精确匹配。不得stage协作报告/tasks/evidence或其他脏改；0测试/0M1。",
+  "domain_stage": "开发/Git同步",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [
+    "https://github.com/1404369477-blip/F1-1-website/commit/54e694c13b7369819448a2c3b072cb0fbbc49b7b"
+  ],
+  "failure_paths": [
+    "远端父漂移、installer SHA/secret/身份异常、cached非唯一文件：停止不amend或不push。",
+    "smart-HTTP认证/传输失败：停止、不fallback API、不force、不重试。",
+    "push后ref/tree/parent不精确：停止并报告，不改远端。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "显式只stage installer；未git add -A/.、未force、未重试、未API fallback；推送前后均执行父/ref/tree硬门；未纳入协作任务/报告/evidence/SQLite/凭据/缓存或其他脏改。",
+  "node": "第一版后台/Git最终同步",
+  "pointers": [
+    "docs/collaboration/部门/测试部/报告/2026-08-12-E44650-Admin检查点运行闭包只读核对报告.md"
+  ],
+  "report": "不适用",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-86A040",
+  "title": "95b21d运行闭包amend与smart-HTTP精确同步",
+  "unverified": [
+    "0测试、0typecheck、0build、0M1、0Admin服务/真实数据库操作；GitHub其他分支、PR、仓库设置未验证且未修改。"
+  ],
+  "updated_at": "2026-08-12T09:39+08:00",
+  "verified": [
+    "远端父门两次均为5d5963；installer普通文件4099 bytes、SHA256 6ea70c、secret0；cached唯一installer且check PASS；amend后34文件单一commit 54e694c/tree e5b1d1/parent 5d5963；普通smart-HTTP一次非force快进成功；推后GitHub ref/tree/唯一parent与本地精确一致；非白名单脏改保留。"
+  ]
+}

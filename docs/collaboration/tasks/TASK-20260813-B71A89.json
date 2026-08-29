@@ -1,0 +1,42 @@
+{
+  "acceptance_exit": "raw config HTTPS443/proxy/app-cap/AllowFunnel=false；M1 --resolve完成TLS并得到Admin确定响应；M5通过tailnet得到Admin入口确定响应（已授权200页面或明确认证状态），Serve保持启用；Funnel目标键非true；3101/3102、DB/public/RSS保持。",
+  "artifacts": [],
+  "authorization_evidence": "继承EDBB77/6CFFBA与用户明确Grant/Serve授权；修正验收位置不扩权。",
+  "authorization_history": [
+    {
+      "at": "2026-08-13T00:41+08:00",
+      "evidence": "继承EDBB77/6CFFBA与用户明确Grant/Serve授权；修正验收位置不扩权。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "M1_RESOLVE_TLS_HANDSHAKE_FAILED: fresh preflight and sole Serve write passed; raw config passed HTTPS443/proxy/single-cap/AllowFunnel=false; M1 curl --resolve CertDomain:443:M1-Tailscale-IP failed `LibreSSL/3.3.6 error:1404B438 ST_CONNECT tlsv1 alert internal error`; per failure path immediately serve reset; Serve={} and 3101/3102 retained; no DB/policy/public write",
+  "claimed_by": "开发部/internal-agent:tailscale_serve_m5_validation",
+  "completion_class": "standard",
+  "confirmation": "无需额外确认",
+  "created_at": "2026-08-13T00:41+08:00",
+  "department": "开发部",
+  "details": "EDBB77已证明Serve raw config完全正确且AllowFunnel=false，仅因M1无法解析自己的MagicDNS域名而回退。继承用户授权，经UU入口fresh preflight后执行同一唯一Serve写；raw config复验；M1使用curl --resolve CertDomain:443:M1-Tailscale-IP验证TLS/代理；本机M5使用同域名与Tailscale IP或系统MagicDNS真实访问Admin，不修改DNS；允许单次短等待用于policy/cert传播。成功保持Serve启用。",
+  "domain_stage": "tailscale_serve_activation",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "raw config异常立即reset；TLS/代理确定失败reset；仅M5当前设备offline/DNS不可用而M1 --resolve链PASS时保留Serve并明确用户设备动作，不把DNS自解析当配置失败；不改系统DNS/policy/DB/public。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "tailscale_serve_cross_device_finalizer",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260813-EDBB77.json"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260813-B71A89",
+  "title": "M1 Serve跨设备HTTPS验收最终续跑",
+  "unverified": [],
+  "updated_at": "2026-08-13T00:44+08:00",
+  "verified": []
+}

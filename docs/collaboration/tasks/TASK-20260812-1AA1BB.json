@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "形成PASS/FAIL与P0/P1/P2报告；只有真实采集成功、候选与人工字段合同闭合、停采和公开零漂移成立时，明确放行后续独立的900秒启用任务。",
+  "artifacts": [],
+  "authorization_evidence": "用户要求复杂任务后由对应部门复核，并已授权快速上线但禁止低价值冗余测试。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T04:04+08:00",
+      "evidence": "用户要求复杂任务后由对应部门复核，并已授权快速上线但禁止低价值冗余测试。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "",
+  "completion_class": "audit",
+  "confirmation": "统筹部根据独立报告决定是否ACK D460D7，并决定是否创建900秒调度启用任务。",
+  "created_at": "2026-08-12T04:04+08:00",
+  "department": "安全部",
+  "details": "硬前置：TASK-20260812-D460D7执行结束并提供精确release/deployment/DB/receipt身份。审查必须独立读取M1当前状态和脱敏收据；不运行采集、不启用source、不加载LaunchAgent、不修改DB/文件。逐项核对release manifest/runtime/Node闭包、deployment manifest、private schema+integrity、唯一run终态、candidate/pending_review、人工字段零覆盖、source disabled/epoch、job unloaded、短窗零新增、公开DB SHA/size/inode及公开首页/详情/三既有服务零漂移。区分HTTP成功、304、网络失败、解析失败与slot重复；不得用实施者结论代替证据。",
+  "domain_stage": "运行安全复审",
+  "event_receipts": [],
+  "execution_state": "queued",
+  "external_artifacts": [],
+  "failure_paths": [
+    "缺少实施收据或精确身份时保持Unknown/FAIL，不连接网络补证。",
+    "发现source仍enabled、job已加载、短窗新增run、manifest漂移或公开DB/服务漂移时立即判阻断并指出回退动作。",
+    "真实请求失败、候选状态或人工字段合同不成立时不放行900秒，保留单次失败事实。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "只读复核D460D7的第二release、唯一真实请求、立即停采与公开零漂移证据，裁定是否允许900秒调度",
+  "pointers": [],
+  "report": "",
+  "resolution": {
+    "evidence": "TASK-20260812-C682F8已ACK，唯一HTTP200实采与停采收据已形成；3EB28F已由安全部领取执行。",
+    "reason": "原审查任务绑定已blocked的D460D7实施输入，后继3EB28F绑定实际完成并ACK的C682F8成功收据。",
+    "receipt_id": "RES-20260812T053920-09F0D27C",
+    "replacement_revision": 2,
+    "replacement_state": "claimed",
+    "replacement_task_id": "TASK-20260812-3EB28F",
+    "resolved_at": "2026-08-12T05:39+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "superseded",
+    "target_revision_before": 1
+  },
+  "revision": 2,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-1AA1BB",
+  "title": "M1第二release真实采集收据独立运行审查",
+  "unverified": [],
+  "updated_at": "2026-08-12T05:39+08:00",
+  "verified": []
+}

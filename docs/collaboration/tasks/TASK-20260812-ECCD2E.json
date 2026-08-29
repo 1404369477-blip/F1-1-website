@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "生成新执行器文件、新SHA和精确diff说明；node --check PASS，2A54AD两项P1有逐条代码出口，可交安全部复审。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/tasks/TASK-20260812-ECCD2E.json"
+  ],
+  "authorization_evidence": "用户已授权真实采集；本任务只修本地临时执行器且安全审查已给出最小修正。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T05:16+08:00",
+      "evidence": "用户已授权真实采集；本任务只修本地临时执行器且安全审查已给出最小修正。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:rss_real",
+  "completion_class": "standard",
+  "confirmation": "统筹部交安全部限定复审；PASS后才派M1执行。",
+  "created_at": "2026-08-12T05:16+08:00",
+  "department": "开发部",
+  "details": "安全TASK-20260812-2A54AD已ACK，固定输入脚本d86feca9…30292，P0=0/P1=2/P2=0。只在本地task scratch用apply_patch机械修正：1) 合并enable与run-stop为同一post-enable安全临界phase，enable commit后所有前置、wrapper spawn/timeout/signal、receipt parse/write/validation错误均进入不可跳过finally；wrapper返回后下一动作仍stop恰1，必须先持久化stop进程/收据并最终回读source disabled、stopEpoch严格>enable前epoch、job unloaded，再上抛wrapper错误。stop timeout/异常时走固定紧急DB refence+bootout+最终回读，输出STOP_UNCONFIRMED或安全确认，禁止真实请求重试。允许wrapper自身stopSource导致最终epoch>4，必须如实记录且control stop仍恰1。2) baseline/execute前要求距当前900秒slot结束至少60秒；enable receipt TTL≤15秒且拒绝未来/过期，enable后时间门失败也进入finally stop。保留唯一合法gap、人工字段、20秒/public收据。不得改产品代码/DB/任务报告，不SSH、不传输、不运行执行器；仅固定Node24 node --check恰1次与git diff --no-index/diff-check式静态检查，不跑测试。",
+  "domain_stage": "实采执行器机械修正",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "无法让任何enable后异常统一停采或无法证明slot余量/TTL时block，不允许远端执行。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "错题自检：确认Node check未重跑；控制stop路径单次，紧急路径仅DB refence+bootout；wrapper返回后下一外部动作是control stop；所有enable COMMIT后异常均经过finally和最终回读；未改产品代码或开发报告。",
+  "node": "仅修正d86f执行器的统一停采finally与slot安全余量，生成新冻结SHA，不接触M1",
+  "pointers": [],
+  "report": "不适用",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-ECCD2E",
+  "title": "M1实采执行器两项P1机械修正",
+  "unverified": [
+    "按任务边界未SSH、未传输、未接触M1/DB、未运行执行器、未发真实请求；动态故障路径留待安全部基于冻结SHA复审。"
+  ],
+  "updated_at": "2026-08-12T05:28+08:00",
+  "verified": [
+    "输入SHA d86feca9e2debeeb89cd9276b30ebe52b12885a9ac454d3e49f7d1644ae30292；输出scratch执行器 /var/folders/dz/l8yd2gqj22z1xgrcl1z_wbkr0000gn/T/TASK-20260812-B57F41-executor.h1qmBj/controlled-rss-run.mjs SHA-256 9067b5a08ead7282ea558c57cfbebcaed6d0ed0b71c9b4d22944fc041c9c38be；仅目标脚本经apply_patch修改。",
+    "固定 /opt/homebrew/opt/node@24/bin/node --check 恰1次，exit 0（组合命令已进入后续diff步骤），PASS；未运行执行器。",
+    "精确no-index核对：346 additions/110 deletions，798→1034行；git diff --no-index --check 无任何空白诊断，rc=1仅表示两文件存在预期差异；新增统一execute/finally、stop进程与收据持久化、紧急DB refence+bootout、最终disabled/epoch递增/unloaded回读、slot余量与15秒TTL门；postflight接受最终epoch>4并核对精确epoch。"
+  ]
+}

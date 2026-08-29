@@ -1,0 +1,57 @@
+{
+  "acceptance_exit": "提交数据部final报告与机器可读JSON oracle；oracle绑定closed DB SHA、相关代码/合同SHA，完整给出剩余安全向量的精确预期、计算算法和实得根；对inbox/task_attempt为0给出可追溯解释或明确合同冲突；正式DB SHA零漂移、externalCalls=0、临时副本/sidecar零残留，并返回TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/数据部/报告/TASK-20260811-3D190C-SOURCE-MGMT剩余安全出口-oracle.json",
+    "docs/collaboration/部门/数据部/报告/2026-08-11-3D190C-SOURCE-MGMT剩余安全出口机器oracle冻结报告.md"
+  ],
+  "authorization_evidence": "本线程持续目标要求推进到可用初版；2026-08-11用户明确继续推进。",
+  "authorization_history": [
+    {
+      "at": "2026-08-11T11:38+08:00",
+      "evidence": "本线程持续目标要求推进到可用初版；2026-08-11用户明确继续推进。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "019fb371-9834-78d3-a7b3-4f4c62819520",
+  "completion_class": "standard",
+  "confirmation": "用户要求持续推进可用初版；本任务是对已发生多次operator false negative的最低成本消歧，不新增功能、不外联。",
+  "created_at": "2026-08-11T11:38+08:00",
+  "department": "数据部",
+  "details": "承接blocked TASK-20260811-76E7E8。以当前closed DB SHA ddf3778c62cf95f195b1f08db8b075d676069f4cc9fb39804063e1004dd2e939、ACK TASK-20260810-875B6C、数据合同TASK-20260809-8F382B以及76E7E8实得为输入。仅从正式DB做物理副本后只读打开副本，逐项冻结fixture_profile_ledger、source_overlay_lineage、source_runtime_fence、operation_receipt、outbox_job、inbox、task_attempt、dead_letter、audit_event的精确计数与行级约束，解释inbox=0和task_attempt=0是否与闭环状态一致；冻结audit单调序号、previous hash、payload hash、operation receipt关联、append_only/internal_only/external_calls/redaction约束；按产品canonicalJson算法复算并记录唯一logical content root。另从当前数据库打开/事务代码只读推导第二writer的允许失败阶段和SQLite locked/busy语义，不执行并发写探针。输出机器可读JSON oracle与final数据报告，供安全部后继直接消费。不得修改代码、数据库、Spec、ADR或任务历史，不得联网，不得启动server/readiness/fixture，不得运行build/typecheck/全量测试。",
+  "domain_stage": "M5-SOURCE-MGMT安全oracle冻结",
+  "event_receipts": [
+    "MIL-20260811T121153-CE4374"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "closed DB、875B6C、8F382B、76E7E8或相关代码SHA漂移：停止并block，禁止生成伪oracle。",
+    "数据库实得与accepted/proposed合同无法唯一调和，或logical root算法存在两个合理口径：停止并列出冲突，交回产品部裁决。",
+    "任何打开正式DB、写入、sidecar残留、动态网络、server/readiness/fixture初始化或代码修改迹象：立即停止并block。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未继承inbox=1/task_attempt=1错误假设；未把audit_event.payload_json误当业务payload；未用generic root代替SOURCE-MGMT精确表序和Node24.18.0 comparator；未把lock path存在外推为存活owner；仅ERR_SQLITE_ERROR且BUSY/LOCKED条件映射LOCK_CONTENTION；未打开正式DB、未执行writer探针、未修改App/data/migration/DB/Spec/ADR/receipt/前驱任务",
+  "node": "只读生成唯一数据oracle，消除安全harness对ledger计数、audit链和内容根的无依据假设",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260811-76E7E8.json",
+    "docs/collaboration/部门/安全部/报告/2026-08-11-76E7E8剩余SQLite-audit出口单次安全复验报告.md",
+    "docs/collaboration/tasks/TASK-20260810-875B6C.json",
+    "docs/collaboration/tasks/TASK-20260809-8F382B.json"
+  ],
+  "report": "docs/collaboration/部门/数据部/报告/2026-08-11-3D190C-SOURCE-MGMT剩余安全出口机器oracle冻结报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260811-3D190C",
+  "title": "冻结SOURCE-MGMT剩余安全出口的机器可读数据验收基准",
+  "unverified": [
+    "未执行第二writer/SQLite锁竞争动态探针；audit UPDATE/DELETE trigger仅从sqlite_schema确认，未在只读副本触发；未运行server/HTTP/readiness/fixture/provider/Base/Collector/UI/build/typecheck/全量测试/部署/备份/生产环境"
+  ],
+  "updated_at": "2026-08-11T12:13+08:00",
+  "verified": [
+    "正式DB SHA前后均ddf3778c…e939且SQLite handle=0；唯一0700临时根内0600物理副本以mode=ro&immutable=1/query_only打开，integrity=ok、FK=0；10表计数=1/1/1/1/5/1/0/0/0/5；inbox/task_attempt=0与cancelled+attempt0+null lease一致；5/5 receipt result、audit payload/event/previous链及operation关联复算一致；logical root=7cae9bb8…6e6a匹配closed receipt；两路静态对抗审查修正后P0/P1/P2=0；正式sidecar与/tmp任务残留=0；externalCalls=0；git diff --check PASS"
+  ]
+}

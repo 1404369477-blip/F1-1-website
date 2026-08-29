@@ -1,0 +1,43 @@
+{
+  "acceptance_exit": "SQLite默认recursive_triggers状态下四个绕过负例均被SQL层拒绝；plain INSERT正例与既有3项仍通过；0002新SHA与测试SHA明确，mapping/schema不变；真实/synthetic DB零写；三项限定验证一次通过；TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "独立复审7920C6发现可复现SQLite REPLACE与audit_seq分叉P1，用户要求快速闭合第一版。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T07:05+08:00",
+      "evidence": "独立复审7920C6发现可复现SQLite REPLACE与audit_seq分叉P1，用户要求快速闭合第一版。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "限定验证首错：固定Node24聚焦测试唯一1次3/3 PASS；随后固定Node24 typecheck唯一1次在任务外 app/src/server/review-real/repository.ts:432 命中 TS2322（string|null 传给 string）。按任务失败路径立即停止，未重跑、未执行diff-check、未修改repository；当前0002 SHA 1d373f90cf881a58a15966ffe12ed01c3a651380d5f4f5aa9de468d79a798263，测试SHA ccbe2938c653346e82241ef17fecda74b3ba2c446eeeaa1d51023f8c4fad7b4b。等待统筹/开发部修复任务外并发类型错误后resume。",
+  "claimed_by": "数据部/internal-agent:admin_data_successor2",
+  "completion_class": "standard",
+  "confirmation": "本轮只修REPLACE绕过和Audit序列分叉；修完进行一次最终限定静态复审，之后不再扩展数据层审查。",
+  "created_at": "2026-08-12T07:05+08:00",
+  "department": "数据部",
+  "details": "严格依据7920C6，只修改0002 SQL与现有聚焦测试；mapping/schema字节不改。为publication、projection_outbox、audit_event的BEFORE INSERT显式查询并拒绝所有现存PK与合同unique identity冲突，确保INSERT OR REPLACE在触发隐式DELETE前即abort，不依赖recursive_triggers或连接PRAGMA。Audit INSERT必须new.audit_seq严格等于当前MAX+1（首条为1）且previous_event_hash匹配当前唯一latest或genesis；拒绝REPLACE、低位空闲seq、重复event_id/hash。新增四个聚焦负例精确覆盖Publication REPLACE、Outbox REPLACE、Audit REPLACE、Audit低位分叉；保留既有正例。0真实DB/0synthetic/0网络/0API。固定Node24聚焦测试、typecheck、diff-check各仅一次，首错即停。",
+  "domain_stage": "数据/安全修复",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "SQLite触发器执行顺序无法在REPLACE隐式删除前拦截：立即BLOCK并改用产品明确禁止REPLACE的authorizer/connection contract successor，不伪报闭合。",
+    "限定验证首错：立即停止、不重跑，保留首错和SHA并BLOCK。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "第一版后台/数据层SQLite不变量修复",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-7920C6-D8A278三项P1修复限定静态复审报告.md"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-AA08F9",
+  "title": "D8A278 successor-2：REPLACE绕过与Audit分叉最小闭合",
+  "unverified": [],
+  "updated_at": "2026-08-12T07:10+08:00",
+  "verified": []
+}

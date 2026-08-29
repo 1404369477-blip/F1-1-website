@@ -1,0 +1,57 @@
+{
+  "acceptance_exit": "测试stage和manifest均canonical realpath，聚焦builder+fresh verifier PASS；typecheck/diff-check PASS；release产物冻结并TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/src/server/admin-service/release-manifest.ts",
+    "app/scripts/admin-build-release-manifest.ts",
+    "app/scripts/admin-verify-release-stage.ts",
+    "app/src/tests/admin-release-manifest.test.ts",
+    "app/package.json",
+    "app/ADMIN-SERVICE-PREP.md",
+    "docs/collaboration/部门/开发部/报告/2026-08-12-679786-Admin精确release闭包与真实路径finalizer报告.md"
+  ],
+  "authorization_evidence": "统筹固定Node24只读诊断same=false，tmpdirPrefix/realPrefix吻合唯一路径别名。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T10:21+08:00",
+      "evidence": "统筹固定Node24只读诊断same=false，tmpdirPrefix/realPrefix吻合唯一路径别名。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:admin_release_realpath_finalizer",
+  "completion_class": "standard",
+  "confirmation": "只读证据已定位macOS /var与/private/var别名；fixture-only canonical path修正。",
+  "created_at": "2026-08-12T10:21+08:00",
+  "department": "开发部",
+  "details": "继承EA1747候选。统筹只读固定Node24诊断已确认macOS tmpdir字符串以/var/开头而realpath以/private/var/开头，same=false；生产verifier要求realpath(manifestPath)===resolve(manifestPath)，这是复合identity门的唯一高置信首错。仅修改admin-release-manifest.test.ts：stage根创建后立即以realpathSync(root)作为返回/后续复制与manifest路径根（或创建时基于realpathSync(tmpdir())）；保持目录0700、manifest0600。不得改生产verifier或其他文件。一次聚焦Vitest、一次Node24 typecheck、一次diff-check新预算；首错即停且若仍失败不再派fixture。PASS后固化报告/SHA/roots/TASK_STATE_OK并解锁850163。",
+  "domain_stage": "开发/Admin release闭包",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若仍为复合identity或其他生产首错，立即block并放弃当前测试harness，不再修fixture。",
+    "任何生产文件或闭包门需修改则立即block。",
+    "三项验证首错即停不重跑。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "仅在test harness使用canonical realpath；生产verifier未改。base逐blob=54e694c，overlay严格四文件且package只新增两script；未纳入测试/协作文档/DB/密钥/缓存/.git；0SSH/0M1/0prepare/load/0sender。",
+  "node": "第一版后台/Admin release真实路径finalizer",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-EA1747.json"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-679786-Admin精确release闭包与真实路径finalizer报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-679786",
+  "title": "规范化Admin release测试stage真实路径并最终收口",
+  "unverified": [
+    "M1 fresh stage、文件传输、真实manifest最终SHA/roots、prepare/load、Tailscale Serve、passkey、真实migration、3101、sender、公开切换与回退均未运行。"
+  ],
+  "updated_at": "2026-08-12T10:24+08:00",
+  "verified": [
+    "固定Node24聚焦Admin release Vitest唯一1/1 PASS（1 file/1 test）；Node24 typecheck唯一1/1 PASS；git diff --check唯一1/1 PASS。builder/fresh-stage verifier闭合38 runtime files、SimpleWebAuthn递归22包、固定Git commit/tree/parent、Node字节SHA与确定性content/release roots；四文件overlay经porcelain v1 -z精确解析。"
+  ]
+}

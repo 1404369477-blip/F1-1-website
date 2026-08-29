@@ -1,0 +1,51 @@
+{
+  "acceptance_exit": "receiver/Admin各bootstrap一次+kickstart一次并loaded健康；3102/3101仅loopback；固定DB同path/dev/ino、v3、integrity/FK无第二库；三refs通过、无可信头401零写、sender once确定收据、旧public/RSS不变；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-EC09C3-M1-Admin运行态启动与DB-v3原位迁移报告.md"
+  ],
+  "authorization_evidence": "thread-user-message:2026-08-12:授权",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T23:48+08:00",
+      "evidence": "thread-user-message:2026-08-12:授权",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:m1_admin_activation_kickstart",
+  "completion_class": "standard",
+  "confirmation": "用户当前线程明确授权；2084BB已bootout receiver并隔离live plist，3101/3102 absent、DB未开",
+  "created_at": "2026-08-12T23:48+08:00",
+  "department": "开发部",
+  "details": "承接用户授权与2084BB完整回退收据。prepared receiver/Admin plist有意RunAtLoad=false/KeepAlive=false，bootstrap只注册不启动；本任务在每个bootstrap后各执行唯一一次launchctl kickstart：receiver copy→bootstrap→kickstart→3102；再Admin copy→bootstrap→kickstart→固定DB同path/dev/ino v3迁移→3101；随后安全门和sender once。Public仍只做前后状态记录。禁止再增加非任务门、业务代码改动、额外测试、Tailscale/public写。",
+  "domain_stage": "admin_runtime_activation",
+  "event_receipts": [
+    "TASK_STATE_OK; receiver=running/runs1/127.0.0.1:3102; admin=running/runs1/127.0.0.1:3101; db=dev16777233/ino24570709/v3/integrity-ok; sender=idle; tailscaleWrites=0; publicCutover=0"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "receiver失败bootout并隔离plist；Admin/DB失败先bootout Admin再receiver并隔离本次plist，保留DB事实；sender未知结果停止并留服务健康态供裁定；禁止重复kickstart/bootstrap与Tailscale/public写。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "两个前序均在DB/服务业务写前停止并回退；本task仅补各一次kickstart。主链完成后一个额外只读SQL摘要误用不存在表名并只读失败，未修改DB且未重跑主链，已在报告如实记录。没有泄露login/sourceRefs/key；没有Tailscale或public写。",
+  "node": "ADMIN-RUNTIME-LIVE-001-KICKSTART",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-2084BB.json"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-EC09C3-M1-Admin运行态启动与DB-v3原位迁移报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-EC09C3",
+  "title": "M1 Admin运行态显式kickstart最终上线",
+  "unverified": [
+    "尚未启用Tailscale Serve或执行M5/iPhone/iPad真机Passkey/app-cap/撤销验证；sender本轮idle，尚无generation 1真实投影；public read mode/live release未切换。"
+  ],
+  "updated_at": "2026-08-12T23:52+08:00",
+  "verified": [
+    "M1 receiver/Admin各bootstrap一次+kickstart一次且running/runs1；3102/3101各仅127.0.0.1 listener；固定review DB保持path/dev16777233/ino24570709/uid501/nlink1由v1原位迁至v3，integrity ok、WAL，Admin真实启动门强制FK=ON；第二库0；三refs唯一；缺失可信身份401且DB SHA前后相同；sender once idle确定no-op；public PID52089/3000 loopback与RSS loaded不受任务改变；Tailscale/public cutover写0。"
+  ]
+}

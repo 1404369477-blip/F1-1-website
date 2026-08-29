@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "固定M1正式路径通过第二release验签；唯一真实RSS采集给出可审计结果并立即回到disabled/unloaded；HTTP 200且候选写入pending_review时，交给安全部独立运行审查。",
+  "artifacts": [],
+  "authorization_evidence": "用户已授权固定M1 SSH、真实采集和快速上线；345AB2已独立安全放行该精确机械恢复。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T04:21+08:00",
+      "evidence": "用户已授权固定M1 SSH、真实采集和快速上线；345AB2已独立安全放行该精确机械恢复。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "MODE_RESTORE_SCRIPT_SYNTAX_PREWRITE",
+  "claimed_by": "开发部/internal-agent:rss_real",
+  "completion_class": "standard",
+  "confirmation": "统筹部核对实施收据后交安全部执行TASK-20260812-1AA1BB；只有独立PASS才另行决定900秒调度。",
+  "created_at": "2026-08-12T04:21+08:00",
+  "department": "开发部",
+  "details": "前置：D460D7 blocked且正式路径零写；安全裁定TASK-20260812-345AB2已ACK/PASS/P0=0/P1=0/P2=0。严禁重跑builder、重传tar、修改manifest或放宽verifier。固定stage=[M1-HOME]/F1-1-website/.rss-release-TASK-20260812-D460D7/stage-app；固定manifest SHA=34c1032cc6adca96990cf35b092c2d61b940a2bda8fdd53a0c8ccfbb6e7c8d95，记录数137；期望content=2aae04864325f9db436b72267b578df681efdc51f79f81d8348a5490b5e8c153，release=6d402a5d0b81fcf2d20e9720e3d0eef5f6e2ea63bb939ca8c7921df85159eb02。写前一次性确认固定root/manifest、137唯一相对路径、无绝对/点段/逃逸、无symlink、无缺失或额外闭包、owner501/nlink1、137/137 SHA+size匹配；通过已打开且O_NOFOLLOW的fd逐项fchmod为manifest精确0644/0755并回读，禁止路径跟随和宽泛递归chmod。随后仅一次现有release verifier；只有content/release root精确恢复才创建任务专属正式backup、overlay并在正式路径再验签。prepare恰一次且不bootstrap/load；source必须仍disabled/epoch3/job unloaded。15分钟slot可写时单事务仅enabled=1、epoch不变；verified wrapper恰一次、真实请求最多一次、禁止重试，结束后的第一控制动作stop恰一次。核对HTTP/parse/run/candidate/pending_review、机器/人工字段、20秒零新增、公开DB SHA949c78d5…bb50/size737280/inode24546198、home/detail200及三服务PID零漂移。成功或失败都不加载900秒。成功后精确清理D460D7与本任务stage/tar/tmp/backup，并删除已确认不再需要的772F48本地/M1 Trash备份；失败时按验证过的backup恢复并保留首错证据。",
+  "domain_stage": "M1部署机械恢复与真实采集",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "机械写前任一闭包、路径、owner、link、SHA、size、mode前态不满足时零chmod并停止。",
+    "chmod后唯一verifier、正式overlay验签、prepare或状态门任一失败时不启用source，必要时恢复backup并报告首错。",
+    "唯一wrapper失败时不重试，第一动作stop并证明disabled/unloaded/短窗零新增；公开DB或服务漂移时立即阻断并保留恢复证据。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "复用D460D7唯一builder/传输产物，按验签manifest机械恢复stage mode并继续第二release、单次真实采集和立即停采",
+  "pointers": [],
+  "report": "",
+  "resolution": {
+    "evidence": "docs/当前生产状态与执行待办.md",
+    "reason": "2026-08-29 schema10生产恢复、27个X信源和完整Admin路线已形成新的当前闭包；旧任务绑定过时schema/release/plist/视觉或运行时态，继续领取会造成重复或错误执行。",
+    "receipt_id": "RES-20260829T235605-9705F9D5",
+    "replacement_revision": 3,
+    "replacement_state": "blocked",
+    "replacement_task_id": "TASK-20260829-BBFF2A",
+    "resolved_at": "2026-08-29T23:56+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "superseded",
+    "target_revision_before": 3
+  },
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-817BA9",
+  "title": "M1第二release mode机械恢复与唯一真实RSS采集-successor",
+  "unverified": [],
+  "updated_at": "2026-08-29T23:56+08:00",
+  "verified": []
+}

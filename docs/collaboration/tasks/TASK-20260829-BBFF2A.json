@@ -1,0 +1,44 @@
+{
+  "acceptance_exit": "形成真实 verified off-host encrypted restore-drilled recovery point，RPO<=900s；DB user_version=10、正式 schema/runtime verifier PASS；control 操作均有 fresh receipt；两源 RSS identity closure 为真实 hash；新 plist 精确绑定候选/DB/900s/log，installed-not-loaded 或按后继 canary 门执行；automatic review/publish/reconcile=0；report/receipt/manifest/hash 完整。",
+  "artifacts": [],
+  "authorization_evidence": "2026-08-29当前主线程：用户要求完整同步工作文档，方便其他Agent接手；此前已明确要求持续推进至公开网站和管理后台完整上线。",
+  "authorization_history": [
+    {
+      "at": "2026-08-29T23:49+08:00",
+      "evidence": "2026-08-29当前主线程：用户要求完整同步工作文档，方便其他Agent接手；此前已明确要求持续推进至公开网站和管理后台完整上线。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "等待 TASK-20260829-FCC322 完成 Backup V2 P0/P1 整改、disposable故障注入与独立复审PASS。",
+  "claimed_by": "自动化部/01a00560-4fca-7221-9bbb-382a9c2f6195",
+  "completion_class": "standard",
+  "confirmation": "按当前线程用户持续推进目标执行；任何新增付费、凭证、权限、不可逆删除或扩大公网暴露仍需单独用户确认。",
+  "created_at": "2026-08-29T23:49+08:00",
+  "department": "自动化部",
+  "details": "前置为备份V2候选独立 PASS，并另有真实一致性异机加密恢复点执行授权。按 TASK-20260829-M1-RSS-SCHEMA10-RECOVERY-PREFLIGHT 只处理当前阻断：验证/形成 recovery point；通过合法 Admin control 推进 clockTrusted/writerReady、phase/global_stop/recovery；以真实 route/release/manifest/authorization/source-policy hash 替换 Motorsport 与 The Race 的占位值；Autosport/RaceFans 保持隔离；历史 queued publication 与 reconcile_wait outbox 不得触发；生成指向 schema10 candidate-v10-20260829-091305 的新 LaunchAgent candidate，旧 2026-08-13 plist 禁止加载。",
+  "domain_stage": "M1生产预备/恢复门与RSS闭包",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "备份恢复点、RPO、共同恢复边界任一 Unknown 时零生产写并 BLOCK。",
+    "合法 Admin control 路径失败时不得 raw UPDATE/drop trigger，立即 BLOCK。",
+    "发现旧 plist、占位 hash、历史 outbox 可能被执行时保持全局停止并 BLOCK。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "QL3/m1/schema10-recovery-rss-closure",
+  "pointers": [
+    "docs/当前生产状态与执行待办.md"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260829-BBFF2A",
+  "title": "M1 Schema10恢复门与RSS身份闭包生产预备",
+  "unverified": [],
+  "updated_at": "2026-08-29T23:55+08:00",
+  "verified": []
+}

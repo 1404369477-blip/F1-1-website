@@ -32,8 +32,8 @@ summary: 单次隔离 canonical migration/seed 与单次聚焦完整性核验通
 唯一一次实际生成命令：
 
 ```bash
-env -i PATH=/Users/hoyin/Documents/F1+1/app/.local/toolchains/node-v24.18.0-darwin-arm64/bin:/usr/bin:/bin \
-  /Users/hoyin/Documents/F1+1/app/.local/toolchains/node-v24.18.0-darwin-arm64/bin/node \
+env -i PATH=[M5-HOME]/Documents/F1+1/app/.local/toolchains/node-v24.18.0-darwin-arm64/bin:/usr/bin:/bin \
+  [M5-HOME]/Documents/F1+1/app/.local/toolchains/node-v24.18.0-darwin-arm64/bin/node \
   --experimental-strip-types \
   /tmp/F1plus1-TASK-20260804-504B0D/generate.ts
 ```
@@ -62,8 +62,8 @@ env -i PATH=/Users/hoyin/Documents/F1+1/app/.local/toolchains/node-v24.18.0-darw
 唯一一次完成业务核验的命令：
 
 ```bash
-env -i PATH=/Users/hoyin/Documents/F1+1/app/.local/toolchains/node-v24.18.0-darwin-arm64/bin:/usr/bin:/bin \
-  /Users/hoyin/Documents/F1+1/app/.local/toolchains/node-v24.18.0-darwin-arm64/bin/node \
+env -i PATH=[M5-HOME]/Documents/F1+1/app/.local/toolchains/node-v24.18.0-darwin-arm64/bin:/usr/bin:/bin \
+  [M5-HOME]/Documents/F1+1/app/.local/toolchains/node-v24.18.0-darwin-arm64/bin/node \
   --experimental-transform-types \
   /tmp/F1plus1-TASK-20260804-504B0D/integrity.ts
 ```

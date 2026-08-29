@@ -1,0 +1,56 @@
+{
+  "acceptance_exit": "测试差异仅删除错误临时canonical-oracle调用及未使用import；唯一聚焦批次5/5 PASS；M3/public受控入口各一次PASS，三份canonical receipts绑定冻结root 712fe5d6e9d693eaf0d531b481253374d9c5a8b4d912ab4f05157700879f57f2、revision、marker、freshness、canonical/self-hash/0700/0600/nlink1；真实canonical assertLegacyClosedReceipts只读PASS；两个canonical DB文件SHA与逻辑根零漂移，public双receipt无部分态，journal/backup/tmp/lock/WAL/SHM零残留，package-lock零漂移、externalCalls=0；报告、manifest、已验证/未验证/错题自检、TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "用户2026-08-11明确：Codex桌面端重启后继续推进。",
+  "authorization_history": [
+    {
+      "at": "2026-08-11T19:55+08:00",
+      "evidence": "用户2026-08-11明确：Codex桌面端重启后继续推进。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "",
+  "completion_class": "standard",
+  "confirmation": "用户已授权继续推进；本successor只移除错误测试断言并完成此前未运行的本地收据刷新。",
+  "created_at": "2026-08-11T19:55+08:00",
+  "department": "开发部",
+  "details": "承接blocked TASK-20260811-34C7F1当前生产候选与两项已通过测试修复。只允许修改app/src/tests/profile-closed-receipt.test.ts：删除在/tmp重新migrate/seed的临时数据库上调用assertLegacyClosedReceipts(roots.projectRoot)的错误正向断言，并删除因此成为未使用的assertLegacyClosedReceipts import；保留新receipt revision/root/externalCalls、回放、journal、失败恢复等其余断言。原因已由只读对抗诊断唯一定位：临时M3/public migration_ledger.applied_at动态，closedDbSha256及migrationLedgerRoot必然不同于生产canonical冻结值；禁止修改任何LEGACY_RECEIPT_EXPECTATIONS、PUBLIC_DATA_RECEIPT_EXPECTATION、CLOSED_VALIDATOR_SHA256或生产实现迎合临时库。修改后运行一次原固定Node24聚焦批次；PASS后各执行一次M3/public legacy受控刷新，随后对真实canonical项目只读调用assertLegacyClosedReceipts并完成root/marker/freshness/权限/零漂移/清理复核。不得运行0F65C1整链。",
+  "domain_stage": "M5-local-public-runtime-preflight",
+  "event_receipts": [],
+  "execution_state": "queued",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 需要修改生产常量/实现或其他测试才能通过：首错block，不迎合临时DB；2) 唯一聚焦批次失败：停止且不生成canonical receipts；3) 受控生成或真实canonical oracle、原子性、freshness、权限、零漂移、清理任一失败：保存首错停止，不执行0F65C1。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "关闭34C7F1唯一测试夹具作用域首错并执行未运行收口",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260811-34C7F1.json",
+    "docs/collaboration/部门/开发部/报告/2026-08-11-34C7F1两项receipt聚焦测试准备修复与原子刷新首错阻断报告.md",
+    "app/src/tests/profile-closed-receipt.test.ts",
+    "app/src/server/db/public-multimedia-synthetic.ts"
+  ],
+  "report": "",
+  "resolution": {
+    "evidence": "内部只读根因诊断+一次固定Node24 5/5、两受控刷新与真实canonical oracle PASS；用户2026-08-11明确继续推进。",
+    "reason": "原任务误写为删除canonical oracle调用与import；根因诊断证明正确最小语义是对临时动态DB明确预期fail-closed并保留实际使用的import，且残留物口径必须限task-owned legacy transaction artifacts。",
+    "receipt_id": "RES-20260811T201917-F37B1C22",
+    "replacement_revision": 2,
+    "replacement_state": "claimed",
+    "replacement_task_id": "TASK-20260811-6E1E54",
+    "resolved_at": "2026-08-11T20:19+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "superseded",
+    "target_revision_before": 1
+  },
+  "revision": 2,
+  "schema_version": 1,
+  "task_id": "TASK-20260811-0F3F80",
+  "title": "移除临时DB误用canonical oracle并完成legacy receipt刷新",
+  "unverified": [],
+  "updated_at": "2026-08-11T20:19+08:00",
+  "verified": []
+}

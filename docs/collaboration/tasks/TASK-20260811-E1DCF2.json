@@ -1,0 +1,42 @@
+{
+  "acceptance_exit": "1) 当前 HTML SHA 精确匹配；2) 新四图尺寸精确为 1440x900 与 390x844，深浅各一，输出 mtime/hash 均属于本任务；3) 桌面图可见固定 ACTIONS、横向控制和详情入口，移动图可见卡片、详情/动作入口；4) 运行收据记录 desktop scroll region、mobile innerWidth=390、document.scrollWidth<=390、console error=0、pageerror=0、外部请求=0；5) 交付脱敏 machine manifest、一页用户确认说明和报告；6) 清理浏览器/临时 profile/任务临时文件，任务 complete 并返回 TASK_STATE_OK；7) 任务 doctor 通过。",
+  "artifacts": [],
+  "authorization_evidence": "用户在主线程持续要求推进网站直至初版可用；本任务为无外联、无代码改动的本地可视化验收恢复。",
+  "authorization_history": [
+    {
+      "at": "2026-08-11T12:43+08:00",
+      "evidence": "用户在主线程持续要求推进网站直至初版可用；本任务为无外联、无代码改动的本地可视化验收恢复。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "ENVIRONMENT_BLOCKED：固定 HTML 与工具字节匹配；宿主拒绝 Seatbelt apply，唯一等价兜底在页面创建/首图前因 Chromium MachPortRendezvous bootstrap_check_in Permission denied (1100) SIGTRAP 退出。四图与运行矩阵 NOT_RUN，未建立候选产品缺陷；禁止原样重试。报告：docs/collaboration/部门/测试部/报告/2026-08-11-E1DCF2隔离浏览器四图恢复阻断报告.md。",
+  "claimed_by": "测试部/019fb379-9212-7e80-a5df-587d339936c4",
+  "completion_class": "audit",
+  "confirmation": "四图只用于用户确认 SOURCE-MGMT 当前视觉方向；不代表真实页面实现、功能验收或上线授权。",
+  "created_at": "2026-08-11T12:43+08:00",
+  "department": "测试部",
+  "details": "沿用现有测试部窗口。只读取并渲染 design/ui/F1+1-M5-admin-sources-preview-v0.1/index.html，固定 SHA-256=0d73ea294972627a7a832b42d999381da1fc4c8ea602b9fdbd04b11985156d68。使用本机现有且版本匹配的 playwright-core 1.58.2 与 chromium-headless-shell revision 1208，优先采用已证明可 apply 的 sandbox-exec 精确 no-egress 结构；不得安装、下载、访问外网、改候选/App/Spec/ADR，禁止复用旧 PNG。先做一次最小静态预检；随后单批次渲染 1440x900/390x844 × dark/light 四张当前图，并记录 current HTML、工具、浏览器二进制和输出哈希。页面为 file:// 本地候选，任何非本地请求均失败关闭。",
+  "domain_stage": "MVP-visual-confirmation",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "a) 输入或本机固定工具 SHA/版本漂移，在浏览器启动前 block；b) 浏览器启动或首批渲染失败，只允许一次预先声明、等价且仍 no-egress 的本地兜底，仍失败即 block，不重复堆叠；c) 任一外部请求、错误尺寸、旧图复用、390 页面级横溢、关键入口不可见或候选被改动，立即 fail/block并保留首错，禁止修候选或伪造证据。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "MVP/SOURCE-MGMT-001/visual-confirmation-recovery",
+  "pointers": [
+    "design/ui/F1+1-M5-admin-sources-preview-v0.1/index.html"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260811-E1DCF2",
+  "title": "SOURCE-MGMT当前字节隔离浏览器四图与运行收据恢复",
+  "unverified": [],
+  "updated_at": "2026-08-11T13:00+08:00",
+  "verified": []
+}

@@ -1,0 +1,54 @@
+{
+  "acceptance_exit": "提交产品部final状态审计报告；用可核验路径逐项回答“公开用户可看什么、管理员可做什么、数据保存在哪里、怎样启动、哪些仍不可用”；形成唯一的初版完成定义和最多三条的下一批派单顺序，区分已验证/证据不足/缺失与用户门禁，并返回TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/产品部/报告/2026-08-11-可用初版当前仓库产品审计与剩余主链报告.md"
+  ],
+  "authorization_evidence": "本线程持续目标：推进到有前端、必要数据库、核心功能可用的初版。",
+  "authorization_history": [
+    {
+      "at": "2026-08-11T11:48+08:00",
+      "evidence": "本线程持续目标：推进到有前端、必要数据库、核心功能可用的初版。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "用户持续目标已明确，并要求统筹拆解与部门执行；本任务只读收敛现状和实施顺序。",
+  "created_at": "2026-08-11T11:48+08:00",
+  "department": "产品部",
+  "details": "以用户持续目标“有前端界面、必要后端数据库、核心功能可用的初版落地方案”为验收对象，读取当前docs/spec.md、docs/progress.md、docs/handoff.md、50功能矩阵及当前app路由/API/数据库/测试证据索引；结合已完成的公开页、SOURCE-MGMT后端、公开多媒体和部署决策，逐项标记已实现、部分实现、缺失、用户门禁、外部依赖。输出一份不新增范围的MVP收敛清单：必须列明初版核心用户旅程、每项权威证据、剩余执行部门、依赖顺序、可并行项、明确不进入初版的内容，以及SOURCE-MGMT安全/视觉门结束后的下一组三个以内最高收益任务。不得修改Spec、ADR、代码、数据库、设计或现有任务状态；不得运行测试、build、浏览器或联网。",
+  "domain_stage": "M5可用初版收敛",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "现有Spec、50功能矩阵与代码事实出现无法调和的范围冲突：停止并列出冲突，不擅自改完成定义。",
+    "某项只有历史报告没有当前文件/运行证据：标为证据不足，不把计划或意图计作完成。",
+    "需要新增产品方向、外联、付费服务或用户可见设计决策才能收敛：保留为用户门禁，不自行选择。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已纠正任务JSON中的不存在矩阵路径；未把代码存在、历史PASS或数据文件存在外推为当前可用；用户门禁和NOT READY边界保留。",
+  "node": "只读核对当前前端、API、SQLite、Admin与运行文档，给出从现状到可用初版的最短、可派单顺序",
+  "pointers": [
+    "docs/spec.md",
+    "docs/progress.md",
+    "docs/handoff.md",
+    "docs/spec/F1+1-全功能需求与验收矩阵-v0.1.md"
+  ],
+  "report": "不适用",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260811-907A0B",
+  "title": "按当前仓库事实收敛可用初版剩余实施主链",
+  "unverified": [
+    "当前候选实际启动与浏览器旅程、24条多媒体当前closed receipt、SOURCE-MGMT最终安全PASS、真实Admin审核台及全部真实外部能力。"
+  ],
+  "updated_at": "2026-08-11T12:07+08:00",
+  "verified": [
+    "只读核对五问、当前路由与启动分支、四个本地SQLite文件及封闭收据、公开候选哈希漂移、SOURCE-MGMT/VS1任务时态；未运行测试、build、浏览器或联网，未打开SQLite。"
+  ]
+}

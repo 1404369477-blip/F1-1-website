@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "十核心SHA身份明确；P1-01 CLOSED或给唯一直接反例；P0/P1/P2明确；无P0/P1则放行后端候选进入本地部署准备，报告落盘，TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-7B47E0-完整sqlite_schema指纹唯一P1最终限定复审报告.md"
+  ],
+  "authorization_evidence": "独立审查52616C唯一P1已由739DF6最小修复并通过一次验证。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T07:46+08:00",
+      "evidence": "独立审查52616C唯一P1已由739DF6最小修复并通过一次验证。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/internal-agent:admin_backend_schema_review",
+  "completion_class": "audit",
+  "confirmation": "仅复审唯一schema fingerprint P1，不重启全量后端审查。",
+  "created_at": "2026-08-12T07:46+08:00",
+  "department": "安全部",
+  "details": "只读绑定新migration SHA b752d7f115d50bc9af4077b537e0fb4e9ea9ba5deac8195a91b1a2bc6c7a0f39、test SHA 6387db1d5b77b93eddd188e8ceeec50c02d1e9a6fbb139c6e9d4125a6d4a6fa5；其余九核心SHA保持52616C冻结值。只裁定52616C唯一P1：canonical main.sqlite_schema manifest/hash是否覆盖全部业务table/index/trigger/view、排除sqlite内部对象但拒绝额外业务对象/遮蔽，是否在v1 apply后及每次现成v2打开、Repository构造前核对，删关键trigger是否fail-closed；阅读唯一负例与验证收据。0修改/0测试/0typecheck/0网络/0DB写，不扩展52616C已停止的其他层。",
+  "domain_stage": "安全/后端最终复审",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "SHA漂移或完整schema仍存在删除/额外对象可通过路径：FAIL并停止。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "仅裁定52616C唯一schema fingerprint P1；区分migration文本SHA与数据库当前schema root；未重跑测试/typecheck、未访问网络/SSH/数据库、未修改被审文件；未把限定PASS外推到部署或其他后端层",
+  "node": "第一版后台/后端最终安全放行",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-739DF6-完整sqlite_schema指纹启动门successor报告.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-12-7B47E0-完整sqlite_schema指纹唯一P1最终限定复审报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-7B47E0",
+  "title": "739DF6完整schema指纹唯一P1最终限定复审",
+  "unverified": [
+    "后续真实opener尚未实现，部署准备必须强制每个DB handle先apply/验签再构造Repository；52616C按fail-first未审的session/CSRF/routes/delivery/projection文件与crash replay/public reader全链继续Unknown；M1真实DB、Tailscale/passkey、Mac/iPhone、UI、公网切换、RPO/RTO均范围外"
+  ],
+  "updated_at": "2026-08-12T07:50+08:00",
+  "verified": [
+    "限定PASS P0=0 P1=0 P2=0；新migration/test SHA逐字MATCH，八个未改核心SHA及0002 SHA均MATCH；main.sqlite_schema闭合manifest覆盖table/index/trigger/view并按type/name/tbl_name/sql确定排序，canonical root精确绑定46a71403…f638e；temp非内部对象与ATTACH拒绝；v1 apply后及现成v2路径均无条件验签；删除publication_no_delete后在Repository构造标记前ADMIN_INTERNAL_FAILURE；52616C唯一P1-01=CLOSED；只读开发唯一Vitest/typecheck/diff-check持久化收据，未重跑"
+  ]
+}

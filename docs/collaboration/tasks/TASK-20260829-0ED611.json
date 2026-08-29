@@ -1,0 +1,44 @@
+{
+  "acceptance_exit": "生产 registry 精确27 X + Sky F1 RSS，无被drop账号 active；三源canary能取得canonical status URL/内容候选并生成去重收据；challenge/rate-limit/login-loss 会停用且有告警；扩容门、频率、抖动、单账号熔断、总预算和回退可观测；0社交写操作、0绕过、0自动公开；形成运行报告与source状态清单。",
+  "artifacts": [],
+  "authorization_evidence": "2026-08-29当前主线程：用户要求完整同步工作文档，方便其他Agent接手；此前已明确要求持续推进至公开网站和管理后台完整上线。",
+  "authorization_history": [
+    {
+      "at": "2026-08-29T23:49+08:00",
+      "evidence": "2026-08-29当前主线程：用户要求完整同步工作文档，方便其他Agent接手；此前已明确要求持续推进至公开网站和管理后台完整上线。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "",
+  "completion_class": "standard",
+  "confirmation": "按当前线程用户持续推进目标执行；任何新增付费、凭证、权限、不可逆删除或扩大公网暴露仍需单独用户确认。",
+  "created_at": "2026-08-29T23:49+08:00",
+  "department": "开发部",
+  "details": "以 data/x-source-selection-v1.csv 为唯一选择输入：keep=27，SkySportsF1 改官方 RSS，drop=31。后续不得恢复旧59全量。先把生产 source registry 收敛到27个 X proposed/disabled/manual-only 与1条 Sky F1 RSS candidate；复用 M1 已完成的27/27登录态页面只读证据，只证明当次可访问。实现最低风险采集：单账号串行、低频有抖动、会话健康/挑战/限流即停、无点赞转发关注回复发帖、不得读取cookie值或绕过挑战、不得用Nitter/RSSHub/未文档化GraphQL。先3源 canary，成功后分批扩容；所有内容进入审核链，不直接公开。",
+  "domain_stage": "开发实现/X信源灰度",
+  "event_receipts": [],
+  "execution_state": "queued",
+  "external_artifacts": [],
+  "failure_paths": [
+    "出现 challenge、rate limit、login loss 或 restricted 页面立即停止该账号，不自动重试绕过。",
+    "无法以允许的页面只读路径稳定取得内容时保持 manual-only，不降级到非官方抓取。",
+    "任何旧59条 drop 项被启用、或X内容绕过人工审核进入公开投影时立即全局停止。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "QL3/x27/registry-low-risk-canary",
+  "pointers": [
+    "docs/当前生产状态与执行待办.md"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 1,
+  "schema_version": 1,
+  "task_id": "TASK-20260829-0ED611",
+  "title": "27个X信源Registry收敛与低风险只读采集灰度",
+  "unverified": [],
+  "updated_at": "2026-08-29T23:49+08:00",
+  "verified": []
+}

@@ -1,0 +1,51 @@
+{
+  "acceptance_exit": "M1上域名无关密钥和opaque身份材料安全生成一次且可重放只读核验；Ed25519公私钥匹配，私有根0700、秘密文件0600、uid501、nlink1、无symlink；源ref精确两个且不相同；现有live/DB/plist/jobs/listeners零任务引起漂移；给出剩余prepare必填输入和下一命令。若新增代码，固定Node24聚焦测试/typecheck/diff各一次通过。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-8EB56C-M1-Admin域名无关prepare前置输入报告.md"
+  ],
+  "authorization_evidence": "本线程用户：进入快速推进阶段并持续推进初版；2026-08-12",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T21:26+08:00",
+      "evidence": "本线程用户：进入快速推进阶段并持续推进初版；2026-08-12",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:prepare_prerequisites",
+  "completion_class": "standard",
+  "confirmation": "用户明确要求快速推进，域名问题不要阻断其他本地准备。",
+  "created_at": "2026-08-12T21:26+08:00",
+  "department": "开发部",
+  "details": "快速主线：基于已验签并固化但未加载的 d186e428 release，在固定M1仅完成域名无关且可独立冻结的prepare输入。允许在任务专属/正式预定私有根创建Ed25519投影keypair/key-id、operatorRef、M5/iPhone两个唯一sourceRefs、sender/receiver service identities及必要0700目录/0600文件；必须用密码学安全随机源和原子写，输出仅hash/路径/权限/配对收据，禁止回传秘密原文。不得创建deployment manifest/plist，不得运行prepare，不得launchctl/load，不得监听端口，不得打开/迁移/写review DB，不得修改现有public/RSS服务。若现有正式CLI缺独立出口，只做最小实现并单次聚焦验证。capability ID、canonical origin、真实login、source selectors等用户/管理面输入继续缺省。",
+  "domain_stage": "admin_prepare_inputs",
+  "event_receipts": [
+    "M1_GENERATE_PASS:input-config-sha256=234b7c53320e17973738ca652849ea193199e24afbfdd973aec79e74962d99ee;public-key-fingerprint=8e52ac4c47082ce0020edd1425bab1c60c440a7aa542c7954925d1cfbba2fb46;safety-receipt=8ba224c726642d50fd52b26116f88104e3b6ec8eccc604af42d598634f6fb821"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一既有目标已存在但身份/内容不可证明则停止，不覆盖；任何秘密泄露到stdout/报告/git则停止并隔离；任何DB/plist/launchctl/listener/live漂移则停止并给回退状态。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "No secret bytes or raw opaque identifiers entered stdout/report/Git; only paths, modes, hashes and pairing booleans. Two pre-promotion failures created no key material or formal input root; allowed empty private roots were retained. Runtime/code/build/tests untouched.",
+  "node": "M1_ADMIN_PREP_INPUTS",
+  "pointers": [
+    "app/ADMIN-SERVICE-PREP.md"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-8EB56C-M1-Admin域名无关prepare前置输入报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-8EB56C",
+  "title": "M1 Admin域名无关prepare前置输入生成",
+  "unverified": [
+    "Final canonical HTTPS origin, user-owned Tailscale app capability ID, exact Tailscale-User-Login, M5/iPhone management-plane source selectors and their mapping; actual prepare/load/3101/3102/projection/cutover remain successor scope."
+  ],
+  "updated_at": "2026-08-12T21:39+08:00",
+  "verified": [
+    "M1 generated once and verified once: Ed25519 pair matches; roots 0700; secret/config/runner files 0600 uid501 nlink1; exactly two unique 43-char sourceRefs; review DB identity and rollback anchors match; protected live/DB/plist/jobs/listeners receipt unchanged; no deployment/plist/prepare/launchctl/DB/service write."
+  ]
+}

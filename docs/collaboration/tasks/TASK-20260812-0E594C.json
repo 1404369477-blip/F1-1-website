@@ -1,0 +1,50 @@
+{
+  "acceptance_exit": "TASK_STATE_OK；唯一改动为测试夹具OS原子唯一tmp root；聚焦Vitest/typecheck/diff各一次PASS；继承builder next322/roots；FA5D66完整报告最终PASS并列SHA。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/src/tests/public-install-release.test.ts",
+    "docs/collaboration/部门/开发部/报告/2026-08-12-FA5D66-Next构建闭包与public-prepare原子提交实现报告.md"
+  ],
+  "authorization_evidence": "用户本会话：继续。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T12:58+08:00",
+      "evidence": "用户本会话：继续。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:projection_runtime_p1_mkdtemp_finalizer",
+  "completion_class": "standard",
+  "confirmation": "用户要求继续快速上线且减少无效测试。",
+  "created_at": "2026-08-12T12:58+08:00",
+  "department": "开发部",
+  "details": "继承blocked EFE9FE：admin release test PASS；installer唯一首错源于Vitest thread pool同PID、`${process.pid}-${temporaryRoots.length}`在两个worker都为0，home/manifest相互覆盖cleanup，触发owner-only single-link门。只允许测试夹具把每test home/root改为`mkdtempSync(realpathSync(tmpdir()) + /TASK-...-)`或等价OS原子唯一目录，并保持0700、独立cleanup；禁止改production/package/runbook/断言/并行配置/build。然后同一聚焦Vitest一次、typecheck一次、限定diff-check一次，首错即停。",
+  "domain_stage": "implementation",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若仍有碰撞或出现生产断言/类型/diff首错立即block不重跑；不得串行化套件或放宽manifest身份门；不得修改生产字节。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查并修正Vitest thread pool同PID导致的临时路径碰撞；最终使用mkdtempSync(realpath(tmpdir()))原子唯一0700 home，每test独立cleanup；未改production/断言/并行/build。",
+  "node": "M1首版上线/真实投影release/fixture collision finalizer",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-EFE9FE.json"
+  ],
+  "report": "不适用",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-0E594C",
+  "title": "Installer夹具mkdtemp物理唯一home最终收口",
+  "unverified": [
+    "M1目标机身份、listener、sender到active、公开feed/detail、真实synthetic回退演练未执行；SSH/网络/launchctl/load/cutover均0"
+  ],
+  "updated_at": "2026-08-12T13:01+08:00",
+  "verified": [
+    "固定Node24同一聚焦Vitest一次PASS：2 files/5 tests；typecheck一次PASS；限定diff-check一次PASS；继承production build与builder PASS，next322/13373354 bytes/root b11ef505，content e9eee919，release 4f3e25b9"
+  ]
+}

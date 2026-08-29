@@ -1,0 +1,55 @@
+{
+  "acceptance_exit": "聚焦测试PASS并证明base逐blob=54e694c、overlay严格4文件、package仅两script、fresh stage verifier roots一致；Node24 typecheck/diff-check PASS；修正历史报告并产successor报告/TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "用户授权继续；A441AC定位为工具自增量的确定性误判。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T10:14+08:00",
+      "evidence": "用户授权继续；A441AC定位为工具自增量的确定性误判。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "限定聚焦Vitest唯一1/1首错：RELEASE_GIT tooling overlay not exactly four files。静态推断为git status porcelain对untracked文件输出`?? app/...`，当前解析固定slice(3)错误丢失路径首字符；属于overlay状态解析机械错误。按协议立即停止，不改、不重跑；typecheck/diff-check均0/1，0外部。",
+  "claimed_by": "开发部/internal-agent:admin_release_overlay_finalizer",
+  "completion_class": "standard",
+  "confirmation": "仅修release工具自身overlay身份建模，不修改业务或用户授权。",
+  "created_at": "2026-08-12T10:14+08:00",
+  "department": "开发部",
+  "details": "继承5DA73D/A441AC候选。当前唯一首错：assertGitIdentity将本任务自己对app/package.json新增的两个release script误判为54e694c业务漂移。仅允许建立显式双层身份：BASE_RUNTIME_PATHS为54e694c中不被本任务修改的业务文件，逐blob/git status仍必须等于54e694c；TOOLING_OVERLAY_PATHS精确只含app/package.json、scripts/admin-build-release-manifest.ts、scripts/admin-verify-release-stage.ts、src/server/admin-service/release-manifest.ts，其中package.json必须验证相对54e694c只新增两条精确script且其余canonical结构/lock/package身份不变，三新文件必须普通owner单链接、路径闭合并被runtime file records/content/release root绑定。ADMIN-SERVICE-PREP仅文档不进入M1 runtime。禁止把任意其他dirty/untracked纳入overlay，禁止删除Git基线门，Node target/local和22包SHA门保持。承接一次聚焦Vitest、一次Node24 typecheck、一次diff-check新预算；首错即停。0SSH/M1/prepare/load/sender。",
+  "domain_stage": "开发/Admin release闭包",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "overlay发现第5文件、package存在两script以外差异或base blob漂移，立即block。",
+    "需移除外部manifest SHA/Node/依赖/文件mode门才能通过，立即block。",
+    "任何限定验证首错即停、不重跑。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "第一版后台/Admin release第二机械successor",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-A441AC.json"
+  ],
+  "report": "",
+  "resolution": {
+    "evidence": "docs/当前生产状态与执行待办.md",
+    "reason": "2026-08-29 schema10生产恢复、27个X信源和完整Admin路线已形成新的当前闭包；旧任务绑定过时schema/release/plist/视觉或运行时态，继续领取会造成重复或错误执行。",
+    "receipt_id": "RES-20260829T235603-B581820B",
+    "replacement_revision": 3,
+    "replacement_state": "blocked",
+    "replacement_task_id": "TASK-20260829-BBFF2A",
+    "resolved_at": "2026-08-29T23:56+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "superseded",
+    "target_revision_before": 3
+  },
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-44963E",
+  "title": "冻结Admin release受控tooling overlay并最终验签",
+  "unverified": [],
+  "updated_at": "2026-08-29T23:56+08:00",
+  "verified": []
+}

@@ -1,0 +1,56 @@
+{
+  "acceptance_exit": "提交安全部status=final、decision=pass或fail报告和脱敏manifest；静态审查完成后唯一Node24 harness commandCount=1且exit0；audit 5/5链/关联/root、UPDATE/DELETE触发器、profile lock第二owner和SQLite BEGIN IMMEDIATE contention全部按oracle通过；正式DB SQLite handle=0且SHA前后ddf3778c…e939、externalCalls=0、临时DB/lock/WAL/SHM/journal/harness零残留；结合前驱证据给出875B6C最终安全结论P0=0/P1=0，并返回TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-11-FAD506按冻结oracle闭合audit与第二writer最终安全报告.md",
+    "docs/collaboration/部门/安全部/报告/TASK-20260811-FAD506-evidence/manifest.json"
+  ],
+  "authorization_evidence": "本线程持续目标与2026-08-11继续推进授权；TASK-20260811-3D190C已ACK。",
+  "authorization_history": [
+    {
+      "at": "2026-08-11T12:16+08:00",
+      "evidence": "本线程持续目标与2026-08-11继续推进授权；TASK-20260811-3D190C已ACK。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "用户持续目标要求推进到可用初版；数据oracle已PASS/ACK并消除了前两次operator false negative，本任务只关闭最终未运行安全向量。",
+  "created_at": "2026-08-11T12:16+08:00",
+  "department": "安全部",
+  "details": "承接blocked TASK-20260811-76E7E8，并以ACK TASK-20260811-3D190C机器oracle为唯一数据预期。固定oracle路径docs/collaboration/部门/数据部/报告/TASK-20260811-3D190C-SOURCE-MGMT剩余安全出口-oracle.json，SHA-256=1ced08f0504bdfab352aea40ddb40e35cbde712ada05148ebc3f1ab82afc248e；冻结报告SHA-256=4dda4cbc9061926843a9c8cb7ae9854bb221a0029baf5db95252ac2f265caaaf。先完成纯静态harness审查，确认所有计数、audit core与业务payload来源、hash算法、表序和Node24 localeCompare均直接读取oracle，不再手写预期。随后固定Node24仅执行一次进程内harness：在0700任务临时根物理复制closed DB并chmod0600；只对副本验证oracle绑定、5条audit链与operation关联、logical root；在副本上分别尝试audit UPDATE/DELETE并确认触发器失败关闭且业务内容根不变；在独立lock-only临时appRoot中持有第一个profile lock时，第二次acquire必须在SQLite打开前以LOCK_CONTENTION失败且释放后零残留；在同一数据库副本两连接下由第一个BEGIN IMMEDIATE持锁，第二个withImmediateTransaction必须按oracle限定的ERR_SQLITE_ERROR busy/locked语义经3次有界尝试映射LOCK_CONTENTION，callback业务写入计数为0，随后rollback/close。只验证这些NOT_RUN出口；直接复用742B8D、AD6AD9、76E7E8已经通过的raw/session/CSRF/identity/no-egress/弱权限/basename/profile/59+1证据。不得修改repo、正式DB、依赖、UI、Spec或ADR；不得启动server/readiness/fixture，不得运行build/typecheck/全量测试或动态网络。",
+  "domain_stage": "M5-SOURCE-MGMT最终安全闭合",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "oracle、冻结报告、closed DB、875B6C或任一oracle绑定代码/合同SHA漂移，或oracle字段无法唯一驱动断言：不运行harness，立即block。",
+    "静态审查发现harness包含手写计数、错误payload来源、错误root排序、重复已证向量或可能触碰正式DB：不运行，修订审查稿后仍有歧义则block。",
+    "唯一harness任一断言首错、命令非零、正式DB/网络副作用或清理异常：立即停止，不修harness、不重跑；保留实得、完成精确清理并block。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "所有计数/event/payload/root/锁语义均由ACK oracle驱动；业务payload取receipt_json.result；未重复前驱向量或重跑harness；未打开正式DB、启动server/readiness/fixture、访问网络或修改repo。",
+  "node": "先静态审查harness，再精确执行一次；只覆盖76E7E8仍为NOT_RUN的audit、内容根、触发器和第二writer向量",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260811-3D190C.json",
+    "docs/collaboration/部门/数据部/报告/TASK-20260811-3D190C-SOURCE-MGMT剩余安全出口-oracle.json",
+    "docs/collaboration/部门/数据部/报告/2026-08-11-3D190C-SOURCE-MGMT剩余安全出口机器oracle冻结报告.md",
+    "docs/collaboration/tasks/TASK-20260811-76E7E8.json",
+    "docs/collaboration/tasks/TASK-20260810-875B6C.json"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-11-FAD506按冻结oracle闭合audit与第二writer最终安全报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260811-FAD506",
+  "title": "按冻结oracle单次闭合audit与第二writer最终安全出口",
+  "unverified": [
+    "OS级与生产网络隔离；真实provider/外部API/Public或Admin UI/部署/备份/生产数据；stale profile-lock owner存活判定与恢复策略。"
+  ],
+  "updated_at": "2026-08-11T12:42+08:00",
+  "verified": [
+    "ACK oracle及全部input pin SHA匹配；静态harness审查PASS；固定Node24唯一harness exit0；audit 5/5 payload/event hash与operation关联、2个append-only trigger、logical root、第二profile owner、3次有界BEGIN IMMEDIATE contention、callback写入0全部PASS；结合前驱证据，875B6C本地synthetic安全出口P0=0/P1=0；formal DB handle=0且SHA零漂移，externalCalls=0，零残留。"
+  ]
+}

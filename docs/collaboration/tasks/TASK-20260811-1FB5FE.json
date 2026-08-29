@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "专用legacy入口与SOURCE-MGMT入口职责分离且目标测试证明互不耦合；旧2a8 root仅能在全部稳定字段和DB真值精确匹配时迁移到唯一冻结新root，重复运行只更新validatedAt/self-hash；public两receipt集合提交具备失败零部分写与精确回退；CLI对外为RECEIPT_INTEGRITY且无泄露。固定Node24聚焦测试一次PASS，三份legacy receipt受控刷新一次PASS，随后canonical/self-hash/新root/freshness/0700/0600/nlink1/DB SHA与逻辑零漂移/无WAL-SHM-tmp-lock全部PASS，source-management现有入口静态/聚焦回归PASS，package-lock零漂移、externalCalls=0；报告、机器manifest、已验证/未验证/错题自检、TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "用户2026-08-11明确：Codex桌面端重启后继续推进。",
+  "authorization_history": [
+    {
+      "at": "2026-08-11T19:05+08:00",
+      "evidence": "用户2026-08-11明确：Codex桌面端重启后继续推进。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "固定Node24唯一聚焦批次exit1：首错app/src/tests/profile-closed-receipt.test.ts:266 ReferenceError unlinkSync is not defined；同批次另见:409 receipts目录已存在导致symlink EEXIST。按失败路径停止，canonical M3/public生成与三份receipt刷新NOT_RUN；两库、旧receipt、package-lock零漂移，externalCalls=0。报告：docs/collaboration/部门/开发部/报告/2026-08-11-profile-scoped验证器迁移与legacy收据原子刷新首错阻断报告.md；manifest：app/evidence/TASK-20260811-1FB5FE/manifest.json",
+  "claimed_by": "开发部/019fb374-7c86-7882-9e51-76114ce69e7f",
+  "completion_class": "standard",
+  "confirmation": "用户已授权重启后继续推进；该任务仅修复本地完整性收据迁移机制并刷新过期收据，不开启外部能力。",
+  "created_at": "2026-08-11T19:05+08:00",
+  "department": "开发部",
+  "details": "绑定已ACK安全报告TASK-20260811-2EAD96，实施唯一推荐方案。将legacy M3/public closed-receipt CLI与SOURCE-MGMT路由职责解耦，使legacy validator identity只绑定实际验证模块与专用稳定入口；SOURCE-MGMT使用独立受控入口且既有后端语义不变。为旧validator root 2a8c89ace30b1e9cac876adb0583ec47e43ce6d6806616a58fac7823ca586d83到新冻结profile-scoped root实现一次精确迁移：旧receipt canonical/self-hash/0600/DB SHA/schema/ledger/count/logical root/artifact revision及除validator identity、validatedAt、self-hash外的稳定字段必须全等；任一不等fail closed。public profile receipt与public data receipt必须先生成候选并作为一致集合原子安装，失败恢复旧精确字节，禁止部分刷新。安全日志新增粗粒度RECEIPT_INTEGRITY，仅映射内部RECEIPT_*，不输出内部码、路径、stack或载荷。更新public-multimedia运行时的冻结validator root与必要聚焦测试；不得修改DB业务内容、data/migration/Spec/design、前端功能、真实外部能力或放宽24小时freshness。完成聚焦测试后仅各运行一次既有受控legacy生成入口，刷新三份receipt；SOURCE receipt不重生成。",
+  "domain_stage": "M5-local-public-runtime-preflight",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 旧receipt任一稳定字段、DB/hash/root/权限不匹配：零写入首错block；2) public双receipt候选或原子安装任一步失败且无法证明旧字节完整恢复：P0阻断并停止，不重试；3) 聚焦测试、受控生成、安全脱敏、freshness、sidecar/清理或保护hash任一失败：保存首错停止，不继续0F65C1整链。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "修复2EAD96确认的双层P1并解除0F65C1运行前置",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260811-2EAD96.json",
+    "docs/collaboration/部门/安全部/报告/2026-08-11-CLI_INTERNAL_ERROR与legacy-receipt验证器漂移独立安全诊断报告.md",
+    "docs/collaboration/tasks/TASK-20260811-0F65C1.json",
+    "app/src/server/db/closed-receipt.ts",
+    "app/scripts/profile-closed-receipt.ts",
+    "app/src/server/db/public-multimedia-synthetic.ts",
+    "app/src/server/security/cli.ts",
+    "app/src/server/security/log.ts"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260811-1FB5FE",
+  "title": "实现profile-scoped验证器迁移并原子刷新legacy receipts",
+  "unverified": [],
+  "updated_at": "2026-08-11T19:37+08:00",
+  "verified": []
+}

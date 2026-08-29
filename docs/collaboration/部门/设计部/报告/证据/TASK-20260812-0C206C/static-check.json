@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "taskId": "TASK-20260812-0C206C",
+  "checkedAt": "2026-08-12T00:29:02Z",
+  "scope": "single-static-check",
+  "status": "pass",
+  "assertionCount": 20,
+  "assertionsCompletedBeforeReceiptWrite": true,
+  "receiptRecovery": {
+    "event": "The first receipt write used a percent-encoded Chinese directory and ended with ENOENT after all assertions passed.",
+    "action": "No UI check was rerun. This receipt was reconstructed from the completed assertion set and freshly calculated file hashes.",
+    "uiChangedAfterCheck": false
+  },
+  "checks": [
+    "app.js and one-shot capture script parse successfully",
+    "all HTML ids are unique and every JS id binding exists",
+    "HTML has no inline script, inline style, or external asset URL",
+    "formal filenames match the admin service static map",
+    "all frozen same-origin review and passkey endpoints are present",
+    "fresh options and verify carry the complete PublishRequest",
+    "publish performs fresh reauthentication before CSRF and sends both required headers",
+    "revision uses sourceVersionTag and the UI contains no sourcePayloadHash",
+    "real adapter validates fixed response schema versions",
+    "fixture requires explicit file or loopback activation and RealAdminAdapter is the default",
+    "CSS block braces are balanced",
+    "44px controls, mobile breakpoint, safe-area, reduced-motion, and keyboard focus styles are present",
+    "bootstrap token input mirrors the 43-character server contract",
+    "approval and manual publication are separate actions",
+    "index.html, app.css, and app.js are non-empty and each below the service 2 MiB limit"
+  ],
+  "inputs": {
+    "html": {
+      "path": "[M5-HOME]/Documents/F1+1/app/src/admin-ui/index.html",
+      "sha256": "5a617b38e3b38f19bbabb89a7ea16f79d1aceab1f8cc5fc7940726e79c747dda",
+      "bytes": 10190
+    },
+    "css": {
+      "path": "[M5-HOME]/Documents/F1+1/app/src/admin-ui/app.css",
+      "sha256": "be18bccf9ada2efad5fd00d8351888cd877fe708bbc0ad78990211578292468d",
+      "bytes": 18334
+    },
+    "js": {
+      "path": "[M5-HOME]/Documents/F1+1/app/src/admin-ui/app.js",
+      "sha256": "1123845193308472ff75b93701569306055f67cbf4a6f791f13cd9f5560c09ec",
+      "bytes": 59298
+    }
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "acceptance_exit": "Serve raw config：TCP443 HTTPS true、Web唯一根代理127.0.0.1:3101、app-cap唯一指定值；AllowFunnel缺失/空/目标键非true；M1 Admin/receiver仍loopback；canonical HTTPS有确定响应且无cap401、合法M5请求进入登录/bootstrap；DB/public/RSS零任务漂移。",
+  "artifacts": [],
+  "authorization_evidence": "继承52A4F6/6CFFBA用户明确Grant/Serve授权与Policy Saved截图；本任务仅修正已证实的共享状态判定。",
+  "authorization_history": [
+    {
+      "at": "2026-08-13T00:39+08:00",
+      "evidence": "继承52A4F6/6CFFBA用户明确Grant/Serve授权与Policy Saved截图；本任务仅修正已证实的共享状态判定。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "HTTPS_POSTFLIGHT_DNS_RESOLUTION_FAILED_ON_M1: raw Serve config fully passed HTTPS443/proxy/single-app-cap/AllowFunnel=false; first canonical HTTPS curl then failed `Could not resolve host: [PRIVATE-ADMIN-HOST]`; per contract first action serve reset succeeded; Serve={} and internal 3101/3102 listeners retained; no DB/policy/public write",
+  "claimed_by": "开发部/internal-agent:tailscale_serve_allowfunnel_finalizer",
+  "completion_class": "standard",
+  "confirmation": "无需额外确认",
+  "created_at": "2026-08-13T00:39+08:00",
+  "department": "开发部",
+  "details": "6CFFBA已证明唯一Serve写可正确形成HTTPS443→127.0.0.1:3101并accept唯一app-cap，后因错误以funnel status对象非空判Funnel启用而reset。官方CLI源码确认Serve与Funnel共享ServeConfig，serve路径调用setServe(...allowFunnel=false)；funnel status可回显共享配置。经UU入口fresh preflight后执行唯一Serve写，验收只以raw/JSON config中AllowFunnel缺失、空或目标键非true判断Funnel关闭，同时逐字段核HTTPS/proxy/app-cap；再做HTTPS无cap/合法cap最小验收。不得用funnel status对象非空作为失败条件。",
+  "domain_stage": "tailscale_serve_activation",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "写前门不符0写停；Serve写后raw config任一字段不符或AllowFunnel目标键=true则第一动作serve reset并复核；HTTPS身份异常同样reset；不改policy/DB/public。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "tailscale_serve_allowfunnel_finalizer",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260813-6CFFBA.json"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260813-EDBB77",
+  "title": "M1 Serve的AllowFunnel语义机械finalizer",
+  "unverified": [],
+  "updated_at": "2026-08-13T00:40+08:00",
+  "verified": []
+}

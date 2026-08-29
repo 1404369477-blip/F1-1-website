@@ -1,0 +1,48 @@
+{
+  "acceptance_exit": "给出PASS/FAIL、P0/P1/P2及是否允许按四phase顺序直接执行；若有缺陷给出最小机械修正，不要求重写产品代码。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-2A54AD-M1单次实采四阶段执行器静态安全审查报告.md"
+  ],
+  "authorization_evidence": "用户授权真实采集，并要求复杂执行前后由对应部门审查；本轮只读且不增加网络请求。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T05:08+08:00",
+      "evidence": "用户授权真实采集，并要求复杂执行前后由对应部门审查；本轮只读且不增加网络请求。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/internal-agent:rss_static_review",
+  "completion_class": "audit",
+  "confirmation": "统筹部据审查决定执行原脚本或派机械修复后继。",
+  "created_at": "2026-08-12T05:08+08:00",
+  "department": "安全部",
+  "details": "精确本地脚本=/var/folders/dz/l8yd2gqj22z1xgrcl1z_wbkr0000gn/T/TASK-20260812-B57F41-executor.h1qmBj/controlled-rss-run.mjs，SHA=d86feca9e2debeeb89cd9276b30ebe52b12885a9ac454d3e49f7d1644ae30292；远端同SHA但本任务禁止SSH/运行/修改。限定审查：baseline过期与slot边界；BEGIN IMMEDIATE只改enabled；enable失败stop；wrapper spawn返回后的下一语句确为stop且无解析/DB动作；timeout/exception仍停采；stop epoch与job门；合法唯一scheduler_gap；run/候选/pending_review/人工字段保护；20秒零新增；public DB/page/service零漂移；receipt权限/重复运行拒绝；是否存在会在真实请求后留下enabled或无法审计的P0/P1/P2。禁止扩展到collector核心已ACK项，0测试0网络0写入。",
+  "domain_stage": "真实采集执行器安全审查",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "发现wrapper异常路径可能跳过stop、source状态不确定或收据可误报时判P1/P0并禁止执行。",
+    "脚本SHA或输入路径不匹配时保持Unknown/FAIL。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未把正常stop顺序外推到全部异常；未把成功postflight外推到进程/receipt失败；未运行脚本/测试/网络/SSH，未修改执行器或collector，未扩展已ACK核心",
+  "node": "只读审查已传M1且SHA固定的B57F41四阶段执行器，重点验证启用围栏、wrapper后立即stop、gap与人工/public收据",
+  "pointers": [],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-12-2A54AD-M1单次实采四阶段执行器静态安全审查报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-2A54AD",
+  "title": "M1单次实采四阶段执行器精确静态审查",
+  "unverified": [
+    "远端实时SHA/mode与M1 source/job/DB/public状态、timeout/exception实机结果、修复后唯一实采与零漂移收据均Unknown"
+  ],
+  "updated_at": "2026-08-12T05:15+08:00",
+  "verified": [
+    "执行器SHA d86feca9e2debeeb89cd9276b30ebe52b12885a9ac454d3e49f7d1644ae30292 MATCH；正常路径wrapper返回下一语句为stop；enable仅改enabled且epoch3；成功路径gap/run/candidate/manual/20秒/public后验存在；但确认两项P1，最终P0=0/P1=2/P2=0，禁止四phase直接执行"
+  ]
+}

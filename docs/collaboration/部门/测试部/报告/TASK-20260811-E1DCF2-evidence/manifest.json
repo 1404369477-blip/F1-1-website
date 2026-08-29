@@ -1,0 +1,65 @@
+{
+  "schemaVersion": "e1dcf2-browser-recovery-evidence-v1",
+  "taskId": "TASK-20260811-E1DCF2",
+  "decision": "blocked",
+  "classification": "ENVIRONMENT_BROWSER_LAUNCH_BLOCKED",
+  "source": {
+    "path": "design/ui/F1+1-M5-admin-sources-preview-v0.1/index.html",
+    "sha256": "0d73ea294972627a7a832b42d999381da1fc4c8ea602b9fdbd04b11985156d68",
+    "modified": false
+  },
+  "tooling": {
+    "nodeVersion": "24.18.0",
+    "playwrightCoreVersion": "1.58.2",
+    "playwrightPackageSha256": "16a25dbd7368a87af8b58a45c6216b9cec5a91a72cf704533344701997ebde22",
+    "playwrightEntrySha256": "a4f83b5b2915b43bddd5384d963a66d1fd4d978a3db8059969fb78de65bc519a",
+    "browserRevision": 1208,
+    "browserVersion": "145.0.7632.6",
+    "browserSha256": "a46b3b1e63163fa2d2437fb6ae967cb5a73b50050bca32f1964e6129b6228244",
+    "transport": "remote-debugging-pipe",
+    "chromiumSandbox": true
+  },
+  "staticPreflight": {
+    "htmlHashMatched": true,
+    "externalResourceReferences": 0,
+    "networkApiCalls": 0,
+    "expectedDesktopControlsPresent": true,
+    "expectedMobileCardsPresent": true
+  },
+  "attempts": {
+    "seatbeltApply": {
+      "result": "blocked",
+      "stderr": "sandbox-exec: sandbox_apply: Operation not permitted",
+      "browserStarted": false,
+      "profileSha256": "ad9d4fdb76db3a41beb3fd5ad6557ef57e1b051663850048e51357ed46812edf"
+    },
+    "singleEquivalentFallback": {
+      "result": "blocked",
+      "harnessSha256": "34e1f36b96003c12cdf570c0be763508cf1b76577d5fa7b402ed095781365c6d",
+      "runtimeReceiptSha256": "428d02378cdc94ba0edbc83b78627f10244ec594cfcbcc59ca4a8879e6675f78",
+      "firstError": "MachPortRendezvousServer bootstrap_check_in permission denied (1100)",
+      "processExit": "SIGTRAP",
+      "pageCreated": false,
+      "firstNavigationReached": false,
+      "screenshotsCreated": 0
+    }
+  },
+  "verified": {
+    "candidateAndToolsPinned": true,
+    "oldPngReused": false,
+    "candidateModified": false,
+    "externalPageRequestsObserved": 0,
+    "browserPidResidual": false
+  },
+  "notRun": [
+    "1440x900 dark screenshot",
+    "1440x900 light screenshot",
+    "390x844 dark screenshot",
+    "390x844 light screenshot",
+    "desktop scroll-region runtime receipt",
+    "mobile width and horizontal-overflow runtime receipt",
+    "console and pageerror runtime matrix",
+    "page network runtime matrix"
+  ],
+  "productDefectEstablished": false
+}

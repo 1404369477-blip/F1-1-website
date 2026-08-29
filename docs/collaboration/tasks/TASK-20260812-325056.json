@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "M1正式app仅transport和release manifest更新，正式root第二release精确验签PASS，任务backup保留供下一阶段回退。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "scratch/TASK-20260812-325056-atomic-overlay.mjs",
+    "docs/collaboration/部门/开发部/报告/2026-08-12-325056-M1第二release双文件原子overlay与正式验签报告.md"
+  ],
+  "authorization_evidence": "用户已授权M1部署；stage已精确验签，第二release运行时代码差异已收敛为单文件。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T04:40+08:00",
+      "evidence": "用户已授权M1部署；stage已精确验签，第二release运行时代码差异已收敛为单文件。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:m1_release_executor",
+  "completion_class": "standard",
+  "confirmation": "统筹部核收正式验签后创建prepare与唯一实采任务。",
+  "created_at": "2026-08-12T04:40+08:00",
+  "department": "开发部",
+  "details": "前置TASK-20260812-45E5C7已ACK，stage release精确PASS。git diff证明第二release运行闭包唯一代码变化是app/src/server/rss/transport.ts；测试/文档不部署。正式旧transport必须SHA747c3fa238dab55bb9eb247b3337ae2b8e7918e45d68a9d9033fcaa62064cd09，新stage必须a55b76fa8899173341671a3c8e13d67c47e6f74d8fd6e0ff68a29e1abc134028；正式旧release manifest必须SHAf9765974eb3bc1be3512ea202781efb300b14d3a20f4f56cbb92cf206fbe9e96，新stage必须34c1032cc6adca96990cf35b092c2d61b940a2bda8fdd53a0c8ccfbb6e7c8d95。只创建一份任务专属、固定绝对路径的.mjs原子overlay脚本：两端Node24 --check各1、SHA一致；脚本全量写前确认四个文件为UID501/nlink1/普通文件/非symlink及固定SHA，backup root不存在且父目录真实；以COPYFILE_EXCL生成0700 backup内两份0600备份，以同目录临时文件复制stage、fsync、精确chmod后原子rename覆盖，任一apply错误在进程内按固定备份自动恢复并验证旧SHA。禁止inline Node、变量包装、grep/pipe、宽泛cp/rm/chmod或全闭包重覆盖。apply恰1次PASS后，直接用45E5C7同一c2db... verifier与--experimental-strip-types对正式root运行恰1次，要求rootKind=formal及第二release全身份PASS；若正式验签失败，只允许立即用已检查脚本固定rollback动作恢复两旧SHA并停止。本任务不prepare、不启用source、不RSS、不清理backup。",
+  "domain_stage": "M1原子overlay与正式验签",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一旧/新SHA、owner/link/type、backup门或脚本check/SHA失败时正式路径零写。",
+    "apply异常时脚本内恢复旧SHA；正式验签失败时执行唯一固定rollback并停止，不进入prepare。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "apply前只读对抗审查发现并关闭rollback双tmp顺序、临时名碰撞删除、pathname TOCTOU与特殊mode位问题；未使用inline Node、变量包装、grep/pipe、宽泛cp/rm/chmod或全闭包覆盖；formal PASS后保留两旧SHA backup。",
+  "node": "基于已通过的stage，仅原子替换唯一运行时代码transport与release manifest，并验证正式路径",
+  "pointers": [],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-325056-M1第二release双文件原子overlay与正式验签报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-325056",
+  "title": "M1第二release双文件原子overlay与正式验签",
+  "unverified": [
+    "未人为注入故障动态执行rollback分支；prepare、source enable、wrapper、RSS请求、stop、900秒load和清理均未执行。"
+  ],
+  "updated_at": "2026-08-12T04:53+08:00",
+  "verified": [
+    "任务脚本本地/远端固定Node24 --check各1次PASS且SHA均为36dabf8a1dda9752a7049ccc52e5cdfd31bf558fc1fd9413fbfc08d2572324c0；apply恰1次返回overlay-applied/files=2/backup retained-old-sha-verified，新transport=a55b76fa8899173341671a3c8e13d67c47e6f74d8fd6e0ff68a29e1abc134028、新manifest=34c1032cc6adca96990cf35b092c2d61b940a2bda8fdd53a0c8ccfbb6e7c8d95；现有固定verifier以--experimental-strip-types对formal恰1次返回release-verified/rootKind=formal，commit/content/release/runtime19/packages8/files118/Node身份全部精确匹配。"
+  ]
+}

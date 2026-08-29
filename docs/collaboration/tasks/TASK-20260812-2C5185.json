@@ -1,0 +1,42 @@
+{
+  "acceptance_exit": "精确commit/push成功，runtime clean；build/manifest/local verifier PASS且三设备运行文件进入闭包；M1新release原子固化并target verifier PASS；PrepareInputs与Admin manifest精确3个独立role/ref/selector映射，Admin prepare disabled、RunAtLoad/KeepAlive false；3101/3102 absent，review DB inode/version与live jobs/plists零任务引起漂移。",
+  "artifacts": [],
+  "authorization_evidence": "本线程用户确认同时给iPad；C8CDB9代码TASK_STATE_OK；2026-08-12",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T23:06+08:00",
+      "evidence": "本线程用户确认同时给iPad；C8CDB9代码TASK_STATE_OK；2026-08-12",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "LOCAL_TARGET_VERIFIER_ENTRY_REJECTED_CLI_INTERNAL_ERROR_AFTER_BUILDER_PASS; STOPPED_BEFORE_M1_TRANSFER_PER_FIRST_ERROR",
+  "claimed_by": "开发部/internal-agent:three_device_release",
+  "completion_class": "standard",
+  "confirmation": "用户明确授权M5+iPhone+iPad三设备后台范围；本任务仅代码发布和disabled reprepare，不启动服务或迁移DB。",
+  "created_at": "2026-08-12T23:06+08:00",
+  "department": "开发部",
+  "details": "吸收C8CDB9冻结四文件与restricted ipad sourceRef。快速机械主线：仅精确白名单形成clean单parent commit并普通非force推送codex/first-public-release；post-commit运行聚焦Vitest/固定Node24 typecheck/限定diff；production build一次、M1 target manifest builder一次、闭包外target verifier一次；用最小delta同步固定M1为新版本release并target verifier；更新PrepareInputs三refs配置与真实M5/new iPhone/old iPad selector映射；用新release重新执行Admin deployment-v3 prepare disabled一次。Public deployment只有在新release root/manifest要求它绑定新appRoot时机械reprepare，否则保持3a4824e2。全程禁止load/bootstrap、DB打开/迁移/写、Serve/Grant/Funnel、public cutover；保护旧live/RSS/public jobs/plists/listeners/DB。",
+  "domain_stage": "admin_three_device_release_prepare",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "白名单外或runtime脏、push非快进/未知则停且不force；build/manifest/verifier/delta任一首错停在未激活release；三refs任何泄露、重复或旧2项接受则停；任何load/DB/Serve/Grant/cutover调用立即停止并保留旧服务态。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "ADMIN_THREE_DEVICE_RELEASE_PREPARE",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-C8CDB9-M5-iPhone-iPad三设备独立身份最小实现报告.md"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-2C5185",
+  "title": "三设备合同checkpoint-release-M1-reprepare机械收口",
+  "unverified": [],
+  "updated_at": "2026-08-12T23:08+08:00",
+  "verified": []
+}

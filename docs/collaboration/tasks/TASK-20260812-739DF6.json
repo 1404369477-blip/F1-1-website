@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "完整最终sqlite_schema manifest/hash冻结且新库/现成v2库都核对；删关键trigger负例fail-closed；原1条端到端正例仍通过；除migration/test外九个核心SHA不变；三项验证各一次PASS；报告落盘，TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/src/server/review-real/migration.ts",
+    "app/src/tests/review-real-backend.test.ts",
+    "docs/collaboration/部门/开发部/报告/2026-08-12-739DF6-完整sqlite_schema指纹启动门successor报告.md"
+  ],
+  "authorization_evidence": "后端唯一端到端测试和typecheck已PASS；独立最终审查发现完整schema fingerprint缺失P1，用户要求快速修复第一版。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T07:38+08:00",
+      "evidence": "后端唯一端到端测试和typecheck已PASS；独立最终审查发现完整schema fingerprint缺失P1，用户要求快速修复第一版。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:admin_backend_successor",
+  "completion_class": "standard",
+  "confirmation": "只修52616C唯一P1并承接最终diff-check；不得扩展session/routes/receiver/部署/UI。",
+  "created_at": "2026-08-12T07:38+08:00",
+  "department": "开发部",
+  "details": "继承8B641A冻结候选及其唯一Vitest/typecheck PASS，不改除 app/src/server/review-real/migration.ts、app/src/tests/review-real-backend.test.ts 和successor报告外的任何文件。严格修52616C唯一P1：为0001+0002最终业务schema生成/冻结canonical sqlite_schema manifest/hash（排除SQLite内部对象，按type/name/tbl_name/sql确定排序并闭合规范化），在新库apply后及每次打开user_version=2已有库时、Repository可构造前逐字/逐hash核对；缺表/列/index/trigger、额外业务对象、SQL漂移均fail-closed。测试只新增一个高价值负例：合法temp v2库删除一个关键不可变/REPLACE/audit trigger后，重新打开必须在Repository构造前失败；保留原端到端正例。0真实DB/0synthetic/0网络/0M1。仅运行一次聚焦Vitest、一次固定Node24 typecheck、一次diff-check，首错即停。",
+  "domain_stage": "开发/后端安全修复",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "canonical schema在相同migration/固定SQLite上无法稳定重现：立即BLOCK并报告，不改用仅表名检查。",
+    "需修改Repository或放宽数据库门：停止并BLOCK。",
+    "限定验证首错：立即停止、不重跑，保留首错/SHA并BLOCK。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "只改migration.ts、原聚焦测试和successor报告；完整持久业务对象manifest覆盖table/index/trigger/view并拒绝temp遮蔽；未自动修复漂移；唯一三项验证无重跑；无网络/SSH/真实DB/生产数据写。",
+  "node": "第一版后台/后端候选P1修复",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-52616C-真实RSS审核发布后端冻结候选最终静态对抗审查报告.md"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-739DF6-完整sqlite_schema指纹启动门successor报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-739DF6",
+  "title": "8B641A successor：完整sqlite_schema指纹启动门",
+  "unverified": [
+    "正式M1、真实RSS数据库/运营数据、Tailscale、passkey/WebAuthn外部验证器、Mac/iPhone管理端、Admin UI、sender/receipt回写、公网隔离与部署切换均未运行。"
+  ],
+  "updated_at": "2026-08-12T07:45+08:00",
+  "verified": [
+    "固定Node24聚焦Vitest唯一1/1 PASS（1 file/1 test）；固定Node24 typecheck唯一1/1 PASS；git diff --check唯一1/1 PASS；新库v1→v2、合法现成v2命中冻结schema hash，删除publication_no_delete后重开在Repository构造前ADMIN_INTERNAL_FAILURE；九项非任务SHA保持。"
+  ]
+}

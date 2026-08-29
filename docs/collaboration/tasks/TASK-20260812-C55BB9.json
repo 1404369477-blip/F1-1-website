@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "TASK_STATE_OK；正式短报告给M1/M5当前可证状态、阻断Admin canonical HTTPS origin的唯一缺口、用户下一次只需做的一项GUI动作，以及完成后的命令级验收/回退；0状态修改。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/研究部/报告/2026-08-12-M1与M5-Tailscale当前入口只读状态.md"
+  ],
+  "authorization_evidence": "用户此前：Mac与iPhone都能执行全部操作；接受安装；私有网络；固定M1。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T13:11+08:00",
+      "evidence": "用户此前：Mac与iPhone都能执行全部操作；接受安装；私有网络；固定M1。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "研究部/internal-agent:tailscale_official",
+  "completion_class": "standard",
+  "confirmation": "用户已接受Tailscale安装和Mac/iPhone全功能，但首次GUI动作尚未完成。",
+  "created_at": "2026-08-12T13:11+08:00",
+  "department": "研究部",
+  "details": "继承22B680官方实施核验与42DB75 M1 preflight。严格只读核对本机M5和SSH别名f1plus1-m1-uu上的Tailscale当前事实：安装渠道/版本、CLI路径、backend state、node name/IP、tailnet/MagicDNS/CertDomains、Serve/Funnel config、是否已登录、是否具备HTTPS Serve能力、3101目标尚未监听；不登录、不升级、不批准设备、不改Serve/Funnel/Grant。M5若未安装只报告；iPhone仅按现有用户事实与官方要求列Unknown。输出一条最小人工动作链：在哪台Mac打开哪个GUI、预期看到什么、完成后统筹可用SSH执行的具体只读/配置命令；必须保持Funnel关闭、Admin仅tailnet、现有Cloudflare公网3000不变。禁止泄露tailnet私密标识，报告脱敏。",
+  "domain_stage": "research-preflight",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "CLI/App/SSH任一不可用时保持Unknown不反复重试；若发现Funnel已开或Serve指向公网/非3101，只报告P1不修改；若输出会泄露完整tailnet/设备标识则脱敏后落盘。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "原始CLI输出含完整tailnet/IP/账号/node key，正式报告已全部脱敏；没有把M5的系统VPN Connected误写成backend Running；没有把空Serve等同HTTPS已启用，CertDomains=null被识别为canonical origin唯一外部前置缺口。",
+  "node": "M1首版上线/Admin私有入口/设备准备",
+  "pointers": [
+    "docs/collaboration/部门/研究部/报告/2026-08-12-M1-M5-iPhone-Tailscale私有Admin官方实施核验.md"
+  ],
+  "report": "docs/collaboration/部门/研究部/报告/2026-08-12-M1与M5-Tailscale当前入口只读状态.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-C55BB9",
+  "title": "M1与M5 Tailscale当前入口状态和单一人工动作只读核对",
+  "unverified": [
+    "iPhone当前状态、tailnet管理面的device approval/Grant、M5重连、HTTPS启用后的实际CertDomain、M5/iPhone异地可达及中国大陆网络/撤销/RTO/RPO均未验证；本轮未改任何状态。"
+  ],
+  "updated_at": "2026-08-12T13:16+08:00",
+  "verified": [
+    "只读核验M5与SSH别名f1plus1-m1-uu：两端均为Standalone App及已启用system extension/VPN；M1 v1.96.5 backend Running、MagicDNS true、CertDomains null、Serve/Funnel空、3101无listener；M5 v1.98.9 backend Stopped、CertDomains null、Serve/Funnel空。已给出唯一GUI动作、后续命令级验收和回退。"
+  ]
+}

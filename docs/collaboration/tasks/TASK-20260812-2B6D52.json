@@ -1,0 +1,55 @@
+{
+  "acceptance_exit": "四个精确旧残留路径均不存在；当前唯一回退备份及全部正式运行数据存在；RSS 900秒任务仍loaded/enabled；公开面无漂移；报告列明删除对象、释放字节、不可恢复性与保留项，TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "用户此前明确要求安装后清除旧版备份、避免无效残留；当前自然900秒周期已通过，按统筹保留最近一份回退备份。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T06:10+08:00",
+      "evidence": "用户此前明确要求安装后清除旧版备份、避免无效残留；当前自然900秒周期已通过，按统筹保留最近一份回退备份。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "LOCAL_DELETION_TOOL_POLICY_REJECTED_AFTER_REMOTE_PARTIAL_CLEANUP",
+  "claimed_by": "开发部/internal-agent:rss_cleanup",
+  "completion_class": "standard",
+  "confirmation": "删除前逐项打印规范化绝对路径和字节数；不得清空整个Trash；不得删除325056最新回退备份。",
+  "created_at": "2026-08-12T06:10+08:00",
+  "department": "开发部",
+  "details": "自然900秒周期BAF2E6已PASS。先只读核对并记录大小、路径、owner、是否有进程打开；仅永久删除以下已被当前第二release替代且不再用于回退的任务残留：M1 [M1-HOME]/F1-1-website/.rss-release-TASK-20260812-D460D7/，本机 /var/folders/dz/l8yd2gqj22z1xgrcl1z_wbkr0000gn/T/TASK-20260812-D460D7-release.1qPEeZ/，M1 Trash中的TASK-20260812-772F48-remote-release-stage，本机Trash中的TASK-20260812-772F48-local-release-stage.36zkHe。不得使用glob或宽路径递归；每个精确路径须验证身份后逐项删除。保留 [M1-HOME]/F1-1-website/.rss-release-TASK-20260812-325056-backup 作为当前唯一最近回退备份，并保留正式private DB、release/deployment manifest、plist、logs/receipts、公网DB与应用。删除后只做路径不存在、RSS job loaded/source enabled、公开四页面200与三服务状态零漂移的最小复核；不触发采集、不重启服务、不改DB。落脱敏清理报告并回报释放字节数。",
+  "domain_stage": "部署/清理",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一目标路径身份、owner或路径与任务不一致：停止，不删除该项并BLOCK。",
+    "任一目标存在打开句柄或属于当前release/正式数据：停止全部删除并BLOCK。",
+    "删除或后置最小健康复核首错：立即停止，不尝试重启/修复，保留证据并BLOCK。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "第一版上线/RSS稳定后清理",
+  "pointers": [
+    "docs/collaboration/部门/测试部/报告/2026-08-12-BAF2E6-M1真实RSS自然900秒周期独立运行观察报告.md"
+  ],
+  "report": "",
+  "resolution": {
+    "evidence": "docs/当前生产状态与执行待办.md",
+    "reason": "2026-08-29 schema10生产恢复、27个X信源和完整Admin路线已形成新的当前闭包；旧任务绑定过时schema/release/plist/视觉或运行时态，继续领取会造成重复或错误执行。",
+    "receipt_id": "RES-20260829T235610-A788E9D6",
+    "replacement_revision": 3,
+    "replacement_state": "blocked",
+    "replacement_task_id": "TASK-20260829-082F2C",
+    "resolved_at": "2026-08-29T23:56+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "superseded",
+    "target_revision_before": 3
+  },
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-2B6D52",
+  "title": "M1真实RSS稳定后旧stage与迁移残留精确清理",
+  "unverified": [],
+  "updated_at": "2026-08-29T23:56+08:00",
+  "verified": []
+}

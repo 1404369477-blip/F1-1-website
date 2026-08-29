@@ -1,0 +1,46 @@
+{
+  "acceptance_exit": "报告唯一定位每个不一致字段及精确代码来源，说明为何其余4/5通过；给出唯一最小修复文件/行级建议、成功/拒绝/回退出口与P0/P1；canonical两库/三旧receipt/生产源码前后hash零漂移，临时根清理、externalCalls=0；已验证/未验证/错题自检并TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "用户2026-08-11明确：Codex桌面端重启后继续推进。",
+  "authorization_history": [
+    {
+      "at": "2026-08-11T19:45+08:00",
+      "evidence": "用户2026-08-11明确：Codex桌面端重启后继续推进。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "",
+  "completion_class": "audit",
+  "confirmation": "用户已授权继续推进；本任务只诊断本地聚焦测试的字段级完整性首错。",
+  "created_at": "2026-08-11T19:45+08:00",
+  "department": "安全部",
+  "details": "只读/隔离诊断TASK-20260811-34C7F1在profile-closed-receipt.test.ts:292调用assertLegacyClosedReceipts时的RECEIPT_TAMPER binding changed。可静态比较generator新receipt schema、LEGACY_RECEIPT_EXPECTATIONS/PUBLIC_DATA_RECEIPT_EXPECTATION与validator marker；若仍不能唯一定位，允许在项目外0700临时工程中至多复现一次该单一迁移用例，并只输出不一致字段名、期望值hash、实际值hash和所属receipt，不输出receipt正文、数据库行、绝对路径或stack。禁止修改canonical、生产代码、测试、DB/receipt、freshness、运行其他测试/服务或联网。交付唯一最小修复建议，区分测试夹具问题与产品冻结常量问题。",
+  "domain_stage": "M5-local-public-runtime-preflight",
+  "event_receipts": [],
+  "execution_state": "queued",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 单次隔离复现仍无法唯一定位：保持Unknown并给下一条最小诊断，不猜修复；2) 需要输出载荷、打开canonical DB或修改正式文件才能判断：立即停止并block；3) 发现生产冻结期待值本身与真实canonical不一致：定为P1并禁止只改测试绕过。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "诊断34C7F1剩余4/5首错，为最小修复提供字段级证据",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260811-34C7F1.json",
+    "docs/collaboration/部门/开发部/报告/2026-08-11-34C7F1两项receipt聚焦测试准备修复与原子刷新首错阻断报告.md",
+    "app/src/tests/profile-closed-receipt.test.ts",
+    "app/src/server/db/public-multimedia-synthetic.ts",
+    "app/src/server/db/closed-receipt.ts"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 1,
+  "schema_version": 1,
+  "task_id": "TASK-20260811-4CAE32",
+  "title": "定位新receipt与runtime冻结binding的唯一不一致字段",
+  "unverified": [],
+  "updated_at": "2026-08-11T19:45+08:00",
+  "verified": []
+}

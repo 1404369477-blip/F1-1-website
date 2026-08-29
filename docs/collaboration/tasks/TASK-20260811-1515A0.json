@@ -1,0 +1,47 @@
+{
+  "acceptance_exit": "1) 授权后先重新复算全部闭集 SHA，任一漂移即停止；2) 最小文件边界遵循 proposed B §9：page-service adapter/manifest、server.ts与serve.ts最小接线、真实 page/client/CSS、必要聚焦测试与 closed page-service manifest；3) 真实 source profile 从同一 origin访问 /admin/sources、/api/health、全部 allowlisted Admin API与精确 hashed assets，禁止其他路由；4) 进程=1、listener=1、port=1、profile=1、DB handle=1、writer=1，child/worker/proxy/internal port/DNS/external calls=0；5) 首屏无业务数据/session/CSRF/identity/secret，真实 session→list，mutation严格按 command bytes→一次性CSRF→同bytes提交，response unknown只查同operation；6) 59 baseline只读+local overlay、add/validate/revalidate/activate/stop/retire/requeue，以及 loading/filter-empty/partial/error/locked/guard/conflict/stale/blocked/dead-letter/active/stopped/response-unknown 全部有真实可达出口；7) 1440/1024/390×dark/light六格与同candidate root绑定，桌面固定ACTIONS/局部横滚可发现且键盘可达，390无页面横溢、safe-area与六操作等价；8) fixed Node24 typecheck/build/聚焦功能与HTTP链按低冗余单次执行，首错即停；9) 交付实现报告、manifest、Function ID映射、已验证/未验证、回退与清理收据，TASK_STATE_OK；后继设计/测试/安全仍须独立复验。",
+  "artifacts": [],
+  "authorization_evidence": "",
+  "authorization_history": [],
+  "authorization_state": "user_required",
+  "block_reason": "",
+  "claimed_by": "",
+  "completion_class": "standard",
+  "confirmation": "待用户精确回答：是否确认 SHA-256=7686511f56f65ca5838ee9c907a24ac930d92974397d9b398d0d9ac90495f155 的 SOURCE-MGMT-001 v2视觉冻结manifest，并允许开发部按 proposed B 同进程合同实现本地 /admin/sources？确认只授权本地synthetic页面，不含真实provider/Base、外部I/O、远程Admin、生产部署或自动发布。",
+  "created_at": "2026-08-11T13:05+08:00",
+  "department": "开发部",
+  "details": "【仅形成待授权任务，当前不得claim或改App】唯一 Function ID=SOURCE-MGMT-001。前置输入闭集：视觉冻结 manifest SHA=7686511f56f65ca5838ee9c907a24ac930d92974397d9b398d0d9ac90495f155；交互 HTML SHA=0d73ea294972627a7a832b42d999381da1fc4c8ea602b9fdbd04b11985156d68；design-notes SHA=9d9d6f39cfc028e50acbdacecdfc21c2e4096133e08ee542986fe88174fd1b5a；SOURCE-MGMT v0.3 SHA=90ee4ed30d325b7b2833582cc0ac8134aefc7fbc2dcd43ec9d20c0f726b2f1fe；页面服务模型 proposed B SHA=7d7bf37f4f55bd6a932f83d2301f922c74e08ce7a2503b9f17afde0e762a6681；后端 91AF6E manifest SHA=7b0658d9972df676acec689cb3d99ea23e74bf1abc2e51f9a169a9aa49b187b3；最终安全 FAD506 已 ACK/PASS。用户精确确认视觉 manifest 后，才允许开发：同一 Node24 进程、唯一 numeric loopback node:http listener、raw gate before Next、同进程 Next production handler、单 source-management-synthetic profile/DB handle/writer/lock，真实 GET /admin/sources 与同源 Admin API/closed hashed assets；Mac 1440/1024 表格+Drawer，390 卡片+全屏详情，六操作和全部状态/恢复功能等价。不得新增依赖、sidecar、第二进程/端口/writer、静态假数据页、孤立Next页面、真实 provider/Base/外部 I/O、Reviews、多媒体或生产能力。",
+  "domain_stage": "MVP-real-admin-page",
+  "event_receipts": [],
+  "execution_state": "queued",
+  "external_artifacts": [],
+  "failure_paths": [
+    "a) 未取得用户对精确视觉 manifest 的确认，任务保持 user_required，禁止claim；b) 同进程 Next handler无法满足raw-before-Next、单listener/进程/profile/DB/writer或closed CSP/asset/no-egress，首错即block，不回退sidecar/第二端口/A方案；c) 任一需求需要改accepted ADR、v0.3安全/命令语义、新增依赖或真实外部能力，立即block并只提交最小差异与一个用户问题；d) 运行候选偏离冻结视觉、删减iPhone功能、存在占位/DRAFT/TODO/NOT_RUN、敏感材料暴露、非loopback请求、失败清理残留或六格证据缺失，开发任务不得complete。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "MVP/SOURCE-MGMT-001/real-admin-page",
+  "pointers": [
+    "docs/decisions/system/2026-08-10-F1+1-SOURCE-MGMT-001真实Admin页面服务模型-proposed.md"
+  ],
+  "report": "",
+  "resolution": {
+    "evidence": "docs/当前生产状态与执行待办.md",
+    "reason": "2026-08-29 schema10生产恢复、27个X信源和完整Admin路线已形成新的当前闭包；旧任务绑定过时schema/release/plist/视觉或运行时态，继续领取会造成重复或错误执行。",
+    "receipt_id": "RES-20260829T235612-EB04B977",
+    "replacement_revision": 3,
+    "replacement_state": "blocked",
+    "replacement_task_id": "TASK-20260829-E59ACA",
+    "resolved_at": "2026-08-29T23:56+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "superseded",
+    "target_revision_before": 1
+  },
+  "revision": 2,
+  "schema_version": 1,
+  "task_id": "TASK-20260811-1515A0",
+  "title": "SOURCE-MGMT-001真实Admin页面同进程Next落地",
+  "unverified": [],
+  "updated_at": "2026-08-29T23:56+08:00",
+  "verified": []
+}

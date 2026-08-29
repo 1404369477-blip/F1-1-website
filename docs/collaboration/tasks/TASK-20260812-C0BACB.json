@@ -1,0 +1,43 @@
+{
+  "acceptance_exit": "安全部final报告列每个prepare输入的Known/Unknown/来源/是否可自动生成；给最小下一动作与阻断项、P0/P1/P2；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-C0BACB-M1新release-prepare输入只读核对报告.md"
+  ],
+  "authorization_evidence": "",
+  "authorization_history": [],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "安全部/internal-agent:prepare_input_gate",
+  "completion_class": "audit",
+  "confirmation": "无需额外确认",
+  "created_at": "2026-08-12T18:36+08:00",
+  "department": "安全部",
+  "details": "在已固化未加载8e70 release上严格只读SSH核对prepare输入，不执行prepare：新final target verifier；唯一review DB固定路径/dev/ino/uid/mode/nlink/user_version/integrity；旧synthetic rollback app root BUILD_ID内容、DB SHA/dev/ino/identity；Admin/Public data roots与keypair路径是否存在；三份live plist SHA/mode/loaded/PID作为rollback anchor；3101/3102 listener；Tailscale CertDomains/Serve/Funnel/current login/device approval/Grants/app-cap可读状态（仅可读且脱敏）；M1 release实际env example/CLI所需字段。列出可在不需用户值时安全生成的输入（Ed25519 keypair、service identities、operatorRef等）与必须用户/管理面提供的真实值（capability域名、login、M5/iPhone selectors、sourceRefs、policy hash、HTTPS enable）。禁止输出真实login/IP/node key，禁止写key/dataRoot/plist/tailnet/DB，不访问页面。",
+  "domain_stage": "review",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "SSH/身份读取首错立即FAIL；发现已有不安全key/路径即P1停止扩展；不得生成或修改任何输入、prepare/launchctl/tailnet/DB。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未输出login/IP/node key/BUILD_ID原文/token/key bytes；首次错误Node路径未执行程序，随后用冻结真实Node只读verifier成功；SQLite最终仅Node readOnly；未把输入盘点PASS扩大为prepare/load/cutover授权。",
+  "node": "M1-PREPARE-INPUT-GATE",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-F031E2-M1-delta-release原子固化报告.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-12-C0BACB-M1新release-prepare输入只读核对报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-C0BACB",
+  "title": "M1新release prepare输入与可执行缺口只读核对",
+  "unverified": [
+    "device approval、Grants、M5/iPhone selectors、policy hash、capability控制域、真实Serve header、keypair/sourceRefs/opaque refs均未形成；0key/root/plist/tailnet/launchd/service/DB写，0页面。"
+  ],
+  "updated_at": "2026-08-12T18:43+08:00",
+  "verified": [
+    "严格只读SSH完成8e70 final target verifier PASS；核唯一review DB固定身份/user_version1/integrity ok；旧rollback BUILD_ID受限身份与synthetic DB SHA/dev/ino；三live plist/loaded/PID；3101/3102=0；Admin/Public/key/deployment absent；Tailscale1.96.5 Running、login可发现但脱敏、CertDomains0、Serve/Funnel空、目标app-cap0；列全Admin/Public输入Known/Unknown/来源/自动生成性。P0=0/P1=0/P2=3。"
+  ]
+}

@@ -1,0 +1,153 @@
+{
+  "renderer": "Google Chrome 151.0.7922.137 headless via local CDP",
+  "localOrigin": "http://127.0.0.1:51173",
+  "explicitFixture": "review-ui-v1",
+  "externalHttpRequestsObserved": [],
+  "pageFailures": [],
+  "captures": [
+    {
+      "file": "admin-ui-1440-dark-pending.png",
+      "width": 1440,
+      "height": 900,
+      "mobile": false,
+      "theme": "dark",
+      "fixtureState": "pending",
+      "view": "list",
+      "scroll": "top",
+      "purpose": "宽屏队列、真实详情、编辑与批准/拒绝层级",
+      "url": "http://127.0.0.1:51173/admin/reviews?fixture=review-ui-v1&fixtureState=pending&theme=dark&view=list",
+      "outputPath": "[M5-HOME]/Documents/F1+1/docs/collaboration/部门/设计部/报告/证据/TASK-20260812-0C206C/admin-ui-1440-dark-pending.png",
+      "observed": {
+        "theme": "dark",
+        "mobileView": "list",
+        "innerWidth": 1440,
+        "innerHeight": 900,
+        "devicePixelRatio": 1,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "scrollY": 0,
+        "title": "F1+1 · 人工审核台",
+        "fixtureVisible": true,
+        "environmentLabel": "验收 Fixture",
+        "detailTitle": "汉密尔顿谈法拉利新阶段：赛车节奏与信心正在回升",
+        "actionLabels": [
+          "批准当前版本",
+          "拒绝并填写原因"
+        ],
+        "visibleTargetMinimumHeight": 44,
+        "visibleTargetsBelow44": [],
+        "styleSheetCount": 1
+      },
+      "outputSha256": "62e97d357cabebd787964d3b858af914b992e69151c8c2fd513076a74960fbb7",
+      "bytes": 325145
+    },
+    {
+      "file": "admin-ui-1440-light-approved.png",
+      "width": 1440,
+      "height": 900,
+      "mobile": false,
+      "theme": "light",
+      "fixtureState": "approved",
+      "view": "list",
+      "scroll": "top",
+      "purpose": "宽屏浅色主题与批准后独立手动发布动作",
+      "url": "http://127.0.0.1:51173/admin/reviews?fixture=review-ui-v1&fixtureState=approved&theme=light&view=list",
+      "outputPath": "[M5-HOME]/Documents/F1+1/docs/collaboration/部门/设计部/报告/证据/TASK-20260812-0C206C/admin-ui-1440-light-approved.png",
+      "observed": {
+        "theme": "light",
+        "mobileView": "list",
+        "innerWidth": 1440,
+        "innerHeight": 900,
+        "devicePixelRatio": 1,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "scrollY": 0,
+        "title": "F1+1 · 人工审核台",
+        "fixtureVisible": true,
+        "environmentLabel": "验收 Fixture",
+        "detailTitle": "汉密尔顿谈法拉利新阶段：赛车节奏与信心正在回升",
+        "actionLabels": [
+          "手动发布当前批准版本",
+          "返回队列"
+        ],
+        "visibleTargetMinimumHeight": 44,
+        "visibleTargetsBelow44": [],
+        "styleSheetCount": 1
+      },
+      "outputSha256": "73d36b5bcb8133f1523988ddfc69ad941366e2c405c748223bdb64bee22b8cc1",
+      "bytes": 324970
+    },
+    {
+      "file": "admin-ui-390-dark-pending-editor-actions.png",
+      "width": 390,
+      "height": 844,
+      "mobile": true,
+      "theme": "dark",
+      "fixtureState": "pending",
+      "view": "detail",
+      "scroll": "editor-actions",
+      "purpose": "窄屏单列编辑尾部与批准/拒绝动作",
+      "url": "http://127.0.0.1:51173/admin/reviews?fixture=review-ui-v1&fixtureState=pending&theme=dark&view=detail",
+      "outputPath": "[M5-HOME]/Documents/F1+1/docs/collaboration/部门/设计部/报告/证据/TASK-20260812-0C206C/admin-ui-390-dark-pending-editor-actions.png",
+      "observed": {
+        "theme": "dark",
+        "mobileView": "detail",
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 1,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "scrollY": 1112,
+        "title": "F1+1 · 人工审核台",
+        "fixtureVisible": true,
+        "environmentLabel": "验收 Fixture",
+        "detailTitle": "汉密尔顿谈法拉利新阶段：赛车节奏与信心正在回升",
+        "actionLabels": [
+          "批准当前版本",
+          "拒绝并填写原因"
+        ],
+        "visibleTargetMinimumHeight": 44,
+        "visibleTargetsBelow44": [],
+        "styleSheetCount": 1
+      },
+      "outputSha256": "dc8d02ee7ada47dfe64d3dce17a862be4e0b981ee10c5648bb09d46508736a98",
+      "bytes": 72224
+    },
+    {
+      "file": "admin-ui-390-light-approved-manual-publish.png",
+      "width": 390,
+      "height": 844,
+      "mobile": true,
+      "theme": "light",
+      "fixtureState": "approved",
+      "view": "detail",
+      "scroll": "action-panel",
+      "purpose": "窄屏单列批准后独立手动发布动作",
+      "url": "http://127.0.0.1:51173/admin/reviews?fixture=review-ui-v1&fixtureState=approved&theme=light&view=detail",
+      "outputPath": "[M5-HOME]/Documents/F1+1/docs/collaboration/部门/设计部/报告/证据/TASK-20260812-0C206C/admin-ui-390-light-approved-manual-publish.png",
+      "observed": {
+        "theme": "light",
+        "mobileView": "detail",
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 1,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "scrollY": 1170,
+        "title": "F1+1 · 人工审核台",
+        "fixtureVisible": true,
+        "environmentLabel": "验收 Fixture",
+        "detailTitle": "汉密尔顿谈法拉利新阶段：赛车节奏与信心正在回升",
+        "actionLabels": [
+          "手动发布当前批准版本",
+          "返回队列"
+        ],
+        "visibleTargetMinimumHeight": 44,
+        "visibleTargetsBelow44": [],
+        "styleSheetCount": 1
+      },
+      "outputSha256": "394a8246796e3c3f9dadc9ffa73450323a8cbd7e2e2de91643d98ba1c76e962e",
+      "bytes": 69654
+    }
+  ]
+}

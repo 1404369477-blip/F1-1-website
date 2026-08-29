@@ -1,0 +1,42 @@
+{
+  "acceptance_exit": "TASK_STATE_OK；本地冻结门、M1 baseline、tar local/remote SHA、stage精确身份、外部manifest SHA与target verifier一次PASS；0 formal overlay/prepare/launchctl/load/DB/key/cutover；报告给stage/tar路径、roots、public/RSS零漂移和下一prepare输入。",
+  "artifacts": [],
+  "authorization_evidence": "用户：可以直接部署到M1 MacBook；直接用SSH；继续。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T13:17+08:00",
+      "evidence": "用户：可以直接部署到M1 MacBook；直接用SSH；继续。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "M1_BASELINE_RSS_READONLY_PROBE_SQL_LITERAL_ERROR",
+  "claimed_by": "开发部/internal-agent:projection_runtime_m1_fresh_stage_final",
+  "completion_class": "standard",
+  "confirmation": "用户已明确可直接部署M1并用SSH；安全C0B063放行fresh stage。",
+  "created_at": "2026-08-12T13:17+08:00",
+  "department": "开发部",
+  "details": "取代blocked 4F7345，使用已ACK B04945新manifest精确锚：本地绝对路径app/.local/release/admin-service-release-manifest.json，SHA58b6da76890d1ccb800624f6915c6f0ddd7f9a37b51e6fcafd6c16b6a9e9c95f，M1 target Node [M1-HOME]/.local/node-v24.18.0-darwin-arm64/bin/node、NodeSHAee6fb0e0...、runtime89/overlay30/base59、Next322/13,373,354/nextRootb11ef505...、packages44/depRoot517c29e4...、contentb3886d55...、releasef8684975...。禁止重builder/build。先本地只读硬门并M1只读baseline（UID/home/Node、RSS source/job/run/candidate、public DB SHA/size/inode、四页面、public-beta/quick-tunnel/receipt-refresh、3101/3102 listener、Admin/public新stage路径不存在）。只打包manifest列出的运行/依赖/Next闭包与verifier必需入口到任务专属tar，记录local SHA/size；传入全新task stage。远端逐字核对tar SHA、外部manifest SHA、精确文件集合/owner/mode/nlink/no symlink/extra后，固定Node从stage appRoot运行现有target verifier恰一次。保留stage/tar证据，禁止formal overlay/prepare/plist/DB/key/root/load/cutover/cleanup；任一首错停止不重试。",
+  "domain_stage": "deployment-prep",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "本地manifest/闭包任一漂移停且不重build；远端路径已存在、tar/集合/mode/owner/symlink/Node/verifier任一不匹配停且不重传；public/RSS基线异常或formal路径/plist/DB发生写入立即停并保留证据。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "M1首版上线/真实投影部署/fresh-stage final",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-B04945.json"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-7B8E33",
+  "title": "固定M1真实投影release fresh-stage传输与只读验签-successor",
+  "unverified": [],
+  "updated_at": "2026-08-12T13:21+08:00",
+  "verified": []
+}

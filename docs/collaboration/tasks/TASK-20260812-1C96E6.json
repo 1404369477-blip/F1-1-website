@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "TASK_STATE_OK；文件化RSS baseline严格JSON与launchctl语义正确；此前public baseline继承；tar local/remote SHA、M1 stage身份、external manifest SHA和target verifier一次PASS；0 DB写/formal/prepare/load/cutover。",
+  "artifacts": [],
+  "authorization_evidence": "用户：可以直接部署到M1 MacBook；直接用SSH；继续。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T13:21+08:00",
+      "evidence": "用户：可以直接部署到M1 MacBook；直接用SSH；继续。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "RSS_BASELINE_FILE_PROBE_SCHEMA_COLUMN_EXTERNAL_CALLS_ABSENT",
+  "claimed_by": "开发部/internal-agent:projection_runtime_m1_rss_probe_stage",
+  "completion_class": "standard",
+  "confirmation": "用户已授权M1 SSH部署；当前只修远端只读探针引用错误。",
+  "created_at": "2026-08-12T13:21+08:00",
+  "department": "开发部",
+  "details": "继承blocked 7B8E33已成立的只读baseline：UID/Node/public DB/public页面/服务/3101/3102/stage absent均PASS；唯一首错为inline node-e经过SSH shell引用后把SQL字符串running错误变成标识符。只允许在本地任务scratch创建一个纯只读Node脚本，使用node:sqlite DatabaseSync(path,{readOnly:true})与参数绑定（禁止拼接SQL），输出单一严格JSON：integrity_check、source enabled/stop_epoch/last_reason、run总数/最新slot/status/reason/externalCalls/item/selected/new/updated/duplicate、candidate总数/status分布、人工字段非空计数；launchctl另用无元字符固定命令并按退出码/输出明确job loaded/runs/lastExit/interval，不用误导性`|| echo 0`。脚本本地Node --check一次、SHA记录、scp到全新M1 task scratch、远端Node --check一次、只读执行一次。通过后沿用B04945 manifest继续唯一tar/传输/stage/target verifier一次；禁止formal/prepare/plist/DB写/key/load/cutover/cleanup。首错停止不重试。",
+  "domain_stage": "deployment-prep",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "脚本SHA/check/只读DB/launchctl语义任一异常立即停；参数化SQL仍报错、integrity/source/job异常或public基线漂移立即停；tar/传输/stage/verifier任一首错停不重试；禁止inline node-e或第二SQL诊断。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "M1首版上线/真实投影部署/fresh-stage baseline finalizer",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-7B8E33.json"
+  ],
+  "report": "",
+  "resolution": {
+    "evidence": "docs/当前生产状态与执行待办.md",
+    "reason": "2026-08-29 schema10生产恢复、27个X信源和完整Admin路线已形成新的当前闭包；旧任务绑定过时schema/release/plist/视觉或运行时态，继续领取会造成重复或错误执行。",
+    "receipt_id": "RES-20260829T235602-999AEF70",
+    "replacement_revision": 3,
+    "replacement_state": "blocked",
+    "replacement_task_id": "TASK-20260829-BBFF2A",
+    "resolved_at": "2026-08-29T23:56+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "superseded",
+    "target_revision_before": 3
+  },
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-1C96E6",
+  "title": "M1 fresh-stage RSS基线文件化只读探针successor",
+  "unverified": [],
+  "updated_at": "2026-08-29T23:56+08:00",
+  "verified": []
+}

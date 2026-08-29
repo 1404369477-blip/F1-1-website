@@ -1,0 +1,42 @@
+{
+  "acceptance_exit": "完整继承F3CA65验收出口：3102/3101 loopback健康、DB同path/dev/ino且v3/integrity/FK通过、无可信头401零写、sender-once可审计、旧public/RSS健康；并证明本后继仅修preflight机械表达式，TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "thread-user-message:2026-08-12:授权",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T23:37+08:00",
+      "evidence": "thread-user-message:2026-08-12:授权",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "FRESH_PREFLIGHT_PUBLIC_MANIFEST_EXTRA_TARGET_EQUALITY_REJECTED_BEFORE_SERVICE_OR_DB_WRITE: PUBLIC_MANIFEST_INVALID; public manifest SHA/readMode/serviceState valid but intentionally remains prior disabled candidate per F4D716",
+  "claimed_by": "开发部/internal-agent:m1_admin_activation_finalizer",
+  "completion_class": "standard",
+  "confirmation": "用户在当前线程明确回复：授权；F3CA65写前机械首错后由统筹直接接续",
+  "created_at": "2026-08-12T23:37+08:00",
+  "department": "开发部",
+  "details": "承接用户已授权TASK-20260812-F3CA65。前序唯一首错发生在任何外部写之前：preflight shell一条无用plist状态拼接触发zsh bad math expression。只删除该无用表达式/改用文件化脚本的明确字段解析，重新取得fresh只读preflight；随后严格承接原顺序 receiver bootstrap→3102 loopback→Admin bootstrap/固定DB同path/dev/ino v3迁移→3101安全门→sender once。不得改业务代码，不追加诊断测试，不触碰Tailscale policy/Serve/Funnel/public cutover。",
+  "domain_stage": "admin_runtime_activation",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "fresh preflight任一业务门失败则0写停止；receiver/Admin/DB/sender任一步失败按F3CA65回退顺序bootout本次服务并停止；不重试、不改Tailscale或public。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "ADMIN-RUNTIME-LIVE-001-FINALIZER",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-F3CA65.json"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-2889EA",
+  "title": "M1运行态启动preflight表达式机械修复与接续",
+  "unverified": [],
+  "updated_at": "2026-08-12T23:45+08:00",
+  "verified": []
+}

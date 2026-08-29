@@ -35,7 +35,7 @@ session/Origin/CSRF、完整 R12 deny-all harness、真实端口、真实 provid
 - accepted 门槛：`ADR-M4-KICKOFF-001` 的 C 轴 local preflight；SQLite WAL 多连接拒绝
  低于 3.51.3 的实际引擎，真实外部能力持续关闭。
 - 固定工具链：
-  `/Users/hoyin/Documents/F1+1/app/.local/toolchains/node-v24.18.0-darwin-arm64/`。
+  `[M5-HOME]/Documents/F1+1/app/.local/toolchains/node-v24.18.0-darwin-arm64/`。
 - 安装树：只使用统筹部恢复后的现成 `app/node_modules/`；测试部没有运行
   `npm install`、`npm ci`、全局安装或 lifecycle。
 - SQLite 临时目录：每轮由 `mktemp -d /tmp/f1plus1-sqlite-review.XXXXXX` 创建，
@@ -62,8 +62,8 @@ session/Origin/CSRF、完整 R12 deny-all harness、真实端口、真实 provid
 使用的绝对路径：
 
 ```text
-NODE=/Users/hoyin/Documents/F1+1/app/.local/toolchains/node-v24.18.0-darwin-arm64/bin/node
-NPM=/Users/hoyin/Documents/F1+1/app/.local/toolchains/node-v24.18.0-darwin-arm64/bin/npm
+NODE=[M5-HOME]/Documents/F1+1/app/.local/toolchains/node-v24.18.0-darwin-arm64/bin/node
+NPM=[M5-HOME]/Documents/F1+1/app/.local/toolchains/node-v24.18.0-darwin-arm64/bin/npm
 ```
 
 ### 3.2 官方归档 SHA-256
@@ -221,7 +221,7 @@ fs.rmSync(tempDir, { recursive: true, force: true });
 恢复后的现成依赖树上，仅运行：
 
 ```bash
-export PATH="/Users/hoyin/Documents/F1+1/app/.local/toolchains/node-v24.18.0-darwin-arm64/bin:$PATH"
+export PATH="[M5-HOME]/Documents/F1+1/app/.local/toolchains/node-v24.18.0-darwin-arm64/bin:$PATH"
 export NEXT_TELEMETRY_DISABLED=1
 export NPM_CONFIG_CACHE="$(mktemp -d /tmp/f1plus1-build-review.XXXXXX)/npm-cache"
 (cd app && "$NPM" run lint)
@@ -375,7 +375,7 @@ readiness 字符串构造，SQL、阈值、权限和期望行均未改变；第�
 确认依赖树缺失时，测试执行器误运行：
 
 ```bash
-/Users/hoyin/Documents/F1+1/app/.local/toolchains/node-v24.18.0-darwin-arm64/bin/npm \
+[M5-HOME]/Documents/F1+1/app/.local/toolchains/node-v24.18.0-darwin-arm64/bin/npm \
   --prefix app exec -- which eslint
 ```
 

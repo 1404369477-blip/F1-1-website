@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "e1dcf2-isolated-render-v1",
+  "taskId": "TASK-20260811-E1DCF2",
+  "startedAt": "2026-08-11T04:55:19.207Z",
+  "source": {
+    "path": "[M5-HOME]/Documents/F1+1/design/ui/F1+1-M5-admin-sources-preview-v0.1/index.html",
+    "sha256": "0d73ea294972627a7a832b42d999381da1fc4c8ea602b9fdbd04b11985156d68"
+  },
+  "tooling": {
+    "node": "24.18.0",
+    "playwrightCore": "1.58.2",
+    "playwrightPackageSha256": "16a25dbd7368a87af8b58a45c6216b9cec5a91a72cf704533344701997ebde22",
+    "browserPath": "[M5-HOME]/Library/Caches/ms-playwright/chromium_headless_shell-1208/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+    "browserSha256": "a46b3b1e63163fa2d2437fb6ae967cb5a73b50050bca32f1964e6129b6228244",
+    "browserVersion": "145.0.7632.6",
+    "revision": 1208,
+    "transport": "remote-debugging-pipe",
+    "chromiumSandbox": true
+  },
+  "isolation": {
+    "seatbeltProfileSha256": "ad9d4fdb76db3a41beb3fd5ad6557ef57e1b051663850048e51357ed46812edf",
+    "policy": "allow-default; deny network-outbound remote ip",
+    "pageAllowedSchemes": [
+      "file",
+      "about",
+      "data",
+      "blob"
+    ],
+    "browserArgs": [
+      "--no-proxy-server",
+      "--host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE localhost",
+      "--disable-domain-reliability",
+      "--disable-pings"
+    ]
+  },
+  "network": {
+    "requests": [],
+    "responses": [],
+    "failed": [],
+    "externalRequests": []
+  },
+  "console": [],
+  "pageErrors": [],
+  "captures": [],
+  "decision": "fail",
+  "firstError": "browserType.launchPersistentContext: Target page, context or browser has been closed\nBrowser logs:\n\n<launching> [M5-HOME]/Library/Caches/ms-playwright/chromium_headless_shell-1208/chrome-headless-shell-mac-arm64/chrome-headless-shell --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument,OptimizationHints --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-proxy-server --host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE localhost --disable-domain-reliability --disable-pings --user-data-dir=/private/tmp/TASK-20260811-E1DCF2-run/profile --remote-debugging-pipe about:blank\n<launched> pid=39626\n[pid=39626][err] [0811/125519.584325:ERROR:base/power_monitor/thermal_state_observer_mac.mm:140] ThermalStateObserverMac unable to register to power notifications. Result: 9\n[pid=39626][err] [0811/125519.586411:ERROR:net/dns/dns_config_service_posix.cc:138] DNS config watch failed to start.\n[pid=39626][err] [0811/125519.588684:FATAL:base/apple/mach_port_rendezvous_mac.cc:155] Check failed: kr == KERN_SUCCESS. bootstrap_check_in org.chromium.Chromium.MachPortRendezvousServer.39626: Permission denied (1100)\nCall log:\n  - <launching> [M5-HOME]/Library/Caches/ms-playwright/chromium_headless_shell-1208/chrome-headless-shell-mac-arm64/chrome-headless-shell --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument,OptimizationHints --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-proxy-server --host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE localhost --disable-domain-reliability --disable-pings --user-data-dir=/private/tmp/TASK-20260811-E1DCF2-run/profile --remote-debugging-pipe about:blank\n  - <launched> pid=39626\n  - [pid=39626][err] [0811/125519.584325:ERROR:base/power_monitor/thermal_state_observer_mac.mm:140] ThermalStateObserverMac unable to register to power notifications. Result: 9\n  - [pid=39626][err] [0811/125519.586411:ERROR:net/dns/dns_config_service_posix.cc:138] DNS config watch failed to start.\n  - [pid=39626][err] [0811/125519.588684:FATAL:base/apple/mach_port_rendezvous_mac.cc:155] Check failed: kr == KERN_SUCCESS. bootstrap_check_in org.chromium.Chromium.MachPortRendezvousServer.39626: Permission denied (1100)\n  - [pid=39626] <gracefully close start>\n  - [pid=39626] <kill>\n  - [pid=39626] <will force kill>\n  - [pid=39626] exception while trying to kill process: Error: kill EPERM\n  - [pid=39626] <process did exit: exitCode=null, signal=SIGTRAP>\n  - [pid=39626] starting temporary directories cleanup\n  - [pid=39626] finished temporary directories cleanup\n  - [pid=39626] <gracefully close end>\n",
+  "finishedAt": "2026-08-11T04:55:19.769Z"
+}

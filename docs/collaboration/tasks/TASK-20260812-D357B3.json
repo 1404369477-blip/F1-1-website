@@ -1,0 +1,43 @@
+{
+  "acceptance_exit": "四SHA精确MATCH；逐层给P0/P1/P2与反例；若无P0/P1，明确放行精确白名单Git checkpoint并列post-commit clean-HEAD必验门；正式安全报告+TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-D357B3-Release-clean-commit身份门最终只读对抗复审报告.md"
+  ],
+  "authorization_evidence": "",
+  "authorization_history": [],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "安全部/internal-agent:projection_security_final",
+  "completion_class": "audit",
+  "confirmation": "无需用户确认；复杂release身份修复的独立只读安全复审。",
+  "created_at": "2026-08-12T19:27+08:00",
+  "department": "安全部",
+  "details": "只读复审A66510/0E53C4冻结候选：release-manifest SHA 8ac445e74fcd209119903c0a11e7e09f562efa942f8eceb26ff4aed0bf2ec23c；test c951c1d953fd8ac64a55e89a958c0a2e383e3f0616d282eecaa01775558dd39f；runbook 760749d04ae5230e6c6b6aaa4274bd4006faf5f4ba32ac3036352d4e1626f3a6；.gitignore b59c2af8b102be6e00d97efb931d0ffdfb5f6d8eda60806e224dda09d2c9c79b。全文回读A7D590报告与候选。重点对抗：(1) clean HEAD单parent/89 runtime tracked+index/worktree clean+blob等HEAD能否被rename/intent-to-add/submodule/partial status/非runtime dirty绕过；(2) commit/tree/parent动态字段是否形成自引用或target信任放宽；(3) legacy 54e分支是否只接纳精确31 overlay且不能吞额外runtime dirty；(4)外部manifest SHA先验、Git字段形状、runtime/Next/deps/Node/content/release roots target重算是否闭合；(5)app/evidence忽略范围是否过宽或污染运行闭包。0测试/0typecheck/0脚本/0网络/0SSH/0修改，P0/P1/P2分级并给Git checkpoint是否放行。",
+  "domain_stage": "security",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一SHA不符立即FAIL；发现可让未绑定runtime/manifest字节通过或target外锚失效的P0/P1立即FAIL且不得扩展；不得修改候选或运行测试。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未把路径+状态精确误写成字节精确；未把外部manifest SHA的传输锚扩大成builder输入来源证明；首P1后停止，未运行测试/typecheck/脚本/网络/SSH或修改候选/index/HEAD/refs。",
+  "node": "RELEASE-IDENTITY-CLEAN-COMMIT-FINAL-REVIEW",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-0E53C4-A66510固定Node24路径机械验证报告.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-12-D357B3-Release-clean-commit身份门最终只读对抗复审报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-D357B3",
+  "title": "Release clean-commit身份门最终只读对抗复审",
+  "unverified": [
+    "首个P1后停止：clean HEAD的rename/intent-to-add/submodule/partial-status/非runtime-dirty对抗、动态commit/tree/parent自引用、target verifier全闭包及app/evidence ignore边界均NOT_RUN。Git checkpoint、stage/commit/push/build/builder/verifier均未放行。"
+  ],
+  "updated_at": "2026-08-12T19:33+08:00",
+  "verified": [
+    "四项冻结候选SHA全部精确MATCH。静态回读确认legacy 54e分支对58项base执行HEAD blob+clean status门，但对31项overlay仅校验路径/数量及固定20个 M+11个??状态；未校验任何预期content SHA/blob/patch root。"
+  ]
+}

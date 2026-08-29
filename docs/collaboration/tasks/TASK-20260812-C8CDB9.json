@@ -1,0 +1,55 @@
+{
+  "acceptance_exit": "三角色m5/iphone/ipad与三个互异43字符sourceRef/三个互异真实selector一一映射；deployment/server/installer/runtime/tests闭合，旧2项与任意重复/缺项/未知项fail closed；聚焦测试/typecheck/diff通过；若含release同步则clean commit/build/manifest/target verifier与M1新release PASS，Admin重新prepare disabled，3101/3102仍无listener，DB/plist live/jobs零漂移。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/src/server/admin-service/deployment.ts",
+    "app/src/server/admin-service/server.ts",
+    "app/src/tests/admin-service.test.ts",
+    "app/ADMIN-SERVICE-PREP.md",
+    "docs/collaboration/部门/开发部/报告/2026-08-12-C8CDB9-M5-iPhone-iPad三设备独立身份最小实现报告.md"
+  ],
+  "authorization_evidence": "本线程用户回复ipad也可以保留、同时给ipad吧；2026-08-12",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T23:02+08:00",
+      "evidence": "本线程用户回复ipad也可以保留、同时给ipad吧；2026-08-12",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:three_device_contract",
+  "completion_class": "standard",
+  "confirmation": "用户明确说iPad也可以保留并同时给iPad后台权限；2026-08-12。",
+  "created_at": "2026-08-12T23:02+08:00",
+  "department": "开发部",
+  "details": "用户明确授权后台访问设备范围为M5、新iPhone、旧iPad，三台都保留并必须各自独立sourceRef。基于9B0DB6 restricted v2与现有B5FA49/1F1B7B代码，最小修改production deployment schema、Admin raw-header/trusted identity启动门、installer/runtime/tests，使sourceRefs精确3项且roles为m5/iphone/ipad；拒绝缺项/重复ref/重复selector/未知role/旧schema。生成独立ipad sourceRef并绑定旧ipad真实selector，m5/new iphone绑定零漂移。同步release clean-only运行闭包身份，完成聚焦Vitest、固定Node24 typecheck、限定diff各一次。若源代码通过，再按clean Git/release协议形成后继commit/build/M1 manifest/release并重prepare Admin，Public manifest只在必需字段变化时机械同步；本任务可拆成代码实现与部署后继，但必须清楚交付最短主线。禁止load/launchctl、DB迁移/写、Serve/Grant/Funnel/public cutover。",
+  "domain_stage": "admin_three_device_identity",
+  "event_receipts": [
+    "THREE_DEVICE_CODE_PASS:deployment=d75d0cb1;server=41f05b74;test=c72acc4d;runbook=3fa89552;restricted=93df4440;ipad-ref-hash=bd2051fb;vitest=4-pass;typecheck=pass;diff=pass"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任何现有m5/iphone ref或selector意外漂移、iPad与iPhone identity混同则停止；任何三项校验可被重复/缺失绕过则停止；任何load/DB/Serve/Grant/cutover调用立即停止；release或M1链首错保留证据并停在安全禁用态。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "No sourceRef/login/selector raw values entered report/Git; restricted three-device freeze is ignored0600. Old iPad identity retained and separate. Both schema and runtime startup gate changed together. No load/DB/Serve/Grant/Funnel/cutover or M1 prepared manifest write.",
+  "node": "ADMIN_THREE_DEVICE_IDENTITY",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-9B0DB6-新iPhone双视图冻结与sourceRef改绑报告.md"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-C8CDB9-M5-iPhone-iPad三设备独立身份最小实现报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-C8CDB9",
+  "title": "M5-iPhone-iPad三设备独立身份最小实现",
+  "unverified": [
+    "Clean checkpoint, post-commit clean identity, production build/new release manifest/target verifier, M1 release sync and three-ref Admin reprepare remain mechanical deployment successor. Physical fresh M5 Tailscale view and management-plane device approval/Grant remain pending."
+  ],
+  "updated_at": "2026-08-12T23:06+08:00",
+  "verified": [
+    "Production deployment schema and Admin server require exactly three unique 43-char sourceRefs; focused test covers m5/iphone/ipad and rejects old two-item and duplicate inputs. Independent iPad sourceRef generated owner-only and selectors for all three roles are unique with m5/new-iPhone mappings unchanged. Focused Vitest 1file/4 PASS, fixed Node24 typecheck PASS, limited diff-check PASS, each once."
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "f1plus1-security-76e7e8-evidence-v1",
+  "taskId": "TASK-20260811-76E7E8",
+  "decision": "fail",
+  "p0": 0,
+  "p1": 1,
+  "p2": 0,
+  "harness": {
+    "commandCount": 1,
+    "exitCode": 1,
+    "nodeVersion": "24.18.0",
+    "firstError": {
+      "reasonCode": "LEDGER_COUNTS",
+      "actual": {
+        "fixture_profile_ledger": 1,
+        "source_overlay_lineage": 1,
+        "source_runtime_fence": 1,
+        "operation_receipt": 5,
+        "outbox_job": 1,
+        "inbox": 0,
+        "task_attempt": 0,
+        "dead_letter": 0,
+        "audit_event": 5
+      },
+      "incorrectHarnessExpectation": {
+        "inbox": 1,
+        "task_attempt": 1
+      },
+      "operatorAssertionError": true,
+      "productDefectEstablished": false
+    }
+  },
+  "verifiedBeforeFirstError": {
+    "physicalCopyThenChmod0600": true,
+    "copySha256Matched": true,
+    "wrongBasenameDenied": true,
+    "singleMainTempDatabase": true,
+    "integrityCheck": "ok",
+    "profileLedgerUnique": true,
+    "profileId": "source-management-synthetic",
+    "baselineRows": 59,
+    "baselineEnabledFalse": 59,
+    "localRows": 1,
+    "localOrigin": "local_synthetic",
+    "localState": "retired/stopped/disabled",
+    "baselineRowsInLocalTable": 0
+  },
+  "notRun": [
+    "audit append-only trigger and hash-link assertions",
+    "audit to operation receipt linkage",
+    "logical content root recomputation",
+    "second writer denial"
+  ],
+  "reusedPredecessorEvidence": {
+    "ad6ad9WeakPermissionFailClosed": "DB_PATH before database use",
+    "task742b8dFrontHalf": "PASS as recorded in task block receipt",
+    "task70ec0fNoEgressFrozenChain": "SHA_MATCHED"
+  },
+  "effects": {
+    "formalDatabaseOpened": false,
+    "formalDatabaseModified": false,
+    "formalDatabaseHashUnchanged": true,
+    "serverStarted": false,
+    "readinessCalled": false,
+    "fixtureInitialized": false,
+    "dynamicNetworkCalled": false,
+    "externalCalls": 0,
+    "taskTemporaryResourcesCleaned": true
+  },
+  "final875b6cSecurityDecision": "NOT_CLOSED"
+}

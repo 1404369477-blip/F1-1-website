@@ -1,0 +1,44 @@
+{
+  "acceptance_exit": "三门按顺序各且仅一次PASS；A66510报告回填真实验证与最终SHA；本successor报告落盘并TASK_STATE_OK；列post-commit clean-HEAD唯一再验证要求。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-A66510-Release身份门clean-commit-successor实现报告.md",
+    "docs/collaboration/部门/开发部/报告/2026-08-12-0E53C4-A66510固定Node24路径机械验证报告.md"
+  ],
+  "authorization_evidence": "",
+  "authorization_history": [],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:release_identity_node24_finalizer",
+  "completion_class": "standard",
+  "confirmation": "无需用户确认；仅修正A66510验证命令的目录拼写，不改变代码或产品合同。",
+  "created_at": "2026-08-12T19:23+08:00",
+  "department": "开发部",
+  "details": "继承A66510现有五文件候选，禁止修改生产代码。只使用已只读确认的固定本机Node绝对路径 [M5-HOME]/Documents/F1+1/app/.local/toolchains/node-v24.18.0-darwin-arm64/bin/node（SHA-256 ee6fb0e015284d83a91e8ec5213f43a157f8a392b58555301682892ba928c04a）执行新预算：聚焦admin-release-manifest Vitest一次；PASS后固定Node24 typecheck一次；PASS后限定五文件git diff --check一次。仅允许回填A66510开发报告与本successor短报告/任务收据，不得stage/commit/push/build/SSH/M1。",
+  "domain_stage": "development",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一命令首错立即block且不得重跑；真实Node SHA/版本不匹配立即block；若需改候选生产代码立即block并退回新的实现任务。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未重跑A66510失败命令；新预算仅使用任务核定的toolchains复数路径；未stage/commit/push；报告明确post-commit仍需clean-HEAD三门及新build/manifest/verifier。",
+  "node": "RELEASE-IDENTITY-NODE24-PATH-FINALIZER",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-A66510.json"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-0E53C4-A66510固定Node24路径机械验证报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-0E53C4",
+  "title": "A66510固定Node24路径机械验证后继",
+  "unverified": [
+    "未形成Git commit，post-commit clean-HEAD分支尚未在真实新HEAD验证；0build/0builder/0新manifest/0target verifier/0SSH/M1。"
+  ],
+  "updated_at": "2026-08-12T19:27+08:00",
+  "verified": [
+    "固定Node24 v24.18.0/SHA ee6fb0...04a；聚焦Vitest唯一一次PASS(1 file/2 tests/10.97s)；Node24 tsc --noEmit唯一一次PASS；限定A66510五文件git diff --check唯一一次PASS；继承生产候选且未修改生产代码。"
+  ]
+}

@@ -4,14 +4,14 @@
 
 - 状态：第一版公开 synthetic beta 已在固定 M1 MacBook 上运行。
 - 上线时间：2026-08-12 00:22（Asia/Shanghai）。
-- 临时公网地址：<https://firmware-arch-eagles-slot.trycloudflare.com/>
+- 临时公网地址：<[EPHEMERAL-TUNNEL-URL]>
 - GitHub：<https://github.com/1404369477-blip/F1-1-website>
 - 分支：`codex/first-public-release`
 - 本地 release commit：`939fac95ac28ee30dec31c1e115aa372ec40261a`
 - GitHub 对应远端 commit：`3b1c89540f2a2913b17b9dee358dc49b01f271aa`
-- M1 运行目录：`/Users/chanai/F1-1-website`，当前为精确 release package，不含 `.git`。
+- M1 运行目录：`[M1-HOME]/F1-1-website`，当前为精确 release package，不含 `.git`。
 
-该公网地址来自 Cloudflare Quick Tunnel，只适合开发和公开 beta。地址会在隧道进程或 M1 重启后变化，无可用性保证；稳定上线需要用户域名和命名隧道。Cloudflare 官方说明见 [Quick Tunnels](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/do-more-with-tunnels/trycloudflare/) 与 [Tunnel 概览](https://developers.cloudflare.com/tunnel/)。
+该公网地址来自 Cloudflare Quick Tunnel，只适合开发和公开 beta。地址会在隧道进程或 M1 重启后变化，无可用性保证；稳定上线需要用户域名和命名隧道。Cloudflare 官方说明见 [Quick Tunnels](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/do-more-with-tunnels/[EPHEMERAL-TUNNEL-URL]/) 与 [Tunnel 概览](https://developers.cloudflare.com/tunnel/)。
 
 ## 主机与运行面
 
@@ -21,7 +21,7 @@
 | 供电 | AC attached，电池 80% |
 | 睡眠 | 电池与 AC 下 `sleep=0`；屏幕休眠为 60 分钟 |
 | 网络 | Wi-Fi；没有路由器端口转发或 UPnP 暴露 |
-| Node | 官方 arm64 Node.js 24.18.0，路径 `/Users/chanai/.local/node-v24.18.0-darwin-arm64` |
+| Node | 官方 arm64 Node.js 24.18.0，路径 `[M1-HOME]/.local/node-v24.18.0-darwin-arm64` |
 | 应用监听 | `127.0.0.1:3000`；Next 内部监听 `127.0.0.1:3001` |
 | 数据 profile | `public-multimedia-synthetic`，24 条公开 synthetic 内容 |
 | 公网入口 | `cloudflared 2026.6.1` arm64，origin 仅指向 `http://127.0.0.1:3000` |
@@ -37,7 +37,7 @@
 | `com.f1plus1.receipt-refresh` | scheduled，last exit 0 | 每 43,200 秒刷新一次闭合收据 |
 | `com.f1plus1.quick-tunnel` | running | Cloudflare 临时公网隧道，`KeepAlive` |
 
-三个 plist 位于 `/Users/chanai/Library/LaunchAgents/`。它们依赖用户 `chanai` 已登录；FileVault 解锁前和无人登录阶段不会启动。
+三个 plist 位于 `[M1-HOME]/Library/LaunchAgents/`。它们依赖用户 `chanai` 已登录；FileVault 解锁前和无人登录阶段不会启动。
 
 ## 已执行的最小上线验证
 
@@ -72,15 +72,15 @@ launchctl print gui/501/com.f1plus1.quick-tunnel
 读取当前临时公网地址：
 
 ```sh
-grep -Eo 'https://[a-z0-9-]+\.trycloudflare\.com' /Users/chanai/F1-1-website/app/.local/logs/quick-tunnel.stderr.log | tail -n 1
+grep -Eo 'https://[a-z0-9-]+\.[EPHEMERAL-TUNNEL-URL]\.com' [M1-HOME]/F1-1-website/app/.local/logs/quick-tunnel.stderr.log | tail -n 1
 ```
 
 查看日志：
 
 ```sh
-tail -n 100 /Users/chanai/F1-1-website/app/.local/logs/public-beta.stderr.log
-tail -n 100 /Users/chanai/F1-1-website/app/.local/logs/receipt-refresh.stdout.log
-tail -n 100 /Users/chanai/F1-1-website/app/.local/logs/quick-tunnel.stderr.log
+tail -n 100 [M1-HOME]/F1-1-website/app/.local/logs/public-beta.stderr.log
+tail -n 100 [M1-HOME]/F1-1-website/app/.local/logs/receipt-refresh.stdout.log
+tail -n 100 [M1-HOME]/F1-1-website/app/.local/logs/quick-tunnel.stderr.log
 ```
 
 只重启网站：
@@ -102,20 +102,20 @@ launchctl kickstart -k gui/501/com.f1plus1.quick-tunnel
 立即关闭公网暴露，同时保留本机网站：
 
 ```sh
-launchctl bootout gui/501 /Users/chanai/Library/LaunchAgents/com.f1plus1.quick-tunnel.plist
+launchctl bootout gui/501 [M1-HOME]/Library/LaunchAgents/com.f1plus1.quick-tunnel.plist
 ```
 
 同时停止网站：
 
 ```sh
-launchctl bootout gui/501 /Users/chanai/Library/LaunchAgents/com.f1plus1.public-beta.plist
+launchctl bootout gui/501 [M1-HOME]/Library/LaunchAgents/com.f1plus1.public-beta.plist
 ```
 
 恢复当前版本：
 
 ```sh
-launchctl bootstrap gui/501 /Users/chanai/Library/LaunchAgents/com.f1plus1.public-beta.plist
-launchctl bootstrap gui/501 /Users/chanai/Library/LaunchAgents/com.f1plus1.quick-tunnel.plist
+launchctl bootstrap gui/501 [M1-HOME]/Library/LaunchAgents/com.f1plus1.public-beta.plist
+launchctl bootstrap gui/501 [M1-HOME]/Library/LaunchAgents/com.f1plus1.quick-tunnel.plist
 ```
 
 代码回退或升级必须从 GitHub 指定 commit 重新生成精确 release package，再通过 SSH 传入新的非 iCloud 运行目录；当前目录不含 `.git`，不得在其中执行 `git pull`。切换前保留上一运行目录，完成 health、首页、详情和 Admin 404 四项检查后再删除旧目录。

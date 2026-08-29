@@ -1,0 +1,55 @@
+{
+  "acceptance_exit": "F1E14C放行；staged清单完全在白名单且无高置信凭据；本地单一commit创建；远端codex/first-public-release force=false快进到完全相同commit/tree/parent；本地未纳入脏改保持；报告与TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "用户已明确要求以后在目标GitHub仓库更新维护，现为第一版Admin候选检查点。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T09:02+08:00",
+      "evidence": "用户已明确要求以后在目标GitHub仓库更新维护，现为第一版Admin候选检查点。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "Git Data API commit SHA 896d5fb623dfbed79f2ff610ab0e32e33edf4560 与本地目标 95b21d106c95afe076847df8a74442eb7c240de8 不一致；按硬门停止，未更新ref、未force、未重试。报告：docs/collaboration/部门/开发部/报告/2026-08-12-AB853B-Admin第一版Git检查点API-commit-SHA阻断报告.md",
+  "claimed_by": "开发部/internal-agent:admin_git_checkpoint",
+  "completion_class": "standard",
+  "confirmation": "本次提交只含运行代码和核心合同，不把协作原始证据/历史任务打进GitHub；本地这些资料保留。",
+  "created_at": "2026-08-12T09:02+08:00",
+  "department": "开发部",
+  "details": "目标本地分支codex/first-public-release，当前父提交5d5963671550b45e9c01fbc727bc6aeac73447e4，远端github.com/1404369477-blip/F1-1-website同分支必须仍精确位于该父。等待UI最终复审F1E14C无P0/P1后再写。只版本化本里程碑必要运行/合同文件：app/migrations/rss-real/0002_admin_review_publish.sql；app/src/server/review-real/**；app/src/server/admin-service/**；app/src/admin-ui/**；app/src/tests/review-real-data.test.ts、review-real-backend.test.ts、admin-service.test.ts；app/scripts/admin-service.ts；app/package.json/lock；app/ADMIN-SERVICE-PREP.md；本轮accepted产品合同/ADR、docs/spec.md、功能矩阵、spec README、docs/progress.md与M1后台私有入口最小安全合同。不得git add -A；排除所有旧migration bundle、Trash/备份、.obsidian/.codex、evidence PNG/raw、历史任务JSON/部门收件箱/报告、凭据/bootstrap token/.env/SQLite/node_modules/.next及不在白名单的既有脏改。先做只读manifest/size/secret/path审计，显式逐项stage，git diff --cached --check，仅创建一个提交 `feat: add real review and private admin candidate`。随后用已验证Git Data API精确对象链快进远端：blob/tree/commit SHA需等于本地，force=false；远端父漂移或SHA不匹配立即停止。0测试/0build/0M1/0服务。",
+  "domain_stage": "开发/Git同步",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "F1E14C有P0/P1或未完成：只读等待，不提交。",
+    "发现凭据/超过GitHub限制/非白名单文件/远端父漂移：停止并BLOCK，不推送。",
+    "任何blob/tree/commit SHA不一致或ref写失败：停止、不force、不重试。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "第一版后台/版本化",
+  "pointers": [
+    "https://github.com/1404369477-blip/F1-1-website"
+  ],
+  "report": "",
+  "resolution": {
+    "evidence": "docs/当前生产状态与执行待办.md",
+    "reason": "2026-08-29 schema10生产恢复、27个X信源和完整Admin路线已形成新的当前闭包；旧任务绑定过时schema/release/plist/视觉或运行时态，继续领取会造成重复或错误执行。",
+    "receipt_id": "RES-20260829T235615-2D949C76",
+    "replacement_revision": 3,
+    "replacement_state": "blocked",
+    "replacement_task_id": "TASK-20260829-E59ACA",
+    "resolved_at": "2026-08-29T23:56+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "superseded",
+    "target_revision_before": 3
+  },
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-AB853B",
+  "title": "Admin第一版本地候选精确Git检查点与GitHub同步",
+  "unverified": [],
+  "updated_at": "2026-08-29T23:56+08:00",
+  "verified": []
+}

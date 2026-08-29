@@ -1,0 +1,63 @@
+{
+  "acceptance_exit": "正式独立Admin静态UI落盘且不进入public Next路由；Mac/iPhone全功能入口可达，批准与发布独立；真实API默认、fixture仅验收；深浅/390/1440/键盘/触控/错误态满足冻结视觉；B2CB5F端点冻结后字段一致；报告/截图/manifest落盘，TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/src/admin-ui/index.html",
+    "app/src/admin-ui/app.css",
+    "app/src/admin-ui/app.js",
+    "docs/collaboration/部门/设计部/报告/2026-08-12-0C206C-独立静态Admin-UI实现报告.md",
+    "docs/collaboration/部门/设计部/报告/证据/TASK-20260812-0C206C/static-check.json",
+    "docs/collaboration/部门/设计部/报告/证据/TASK-20260812-0C206C/manifest.json",
+    "docs/collaboration/部门/设计部/报告/证据/TASK-20260812-0C206C/capture-results.json",
+    "docs/collaboration/部门/设计部/报告/证据/TASK-20260812-0C206C/render-recipe.md",
+    "docs/collaboration/部门/设计部/报告/证据/TASK-20260812-0C206C/admin-ui-1440-dark-pending.png",
+    "docs/collaboration/部门/设计部/报告/证据/TASK-20260812-0C206C/admin-ui-1440-light-approved.png",
+    "docs/collaboration/部门/设计部/报告/证据/TASK-20260812-0C206C/admin-ui-390-dark-pending-editor-actions.png",
+    "docs/collaboration/部门/设计部/报告/证据/TASK-20260812-0C206C/admin-ui-390-light-approved-manual-publish.png",
+    "docs/collaboration/部门/设计部/报告/证据/TASK-20260812-0C206C/admin-ui-overview-2x2.png"
+  ],
+  "authorization_evidence": "用户查看四格视觉确认包后回复“继续”；统筹已明确把它作为视觉方向确认并允许用户随时纠正。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T08:00+08:00",
+      "evidence": "用户查看四格视觉确认包后回复“继续”；统筹已明确把它作为视觉方向确认并允许用户随时纠正。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "设计部/internal-agent:admin_ui",
+  "completion_class": "standard",
+  "confirmation": "本任务可实现UI/CSS/浏览器JS；不得改review-real后端、public app、Spec/ADR或部署。",
+  "created_at": "2026-08-12T08:00+08:00",
+  "department": "设计部",
+  "details": "用户在9538F5四格确认包后回复继续，统筹按视觉确认推进。严格沿用 design/ui/F1+1-M5-admin-reviews-preview-v0.1 冻结方向，在 app/src/admin-ui/ 新建独立静态界面（index.html、admin.css、admin.js及必要无外链本地资产），由后继3101服务独立提供，严禁加入公开Next app/src/app routes。实现Mac左队列+右详情/编辑/动作、iPhone单列同功能、深浅同构；真实API状态包括登录/首次passkey注册、loading/empty/error/401/409/503、候选队列/详情、中文标题摘要备注编辑、保存revision、approve/reject、批准后独立manual publish、operation/delivery对账。无synthetic fallback；本地视觉验收可用明确标注fixture适配器但产物默认只请求真实API。API路径使用现有review routes；passkey端点先以可配置常量等待B2CB5F冻结后同步，不自行发明业务语义。CSP友好、无inline script/style、无外部字体/图片、44px触控、键盘焦点、aria live、prefers-reduced-motion、iPhone safe-area。只做一次本地静态检查和一组1440/390深浅截图，不启动公网/M1。",
+  "domain_stage": "设计/前端实现",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "B2CB5F认证端点未冻结：先完成非认证UI与adapter，等待精确端点，不猜测最终路径。",
+    "必须把Admin页面编进public Next才能运行：停止并BLOCK。",
+    "视觉与冻结9538F5出现结构性偏移：停止改动并回报，不自行换设计。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未改public Next、后端、Spec/ADR或部署；未使用synthetic自动回退；UI未接收/显示完整sourcePayloadHash；批准与发布未合并；静态检查收据首次因中文路径percent-encode在断言全部完成后写入失败，未重跑功能检查，恢复收据已记录；截图harness初始选中Chrome内置扩展target，任何PNG生成前已停并改为显式page target，最终证据无旧图/半成品。",
+  "node": "第一版后台/正式UI实现",
+  "pointers": [
+    "design/ui/F1+1-M5-admin-reviews-preview-v0.1/evidence/TASK-20260812-9538F5/admin-reviews-overview-2x2.png"
+  ],
+  "report": "docs/collaboration/部门/设计部/报告/2026-08-12-0C206C-独立静态Admin-UI实现报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-0C206C",
+  "title": "DESIGN-ADMIN-UI-01确认视觉转正式静态Admin界面",
+  "unverified": [
+    "未启动M1/3101真实服务，未验证Tailscale身份头、真实passkey/cookie轮换、真实RSS写入/审计/公开投递；未做iPhone真机软键盘、屏幕阅读器、200%缩放或高对比测试。"
+  ],
+  "updated_at": "2026-08-12T08:35+08:00",
+  "verified": [
+    "正式静态UI三文件落盘且匹配3101静态映射；真实API为默认，fixture仅显式file/loopback验收；B2CB5F六个认证端点、fresh完整PublishRequest顺序、CSRF与fresh双头、revision sourceVersionTag已精确接线；单次静态检查20项断言通过；1440/390深浅四图与2x2总览已绑定输入SHA，四图无横向溢出、可见触控目标最小44px、外部HTTP(S)请求0、运行时异常0；目检关键动作可读且批准/发布分离。"
+  ]
+}

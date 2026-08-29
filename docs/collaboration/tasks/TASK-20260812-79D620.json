@@ -1,0 +1,57 @@
+{
+  "acceptance_exit": "并发N+2→N+1无法回退counter；一个请求成功另一个CAS失败；deviceType漂移与backup降级fail-closed；状态提交前不发session/fresh；原passkey纵切仍通过；非目标SHA不变；三项验证各一次PASS；报告落盘，TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/src/server/admin-service/webauthn.ts",
+    "app/src/server/admin-service/storage.ts",
+    "app/src/server/admin-service/auth.ts",
+    "app/src/tests/admin-service.test.ts",
+    "docs/collaboration/部门/开发部/报告/2026-08-12-79D620-WebAuthn-counter-CAS与backup状态单调提交successor报告.md"
+  ],
+  "authorization_evidence": "独立安全审查86C9B9发现WebAuthn并发counter回退P1；用户要求继续第一版。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T08:34+08:00",
+      "evidence": "独立安全审查86C9B9发现WebAuthn并发counter回退P1；用户要求继续第一版。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:admin_service_fix",
+  "completion_class": "standard",
+  "confirmation": "只修认证状态单调提交，不扩展UI、Tailscale、M1或sender/public切换。",
+  "created_at": "2026-08-12T08:34+08:00",
+  "department": "开发部",
+  "details": "严格只修86C9B9唯一P1，范围 app/src/server/admin-service/webauthn.ts、storage.ts、auth.ts、app/src/tests/admin-service.test.ts 与successor报告。verification结果完整透传newCounter、credentialDeviceType、credentialBackedUp；credential持久记录冻结deviceType并保存backedUp。同步原子store提交必须带credentialId+expectedCounter：当前值不等expected立即失败；current/new均0允许，否则new必须严格大于current；deviceType与登记不一致拒绝；backedUp采用单调策略false→true允许、true→false拒绝，singleDevice不得backedUp=true。登录/fresh只有状态CAS提交成功后才签发/旋转session。新增唯一聚焦并发逆序负例和device/backup负例，保留原纵切；0M1/0SSH/0load/0真实DB。只运行一次聚焦Vitest、一次Node24 typecheck、一次diff-check，首错即停。",
+  "domain_stage": "开发/认证安全修复",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "SimpleWebAuthn返回语义无法支持明确device/backup策略：停止并BLOCK，不丢弃字段或放宽。",
+    "需要全局锁/跨请求内存状态才能正确：优先store文件级CAS；无法原子实现则BLOCK。",
+    "限定验证首错：立即停止、不重跑，保留首错/SHA并BLOCK。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查：没有以challenge消费代替CAS，没有在状态提交前发session/fresh，没有放宽device/backup/counter规则，没有修改依赖/UI/Spec/ADR/M1/网络/真实DB；三项验证各一次且无修正性重跑",
+  "node": "第一版后台/Passkey安全修复",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-86C9B9-独立3101与Passkey候选最终静态对抗审查报告.md"
+  ],
+  "report": "不适用",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-79D620",
+  "title": "86C9B9 successor：WebAuthn counter CAS与backup状态单调提交",
+  "unverified": [
+    "真实Touch ID/iCloud passkey/iPhone/FIDO2/浏览器/Tailscale/M1/真实DB/sender/public switch均未执行；多进程共同写credential file不在冻结单实例边界内"
+  ],
+  "updated_at": "2026-08-12T08:47+08:00",
+  "verified": [
+    "固定Node24聚焦Vitest恰一次PASS：1 file/2 tests；原passkey纵切与新增并发N+2→N+1、device漂移、backup单调、singleDevice、fresh提交前不签发负例全部通过",
+    "固定Node24 typecheck恰一次PASS：exit 0，无输出",
+    "冻结范围diff-check恰一次PASS：4个目标SHA变化，9个非目标冻结SHA不变，无CR/行尾空白/冲突标记"
+  ]
+}

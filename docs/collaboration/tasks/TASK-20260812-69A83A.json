@@ -1,0 +1,44 @@
+{
+  "acceptance_exit": "final安全报告/TASK_STATE_OK；明确三路径各自 keep/delete 裁定、删除前身份谓词、builder重试边界与是否需要新build；P0/P1/P2。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-69A83A-fresh-Next三项重复空目录只读安全裁定报告.md"
+  ],
+  "authorization_evidence": "",
+  "authorization_history": [],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "安全部/internal-agent:projection_security_final",
+  "completion_class": "audit",
+  "confirmation": "无需用户确认；只读安全裁定，不执行删除或构建。",
+  "created_at": "2026-08-12T20:32+08:00",
+  "department": "安全部",
+  "details": "承接05CCAF build PASS/builder首错。只读证据：唯一直接buildAdmin调用返回 ConfigError RELEASE_NEXT_BUILD Next build directory is not owner-controlled；`.next`无symlink/特殊/多链文件，所有文件0644，全部目录0755，唯一例外 `app/.next/server/app 2` mode0700；另有 `app/.next/server/chunks 2`、`app/.next/static/chunks 2` mode0755。三者均uid501/gid20/real directory/nlink2/size64/entry count0/hidden flag/同一dev，realpath exact；同名不带2的正常目录非空。历史50B654曾在同类builder后按安全门精确rmdir server/app 2与server/chunks 2。请只读审查生产build/normalize/nextBuild闭包语义，裁定是否允许后继对三项逐个重验身份后各一次rmdir、然后不重build只重builder；是否只删0700一项更妥；列P0/P1/P2和失败路径。0修改/0测试/0build/0Git/0SSH。",
+  "domain_stage": "review",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一目录非空/身份不明则禁止删除；若不能证明为纯build残留则FAIL；不得执行rmdir或builder。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未把0700误判为normalize非法输入；未只删触发首错的app 2而遗留两个不进manifest的重复空目录；未用历史清理替代当前fresh身份门；未预判builder必然PASS；0删除/测试/build/Git/SSH/修改。",
+  "node": "NEXT-DUPLICATE-EMPTY-DIRECTORIES-READONLY-RULING",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-05CCAF.json",
+    "docs/collaboration/部门/开发部/报告/2026-08-12-50B654-两个空Next目录清理与release验签delta收口报告.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-12-69A83A-fresh-Next三项重复空目录只读安全裁定报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-69A83A",
+  "title": "fresh Next三项重复空目录只读安全裁定",
+  "unverified": [
+    "本轮未执行fresh lstat/descriptor重核、rmdir或builder；三目录删除后absent、正常同名目录仍非空、重跑builder及新manifest roots均待后继验证。"
+  ],
+  "updated_at": "2026-08-12T20:35+08:00",
+  "verified": [
+    "静态回读生产inspect/normalize/nextBuild语义及05CCAF/50B654证据：normalize允许目录0700/0755并全部归一0755；nextBuild遍历目录但manifest只记录文件。三项均为uid501/gid20、同dev、real目录、nlink2、size64、entry0、realpath exact的重复空目录；裁定三项均delete，须逐项fresh身份谓词后各一次非递归rmdir，三项全成功后不重build只重builder。"
+  ]
+}

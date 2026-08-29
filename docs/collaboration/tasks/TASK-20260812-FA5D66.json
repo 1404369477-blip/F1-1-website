@@ -1,0 +1,42 @@
+{
+  "acceptance_exit": "TASK_STATE_OK；`.next` production闭包与源/依赖/Node一起受外部manifest SHA约束；installer在全prepare成功前live plist零写，失败恢复；一次build、一次聚焦Vitest、一次typecheck、一次diff-check均PASS；报告列runtime/next/deps计数、manifest/content/release root、回退与0外部操作。",
+  "artifacts": [],
+  "authorization_evidence": "用户本会话：继续；此前明确快速搭建并上线第一版、减少冗余测试。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T12:25+08:00",
+      "evidence": "用户本会话：继续；此前明确快速搭建并上线第一版、减少冗余测试。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "NEXT_BUILD_FILE_MODE_POLICY_UNRESOLVED",
+  "claimed_by": "开发部/internal-agent:projection_runtime_p1_next_closure",
+  "completion_class": "standard",
+  "confirmation": "用户已授权快速上线第一版；该P1是M1 stage前唯一安全阻断。",
+  "created_at": "2026-08-12T12:25+08:00",
+  "department": "开发部",
+  "details": "只修安全报告D17D1B唯一P1-01，继承6996D6候选。要求：(1) Admin release manifest/builder/verifier将公开Next production build输出纳入精确内容寻址闭包；只允许排除明确运行时可变项（例如cache/trace，须逐项列明理由），`.next`中被`next start`消费的所有常规文件按relative path/size/mode/SHA入manifest，拒绝symlink/额外缺失/漂移；(2) builder/运行手册固定先用项目Node24执行一次production build，再生成唯一manifest；builder收据列next文件数/bytes/root；(3)public installer必须接收外部release manifest路径+精确SHA，调用同一verifier并确认当前appRoot/Node/Next build closure后才能产生任何live LaunchAgent写入；(4)existing public-beta/quick-tunnel/receiver三份plist先写任务私有stage，全部prepare/manifest/key/root校验成功后同一提交阶段原子替换，失败恢复旧字节且删除新临时文件，RunAtLoad/KeepAlive保持false且禁止launchctl；(5)更新package scripts、ADMIN-SERVICE-PREP、release聚焦测试与installer负例。不得改sender/receiver/reader业务语义、公开视觉、accepted ADR，不SSH/M1/load/cutover/真实DB/网络。高价值验证预算：固定Node24 production build一次；release+installer聚焦Vitest一组一次；Node24 typecheck一次；限定diff-check一次。首错即停，不重跑。",
+  "domain_stage": "implementation",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若无法确定next start所需闭包或构建包含必要symlink/越界文件，立即block而不放宽；若installer任一失败路径可留下live plist漂移或不消费外部manifest锚，判未闭合；build/聚焦测试/typecheck/diff任一首错立即停止不重跑。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "M1首版上线/真实投影release/P1-01收口",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-D17D1B-真实投影A+B与release闭包最终独立安全复审报告.md"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 5,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-FA5D66",
+  "title": "公开Next构建闭包绑定与prepare原子提交successor",
+  "unverified": [],
+  "updated_at": "2026-08-12T12:49+08:00",
+  "verified": []
+}

@@ -1,0 +1,48 @@
+{
+  "acceptance_exit": "给出PASS/FAIL、P0/P1/P2以及机械恢复前置条件；若PASS，明确是否允许后继在原stage修复mode并继续同一第二release。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-345AB2-M1第二release-stage全量mode漂移机械恢复安全裁定.md"
+  ],
+  "authorization_evidence": "用户已授权快速部署M1及复杂任务的独立审查。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T04:17+08:00",
+      "evidence": "用户已授权快速部署M1及复杂任务的独立审查。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/internal-agent:rss_static_review",
+  "completion_class": "audit",
+  "confirmation": "统筹部据此决定是否派开发后继；本任务无部署权限。",
+  "created_at": "2026-08-12T04:17+08:00",
+  "department": "安全部",
+  "details": "输入：D460D7报告；manifest SHA 34c1032c…c8d95；137/137文件SHA与size匹配、137/137 mode由期望0644/0755变为0600/0700；stage位于0700任务根，未overlay/prepare/外联。期望content 2aae0486…8c153，实际9c6fda9e…be75c；期望release6d402a5d…59eb02，实际53101c7b…47cfd。仅静态/只读判断：是否可对manifest枚举的每个路径在拒绝symlink、路径逃逸、缺失/额外闭包后按manifest精确mode执行chmod，再唯一一次运行现有verifier；不得修改manifest、放宽verifier或重新builder。不得SSH、不得运行测试或写文件。",
+  "domain_stage": "部署恢复安全裁定",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "发现mode之外的身份/闭包差异或chmod可被symlink/路径逃逸利用时判阻断。",
+    "无法证明expected mode来自已验签manifest时保持Unknown/FAIL。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未把历史探针外推为当前M1；写前强制完整闭包与symlink/owner/link/path门；未授权chmod-R、manifest/verifier修改、重新builder/传输或第二次verifier；0SSH/0测试/0M1写",
+  "node": "只读裁定D460D7的137/137 mode漂移根因及按manifest逐项chmod后再验签的最小恢复方案",
+  "pointers": [],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-12-345AB2-M1第二release-stage全量mode漂移机械恢复安全裁定.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-345AB2",
+  "title": "M1第二release stage全量mode漂移机械修复裁定",
+  "unverified": [
+    "M1保留stage当前实时owner/mode/link/realpath/symlink/额外闭包、chmod后身份与唯一verifier结果、overlay保mode及后续prepare/实采/零漂移均Unknown，须机械后继实机确认"
+  ],
+  "updated_at": "2026-08-12T04:20+08:00",
+  "verified": [
+    "D460D7报告确认137/137 SHA与size相等且137/137仅mode漂移；本地同SHA manifest静态展开为137个唯一安全目标、134项0644和3项0755，固定commit/content/release root逐字一致；按外部锚manifest逐项无跟随fchmod后唯一一次现有verifier的机械恢复方案PASS，P0=0/P1=0/P2=0"
+  ]
+}

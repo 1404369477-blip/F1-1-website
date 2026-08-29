@@ -1,0 +1,47 @@
+{
+  "acceptance_exit": "聚焦release测试唯一一次PASS，覆盖legacy过渡、manifest外锚与stage漂移拒绝，并静态/测试证明clean HEAD分支的单parent/全runtime tracked+blob+clean合同；Node24 typecheck唯一一次PASS；限定5文件diff-check唯一一次PASS；列新SHA与post-commit唯一验证要求；TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "",
+  "authorization_history": [],
+  "authorization_state": "none",
+  "block_reason": "FOCUSED_VITEST_NODE24_PATH_NOT_FOUND: [M5-HOME]/Documents/F1+1/app/.local/toolchain/node-v24.18.0-darwin-arm64/bin/node",
+  "claimed_by": "开发部/internal-agent:release_identity_clean_commit",
+  "completion_class": "standard",
+  "confirmation": "无需额外确认；属于A7D590已证P1的最小可逆修复",
+  "created_at": "2026-08-12T19:11+08:00",
+  "department": "开发部",
+  "details": "关闭A7D590两项P1。仅改 app/src/server/admin-service/release-manifest.ts、app/src/tests/admin-release-manifest.test.ts、app/ADMIN-SERVICE-PREP.md、根.gitignore及开发报告。新模型：builder优先要求89项runtime均已被当前单parent HEAD跟踪、worktree/index对这些路径clean、逐blob等于HEAD，动态记录commit/tree/parent；target verifier在无.git目标机只接受外部manifest SHA并对git字段40hex形状、runtime/Next/deps/Node与content/release roots逐字重算，不依赖编译时commit常量。为当前尚未提交54e候选保留唯一、精确31路径/状态/byte的legacy过渡分支，使本轮可验证；任何其他dirty状态拒绝，首个新checkpoint后自动走clean分支。删除package对旧base重构依赖，改为精确验证五个必需script存在/值正确且不放宽依赖。根.gitignore新增app/evidence/，不得删除历史证据。禁止stage/commit/push/build/SSH/M1。",
+  "domain_stage": "development",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若动态git字段造成target端信任放宽、不能保持外部SHA+完整root绑定、legacy分支可接受额外脏文件、或任何首测/typecheck/diff首错，立即block且不得重跑；不得使用any/ts-ignore、不得改其他业务文件。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "RELEASE-IDENTITY-CLEAN-COMMIT-SUCCESSOR",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-A7D590-Admin投影运行闭包Git检查点只读盘点报告.md"
+  ],
+  "report": "",
+  "resolution": {
+    "evidence": "docs/collaboration/部门/开发部/报告/2026-08-12-0E53C4-A66510固定Node24路径机械验证报告.md",
+    "reason": "A66510唯一失败为验证命令Node路径拼写；0E53C4使用固定Node24字节继承同一候选并以三门各一次PASS完成机械收口。",
+    "receipt_id": "RES-20260812T192708-DDC9F728",
+    "replacement_revision": 4,
+    "replacement_state": "acknowledged",
+    "replacement_task_id": "TASK-20260812-0E53C4",
+    "resolved_at": "2026-08-12T19:27+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "superseded",
+    "target_revision_before": 3
+  },
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-A66510",
+  "title": "Release身份门从一次性脏overlay升级为可提交检查点",
+  "unverified": [],
+  "updated_at": "2026-08-12T19:27+08:00",
+  "verified": []
+}

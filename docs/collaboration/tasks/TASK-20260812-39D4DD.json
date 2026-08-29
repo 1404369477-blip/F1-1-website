@@ -1,0 +1,57 @@
+{
+  "acceptance_exit": "0003+migration+Repository+sender+ProjectionReceiver和一组test落盘；聚焦证明状态机/幂等/bootstrap全PASS，旧0001/0002/采集核心/UI/release工具SHA不漂移；typecheck/diff-check PASS；报告/TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/migrations/rss-real/0003_projection_delivery_runtime.sql",
+    "app/src/server/review-real/migration.ts",
+    "app/src/server/review-real/repository.ts",
+    "app/src/server/review-real/sender.ts",
+    "app/src/server/review-real/projection.ts",
+    "app/src/tests/review-real-delivery.test.ts",
+    "docs/collaboration/部门/开发部/报告/2026-08-12-39D4DD投影outbox-single-sender与无hash首包自举实现报告.md"
+  ],
+  "authorization_evidence": "用户连续要求继续上线第一版；96F40F accepted合同已ACK。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T10:41+08:00",
+      "evidence": "用户连续要求继续上线第一版；96F40F accepted合同已ACK。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:projection_sender_a",
+  "completion_class": "standard",
+  "confirmation": "用户已授权继续；只是将已授权96F40F实现拆成原子A/B，不扩大功能。",
+  "created_at": "2026-08-12T10:41+08:00",
+  "department": "开发部",
+  "details": "这是850163正式范围拆分后的A段，吸收其已落候选：0003_projection_delivery_runtime.sql、review-real/migration.ts及后续同一代码。唯一权威为ADR-M5-REAL-PROJECTION-RUNTIME-002。严格实现：0003只追加receipt/lease/attempt/reconcile约束并保留0002；Repository单worker一次最多lease一件、60秒、max3、过期lease先reconcile；sender从已存envelope/hash构造同一Ed25519包，POST transport抽象，精确receipt匹配才succeeded，response unknown只GET，同delivery 404才retryable，语义/签名/generation冲突terminal；所有状态与audit同事务；ProjectionReceiver空根仅接收验签gen1/previous=null/active absent CAS，O_EXCL并发单胜，后继链连续。补一组聚焦test覆盖manual publish前0、publish后唯一outbox、success/reconcile404 same-package/terminal、gen1与并发假签名失败。可以新增纯模块sender.ts；不接Next/public adapter/deployment-v2/installer/release manifest/SSH/M1/真实DB。一次聚焦Vitest、一次Node24 typecheck、一次diff-check，首错即停。",
+  "domain_stage": "开发/真实投影闭环A",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "无法让状态与audit同一事务或需盲重投/第二delivery，立即block。",
+    "发现0003需破坏0002或真实私库down migration，立即block。",
+    "任一限定验证首错即停、不重跑、不扩到public/deployment。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查单部门单在办、0002零改、stored envelope/hash不重算、unknown不盲重投、状态audit同事务、首错即停与0SSH/0M1，无命中",
+  "node": "第一版后台/真实投影闭环A",
+  "pointers": [
+    "docs/decisions/system/2026-08-12-F1+1-真实RSS公开投影bootstrap与sender-reader闭环-successor-accepted.md"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-39D4DD投影outbox-single-sender与无hash首包自举实现报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-39D4DD",
+  "title": "闭合投影outbox状态机、single sender与无hash首包自举",
+  "unverified": [
+    "HTTP transport/CLI、deployment-v2、public listener/Next adapter、installer/release successor overlay归后继B；未SSH/M1/真实DB/真实网络/cutover/完整回归"
+  ],
+  "updated_at": "2026-08-12T10:55+08:00",
+  "verified": [
+    "固定Node24 focused Vitest首次1 file/2 tests PASS；固定Node24 tsc --noEmit首次PASS；限定六项实现diff-check首次PASS；0001/0002与679786四项release工具SHA未漂移"
+  ]
+}

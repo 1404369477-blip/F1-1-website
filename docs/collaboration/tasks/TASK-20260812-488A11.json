@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "M1产生唯一修复后真实RSS收据并立即回到disabled epoch4/unloaded；理想成功出口为HTTP200、解析成功且真实条目进入pending_review，公开站不受影响。",
+  "artifacts": [],
+  "authorization_evidence": "用户明确授权接入真实采集、SSH固定M1并快速上线；当前第二release已正式验签且prepare完成。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T04:57+08:00",
+      "evidence": "用户明确授权接入真实采集、SSH固定M1并快速上线；当前第二release已正式验签且prepare完成。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "CONTRACT_RUN_COUNT_SCHEDULER_GAP",
+  "claimed_by": "开发部/internal-agent:rss_real",
+  "completion_class": "standard",
+  "confirmation": "统筹部收到收据后派安全部独立运行审查；独立PASS前不启用900秒。",
+  "created_at": "2026-08-12T04:57+08:00",
+  "department": "开发部",
+  "details": "前置TASK-20260812-4DD7E5已ACK：第二release prepare PASS，deployment manifest1f681429aa56a49e1b0bfb3ea6405db07ffacd0aa8e5b339dbf1909522cfad50，plist60cd3b0d96b2b7bdf652ffb190288197db2685de4ece6fa2e7daae12c0ad787e，source disabled/stopEpoch3/job unloaded；formal release manifest34c1032c…c8d95。严格复用E157BC已成功的阶段D结构，但所有多步Node逻辑必须落为任务专属文件，两端固定Node24 --check各1次且SHA一致；禁止inline Node、grep/pipe、resume/bootstrap/load。执行前只读确认control status仍disabled epoch3/unloaded、private schema+integrity、run=1/candidate=0、当前slot未记录、public DB基线SHA949c78d505e4c032d2495174deaf62d24f9d99b76284ad7ba6fb29a5ac83bb50/size737280/inode24546198与local/public home+detail200/三服务PID。脚本同一DB连接assertRssSchema后BEGIN IMMEDIATE，仅把fixed source enabled 0→1且epoch保持3，changes=1并逐字段证明其余source字段不变。随后以env-i、固定release SHA和固定Node运行verified rss-scheduled-run恰1次，真实RSS请求最多1次、禁止重试；wrapper进程返回后的下一项外部/DB/解析动作必须是固定rss-control stop恰1次，无论wrapper成功或失败都执行。保存脱敏wrapper/stop收据为0600。stop必须disabled、epoch4、job unloaded。之后只读核对private integrity/schema、run总数2且本次唯一终态、HTTP/response/item/selected/new/updated/duplicate、candidate总数与pending_review分布、机器字段及所有人工editor/review字段未被覆盖；20秒后run/candidate零新增。公开DB SHA/size/inode/mode/owner/link、home/detail200及public-beta/quick-tunnel PID和receipt-refresh零漂移。0自动发布/0公开DB写/0Admin/0900秒。若唯一请求失败不重试，如实完成停采收据；task-owned运行脚本可在收据落盘后清理，但D460D7 stage/tar、325056正式backup与旧772F48 Trash全部保留到独立审查。",
+  "domain_stage": "M1唯一真实采集",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "状态/schema/slot/public基线或one-shot enable任一失败时不运行wrapper；若enabled部分发生则立即stop。",
+    "wrapper失败不得重试，下一动作仍必须stop并证明disabled epoch增加/unloaded。",
+    "stop、人工字段保护、短窗零新增或公开零漂移任一不成立时保留全部backup/证据并阻断。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "在prepare完成且调度未加载的前提下，执行一次one-shot enable、唯一verified wrapper与紧随stop，取得成功候选收据",
+  "pointers": [],
+  "report": "",
+  "resolution": {
+    "evidence": "docs/当前生产状态与执行待办.md",
+    "reason": "2026-08-29 schema10生产恢复、27个X信源和完整Admin路线已形成新的当前闭包；旧任务绑定过时schema/release/plist/视觉或运行时态，继续领取会造成重复或错误执行。",
+    "receipt_id": "RES-20260829T235608-D84BE34A",
+    "replacement_revision": 3,
+    "replacement_state": "blocked",
+    "replacement_task_id": "TASK-20260829-082F2C",
+    "resolved_at": "2026-08-29T23:56+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "superseded",
+    "target_revision_before": 3
+  },
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-488A11",
+  "title": "M1第二release唯一真实RSS采集与立即停采",
+  "unverified": [],
+  "updated_at": "2026-08-29T23:56+08:00",
+  "verified": []
+}

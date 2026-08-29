@@ -1,0 +1,42 @@
+{
+  "acceptance_exit": "stage与正式路径第二release均精确验签，M1唯一真实RSS采集产生明确收据后立即停采，公开站零漂移。",
+  "artifacts": [],
+  "authorization_evidence": "用户已授权M1实采和快速上线；前继正式路径/请求均保持0，现更换执行成员降低重复shell编排错误。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T04:32+08:00",
+      "evidence": "用户已授权M1实采和快速上线；前继正式路径/请求均保持0，现更换执行成员降低重复shell编排错误。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "UNAUTHORIZED_REMOTE_GREP_PIPE_PREEXEC",
+  "claimed_by": "开发部/internal-agent:m1_release_executor",
+  "completion_class": "standard",
+  "confirmation": "统筹部核对实施收据后派安全部执行TASK-20260812-1AA1BB；独立PASS前不启用900秒。",
+  "created_at": "2026-08-12T04:32+08:00",
+  "department": "开发部",
+  "details": "继承链：D460D7传输完成但umask致mode漂移；345AB2安全放行；7593F6已安全恢复137项mode；8DFD59的verifier脚本本地check PASS且SHA=c2db759cd11a043bb0ec7df5d421fdc8ff528171294bbac046ca0928daa745dc，已在M1固定路径[M1-HOME]/F1-1-website/.rss-release-TASK-20260812-D460D7/TASK-20260812-8DFD59-release-verifier.mjs；远端Node check与verifier实际均0。换用新执行成员。禁止变量、eval、node -e、heredoc、ssh后再套`zsh -c`参数、条件末尾无条件PASS文本；每个远端动作必须是一条包含所有固定绝对路径的直接命令，或一份两端check+SHA一致的文件化脚本。先直接chmod 0600固定verifier文件，再分别直接shasum/stat/固定Node24 --check；只有SHA=c2db...、UID501/nlink1/mode0600与check PASS才直接执行固定Node24 `--import tsx` verifier（工作目录若必要只能用一条字面量cd+exec，不传变量）对stage恰1次。要求manifest34c1032c…c8d95/content2aae0486…8c153/release6d402a5d…59eb02。PASS后以文件化、语法检查和SHA绑定的事务脚本完成任务backup/overlay；正式路径用同一verifier恰1次。再严格复用仓内已验收installer/control/wrapper CLI及既有成功SQL收据，不新增内联Node：prepare-only恰1、不load；disabled epoch3 job unloaded；slot可写时仅enabled=1；wrapper恰1、真实RSS最多1，第一控制动作stop恰1；核对HTTP/parse/candidate pending_review/人工字段、20秒零新增、公开DB身份/home/detail/三服务零漂移。不加载900秒。成功后清理任务文件、stage/tar/backups/tmp与772F48 Trash；失败首错即停并恢复/保留证据。",
+  "domain_stage": "M1执行成员换班部署与真实采集",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "固定脚本SHA/stat/check或stage verifier任一不符时不overlay、不请求。",
+    "backup/overlay/formal verifier/prepare/state门失败时不启用source并恢复正式路径。",
+    "唯一wrapper失败时不重试且第一动作stop；公开DB/服务漂移即阻断。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "更换执行成员，以固定绝对路径的直接SSH命令复用现有verifier和已恢复stage，完成第二release及唯一实采",
+  "pointers": [],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-B4EE80",
+  "title": "M1第二release直接命令验签与唯一实采-executor-handoff",
+  "unverified": [],
+  "updated_at": "2026-08-12T04:34+08:00",
+  "verified": []
+}

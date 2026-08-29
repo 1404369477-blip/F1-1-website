@@ -1,0 +1,549 @@
+{
+  "schema_version": "f1plus1-source-management-safety-oracle-v1",
+  "task_id": "TASK-20260811-3D190C",
+  "status": "final",
+  "decision": "pass",
+  "scope": "closed SOURCE-MGMT local-synthetic database; offline read-only oracle",
+  "input_pins": {
+    "closed_database": {
+      "path": "app/.local/f1plus1-source-management-synthetic.sqlite",
+      "sha256": "ddf3778c62cf95f195b1f08db8b075d676069f4cc9fb39804063e1004dd2e939",
+      "bytes": 237568
+    },
+    "closed_receipt": {
+      "path": "app/.local/receipts/source-management-synthetic.closed.json",
+      "file_sha256": "fda5bc8727f1b39bbeaca99857d9baf248e3791f7075ea611aa2d86eb97732a1",
+      "receipt_sha256": "2d684ca9074c0f853bd1c03449e54b7293102c264a87d9514c5464482b806279"
+    },
+    "product_contract": {
+      "path": "docs/spec/F1+1-SOURCE-MGMT-001本地synthetic信源管理纵切实现合同-v0.2.md",
+      "sha256": "a4b7230c89b0083f6d3f412d2c3f3f767c7f131d4ea422f85fe5721f75df686b"
+    },
+    "data_contract": {
+      "path": "docs/collaboration/部门/数据部/报告/2026-08-09-SOURCE-MGMT-001-SQLite-profile-mutation-successor数据合同.md",
+      "sha256": "4498eea95e8d2461bd3c4bbb1e3ff67de2247a65c0da99951a194b2b9e9d3d95"
+    },
+    "implementation": {
+      "source_management_database_module": {
+        "path": "app/src/server/db/source-management-synthetic.ts",
+        "sha256": "20335550c73b7f1c54af15acc7cafede4d7dbc590811d80759370c299b4224a0"
+      },
+      "database_module": {
+        "path": "app/src/server/db/database.ts",
+        "sha256": "a38a41024bad0fb9252cbce0cee07ecef77da2a941b52990be5ce9395e781d5d"
+      },
+      "canonical_json_module": {
+        "path": "app/src/server/db/profile.ts",
+        "sha256": "e2ff860118308e779b1c83b9664628dd5d45986970f48861fe7e79d08f544c17"
+      },
+      "repository_module": {
+        "path": "app/src/server/source-management/repository.ts",
+        "sha256": "741aad53d872f837afbe1d3c94bb3047deb54d711d76045f6b2e1684c4598912"
+      },
+      "runtime_migration": {
+        "path": "app/migrations/profiles/source-management-synthetic/0003_source_management_runtime.sql",
+        "sha256": "6168ba83c3d656ac25cbd58474ce5ab47497fa5c5fb38ef94b243d8a12e96bb6"
+      },
+      "ack_875b6c_manifest": {
+        "path": "app/evidence/TASK-20260810-875B6C/manifest.json",
+        "sha256": "1d402722e2139fd5fbab0de791e691939273e0a534672aba71a629b45486519e"
+      },
+      "closed_candidate_manifest": {
+        "path": "app/evidence/TASK-20260810-91AF6E/manifest.json",
+        "sha256": "7b0658d9972df676acec689cb3d99ea23e74bf1abc2e51f9a169a9aa49b187b3"
+      }
+    }
+  },
+  "database_access_receipt": {
+    "formal_sqlite_handle_opened": false,
+    "formal_database_modified": false,
+    "formal_sha256_before": "ddf3778c62cf95f195b1f08db8b075d676069f4cc9fb39804063e1004dd2e939",
+    "formal_sha256_after": "ddf3778c62cf95f195b1f08db8b075d676069f4cc9fb39804063e1004dd2e939",
+    "physical_copy_count": 1,
+    "copy_directory_mode": "0700",
+    "copy_file_mode": "0600",
+    "copy_sha256": "ddf3778c62cf95f195b1f08db8b075d676069f4cc9fb39804063e1004dd2e939",
+    "copy_sqlite_uri_mode": "mode=ro&immutable=1",
+    "temporary_root": "/tmp/TASK-20260811-3D190C.R5fOBk",
+    "temporary_copy": "/tmp/TASK-20260811-3D190C.R5fOBk/closed-copy.sqlite",
+    "copy_query_only": 1,
+    "copy_database_list": ["main"],
+    "copy_integrity_check": "ok",
+    "copy_foreign_key_check_rows": 0,
+    "copy_user_version": 3,
+    "copy_journal_mode_observed": "delete",
+    "external_calls": 0,
+    "server_started": false,
+    "readiness_called": false,
+    "fixture_initialized": false,
+    "writer_probe_executed": false,
+    "temporary_copy_residual_count": 0,
+    "temporary_root_exists_after_cleanup": false,
+    "temporary_residual_scan": {
+      "scope": "/tmp",
+      "maxdepth": 1,
+      "name_glob": "TASK-20260811-3D190C.*",
+      "matches": []
+    },
+    "formal_sidecar_residual_count": 0,
+    "formal_sidecar_scan": {
+      "scope": "app/.local",
+      "exact_names": [
+        "f1plus1-source-management-synthetic.sqlite-wal",
+        "f1plus1-source-management-synthetic.sqlite-shm",
+        "f1plus1-source-management-synthetic.sqlite-journal"
+      ],
+      "matches": []
+    }
+  },
+  "table_counts": {
+    "fixture_profile_ledger": 1,
+    "source_config_fixture": 1,
+    "source_overlay_lineage": 1,
+    "source_runtime_fence": 1,
+    "operation_receipt": 5,
+    "outbox_job": 1,
+    "inbox": 0,
+    "task_attempt": 0,
+    "dead_letter": 0,
+    "audit_event": 5
+  },
+  "row_oracles": {
+    "fixture_profile_ledger": {
+      "profile_id": "source-management-synthetic",
+      "sqlite_path": "app/.local/f1plus1-source-management-synthetic.sqlite",
+      "contract_version": "source-management-local-v0.3",
+      "baseline_file_sha256": "d4da9fc24c792c0471bcd24c525a46dcef1e521b36a870fd111e7310243888b2",
+      "baseline_projection_sha256": "e7a8312c70a9a49922aedb3cfbeaa190db8f5dce8d4ab45db1570748fc329f17",
+      "baseline_row_count": 59,
+      "source_field_count": 39,
+      "baseline_enabled_false_count": 59,
+      "source_schema_sha256": "de6c6c07a33589106ebb93496ad10ae3b06ab1c7845e4e0e91888ca0b17ae5a4",
+      "migration_selector_root_sha256": "a5f540a64b38a473e6a1a0927302876fce8dcbf7e693c48e5eff07d4d98d1de0",
+      "schema_fingerprint_sha256": "f6f56bad5a93a486b27eafcae661f79d70ca93b7a04d5cd55c5917ce8aae377d",
+      "validator_sha256": "7f758f9bd907939d4be29dd61d3d195522a6a58e5bb47b8de1dd917858b78ff9",
+      "row_count_contract_json": "{\"baseline\":59,\"local_initial\":0}",
+      "synthetic_only": 1,
+      "external_calls": 0,
+      "writes_to_base": 0,
+      "real_content_imported": 0,
+      "recorded_at": "2026-08-09T00:00:00.000Z"
+    },
+    "source_config_fixture": {
+      "source_id": "src-local-14ae0ef1ac47d753a1994519",
+      "local_row_count": 1,
+      "origin": "local_synthetic",
+      "required_field_count": 39,
+      "collection_onboarding_status": "stopped",
+      "lifecycle_status": "retired",
+      "enabled": 0,
+      "source_stop_status": "manual",
+      "source_config_epoch": 5,
+      "source_safety_epoch": 3,
+      "onboarding_operation_id": "op-srcact-91f8139ed3a49913d75c4d771951760be337ceba7e059a9a86deec46698a92e1",
+      "external_url_class": "synthetic.invalid only"
+    },
+    "source_overlay_lineage": {
+      "source_id": "src-local-14ae0ef1ac47d753a1994519",
+      "origin": "local_synthetic",
+      "baseline_projection_hash": "e7a8312c70a9a49922aedb3cfbeaa190db8f5dce8d4ab45db1570748fc329f17",
+      "source_version": 5,
+      "effective_source_hash": "ae982ea031c01b88743195e9fcc7e124e663dd4d3796380f8b5ebc4dd33ddf81",
+      "full_identity_hash": "14ae0ef1ac47d753a199451904ac2ab8de863cf047860d2e4c4f05758b0a137e",
+      "first_operation_id": "op-cmd-0000000000000000000000000000000000000000000000000000000000000001",
+      "last_operation_id": "op-cmd-0000000000000000000000000000000000000000000000000000000000000005"
+    },
+    "source_runtime_fence": {
+      "source_id": "src-local-14ae0ef1ac47d753a1994519",
+      "authorization_version": 1,
+      "policy_epoch": 1,
+      "recovery_epoch": 1
+    },
+    "operation_receipt": {
+      "closed_operation_types_in_order": [
+        "source_add",
+        "source_validate",
+        "source_activate",
+        "source_stop",
+        "source_retire"
+      ],
+      "all_status": "succeeded",
+      "all_result_hashes_recomputed": true,
+      "command_operation_ids_in_order": [
+        "op-cmd-0000000000000000000000000000000000000000000000000000000000000001",
+        "op-cmd-0000000000000000000000000000000000000000000000000000000000000002",
+        "op-cmd-0000000000000000000000000000000000000000000000000000000000000003",
+        "op-cmd-0000000000000000000000000000000000000000000000000000000000000004",
+        "op-cmd-0000000000000000000000000000000000000000000000000000000000000005"
+      ],
+      "activate_business_operation_id": "op-srcact-91f8139ed3a49913d75c4d771951760be337ceba7e059a9a86deec46698a92e1",
+      "activate_outbox_job_id": "job-srcact-7c34bcb9177d0c9f127b4d828d88c68b1f5d07450ef07c03c0732dd429d12320"
+    },
+    "outbox_job": {
+      "job_id": "job-srcact-7c34bcb9177d0c9f127b4d828d88c68b1f5d07450ef07c03c0732dd429d12320",
+      "task_id": "task-srcact-f3bd950b24dcdb4e8b6a070ae02f8fb4d2d7100231d5f578d9f123aeae2416c5",
+      "business_operation_id": "op-srcact-91f8139ed3a49913d75c4d771951760be337ceba7e059a9a86deec46698a92e1",
+      "operation_type": "source_activation",
+      "aggregate_type": "source",
+      "aggregate_id": "src-local-14ae0ef1ac47d753a1994519",
+      "job_status": "cancelled",
+      "last_error_code": "SOURCE_STOPPED",
+      "attempt": 0,
+      "retry_generation": 0,
+      "max_attempts": 3,
+      "lease_expiry": null,
+      "source_config_epoch": 3,
+      "source_safety_epoch": 1,
+      "authorization_version": 1,
+      "policy_epoch": 1,
+      "recovery_epoch": 1,
+      "envelope_hash": "f7d01404f313ef02dd89909166e211dd077ca10e9aabdd803f9682e993ef30ce",
+      "payload_hash": "a5e4682288c816549c654c576189d6ddd4a3951e121162643b33973c8b8e6a24"
+    },
+    "inbox": {
+      "count": 0,
+      "required_reason": "The sole activation job was cancelled by source_stop while attempt remained 0 and lease_expiry remained null; acquireActivation was never committed, so no inbox processing row exists."
+    },
+    "task_attempt": {
+      "count": 0,
+      "required_reason": "task_attempt is inserted only after a fresh worker lease is acquired. The sole job never advanced beyond attempt 0 and was cancelled before acquisition."
+    },
+    "dead_letter": {
+      "count": 0,
+      "required_reason": "The sole job is cancelled with SOURCE_STOPPED and never consumed an attempt; no terminal or third-attempt settlement occurred."
+    }
+  },
+  "audit_oracle": {
+    "event_count": 5,
+    "monotonic_sequence": [1, 2, 3, 4, 5],
+    "sequence_exact": true,
+    "previous_event_hash_chain_exact": true,
+    "payload_hashes_exact": true,
+    "event_hashes_exact": true,
+    "operation_receipt_links_exact": true,
+    "payload_json_is_canonical_core_for_all_events": true,
+    "required_flags": {
+      "append_only": 1,
+      "internal_only": 1,
+      "external_calls": 0,
+      "redaction_version": "source-management-redaction-v1"
+    },
+    "append_only_triggers": [
+      "source_management_audit_no_update",
+      "source_management_audit_no_delete"
+    ],
+    "payload_derivation": "For these five command events, payload is the linked operation_receipt.receipt_json.result. audit_event.payload_json stores canonical core metadata, not the business payload.",
+    "receipt_payload_json_pointer": "/result",
+    "payload_hash_algorithm": "SHA-256(UTF8(canonicalJson(payload)))",
+    "event_hash_algorithm": "SHA-256(UTF8(canonicalJson({previous_event_hash,core,payload})))",
+    "events": [
+      {
+        "seq": 1,
+        "event_id": "audit-000000000001",
+        "reason_code": "SOURCE_ADD_SUCCEEDED",
+        "operation_type": "source_add",
+        "operation_id": "op-cmd-0000000000000000000000000000000000000000000000000000000000000001",
+        "task_id": null,
+        "previous_event_hash": null,
+        "payload_hash": "f668f9373be4a64f34a1b6f67db0fb94773fb203b58085388049bf5a99043d55",
+        "receipt_result_hash": "f668f9373be4a64f34a1b6f67db0fb94773fb203b58085388049bf5a99043d55",
+        "payload": {
+          "collection_onboarding_status": "validating",
+          "enabled": false,
+          "lifecycle_status": "proposed",
+          "onboarding_operation_id": null,
+          "source_config_epoch": 1,
+          "source_safety_epoch": 1
+        },
+        "core": {
+          "event_id": "audit-000000000001",
+          "monotonic_seq": 1,
+          "occurred_at": "2026-08-09T23:52:58.508Z",
+          "clock_status": "trusted_local_clock",
+          "trace_ref": "trace-000000000001",
+          "session_hash": null,
+          "reason_code": "SOURCE_ADD_SUCCEEDED",
+          "owner": "command",
+          "operation_id": "op-cmd-0000000000000000000000000000000000000000000000000000000000000001",
+          "task_id": null,
+          "source_config_epoch": 1,
+          "source_safety_epoch": 1,
+          "authorization_version": 1,
+          "policy_epoch": 1,
+          "recovery_epoch": 1,
+          "attempt": 0,
+          "payload_hash": "f668f9373be4a64f34a1b6f67db0fb94773fb203b58085388049bf5a99043d55",
+          "fixture_hash": "e7a8312c70a9a49922aedb3cfbeaa190db8f5dce8d4ab45db1570748fc329f17",
+          "schema_hash": "de6c6c07a33589106ebb93496ad10ae3b06ab1c7845e4e0e91888ca0b17ae5a4",
+          "redaction_version": "source-management-redaction-v1",
+          "retention": "local-synthetic",
+          "cleanup_after": "2099-12-31T00:00:00.000Z",
+          "append_only": 1,
+          "internal_only": 1,
+          "external_calls": 0
+        },
+        "event_hash": "93b7bdc3510d0089dd2aea21c7f8f2dcaf17510a96df9b982e223f52d0dfc122"
+      },
+      {
+        "seq": 2,
+        "event_id": "audit-000000000002",
+        "reason_code": "SOURCE_VALIDATE_SUCCEEDED",
+        "operation_type": "source_validate",
+        "operation_id": "op-cmd-0000000000000000000000000000000000000000000000000000000000000002",
+        "task_id": null,
+        "previous_event_hash": "93b7bdc3510d0089dd2aea21c7f8f2dcaf17510a96df9b982e223f52d0dfc122",
+        "payload_hash": "4588ae1339e29ebfd8005cf563ed9d9c243e7b100f8eb7bc67073335b2fcad8a",
+        "receipt_result_hash": "4588ae1339e29ebfd8005cf563ed9d9c243e7b100f8eb7bc67073335b2fcad8a",
+        "payload": {
+          "collection_onboarding_status": "activation_pending",
+          "enabled": false,
+          "lifecycle_status": "proposed",
+          "onboarding_operation_id": null,
+          "source_config_epoch": 2,
+          "source_safety_epoch": 1
+        },
+        "core": {
+          "event_id": "audit-000000000002",
+          "monotonic_seq": 2,
+          "occurred_at": "2026-08-09T23:52:58.518Z",
+          "clock_status": "trusted_local_clock",
+          "trace_ref": "trace-000000000002",
+          "session_hash": null,
+          "reason_code": "SOURCE_VALIDATE_SUCCEEDED",
+          "owner": "command",
+          "operation_id": "op-cmd-0000000000000000000000000000000000000000000000000000000000000002",
+          "task_id": null,
+          "source_config_epoch": 2,
+          "source_safety_epoch": 1,
+          "authorization_version": 1,
+          "policy_epoch": 1,
+          "recovery_epoch": 1,
+          "attempt": 0,
+          "payload_hash": "4588ae1339e29ebfd8005cf563ed9d9c243e7b100f8eb7bc67073335b2fcad8a",
+          "fixture_hash": "e7a8312c70a9a49922aedb3cfbeaa190db8f5dce8d4ab45db1570748fc329f17",
+          "schema_hash": "de6c6c07a33589106ebb93496ad10ae3b06ab1c7845e4e0e91888ca0b17ae5a4",
+          "redaction_version": "source-management-redaction-v1",
+          "retention": "local-synthetic",
+          "cleanup_after": "2099-12-31T00:00:00.000Z",
+          "append_only": 1,
+          "internal_only": 1,
+          "external_calls": 0
+        },
+        "event_hash": "3d7c7b3a3f010787c132174bd42a9f7bc63103e82feb33dc5582da3160827a22"
+      },
+      {
+        "seq": 3,
+        "event_id": "audit-000000000003",
+        "reason_code": "SOURCE_ACTIVATE_QUEUED",
+        "operation_type": "source_activate",
+        "operation_id": "op-cmd-0000000000000000000000000000000000000000000000000000000000000003",
+        "task_id": "task-srcact-f3bd950b24dcdb4e8b6a070ae02f8fb4d2d7100231d5f578d9f123aeae2416c5",
+        "previous_event_hash": "3d7c7b3a3f010787c132174bd42a9f7bc63103e82feb33dc5582da3160827a22",
+        "payload_hash": "1d64bfb2a13857388063d8e034f40beca915983d6dc1cd4bb7df7aefaa46302e",
+        "receipt_result_hash": "1d64bfb2a13857388063d8e034f40beca915983d6dc1cd4bb7df7aefaa46302e",
+        "payload": {
+          "collection_onboarding_status": "queued",
+          "enabled": true,
+          "lifecycle_status": "active",
+          "onboarding_operation_id": "op-srcact-91f8139ed3a49913d75c4d771951760be337ceba7e059a9a86deec46698a92e1",
+          "source_config_epoch": 3,
+          "source_safety_epoch": 1
+        },
+        "core": {
+          "event_id": "audit-000000000003",
+          "monotonic_seq": 3,
+          "occurred_at": "2026-08-09T23:52:58.525Z",
+          "clock_status": "trusted_local_clock",
+          "trace_ref": "trace-000000000003",
+          "session_hash": null,
+          "reason_code": "SOURCE_ACTIVATE_QUEUED",
+          "owner": "command",
+          "operation_id": "op-cmd-0000000000000000000000000000000000000000000000000000000000000003",
+          "task_id": "task-srcact-f3bd950b24dcdb4e8b6a070ae02f8fb4d2d7100231d5f578d9f123aeae2416c5",
+          "source_config_epoch": 3,
+          "source_safety_epoch": 1,
+          "authorization_version": 1,
+          "policy_epoch": 1,
+          "recovery_epoch": 1,
+          "attempt": 0,
+          "payload_hash": "1d64bfb2a13857388063d8e034f40beca915983d6dc1cd4bb7df7aefaa46302e",
+          "fixture_hash": "e7a8312c70a9a49922aedb3cfbeaa190db8f5dce8d4ab45db1570748fc329f17",
+          "schema_hash": "de6c6c07a33589106ebb93496ad10ae3b06ab1c7845e4e0e91888ca0b17ae5a4",
+          "redaction_version": "source-management-redaction-v1",
+          "retention": "local-synthetic",
+          "cleanup_after": "2099-12-31T00:00:00.000Z",
+          "append_only": 1,
+          "internal_only": 1,
+          "external_calls": 0
+        },
+        "event_hash": "94073f2d813b8a912cca815321c0b41ca449c1cba02dba01409d7aae34736779"
+      },
+      {
+        "seq": 4,
+        "event_id": "audit-000000000004",
+        "reason_code": "SOURCE_STOP_SUCCEEDED",
+        "operation_type": "source_stop",
+        "operation_id": "op-cmd-0000000000000000000000000000000000000000000000000000000000000004",
+        "task_id": null,
+        "previous_event_hash": "94073f2d813b8a912cca815321c0b41ca449c1cba02dba01409d7aae34736779",
+        "payload_hash": "7a39952b03e8f74edad2b4f1ead90cf7da6530c0187c1d63c6a425637338baf2",
+        "receipt_result_hash": "7a39952b03e8f74edad2b4f1ead90cf7da6530c0187c1d63c6a425637338baf2",
+        "payload": {
+          "collection_onboarding_status": "stopped",
+          "enabled": false,
+          "lifecycle_status": "active",
+          "onboarding_operation_id": "op-srcact-91f8139ed3a49913d75c4d771951760be337ceba7e059a9a86deec46698a92e1",
+          "source_config_epoch": 4,
+          "source_safety_epoch": 2
+        },
+        "core": {
+          "event_id": "audit-000000000004",
+          "monotonic_seq": 4,
+          "occurred_at": "2026-08-09T23:52:58.535Z",
+          "clock_status": "trusted_local_clock",
+          "trace_ref": "trace-000000000004",
+          "session_hash": null,
+          "reason_code": "SOURCE_STOP_SUCCEEDED",
+          "owner": "command",
+          "operation_id": "op-cmd-0000000000000000000000000000000000000000000000000000000000000004",
+          "task_id": null,
+          "source_config_epoch": 4,
+          "source_safety_epoch": 2,
+          "authorization_version": 1,
+          "policy_epoch": 1,
+          "recovery_epoch": 1,
+          "attempt": 0,
+          "payload_hash": "7a39952b03e8f74edad2b4f1ead90cf7da6530c0187c1d63c6a425637338baf2",
+          "fixture_hash": "e7a8312c70a9a49922aedb3cfbeaa190db8f5dce8d4ab45db1570748fc329f17",
+          "schema_hash": "de6c6c07a33589106ebb93496ad10ae3b06ab1c7845e4e0e91888ca0b17ae5a4",
+          "redaction_version": "source-management-redaction-v1",
+          "retention": "local-synthetic",
+          "cleanup_after": "2099-12-31T00:00:00.000Z",
+          "append_only": 1,
+          "internal_only": 1,
+          "external_calls": 0
+        },
+        "event_hash": "3883e83e671e8cf2c4b39649a9017e2ebdee958ed07e0785a9b2efc7af1f19e0"
+      },
+      {
+        "seq": 5,
+        "event_id": "audit-000000000005",
+        "reason_code": "SOURCE_RETIRE_SUCCEEDED",
+        "operation_type": "source_retire",
+        "operation_id": "op-cmd-0000000000000000000000000000000000000000000000000000000000000005",
+        "task_id": null,
+        "previous_event_hash": "3883e83e671e8cf2c4b39649a9017e2ebdee958ed07e0785a9b2efc7af1f19e0",
+        "payload_hash": "4fccb24bee46cfccdbff7c0da6decbeff33bfebb89c928e30cf4e98352156663",
+        "receipt_result_hash": "4fccb24bee46cfccdbff7c0da6decbeff33bfebb89c928e30cf4e98352156663",
+        "payload": {
+          "collection_onboarding_status": "stopped",
+          "enabled": false,
+          "lifecycle_status": "retired",
+          "onboarding_operation_id": "op-srcact-91f8139ed3a49913d75c4d771951760be337ceba7e059a9a86deec46698a92e1",
+          "source_config_epoch": 5,
+          "source_safety_epoch": 3
+        },
+        "core": {
+          "event_id": "audit-000000000005",
+          "monotonic_seq": 5,
+          "occurred_at": "2026-08-09T23:52:58.541Z",
+          "clock_status": "trusted_local_clock",
+          "trace_ref": "trace-000000000005",
+          "session_hash": null,
+          "reason_code": "SOURCE_RETIRE_SUCCEEDED",
+          "owner": "command",
+          "operation_id": "op-cmd-0000000000000000000000000000000000000000000000000000000000000005",
+          "task_id": null,
+          "source_config_epoch": 5,
+          "source_safety_epoch": 3,
+          "authorization_version": 1,
+          "policy_epoch": 1,
+          "recovery_epoch": 1,
+          "attempt": 0,
+          "payload_hash": "4fccb24bee46cfccdbff7c0da6decbeff33bfebb89c928e30cf4e98352156663",
+          "fixture_hash": "e7a8312c70a9a49922aedb3cfbeaa190db8f5dce8d4ab45db1570748fc329f17",
+          "schema_hash": "de6c6c07a33589106ebb93496ad10ae3b06ab1c7845e4e0e91888ca0b17ae5a4",
+          "redaction_version": "source-management-redaction-v1",
+          "retention": "local-synthetic",
+          "cleanup_after": "2099-12-31T00:00:00.000Z",
+          "append_only": 1,
+          "internal_only": 1,
+          "external_calls": 0
+        },
+        "event_hash": "0c8797fc638bc39de98454a8c6546a30779485501e30088570ec505ddf9f4b1a"
+      }
+    ]
+  },
+  "logical_content_root": {
+    "canonicalization": "project canonicalJson from app/src/server/db/profile.ts; recursive JSON encoding, object keys sorted lexicographically, arrays retain order, finite JSON numbers only, UTF-8 bytes",
+    "frozen_runtime": "Node.js 24.18.0 closed-receipt runtime pinned by app/evidence/TASK-20260810-91AF6E/manifest.json",
+    "table_order": [
+      "fixture_profile_ledger",
+      "source_config_fixture",
+      "source_overlay_lineage",
+      "source_runtime_fence",
+      "operation_receipt",
+      "outbox_job",
+      "inbox",
+      "task_attempt",
+      "dead_letter",
+      "audit_event"
+    ],
+    "row_order": "Within each table, SELECT * rows sorted by canonicalJson(left).localeCompare(canonicalJson(right)) under the frozen Node.js runtime.",
+    "root_object": "{tables:[{table:<name>,rows:<sorted rows>},...]}",
+    "algorithm": "SHA-256(UTF8(canonicalJson(root_object)))",
+    "canonical_byte_length": 24548,
+    "sha256": "7cae9bb8767a259086920190f65485800bb6008e3dc294fba893d1b0b8156e6a",
+    "matches_closed_receipt": true
+  },
+  "second_writer_oracle": {
+    "probe_executed": false,
+    "derivation_only": true,
+    "product_open_path": {
+      "first_gate": "acquireSourceManagementProfileLock(appRoot)",
+      "allowed_failure_phase": "before SQLite database open",
+      "failure_reason_code": "LOCK_CONTENTION",
+      "owner_liveness_proven": false,
+      "meaning": "A second product open attempt that encounters an existing profile lock path fails closed with LOCK_CONTENTION before obtaining a SQLite handle; this does not establish whether the lock path belongs to a live owner or is stale."
+    },
+    "transaction_path_if_profile_lock_is_not_the_contender": {
+      "primitive": "BEGIN IMMEDIATE",
+      "sqlite_busy_timeout_ms": 250,
+      "bounded_begin_attempts": 3,
+      "inter_attempt_delays_ms": [25, 50],
+      "contention_classifier": {
+        "required_error_code": "ERR_SQLITE_ERROR",
+        "accepted_detail": [
+          "errcode=5 (SQLITE_BUSY)",
+          "errcode=6 (SQLITE_LOCKED)",
+          "message matches busy or locked"
+        ]
+      },
+      "terminal_reason_code": "LOCK_CONTENTION",
+      "terminal_message": "BEGIN IMMEDIATE remained busy after 3 bounded attempts",
+      "callback_business_writes_before_acquire": 0,
+      "callback_failure_after_acquire": "ROLLBACK best effort; original error preserved"
+    },
+    "forbidden_interpretation": "This oracle does not prove OS-level exclusivity or a live two-writer probe; it freezes only the failure semantics implied by the pinned implementation."
+  },
+  "verified": [
+    "All pinned SHA-256 values matched current bytes before oracle creation.",
+    "One physical copy matched the formal closed DB SHA-256 and was opened read-only with immutable=1 and query_only=ON.",
+    "All ten table counts, row constraints, receipt result hashes, audit sequence/links/payload hashes/event hashes, integrity, foreign keys and logical content root matched.",
+    "Formal DB SHA-256 was identical before and after; no formal WAL/SHM/journal appeared.",
+    "Temporary copy and task-specific temporary root were removed; residual count is zero.",
+    "No network, server, readiness, fixture initialization, build, typecheck, full test, writer probe or external call occurred."
+  ],
+  "unverified": [
+    "No live second-writer or SQLite contention probe was executed; semantics are code-derived.",
+    "Audit UPDATE/DELETE triggers were inspected from sqlite_schema and frozen by name/SQL semantics; they were not fired because the copy was strictly read-only.",
+    "No server, HTTP route, provider, Base, Collector, UI, deployment, backup or production environment was exercised."
+  ],
+  "mistake_check": [
+    "Did not assume inbox=1 or task_attempt=1; both are exactly zero and are reconciled to cancelled attempt=0 with null lease_expiry.",
+    "Did not treat audit_event.payload_json as the business payload; it is canonical audit core metadata. Payload was recovered from the linked operation receipt result.",
+    "Did not reuse a generic content-root recipe; used the exact source-management table list and root object from the pinned implementation.",
+    "Did not open the formal database with SQLite, execute a writer probe, or infer a dynamic concurrency PASS from static code.",
+    "Did not modify App, data, database, migration, Spec, ADR, receipt or prior task history."
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "acceptance_exit": "得到一次可信stage release-verified收据，或一次明确失败；正式路径继续零写。",
+  "artifacts": [],
+  "authorization_evidence": "用户已授权M1部署；前置SHA/stat/check均通过，现仅执行已审核的单一验签命令。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T04:35+08:00",
+      "evidence": "用户已授权M1部署；前置SHA/stat/check均通过，现仅执行已审核的单一验签命令。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "STAGE_VERIFIER_TSX_MODULE_NOT_FOUND",
+  "claimed_by": "开发部/internal-agent:m1_release_executor",
+  "completion_class": "standard",
+  "confirmation": "统筹部核收stage验签后再创建正式overlay与实采任务。",
+  "created_at": "2026-08-12T04:35+08:00",
+  "department": "开发部",
+  "details": "前置：B4EE80已确认远端verifier SHA=c2db759cd11a043bb0ec7df5d421fdc8ff528171294bbac046ca0928daa745dc、UID501/nlink1/mode0600、远端Node24 --check均PASS；stage verifier实际0；stage mode和内容已恢复。领取后禁止任何远端preflight、grep、stat、shasum、变量、管道、重定向、node-e、heredoc或包装脚本。唯一允许的远端命令是：ssh f1plus1-m1-uu 后接一个单独远端命令字符串，内容逐字为 cd [M1-HOME]/F1-1-website/app && exec [M1-HOME]/.local/node-v24.18.0-darwin-arm64/bin/node --import tsx [M1-HOME]/F1-1-website/.rss-release-TASK-20260812-D460D7/TASK-20260812-8DFD59-release-verifier.mjs [M1-HOME]/F1-1-website/.rss-release-TASK-20260812-D460D7/stage-app。只运行恰1次。exit0且唯一JSON明确status=release-verified/rootKind=stage、manifest34c1032c…c8d95、commit5d596367…、content2aae0486…8c153、release6d402a5d…59eb02、runtime19/dependency packages8/files118才PASS；否则首错停止。本任务不overlay、不prepare、不访问RSS、不清理。",
+  "domain_stage": "M1单命令stage验签",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "SSH/Node/verifier非零或JSON身份任一不符时停止，不运行第二命令。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "只执行一条已固定的远端stage verifier命令，消除额外诊断与shell变量",
+  "pointers": [],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-670A4F",
+  "title": "M1第二release stage verifier单命令白名单",
+  "unverified": [],
+  "updated_at": "2026-08-12T04:36+08:00",
+  "verified": []
+}

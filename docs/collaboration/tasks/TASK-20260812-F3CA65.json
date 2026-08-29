@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "receiver与Admin LaunchAgent均loaded且健康；3102和3101只绑定loopback；固定review DB仍同path/dev/ino、user_version=3、integrity=ok、FK开启且无第二库；三设备sourceRefs配置被启动门接受；无可信身份请求401零写；唯一sender-once产生可审计收据或明确no-op；旧public/RSS任务继续健康；0 Tailscale policy/Serve/Funnel写、0 public cutover；提交脱敏报告并TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "thread-user-message:2026-08-12:授权",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T23:34+08:00",
+      "evidence": "thread-user-message:2026-08-12:授权",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "PREFLIGHT_SHELL_PLIST_STATUS_BAD_MATH_EXPRESSION_BEFORE_ANY_WRITE: zsh: bad math expression: operator expected at `1 '",
+  "claimed_by": "开发部/internal-agent:m1_admin_activation",
+  "completion_class": "standard",
+  "confirmation": "用户在当前线程明确回复：授权",
+  "created_at": "2026-08-12T23:34+08:00",
+  "department": "开发部",
+  "details": "用户已明确回复授权。基于已验签release 74580c8a、Admin-v3 manifest 9933b90e、Public-v2 manifest 3a4824e2和PrepareInputs三设备配置，执行正式上线第一事务：fresh核验固定review DB路径/dev/ino/user_version与3101/3102无listener；将prepared receiver plist复制到live并bootstrap，仅监听127.0.0.1:3102；验证后将prepared Admin plist复制到live并bootstrap，existing-only打开同一review DB并原位迁移v1/v2到v3，保持同path/dev/ino；核对integrity/FK/WAL/synchronous/三sourceRefs/3101 loopback与无可信头401；显式sender --once一次并核对outbox/receipt，不启动第二worker。不得修改Tailscale管理面policy/Grant/Serve/Funnel，不得public cutover。任一步失败立即bootout本次新服务并保留数据库/audit/outbox事实，不做破坏性DB回滚。",
+  "domain_stage": "admin_runtime_activation",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一manifest/release/key/DB inode/plist基线漂移则0 bootstrap停止；receiver失败只清除本次receiver加载；Admin/迁移失败先bootout Admin再bootout receiver，数据库事实不回滚；端口非loopback、第二DB、migration/integrity/FK异常或sender未知结果立即停止，禁止重试与public/tailnet写。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "ADMIN-RUNTIME-LIVE-001",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-F4D716-三设备M1-release与Admin-reprepare-finalizer报告.md"
+  ],
+  "report": "",
+  "resolution": {
+    "evidence": "docs/当前生产状态与执行待办.md",
+    "reason": "2026-08-29 schema10生产恢复、27个X信源和完整Admin路线已形成新的当前闭包；旧任务绑定过时schema/release/plist/视觉或运行时态，继续领取会造成重复或错误执行。",
+    "receipt_id": "RES-20260829T235617-869CAF57",
+    "replacement_revision": 3,
+    "replacement_state": "blocked",
+    "replacement_task_id": "TASK-20260829-E59ACA",
+    "resolved_at": "2026-08-29T23:56+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "superseded",
+    "target_revision_before": 3
+  },
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-F3CA65",
+  "title": "M1三设备Admin运行态启动与DB-v3原位迁移",
+  "unverified": [],
+  "updated_at": "2026-08-29T23:56+08:00",
+  "verified": []
+}

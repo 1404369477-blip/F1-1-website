@@ -1,0 +1,148 @@
+{
+  "schemaVersion": 1,
+  "taskId": "TASK-20260812-253682",
+  "status": "pass",
+  "scope": "one-static-contract-check-plus-one-diff-check",
+  "staticContract": {
+    "status": "pass",
+    "checkCount": 12,
+    "checks": [
+      {
+        "name": "javascript-syntax",
+        "status": "pass",
+        "detail": "app.js parses as a classic browser script"
+      },
+      {
+        "name": "delivery-endpoint",
+        "status": "pass",
+        "detail": "real adapter reads the frozen same-delivery endpoint"
+      },
+      {
+        "name": "delivery-receipt-schema",
+        "status": "pass",
+        "detail": "receipt identity, status, generation, hash, and timestamps are checked before use"
+      },
+      {
+        "name": "delivery-server-parity",
+        "status": "pass",
+        "detail": "UI endpoint and receipt constants match the current service contract"
+      },
+      {
+        "name": "receipt-then-detail",
+        "status": "pass",
+        "detail": "active or superseded receipt is validated before the same candidate is reread and shown separately"
+      },
+      {
+        "name": "same-delivery-failure",
+        "status": "pass",
+        "detail": "404/409/503 paths retain the same delivery and cannot create a publication mutation"
+      },
+      {
+        "name": "memory-draft-shape",
+        "status": "pass",
+        "detail": "draft stores the three editable fields and four CAS bindings only in the page-state Map"
+      },
+      {
+        "name": "no-draft-persistence",
+        "status": "pass",
+        "detail": "browser storage remains theme-only and no draft or private note is logged"
+      },
+      {
+        "name": "explicit-recover-or-discard",
+        "status": "pass",
+        "detail": "relogin and refresh can reapply text or discard it without automatically replaying a mutation"
+      },
+      {
+        "name": "binding-drift-warning",
+        "status": "pass",
+        "detail": "a changed source or Bundle keeps restoration manual and visible"
+      },
+      {
+        "name": "mutation-reentry-guard",
+        "status": "pass",
+        "detail": "save, confirm, and final mutation entry all reject busy reentry"
+      },
+      {
+        "name": "dialog-synchronous-disable",
+        "status": "pass",
+        "detail": "dialog controls disable synchronously and all mutation exits restore the busy state in finally"
+      }
+    ]
+  },
+  "diffCheck": {
+    "status": "pass",
+    "checkCount": 12,
+    "checks": [
+      {
+        "name": "unchanged:app/src/admin-ui/index.html",
+        "status": "pass",
+        "detail": "frozen visual or non-JS input hash is unchanged"
+      },
+      {
+        "name": "unchanged:app/src/admin-ui/app.css",
+        "status": "pass",
+        "detail": "frozen visual or non-JS input hash is unchanged"
+      },
+      {
+        "name": "unchanged:docs/collaboration/部门/设计部/报告/证据/TASK-20260812-0C206C/admin-ui-1440-dark-pending.png",
+        "status": "pass",
+        "detail": "frozen visual or non-JS input hash is unchanged"
+      },
+      {
+        "name": "unchanged:docs/collaboration/部门/设计部/报告/证据/TASK-20260812-0C206C/admin-ui-1440-light-approved.png",
+        "status": "pass",
+        "detail": "frozen visual or non-JS input hash is unchanged"
+      },
+      {
+        "name": "unchanged:docs/collaboration/部门/设计部/报告/证据/TASK-20260812-0C206C/admin-ui-390-dark-pending-editor-actions.png",
+        "status": "pass",
+        "detail": "frozen visual or non-JS input hash is unchanged"
+      },
+      {
+        "name": "unchanged:docs/collaboration/部门/设计部/报告/证据/TASK-20260812-0C206C/admin-ui-390-light-approved-manual-publish.png",
+        "status": "pass",
+        "detail": "frozen visual or non-JS input hash is unchanged"
+      },
+      {
+        "name": "unchanged:docs/collaboration/部门/设计部/报告/证据/TASK-20260812-0C206C/admin-ui-overview-2x2.png",
+        "status": "pass",
+        "detail": "frozen visual or non-JS input hash is unchanged"
+      },
+      {
+        "name": "static-root-scope",
+        "status": "pass",
+        "detail": "no new deployable Admin UI file was added"
+      },
+      {
+        "name": "js-successor-exists",
+        "status": "pass",
+        "detail": "app.js changed from the 0C206C frozen predecessor"
+      },
+      {
+        "name": "no-conflict-markers",
+        "status": "pass",
+        "detail": "app.js contains no merge conflict marker"
+      },
+      {
+        "name": "no-trailing-whitespace",
+        "status": "pass",
+        "detail": "app.js has no trailing whitespace or CRLF and ends with one newline boundary"
+      },
+      {
+        "name": "size-limit",
+        "status": "pass",
+        "detail": "app.js remains below the admin service static-file limit"
+      }
+    ]
+  },
+  "outputs": {
+    "appJs": {
+      "path": "[M5-HOME]/Documents/F1+1/app/src/admin-ui/app.js",
+      "sha256": "58a0d014741a26b950c6afd1caa64fb9c73fb856eb7426bcd653d6b68d4b184d",
+      "bytes": 67369
+    },
+    "indexHtmlUnchanged": "5a617b38e3b38f19bbabb89a7ea16f79d1aceab1f8cc5fc7940726e79c747dda",
+    "appCssUnchanged": "be18bccf9ada2efad5fd00d8351888cd877fe708bbc0ad78990211578292468d",
+    "screenshotsRerun": 0
+  }
+}

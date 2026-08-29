@@ -1,0 +1,42 @@
+{
+  "acceptance_exit": "内置解析preflight PASS且旧live零写；delta传输/apply各一次；M1 verifier一次PASS d14ee602/35021046/8e70b2b7；新release固化；旧base/live/public/RSS无任务漂移；TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "用户授权固定M1部署；只建立未加载版本release",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T18:03+08:00",
+      "evidence": "用户授权固定M1部署；只建立未加载版本release",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "M1_PREFLIGHT_FIRST_ERROR: RSS_REVIEW_BASELINE_INVALID at observe.mjs:267; plist built-in parsing passed but current RSS review semantic predicate no longer matched frozen exact-20 baseline; stopped before stage/clone/delta transfer/apply/verifier/finalize; no retry per contract",
+  "claimed_by": "开发部/internal-agent:m1_delta_release_final2",
+  "completion_class": "standard",
+  "confirmation": "无需额外确认",
+  "created_at": "2026-08-12T18:03+08:00",
+  "department": "开发部",
+  "details": "承接E7DA7C首错。只改新任务专属远端observe脚本，删除裸包plist依赖；改为固定/usr/bin/plutil -convert json -o - <plist>后用Node内置JSON.parse做敏感字段闭集扫描，或纯Node内置实现，脚本仍位于全新任务路径。本地/远端Node --check与SHA各一次。其余完全继承D53D87安全谓词和E7DA7C步骤：base preflight一次→APFS clone全新stage→delta两文件各唯一scp/SHA→apply一次→M1 target verifier一次→原子固化8e70 release。0prepare/DB写/launchctl/load/cutover，首错不重试。",
+  "domain_stage": "candidate",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任何check/SHA/preflight/clone/transfer/apply/verifier首错立即block不重试；不得安装依赖、修改旧plist/base/live、prepare/DB写/launchctl/load/cutover。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "M5-DEPLOY-V3-IDENTITY-M1-DELTA-STAGE-FINAL-2",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-E7DA7C.json"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-157099",
+  "title": "M1 plist内置解析后的delta release最终执行",
+  "unverified": [],
+  "updated_at": "2026-08-12T18:05+08:00",
+  "verified": []
+}

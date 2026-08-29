@@ -14,10 +14,10 @@ execution_mode: read_only_blueprint
 
 本任务已正式领取。本文是开发部实施 VS-1 本地 mock 采集链路的 DDL 级交接蓝图，输入仅包括：
 
-- [`docs/spec.md`](/Users/hoyin/Documents/F1+1/docs/spec.md) 的 M4 本地状态库、mock/fixture provider、Source onboarding、采集、幂等、恢复和 C 层验收条款；
-- 已接受的 [`ADR-M4-KICKOFF-001`](/Users/hoyin/Documents/F1+1/docs/decisions/system/2026-08-01-F1+1-M4本地Kickoff系统路线-accepted.md)；
-- 唯一冻结领域合同 [`data/mvp-contract-v0/`](/Users/hoyin/Documents/F1+1/data/mvp-contract-v0/)，版本 `mvp-local-v0.3`，对应已 ACK 的 `TASK-20260802-D80846`；
-- 唯一 VS-0 M3→Source enrichment bridge [`data/m4-vs0-seed-enrichment-v0/`](/Users/hoyin/Documents/F1+1/data/m4-vs0-seed-enrichment-v0/)，59×39 sorted projection 的权威 hash 为 `e7a8312c70a9a49922aedb3cfbeaa190db8f5dce8d4ab45db1570748fc329f17`。
+- [`docs/spec.md`]([M5-HOME]/Documents/F1+1/docs/spec.md) 的 M4 本地状态库、mock/fixture provider、Source onboarding、采集、幂等、恢复和 C 层验收条款；
+- 已接受的 [`ADR-M4-KICKOFF-001`]([M5-HOME]/Documents/F1+1/docs/decisions/system/2026-08-01-F1+1-M4本地Kickoff系统路线-accepted.md)；
+- 唯一冻结领域合同 [`data/mvp-contract-v0/`]([M5-HOME]/Documents/F1+1/data/mvp-contract-v0/)，版本 `mvp-local-v0.3`，对应已 ACK 的 `TASK-20260802-D80846`；
+- 唯一 VS-0 M3→Source enrichment bridge [`data/m4-vs0-seed-enrichment-v0/`]([M5-HOME]/Documents/F1+1/data/m4-vs0-seed-enrichment-v0/)，59×39 sorted projection 的权威 hash 为 `e7a8312c70a9a49922aedb3cfbeaa190db8f5dce8d4ab45db1570748fc329f17`。
 
 本报告只交付数据库和 fixture 映射蓝图，没有实现 Repository、worker 或 provider。报告写入之外没有修改 `data/`、`app/`、Spec、ADR；没有访问 Base、飞书、网络、真实平台、真实数据库或外部服务，也没有运行生成器。
 

@@ -1,0 +1,368 @@
+{
+  "schema_version": "f1plus1-local-synthetic-release-candidate-v1",
+  "task_id": "TASK-20260811-B42C2E",
+  "generated_on": "2026-08-11",
+  "decision": "pass_with_external_gate",
+  "inventory_status": "final",
+  "release_readiness": "blocked_pending_authoritative_fresh_receipt_closure",
+  "external_calls": 0,
+  "canonical_sqlite_access_observation": {
+    "opened_by_this_task_commands": false,
+    "os_level_global_handle_audit_performed": false,
+    "evidence_kind": "protocol_and_command_observation"
+  },
+  "protected_stable_inputs_zero_drift": {
+    "scope": "four_sqlite_files_and_public_multimedia_v0_6_graph_manifest",
+    "all_before_after_equal": true,
+    "inputs": [
+      {"path": "app/.local/f1plus1.sqlite", "before_sha256": "df82598ca2405ad2dfebd01503ac5615a10dcbd40807d308a87fa5c27fb519c0", "after_sha256": "df82598ca2405ad2dfebd01503ac5615a10dcbd40807d308a87fa5c27fb519c0"},
+      {"path": "app/.local/f1plus1-public-synthetic.sqlite", "before_sha256": "24536392e0ca00524010ba70ff55f754cd892e3f3f4652eb69ae6a182deaf041", "after_sha256": "24536392e0ca00524010ba70ff55f754cd892e3f3f4652eb69ae6a182deaf041"},
+      {"path": "app/.local/f1plus1-public-multimedia-synthetic.sqlite", "before_sha256": "eb2d7ad2787a290f7a13adcb063215d58654bc9f66d1d8ff60b98f14592b9551", "after_sha256": "eb2d7ad2787a290f7a13adcb063215d58654bc9f66d1d8ff60b98f14592b9551"},
+      {"path": "app/.local/f1plus1-source-management-synthetic.sqlite", "before_sha256": "ddf3778c62cf95f195b1f08db8b075d676069f4cc9fb39804063e1004dd2e939", "after_sha256": "ddf3778c62cf95f195b1f08db8b075d676069f4cc9fb39804063e1004dd2e939"},
+      {"path": "data/mvp-contract-v0.6-public-multimedia-pagination-synthetic/runtime-graph.public-multimedia-pagination-synthetic.json", "before_sha256": "1eddfe54394757ff1cf00dce12ec2409772817256fe40177bc04e5a54989608b", "after_sha256": "1eddfe54394757ff1cf00dce12ec2409772817256fe40177bc04e5a54989608b"},
+      {"path": "data/mvp-contract-v0.6-public-multimedia-pagination-synthetic/manifest.json", "before_sha256": "38d51764568cc9d3943e0c31388bf125c1f3b207cde0fc2f37db22becfbed6eb", "after_sha256": "38d51764568cc9d3943e0c31388bf125c1f3b207cde0fc2f37db22becfbed6eb"}
+    ],
+    "legacy_receipts_excluded_from_stable_input_scope": true,
+    "exclusion_reason": "their bytes changed outside this task and authoritative provenance remains unresolved"
+  },
+  "profiles": [
+    {
+      "profile_id": "m3-shadow",
+      "database_path": "app/.local/f1plus1.sqlite",
+      "role": "frozen_59x39_m3_shadow_baseline_not_public_feed_not_base_truth",
+      "database_sha256": "df82598ca2405ad2dfebd01503ac5615a10dcbd40807d308a87fa5c27fb519c0",
+      "schema_fingerprint_sha256": "ad2f86e03d9aa8727fe7555729e65a18e4c3986a572ca88cb52cc96245afd23b",
+      "schema_pin_authority": "observed_unaccepted_legacy_receipt_pending_freshness_closure",
+      "sqlite_user_version": 3,
+      "migration_chain": [
+        {"name": "0001_local_foundation.sql", "sha256": "9c8c083b8f3c566023e9438c254d5b1c09d87430dec08f6e6905ed84b6fb3176"},
+        {"name": "0002_source_fixture.sql", "sha256": "12a755754744689f977ac8b8d5d4443ec63cd5612aaff50eb920badf1ebfb031"},
+        {"name": "0003_public_synthetic_profile.sql", "sha256": "57df4d990cded9d69551d0acf97615ef5d9fd3d5ecceb05ebb10d3812549498a"}
+      ],
+      "counts": {
+        "migration_ledger": 3,
+        "fixture_profile_ledger": 1,
+        "source_config_fixture": 59,
+        "source_seed_ledger": 1,
+        "sources_enabled_false": 59,
+        "captured_items": 0,
+        "contents": 0,
+        "summaries": 0,
+        "media_candidates": 0,
+        "release_bundles": 0,
+        "review_decisions": 0,
+        "publications": 0,
+        "published_projections": 0,
+        "fixture_seed_ledger": 0
+      },
+      "ledger": {
+        "contract_version": "mvp-local-v0.3",
+        "fixture_set": "m3-shadow-59-v0.3",
+        "fixture_graph_sha256": "e7a8312c70a9a49922aedb3cfbeaa190db8f5dce8d4ab45db1570748fc329f17",
+        "fixture_manifest_sha256": "d4da9fc24c792c0471bcd24c525a46dcef1e521b36a870fd111e7310243888b2",
+        "external_calls": 0,
+        "writes_to_base": 0,
+        "synthetic_only": 0
+      },
+      "roots": {
+        "logical_content_root_sha256": "f6ae0064360f4d79f418e2e5d128199854e6939ae706e7fc1403c258f2962549",
+        "source": "current_receipt_bytes_unaccepted_for_freshness",
+        "observed_receipt": {
+          "path": "app/.local/receipts/m3-shadow.closed.json",
+          "file_sha256": "8ddf26bd4df59dd1bd2e96d0f2c4d9c428763fd916d1bb6175c9699cf244fa42",
+          "logical_root_claim": "f6ae0064360f4d79f418e2e5d128199854e6939ae706e7fc1403c258f2962549",
+          "authority": "unaccepted_pending_5F3B7D_successor"
+        }
+      },
+      "source_baseline_overlay": {"applicable": true, "baseline_rows": 59, "overlay_rows": 0, "reason": "frozen_shadow_baseline_only"},
+      "pagination": {"applicable": false, "reason": "profile_has_no_public_projections"},
+      "category_distribution": {"applicable": false, "reason": "profile_has_no_public_projections"},
+      "media_distribution": {"applicable": false, "reason": "profile_has_no_public_projections"}
+    },
+    {
+      "profile_id": "public-synthetic",
+      "database_path": "app/.local/f1plus1-public-synthetic.sqlite",
+      "role": "legacy_12_story_synthetic_public_profile_not_unique_current_release_candidate",
+      "database_sha256": "24536392e0ca00524010ba70ff55f754cd892e3f3f4652eb69ae6a182deaf041",
+      "schema_fingerprint_sha256": "ad2f86e03d9aa8727fe7555729e65a18e4c3986a572ca88cb52cc96245afd23b",
+      "schema_pin_authority": "observed_unaccepted_legacy_receipt_pending_freshness_closure",
+      "sqlite_user_version": 3,
+      "migration_chain": [
+        {"name": "0001_local_foundation.sql", "sha256": "9c8c083b8f3c566023e9438c254d5b1c09d87430dec08f6e6905ed84b6fb3176"},
+        {"name": "0002_source_fixture.sql", "sha256": "12a755754744689f977ac8b8d5d4443ec63cd5612aaff50eb920badf1ebfb031"},
+        {"name": "0003_public_synthetic_profile.sql", "sha256": "57df4d990cded9d69551d0acf97615ef5d9fd3d5ecceb05ebb10d3812549498a"}
+      ],
+      "counts": {
+        "migration_ledger": 3,
+        "fixture_profile_ledger": 1,
+        "sources": 1,
+        "captured_items": 12,
+        "contents": 12,
+        "summaries": 12,
+        "media_candidates": 10,
+        "release_bundles": 12,
+        "review_decisions": 12,
+        "publications": 12,
+        "published_projections": 12,
+        "domain_events": 0,
+        "outbox_jobs": 0
+      },
+      "ledger": {
+        "contract_version": "mvp-local-v0.4",
+        "fixture_set": "public-demo-12-v0.4",
+        "fixture_graph_sha256": "4be9f7e868a8bf21551bdcdc05d6b0d027e1a0ea43fd16dd2c7ea2b2ff9ba526",
+        "fixture_manifest_sha256": "3b296868dc0c0000fb94856b334ff7d1f698e3e80d4bb02e7062142dc1a0e554",
+        "profile_ledger_root_sha256": "1f7719490a18a49842427907b53c3dbde5813709a2ad611f7cfaca891880caf1",
+        "external_calls": 0,
+        "writes_to_base": 0,
+        "synthetic_only": 1
+      },
+      "roots": {
+        "logical_content_root_sha256": "6be7af63590b1a3e258885691eb35964813b00a27bcb62fca8e6c409d4ca7a3a",
+        "source": "current_receipt_bytes_unaccepted_for_freshness",
+        "observed_receipt": {
+          "path": "app/.local/receipts/public-synthetic.closed.json",
+          "file_sha256": "2a018f6875a23cebb67d078278c4bebd7fdb324a36f31bde7d3ae91d18abcc81",
+          "logical_root_claim": "6be7af63590b1a3e258885691eb35964813b00a27bcb62fca8e6c409d4ca7a3a",
+          "authority": "unaccepted_pending_5F3B7D_successor"
+        }
+      },
+      "source_baseline_overlay": {"applicable": false, "reason": "standalone_public_fixture_source_not_m3_baseline_overlay"},
+      "pagination": {
+        "applicable": true,
+        "release_gate_applicable": false,
+        "reason": "legacy_12_story_profile_is_not_the_two_page_release_gate",
+        "page_size": 12,
+        "page_1_fixture_order": [
+          "public-demo-qualifying-window", "public-demo-pit-wall-notes", "public-demo-practice-notebook", "public-demo-helmet-sketch",
+          "public-demo-training-lap", "public-demo-garage-ritual", "public-demo-archive-gearbox", "public-demo-legend-interview",
+          "public-demo-circuit-map", "public-demo-paddock-rain", "public-demo-radio-mixup", "public-demo-fan-sign"
+        ],
+        "page_2": [],
+        "page_2_reason": "only_12_published_projections"
+      },
+      "category_distribution": {
+        "applicable": true,
+        "release_gate_applicable": false,
+        "source": "data/mvp-contract-v0.4-public-synthetic/stories.input.json",
+        "赛事新闻": 3,
+        "车手社交": 3,
+        "名宿/历史": 3,
+        "赛场趣事": 3
+      },
+      "media_distribution": {
+        "applicable": true,
+        "release_gate_applicable": false,
+        "source": "data/mvp-contract-v0.4-public-synthetic/fixtures.public-synthetic.json",
+        "zero_media_stories": 2,
+        "one_media_stories": 10,
+        "four_media_stories": 0,
+        "media_candidates_total": 10
+      }
+    },
+    {
+      "profile_id": "public-multimedia-synthetic",
+      "database_path": "app/.local/f1plus1-public-multimedia-synthetic.sqlite",
+      "role": "unique_current_public_data_release_candidate",
+      "database_sha256": "eb2d7ad2787a290f7a13adcb063215d58654bc9f66d1d8ff60b98f14592b9551",
+      "schema_fingerprint_sha256": "b39672c45af95027f9ae32a5610b1d2c71c49c38d79897e1d42a8a71771efe8f",
+      "schema_pin_authority": "public_multimedia_profile_ledger",
+      "sqlite_user_version": 3,
+      "migration_chain": [
+        {"name": "0001_local_foundation.sql", "sha256": "9c8c083b8f3c566023e9438c254d5b1c09d87430dec08f6e6905ed84b6fb3176"},
+        {"name": "0002_source_fixture.sql", "sha256": "12a755754744689f977ac8b8d5d4443ec63cd5612aaff50eb920badf1ebfb031"},
+        {"name": "profiles/public-multimedia-synthetic/0003_public_multimedia_synthetic_profile.sql", "sha256": "1f88116c62d2d29e469ff0dce356d07b41c8b142a00769774a3cf67709968b43"}
+      ],
+      "counts": {
+        "migration_ledger": 3,
+        "fixture_profile_ledger": 1,
+        "sources": 1,
+        "captured_items": 24,
+        "contents": 24,
+        "summaries": 24,
+        "media_candidates": 40,
+        "release_bundles": 24,
+        "review_decisions": 24,
+        "publications": 24,
+        "published_projections": 24,
+        "domain_events": 0,
+        "outbox_jobs": 0
+      },
+      "ledger": {
+        "contract_version": "public-read-v0.2",
+        "fixture_set": "public-multimedia-pagination-24-v0.6",
+        "fixture_graph_sha256": "52775a139bf8d7352cd5c751e090794a2aac878a3515d9c35fb61e3f13ffa532",
+        "fixture_manifest_file_sha256": "38d51764568cc9d3943e0c31388bf125c1f3b207cde0fc2f37db22becfbed6eb",
+        "fixture_manifest_root_sha256": "0a0374e8eb417574128796a7d6b4c9fb3bba786430a649207aca2007225f800b",
+        "profile_ledger_root_sha256": "dd33f389a069cae2eee94b9a8b73ca162434f207c7545ef45fab1cd5da86d4ec",
+        "schema_fingerprint_sha256": "b39672c45af95027f9ae32a5610b1d2c71c49c38d79897e1d42a8a71771efe8f",
+        "migration_selector_root_sha256": "336a8721d75a24ac956b4d7cdecba4515fc136f96d89f91f3304293b0f6c600c",
+        "external_calls": 0,
+        "writes_to_base": 0,
+        "synthetic_only": 1,
+        "real_content_imported": 0,
+        "real_media": 0
+      },
+      "roots": {
+        "content_logical_root_sha256": "52775a139bf8d7352cd5c751e090794a2aac878a3515d9c35fb61e3f13ffa532",
+        "content_logical_root_semantics": "canonical_runtime_graph_root_asserted_against_all_materialized_domain_payloads",
+        "profile_ledger_root_sha256": "dd33f389a069cae2eee94b9a8b73ca162434f207c7545ef45fab1cd5da86d4ec",
+        "closed_database_logical_content_root_receipt": null
+      },
+      "source_baseline_overlay": {"applicable": false, "reason": "standalone_public_fixture_source_not_m3_baseline_overlay"},
+      "pagination": {
+        "applicable": true,
+        "page_size": 12,
+        "sort": ["publication.published_at DESC", "projection.public_id DESC"],
+        "page_1": [
+          "public-page2-race-news-24", "public-page2-driver-social-23", "public-page2-paddock-fun-21", "public-page2-legends-history-22",
+          "public-page2-race-news-20", "public-page2-driver-social-19", "public-page2-paddock-fun-17", "public-page2-legends-history-18",
+          "public-page2-race-news-16", "public-page2-driver-social-15", "public-page2-paddock-fun-13", "public-page2-legends-history-14"
+        ],
+        "page_1_has_more": true,
+        "page_1_next_cursor": "eyJjb250ZW50VHlwZSI6bnVsbCwicHVibGljSWQiOiJwdWJsaWMtcGFnZTItbGVnZW5kcy1oaXN0b3J5LTE0IiwicHVibGlzaGVkQXQiOiIyMDI2LTA4LTA5VDEyOjA2OjAwWiIsInNvdXJjZSI6bnVsbCwidiI6MX0",
+        "page_2": [
+          "public-page2-race-news-12", "public-page2-driver-social-11", "public-page2-paddock-fun-09", "public-page2-legends-history-10",
+          "public-page2-race-news-08", "public-page2-driver-social-07", "public-page2-paddock-fun-05", "public-page2-legends-history-06",
+          "public-page2-race-news-04", "public-page2-driver-social-03", "public-page2-paddock-fun-01", "public-page2-legends-history-02"
+        ],
+        "page_2_has_more": false
+      },
+      "category_distribution": {"applicable": true, "race_news": 6, "driver_social": 6, "legends_history": 6, "paddock_fun": 6},
+      "media_distribution": {"applicable": true, "zero_media_stories": 8, "one_media_stories": 8, "four_media_stories": 8, "media_candidates_total": 40}
+    },
+    {
+      "profile_id": "source-management-synthetic",
+      "database_path": "app/.local/f1plus1-source-management-synthetic.sqlite",
+      "role": "raw_local_synthetic_source_management_backend_not_public_feed",
+      "database_sha256": "ddf3778c62cf95f195b1f08db8b075d676069f4cc9fb39804063e1004dd2e939",
+      "schema_fingerprint_sha256": "f6f56bad5a93a486b27eafcae661f79d70ca93b7a04d5cd55c5917ce8aae377d",
+      "schema_pin_authority": "TASK-20260811-3D190C_acknowledged_oracle_and_current_source_management_closed_receipt",
+      "sqlite_user_version": 3,
+      "migration_chain": [
+        {"name": "0001_local_foundation.sql", "sha256": "9c8c083b8f3c566023e9438c254d5b1c09d87430dec08f6e6905ed84b6fb3176"},
+        {"name": "0002_source_fixture.sql", "sha256": "12a755754744689f977ac8b8d5d4443ec63cd5612aaff50eb920badf1ebfb031"},
+        {"name": "0003_source_management_runtime.sql", "sha256": "6168ba83c3d656ac25cbd58474ce5ab47497fa5c5fb38ef94b243d8a12e96bb6"}
+      ],
+      "counts": {
+        "migration_ledger": 3,
+        "fixture_profile_ledger": 1,
+        "baseline_sources": 59,
+        "baseline_enabled_false": 59,
+        "local_sources": 1,
+        "source_lineage": 1,
+        "source_fence_state": 1,
+        "command_receipts": 5,
+        "outbox_jobs": 1,
+        "inbox_receipts": 0,
+        "task_attempts": 0,
+        "dead_letters": 0,
+        "audit_events": 5
+      },
+      "baseline_and_overlay": {
+        "baseline_projection_sha256": "e7a8312c70a9a49922aedb3cfbeaa190db8f5dce8d4ab45db1570748fc329f17",
+        "baseline_mutable": false,
+        "local_source": {
+          "source_id": "src-local-14ae0ef1ac47d753a1994519",
+          "origin": "local_synthetic",
+          "version": 5,
+          "enabled": false,
+          "collection_status": "stopped",
+          "lifecycle_status": "retired",
+          "source_stop_status": "manual",
+          "source_config_epoch": 5,
+          "source_safety_epoch": 3,
+          "effective_source_hash": "ae982ea031c01b88743195e9fcc7e124e663dd4d3796380f8b5ebc4dd33ddf81"
+        }
+      },
+      "roots": {
+        "effective_root_sha256": "7003323bf05651aa39efa70ba11b3dfcb24a3f34c9e98f9f0469d26c06ffe0d3",
+        "logical_content_root_sha256": "7cae9bb8767a259086920190f65485800bb6008e3dc294fba893d1b0b8156e6a"
+      },
+      "source_baseline_overlay": {"applicable": true, "baseline_rows": 59, "overlay_rows": 1, "reason": "readonly_m3_baseline_plus_local_synthetic_effective_view"},
+      "pagination": {"applicable": false, "reason": "raw_source_management_backend_is_not_a_public_feed"},
+      "category_distribution": {"applicable": false, "reason": "raw_source_management_backend_has_no_public_story_categories"},
+      "media_distribution": {"applicable": false, "reason": "raw_source_management_backend_has_no_public_media_candidates"}
+    }
+  ],
+  "public_data_entrance": {
+    "required_profile": "public-multimedia-synthetic",
+    "environment_selector": "F1_DATA_PROFILE=public-multimedia-synthetic",
+    "feed_route": "/",
+    "feed_api": "/api/public/feed",
+    "detail_route_template": "/stories/{publicId}",
+    "detail_api_template": "/api/public/stories/{publicId}",
+    "database_path": "app/.local/f1plus1-public-multimedia-synthetic.sqlite",
+    "server_started_for_this_task": false
+  },
+  "source_management_gap": {
+    "backend_profile_present": true,
+    "admin_api_routes_present": true,
+    "admin_page_route_present": false,
+    "missing": ["app/src/app/admin/sources/page.tsx", "page_candidate_test_security_design_acceptance"],
+    "claim": "raw_backend_data_exists_but_no_user_reachable_source_management_page"
+  },
+  "receipt_freshness_gate": {
+    "task_id": "TASK-20260811-5F3B7D",
+    "task_state_observed": "blocked",
+    "report_path": "docs/collaboration/部门/开发部/报告/2026-08-11-旧profile封闭收据刷新首错阻断报告.md",
+    "report_sha256": "f727b993dfff5f17aac3ac1ffdac4a680d776548387310cfeda84cea9ca16128",
+    "manifest_path": "app/evidence/TASK-20260811-5F3B7D/manifest.json",
+    "manifest_sha256": "3c105f96fc1f1beb3dcb57ffc6acdfb1e9152f50dea77260b9078d3cbabe213c",
+    "first_error": "CLI_INTERNAL_ERROR",
+    "current_receipt_bytes_differ_from_5F3B7D_recorded_old_shas": true,
+    "closed_receipts_match_5F3B7D_frozen_old_bytes": false,
+    "closed_receipt_provenance_unverified": true,
+    "current_observed_receipt_files": {
+      "app/.local/receipts/m3-shadow.closed.json": "8ddf26bd4df59dd1bd2e96d0f2c4d9c428763fd916d1bb6175c9699cf244fa42",
+      "app/.local/receipts/public-synthetic.closed.json": "2a018f6875a23cebb67d078278c4bebd7fdb324a36f31bde7d3ae91d18abcc81",
+      "app/.local/receipts/public-synthetic.data.closed.json": "235489462fd498faee0a1ce4c81a181d0db80465dde374cd88fabf9282c93021"
+    },
+    "current_receipt_provenance_accepted_in_5F3B7D": false,
+    "gate_rule": "data_inventory_is_final_but_release_freshness_requires_authoritative_successor_closure"
+  },
+  "isolated_copy_receipt": {
+    "canonical_sqlite_opened_by_this_task_commands": false,
+    "os_level_global_handle_audit_performed": false,
+    "canonical_databases_copied": 4,
+    "copy_open_mode": "sqlite_uri_mode_ro_immutable_1_and_query_only_on",
+    "first_attempt": {
+      "temporary_root": "/private/tmp/TASK-20260811-B42C2E.a8R1SE",
+      "result": "failed_before_fact_report",
+      "error": "sqlite3.OperationalError: no such column: version",
+      "cause": "incorrect_assumption_about_migration_ledger_column",
+      "cleanup": "four_0600_copies_and_0700_root_removed"
+    },
+    "successful_attempt": {
+      "temporary_root": "/private/tmp/TASK-20260811-B42C2E.WE7sAS",
+      "result": "pass",
+      "cleanup": "all_copies_and_root_removed",
+      "root_exists_after_cleanup": false
+    },
+    "task_temp_root_residual_count": 0,
+    "residual_check_date": "2026-08-11",
+    "protected_stable_input_hashes_before_after_equal": true,
+    "wal_shm_journal_created": false
+  },
+  "verified": [
+    "four canonical database file hashes remained unchanged",
+    "only 0700 temporary copies were opened and only in immutable read-only query-only mode",
+    "migration chains, ledgers, table counts and roots were read from isolated copies or existing machine artifacts",
+    "public multimedia candidate contains exactly 24 stories, two pages of 12, four categories at 6 each, and 0/1/4 media distribution at 8 each",
+    "m3 baseline contains 59 disabled rows and source-management effective view contains the same baseline plus one local synthetic source",
+    "external calls, Base writes, real content imports and real media use equal zero",
+    "task temporary roots were cleaned and no task-named residual remained"
+  ],
+  "unverified": [
+    "legacy receipt freshness and authoritative provenance remain gated by TASK-20260811-5F3B7D or its accepted successor",
+    "public routes were not started or exercised",
+    "SOURCE-MGMT page does not exist and therefore has no page-level acceptance",
+    "real Base and provider behavior were intentionally not accessed"
+  ],
+  "mistake_check": [
+    "The first isolated-copy query assumed migration_ledger.version; it failed on a disposable copy, was cleaned, and the single permitted retry used SELECT *.",
+    "Current legacy receipt bytes differ from the old hashes recorded by blocked TASK-20260811-5F3B7D; this inventory does not infer freshness acceptance from that unexplained byte change.",
+    "The public multimedia graph root, profile ledger root and database file hash are recorded as distinct values; no nonexistent closed database receipt was invented.",
+    "No task command opened a canonical SQLite handle, network connection, server, Base or provider; no OS-level global handle audit was performed."
+  ]
+}

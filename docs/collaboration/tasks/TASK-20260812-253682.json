@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "delivery真实端点对账可达；401/409后草稿可明确恢复或丢弃且仅内存；无自动mutation重放；busy重入关闭；index/css非必要不变；一次静态检查与diff-check PASS；0浏览器截图重跑/0M1/0网络，TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/src/admin-ui/app.js",
+    "docs/collaboration/部门/设计部/报告/2026-08-12-253682-Admin-UI投递对账与内存草稿successor报告.md",
+    "docs/collaboration/部门/设计部/报告/证据/TASK-20260812-253682/static-contract-and-diff-check.json"
+  ],
+  "authorization_evidence": "测试部338928发现两项P1，用户已确认继续正式UI。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T08:51+08:00",
+      "evidence": "测试部338928发现两项P1，用户已确认继续正式UI。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "设计部/internal-agent:admin_ui_successor",
+  "completion_class": "standard",
+  "confirmation": "只修已知两P1和同JS重入P2，视觉/布局不变。",
+  "created_at": "2026-08-12T08:51+08:00",
+  "department": "设计部",
+  "details": "严格只修改 app/src/admin-ui/app.js，除非恢复提示现有DOM缺少插槽才可最小改index.html；CSS视觉字节尽量不改，不重跑截图。P1-01：RealAdminAdapter.checkDelivery必须从当前detail.delivery.id调用冻结GET /api/admin/deliveries/{deliveryId}，严格校验schemaVersion/deliveryId/status及active/superseded收据；active/superseded后再回读同candidate detail；404/409/503保持同delivery且禁止新publish。P1-02：用户编辑时把titleZh/summaryZh/notes及candidateId/sourceRevision/sourceVersionTag/latestBundleVersionTag只存内存Map，禁止localStorage/sessionStorage/日志；401/409刷新和passkey重登录后不自动覆盖，展示“重新套用草稿/明确丢弃”选择，草稿版本与当前来源不符则只允许复制文本后重新保存revision，不自动重放mutation。顺手关闭P2：全局mutation busy guard+按钮disabled/finally恢复，事件重入直接返回。新增一组纯本地JS/DOM静态契约检查或既有harness断言，不重跑四图；只运行一次检查和一次diff-check，首错即停。",
+  "domain_stage": "设计/前端修复",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "服务delivery收据schema与冻结UI无法映射：停止并BLOCK，不退回detail伪对账。",
+    "需要持久化草稿或放宽CSRF/CAS：停止并BLOCK。",
+    "限定检查首错：立即停止、不重跑。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "仅修改app/src/admin-ui/app.js；未改HTML/CSS/public Next/后端/Spec/ADR/部署/旧manifest/PNG；草稿不进localStorage/sessionStorage/URL/console；receiver receipt未冒充private detail；401/409不自动提交；未重跑截图、浏览器、M1或网络。",
+  "node": "第一版后台/UI接口修复",
+  "pointers": [
+    "docs/collaboration/部门/测试部/报告/2026-08-12-338928-0C206C正式Admin-UI独立接口与安全静态验收报告.md"
+  ],
+  "report": "docs/collaboration/部门/设计部/报告/2026-08-12-253682-Admin-UI投递对账与内存草稿successor报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-253682",
+  "title": "338928 successor：Admin UI投递对账与内存草稿恢复",
+  "unverified": [
+    "未启动浏览器、3101/M1/Tailscale、真实passkey、真实RSS或delivery active/superseded/404/409/503/401运行冒烟；未验证iPhone真机与辅助技术。"
+  ],
+  "updated_at": "2026-08-12T09:01+08:00",
+  "verified": [
+    "delivery真实端点、receipt identity/status/generation/hash/timestamp严格校验、receipt后同candidate回读与分开展示已落；404/409/503保持同delivery且无publish mutation；401/409后仅内存草稿可重新套用或明确丢弃，版本漂移仅复制文本供人工另存revision，无自动mutation replay；save/confirm/execute三层busy guard与dialog同步disabled/finally恢复已落；一次静态契约检查12项PASS、一次diff-check 12项PASS；index/css/五张视觉证据SHA不变、截图重跑0。"
+  ]
+}

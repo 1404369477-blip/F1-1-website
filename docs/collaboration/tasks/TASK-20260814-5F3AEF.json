@@ -1,0 +1,93 @@
+{
+  "acceptance_exit": "1) 可本地打开动态预览并看到与当前生产证据一致的真实首页/详情画面；2) 来源清单精确记录commit/tree/release root/evidence manifest与逐资产引用；3) 给出一个推荐分镜及逐镜时长，总时长15-40秒；4) 交付3张1920x1080风格帧、动态样片与shot QA计划；5) 对video-shotcraft+Remotion与HyperFrames+/product-launch-video给出证据化推荐，或提交一条精确依赖授权问题；6) 把方向/时长/声音/CTA/logo/媒体权利/renderer收敛为一条用户确认问题；7) 设计部报告、交接更新、TASK_STATE_OK、complete、doctor。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "design/video/F1+1-launch-current-release-v0.2/index.html",
+    "design/video/F1+1-launch-current-release-v0.2/sources.md",
+    "design/video/F1+1-launch-current-release-v0.2/storyboard.md",
+    "design/video/F1+1-launch-current-release-v0.2/motion-tokens.md",
+    "design/video/F1+1-launch-current-release-v0.2/renderer-preflight.md",
+    "design/video/F1+1-launch-current-release-v0.2/decision-card.md",
+    "design/video/F1+1-launch-current-release-v0.2/shot-qa-plan.md",
+    "design/video/F1+1-launch-current-release-v0.2/SHA256.txt",
+    "design/video/F1+1-launch-current-release-v0.2/styleframes/01-brand-1920x1080.png",
+    "design/video/F1+1-launch-current-release-v0.2/styleframes/02-responsive-1920x1080.png",
+    "design/video/F1+1-launch-current-release-v0.2/styleframes/03-detail-1920x1080.png",
+    "design/video/F1+1-launch-current-release-v0.2/styleframes/capture-receipt.json",
+    "design/video/F1+1-launch-current-release-v0.2/hyperframes-candidate/DESIGN.md",
+    "design/video/F1+1-launch-current-release-v0.2/hyperframes-candidate/index.html",
+    "design/video/F1+1-launch-current-release-v0.2/hyperframes-candidate/PREFLIGHT.md",
+    "design/video/F1+1-launch-current-release-v0.2/remotion-preflight/CurrentReleaseLaunch.tsx",
+    "design/video/F1+1-launch-current-release-v0.2/remotion-preflight/PIPELINE.md"
+  ],
+  "authorization_evidence": "当前统筹部正式窗口用户原话：现在开始去推进 网站发布视频 这个任务（2026-08-14）。",
+  "authorization_history": [
+    {
+      "at": "2026-08-14T22:45+08:00",
+      "evidence": "当前统筹部正式窗口用户原话：现在开始去推进 网站发布视频 这个任务（2026-08-14）。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "设计部/当前正式会话",
+  "completion_class": "standard",
+  "confirmation": "用户已于2026-08-14明确要求现在开始推进网站发布视频；该确认授权当前release重基线与成片开工包，不代表确认旧27秒/无旁白/旧CTA，也不代表授权新依赖、付费API、第三方媒体或正式全片渲染。",
+  "created_at": "2026-08-14T22:45+08:00",
+  "department": "设计部",
+  "details": "读取既有发布视频调研、010B9F方向报告与当前生产部署凭证；以当前公开站不可变身份 commit=52e654915d19ab31802c97a406402896b6a68978、tree=7a0e9efd59954e5b9c8494b27ed851d5596c0c14、release_root_sha256=5d99dc951ea3312f83f4ab097d185e37eaf820e76f8d817e7e764b7d34f8eaed、production evidence manifest=ae009b2a1ef3acbcb2a36bab4a9bb61b2bf4ba2a7f74d8b8d44d251e0787baa4 为唯一现行画面基线。使用 scratch/TASK-20260813-53677C/evidence-production 中首页/详情、1440/1024/390、深浅主题真实截图与当前真实文案；2026-08-08旧画面仅作历史比较，不得继续冒充现行版本。产出 design/video/F1+1-launch-current-release-v0.2/：来源清单与hash、推荐版15-40秒分镜、3张1920x1080风格帧、无需新增依赖的动态预览、动效token差异、renderer并排评估/预检、音频/CTA/logo/媒体权利决策单、shot QA计划。保持真实资产纪律，不手绘假UI，不宣称未实现能力。本任务不安装依赖、不调用付费API、不做网络写入、不渲染正式全片、不修改Spec/ADR/app/data；若renderer验证必须新增依赖，只提交目的、替代方案、风险与精确安装请求。用户本次指令只授权当前release重基线与开工包；更新方向、时长、声音、CTA、logo/权利及renderer须在正式全片前形成一次集中确认。",
+  "domain_stage": "发布视频-当前release方向与开工",
+  "event_receipts": [
+    "in-app-browser: localhost-only capture batch completed at 2026-08-14T23:40:39+08:00; three 1920x1080 PNG; default autoplay receipt; service stopped; tabs and temporary viewport cleared"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "当前生产证据缺失或hash不符时立即block，不以旧截图替代；需要未授权第三方媒体时改用自有/静音占位并明确未验证，无法合规则block；需要新依赖、网络访问、付费服务或API时wait_input并只提出一条精确请求，未获授权不得安装或调用；与其他部门写入冲突立即停止并报告。"
+  ],
+  "from_department": "统筹部",
+  "impact_declaration": {
+    "admission": "manual",
+    "base_revision": "52e654915d19ab31802c97a406402896b6a68978",
+    "external_effects": [
+      "none"
+    ],
+    "owner_task": "TASK-20260814-5F3AEF",
+    "shared_contracts": [
+      "docs/collaboration/部门/开发部/报告/2026-08-13-53677C-公开站v0.2冻结视觉生产部署报告.md",
+      "scratch/TASK-20260813-53677C/evidence-production",
+      "docs/collaboration/部门/研究部/报告/2026-08-09-发布视频方案与视频制作Skill生态调研.md",
+      "docs/collaboration/部门/研究部/报告/2026-08-11-HyperFrames调研与发布视频渲染器选型补充.md",
+      "docs/collaboration/部门/设计部/报告/2026-08-09-F1+1发布视频方向与分镜提案报告.md",
+      "docs/collaboration/tasks/TASK-20260809-010B9F.json",
+      "docs/collaboration/tasks/TASK-20260809-498590.json"
+    ],
+    "write_paths": [
+      "design/video/F1+1-launch-current-release-v0.2"
+    ]
+  },
+  "mistake_check": "未用2026-08-08旧UI、手绘假UI、默认JPEG、错误尺寸或2倍放大帧冒充当前证据；已修默认冻结、Brand安全区和桌面/移动截图裁切并重采；未把Open Design运行中、插件规则、source或Node/FFmpeg前置写成renderer通过；未安装npm依赖、调用付费API、渲染正式MP4或引入音频；未把内部截图外推为Motorsport公开权利；complete只收口方向与开工包，不授权正式成片或解除用户/依赖/媒体权利门。",
+  "node": "重绑当前生产版本、刷新分镜与动态预览、形成全片开工确认包",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-13-53677C-公开站v0.2冻结视觉生产部署报告.md",
+    "scratch/TASK-20260813-53677C/evidence-production",
+    "docs/collaboration/部门/研究部/报告/2026-08-09-发布视频方案与视频制作Skill生态调研.md",
+    "docs/collaboration/部门/研究部/报告/2026-08-11-HyperFrames调研与发布视频渲染器选型补充.md",
+    "docs/collaboration/部门/设计部/报告/2026-08-09-F1+1发布视频方向与分镜提案报告.md",
+    "docs/collaboration/tasks/TASK-20260809-010B9F.json",
+    "docs/collaboration/tasks/TASK-20260809-498590.json"
+  ],
+  "report": "docs/collaboration/部门/设计部/报告/2026-08-14-当前真实站发布视频重基线与开工包完成报告.md",
+  "resolution": null,
+  "revision": 7,
+  "schema_version": 1,
+  "task_id": "TASK-20260814-5F3AEF",
+  "title": "当前真实站发布视频重基线与成片开工包",
+  "unverified": [
+    "Open Design本机Local Codex唯一项目的生成结果尚未回传，收口时一次只读项目列表因本地连接关闭失败且未重试；HyperFrames CLI/runtime/lint/inspect/preview/capture与Remotion package/typecheck/Studio/render/ffprobe均NOT_RUN；正式MP4、真实30fps编码、9:16、海报帧、音频、正式域名/CTA、矢量logo、Motorsport对外营销权利、跨浏览器/低性能均未验证；用户尚未确认本视觉方向进入4.8秒renderer实跑；共享工作树app/Spec/ADR已有其他并发脏改，无法仅凭git归属全部作者。"
+  ],
+  "updated_at": "2026-08-14T23:51+08:00",
+  "verified": [
+    "生产 commit/tree/release root/manifest/部署报告身份与12项生产证据清单一致，6张复制资产逐字节同源；21秒5镜头无依赖预览默认自动播放、显式t参数冻结、reduced-motion落定，候选代码零远程资源/请求；3张风格帧均为1920x1080 RGB PNG，页面innerWidth=scrollWidth=1920且逐张目视通过，hash与capture receipt及22项SHA清单一致；HyperFrames同镜头结构和Remotion frame-driven pipeline source/preflight已落盘并保持桌面8:5、移动390:844完整比例；P0/P1/P2合同审查清零；临时127.0.0.1服务已关闭，未发现本任务触碰冻结基线、app、Spec或accepted ADR的证据。"
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "acceptance_exit": "冻结SHA匹配；逐项给出PASS/FAIL和P0/P1/P2；无P0/P1则放行后端继续，存在P0/P1则给出精确文件/约束/最小修正；报告落盘，TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-0D4DCB-真实RSS审核发布数据层冻结候选独立静态对抗审查报告.md"
+  ],
+  "authorization_evidence": "用户要求复杂任务后多Agent对抗审查并快速修正；数据层已形成冻结候选。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T06:40+08:00",
+      "evidence": "用户要求复杂任务后多Agent对抗审查并快速修正；数据层已形成冻结候选。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/internal-agent:admin_data_review",
+  "completion_class": "audit",
+  "confirmation": "严格只读，后端代理并行实现但收到P1必须停止重叠模块并等successor。",
+  "created_at": "2026-08-12T06:40+08:00",
+  "department": "安全部",
+  "details": "对数据部TASK-90942F冻结候选做严格只读静态审查：app/migrations/rss-real/0002_admin_review_publish.sql SHA 1c0b1c09…a2a1ce；app/src/server/review-real/schema.ts SHA 389245a0…e456b；mapping.ts SHA eb89507a…69f99；对应聚焦测试仅作为证据阅读。依据产品合同逐项检查七表完整性、状态/唯一约束、immutable/append-only、operation/outbox幂等、CAS/hash、canonical JSON与排序、URL allowlist、notes及私有字段外泄、snapshot generation/previous hash、receiver可验证性、SQL触发器绕过和migration升级/回退风险。0修改、0测试、0typecheck、0网络、0DB写。只列可复现P0/P1/P2与最小修正，不扩展到尚未实现API/认证/部署。",
+  "domain_stage": "安全/静态审查",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一目标SHA漂移：停止并BLOCK，不审查混合候选。",
+    "必须运行代码或修改文件才能裁定：保持Unknown，不能伪报PASS。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已亲自读取冻结源码且未采信执行部门PASS；发现P1后立即通知统筹部与admin_backend暂停重叠模块；未修改被审文件、App、Spec或数据库",
+  "node": "第一版后台/数据层安全门",
+  "pointers": [
+    "docs/collaboration/部门/数据部/报告"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-12-0D4DCB-真实RSS审核发布数据层冻结候选独立静态对抗审查报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-0D4DCB",
+  "title": "DATA-REAL-REVIEW-MAP-01冻结候选独立静态对抗审查",
+  "unverified": [
+    "Repository/API/session/CSRF/fresh re-auth、真实migration runner、签名sender/receiver/active pointer/M1动态行为均未实现或不在本任务范围，保持Unknown"
+  ],
+  "updated_at": "2026-08-12T06:50+08:00",
+  "verified": [
+    "三目标SHA逐字匹配；严格只读覆盖七表/状态唯一/immutable append-only/operation outbox幂等/CAS hash/canonical排序/URL allowlist/notes隔离/snapshot lineage/receiver字段/SQL绕过/migration边界；结论FAIL P0=0 P1=3 P2=1；0测试0typecheck0网络0DB写"
+  ]
+}

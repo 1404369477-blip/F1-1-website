@@ -1,0 +1,50 @@
+{
+  "acceptance_exit": "1) Grok CLI可用性有可复核收据；2) 精确输入SHA与M1同步文件逐项匹配；3) 目标/label absent和HTTP/job/listener只读基线完整；4) Grok生成的短合同列closed paths/modes/own-label-only/KeepAlive absent/300s/非删除回退/首份和第二周期收据门；5) productionWrites=0,databaseReads=0,databaseWrites=0,serviceActions=0,launchdActions=0；6) 交付本地TASK报告并TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "conversation:2026-08-16 user=继续推进吧，直到能搭建好整个信息推送链路；只做规划、任务拆分，把执行工作分配给grok cli",
+  "authorization_history": [
+    {
+      "at": "2026-08-16T03:10+08:00",
+      "evidence": "conversation:2026-08-16 user=继续推进吧，直到能搭建好整个信息推送链路；只做规划、任务拆分，把执行工作分配给grok cli",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "",
+  "completion_class": "standard",
+  "confirmation": "用户明确要求继续推进至真实持续更新，并要求执行工作交给Grok CLI、主会话只规划与验收。",
+  "created_at": "2026-08-16T03:10+08:00",
+  "department": "自动化部",
+  "details": "目标：在M1本机以自动化部会话接手 observer v7 的受限安装准备。先读取四文档和本TASK。执行工作必须先调用Grok CLI生成短安装计划；DeepSeek/Codex只负责机械执行和事实收据，不得自行扩展设计。精确输入：candidate manifest SHA 6c437973c101b4fd773ae5a8592b8050a75977545f9e5efb6b9b29cacd69c2b4；V7独立PASS报告SHA 5ac3cb32df67ace1edbe4db8fa4b2290d4bf1540fb42c67ddb266a2f1e7074b6；review receipt SHA 8877ef5e444adc0790911d6be6737602abd01cb237c2dbd8d8fc859b776ba0b9；adversarial receipt SHA 2b39d0f2c3aac35c8b19f271df634942454eb783cf61a37d28d1760047801122。范围仅只读预检+plan-only合同：确认grok CLI可用性；UID501/chanai；目标路径和com.f1plus1.ops-observer均absent；裸/api/public/feed与/api/health只读正向；7 jobs+4 listeners基线。禁止打开生产DB、禁止文件安装、launchctl mutation、服务动作、网络外发、审核/发布。输出Grok原始计划、机械事实收据、明确未执行安装。",
+  "domain_stage": "observer-install-preflight",
+  "event_receipts": [],
+  "execution_state": "queued",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一输入SHA不匹配、Grok CLI缺失/超时/虚构结果、裸feed非2xx、目标或label已存在、任何生产DB或服务动作企图：立即block，保留证据，不安装、不重试、不修服务；最多列3个首错。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "observer-v7-install-preflight",
+  "pointers": [
+    "scratch/TASK-20260816-GROK-OBSERVER-SUCCESSOR/candidate-v7/MANIFEST.sha256"
+  ],
+  "report": "",
+  "resolution": {
+    "evidence": "contract-v4 sha256=95915e30c70fd84573f27bc00269514ae6c45882f9058922c891e0901de65406 review=0d148184ddf374726fadedb6f4e96d8a5aa2afd913c12d4b23c7b9ab42c4dc67",
+    "reason": "preflight scope absorbed into independently reviewed live install task TASK-20260816-1D6B4F",
+    "receipt_id": "RES-20260816T034649-83F06082",
+    "resolved_at": "2026-08-16T03:46+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "abandoned",
+    "target_revision_before": 1
+  },
+  "revision": 2,
+  "schema_version": 1,
+  "task_id": "TASK-20260816-2ABB98",
+  "title": "M1 Observer v7 安装合同与只读预检",
+  "unverified": [],
+  "updated_at": "2026-08-16T03:46+08:00",
+  "verified": []
+}

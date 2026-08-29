@@ -1,0 +1,55 @@
+{
+  "acceptance_exit": "独立3101服务入口、passkey注册/登录/fresh reauth、原子credential store、DB opener验签、API/receiver接线与prepare-only部署候选完成；public Next零路由改动；官方依赖可溯源；聚焦测试/typecheck/diff-check各一次PASS；0M1/0SSH/0服务load/0真实DB写；报告与运行清单落盘，TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "用户选择私有方案C，要求Mac/iPhone全功能，接受安装并刚回复继续；后台后端已通过最终安全门。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T07:59+08:00",
+      "evidence": "用户选择私有方案C，要求Mac/iPhone全功能，接受安装并刚回复继续；后台后端已通过最终安全门。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "限定验证首错：唯一聚焦Vitest 1/1 PASS（1 file/1 test，349ms）；随后唯一固定Node24 typecheck 1/1 在 app/src/server/admin-service/webauthn.ts:88 命中 TS2322：Uint8Array<ArrayBufferLike> 不能赋给 SimpleWebAuthn userID 所需 Uint8Array<ArrayBuffer>。按失败路径立即停止，未重跑、未执行diff-check、未SSH/M1/load/真实DB写。首错文件SHA a34bc0ace8a627fb2d6431f964fc6eb7c5cd15c261359b54d447cd170d33aa79；测试SHA 7fff56cf99d18c89b5f284794aae28af8bc9648dddd215704aa331dfd5ad6a46。需机械successor在调用边界构造ArrayBuffer-backed Uint8Array后重新独立预算验证。",
+  "claimed_by": "开发部/internal-agent:admin_service",
+  "completion_class": "standard",
+  "confirmation": "本任务仅构建本地候选/prepare-only，不安装Tailscale、不启动M1服务；真实passkey注册与部署另派。",
+  "created_at": "2026-08-12T07:59+08:00",
+  "department": "开发部",
+  "details": "在739DF6/7B47E0放行后端上实现独立Admin运行壳，不改公网Next routes。只绑定127.0.0.1:3101；先运行0001/0002及完整sqlite_schema验签，再构造Repository。接ReviewAdminRoutes、ProjectionReceiver内部端点与后续静态Admin UI目录；公开3000无依赖且/admin*|/api/admin*|/internal*保持不存在。按87555F合同实现单人Passkey纵切：仅查官方SimpleWebAuthn/WebAuthn文档并记录版本/来源；可增加最小@simplewebauthn/server依赖。首次注册需tailnet-only浏览器+任务专属一次性bootstrap token（token只写0600本机文件/CLI收据，不进日志/Git）；凭据用0700目录+0600原子JSON持久化，challenge一次性/短TTL；登录验证后调用acceptVerifiedSession；publish fresh reauth使用同凭据并调用acceptVerifiedFreshReauth；会话/CSRF仍由现有security.ts管理。强制canonical HTTPS origin、可信Tailscale identity allowlist、Host/Origin、body上限、超时、method/path closed。新增prepare-only installer/LaunchAgent plist渲染与status，不执行load/SSH/M1/Tailscale安装。聚焦测试使用注入WebAuthn verifier覆盖bootstrap注册→登录session→CSRF→fresh reauth门，以及只监听loopback/公网路径不接入；不需要模拟生物识别。只运行一次聚焦Vitest、一次Node24 typecheck、一次diff-check，首错即停。",
+  "domain_stage": "开发/后台服务",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "SimpleWebAuthn当前官方版本与Node24/项目模块制不兼容或需降低安全语义：停止并BLOCK，不手写不完整WebAuthn验证器。",
+    "必须把Admin route编进公开Next或监听非loopback才能工作：停止并BLOCK。",
+    "限定验证首错：立即停止、不重跑、不部署，保留首错/SHA并BLOCK。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "第一版后台/独立服务接线",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-87555F-M1后台私有入口最小安全合同-v0.1.md"
+  ],
+  "report": "",
+  "resolution": {
+    "evidence": "docs/当前生产状态与执行待办.md",
+    "reason": "2026-08-29 schema10生产恢复、27个X信源和完整Admin路线已形成新的当前闭包；旧任务绑定过时schema/release/plist/视觉或运行时态，继续领取会造成重复或错误执行。",
+    "receipt_id": "RES-20260829T235615-94CCE876",
+    "replacement_revision": 3,
+    "replacement_state": "blocked",
+    "replacement_task_id": "TASK-20260829-E59ACA",
+    "resolved_at": "2026-08-29T23:56+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "superseded",
+    "target_revision_before": 3
+  },
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-B2CB5F",
+  "title": "DEV-ADMIN-SERVICE-01独立3101服务与Passkey会话纵切",
+  "unverified": [],
+  "updated_at": "2026-08-29T23:56+08:00",
+  "verified": []
+}

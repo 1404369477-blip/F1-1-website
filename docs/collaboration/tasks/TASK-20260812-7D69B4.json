@@ -1,0 +1,51 @@
+{
+  "acceptance_exit": "userID字节复制语义明确且类型满足；继承Vitest PASS且0重跑；Node24 typecheck一次PASS；diff-check一次PASS；非目标代码/依赖无漂移；报告落盘，TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/src/server/admin-service/webauthn.ts",
+    "docs/collaboration/部门/开发部/报告/2026-08-12-7D69B4-WebAuthn-userID-ArrayBuffer机械修复报告.md",
+    "docs/collaboration/部门/开发部/报告/2026-08-12-B2CB5F-独立3101服务与Passkey会话纵切实现报告.md"
+  ],
+  "authorization_evidence": "B2CB5F唯一首错为SimpleWebAuthn userID泛型ArrayBuffer类型，用户要求减少重复测试并继续第一版。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T08:21+08:00",
+      "evidence": "B2CB5F唯一首错为SimpleWebAuthn userID泛型ArrayBuffer类型，用户要求减少重复测试并继续第一版。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:admin_service_typefix",
+  "completion_class": "standard",
+  "confirmation": "纯机械类型边界修复，不重跑已PASS聚焦测试。",
+  "created_at": "2026-08-12T08:21+08:00",
+  "department": "开发部",
+  "details": "继承B2CB5F唯一聚焦Vitest 1 file/1 test PASS，禁止重跑Vitest。只修改 app/src/server/admin-service/webauthn.ts 的userID调用边界：将现有Uint8Array<ArrayBufferLike>通过显式新建普通ArrayBuffer并复制字节，得到SimpleWebAuthn要求的Uint8Array<ArrayBuffer>；禁止as强转、any、ts-ignore、放宽第三方类型或改变userID字节。其余服务/UI/backend/package/lock字节不改。随后仅运行一次固定Node24全项目typecheck与一次diff-check；首错即停。修正B2CB5F报告为继承测试+successor验证事实并完成任务。0网络安装/0SSH/0M1/0服务load/0真实DB。",
+  "domain_stage": "开发/机械修复",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "类型仍不兼容或需改第三方配置/运行语义：立即BLOCK，不继续。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "无as/any/ts-ignore/类型放宽；字节长度与顺序不变；未重跑Vitest；未修改测试、依赖、UI、backend或部署外能力；0网络安装/0SSH/0M1/0load/0真实DB",
+  "node": "第一版后台/Passkey服务收口",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-B2CB5F-独立3101服务与Passkey会话纵切实现报告.md"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-7D69B4-WebAuthn-userID-ArrayBuffer机械修复报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-7D69B4",
+  "title": "B2CB5F successor：WebAuthn userID ArrayBuffer类型边界机械修复",
+  "unverified": [
+    "真实Touch ID/iPhone/FIDO2、Tailscale Serve、固定M1 3101、LaunchAgent、真实DB/receiver/sender/public切换均未执行，保持B2CB5F生产门禁"
+  ],
+  "updated_at": "2026-08-12T08:23+08:00",
+  "verified": [
+    "继承B2CB5F唯一聚焦Vitest 1 file/1 test PASS且本successor 0重跑；固定Node24全项目typecheck唯一1次PASS；git diff --check唯一1次PASS；webauthn.ts仅以普通ArrayBuffer+Uint8Array.set复制userID，SHA 78d08dd951cf6da2e78be9dde9926c95cbd3cff8db11dbc576911833942e2096；测试/package/lock SHA保持B2CB5F冻结值"
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "acceptance_exit": "pre policy原文及hash已受限保存；三个设备approval与selectors逐项Known；policy合并只新增三条最小Grant且其他字节/语义无意外漂移，post-hash与回读匹配；3101健康收据后Serve仅HTTPS443→127.0.0.1:3101并accept固定capability；Funnel空；三设备可获得各自唯一app-cap映射，未授权设备/旧legacy头不被放行；完整回退顺序和收据落报告，TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "thread-user-message:2026-08-12:授权",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T23:35+08:00",
+      "evidence": "thread-user-message:2026-08-12:授权",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "恢复后首错再次确认：Chrome公开列表出现两个相同Policies标签；最新用户页仍被旧browser session占用，当前可控旧页对DOM snapshot与visible DOM两种只读接口均在30秒超时并重置控制会话。无法取得完整pre-policy原文/pre-hash/approval，按硬门保持policy/device/Serve/Funnel写=0。真实歧义为两个同URL Policies页且无法判定哪一页含用户打开的有效编辑器状态；需统筹让用户关闭全部Policies页后只新开一个，并保持前台。",
+  "claimed_by": "安全部/internal-agent:projection_security_final",
+  "completion_class": "audit",
+  "confirmation": "用户在当前线程明确回复：授权",
+  "created_at": "2026-08-12T23:35+08:00",
+  "department": "安全部",
+  "details": "用户已明确回复授权。使用已登录Chrome管理台和C1FBDB restricted包执行管理面事务：先只读导出当前完整policy/Grants、设备批准状态与相关设置到0700/0600 git-ignored受限证据并计算canonical pre-hash；核对M5/新iPhone/旧iPad三个精确selectors处于批准状态，合并三条各自独立sourceRef的最小Grant，仅允许访问固定M1 tcp:443及固定app capability，不能覆盖或放宽现有规则；提交后回读完整policy并保存post-hash。等待开发部确认3101健康后，在M1执行唯一Serve配置 HTTPS443→127.0.0.1:3101并accept精确app-cap；Funnel保持关闭。不得改设备名/owner/approval（若未批准则停止并回报）、不得load本地服务/打开DB/切public。",
+  "domain_stage": "tailscale_private_entry_activation",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "无法读取完整pre policy或approval则0写停止；现有宽规则/selector歧义/合并冲突则停止请求统筹裁定；提交结果未知、policy validator失败或post回读不精确则不做Serve并停止，必要时用保存的pre原文恢复；3101未健康则不做Serve；Serve失败先reset并核Funnel空，禁止重复提交或public cutover。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "TAILSCALE-PRIVATE-ENTRY-LIVE-001",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-C1FBDB-三设备最小Grant与Serve提交前只读收敛.md"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 5,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-09690E",
+  "title": "Tailscale三设备最小Grant与Serve受控上线",
+  "unverified": [],
+  "updated_at": "2026-08-12T23:59+08:00",
+  "verified": []
+}

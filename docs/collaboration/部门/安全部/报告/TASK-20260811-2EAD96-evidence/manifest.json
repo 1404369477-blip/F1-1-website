@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "f1plus1.security-diagnostic-manifest.v1",
+  "taskId": "TASK-20260811-2EAD96",
+  "decision": "PASS_DIAGNOSIS_RECOVERY_BLOCKED",
+  "severity": {
+    "P0": 0,
+    "P1": 2
+  },
+  "execution": {
+    "mode": "static_read_only",
+    "dynamicReproduction": "NOT_RUN",
+    "externalCalls": 0,
+    "canonicalWrites": 0
+  },
+  "validator": {
+    "historicalScriptSha256": "beeae3aba02b156e095c3622e94648750075cd5c789808a956181f6aa5fddacb",
+    "currentScriptSha256": "f914623d059fb90e6d4b6769b540fef5a105252f87e4d6fe18dc86e406030793",
+    "moduleSha256": "6466fad6f69912cca2cebcc93a2fd07fc6096fe7582efd37c8d5fc9aa0cf3048",
+    "historicalRootSha256": "2a8c89ace30b1e9cac876adb0583ec47e43ce6d6806616a58fac7823ca586d83",
+    "currentRootSha256": "8940a34ea3695c6de5896e6bf1eee888d1cdad550504e7ca1c5180c43b5e92ac"
+  },
+  "canonicalEvidenceSha256": {
+    "m3Db": "df82598ca2405ad2dfebd01503ac5615a10dcbd40807d308a87fa5c27fb519c0",
+    "publicSyntheticDb": "24536392e0ca00524010ba70ff55f754cd892e3f3f4652eb69ae6a182deaf041",
+    "m3Receipt": "4309961dd363413444821f29586a15eec96cc18b396a3f8aad44330ec5d5bbdc",
+    "publicSyntheticReceipt": "2c5ca3555b108761fb5b224e0cad77a29d8fc16e56d3eb4d6b80448365492803",
+    "publicSyntheticDataReceipt": "71286412fcfc04428145b86ba2a174d93417e6604f16883a7a5a87f7e76cacdc",
+    "cliSecurity": "0474fcd5169e33e8ce8dfa4504faa35502328810c34574f5621af36d9bb54e82",
+    "logSecurity": "ad7bf459f1a64caba02093e16f229efe51b1520dbd1e2741d39c19db63f8b04f"
+  },
+  "rootCause": {
+    "integrityReason": "RECEIPT_OLD_BYTE_DRIFT",
+    "renderedReason": "CLI_INTERNAL_ERROR",
+    "validatorIdentityScopeDrift": true,
+    "receiptReasonAllowlistGap": true
+  },
+  "residuals": {
+    "taskTemporaryRoot": false,
+    "walShmJournalTmpCandidateLock": false
+  },
+  "payloadRecorded": false
+}

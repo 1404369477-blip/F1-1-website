@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "SHA匹配；P1-01/P1-02和busy P2逐项CLOSED或给唯一直接反例；P0/P1/P2明确；无P0/P1则放行UI与3101本地集成；报告落盘，TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-08-12-F1E14C-253682-Admin-UI两项P1最终限定复审报告.md"
+  ],
+  "authorization_evidence": "253682已最小修复338928两项P1并完成唯一静态检查。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T09:01+08:00",
+      "evidence": "253682已最小修复338928两项P1并完成唯一静态检查。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "测试部/internal-agent:admin_ui_final_review",
+  "completion_class": "audit",
+  "confirmation": "限定最终复审，不重开全量UI审查。",
+  "created_at": "2026-08-12T09:01+08:00",
+  "department": "测试部",
+  "details": "只读绑定app.js SHA 58a0d014741a26b950c6afd1caa64fb9c73fb856eb7426bcd653d6b68d4b184d，index/css/manifest保持0C206C冻结值。只裁定338928两项P1及同文件P2：delivery是否真实调用/api/admin/deliveries/{id}并严格验收据/不新publish；401/409草稿是否仅内存、可恢复/明确丢弃、版本漂移只复制文本且不自动重放；busy guard是否覆盖save/confirm/execute并finally恢复。阅读12项静态收据，不重跑/不改/不联网。",
+  "domain_stage": "测试/UI最终复审",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "发现伪对账、草稿静默丢失/持久化、自动mutation重放或重入：FAIL并停止。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "0重跑、0修改候选、0网络；只裁定既定三项；源码追踪独立于设计部报告；未把内存草稿写成持久恢复、未把receiver receipt写成private DB回写、未把本地集成放行写成生产放行。",
+  "node": "第一版后台/UI最终放行",
+  "pointers": [
+    "docs/collaboration/部门/设计部/报告/2026-08-12-253682-Admin-UI投递对账与内存草稿successor报告.md"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-08-12-F1E14C-253682-Admin-UI两项P1最终限定复审报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-F1E14C",
+  "title": "253682 UI两项P1最终限定复审",
+  "unverified": [
+    "浏览器/3101真实运行、固定M1、Tailscale、真实passkey/cookie、真实RSS mutation/delivery/公开切换、1024与真机辅助技术保持Unknown，须由后继同候选聚焦运行集成证明。"
+  ],
+  "updated_at": "2026-08-12T09:09+08:00",
+  "verified": [
+    "新app.js SHA 58a0d014…184d及index/css/manifest冻结SHA匹配；P1-01真实delivery GET、严格receipt校验、receipt后同candidate detail回读且无publish路径CLOSED；P1-02仅内存Map草稿、401/409后恢复或明确丢弃、版本漂移只复制文本且无自动重放CLOSED；busy P2的save/confirm/execute三层闸、同步disabled和finally恢复CLOSED。限定范围PASS，P0=0/P1=0/P2=0，放行UI与3101本地集成。"
+  ]
+}

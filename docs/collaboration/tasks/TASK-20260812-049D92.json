@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "TASK_STATE_OK；同盘原子晋升完成，final appRoot精确存在、source stage app精确absent、target verifier唯一一次PASS、manifest/content/release/Next/deps roots匹配；live app/public/RSS/plist/listener零漂移；0copy/formal overlay/prepare/load/cutover/cleanup。报告给final release绝对路径与回退（final原子移回stage）。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-049D92-M1已验签state原子晋升版本release报告.md"
+  ],
+  "authorization_evidence": "用户：可以直接部署到M1 MacBook；直接用SSH；继续。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T13:55+08:00",
+      "evidence": "用户：可以直接部署到M1 MacBook；直接用SSH；继续。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:projection_runtime_m1_atomic_promote",
+  "completion_class": "standard",
+  "confirmation": "用户已授权M1部署；以原子rename替代重复大文件复制，范围仍为非live版本目录。",
+  "created_at": "2026-08-12T13:55+08:00",
+  "department": "开发部",
+  "details": "取代blocked 418763/2C7C32逐文件复制路线，使用奥卡姆最小方案：已验签source=`[M1-HOME]/F1-1-website/.projection-release-TASK-20260812-D9A84D/stage/app`；releases root已存在0700/uid501；final=`[M1-HOME]/F1-1-website/releases/f868497562332e6b365479f48105aba298783aa23513a0b962ac2ba318f462a6/app`；使用全新promote parent `[M1-HOME]/F1-1-website/releases/.promote-TASK-20260812-NEW-f8684975`（执行时替换为本任务ID固定名），必须absent；旧partial temp保留禁止触碰。文件化Node脚本先验证source/release root同一dev、source manifest SHA58b6da...、final/promote absent、live app/public/RSS/plist基线；mkdir promote0700→fsync parent→rename source到promote/app→用固定M1 Node在promote/app运行现有target verifier恰一次。verifier失败时第一动作rename回原source，fsync并保留失败收据；PASS后fsync promote/app与promote parent，rename promote parent为release-id final parent，fsync releases；postflight只读核对final/app、manifest SHA、owner/mode/nlink、source app absent，禁止第二次verifier。禁止触碰2C7C32 partial temp、live `[M1-HOME]/F1-1-website/app`、plist/DB/key/launchctl/load/cutover/cleanup。脚本local/remote Node check与SHA各一次，promote执行恰一次，首错停。",
+  "domain_stage": "deployment-prep",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "source/release非同dev、promote/final已存在、manifest或baseline漂移立即停；rename/verifier/fsync首错立即执行唯一原子回移并停止；回移失败判P0并禁止任何后续；不得复制或删除旧partial证据。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已弃用两条失败的逐文件复制路线；未触碰或清理旧partial temp；失败回移逻辑仅在verifier失败时启用，本次未触发。",
+  "node": "M1首版上线/真实投影部署/atomic promote",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-A156EC-M1-fresh-stage分块传输与目标验签最终报告.md"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-049D92-M1已验签state原子晋升版本release报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-049D92",
+  "title": "M1已验签stage同盘原子晋升版本release",
+  "unverified": [
+    "未执行prepare、launchctl load、key生成、read-mode切换或cutover；RSS DB因900秒自然采集周期发生字节变化，未由本任务写入。"
+  ],
+  "updated_at": "2026-08-12T13:59+08:00",
+  "verified": [
+    "同盘原子promote执行一次PASS；target verifier唯一一次release-verified；final app精确存在、source stage app精确absent；manifest/content/release/Next/dependency roots匹配；public DB/plist/listener/health/home基线通过。"
+  ]
+}

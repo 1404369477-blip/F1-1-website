@@ -1,0 +1,54 @@
+{
+  "acceptance_exit": "M1第二release的deployment manifest/plist/private DB准备完成，source仍disabled epoch3、RSS job仍unloaded，形成可进入唯一实采的状态收据。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/scripts/rss-install-macos.ts",
+    "app/scripts/rss-control.ts"
+  ],
+  "authorization_evidence": "用户已授权M1部署；正式第二release已精确验签，本任务保持调度关闭。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T04:54+08:00",
+      "evidence": "用户已授权M1部署；正式第二release已精确验签，本任务保持调度关闭。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:rss_real",
+  "completion_class": "standard",
+  "confirmation": "统筹部核收prepare收据后单独派发唯一真实采集任务。",
+  "created_at": "2026-08-12T04:54+08:00",
+  "department": "开发部",
+  "details": "前置TASK-20260812-325056已ACK：正式root commit5d596367、manifest34c1032cc6adca96990cf35b092c2d61b940a2bda8fdd53a0c8ccfbb6e7c8d95、content2aae0486…、release6d402a5d…精确PASS，旧双文件backup保留。只复用仓内runbook和已验收CLI，不编写脚本、不用inline Node/grep/pipe/变量包装。远端白名单顺序：1) launchctl print gui/501/com.f1plus1.rss-collector，只有RC113+明确service not found才继续；2) 在固定app cwd直接以RSS_EXPECTED_RELEASE_MANIFEST_SHA256=34c1032c…c8d95和固定Node24 --experimental-strip-types运行scripts/rss-install-macos.ts恰1次，唯一成功收据必须prepared-no-bootstrap-called/externalCalls0；3) 再次launchctl print并仍明确unloaded；4) 以同外部锚运行scripts/rss-control.ts status恰1次，必须重验release/deployment/plist/Node/schema/权限且source disabled、stopEpoch3、job unloaded。不得bootstrap/resume/wrapper/RSS/stop/清理。任一首错停止。",
+  "domain_stage": "M1第二release prepare-only",
+  "event_receipts": [
+    "launchctl-pre:rc=113:service-not-found:unloaded",
+    "installer:prepared-no-bootstrap-called:externalCalls=0:manifestSha256=1f681429aa56a49e1b0bfb3ea6405db07ffacd0aa8e5b339dbf1909522cfad50:plistSha256=60cd3b0d96b2b7bdf652ffb190288197db2685de4ece6fa2e7daae12c0ad787e",
+    "launchctl-post:rc=113:service-not-found:unloaded",
+    "control-status:observed:unloaded:enabled=false:stopEpoch=3:externalCalls=0"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "prepare前job非明确unloaded时不运行installer。",
+    "installer/prepare收据、prepare后job或status任一不符时停止，不启用source；双文件backup继续保留。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "严格仅执行四步远端白名单；installer1、status1、launchctl print2；0新增脚本、0inline Node、0grep/pipe、0resume、0wrapper、0RSS、0stop、0cleanup、0bootstrap/load。complete首次因未声明本地产物被任务工具拒绝，未改变任何远端状态；补充两个实际复用CLI产物后重试落账。",
+  "node": "对已正式验签的第二release执行一次installer prepare，不加载LaunchAgent，并用既有control status确认停采",
+  "pointers": [],
+  "report": "不适用",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-4DD7E5",
+  "title": "M1第二release prepare-only与停采状态确认",
+  "unverified": [
+    "未执行真实wrapper/RSS/HTTP/parse/candidate、20秒短窗或900秒调度；公开DB/页面/PID零漂移留待单独唯一实采任务按前后基线核对。"
+  ],
+  "updated_at": "2026-08-12T04:55+08:00",
+  "verified": [
+    "白名单顺序逐项PASS：prepare前launchctl print RC113且明确Could not find service；installer恰1次返回prepared-no-bootstrap-called、externalCalls0、deployment manifest SHA256=1f681429aa56a49e1b0bfb3ea6405db07ffacd0aa8e5b339dbf1909522cfad50、plist SHA256=60cd3b0d96b2b7bdf652ffb190288197db2685de4ece6fa2e7daae12c0ad787e；prepare后launchctl仍RC113且明确service not found；control status恰1次重验后返回observed、launchState unloaded、source enabled false/stopEpoch3、externalCalls0。"
+  ]
+}

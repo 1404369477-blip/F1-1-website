@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "TASK_STATE_OK；动态feed publicId对应detail200，public DB身份零漂移；RSS自然周期按语义不变量PASS且来源区分清楚；继承stage verifier一次PASS与全部roots；0重传/verifier/formal/prepare/load/DB写/cutover。报告给最终stage路径和下一部署release目录建议。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-A156EC-M1-fresh-stage分块传输与目标验签最终报告.md"
+  ],
+  "authorization_evidence": "用户：可以直接部署到M1 MacBook；直接用SSH；继续。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T13:43+08:00",
+      "evidence": "用户：可以直接部署到M1 MacBook；直接用SSH；继续。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:projection_runtime_m1_postflight_receipt",
+  "completion_class": "standard",
+  "confirmation": "用户授权继续M1部署；本任务只核收动态运行后置状态。",
+  "created_at": "2026-08-12T13:43+08:00",
+  "department": "开发部",
+  "details": "继承blocked D9A84D已完成的全部chunk/reassemble/stage/target verifier PASS证据，禁止重传/reassemble/extract/verifier/修改stage。只修postflight口径：从当前public feed/API单次GET解析第一条合法publicId（禁止硬编码旧slug），再GET对应详情一次，要求feed/detail/home/health均200且public DB SHA/size/inode仍949c78.../737280/24546198。RSS允许已加载900s job自然运行：只读schema-aware probe一次，要求source enabled=1/stop_epoch=4/last_reason=OK、job loaded/not-running/interval900/lastExit0、integrity ok、running run=0、候选总数20且全pending_review、人工字段非空计数0；run总数可从34自然增加，最新run必须succeeded/OK且new=0/updated=0/duplicate=20，DB SHA/size可因自然运行变化并如实记录，不得冒充零漂移。确认stage/tar/chunks/manifest仍存在且未变，formal/prepare/listener/DB/plist均未由本任务写。0 cleanup。",
+  "domain_stage": "deployment-prep",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "feed无合法publicId、detail非200、public DB身份变化、RSS integrity/source/job/candidate/editor语义异常立即block；禁止为获得200改数据或路由；禁止停止RSS、重跑采集或重复stage verifier。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已区分旧硬编码slug 404与当前动态publicId；已区分RSS 900秒自然运行造成的DB字节变化与stage写入；未重跑传输/reassemble/verifier。",
+  "node": "M1首版上线/真实投影部署/fresh-stage postflight",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-D9A84D.json"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-A156EC-M1-fresh-stage分块传输与目标验签最终报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-A156EC",
+  "title": "M1 fresh-stage postflight动态slug与RSS自然周期只读核收",
+  "unverified": [
+    "未执行formal overlay、prepare、launchctl load、DB写、key生成、cutover或cleanup；stage未切换为live release。"
+  ],
+  "updated_at": "2026-08-12T13:47+08:00",
+  "verified": [
+    "动态feed publicId的API详情/页面详情、home、health均200；public DB SHA/size/inode不变；RSS integrity/source/job/run/candidate/editor语义不变量PASS；继承唯一target verifier release-verified及content/release/Next/dependency roots；M1外部产物路径已在报告中冻结。"
+  ]
+}

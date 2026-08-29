@@ -1,0 +1,43 @@
+{
+  "acceptance_exit": "安全报告列每项Known/Discoverable/Unknown、M5/iPhone selector是否能从peer map唯一冻结、精确值的受限证据路径或零保存理由、P0/P1/P2与仍需管理后台的最小输入；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-43ECEE-M1与M5-Tailnet节点图输入门首错报告.md"
+  ],
+  "authorization_evidence": "",
+  "authorization_history": [],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "安全部/internal-agent:projection_security_final",
+  "completion_class": "audit",
+  "confirmation": "无需额外确认；只读本机和既有SSH",
+  "created_at": "2026-08-12T18:54+08:00",
+  "department": "安全部",
+  "details": "严格零写，使用M5本机与既有M1 SSH的Tailscale status/local state只读输出，判断能否唯一识别M1/M5/iPhone user-owned peers、同一login、DNSName/host alias/IP selector候选、online/key-expiry/tag/shared迹象；不得输出或写入普通报告真实login/IP/DNS/node key/device ID。若需要保存精确候选，仅写任务专属scratch owner-only 0600且git ignored，以SHA/字段存在性回报；核对本地CLI是否能证明device approval、Grants、policy hash、HTTPS CertDomains，不能则明确Unknown。禁止Tailscale管理面写、Serve/Funnel/Grant/device操作、key生成、prepare。",
+  "domain_stage": "review",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任何节点图歧义、共享节点/多用户/标签边界不清即不冻结；SSH/CLI首错即FAIL并停止；不得泄露识别符或把local peer map当作device approval/policy权威。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "遵守首错即停且未重试；未用旧报告替代本轮M1证据；未把M5单侧OS唯一性扩展为所有权、批准或Grant唯一性；未将login/IP/DNS/node key/device ID真值写盘；未做任何Tailscale或服务状态修改。",
+  "node": "TAILNET-LOCAL-PEERMAP-INPUT-GATE",
+  "pointers": [
+    "docs/decisions/system/2026-08-12-F1+1-Tailscale-Serve-app-cap私有入口身份-successor-accepted.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-12-43ECEE-M1与M5-Tailnet节点图输入门首错报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-43ECEE",
+  "title": "M1与M5本机Tailnet节点图可冻结输入只读核对",
+  "unverified": [
+    "M1对等peer map与双视图集合一致性NOT_RUN；M5/iPhone精确selector不冻结。device approval、Grants、policy canonical hash、HTTPS/CertDomains管理面状态、shared-node全局边界均Unknown；Serve/Funnel/app-cap/prepare/load均未执行。"
+  ],
+  "updated_at": "2026-08-12T19:01+08:00",
+  "verified": [
+    "M5本机status peer map只读脱敏解析成功：BackendState=Stopped，self 1、peer 2、user 1；peer按OS为macOS 1/iOS 1，三节点UserID/login hash一致，ID/DNS hash互异。首个M1 SSH命令在本地zsh引号解析阶段失败，SSH会话和远端CLI执行均为0；依任务首错规则立即停止。"
+  ]
+}

@@ -1,0 +1,223 @@
+{
+  "schemaVersion": 1,
+  "taskId": "TASK-20260812-0C206C",
+  "scope": "formal-static-admin-ui-local-fixture-render",
+  "syntheticSample": true,
+  "inputs": {
+    "html": {
+      "path": "[M5-HOME]/Documents/F1+1/app/src/admin-ui/index.html",
+      "sha256": "5a617b38e3b38f19bbabb89a7ea16f79d1aceab1f8cc5fc7940726e79c747dda",
+      "bytes": 10190
+    },
+    "css": {
+      "path": "[M5-HOME]/Documents/F1+1/app/src/admin-ui/app.css",
+      "sha256": "be18bccf9ada2efad5fd00d8351888cd877fe708bbc0ad78990211578292468d",
+      "bytes": 18334
+    },
+    "js": {
+      "path": "[M5-HOME]/Documents/F1+1/app/src/admin-ui/app.js",
+      "sha256": "1123845193308472ff75b93701569306055f67cbf4a6f791f13cd9f5560c09ec",
+      "bytes": 59298
+    },
+    "frozenHtml": {
+      "path": "[M5-HOME]/Documents/F1+1/design/ui/F1+1-M5-admin-reviews-preview-v0.1/index.html",
+      "sha256": "fa0ef6e31fe889abea39e6bbcb3a9d7c5764a17f364e1d409bc4defce879113e",
+      "bytes": 48053
+    },
+    "designNotes": {
+      "path": "[M5-HOME]/Documents/F1+1/design/ui/F1+1-M5-admin-reviews-preview-v0.1/design-notes.md",
+      "sha256": "cd95e2a64d9c4807eb64ddb1cdbfd48247bfa3daf13c28ecd14ff3ef52cf5fc2",
+      "bytes": 9500
+    }
+  },
+  "renderer": {
+    "name": "Google Chrome headless via local CDP",
+    "version": "151.0.7922.137",
+    "sourceScheme": "http-loopback",
+    "externalHttpRequestsObserved": 0,
+    "httpsRequestsBlocked": true,
+    "nonLoopbackHttpReceiptMustBeZero": true,
+    "deviceScaleFactor": 1
+  },
+  "captures": [
+    {
+      "file": "admin-ui-1440-dark-pending.png",
+      "width": 1440,
+      "height": 900,
+      "mobile": false,
+      "theme": "dark",
+      "fixtureState": "pending",
+      "view": "list",
+      "scroll": "top",
+      "purpose": "宽屏队列、真实详情、编辑与批准/拒绝层级",
+      "url": "http://127.0.0.1:51173/admin/reviews?fixture=review-ui-v1&fixtureState=pending&theme=dark&view=list",
+      "outputPath": "[M5-HOME]/Documents/F1+1/docs/collaboration/部门/设计部/报告/证据/TASK-20260812-0C206C/admin-ui-1440-dark-pending.png",
+      "observed": {
+        "theme": "dark",
+        "mobileView": "list",
+        "innerWidth": 1440,
+        "innerHeight": 900,
+        "devicePixelRatio": 1,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "scrollY": 0,
+        "title": "F1+1 · 人工审核台",
+        "fixtureVisible": true,
+        "environmentLabel": "验收 Fixture",
+        "detailTitle": "汉密尔顿谈法拉利新阶段：赛车节奏与信心正在回升",
+        "actionLabels": [
+          "批准当前版本",
+          "拒绝并填写原因"
+        ],
+        "visibleTargetMinimumHeight": 44,
+        "visibleTargetsBelow44": [],
+        "styleSheetCount": 1
+      },
+      "outputSha256": "62e97d357cabebd787964d3b858af914b992e69151c8c2fd513076a74960fbb7",
+      "bytes": 325145,
+      "sha256": "62e97d357cabebd787964d3b858af914b992e69151c8c2fd513076a74960fbb7",
+      "pixelWidth": 1440,
+      "pixelHeight": 900
+    },
+    {
+      "file": "admin-ui-1440-light-approved.png",
+      "width": 1440,
+      "height": 900,
+      "mobile": false,
+      "theme": "light",
+      "fixtureState": "approved",
+      "view": "list",
+      "scroll": "top",
+      "purpose": "宽屏浅色主题与批准后独立手动发布动作",
+      "url": "http://127.0.0.1:51173/admin/reviews?fixture=review-ui-v1&fixtureState=approved&theme=light&view=list",
+      "outputPath": "[M5-HOME]/Documents/F1+1/docs/collaboration/部门/设计部/报告/证据/TASK-20260812-0C206C/admin-ui-1440-light-approved.png",
+      "observed": {
+        "theme": "light",
+        "mobileView": "list",
+        "innerWidth": 1440,
+        "innerHeight": 900,
+        "devicePixelRatio": 1,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "scrollY": 0,
+        "title": "F1+1 · 人工审核台",
+        "fixtureVisible": true,
+        "environmentLabel": "验收 Fixture",
+        "detailTitle": "汉密尔顿谈法拉利新阶段：赛车节奏与信心正在回升",
+        "actionLabels": [
+          "手动发布当前批准版本",
+          "返回队列"
+        ],
+        "visibleTargetMinimumHeight": 44,
+        "visibleTargetsBelow44": [],
+        "styleSheetCount": 1
+      },
+      "outputSha256": "73d36b5bcb8133f1523988ddfc69ad941366e2c405c748223bdb64bee22b8cc1",
+      "bytes": 324970,
+      "sha256": "73d36b5bcb8133f1523988ddfc69ad941366e2c405c748223bdb64bee22b8cc1",
+      "pixelWidth": 1440,
+      "pixelHeight": 900
+    },
+    {
+      "file": "admin-ui-390-dark-pending-editor-actions.png",
+      "width": 390,
+      "height": 844,
+      "mobile": true,
+      "theme": "dark",
+      "fixtureState": "pending",
+      "view": "detail",
+      "scroll": "editor-actions",
+      "purpose": "窄屏单列编辑尾部与批准/拒绝动作",
+      "url": "http://127.0.0.1:51173/admin/reviews?fixture=review-ui-v1&fixtureState=pending&theme=dark&view=detail",
+      "outputPath": "[M5-HOME]/Documents/F1+1/docs/collaboration/部门/设计部/报告/证据/TASK-20260812-0C206C/admin-ui-390-dark-pending-editor-actions.png",
+      "observed": {
+        "theme": "dark",
+        "mobileView": "detail",
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 1,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "scrollY": 1112,
+        "title": "F1+1 · 人工审核台",
+        "fixtureVisible": true,
+        "environmentLabel": "验收 Fixture",
+        "detailTitle": "汉密尔顿谈法拉利新阶段：赛车节奏与信心正在回升",
+        "actionLabels": [
+          "批准当前版本",
+          "拒绝并填写原因"
+        ],
+        "visibleTargetMinimumHeight": 44,
+        "visibleTargetsBelow44": [],
+        "styleSheetCount": 1
+      },
+      "outputSha256": "dc8d02ee7ada47dfe64d3dce17a862be4e0b981ee10c5648bb09d46508736a98",
+      "bytes": 72224,
+      "sha256": "dc8d02ee7ada47dfe64d3dce17a862be4e0b981ee10c5648bb09d46508736a98",
+      "pixelWidth": 390,
+      "pixelHeight": 844
+    },
+    {
+      "file": "admin-ui-390-light-approved-manual-publish.png",
+      "width": 390,
+      "height": 844,
+      "mobile": true,
+      "theme": "light",
+      "fixtureState": "approved",
+      "view": "detail",
+      "scroll": "action-panel",
+      "purpose": "窄屏单列批准后独立手动发布动作",
+      "url": "http://127.0.0.1:51173/admin/reviews?fixture=review-ui-v1&fixtureState=approved&theme=light&view=detail",
+      "outputPath": "[M5-HOME]/Documents/F1+1/docs/collaboration/部门/设计部/报告/证据/TASK-20260812-0C206C/admin-ui-390-light-approved-manual-publish.png",
+      "observed": {
+        "theme": "light",
+        "mobileView": "detail",
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 1,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "scrollY": 1170,
+        "title": "F1+1 · 人工审核台",
+        "fixtureVisible": true,
+        "environmentLabel": "验收 Fixture",
+        "detailTitle": "汉密尔顿谈法拉利新阶段：赛车节奏与信心正在回升",
+        "actionLabels": [
+          "手动发布当前批准版本",
+          "返回队列"
+        ],
+        "visibleTargetMinimumHeight": 44,
+        "visibleTargetsBelow44": [],
+        "styleSheetCount": 1
+      },
+      "outputSha256": "394a8246796e3c3f9dadc9ffa73450323a8cbd7e2e2de91643d98ba1c76e962e",
+      "bytes": 69654,
+      "sha256": "394a8246796e3c3f9dadc9ffa73450323a8cbd7e2e2de91643d98ba1c76e962e",
+      "pixelWidth": 390,
+      "pixelHeight": 844
+    }
+  ],
+  "overview": {
+    "path": "[M5-HOME]/Documents/F1+1/docs/collaboration/部门/设计部/报告/证据/TASK-20260812-0C206C/admin-ui-overview-2x2.png",
+    "sha256": "491eaf5ed5810b422baca55adbdd7aed0630948014f63603692acb376d62f4e6",
+    "bytes": 555173,
+    "pixelWidth": 1920,
+    "pixelHeight": 1390
+  },
+  "rawCaptureReceipt": {
+    "path": "[M5-HOME]/Documents/F1+1/docs/collaboration/部门/设计部/报告/证据/TASK-20260812-0C206C/capture-results.json",
+    "sha256": "333b834c743cd2eef7a9af4c4fd560dde54907450be39fcd35d484f18bb24574",
+    "bytes": 5777
+  },
+  "reproductionRecipe": {
+    "path": "[M5-HOME]/Documents/F1+1/docs/collaboration/部门/设计部/报告/证据/TASK-20260812-0C206C/render-recipe.md",
+    "sha256": "62afba5b7bb3348516c9f3979938c651263f887838f9d2cf65468f0d6b0fa371",
+    "bytes": 1005
+  },
+  "boundaries": [
+    "The content and states in the screenshot batch are synthetic acceptance fixtures.",
+    "The production entry has no fixture parameter and uses the real same-origin Admin API by default.",
+    "No production session, RSS mutation, publication, M1 deployment, or external network request was used.",
+    "The evidence verifies formal static UI rendering and selected responsive exits only."
+  ]
+}

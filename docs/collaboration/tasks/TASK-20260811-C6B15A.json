@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "交付产品部正式报告：逐Function给出现状、缺口、责任部门、精确入口、成功/失败/恢复证据、前置与用户门；给出可在本地完成的最短主链和后续Admin链；计数与矩阵逐行一致；列1-3条关键失败路径、已验证/未验证和错题自检，TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/产品部/报告/2026-08-11-初版本地可用主链收口审计与Function真值同步方案报告.md"
+  ],
+  "authorization_evidence": "当前活动目标：持续推进网站搭建，直到交付有前端界面、必要后端数据库、核心功能可用的初版落地方案",
+  "authorization_history": [
+    {
+      "at": "2026-08-11T18:25+08:00",
+      "evidence": "当前活动目标：持续推进网站搭建，直到交付有前端界面、必要后端数据库、核心功能可用的初版落地方案",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "用户已设定持续推进至本地初版落地的长期目标；本任务只做产品真值与实施顺序收口，不新增用户可感知方向。",
+  "created_at": "2026-08-11T18:25+08:00",
+  "department": "产品部",
+  "details": "用户的持续目标是交付有真实前端、必要SQLite、核心功能可用的初版。只读核对 docs/spec.md、初版全功能追踪矩阵、当前 app/ 路由与源码、当前 TASK 真值和已ACK报告。重点裁定公开页11项P1（PUB-FEED-003/004/005、PUB-DETAIL-001/004/005、UI-THEME-002、UI-RESP-002、UI-TOP-001、UI-ACCORDION-001、UI-RUNTIME-001、UI-A11Y-001，若计数重叠需解释）及 SOURCE-MGMT-001；区分已实现但当前证据漂移、真实缺实现、仍需用户视觉确认、真实外部能力门禁。输出唯一推荐实施顺序、依赖图、每个Function的当前证据与完成出口，以及Spec/矩阵待同步delta。不得改app/、accepted ADR或把user-gated改成已授权。",
+  "domain_stage": "M5-初版本地可用主链收口",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) Spec、矩阵和当前代码/报告相互矛盾：保留冲突并提出单一修订建议，不擅自改accepted合同；2) 任一结论仅由历史hash或静态分支支持：标为未完成/待证，不写complete；3) 遇到Admin视觉、真实来源、媒体权利、生产部署门禁：保持user-gated并列唯一用户确认问题。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "纠正11项误计为12项且未合并Function；未把claimed任务、静态代码、旧hash或环境阻断外推为当前PASS；未吸收未确认integrity successor；未改变user-gated、Spec、矩阵、app、data、design、accepted ADR或数据库；未运行测试/build/浏览器/服务/联网。",
+  "node": "以当前仓库事实重建初版落地主链，不缩减目标，不把历史PASS外推到当前候选",
+  "pointers": [
+    "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-11-初版本地可用主链收口审计与Function真值同步方案报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260811-C6B15A",
+  "title": "初版本地可用主链收口审计与Function真值同步方案",
+  "unverified": [
+    "0F65C1与B42C2E仍claimed；当前公开候选production build/启动/浏览器/七态/分页/主题恢复/safe-area/焦点/辅助技术未验；SOURCE视觉用户确认、1515A0页面实现及三路验收未完成；Admin审核与全部真实外部能力未完成。"
+  ],
+  "updated_at": "2026-08-11T18:35+08:00",
+  "verified": [
+    "只读核对Spec、50项矩阵、当前App路由/源码/配置/SQLite文件哈希、公开页历史与当前任务真值；确认任务列出的公开P1实际为12项，加SOURCE-MGMT共13项，与矩阵17/20/13计数一致；形成逐Function入口、缺口、责任、成功/失败/恢复出口及两条实施主链。"
+  ]
+}

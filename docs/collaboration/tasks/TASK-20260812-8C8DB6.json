@@ -1,0 +1,36 @@
+{
+  "acceptance_exit": "固定HEAD/index/89 runtime clean门继承并新鲜只读复核PASS；三门各唯一一次PASS；业务runtime无漂移；协作元数据增长如实记录但不误判；报告/TASK_STATE_OK；放行production build后继。",
+  "artifacts": [],
+  "authorization_evidence": "",
+  "authorization_history": [],
+  "authorization_state": "none",
+  "block_reason": "FOCUSED_VITEST_FIRST_FAILURE: post-commit clean HEAD now correctly makes resolveAdminReleaseGitIdentity(appRoot, projectRoot) succeed, but admin-release-manifest.test.ts line 191 retains pre-commit expectation to throw /runtime closure must be clean/; focused Vitest ran exactly once, 1 failed/1 passed; typecheck and diff-check not run per first-error protocol; no code change/build/push.",
+  "claimed_by": "开发部/internal-agent:post_commit_validation_final",
+  "completion_class": "standard",
+  "confirmation": "无需用户确认；仅纠正8A2F5B把协议必然生成的任务/报告元数据当作runtime漂移的验收口径。",
+  "created_at": "2026-08-12T20:12+08:00",
+  "department": "开发部",
+  "details": "继承8A2F5B已经只读证明的固定commit/tree/single-parent/index empty与89/89 runtime tracked/status empty/blob=HEAD，不重跑该门；先只读复核这些值仍一致。非runtime dirty按E4CB53 P2-02只做记录，不要求条数/hash恒定；明确排除docs/collaboration/tasks/**、各部门报告/收件箱/日志等协议正常派生元数据，不stage/修改。固定Node24按序新预算各唯一一次：聚焦admin-release-manifest Vitest；全项目typecheck；限定release-manifest/test/runbook/.gitignore相对HEAD的git diff --check（应空）。禁止代码修改、stage/commit/amend/push/build/builder/SSH/M1。",
+  "domain_stage": "development",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "HEAD/index/89 runtime任一漂移立即block；三门任一首错停止不重跑；发现非runtime变化实际触及runtime或index立即block；不得修改/push/build。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "POST-COMMIT-CLEAN-HEAD-METADATA-AWARE-FINALIZER",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-8A2F5B.json"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-8C8DB6",
+  "title": "排除协作元数据后的真实clean-HEAD三门finalizer",
+  "unverified": [],
+  "updated_at": "2026-08-12T20:13+08:00",
+  "verified": []
+}

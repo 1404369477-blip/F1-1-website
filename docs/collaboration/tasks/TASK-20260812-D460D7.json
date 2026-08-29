@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "固定M1运行第二release，唯一真实采集收据明确给出HTTP/解析/候选结果并立即回到disabled+unloaded；若HTTP 200且候选进入pending_review，则用户可在后续审核入口使用真实候选，公开站保持现状。",
+  "artifacts": [],
+  "authorization_evidence": "用户明确授权SSH固定M1、接入真实采集、快速部署第一版，并要求减少冗余测试。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T04:04+08:00",
+      "evidence": "用户明确授权SSH固定M1、接入真实采集、快速部署第一版，并要求减少冗余测试。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "REMOTE_STAGE_RELEASE_ROOT_MISMATCH",
+  "claimed_by": "开发部/internal-agent:rss_real",
+  "completion_class": "standard",
+  "confirmation": "统筹部根据真实收据与独立运行审查决定是否ACK并另行放行900秒调度；本任务无权加载常驻采集。",
+  "created_at": "2026-08-12T04:04+08:00",
+  "department": "开发部",
+  "details": "硬前置：TASK-20260812-48D35A已ACK且远端ref精确为5d5963671550b45e9c01fbc727bc6aeac73447e4；安全复审TASK-20260812-06A122 PASS/P0=0/P1=0/P2=0。固定SSH别名f1plus1-m1-uu，M1 appRoot=[M1-HOME]/F1-1-website/app，Node=[M1-HOME]/.local/node-v24.18.0-darwin-arm64/bin/node，公开服务三项必须零漂移，公开DB基线SHA=949c78d505e4c032d2495174deaf62d24f9d99b76284ad7ba6fb29a5ac83bb50/size737280/inode24546198。先只读确认source disabled/stop_epoch=3/job unloaded与private schema/integrity，再从干净HEAD恰一次生成并逐字验证第二release manifest；只传输manifest所列闭包，任务专属stage/backup，正式路径overlay后重验。prepare恰一次且不得bootstrap/load。仅当15分钟slot可写时，用单事务只把固定source enabled=1且epoch不变；verified wrapper恰一次，真实RSS请求最多1次、禁止业务重试；wrapper结束后的第一项控制动作必须stop恰一次，确认disabled、epoch递增、job unloaded。核对run/candidate、pending_review、人工字段未被机器覆盖、20秒短窗零新增、公开DB/页面/PID零漂移。成功或失败都不得放行900秒调度。仅在所有回读完成后清理任务stage/tar/backup；旧772F48 Trash备份只在新release正式验证成功后精确删除，失败时保留以便恢复。不得触碰其他未提交文件、公开synthetic、Admin或发布状态。",
+  "domain_stage": "M1受控部署与真实采集",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "GitHub/ref/release/Node/manifest/闭包任一不匹配时不覆盖正式路径、不发请求，保留或恢复任务备份并报告首错。",
+    "prepare/schema/integrity/权限/source状态/slot门失败时不启用source、不发请求；若已覆盖则按可验证备份恢复。",
+    "唯一wrapper失败或采集返回非成功时禁止重试，立即stop并证明disabled/unloaded/零新增；公开服务或公开DB漂移时立即停止并保留证据。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "在GitHub第二提交精确同步并由统筹ACK后，将5d596367修复闭包部署到固定M1并执行唯一一次真实RSS采集，随后立即停采",
+  "pointers": [],
+  "report": "",
+  "resolution": {
+    "evidence": "docs/当前生产状态与执行待办.md",
+    "reason": "2026-08-29 schema10生产恢复、27个X信源和完整Admin路线已形成新的当前闭包；旧任务绑定过时schema/release/plist/视觉或运行时态，继续领取会造成重复或错误执行。",
+    "receipt_id": "RES-20260829T235608-FE543E73",
+    "replacement_revision": 3,
+    "replacement_state": "blocked",
+    "replacement_task_id": "TASK-20260829-082F2C",
+    "resolved_at": "2026-08-29T23:56+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "superseded",
+    "target_revision_before": 5
+  },
+  "revision": 6,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-D460D7",
+  "title": "M1第二release与唯一一次修复后真实RSS采集",
+  "unverified": [],
+  "updated_at": "2026-08-29T23:56+08:00",
+  "verified": []
+}

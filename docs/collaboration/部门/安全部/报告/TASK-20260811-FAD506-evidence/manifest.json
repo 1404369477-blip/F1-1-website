@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "f1plus1-security-fad506-evidence-v1",
+  "taskId": "TASK-20260811-FAD506",
+  "decision": "pass",
+  "p0": 0,
+  "p1": 0,
+  "p2": 0,
+  "oracle": {
+    "path": "docs/collaboration/部门/数据部/报告/TASK-20260811-3D190C-SOURCE-MGMT剩余安全出口-oracle.json",
+    "sha256": "1ced08f0504bdfab352aea40ddb40e35cbde712ada05148ebc3f1ab82afc248e",
+    "frozenReportSha256": "4dda4cbc9061926843a9c8cb7ae9854bb221a0029baf5db95252ac2f265caaaf"
+  },
+  "staticReview": {
+    "decision": "PASS",
+    "harnessSha256": "e2178bf1d318020b91f9e053fd7043d3b2ffe5f0991cfdfde556b758bf547049",
+    "allDataExpectationsFromOracle": true,
+    "handwrittenLedgerCounts": false,
+    "handwrittenAuditEvents": false,
+    "handwrittenLogicalRoot": false,
+    "businessPayloadSource": "operation_receipt.receipt_json.result",
+    "auditPayloadJsonInterpretation": "canonical audit core metadata",
+    "repeatedPredecessorVectors": false,
+    "formalDatabasePathPassedToSQLite": false,
+    "forbiddenImportsOrCalls": 0
+  },
+  "harness": {
+    "commandCount": 1,
+    "exitCode": 0,
+    "decision": "PASS",
+    "nodeVersion": "24.18.0",
+    "sqliteVersion": "3.53.1",
+    "auditEventsVerified": 5,
+    "payloadHashesVerified": 5,
+    "eventHashesVerified": 5,
+    "operationLinksVerified": 5,
+    "auditTriggersDenied": 2,
+    "logicalContentRootSha256": "7cae9bb8767a259086920190f65485800bb6008e3dc294fba893d1b0b8156e6a",
+    "logicalContentCanonicalBytes": 24548,
+    "secondProfileOwnerDenied": true,
+    "contentionDenied": true,
+    "boundedBeginAttempts": 3,
+    "callbackBusinessWrites": 0
+  },
+  "candidatePinsAfter": {
+    "closedDbSha256": "ddf3778c62cf95f195b1f08db8b075d676069f4cc9fb39804063e1004dd2e939",
+    "ack875b6cManifestSha256": "1d402722e2139fd5fbab0de791e691939273e0a534672aba71a629b45486519e",
+    "sourceManagementDatabaseModuleSha256": "20335550c73b7f1c54af15acc7cafede4d7dbc590811d80759370c299b4224a0",
+    "databaseModuleSha256": "a38a41024bad0fb9252cbce0cee07ecef77da2a941b52990be5ce9395e781d5d",
+    "canonicalJsonModuleSha256": "e2ff860118308e779b1c83b9664628dd5d45986970f48861fe7e79d08f544c17",
+    "repositoryModuleSha256": "741aad53d872f837afbe1d3c94bb3047deb54d711d76045f6b2e1684c4598912",
+    "runtimeMigrationSha256": "6168ba83c3d656ac25cbd58474ce5ab47497fa5c5fb38ef94b243d8a12e96bb6"
+  },
+  "reusedEvidence": {
+    "task742b8d": "raw/session/CSRF/identity and exact raw gate PASS as recorded in blocked task receipt",
+    "task70ec0f": "no-egress frozen SHA chain matched; no dynamic repeat",
+    "taskAd6ad9": "0644 weak-permission DB copy failed closed before database use",
+    "task76e7e8": "basename/profile/integrity/59+1/local_synthetic state verified before its operator assertion error"
+  },
+  "effects": {
+    "formalDatabaseHandlesOpened": 0,
+    "formalDatabaseModified": false,
+    "formalDatabaseHashUnchanged": true,
+    "externalCalls": 0,
+    "serverStarted": false,
+    "readinessCalled": false,
+    "fixtureInitialized": false,
+    "buildOrTypecheckOrFullSuite": false,
+    "temporaryDbResiduals": 0,
+    "lockResiduals": 0,
+    "walShmJournalResiduals": 0,
+    "harnessResiduals": 0
+  },
+  "final875b6cSecurityDecision": "PASS_SCOPED_LOCAL_SYNTHETIC",
+  "unverified": [
+    "OS-level and production network isolation",
+    "real providers, external APIs, public or Admin UI, deployment and production data",
+    "stale profile-lock owner liveness recovery"
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "acceptance_exit": "交付数据部正式报告和机器JSON：每个本地profile的路径角色、migration链、记录数、page1/page2、四类分布、0/1/4图、source baseline+overlay、logical root与文件hash；明确公开页当前可用数据入口和SOURCE-MGMT页面仍缺什么；外部调用=0、canonical输入前后hash一致、临时副本清理收据；已验证/未验证、错题自检、TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/数据部/报告/TASK-20260811-B42C2E-local-synthetic-release-candidate.json",
+    "docs/collaboration/部门/数据部/报告/2026-08-11-B42C2E初版本地SQLite与synthetic数据发布候选清单.md"
+  ],
+  "authorization_evidence": "当前活动目标：持续推进网站搭建，直到交付有前端界面、必要后端数据库、核心功能可用的初版落地方案",
+  "authorization_history": [
+    {
+      "at": "2026-08-11T18:25+08:00",
+      "evidence": "当前活动目标：持续推进网站搭建，直到交付有前端界面、必要后端数据库、核心功能可用的初版落地方案",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "019fb371-9834-78d3-a7b3-4f4c62819520",
+  "completion_class": "standard",
+  "confirmation": "用户已授权持续推进本地初版；本任务只冻结现有synthetic数据事实，不开启真实外部能力。",
+  "created_at": "2026-08-11T18:25+08:00",
+  "department": "数据部",
+  "details": "只在数据职责范围内核对当前 app/migrations、profile registry、closed receipts、public-multimedia-synthetic 24条两页数据与0/1/4图覆盖、source-management-synthetic raw后端基线。生成当前release-candidate数据清单与机器JSON，绑定 migration/manifest/fixture/DB logical root/count/schema/profile，不依赖F67080历史build hash。允许在项目外0700临时目录创建隔离副本做最小只读/重建复算；不得修改canonical DB、app源码、Spec、accepted ADR、飞书Base或真实provider。避免重复全量测试，只运行证明当前数据候选所必需的最小命令。",
+  "domain_stage": "M5-初版本地数据候选冻结",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 任一canonical输入hash或ledger/schema不一致：立即block并给首错，不修数据；2) 只能通过修改正式DB或访问真实Base/provider才能证明：停止并标user-gated；3) 数据量/分类/媒体覆盖不足以支持两页和0/1/4图：报告精确缺口，不用复制静态记录补数。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "首次隔离副本查询误设migration_ledger.version并报sqlite3.OperationalError: no such column: version；已精确清理后按允许范围唯一重试成功。未将receipt新字节解释为freshness PASS，未混淆graph/profile-ledger/DB hash，未打开canonical SQLite或修改App/Spec/ADR/data。",
+  "node": "为当前公开站和后续信源页面提供一个可复算、可启动、无外联的当前数据基线",
+  "pointers": [
+    "app/src/server/db/public-multimedia-synthetic.ts"
+  ],
+  "report": "docs/collaboration/部门/数据部/报告/2026-08-11-B42C2E初版本地SQLite与synthetic数据发布候选清单.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260811-B42C2E",
+  "title": "初版本地SQLite与synthetic数据发布候选清单",
+  "unverified": [
+    "Legacy receipt freshness与当前字节来源未获权威核收，绑定blocked TASK-20260811-5F3B7D或其accepted successor；未启动公开路由；SOURCE-MGMT页面不存在；未访问真实Base/provider；未做OS级全局SQLite handle审计。"
+  ],
+  "updated_at": "2026-08-11T20:22+08:00",
+  "verified": [
+    "四profile路径角色、migration、schema、counts、roots、59+1 baseline/overlay、legacy12与multimedia24/12x2/四类/0-1-4均已冻结；四DB及v0.6 graph/manifest六项稳定输入前后SHA一致；canonical DB未由本任务命令打开；临时副本残留0；externalCalls=0；对抗复核P0=0/P1=0。"
+  ]
+}

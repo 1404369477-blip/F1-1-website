@@ -1,0 +1,43 @@
+{
+  "acceptance_exit": "测试部final报告含精确计数分布、失配谓词、PASS/FAIL与P0/P1/P2、建议最小pre/post不变量；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-08-12-9287D8-M1当前RSS审核状态分布独立只读裁定报告.md"
+  ],
+  "authorization_evidence": "",
+  "authorization_history": [],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "测试部/internal-agent:rss_state_snapshot",
+  "completion_class": "audit",
+  "confirmation": "无需额外确认",
+  "created_at": "2026-08-12T18:08+08:00",
+  "department": "测试部",
+  "details": "承接DF7FF9。严格只读SSH固定M1，以仓内0001/0002/0003实际schema查询唯一review DB当前状态：integrity/user_version/文件identity；ingest_run按status计数及running行；candidate总数、review_status完整分布、machine_invalid计数、四类人工字段逐字段非空计数、revision/decision/publication/projection/outbox/audit各表计数；source enabled/epoch/reason；RSS launchctl loaded/state/runs/last-exit。不得输出正文/私人字段值，只输出计数和hash/identity。裁定DF7FF9哪一谓词失配，属于正常已存在状态还是风险，并给部署代码delta前后应比较的最小语义不变量。0DB写/页面/launchctl/代码/服务修改。",
+  "domain_stage": "review",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "schema/SSH/read-only首错立即FAIL；不得用immutable读掩盖活跃WAL，须用readOnly连接且不建sidecar；若running>0只记录并建议等自然结束，不stop；不得修改状态。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已区分表不存在与0行；未把活跃WAL主文件hash设为恒定；未读取正文/私有值；0 DB/服务/launchctl写，单次查询无冗余重测。",
+  "node": "M1-RSS-REVIEW-STATE-SNAPSHOT",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-DF7FF9.json"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-08-12-9287D8-M1当前RSS审核状态分布独立只读裁定报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-9287D8",
+  "title": "M1当前RSS审核状态分布独立只读裁定",
+  "unverified": [
+    "DF7FF9当时远端observe原文件与SHA未保留，无法证明与本地保留文件字节一致；未执行0002/0003 migration，未验证Admin首启后v3动态结果；未读正文/私人值/页面。"
+  ],
+  "updated_at": "2026-08-12T18:20+08:00",
+  "verified": [
+    "严格只读SSH一次：DB identity/integrity/user_version；53 runs状态分布及running=0；22 candidates完整review_status、machine_invalid=0、四人工字段均0、revision分布；0002/0003八表不存在；source 1/4/OK；RSS job loaded/not running/runs50/last0/900s。DF7FF9第二段谓词当前全部为false，精确风险为错误归因/未保留远端observe字节；当前DB为正常Admin首启前schema v1。"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "acceptance_exit": "唯一build PASS；builder一次PASS；本地target verifier一次PASS；新manifest SHA/content/release/Next/package/runtime roots落盘；旧→新delta manifest+archive SHA/size/路径可用于M1且不含密钥/DB/.local；限定diff-check一次PASS；TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "",
+  "authorization_history": [],
+  "authorization_state": "none",
+  "block_reason": "LOCAL_TARGET_VERIFIER_DEFAULTED_TO_M5_PROCESS_EXEC_PATH_AND_REJECTED_M1_TARGET_NODE_MANIFEST: CLI_INTERNAL_ERROR; build=1 PASS,builder=1 PASS,verifier=1 FAIL; first-error-stop, no retry/delta/diff",
+  "claimed_by": "开发部/internal-agent:release_v3",
+  "completion_class": "standard",
+  "confirmation": "无需额外确认",
+  "created_at": "2026-08-12T17:12+08:00",
+  "department": "开发部",
+  "details": "基于ACK的34285A安全放行与当前候选，执行唯一一次固定Node24 production build；build PASS后以M1固定target Node路径[M1-HOME]/.local/node-v24.18.0-darwin-arm64/bin/node执行唯一release builder，生成新的external manifest并运行一次本地target verifier。release manifest必须覆盖当前89 runtime、31 successor overlay及新.next/44生产包，固定四根/app-cap运行字节在闭包。计算相对M1既有f8684975 release manifest的精确新增/修改/删除差量清单与小型delta archive，但本任务不SSH、不传输。保留旧manifest/根收据，禁止重build、全量测试或改业务代码；只允许为release identity机械同步测试/报告且首错即停。",
+  "domain_stage": "candidate",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "build/builder/verifier/delta任一首错立即block且不重跑；若release identity认为合法候选漂移，只有精确manifest元数据successor可修，不得放宽闭包；不得SSH/M1/prepare/DB写/launchctl/cutover。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "M5-DEPLOY-V3-IDENTITY-RELEASE",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-34285A-精确DB路径与app-cap候选最终限定复审报告.md"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-72B4B1",
+  "title": "四根与app-cap后继唯一production build及M1目标release",
+  "unverified": [],
+  "updated_at": "2026-08-12T17:18+08:00",
+  "verified": []
+}

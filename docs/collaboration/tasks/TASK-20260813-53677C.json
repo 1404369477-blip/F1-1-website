@@ -1,0 +1,51 @@
+{
+  "acceptance_exit": "四文件精确commit与远端ref；固定Node24 focused Vitest/typecheck/build PASS；manifest与本地/M1 verifier PASS；M1新release内容寻址固化；public-beta只读基线和stable rollback SHA冻结；仅public-beta原子切换；health=accepted-public-real-snapshot，home/feed/真实detail=200，admin route=404；390/1024/1440深浅关键视觉结构与无横溢复验；失败可恢复旧stable public plist并验证synthetic health。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-13-53677C-公开站v0.2冻结视觉生产部署报告.md"
+  ],
+  "authorization_evidence": "chat:user:部署新版本吧",
+  "authorization_history": [
+    {
+      "at": "2026-08-13T18:57+08:00",
+      "evidence": "chat:user:部署新版本吧",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:public_v02_deploy",
+  "completion_class": "standard",
+  "confirmation": "用户在本会话先确认12格本地预览方向，随后明确说“部署新版本吧”。",
+  "created_at": "2026-08-13T18:57+08:00",
+  "department": "开发部",
+  "details": "用户已逐图确认本地候选并明确授权部署。固定设计身份：design/ui/F1+1-v0.2-全站设计/F1+1-v0.2-final-20260808.html SHA256=5a84bfb27294ebd727369118a95528f5b788bfacbe2d56cc03fcb006f6168cb1。候选仅4文件：app/src/app/globals.css、app/src/features/stories/feed-experience.tsx、app/src/features/stories/story-detail-experience.tsx、app/src/tests/public-ui.test.ts。必须精确提交/非force推送，固定Node24 test/typecheck/build，M1 target release manifest与target verifier，版本化release，public real-snapshot prepare与public-beta原子切换。禁止修改Admin3101、receiver3102、review DB、projection active、Tailscale Serve/Grant。",
+  "domain_stage": "production-deploy",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [
+    "[EPHEMERAL-TUNNEL-URL]"
+  ],
+  "failure_paths": [
+    "任一Git闭包、build、manifest、传输、target verifier、prepare、listener/health/route/visual出口失败：停止后续；若尚未切换则0生产写；若已切换则第一动作bootout public-beta、原子恢复切换前plist、bootstrap/kickstart并验证旧health/home/detail。不得重试同一步、不得force、不得触碰3101/3102/DB/projection/Tailscale。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "首次Vitest cwd与首次builder子进程Node路径均在产品写前fail closed；最终固定Node24各门PASS。生产视觉取证前两次分别暴露图片未完成与主题偏好跨tab的取证问题，失败证据隔离，最终fresh主题/真实图片12格全PASS。未触碰Admin、receiver、review DB、projection、Tailscale或quick-tunnel配置。",
+  "node": "public-v0.2-visual-release",
+  "pointers": [
+    "design/ui/F1+1-v0.2-全站设计/F1+1-v0.2-final-20260808.html"
+  ],
+  "report": "公开站v0.2冻结视觉已部署到M1新内容寻址release；当前临时公网入口健康，首选与LKG双层rollback保留。",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260813-53677C",
+  "title": "公开站v0.2冻结视觉回归生产部署",
+  "unverified": [
+    "iPhone/iPad实体Safari最终主观复看；Quick Tunnel地址长期稳定性；不可见SSR/RSC payload中的旧not-found组件文字仅作为后续清理项"
+  ],
+  "updated_at": "2026-08-13T19:28+08:00",
+  "verified": [
+    "commit52e6549与origin一致；固定Node24 Vitest16/typecheck/build PASS；manifest fb4d72b1、M1 target verifier、release5d99dc95 PASS；仅public-beta原子切换，health real snapshot、home/feed/detail200、Admin/internal404；production主页+详情12格390/1024/1440深浅结构/无横溢/无多余框与控件PASS；active generation1、Admin3101、receiver3102零漂移"
+  ]
+}

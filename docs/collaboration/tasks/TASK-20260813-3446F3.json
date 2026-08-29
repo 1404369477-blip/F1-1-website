@@ -1,0 +1,55 @@
+{
+  "acceptance_exit": "原pre-policy SHA逐字命中；M5/iPhone/iPad/M1选择器由fresh双视图节点身份映射到合法Tailscale IP或hosts alias；三条Grant互异且sourceRef零漂移；Tailscale官方语法兼容；candidate 0600/nlink1并输出SHA/size；0外部写。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-13-3446F3-Tailscale三设备Grant-IP选择器纠正报告.md",
+    "scratch/TASK-20260813-3446F3/build-ip-candidate.mjs",
+    "scratch/TASK-20260813-3446F3/three-device-ip-candidate.hujson",
+    "scratch/TASK-20260813-3446F3/rollback-pre-policy.hujson",
+    "scratch/TASK-20260813-3446F3/ip-selector-receipt.json"
+  ],
+  "authorization_evidence": "用户已授权三设备Grant与Serve；本任务仅纠正管理台已返回的invalid address错误且0外部提交。",
+  "authorization_history": [
+    {
+      "at": "2026-08-13T00:24+08:00",
+      "evidence": "用户已授权三设备Grant与Serve；本任务仅纠正管理台已返回的invalid address错误且0外部提交。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:tailscale_ip_selector_correction",
+  "completion_class": "standard",
+  "confirmation": "无需额外确认",
+  "created_at": "2026-08-13T00:24+08:00",
+  "department": "开发部",
+  "details": "用户保存策略时报src MagicDNS invalid address。必须从已冻结原pre-policy重新生成候选，使用官方合法且精确绑定M5、新iPhone、旧iPad与M1的Tailscale IP或hosts alias选择器，保持三sourceRef与app-cap映射不变、现有宽放行规则保留、其他策略语义零漂移。只生成受限candidate与rollback收据，不提交管理面、不改Serve/Funnel。",
+  "domain_stage": "tailscale_policy_selector_correction",
+  "event_receipts": [
+    "TASK_STATE_OK; candidate=[M5-HOME]/Documents/F1+1/scratch/TASK-20260813-3446F3/three-device-ip-candidate.hujson; sha256=732845fd2ef810f1eddc8321927543e64aa0f86284ab6268118339988f6ac541; size=3271; selector=tailscale-ipv4; grants=3; sourceRefs=unchanged; externalWrites=0; clipboardReads=0"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一节点IP无法与冻结身份唯一映射即停止；原策略已有同名hosts冲突即停止；语法/字节闭集失败即停止，绝不提交管理面。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "首次候选生成因旧M5视图早于新iPhone加入而fail closed且无输出；最终使用既有M1四节点证据与fresh M1视图绑定iPhone，未叠加错误候选；普通报告未回显Tailscale IP、selector或sourceRef。",
+  "node": "tailscale_policy_selector_correction",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-13-74F915-Tailscale三设备HuJSON最小合并工具与真实candidate报告.md"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-13-3446F3-Tailscale三设备Grant-IP选择器纠正报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260813-3446F3",
+  "title": "Tailscale三设备Grant合法IP选择器纠正",
+  "unverified": [
+    "本任务未独立读取管理台保存后的policy hash或实际Grant生效状态；新iPhone fresh视图显示离线，设备上线后的实际访问留待Serve activation阶段验证。"
+  ],
+  "updated_at": "2026-08-13T00:31+08:00",
+  "verified": [
+    "已从原始pre-policy重建候选；三设备Grant的src与M1 dst均改为合法Tailscale IPv4选择器；三条sourceRef映射不变且唯一；非Grant策略语义零漂移；原有宽放行规则保留；candidate SHA256=732845fd2ef810f1eddc8321927543e64aa0f86284ab6268118339988f6ac541,size=3271,mode=0600,nlink=1；0外部写、0剪贴板读取。用户随后截图确认管理台已保存策略。"
+  ]
+}

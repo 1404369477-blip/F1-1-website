@@ -1,0 +1,45 @@
+{
+  "acceptance_exit": "仅两个精确空重复目录absent；新manifest target验签一次PASS且roots保持35021046/8e70b2b7；delta manifest/archive SHA/size/路径落盘、敏感项0；typecheck/diff各最多一次PASS；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "scratch/TASK-20260812-748EA3/f868-to-8e70-delta-manifest.json",
+    "scratch/TASK-20260812-748EA3/f868-to-8e70-delta.tar",
+    "docs/collaboration/部门/开发部/报告/2026-08-12-50B654-两个空Next目录清理与release验签delta收口报告.md"
+  ],
+  "authorization_evidence": "",
+  "authorization_history": [],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:release_v3_finalizer3",
+  "completion_class": "standard",
+  "confirmation": "无需额外确认",
+  "created_at": "2026-08-12T17:32+08:00",
+  "department": "开发部",
+  "details": "承接748EA3首错与统筹只读证据。精确目标仅[M5-HOME]/Documents/F1+1/app/.next/server/app 2和[M5-HOME]/Documents/F1+1/app/.next/server/chunks 2。删除前逐个证明真实目录、uid501、mode0700、entry count=0、无symlink、路径精确；使用rmdir各一次，仅空目录可成功。禁止其他删除。然后复用闭包外scratch M1 target harness唯一一次验签manifest d14ee602...811a；不得重build/builder/改runtime/manifest/.next其他字节。PASS后生成相对M1旧f868 release的精确delta manifest/archive，排除DB/.local/密钥/报告，静态校验SHA/size/path闭集。Node24 typecheck一次、限定diff一次；首错停。",
+  "domain_stage": "candidate",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一目标非空/非真实目录/身份不符立即block且不删除；任何验签或delta首错立即block且不重跑；不得删除其他文件、重build/builder、SSH/M1/prepare/DB/launchctl/cutover。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未扩大删除范围；未改runtime/manifest/其他Next字节；未重build/builder；delta不含DB/密钥/测试/报告；未将本地delta校验扩大为目标机放行",
+  "node": "M5-DEPLOY-V3-IDENTITY-RELEASE-FINAL-3",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-748EA3.json"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-50B654-两个空Next目录清理与release验签delta收口报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-50B654",
+  "title": "两个空重复Next目录精确清理与release验签delta收口",
+  "unverified": [
+    "未在M1应用/重建delta，未执行M1 target verifier、SSH/传输/prepare/真实DB/LaunchAgent/load/cutover"
+  ],
+  "updated_at": "2026-08-12T17:41+08:00",
+  "verified": [
+    "仅两个精确uid501/mode0700/empty/no-symlink目录各rmdir一次且absent；闭包外M1 target harness唯一一次PASS并保持manifest/content/release/Next/package roots；delta 33 changed/3 deleted，manifest/archive SHA size path闭集PASS且敏感路径0；Node24 typecheck唯一一次PASS；限定diff-check唯一一次PASS；本任务build/builder 0重跑"
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "acceptance_exit": "fixture路径canonical；10生产SHA零漂移；聚焦Vitest/typecheck/diff各最多一次PASS；报告与TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/src/server/admin-service/deployment.ts",
+    "app/src/server/admin-service/runtime.ts",
+    "app/src/server/db/database.ts",
+    "app/src/server/review-real/migration.ts",
+    "app/scripts/admin-install-macos.ts",
+    "app/scripts/admin-service.ts",
+    "app/scripts/projection-sender.ts",
+    "app/src/server/public/deployment.ts",
+    "app/scripts/install-macos-public-beta-core.ts",
+    "app/src/server/admin-service/release-manifest.ts",
+    "app/src/tests/admin-release-manifest.test.ts",
+    "app/src/tests/admin-service.test.ts",
+    "app/src/tests/public-install-release.test.ts",
+    "app/ADMIN-SERVICE-PREP.md",
+    "docs/collaboration/部门/开发部/报告/2026-08-12-3CDDF8-F3FA8B-四根解耦deployment-v3与existing-only私库实现报告.md"
+  ],
+  "authorization_evidence": "",
+  "authorization_history": [],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:data_root_finalizer2",
+  "completion_class": "standard",
+  "confirmation": "无需额外确认",
+  "created_at": "2026-08-12T15:37+08:00",
+  "department": "开发部",
+  "details": "承接blocked TASK-20260812-C59E17。仅修改admin-service测试fixture：privateTemporaryRoot创建时使用realpathSync(tmpdir())并在canonical根下mkdtemp，使测试路径满足生产existing-only父组件无symlink门；保留已完成变量改名。不得修改生产代码/断言语义/其他文件。核对10个生产SHA不变；新预算聚焦Vitest一次、Node24 typecheck一次、限定diff-check一次，首错即停；PASS后落报告complete。",
+  "domain_stage": "candidate",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任何生产SHA漂移或新首错立即block且不重跑；不得build/SSH/M1/DB写/launchctl/cutover；不得顺手放宽生产realpath门。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "两次测试fixture首错均未放宽production安全门；本finalizer只canonicalize测试tmp根；未改业务/UI/Tailscale/RSS collector；未把本地PASS外推为上线。",
+  "node": "M5-REAL-PROJECTION-RUNTIME-003-CODE-FINAL-2",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-C59E17.json"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-3CDDF8-F3FA8B-四根解耦deployment-v3与existing-only私库实现报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-F3FA8B",
+  "title": "四根解耦canonical-tmp fixture机械finalizer",
+  "unverified": [
+    "未build/SSH/M1/真实DB/prepare/plist/launchctl/load/cutover；未生成新production .next与外部release manifest roots；未验证真实RSS下一周期、generation1、Tailscale/Passkey或公网real-mode。"
+  ],
+  "updated_at": "2026-08-12T15:48+08:00",
+  "verified": [
+    "固定Node24聚焦Vitest一次：4 files/10 tests PASS；Node24 typecheck一次PASS；14文件限定git diff --check一次PASS；fixture-only修正前后10个生产SHA零漂移。"
+  ]
+}

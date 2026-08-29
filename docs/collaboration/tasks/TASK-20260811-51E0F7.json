@@ -1,0 +1,44 @@
+{
+  "acceptance_exit": "lint/typecheck/build各仅一次exit0；同一build与source/data/receipt hash绑定；127.0.0.1生产服务唯一启动并完成最小首页/详情/feed分页/筛选/404/no-store/readiness HTTP；App externalCalls=0；进程和端口清理；三个canonical公开/legacy DB及package-lock前后零漂移；交付最小release manifest与报告、已验证/未验证/错题自检、TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "用户2026-08-11：继续推进，进入快速搭建网站，并上线部署第一版方案，不要做太多没必要的测试。",
+  "authorization_history": [
+    {
+      "at": "2026-08-11T21:58+08:00",
+      "evidence": "用户2026-08-11：继续推进，进入快速搭建网站，并上线部署第一版方案，不要做太多没必要的测试。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "production build与服务均成功；HTTP smoke首错来自harness合同假设错误：详情响应真实字段为story（harness读取item/top），详情页为client component故SSR只应断言loading壳层（harness错误要求最终标题），does-not-exist不满足^public-模式所以产品正确返回400 PUBLIC_ID_INVALID（harness错误期待404）。按首错门已停止服务、3000/3001与临时文件零残留，不重跑；产品已实际返回health/home/feed page1/page2/filter/detail API/detail page成功，需精确successor仅补正确shape/valid-format 404。",
+  "claimed_by": "统筹部/root-main:019fb2b1-fb60-7792-adb4-e0e876a32947",
+  "completion_class": "standard",
+  "confirmation": "用户2026-08-11明确要求进入快速搭建并上线部署第一版，减少非必要测试，优先以真实上线反馈迭代。",
+  "created_at": "2026-08-11T21:58+08:00",
+  "department": "统筹部",
+  "details": "承接blocked 0F65C1当前源码与已ACK的6E1E54 fresh legacy receipts、B42C2E数据候选。按用户快速上线决定，只执行最小必要门：固定Node24 lint一次、typecheck一次、production build一次、唯一loopback production start和首页/详情/API主链HTTP一次；不得重跑focused/full tests、不得做六格/全状态/AT/OS级no-egress。HTTP至少覆盖/、公开feed第1页与cursor第2页、一个四类筛选、一个有效detail、一个404、no-store/内容类型和externalCalls/readiness；服务器必须精确停止并确认端口/PID/sidecar无新增残留。任何首错立即停止，不重试、不修改代码迎合。此任务只形成本地可部署候选，不自动选择或写入外部云平台、域名、DNS或生产密钥。",
+  "domain_stage": "M5-first-public-release-candidate",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) lint/typecheck/build任一首错：停止，不重跑或扩大测试；2) production start/readiness/主链HTTP任一失败：保存首错，精确停服务并block；3) 需要外部托管账号、域名、DNS、密钥或改变accepted架构才能继续：本地候选完成后waiting_input，只向用户询问唯一部署目标。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "只运行此前未执行的上线必需门，形成可部署构建候选",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260811-0F65C1.json",
+    "docs/collaboration/tasks/TASK-20260811-6E1E54.json",
+    "docs/collaboration/tasks/TASK-20260811-B42C2E.json"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260811-51E0F7",
+  "title": "第一版公开站最小生产构建与loopback主链放行",
+  "unverified": [],
+  "updated_at": "2026-08-11T22:10+08:00",
+  "verified": []
+}

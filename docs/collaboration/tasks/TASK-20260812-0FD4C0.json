@@ -1,0 +1,43 @@
+{
+  "acceptance_exit": "单文件身份/SHA/cached/diff门PASS；唯一commit单parent=2ff；index empty；89 runtime zero drift；报告/TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-0FD4C0-post-commit旧断言单文件精确Git后继报告.md"
+  ],
+  "authorization_evidence": "",
+  "authorization_history": [],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:test_only_checkpoint",
+  "completion_class": "standard",
+  "confirmation": "无需用户确认；属于post-commit验证暴露的测试前提机械后继，不修改生产代码。",
+  "created_at": "2026-08-12T20:17+08:00",
+  "department": "开发部",
+  "details": "仅提交 app/src/tests/admin-release-manifest.test.ts 当前SHA 3f44895f66184512e9d22cbd47b719bacec0c4e6bd15eb504186672b1f2d5082。前置HEAD必须2ff1bdba83eadddf01908bfbc884d8efcd0d84d1，tree474a260f，single parent54e；index空；89 runtime定向status空/blob=HEAD；该测试为唯一非协作元数据的checkpoint后修改。只用git add --完整单路径；cached集合必须恰1项M、mode100644、index blob SHA与冻结SHA相同；定向凭据扫描和git diff --cached --check PASS后创建唯一commit，message `test: align release identity with clean head`。回读新commit单parent=2ff、index空、89 runtime仍clean；其他变更保留。禁止amend/reset/clean/stash/push/build。",
+  "domain_stage": "development",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "HEAD/index/runtime/test SHA任一漂移立即block；cached出现额外路径或异常mode/status立即停；commit失败不改写历史；禁止push/build与宽add。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "No broad add, directory/glob pathspec, amend/reset/clean/stash; exactly one test path committed; no production or collaboration metadata entered commit; 269FED validation was not redundantly rerun.",
+  "node": "POST-COMMIT-TEST-ONLY-CHECKPOINT",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-269FED-post-commit旧断言fixture-only修复报告.md"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-0FD4C0-post-commit旧断言单文件精确Git后继报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-0FD4C0",
+  "title": "post-commit旧断言单文件精确Git后继",
+  "unverified": [
+    "No push/build/builder/SSH/M1; remote does not contain bb0aa02; production build and fresh manifest/target verification require successor."
+  ],
+  "updated_at": "2026-08-12T20:22+08:00",
+  "verified": [
+    "Preflight HEAD/tree/single-parent/index and 89-runtime tracked/status/blob gates PASS; exact single-path stage only; cached exactly one M with mode 100644, blob SHA 3f44895f66184512e9d22cbd47b719bacec0c4e6bd15eb504186672b1f2d5082, credential scan and diff-check PASS; commit bb0aa0266b73b7b2f7af38d3f29ac0a07dee772f tree 2fdf2078daf7bb2c6327d19c6c8c81809465abf2 single parent 2ff1bdba83eadddf01908bfbc884d8efcd0d84d1; post-commit index empty and 89 runtime clean/blob equal HEAD; 32 non-collaboration dirty records retained with receipt 12f898826d049aef5fe6cd039863583d00291d337be4cbc92a2712c29d224163."
+  ]
+}

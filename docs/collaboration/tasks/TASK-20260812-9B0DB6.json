@@ -1,0 +1,51 @@
+{
+  "acceptance_exit": "M5/M1 fresh双视图节点集合一致；新增唯一iOS节点精确识别且与旧iPad可区分；new iPhone selector唯一并映射既有iphone sourceRef，m5映射零漂移；owner-only restricted config 0600且普通报告不含原始login/IP/node key/sourceRef；明确device approval是否可从CLI证明，不能则列Unknown。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-9B0DB6-新iPhone双视图冻结与sourceRef改绑报告.md"
+  ],
+  "authorization_evidence": "本线程用户回复已经连接上tailscale；2026-08-12",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T22:58+08:00",
+      "evidence": "本线程用户回复已经连接上tailscale；2026-08-12",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:iphone_identity_refresh",
+  "completion_class": "standard",
+  "confirmation": "用户明确回复已经连接上Tailscale；仅授权只读识别与已有sourceRef的本地restricted映射改绑。",
+  "created_at": "2026-08-12T22:58+08:00",
+  "department": "开发部",
+  "details": "用户已在新iPhone完成Tailscale登录并明确表示已经连接。快速主线、只读：从M5本机与固定M1各获取一次fresh tailscale status JSON，识别相对于3540A4旧三节点集合新增的唯一iOS节点，核对两端node ID/key/HostName/DNSName/Tailscale IP/OS/UserID一致、在线状态、tag/sharee线索；确认旧ipad-pro-11-gen-2保持独立节点。将PrepareInputs/restricted owner-only配置中的iphone role sourceRef selector从旧iPad候选机械改绑到新iPhone精确selector，m5 sourceRef与秘密不变；普通报告只留hash。不写tailnet/device/policy/Serve/Funnel，不审批/重命名设备，不load服务、不打开DB。",
+  "domain_stage": "tailscale_iphone_refresh",
+  "event_receipts": [
+    "IPHONE_REFRESH_PASS:restricted=5bc169f6;nodes=4;new-ios=1;new-iphone=b8d6cf5c;old-ipad=48ee30ca;m5=f0b5b950;old-ipad-retained=true;tailnet-writes=0;m5-fresh=unavailable"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "双视图冲突、新增iOS非唯一、UserID不一致、旧iPad消失/identity复用则立即停止且不改映射；任何tailnet/设备/策略/服务/DB写调用立即停止；任何原始身份进入普通报告/Git则隔离并停止。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "Did not delete/logout/rename/overwrite old iPad identity and did not assign it the new iPhone sourceRef. Did not present one physical view as two. Raw identities remain only ignored 0600 restricted config; no production/PrepareInputs/prepared manifest/tailnet/service/DB write.",
+  "node": "TAILSCALE_IPHONE_REFRESH",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-3540A4-Tailscale真实login与双端selector只读冻结报告.md"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-9B0DB6-新iPhone双视图冻结与sourceRef改绑报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-9B0DB6",
+  "title": "新iPhone双视图冻结与sourceRef改绑",
+  "unverified": [
+    "Fresh physical M5 CLI view unavailable because local Tailscale CLI failed to start; only the fresh M1 JSON was parsed twice mechanically, so physical dual-view confirmation remains pending. Device approval and management-plane Grants remain Unknown. Existing production/deployment-v3 supports exactly two sourceRefs; three-device successor and reprepare required."
+  ],
+  "updated_at": "2026-08-12T23:02+08:00",
+  "verified": [
+    "Fresh M1 view has 4 nodes; relative to old 3-node evidence exactly one new iOS node, online, same owner, unique ID/key/DNS; old iPad remains distinct and identity unchanged. Restricted v2 maps existing iphone sourceRef role to new iPhone, m5 mapping unchanged, old iPad retained undecided without sharing sourceRef. Tailnet writes0."
+  ]
+}

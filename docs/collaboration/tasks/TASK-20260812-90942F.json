@@ -1,0 +1,55 @@
+{
+  "acceptance_exit": "0002 migration和映射模块落盘；0001及采集核心SHA不变；迁移/约束/确定性allowlist/私有字段不外泄的聚焦测试通过；typecheck和diff-check通过；synthetic与真实运行DB均零写；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/migrations/rss-real/0002_admin_review_publish.sql",
+    "app/src/server/review-real/schema.ts",
+    "app/src/server/review-real/mapping.ts",
+    "app/src/tests/review-real-data.test.ts",
+    "docs/collaboration/部门/数据部/报告/2026-08-12-90942F-真实RSS审核发布七表与确定性映射报告.md"
+  ],
+  "authorization_evidence": "用户要求快速搭建真实采集、人工审核与第一版上线，并已确认可接入真实采集；产品 successor 已完成。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T06:18+08:00",
+      "evidence": "用户要求快速搭建真实采集、人工审核与第一版上线，并已确认可接入真实采集；产品 successor 已完成。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "数据部/internal-agent:admin_data_layer",
+  "completion_class": "standard",
+  "confirmation": "本任务只负责数据地基与纯函数映射；后端API、投递、认证和UI由后继任务实现。",
+  "created_at": "2026-08-12T06:18+08:00",
+  "department": "数据部",
+  "details": "严格依照 accepted 产品合同 docs/spec/F1+1-真实RSS人工审核与公开投影最小实施合同-v0.1.md 与 successor ADR，实现唯一 app/migrations/rss-real/0002_admin_review_publish.sql 七表（review_bundle、review_decision、publication、published_projection、projection_outbox、admin_operation、audit_event）及必要的确定性数据映射/validator模块；0001字节不改，现有采集器机器字段语义不改，synthetic DB/fixture/manifest零写。所有状态、唯一约束、CAS/hash/allowlist/追加审计边界按合同实现；拒绝任意payload袋和跨库ATTACH。补一组纯本地最小聚焦数据测试：0001→0002迁移、七表/索引/禁止更新审计、candidate→public allowlist映射确定性与私有notes不外泄。不得实现API、UI、网络、投递或M1部署。只运行一次聚焦测试、一次固定Node24 typecheck、一次diff-check；首错即停。落数据部报告和精确SHA。",
+  "domain_stage": "数据/实现",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "产品合同字段、状态或唯一约束无法无歧义映射：停止并BLOCK，不自行改合同。",
+    "任何测试需触碰真实DB、synthetic DB或联网：停止并BLOCK。",
+    "限定验证首错：立即停止、不重跑，保留首错与SHA并BLOCK。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查：未新增同义实体/第二候选或第二Publication/outbox，approve仅可插入queued Publication，Projection/Outbox要求private published，private notes不进入公开allowlist，0001/采集/synthetic/API/UI/网络/M1均未触碰；验证预算严格为测试1次/typecheck1次/diff-check1次，无首错",
+  "node": "第一版后台/真实审核数据层",
+  "pointers": [
+    "docs/spec/F1+1-真实RSS人工审核与公开投影最小实施合同-v0.1.md"
+  ],
+  "report": "docs/collaboration/部门/数据部/报告/2026-08-12-90942F-真实RSS审核发布七表与确定性映射报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-90942F",
+  "title": "DATA-REAL-REVIEW-MAP-01真实RSS审核发布七表与确定性映射",
+  "unverified": [
+    "未应用真实M1数据库；Repository/API/session-CSRF/fresh re-auth/真实事务、投递receiver/签名/公网切换均未实现或运行，按任务边界交后继开发与审核"
+  ],
+  "updated_at": "2026-08-12T06:39+08:00",
+  "verified": [
+    "固定Node24唯一聚焦测试1次3/3 PASS；固定Node24 typecheck唯一1次exit0；唯一diff-check PASS；0001与采集核心8项SHA pin不变；内存0001→0002七表/关系/CAS/状态/追加审计约束PASS；11类DTO及candidate→Bundle→公开allowlist→snapshot→TaskEnvelope确定性hash与private notes零泄露PASS；六个现存SQLite SHA/size/mtime前后相同，externalCalls=0"
+  ]
+}

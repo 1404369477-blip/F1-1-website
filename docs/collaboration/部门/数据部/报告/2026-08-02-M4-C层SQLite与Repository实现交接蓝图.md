@@ -14,11 +14,11 @@ execution_mode: read_only_blueprint
 
 本任务已正式领取。本文是给开发部的只读实现交接蓝图，输入冻结在：
 
-- [`docs/spec.md`](/Users/hoyin/Documents/F1+1/docs/spec.md) 的本地状态库、数据领域、TaskEnvelope、ReleaseBundle/Publication 与 C 层验收条款；
-- 已接受 ADR [`2026-08-01-F1+1-M4本地Kickoff系统路线-accepted.md`](/Users/hoyin/Documents/F1+1/docs/decisions/system/2026-08-01-F1+1-M4本地Kickoff系统路线-accepted.md)；
-- 唯一冻结数据合同目录 [`data/mvp-contract-v0/`](/Users/hoyin/Documents/F1+1/data/mvp-contract-v0/)，合同版本 `mvp-local-v0.3`，对应已 ACK 的 `TASK-20260802-D80846`。
+- [`docs/spec.md`]([M5-HOME]/Documents/F1+1/docs/spec.md) 的本地状态库、数据领域、TaskEnvelope、ReleaseBundle/Publication 与 C 层验收条款；
+- 已接受 ADR [`2026-08-01-F1+1-M4本地Kickoff系统路线-accepted.md`]([M5-HOME]/Documents/F1+1/docs/decisions/system/2026-08-01-F1+1-M4本地Kickoff系统路线-accepted.md)；
+- 唯一冻结数据合同目录 [`data/mvp-contract-v0/`]([M5-HOME]/Documents/F1+1/data/mvp-contract-v0/)，合同版本 `mvp-local-v0.3`，对应已 ACK 的 `TASK-20260802-D80846`。
 
-VS-0 的 M3→Source canonical seed enrichment 由唯一桥接 artifact 单独承载：[`data/m4-vs0-seed-enrichment-v0/implementation-mapping.json`](/Users/hoyin/Documents/F1+1/data/m4-vs0-seed-enrichment-v0/implementation-mapping.json)、[`source-seed-enriched.json`](/Users/hoyin/Documents/F1+1/data/m4-vs0-seed-enrichment-v0/source-seed-enriched.json) 和 [`manifest.json`](/Users/hoyin/Documents/F1+1/data/m4-vs0-seed-enrichment-v0/manifest.json)。该桥接只补齐实现输入，不改变本文的领域 schema；Source 目标为 39 个 required 字段、CapturedItem 目标为 16 个 required 字段，M3 输入仍为 33/9。`source_safety_epoch` 从 M3 直接复制，未再作为 local-only 字段处理。`added_at` 日历日期投影已按 current accepted `ADR-M4-VS0-SEED-002` 的 successor 规则生成，59×39 projection 按 `source_id` Unicode code point 升序，权威 hash 为 `e7a8312c70a9a49922aedb3cfbeaa190db8f5dce8d4ab45db1570748fc329f17`；后续只引用该 bridge，不创建第二字段集或第二 schema。
+VS-0 的 M3→Source canonical seed enrichment 由唯一桥接 artifact 单独承载：[`data/m4-vs0-seed-enrichment-v0/implementation-mapping.json`]([M5-HOME]/Documents/F1+1/data/m4-vs0-seed-enrichment-v0/implementation-mapping.json)、[`source-seed-enriched.json`]([M5-HOME]/Documents/F1+1/data/m4-vs0-seed-enrichment-v0/source-seed-enriched.json) 和 [`manifest.json`]([M5-HOME]/Documents/F1+1/data/m4-vs0-seed-enrichment-v0/manifest.json)。该桥接只补齐实现输入，不改变本文的领域 schema；Source 目标为 39 个 required 字段、CapturedItem 目标为 16 个 required 字段，M3 输入仍为 33/9。`source_safety_epoch` 从 M3 直接复制，未再作为 local-only 字段处理。`added_at` 日历日期投影已按 current accepted `ADR-M4-VS0-SEED-002` 的 successor 规则生成，59×39 projection 按 `source_id` Unicode code point 升序，权威 hash 为 `e7a8312c70a9a49922aedb3cfbeaa190db8f5dce8d4ab45db1570748fc329f17`；后续只引用该 bridge，不创建第二字段集或第二 schema。
 
 本文没有修改 `data/`、`app/`、Spec 或 ADR，没有运行生成器，没有访问 Base、飞书、provider、Collector、真实平台或网络。本文新增的 JSON 代码块是实现映射建议，不构成第二领域 schema；字段、枚举、默认值、hash 规则和状态边界仍以冻结 JSON 为唯一合同。若代码实现需要一个未被下文明确标为“实现基础设施”的业务字段，应暂停并提交数据合同修订任务，不自行扩展。
 

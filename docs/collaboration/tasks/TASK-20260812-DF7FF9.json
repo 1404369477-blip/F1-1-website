@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "语义preflight PASS；delta两文件传输/apply各一次；M1 verifier一次PASS d14ee602/35021046/8e70b2b7；新release固化；postflight证明任务未改public/RSS语义；TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "用户授权固定M1部署；只建立未加载release",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T18:06+08:00",
+      "evidence": "用户授权固定M1部署；只建立未加载release",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "M1_PREFLIGHT_FIRST_ERROR: RSS_REVIEW_BASELINE_INVALID at observe.mjs:271 after exact-count removal; at least one required invariant failed (running=0, all current candidates pending_review, machine_invalid=0, editor fields=0); stopped before stage/clone/delta transfer/apply/verifier/finalize; no retry per contract",
+  "claimed_by": "开发部/internal-agent:m1_delta_release_final3",
+  "completion_class": "standard",
+  "confirmation": "无需额外确认",
+  "created_at": "2026-08-12T18:06+08:00",
+  "department": "开发部",
+  "details": "承接157099。只改新任务observe的RSS基线谓词：保留integrity/schema、source enabled=1/epoch=4/reason=OK、running=0、machine_invalid=0、人工编辑字段非空计数0、当前全部候选pending_review；candidate总数与runs只记录为非负，不固定20，pre/post允许因既有900s job自然增加；任何人工字段/machine-invalid/running/状态异常仍失败。其余继承已通过的plutil/quick-tunnel安全门。全新任务路径执行preflight一次→APFS clone全新stage→delta两文件各唯一scp+SHA→apply一次→M1 target verifier一次→原子固化8e70 release→postflight一次。0prepare/DB写/launchctl/load/cutover，首错不重试。不再新增与delta无关的快照约束。",
+  "domain_stage": "candidate",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任何真正不变量、clone/transfer/apply/verifier首错立即block不重试；不得修改RSS/public DB、plist、旧base/live，0prepare/launchctl/load/cutover；候选/runs自然增长不得误判为任务漂移。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "M5-DEPLOY-V3-IDENTITY-M1-DELTA-STAGE-FINAL-3",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-157099.json"
+  ],
+  "report": "",
+  "resolution": {
+    "evidence": "docs/当前生产状态与执行待办.md",
+    "reason": "2026-08-29 schema10生产恢复、27个X信源和完整Admin路线已形成新的当前闭包；旧任务绑定过时schema/release/plist/视觉或运行时态，继续领取会造成重复或错误执行。",
+    "receipt_id": "RES-20260829T235609-3E9780FF",
+    "replacement_revision": 3,
+    "replacement_state": "blocked",
+    "replacement_task_id": "TASK-20260829-082F2C",
+    "resolved_at": "2026-08-29T23:56+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "superseded",
+    "target_revision_before": 3
+  },
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-DF7FF9",
+  "title": "RSS自然周期语义门修正后的M1 delta release执行",
+  "unverified": [],
+  "updated_at": "2026-08-29T23:56+08:00",
+  "verified": []
+}

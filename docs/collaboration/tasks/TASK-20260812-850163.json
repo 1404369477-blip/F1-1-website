@@ -1,0 +1,44 @@
+{
+  "acceptance_exit": "本地端到端证明manual publish前sender0；publish后唯一outbox经lease/POST/receipt succeeded并public list/detail同代；response-loss→GET匹配/404→同包重试、语义冲突terminal；首次gen1合法、并发/假签名/非1失败；real reader损坏503、无active empty、synthetic DB/旧migration/UI SHA不漂移；交报告/TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "用户要求继续上线第一版；TASK-20260812-96F40F已冻结并ACK运行合同。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T10:02+08:00",
+      "evidence": "用户要求继续上线第一版；TASK-20260812-96F40F已冻结并ACK运行合同。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "SCOPE_SPLIT_TO_39D4DD_AND_SUCCESSOR_B",
+  "claimed_by": "开发部/internal-agent:projection_runtime",
+  "completion_class": "standard",
+  "confirmation": "用户已授权继续快速上线、真实采集与初期人工审核；96F40F只授权手动publish后的机器投递，不授权内容自动发布。",
+  "created_at": "2026-08-12T10:02+08:00",
+  "department": "开发部",
+  "details": "唯一权威为ADR-M5-REAL-PROJECTION-RUNTIME-002（TASK-20260812-96F40F已ACK）及同步实施合同/矩阵。实现最小闭包：0003只追加投递运行约束；Repository single lease/60s/3 attempts/事务审计与receipt提交；sender同一已存envelope签名包、POST /internal/projections、response unknown只GET receipt、明确404才同包有界重投；ProjectionReceiver空根仅验签gen1/previous=null/active absent CAS，不再要求部署占位hash；admin deployment-v2删除bootstrap generation/hash并增加sender私钥/key/loopback internal endpoint所需严格字段；public runtime/internal listener和public-real-snapshot adapter，Next feed/detail通过不可变read-mode显式二选一，禁止请求级fallback/跨读私库；最小CLI与package scripts。保持UI三文件与现有公开视觉不改、auto-publish=0、approve/publish两动作、synthetic SQLite零写。若与正在执行的5DA73D release manifest改同一package/runbook，先等5DA73D完成并吸收其精确产物，禁止并发覆盖。只做本地实现，不SSH/M1/真实DB/cutover。验证性价比：一组聚焦sender+reader测试、一次固定Node24 typecheck、一次diff-check；首错即停。",
+  "domain_stage": "开发/真实投影闭环",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "5DA73D未完成或目标文件重叠时等待其冻结SHA再改，禁止覆盖并发产物。",
+    "migration/密钥/receipt状态无法保持单事务幂等或需要自动发布时立即block，不放宽合同。",
+    "聚焦测试/typecheck/diff-check任一首错立即停止，不重跑、不SSH、不切公开站。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "第一版后台/真实发布闭环实现",
+  "pointers": [
+    "docs/decisions/system/2026-08-12-F1+1-真实RSS公开投影bootstrap与sender-reader闭环-successor-accepted.md"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-850163",
+  "title": "实现公开投影single-sender、无hash bootstrap与public snapshot reader纵切",
+  "unverified": [],
+  "updated_at": "2026-08-12T10:42+08:00",
+  "verified": []
+}

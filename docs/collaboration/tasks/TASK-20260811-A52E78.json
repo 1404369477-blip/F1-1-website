@@ -1,0 +1,44 @@
+{
+  "acceptance_exit": "390深浅证据行均无近竖排、页面级横向溢出或动作挤压；元数据一行、动作一行语义清晰且44px触控目标保持；1440/1024/390×深浅六格与390展开态均为真实可解码PNG并绑定修后候选完整SHA；基线5a84 SHA零漂移；报告/清单/receipt/SHA256更新，明确fallback来源、verified/unverified、开发实施与回退，TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "用户2026-08-11明确：桌面端重启后继续推进；此前已授权设计部复核并产出具体优化方案。",
+  "authorization_history": [
+    {
+      "at": "2026-08-11T20:35+08:00",
+      "evidence": "用户2026-08-11明确：桌面端重启后继续推进；此前已授权设计部复核并产出具体优化方案。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "内部设计fallback在读取/领取后触发账户统一用量上限，未报告已修改字节、未生成新证据、未完成390修正；为避免占用设计部claimed槽并阻塞快速上线，任务保留blocked，部署第一版继续使用既有冻结5a84设计与当前App。",
+  "claimed_by": "设计部/internal-agent:design_390_successor",
+  "completion_class": "standard",
+  "confirmation": "用户在桌面端重启后明确“继续推进吧”，承接设计部提出的唯一恢复条件。",
+  "created_at": "2026-08-11T20:35+08:00",
+  "department": "设计部",
+  "details": "沿用design/ui/F1+1-v0.2-integrity-successor-20260811现有候选、设计文档、implementation-checklist、runtime receipt和2026-08-11-v0.2-integrity-successor具体优化方案报告。只允许对successor候选做390px证据行最小修正：元数据与动作分行，消除nowrap/width冲突导致来源、分隔点与日期近竖排；不得扩大到信息架构、Function、正式App、Spec、accepted ADR或冻结5a84基线。修后必须以同一候选SHA重新采集1440/1024/390×深浅六格，另补390展开态；更新SHA256、runtime receipt、实施清单与正式报告。公开本地HTML可用浏览器验证，禁止外网、远程字体/图片与发布视频。正式设计部窗口因账户额度上限无法执行，本任务由内部设计fallback诚实落账，不冒充原窗口。",
+  "domain_stage": "公开页-v0.2视觉勘误与v0.3输入",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 修正需要改变信息架构、产品合同或正式App：block并退回用户/产品，不自行扩张；2) 浏览器无法按同一候选生成真实六格或任一390仍溢出/近竖排：保留首错block，不复用旧图；3) 冻结基线、输入hash或既有successor不匹配：立即停止，不覆盖任何基线。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "承接EE3F90唯一恢复条件，形成不覆盖5a84基线的可判断候选",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260811-EE3F90.json",
+    "design/ui/F1+1-v0.2-integrity-successor-20260811/F1+1-v0.2-integrity-successor-candidate-20260811.html",
+    "docs/collaboration/部门/设计部/报告/2026-08-11-v0.2-integrity-successor具体优化方案报告.md"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260811-A52E78",
+  "title": "修正390证据行并完成integrity successor视觉证据",
+  "unverified": [],
+  "updated_at": "2026-08-11T21:57+08:00",
+  "verified": []
+}

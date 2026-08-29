@@ -1,0 +1,42 @@
+{
+  "acceptance_exit": "TASK_STATE_OK；temp创建顺序正确，完整copy/target verifier一次/rename PASS；final release绝对路径、manifest/content/release/Next/deps匹配；source stage和live服务零漂移。",
+  "artifacts": [],
+  "authorization_evidence": "用户：可以直接部署到M1 MacBook；直接用SSH；继续。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T13:51+08:00",
+      "evidence": "用户：可以直接部署到M1 MacBook；直接用SSH；继续。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "COPY_PROCESS_TERMINATED_WITHOUT_RECEIPT_AND_PARTIAL_TEMP",
+  "claimed_by": "开发部/internal-agent:projection_runtime_m1_versioned_release_finalizer",
+  "completion_class": "standard",
+  "confirmation": "用户已授权M1非live版本目录部署；只修创建顺序。",
+  "created_at": "2026-08-12T13:51+08:00",
+  "department": "开发部",
+  "details": "继承blocked 418763：source/release根/live基线PASS，copy脚本check/SHA PASS；唯一首错为脚本对尚未创建的temp sibling先realpath/lstat。只允许修任务scratch copy脚本顺序：确认releases root realpath/uid/mode/no symlink；以mkdir mode0700 O_EXCL语义创建全新固定temp sibling；立即lstat/realpath/owner/mode/nlink确认；然后以该已存在temp作为copy根，逐项复制+fsync；禁止复用418763脚本执行或已存在temp（当前absent）。新脚本使用新路径，local/remote Node check/SHA各一次，copy恰1次；复制后target verifier恰1次，PASS后rename提交final，postflight不重验verifier。禁止live app/plist/DB/key/load/cutover/cleanup。",
+  "domain_stage": "deployment-prep",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "temp/final已存在、mkdir/identity/copy/verifier/rename任一首错立即停不重试；不得删除/覆盖已存在路径；任何live app/plist/DB变化立即停。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "M1首版上线/真实投影部署/versioned release finalizer",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-418763.json"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-2C7C32",
+  "title": "M1版本release临时目录创建顺序机械修正",
+  "unverified": [],
+  "updated_at": "2026-08-12T13:53+08:00",
+  "verified": []
+}

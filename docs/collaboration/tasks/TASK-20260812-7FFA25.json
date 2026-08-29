@@ -1,0 +1,43 @@
+{
+  "acceptance_exit": "双视图集合与身份一致时，明确M5/iPhone selector候选是否可冻结为后续管理面交叉核验输入；报告Known/Unknown/P0-P2、受限证据SHA；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-7FFA25-M5与M1-Tailnet-peer-map双视图机械核收报告.md"
+  ],
+  "authorization_evidence": "",
+  "authorization_history": [],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "安全部/internal-agent:projection_security_final",
+  "completion_class": "audit",
+  "confirmation": "无需额外确认；43ECEE机械只读后继",
+  "created_at": "2026-08-12T19:01+08:00",
+  "department": "安全部",
+  "details": "承接43ECEE，仅重做M5本机与M1 SSH两端Tailscale status双视图。M1远端只执行最小单行status JSON输出，避免内联引号/解析；本地立即脱敏解析。核三节点数、OS、同一UserID/login hash、互异node/DNS/IP hash、online/tag/shared线索和两端集合一致性。敏感原值不入普通报告/任务JSON；如需精确selector仅进task scratch 0600并SHA锚。不得查询/写管理面、Serve/Funnel/Grant/device或重跑其他检查。",
+  "domain_stage": "review",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一端命令/解析/集合首错即FAIL；节点歧义、tag/shared迹象或集合不一致时禁止冻结；不得将peer map当device approval/Grant/policy权威。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "只执行两端status只读与本地脱敏机械对比；未把M5 backend Stopped写成在线，未把双视图一致扩展为device approval或Grant通过；敏感原值只在0600 git-ignored scratch；未修改网络、服务、密钥、数据库或项目实现。",
+  "node": "TAILNET-PEERMAP-DUAL-VIEW-FINALIZER",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-43ECEE-M1与M5-Tailnet节点图输入门首错报告.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-12-7FFA25-M5与M1-Tailnet-peer-map双视图机械核收报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-7FFA25",
+  "title": "M5与M1 Tailnet peer-map双视图只读机械核收",
+  "unverified": [
+    "M5/iPhone候选当前在M1视图均offline；用户尚未确认唯一iOS peer现实设备身份。device approval、Grants、额外宽Grant、policy canonical hash、全局shared-node边界均Unknown；候选不得直接作为已批准生产Grant selector，未执行任何管理面/Serve/Funnel/device/prepare/load操作。"
+  ],
+  "updated_at": "2026-08-12T19:05+08:00",
+  "verified": [
+    "M5本机与M1 SSH status双视图只读取得；两端均为3节点，node ID集合、key/host/DNS/IP/OS/UserID/tag/sharee/key-expiry存在性脱敏集合一致，M5 self与唯一iOS peer可冻结为后续管理面交叉核验的selector候选身份束。受限原始证据均为UID501/mode0600、父目录0700、git ignored，并已记录SHA。"
+  ]
+}

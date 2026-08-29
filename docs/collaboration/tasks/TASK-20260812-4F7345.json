@@ -1,0 +1,42 @@
+{
+  "acceptance_exit": "TASK_STATE_OK；本地冻结门、M1 baseline、tar local/remote SHA、stage精确集合/身份、外部manifest SHA与target verifier一次PASS；0 formal overlay/prepare/launchctl/load/DB/key/cutover；报告给stage绝对路径、manifest/content/release roots、public/RSS零漂移和后续prepare所需输入。",
+  "artifacts": [],
+  "authorization_evidence": "本会话用户：可以直接部署到M1 MacBook；直接用SSH；继续。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T13:11+08:00",
+      "evidence": "本会话用户：可以直接部署到M1 MacBook；直接用SSH；继续。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "LOCAL_HARD_GATE_MANIFEST_NODE_TARGET_PATH_MISMATCH_M1_FIXED_NODE",
+  "claimed_by": "开发部/internal-agent:projection_runtime_m1_fresh_stage",
+  "completion_class": "standard",
+  "confirmation": "用户明确可直接部署到固定M1并继续快速上线；安全C0B063仅放行fresh stage。",
+  "created_at": "2026-08-12T13:11+08:00",
+  "department": "开发部",
+  "details": "严格执行安全C0B063只放行的M1 fresh stage，不执行prepare/load/cutover。目标SSH alias=f1plus1-m1-uu，UID501，固定Node=[M1-HOME]/.local/node-v24.18.0-darwin-arm64/bin/node。先本地只读硬门：FA5D66/0E594C最终源码SHA、runtime/overlay/base=89/30/59、packages44、next322 files/13,373,354 bytes、nextRoot b11ef505...、content e9eee919...、release 4f3e25b9...、外部manifest SHA 16fdd3a4...全部匹配；只允许使用已有唯一manifest和现有production build，缺失/漂移即停，禁止重build/builder。M1先只读baseline：UID/home/Node SHA、RSS enabled/epoch/job、public DB SHA/size/inode、四公开页面、public-beta/quick-tunnel/receipt-refresh、3101/3102 listener、Admin/public新release路径不存在。用任务专属tar仅打包manifest列出的89运行文件、44生产包、322 Next文件/目录及外部manifest/verifier必要入口；本地tar SHA/size记录。传入全新固定task stage，远端逐字核对tar SHA、owner/mode/nlink/no symlink/extra，外部manifest SHA独立匹配后，用固定Node在stage appRoot运行现有只读target verifier恰一次。只保留stage和tar证据，不overlay正式app、不改plist/DB/key/root、不cleanup。任何首错停止不重试。",
+  "domain_stage": "deployment-prep",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "本地manifest/build/源码任何漂移立即停且不重build；远端stage路径已存在、tar SHA/文件集合/mode/owner/symlink/Node/manifest/verifier任一不匹配立即停不重传；公开/RSS基线异常或任何formal路径/plist/DB漂移立即停并保留stage证据。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "M1首版上线/真实投影部署/fresh-stage",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-C0B063-D17D1B唯一P1修复最终限定复审报告.md"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-4F7345",
+  "title": "固定M1真实投影release fresh-stage传输与只读验签",
+  "unverified": [],
+  "updated_at": "2026-08-12T13:12+08:00",
+  "verified": []
+}

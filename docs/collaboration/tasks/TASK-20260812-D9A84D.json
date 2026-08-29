@@ -1,0 +1,42 @@
+{
+  "acceptance_exit": "TASK_STATE_OK；000009-000022逐块独立只读收据PASS且0重传，000023单次传输/单独收据PASS；24块集合/manifest/reassembled tar/stage/verifier PASS；public/RSS零漂移，0 formal/prepare/load/DB写。",
+  "artifacts": [],
+  "authorization_evidence": "用户：可以直接部署到M1 MacBook；直接用SSH；继续。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T13:39+08:00",
+      "evidence": "用户：可以直接部署到M1 MacBook；直接用SSH；继续。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "POSTFLIGHT_DETAIL_ROUTE_404_AND_RSS_SCHEDULED_MUTATION",
+  "claimed_by": "开发部/internal-agent:projection_runtime_m1_chunk_receipts_final",
+  "completion_class": "standard",
+  "confirmation": "用户已授权M1 SSH部署；只补缺失收据和最后一块。",
+  "created_at": "2026-08-12T13:39+08:00",
+  "department": "开发部",
+  "details": "继承blocked AFED85：remote000000-000008已PASS；remote000009-000022各已scp恰1次但无输出收据，禁止重传；000023缺失。只允许对000009-000022逐块每块一个独立SSH命令回读SHA/size/mode/uid/nlink/regular/no-symlink，并与local manifest精确匹配；禁止loop批处理和吞输出。全部14块PASS后，对000023执行scp恰1次，再单独SSH收据一次。随后24块集合逐名确认无额外/缺失，传manifest/reassembler（各一次+SHA/check），reassemble一次aggregate aad604e9.../399386112；全新stage解包一次，external manifest SHA58b6da...，target verifier一次。禁止重传000000-000022、触碰旧证据、formal/prepare/plist/DB/key/load/cutover/cleanup；完成后public/RSS只读零漂移。",
+  "domain_stage": "deployment-prep",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一既有块SHA/size/mode/uid/nlink不匹配立即停，不重传；000023 scp/receipt失败停；集合/manifest/reassembler/aggregate/extract/verifier首错停不重试；禁止loop把多块回执合并。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "M1首版上线/真实投影部署/chunk receipts final",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-AFED85.json"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-D9A84D",
+  "title": "M1 chunks000009-022只读补证与000023单块续传",
+  "unverified": [],
+  "updated_at": "2026-08-12T13:42+08:00",
+  "verified": []
+}

@@ -1,0 +1,42 @@
+{
+  "acceptance_exit": "旧base verifier一次PASS；clone/两传输/apply各一次；stage及final target verifier合计按任务列明各一次PASS d14ee602/35021046/8e70b2b7；新final原子固化；旧base/live/三个job身份无任务写；task脚本和原始JSON/SHA证据保留；TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "用户授权固定M1直接部署；此步只建立未加载新release",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T18:20+08:00",
+      "evidence": "用户授权固定M1直接部署；此步只建立未加载新release",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "M1_DELTA_APPLY_FIRST_ERROR: DELTA_CLOSED_SET_INVALID at apply.mjs:184 during pre-mutation closed-set recomputation; base verifier PASS once, APFS clone PASS once, delta manifest/archive scp once each with exact SHA; no changed replacement/deletion performed, stage verifier/final rename/final verifier not run; no retry per contract",
+  "claimed_by": "开发部/internal-agent:m1_delta_minimal",
+  "completion_class": "standard",
+  "confirmation": "无需额外确认",
+  "created_at": "2026-08-12T18:20+08:00",
+  "department": "开发部",
+  "details": "承接9287D8只读裁定与此前delta任务。此任务只写[M1-HOME]/F1-1-website/releases下的全新stage和新final，不接触live app/DB/plist/服务；因此preflight严格最小化为：旧base app真实目录且external manifest SHA58b6da...，用既有target verifier唯一一次PASS；新final/新stage/task transfer root均absent；当前UID501、Node SHA、磁盘空间；delta本地manifest/archive SHA已知。不得以动态RSS candidate/run/hash或旧plist mode阻断代码目录固化。创建并保留task-owned apply脚本与SHA/原始收据。APFS cp -cR旧base到全新stage一次，验证stage独立路径；两delta文件各唯一scp+SHA；apply脚本先完整闭集验证再一次性替换33 changed、删除3 exact old Next files；新manifest0600。stage target verifier唯一一次PASS后同盘rename到新final8e70.../app。后置仅回读新final verifier、旧base manifest不变、live app根身份不变、launchctl三个既有job仍loaded且PID/state存在；不查询动态DB内容。0prepare/DB写/plist写/launchctl修改/load/cutover。首错不重试。",
+  "domain_stage": "candidate",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "base/final/stage/space/clone/transfer/apply/verifier任何首错立即block不重试；不得查询或修改RSS/public DB，不得修改plist/服务/old base/live，不得prepare/launchctl/load/cutover；APFS clone不支持则停，不降级全量copy。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "M5-DEPLOY-V3-IDENTITY-M1-DELTA-MINIMAL",
+  "pointers": [
+    "docs/collaboration/部门/测试部/报告/2026-08-12-9287D8-M1当前RSS审核状态分布独立只读裁定报告.md"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-50BBC7",
+  "title": "最小写集M1 delta release原子固化",
+  "unverified": [],
+  "updated_at": "2026-08-12T18:26+08:00",
+  "verified": []
+}

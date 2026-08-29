@@ -1,0 +1,61 @@
+{
+  "acceptance_exit": "1) Open Design必要成果、来源路径与SHA接入当前视频包；2) HyperFrames doctor/lint/inspect有真实机器收据，若fallback则精确记录阻断与Remotion命令；3) 交付可本地播放的1920x1080、30fps、约21秒静音MP4，ffprobe记录codec/时长/尺寸/fps/audio stream；4) 抽取Brand、Responsive、Detail、Close至少4帧并按9:16中央安全区目视QA，禁止黑帧/裁断/伪造UI；5) 交付renderer source、render manifest、SHA256、设计部完成报告、交接更新、TASK_STATE_OK、complete、doctor；6) 明确该MP4只供内部审片，媒体权利与正式发布保持未放行。",
+  "artifacts": [
+    "design/video/F1+1-launch-current-release-v0.2/open-design-local/README.md",
+    "design/video/F1+1-launch-current-release-v0.2/open-design-local/f1plus1-release-film-direction.html",
+    "design/video/F1+1-launch-current-release-v0.2/open-design-local/SHA256.txt",
+    "design/video/F1+1-launch-current-release-v0.2/hyperframes-render/index.html",
+    "design/video/F1+1-launch-current-release-v0.2/hyperframes-render/render-manifest.json",
+    "design/video/F1+1-launch-current-release-v0.2/hyperframes-render/SHA256.txt",
+    "design/video/F1+1-launch-current-release-v0.2/hyperframes-render/renders/F1+1-current-release-21s-internal-review.mp4",
+    "design/video/F1+1-launch-current-release-v0.2/hyperframes-render/qa/frames",
+    "design/video/F1+1-launch-current-release-v0.2/hyperframes-render/qa/safe-9x16",
+    "design/video/F1+1-launch-current-release-v0.2/hyperframes-render/receipts",
+    "docs/collaboration/部门/设计部/报告/2026-08-15-Open-Design方向整合与21秒静音审片样片完成报告.md",
+    "docs/collaboration/部门/设计部/交接班文档.md"
+  ],
+  "authorization_evidence": "当前统筹部正式窗口用户原话：可以，继续推进 发布视频 任务吧；电脑上已经安装了opendesign app，你可以用mcp来调用；不用登录啊，你直接调用本地安装的 opendesign app就能用了。以及此前：一定要结合之前调研回来的资料和工具，可以调用Remotion、HyperFrames来做。",
+  "authorization_history": [
+    {
+      "at": "2026-08-14T23:51+08:00",
+      "evidence": "当前统筹部正式窗口用户原话：可以，继续推进 发布视频 任务吧；电脑上已经安装了opendesign app，你可以用mcp来调用；不用登录啊，你直接调用本地安装的 opendesign app就能用了。以及此前：一定要结合之前调研回来的资料和工具，可以调用Remotion、HyperFrames来做。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "设计部/当前正式会话",
+  "completion_class": "standard",
+  "confirmation": "用户已明确要求继续推进网站发布视频，必须结合之前调研资料和工具，并可调用Remotion、HyperFrames、电脑上已安装的Open Design App；本任务据此授权本地Open Design结果整合与renderer内部审片样片，不授权付费API、音频、网络发布或第三方媒体公开使用。",
+  "created_at": "2026-08-14T23:51+08:00",
+  "department": "设计部",
+  "details": "沿用TASK-20260814-5F3AEF已ACK的当前release开工包，读取本机Open Design项目 F1+1 当前真实站发布视频 v0.2 的动态方向稿、三张1920x1080风格帧、brand-spec、storyboard-21s、motion-language、hyperframes-remotion-notes与sources；将必要结果按来源和hash接入 design/video/F1+1-launch-current-release-v0.2/，不得覆盖真实生产截图或伪造Open Design结果。以HyperFrames为首选renderer，允许使用 npx hyperframes 在npm缓存及本任务项目局部获取运行依赖，执行doctor/lint/inspect/preview/render，输出21秒、1920x1080、30fps、静音内部审片MP4及机器收据；若HyperFrames因可复现技术阻断失败，可在同一任务局部使用已准备的Remotion source作为一次明确fallback并记录差异。不得修改根package/lock、app、Spec、ADR、data、design/ui，不调用付费API/TTS/音乐，不发布网络，不把内部审片稿写成正式公开成片。Open Design Studio仅作设计入口：当前项目entryFile为空且没有canonical preview URL，禁止伪造预览链接。Motorsport媒体/人物公开营销权利未确认，审片稿必须在报告中保留权利阻断，正式发布仍需替换为清权资产或取得权利确认。",
+  "domain_stage": "发布视频-Open Design整合与内部审片样片",
+  "event_receipts": [
+    "OpenDesign intake SHA fbd7549b11a6ce80d262a3d3721c05d77545fd493cbf3891e967df06765f1904; HyperFrames final job eba0a194-b5b1-40c3-9341-b1377a583259; MP4 SHA 42b597f4a63c675ec399af7b86bd7940f842ec01385997d951a749937cfb1fcf; renderer manifest SHA ca83fe7614481efe0b169d3a2e1c73ea508f4340621ac49692e36255ab0bc8be; adversarial review P0=0 P1=0 P2=0."
+  ],
+  "execution_state": "completed",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若Open Design源文件/生产截图/hash漂移，立即停止并报告；若HyperFrames首次真实render失败，先保留完整错误并只做一次与既有Remotion预检一致的fallback，仍失败则blocked，不得输出假MP4；若发现第三方资产将被对外发布，立即保持权利门并停止正式发布；任何并发写入冲突立即报告，禁止覆盖。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未把Studio编辑入口写成canonical preview；未把npm依赖获取外推为工作站全程零网络；已移除composition远程CDN GSAP并保留本地许可证来源；未把managed-Chrome下载取消或0/630沙箱失败误写成HyperFrames产品失败，未启用Remotion fallback；未伪造MP4、ffprobe、QA、Open Design或媒体权利；complete仅收口内部审片，不解除用户视觉确认与公开发布权利门。流程上先claim后declare-impact，工具拒绝在claimed态补录；已在报告诚实登记，未手改任务JSON或继续伪造重试。",
+  "node": "将本机Open Design方向接回当前release视频包，并用HyperFrames主路径产出可审查MP4",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260814-5F3AEF.json"
+  ],
+  "report": "docs/collaboration/部门/设计部/报告/2026-08-15-Open-Design方向整合与21秒静音审片样片完成报告.md",
+  "resolution": null,
+  "revision": 5,
+  "schema_version": 1,
+  "task_id": "TASK-20260814-D93C5B",
+  "title": "Open Design方向整合与21秒静音审片样片",
+  "unverified": [
+    "用户尚未确认最终21秒静音内部审片的视觉方向与节奏；Motorsport媒体与人物公开营销权利未确认，正式公开发布未放行；独立9:16重排、音频、跨平台播放器、平台二次转码、低性能设备未验证；Open Design无canonical preview URL；HAR/CDP request interception/系统级egress trace未运行，工作站绝对网络包数量未验证；共享工作树并发脏改的逐项作者无法由本任务证明。"
+  ],
+  "updated_at": "2026-08-15T08:41+08:00",
+  "verified": [
+    "Open Design Local唯一项目必要成果与六张本地生产plate已接入，15/15 SHA通过且未伪造canonical preview；HyperFrames 0.7.109主路径doctor/lint/check/inspect/preview/render均有机器收据，final job eba0a194完成630/630帧；最终MP4为H.264 High、1920x1080、30fps、21秒、630帧、0音轨，SHA=42b597f4a63c675ec399af7b86bd7940f842ec01385997d951a749937cfb1fcf；四张1920x1080关键帧与四张608x1080中央安全区证据均可解码并目视无黑帧、关键裁断或伪造UI；composition远程资源引用与外部请求代码路径为0，renderer日志未见外部请求错误；Renderer清单33/33通过；Remotion未触发；未修改根package/lock、App、Spec、accepted ADR、data或design/ui。"
+  ]
+}

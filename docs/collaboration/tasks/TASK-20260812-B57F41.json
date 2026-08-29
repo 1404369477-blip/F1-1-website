@@ -1,0 +1,42 @@
+{
+  "acceptance_exit": "唯一修复后真实RSS请求产生本次run收据；合法时另有恰一条scheduler_gap；随即停采为disabled epoch4/unloaded，真实候选进入pending_review或单次失败如实保留，公开面零漂移。",
+  "artifacts": [],
+  "authorization_evidence": "用户已授权真实采集；统筹部在零远端动作时纠正了scheduler-gap验收口径。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T05:02+08:00",
+      "evidence": "用户已授权真实采集；统筹部在零远端动作时纠正了scheduler-gap验收口径。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "REMOTE_STAT_FORMAT_SHELL_METACHAR_PRECHECK",
+  "claimed_by": "开发部/internal-agent:rss_real",
+  "completion_class": "standard",
+  "confirmation": "统筹部收到收据后派安全部独立运行审查；独立PASS前不启用900秒。",
+  "created_at": "2026-08-12T05:02+08:00",
+  "department": "开发部",
+  "details": "488A11在任何check/传输/DB/网络前因合同误写run总数而blocked；远端状态仍4DD7E5基线：disabled epoch3/unloaded、run1/candidate0、second release prepared。正确合同：preflight读取current slot与MAX(slot_key)；若latest < current-1，claimRun应且只应新增1条slot=current-1的scheduler_gap/SCHEDULER_GAP/manual_review，再新增1条current slot真实run，因此run delta=2、总数3；若恰邻slot则无gap、delta=1。不得因合法gap停止，也不得允许多于一条gap。其余严格继承488A11：任务专属文件化执行器两端Node24 check各1且SHA一致；status/schema/integrity/public基线；同连接BEGIN IMMEDIATE仅enabled0→1且epoch3；verified wrapper恰1、真实RSS最多1、禁止重试；wrapper返回后的下一动作必须rss-control stop恰1，目标disabled epoch4/unloaded；之后核对本次run终态/HTTP/response/counts、可选唯一gap、candidate pending_review和人工字段保护、20秒零新增、公开DB SHA949c78d5…bb50/size/inode与home/detail/三服务零漂移。0resume/bootstrap/load/自动发布/Admin。运行脚本收据后可清理任务脚本，D460D7 stage/tar、325056正式backup和旧772F48 Trash保留至独立审查。",
+  "domain_stage": "M1唯一真实采集正确收据",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "状态/schema/slot/public基线或enable失败时不运行wrapper；若enable部分发生立即stop。",
+    "wrapper失败不重试，下一动作仍stop；gap数量/slot或本次run数量不符合repository语义即阻断。",
+    "stop、人工字段保护、短窗零新增或公开零漂移不成立时保留全部backup与证据。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "修正488A11错误的run总数合同，按repository语义允许恰一条scheduler_gap并完成唯一实采与立即停采",
+  "pointers": [],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-B57F41",
+  "title": "M1第二release唯一实采与scheduler-gap正确收据-successor",
+  "unverified": [],
+  "updated_at": "2026-08-12T05:07+08:00",
+  "verified": []
+}

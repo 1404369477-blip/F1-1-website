@@ -15,7 +15,7 @@ summary: 已将v0.4整改双复验、双profile SQLite与启动整改链的ACK�
 
 ## 结论
 
-产品部已把三条已发生事实同步到 [Spec](/Users/hoyin/Documents/F1+1/docs/spec.md)、[进度日志](/Users/hoyin/Documents/F1+1/docs/progress.md) 与 [交接文档](/Users/hoyin/Documents/F1+1/docs/handoff.md)：
+产品部已把三条已发生事实同步到 [Spec]([M5-HOME]/Documents/F1+1/docs/spec.md)、[进度日志]([M5-HOME]/Documents/F1+1/docs/progress.md) 与 [交接文档]([M5-HOME]/Documents/F1+1/docs/handoff.md)：
 
 1. v0.4 数据机器合同首轮安全/测试 FAIL 继续保留；五类 P1 整改及后继安全、测试复验均已由统筹 ACK，后继两项结论均为 `P0=0 / P1=0 / P2=1`。
 2. 双 profile SQLite migration/seed、四 root pin、Next 受控启动及 `NODE_ENV=test` 数据库覆盖 P1 后继整改链均已完成门禁并 ACK；安全任务 `TASK-20260804-B9D885` 的历史 FAIL 没有被删除或改写。

@@ -1,0 +1,44 @@
+{
+  "acceptance_exit": "三份receipt均由既有受控命令原子重生成，目录0700、文件0600、普通文件nlink=1、相对路径、canonical bytes、自哈希、schema/ledger/count/root/artifact revision/validator SHA与当前两个closed DB精确匹配，validatedAt进入24小时窗口；两个canonical DB及受保护代码/data/package-lock前后SHA零漂移，无WAL/SHM/lock/tmp/进程残留，externalCalls=0；提交报告、机器manifest、已验证/未验证/错题自检并TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "用户2026-08-11明确：刚刚Codex桌面端出错并重启，继续推进。",
+  "authorization_history": [
+    {
+      "at": "2026-08-11T18:46+08:00",
+      "evidence": "用户2026-08-11明确：刚刚Codex桌面端出错并重启，继续推进。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "首条既有受控 profile:closed-receipt M3 命令 exit1，稳定 reasonCode=CLI_INTERNAL_ERROR/externalCalls=0；public-synthetic 调用0次。按失败路径未重试或绕过。三receipt、两canonical DB、代码/data/package-lock前后零漂移，无WAL/SHM/tmp。报告：docs/collaboration/部门/开发部/报告/2026-08-11-旧profile封闭收据刷新首错阻断报告.md",
+  "claimed_by": "开发部/019fb374-7c86-7882-9e51-76114ce69e7f",
+  "completion_class": "standard",
+  "confirmation": "用户已明确要求重启后继续推进初版；本任务仅更新本机过期完整性收据，不改变数据库业务内容或外部系统。",
+  "created_at": "2026-08-11T18:46+08:00",
+  "department": "开发部",
+  "details": "承接TASK-20260811-0F65C1唯一首错。只使用现有已ACK的profile:closed-receipt受控命令，重新验证并原子刷新app/.local/receipts下m3-shadow.closed.json、public-synthetic.closed.json、public-synthetic.data.closed.json的validatedAt与自哈希；重复运行语义必须保持两个canonical SQLite逻辑内容和文件身份不变。禁止手写receipt、touch改时间、放宽24小时freshness、修改validator/app/data/migration/package/lock/Spec/design、创建第三数据真值、联网或启动Web服务。只执行生成所必需的最小验证；生成后做一次精确envelope/权限/DB SHA/无WAL-SHM/validator绑定复核，交付机器manifest与开发报告。",
+  "domain_stage": "M5-local-public-runtime-preflight",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 任一DB/ledger/schema/count/root与旧receipt声明不一致：首错block，不刷新任何后续receipt、不修DB；2) 受控命令要求修改代码、放宽freshness或覆盖数据库：停止并block；3) 原子写、权限、sidecar、临时清理或零漂移任一失败：保存首错并停止，不重复整链。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "解除0F65C1的RECEIPT_STALE唯一前置阻断",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260811-0F65C1.json",
+    "docs/collaboration/部门/开发部/报告/2026-08-11-初版公开站当前候选闭环阻断报告.md",
+    "app/scripts/profile-closed-receipt.ts"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260811-5F3B7D",
+  "title": "刷新旧profile封闭收据并保持数据库零漂移",
+  "unverified": [],
+  "updated_at": "2026-08-11T18:51+08:00",
+  "verified": []
+}

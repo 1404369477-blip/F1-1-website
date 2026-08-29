@@ -1,0 +1,42 @@
+{
+  "acceptance_exit": "TASK_STATE_OK；000008只读SHA补证且无重传；000009-000023各唯一传输/独立收据PASS；24块/manifest/reassembled aggregate PASS；全新stage target verifier一次PASS；public/RSS零漂移，0 formal/prepare/load/DB写。",
+  "artifacts": [],
+  "authorization_evidence": "用户：可以直接部署到M1 MacBook；直接用SSH；继续。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T13:37+08:00",
+      "evidence": "用户：可以直接部署到M1 MacBook；直接用SSH；继续。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "CHUNK_000009_TO_000022_TRANSFER_RECEIPTS_NOT_EMITTED_AND_000023_NOT_TRANSFERRED",
+  "claimed_by": "开发部/internal-agent:projection_runtime_m1_chunk_resume",
+  "completion_class": "standard",
+  "confirmation": "用户已授权M1 SSH部署；只续传已验证分块。",
+  "created_at": "2026-08-12T13:37+08:00",
+  "department": "开发部",
+  "details": "继承blocked 04E33E全部保留证据：local tar aad604e9.../399386112；24块/manifestSHAad129147...；remote000000-000007逐块PASS；remote000008已存在size16777216 mode600 uid501 nlink1但缺SHA收据，000009-000023未传。禁止重传/覆盖000000-000008。先对remote000008只读计算SHA并与local chunk manifest逐字匹配，成功才将其记PASS；随后从000009起每次只处理1块：scp恰1次→独立新SSH回读SHA/size/mode/uid/nlink→PASS后下一块，任一失败停且不重传。全部24块PASS后传canonical manifest和task-owned reassembler脚本，local/remote Node check/SHA门各一次；reassemble一次O_EXCL+fsync+rename，aggregate匹配aad604e9/399386112。全新stage解包一次，逐项身份/external manifest SHA58b6da...，M1固定Node target verifier一次。禁止触碰C5E892/04E33E旧证据、formal/prepare/plist/DB/key/load/cutover/cleanup。完成后只读复核public/RSS基线。",
+  "domain_stage": "deployment-prep",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "000008 SHA不匹配立即停且不重传；任一剩余块scp或独立回读首错停且保留进度；manifest/reassembler/aggregate/extract/verifier任一首错停，不重组或重验第二次；禁止覆盖任何已存在块。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "M1首版上线/真实投影部署/chunk resume",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-04E33E.json"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-AFED85",
+  "title": "M1 chunk000008收据续接与剩余分块fresh-stage验签",
+  "unverified": [],
+  "updated_at": "2026-08-12T13:38+08:00",
+  "verified": []
+}

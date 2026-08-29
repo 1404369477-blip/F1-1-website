@@ -1,0 +1,55 @@
+{
+  "acceptance_exit": "数据/安全前置精确吸收；本地真实候选可完成revision/approve/reject/manual publish；approve不公开；publish生成唯一投影/outbox；receiver原子激活后public reader可读且notes/私有字段不泄露；公开服务与synthetic隔离；聚焦测试/typecheck/diff-check一次通过；0网络/0M1/0真实DB写；TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "用户要求快速完成第一版、真实采集、人工审核后手动发布并直接部署M1；已明确减少冗余测试。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T06:25+08:00",
+      "evidence": "用户要求快速完成第一版、真实采集、人工审核后手动发布并直接部署M1；已明确减少冗余测试。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "最终静态对抗审查TASK-20260812-52616C确认P1-01：runtime对既有user_version=2仅检查七表存在/FK/recursive/integrity，缺少七表+业务index/trigger的确定性sqlite_schema指纹；删除immutable/REPLACE/audit guard的v2库仍可通过并被Repository写入。原任务唯一Vitest与Node24 typecheck已各1次PASS且预算用尽，diff-check按首错规则未运行；须由最小successor只补schema fingerprint并承接最终验证/报告。",
+  "claimed_by": "开发部/internal-agent:admin_backend",
+  "completion_class": "standard",
+  "confirmation": "本任务实现后端纵切和本地public reader候选；Admin UI/CSS仍等待用户视觉确认，公网切换与M1部署另派。",
+  "created_at": "2026-08-12T06:25+08:00",
+  "department": "开发部",
+  "details": "依赖产品TASK-28FA62已完成；必须等待数据TASK-90942F和安全入口合同TASK-87555F完成并回读精确产物后落代码。依据accepted产品合同，实现不含UI/CSS的最小端到端后端：rss-real-private migration runner接0002；候选队列/详情；revision保存不可变Bundle；approve/reject；批准只产生queued Publication；第二次显式manual publish同事务产生private PublishedProjection+唯一snapshot_sync outbox；operationId幂等/CAS/stale fail-closed；独立loopback projection receiver验证闭合全量包并原子激活；独立只读public snapshot reader提供首页列表/详情DTO。Admin mutation必须接入安全合同规定的session/Origin/CSRF/fresh re-auth接口；public服务不得读取private DB，synthetic字节零改。当前不切换公网origin、不部署M1、不抓图、不调用AI、不实现UI。仅以纯本地临时库/临时snapshot根做一组端到端聚焦验证：revision→approve且0公开→manual publish→receiver active→public list/detail；reject与operation replay/CAS至少覆盖关键分支。只运行一次聚焦Vitest、一次固定Node24 typecheck、一次diff-check，首错即停。落开发报告、候选SHA和后继部署清单。",
+  "domain_stage": "开发/后端",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "90942F或87555F未完成/与产品合同冲突：只读等待或BLOCK，不猜测实现。",
+    "需要公开服务直读private DB、写synthetic或放宽session/CSRF才能通过：停止并BLOCK。",
+    "限定验证首错：立即停止、不重跑、不部署，保留精确首错/SHA并BLOCK。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "第一版后台/后端纵切",
+  "pointers": [
+    "docs/spec/F1+1-真实RSS人工审核与公开投影最小实施合同-v0.1.md"
+  ],
+  "report": "",
+  "resolution": {
+    "evidence": "docs/当前生产状态与执行待办.md",
+    "reason": "2026-08-29 schema10生产恢复、27个X信源和完整Admin路线已形成新的当前闭包；旧任务绑定过时schema/release/plist/视觉或运行时态，继续领取会造成重复或错误执行。",
+    "receipt_id": "RES-20260829T235614-4A4B941F",
+    "replacement_revision": 3,
+    "replacement_state": "blocked",
+    "replacement_task_id": "TASK-20260829-E59ACA",
+    "resolved_at": "2026-08-29T23:56+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "superseded",
+    "target_revision_before": 3
+  },
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-8B641A",
+  "title": "DEV-REAL-REVIEW-BE-01真实RSS审核到公开投影后端纵切",
+  "unverified": [],
+  "updated_at": "2026-08-29T23:56+08:00",
+  "verified": []
+}

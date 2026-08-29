@@ -1,0 +1,47 @@
+{
+  "acceptance_exit": "取得生产Node24原生strip-types下的唯一stage release-verified收据；正式路径保持零写。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-45E5C7-M1第二release-stage-verifier单命令收据.md"
+  ],
+  "authorization_evidence": "用户已授权M1部署；runbook明确生产入口使用--experimental-strip-types，tsx不属于生产闭包。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T04:37+08:00",
+      "evidence": "用户已授权M1部署；runbook明确生产入口使用--experimental-strip-types，tsx不属于生产闭包。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:m1_release_executor",
+  "completion_class": "standard",
+  "confirmation": "统筹部核收后创建正式overlay与单次实采任务。",
+  "created_at": "2026-08-12T04:37+08:00",
+  "department": "开发部",
+  "details": "670A4F已证明唯一失败是生产M1无法解析开发期tsx，verifier主体0次、正式写和请求0。权威app/package.json与固定M1 RSS runbook统一使用固定Node24 --experimental-strip-types。领取后仍禁止任何额外命令。唯一允许远端命令：ssh f1plus1-m1-uu 后接一个单独命令字符串，内容逐字为 cd [M1-HOME]/F1-1-website/app && exec [M1-HOME]/.local/node-v24.18.0-darwin-arm64/bin/node --experimental-strip-types [M1-HOME]/F1-1-website/.rss-release-TASK-20260812-D460D7/TASK-20260812-8DFD59-release-verifier.mjs [M1-HOME]/F1-1-website/.rss-release-TASK-20260812-D460D7/stage-app。只运行恰1次；禁止preflight/grep/stat/shasum/变量/管道/重定向/第二命令。exit0且唯一JSON精确status=release-verified/rootKind=stage、manifest34c1032c…c8d95、commit5d596367…、content2aae0486…8c153、release6d402a5d…59eb02、runtime19/packages8/dependencyFiles118才完成。本任务不overlay/prepare/RSS/清理。",
+  "domain_stage": "M1生产Node stage验签",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "该唯一命令非零或JSON身份不符时停止，不运行第二命令。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "仅执行任务逐字白名单远端命令1次；未执行preflight/grep/stat/shasum/变量/管道/重定向或第二远端命令；未触碰正式路径。",
+  "node": "以仓库与runbook既定--experimental-strip-types替换误用的tsx，执行唯一stage验签命令",
+  "pointers": [],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-45E5C7-M1第二release-stage-verifier单命令收据.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-45E5C7",
+  "title": "M1第二release原生Node24 stage verifier单命令",
+  "unverified": [
+    "正式overlay、正式路径验签、prepare、RSS请求、清理均未执行，留待独立后继任务。"
+  ],
+  "updated_at": "2026-08-12T04:39+08:00",
+  "verified": [
+    "唯一远端白名单命令执行1次并exit0；唯一JSON精确为status=release-verified、rootKind=stage、manifestSha256=34c1032cc6adca96990cf35b092c2d61b940a2bda8fdd53a0c8ccfbb6e7c8d95、gitCommit=5d5963671550b45e9c01fbc727bc6aeac73447e4、contentRootSha256=2aae04864325f9db436b72267b578df681efdc51f79f81d8348a5490b5e8c153、releaseSha256=6d402a5d0b81fcf2d20e9720e3d0eef5f6e2ea63bb939ca8c7921df85159eb02、runtimeFiles=19、dependencyPackages=8、dependencyFiles=118、nodeSha256=ee6fb0e015284d83a91e8ec5213f43a157f8a392b58555301682892ba928c04a。"
+  ]
+}

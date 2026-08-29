@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "两个本机精确路径均不存在；释放约5.89MB并记录精确值；未触碰其他Trash内容、工作区、M1或最新回退备份；报告说明永久删除不可恢复；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-49B22E-本机两项旧RSS残留精确永久删除报告.md"
+  ],
+  "authorization_evidence": "用户已明确要求清除旧备份与无效残留；2B6D52已完成身份门且只因本机rm工具策略阻断。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T06:21+08:00",
+      "evidence": "用户已明确要求清除旧备份与无效残留；2B6D52已完成身份门且只因本机rm工具策略阻断。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:rss_cleanup_successor",
+  "completion_class": "standard",
+  "confirmation": "永久删除仅限两条完整绝对路径；不得使用rm、glob、宽目录或清空Trash。",
+  "created_at": "2026-08-12T06:21+08:00",
+  "department": "开发部",
+  "details": "前任2B6D52已永久删除两项M1旧残留并在本机rm进程创建前被工具策略拒绝。只处理仍存在的两个本机绝对路径：/var/folders/dz/l8yd2gqj22z1xgrcl1z_wbkr0000gn/T/TASK-20260812-D460D7-release.1qPEeZ/ 与 [M5-HOME]/.Trash/TASK-20260812-772F48-local-release-stage.36zkHe/。继承前任身份/owner/nlink/symlink/lsof门但执行前只读复核一次；采用执行工具允许的固定绝对路径、depth-first、默认不跟随符号链接的逐项删除方式（如 /usr/bin/find <exact-path> -depth -delete），不得用glob、不得清空Trash、不得触碰M1或325056最新回退备份。每个目标删除后只回读absent并统计释放字节；不运行页面/RSS/DB测试，因为前任已完成服务健康复核且本任务只删本机孤立任务残留。",
+  "domain_stage": "部署/清理",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一目标身份/owner/symlink/打开句柄门与2B6D52不一致：停止并BLOCK。",
+    "允许的精确删除首次失败：立即停止，不改用另一删除机制，不继续第二目标，BLOCK。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查首错纪律与范围：删除均首次成功；并行门检曾只观察到门检自身find句柄，任何删除前已串行复核为零句柄并如实写入报告",
+  "node": "第一版上线/RSS稳定后清理successor",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-2B6D52-M1真实RSS旧stage与迁移残留精确清理首错阻断报告.md"
+  ],
+  "report": "不适用",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-49B22E",
+  "title": "2B6D52后继：本机两项旧RSS残留精确删除",
+  "unverified": [
+    "未以全盘剩余容量变化反推释放量；释放值按删除前两个精确根的du已分配空间记录"
+  ],
+  "updated_at": "2026-08-12T06:25+08:00",
+  "verified": [
+    "两个精确目标在删除前均为UID501真实目录，symlink=0、异主=0；删除前串行lsof复核均无打开句柄",
+    "两条固定绝对路径的find -x -depth -delete均首次exit0，未使用rm、glob、宽目录或清空Trash",
+    "两个精确路径删除后均回读absent；按删除前du记录释放5,885,952个已分配字节",
+    "未运行SSH、RSS、页面、DB或服务测试，未触碰M1、325056最新回退备份、工作区业务文件或其他Trash内容"
+  ]
+}

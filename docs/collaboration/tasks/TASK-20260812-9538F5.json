@@ -1,0 +1,56 @@
+{
+  "acceptance_exit": "用户在本对话可直接看到四格总览并判断Mac/iPhone深浅主题、信息密度、操作层级与视觉风格；给出唯一确认问题。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "design/ui/F1+1-M5-admin-reviews-preview-v0.1/evidence/TASK-20260812-9538F5/admin-reviews-1440-dark-pending.png",
+    "design/ui/F1+1-M5-admin-reviews-preview-v0.1/evidence/TASK-20260812-9538F5/admin-reviews-1440-light-approved.png",
+    "design/ui/F1+1-M5-admin-reviews-preview-v0.1/evidence/TASK-20260812-9538F5/admin-reviews-390-dark-pending-editor-actions.png",
+    "design/ui/F1+1-M5-admin-reviews-preview-v0.1/evidence/TASK-20260812-9538F5/admin-reviews-390-light-approved-manual-publish.png",
+    "design/ui/F1+1-M5-admin-reviews-preview-v0.1/evidence/TASK-20260812-9538F5/admin-reviews-overview-2x2.png",
+    "design/ui/F1+1-M5-admin-reviews-preview-v0.1/evidence/TASK-20260812-9538F5/manifest.json",
+    "design/ui/F1+1-M5-admin-reviews-preview-v0.1/evidence/TASK-20260812-9538F5/capture-results.json",
+    "design/ui/F1+1-M5-admin-reviews-preview-v0.1/evidence/TASK-20260812-9538F5/render-recipe.md",
+    "docs/collaboration/部门/设计部/报告/2026-08-12-9538F5-Admin审核台四格视觉确认包报告.md"
+  ],
+  "authorization_evidence": "用户此前要求设计后台且Mac/iPhone全功能，并要求设计部跟进Kimi审查；现需进入真实审核UI实现前视觉门。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T05:55+08:00",
+      "evidence": "用户此前要求设计后台且Mac/iPhone全功能，并要求设计部跟进Kimi审查；现需进入真实审核UI实现前视觉门。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "设计部/internal-agent:admin_visual_package",
+  "completion_class": "standard",
+  "confirmation": "由用户确认或提出修改；未确认前开发不得实现Admin UI/CSS，但后端可按产品successor先行。",
+  "created_at": "2026-08-12T05:55+08:00",
+  "department": "设计部",
+  "details": "固定输入design/ui/F1+1-M5-admin-reviews-preview-v0.1/index.html SHAfa0ef6e31fe889abea39e6bbcb3a9d7c5764a17f364e1d409bc4defce879113e，design-notes SHAcd95e2a6…fc2；原69BC5A已ACK但PNG未落盘，133584因旧截图链失败而blocked。只做现有候选的隔离渲染与必要显示参数，不覆盖index.html/notes；优先本地CLI/内置浏览器，禁止外部操作浏览器和联网。生成1440×适合首屏的dark/light、390×适合首屏的dark/light四张PNG以及2×2总览图；证据必须绑定输入SHA，页面显示待审核队列+详情、编辑、批准/拒绝、批准后手动发布分离及390单列。若现HTML需URL/query/DOM切换主题或viewport，只记录可复现命令，不改冻结文件。输出短报告说明该候选仍是synthetic视觉样本，真实RSS字段由28FA62产品successor映射，不把数据语义当已确认。",
+  "domain_stage": "Admin视觉确认",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "本地渲染器/浏览器无法加载file时可启动仅loopback静态服务器，但不得联网或修改候选。",
+    "任一尺寸/主题不匹配或截图为空时block并保留命令/首错，不用旧图冒充。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未用旧截图冒充当前证据，未改冻结HTML/notes，未联网或调用外部操作浏览器；PNG、总览、manifest和复现配方均绑定输入与输出SHA；未把synthetic状态、DRAFT工具或视觉样本写成真实数据语义/实现/授权；执行自检不替代测试、安全与用户确认。",
+  "node": "为已ACK的admin-reviews交互HTML生成1440/390深浅四图和一张总览，供用户立即确认视觉方向",
+  "pointers": [],
+  "report": "docs/collaboration/部门/设计部/报告/2026-08-12-9538F5-Admin审核台四格视觉确认包报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-9538F5",
+  "title": "Admin审核台现有候选四格视觉确认包-successor",
+  "unverified": [
+    "真实RSS字段映射与正式Admin后端/session/Origin/CSRF/fresh re-auth/operation对账未运行；iPhone真机安全区、粗指针、软键盘、读屏、200%缩放、forced-colors及用户视觉确认仍未验证；四图数据均为synthetic视觉样本。"
+  ],
+  "updated_at": "2026-08-12T06:12+08:00",
+  "verified": [
+    "冻结HTML与design-notes输入SHA前后命中fa0ef6e3…/cd95e2a6…；Google Chrome 151本地CDP在HTTP(S)阻断下生成1440×900深浅与390×844深浅四图及1920×1390总览；四图尺寸、主题、状态、自身SHA、scrollWidth/clientWidth与manifest逐项一致，external HTTP(S) observed=0；目检队列/详情、编辑、批准/拒绝、批准后手动发布分离与390单列均可判断；未修改冻结输入。"
+  ]
+}

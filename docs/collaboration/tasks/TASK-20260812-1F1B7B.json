@@ -1,0 +1,51 @@
+{
+  "acceptance_exit": "M1唯一CertDomain回读且canonical origin合法；Admin prepare与public prepare各唯一一次成功；deployment manifests/key ID/service identities/review DB dev+ino/rollback anchors/read mode逐字一致；所有新目录0700、文件0600、plist RunAtLoad=false/KeepAlive=false；admin:status与public status只读PASS；现有jobs/listeners/DB/live release零任务引起漂移。输出下一步load/Serve/Grant精确输入，不泄露login/sourceRef/key。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-1F1B7B-M1-CertDomain与Admin-Public-prepare-only报告.md"
+  ],
+  "authorization_evidence": "本线程用户回复可以并完成Tailscale登录；管理台HTTPS enabled；2026-08-12",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T22:17+08:00",
+      "evidence": "本线程用户回复可以并完成Tailscale登录；管理台HTTPS enabled；2026-08-12",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:m1_prepare_only",
+  "completion_class": "standard",
+  "confirmation": "用户授权开启HTTPS并要求快速推进；prepare-only为当前已冻结主线，不启用服务。",
+  "created_at": "2026-08-12T22:17+08:00",
+  "department": "开发部",
+  "details": "快速主线：用户已在Tailscale DNS管理面启用HTTPS Certificates，capability ID固定为1404369477-blip.github.io/cap/f1-admin-device。先从固定M1只读回读唯一CertDomain并构造https://<CertDomain>/ canonical origin；吸收PrepareInputs与restricted login/selector映射。随后在新d186 release分别执行正式Admin deployment-v3与Public deployment-v2 prepare-only：生成隔离roots、manifests与disabled plists；public read mode固定public-real-snapshot，review DB使用既有唯一固定路径且prepare不得打开/迁移/写DB。不得launchctl load/bootstrap/serve/grant/funnel，不得启动3101/3102，不得切public read mode或live release。保护现有public/RSS jobs、plist、DB与listener。",
+  "domain_stage": "admin_public_prepare_only",
+  "event_receipts": [
+    "PREPARE_PASS:admin=f4d581400b6ac3ae039c4e1d1d9db26061f66ae0014ff1439762ddd6b12423e8;public=3a4824e27aaa0658fe64b4b9f55a6bc437e0a969fa3a7d631e5c8729f4ddff3d;cert=b3fe6dde;origin=330fc5ba;readMode=real;disabled=true;ports3101-3102=absent"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "CertDomains非唯一/空或origin异常则不prepare；任何existing target不匹配则不覆盖；任一prepare部分失败必须回滚本任务新增工件并保持0load；任何DB/plist live/service漂移则立即停并恢复本任务可恢复写。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "Sensitive login/sourceRefs/selectors/private key/keyId absent from report/Git. CertDomain hash only. Prepare not equated with loaded service. Public prepare replaced only allowed disabled candidate plists without reload; live process/DB not intentionally modified. Early isolated rollback roots are unreferenced and reserved for later identity-gated cleanup.",
+  "node": "ADMIN_PUBLIC_PREPARE_ONLY",
+  "pointers": [
+    "app/ADMIN-SERVICE-PREP.md"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-1F1B7B-M1-CertDomain与Admin-Public-prepare-only报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-1F1B7B",
+  "title": "M1 CertDomain回读与Admin/Public prepare-only",
+  "unverified": [
+    "Management-plane approval and minimal Grants for M5/iPhone selectors; actual Serve configuration; Admin/receiver/sender load and HTTP/passkey acceptance; active projection/outbox success and public real cutover."
+  ],
+  "updated_at": "2026-08-12T22:58+08:00",
+  "verified": [
+    "M1 CertDomains count1 and canonical HTTPS origin valid. Admin deployment-v3 and Public deployment-v2 each prepared successfully against d186 release; manifests f4d58140/3a4824e2, real read mode, key/service identities/review DB identity/rollback anchors match. Roots0700, files0600, four prepared plists RunAtLoad false KeepAlive false. Admin status PASS, 3101/3102 absent, no load/Serve/Funnel/Grant/DB/cutover."
+  ]
+}

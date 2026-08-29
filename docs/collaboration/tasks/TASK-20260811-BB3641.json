@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "当前build身份不变；唯一production start下三项纠正后HTTP均PASS；结合51E0F7已通过事实形成release manifest/report；App externalCalls=0沿用同一health收据；端口/PID/临时文件清理；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/evidence/TASK-20260811-BB3641/manifest.json",
+    "docs/collaboration/部门/统筹部/报告/2026-08-11-第一版公开站最小production候选放行报告.md",
+    "docs/runbooks/F1+1-第一版快速上线部署方案-v0.1.md"
+  ],
+  "authorization_evidence": "用户2026-08-11：继续推进，进入快速搭建网站，并上线部署第一版方案，不要做太多没必要的测试。",
+  "authorization_history": [
+    {
+      "at": "2026-08-11T22:11+08:00",
+      "evidence": "用户2026-08-11：继续推进，进入快速搭建网站，并上线部署第一版方案，不要做太多没必要的测试。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "统筹部/root-main:019fb2b1-fb60-7792-adb4-e0e876a32947",
+  "completion_class": "standard",
+  "confirmation": "用户明确要求快速搭建并上线第一版，减少非必要测试。",
+  "created_at": "2026-08-11T22:11+08:00",
+  "department": "统筹部",
+  "details": "承接51E0F7已通过的lint/typecheck/build、health/home/feed两页/筛选和200详情状态。禁止重跑lint/typecheck/build/tests；只复用当前.next production build唯一启动一次，执行三项精确HTTP：详情API按PublicStoryDetailResponseV1读取story.publicId；client详情页SSR断言loading壳层与200，不要求最终异步标题；使用合法格式但不存在的public-missing-local断言404 PUBLIC_STORY_NOT_FOUND。结束后停止3000/3001并核对临时文件/端口清理。不得改代码或外部部署配置。",
+  "domain_stage": "M5-first-public-release-candidate",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 三项任一仍与源码合同不符或返回5xx：首错停止并block；2) 服务不能复用当前build启动：停止，不重跑build；3) 产品字节、DB或build身份漂移：停止，不生成可部署候选。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "首个HTTP harness误读story DTO、误把client详情最终标题当SSR要求、用非法ID期待404；首错后停止并创建精确successor，无原样重跑。任务初始pointer漏app/前缀已在报告纠正。未把本地可运行写成公网已上线。",
+  "node": "只补51E0F7 harness误判的三项，不重跑已通过构建门",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260811-51E0F7.json",
+    "src/server/public/types.ts",
+    "src/server/public/http.ts"
+  ],
+  "report": "docs/collaboration/部门/统筹部/报告/2026-08-11-第一版公开站最小production候选放行报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260811-BB3641",
+  "title": "修正烟测合同并完成第一版production候选放行",
+  "unverified": [
+    "未运行全量测试、重复focused测试、六格视觉、AT、OS级no-egress、真实provider/Base或外部公网部署；目标主机、域名、DNS、TLS仍待用户确定；lint 3条img warning与build 1条NFT warning保留。"
+  ],
+  "updated_at": "2026-08-11T22:17+08:00",
+  "verified": [
+    "固定Node24 lint/typecheck/build各一次PASS；真实production loopback验证health ready externalCalls=0、首页、feed两页、筛选、详情API、详情页和合法格式404/no-store；纠正harness合同后三项successor一次PASS；进程/端口/临时目录/sidecar清理，三个canonical DB与package-lock零漂移。"
+  ]
+}

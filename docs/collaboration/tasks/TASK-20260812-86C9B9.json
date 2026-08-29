@@ -1,0 +1,50 @@
+{
+  "acceptance_exit": "所有SHA匹配；逐层PASS/FAIL，P0/P1/P2明确；无P0/P1则放行与Admin UI集成和M1 prepare，存在P0/P1立即通知统筹/service并给最小修正；报告落盘，TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-86C9B9-独立3101与Passkey候选最终静态对抗审查报告.md"
+  ],
+  "authorization_evidence": "用户确认继续私有Admin方案；服务候选唯一聚焦测试和typecheck已通过。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T08:24+08:00",
+      "evidence": "用户确认继续私有Admin方案；服务候选唯一聚焦测试和typecheck已通过。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/internal-agent:admin_service_review",
+  "completion_class": "audit",
+  "confirmation": "不扩展sender/public切换、UI视觉或正式M1部署。",
+  "created_at": "2026-08-12T08:24+08:00",
+  "department": "安全部",
+  "details": "绑定候选SHA：auth b8f21064…dbea；deployment ddfd5eec…bc35；runtime257a8fb8…cccb；server e825ff41…479a；storage9b0a594d…2007；webauthn78d08dd9…2096；CLI1be60c1f…c2a0；test7fff56cf…6a46；packagea55f3047…0808；lock09af0413…24d；review schema6a839832…86e；repository0da22560…c52f；backend test326e3727…7b6b。严格只读审查：SimpleWebAuthn 13.3.2 Node24兼容与官方用法；RP/origin/UV/challenge/credentialID/counter/backup状态/算法；bootstrap token单次/TTL/持久化秘密；credential原子存储路径、owner/mode/symlink/hardlink/crash；Tailscale identity信任边界；session/login/fresh旋转与CSRF绑定；sourceVersionTag不弱化完整hash真值；3101仅loopback、Host/Origin/body/timeout/CSP/static traversal/内部receiver鉴权；DB opener先验签；prepare-only无load。读取已持久化Vitest/typecheck/diff收据，不运行测试、不改文件、不联网/SSH/DB写。只列P0/P1/P2与最小修正。",
+  "domain_stage": "安全/认证服务审查",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "发现未认证session/fresh、bootstrap重放、loopback逃逸、静态路径穿越、私钥/凭据泄露、公开路由接入或完整hash真值降级：立即FAIL并通知。",
+    "只能真机WebAuthn/Tailscale证明的项保持Unknown/P2，不伪报。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "只读静态审查；候选修改0、测试0、typecheck0、网络SSH0、DB写0；首个P1后停止扩展；未把开发动态收据或Unknown写成PASS。",
+  "node": "第一版后台/服务与认证安全门",
+  "pointers": [
+    "app/ADMIN-SERVICE-PREP.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-12-86C9B9-独立3101与Passkey候选最终静态对抗审查报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-86C9B9",
+  "title": "B2CB5F+7D69B4独立3101与Passkey候选最终静态对抗审查",
+  "unverified": [
+    "真实Touch ID/iCloud/FIDO2、Safari/Chrome、Tailscale Serve/Grant/device approval/header、异地网络、固定M1 listener/DB/RPO、sender/receiver/public switch均Unknown；第二独立hardware credential仍为既有production停止线。"
+  ],
+  "updated_at": "2026-08-12T08:34+08:00",
+  "verified": [
+    "十三SHA MATCH；FAIL P0=0/P1=1/P2=1；P1-01为WebAuthn认证状态提交缺expectedCounter单调CAS且丢弃device/backup状态；首个P1前覆盖RP/origin/UV/challenge/bootstrap/session/fresh/sourceVersionTag/loopback/static/DB opener/prepare-only。"
+  ]
+}

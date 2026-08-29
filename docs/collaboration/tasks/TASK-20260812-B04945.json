@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "TASK_STATE_OK；新M1 target manifest三派生roots独立复算匹配，所有非派生闭包字段零漂移；给绝对路径/SHA和可供fresh-stage的精确锚。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/.local/release/admin-service-release-manifest.json"
+  ],
+  "authorization_evidence": "用户：可以直接部署到M1 MacBook；直接用SSH。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T13:15+08:00",
+      "evidence": "用户：可以直接部署到M1 MacBook；直接用SSH。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:projection_runtime_m1_manifest_receipt",
+  "completion_class": "standard",
+  "confirmation": "用户已授权固定M1部署，统筹按确定性root算法裁定派生变化有效。",
+  "created_at": "2026-08-12T13:15+08:00",
+  "department": "开发部",
+  "details": "继承blocked D1A0A8已生成且保留的新manifest，不重跑builder/build，不改任何文件。统筹明确裁定：node.targetPath属于content root输入，因此从f1admin改为chanai时，contentRoot、releaseRoot和manifest SHA确定性变化属于允许派生变化。只读逐字段核收新manifest：targetPath精确[M1-HOME]/.local/node-v24.18.0-darwin-arm64/bin/node；Node bytes SHA ee6fb0e0...；runtime89/overlay30/base59、Next322/13,373,354/nextRoot b11ef505...、packages44/dependencyRoot517c29e4...、所有file/package记录、schema/commit/tree/parent/build exclusions与前候选一致；独立按canonical算法复算contentRoot=b3886d55e093baf50a89d260c21898d4987c77f583ef8e5960f2ca3ba012e987、releaseRoot=f868497562332e6b365479f48105aba298783aa23513a0b962ac2ba318f462a6、manifest SHA=58b6da76890d1ccb800624f6915c6f0ddd7f9a37b51e6fcafd6c16b6a9e9c95f。只跑一次纯只读manifest canonical/self-hash机械核验和一次源码零漂移diff-check；0builder/build/test/typecheck/SSH/M1。",
+  "domain_stage": "deployment-prep",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任何非允许字段漂移或canonical复算不匹配立即block；manifest文件mode/owner/nlink/path不合格立即block；不得重builder或修改manifest修值。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已确认targetPath属于content root输入，content/release/manifest SHA三项为允许确定性派生变化；未重跑builder/build/test/typecheck，未改源码或manifest。",
+  "node": "M1首版上线/真实投影release/M1 manifest receipt",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-D1A0A8.json"
+  ],
+  "report": "不适用",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-B04945",
+  "title": "M1 Node目标manifest派生roots机械核收",
+  "unverified": [
+    "M1 stage/target verifier/SSH均未执行；target path仅作为manifest元数据核收，未伪装本地存在"
+  ],
+  "updated_at": "2026-08-12T13:17+08:00",
+  "verified": [
+    "只读canonical复算PASS：targetPath=[M1-HOME]/.local/node-v24.18.0-darwin-arm64/bin/node；runtime89/next322/13373354/nextRoot b11ef505/packages44/dependencyRoot517c29e4零漂移；content b3886d55/release f8684975/self SHA58b6da76精确匹配；manifest 0600 uid501 nlink1 realpath exact；限定源码diff-check PASS"
+  ]
+}

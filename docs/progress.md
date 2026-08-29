@@ -5,7 +5,219 @@
 
 ---
 
+## 2026-08-30
+
+- 🧭 **提出「数据可再生性分层与 RPO 重定级」提案，尚未采纳**：新增 `docs/decisions/system/2026-08-30-F1+1-数据可再生性分层与RPO重定级-proposed.md`，状态 `proposed / awaiting_user_decision`。核心论点：`TASK-20260829-FCC322` 的 8 项阻断中有 5 项（prune 误删、DB与projection共同恢复边界、RPO 取完成时间、远端 consume 幂等/tombstone、projection verifier 过宽）不是标准过高，而是为达成全局 `RPO≤900s` 而选择的「增量 + prune + 远端消费 + 双源对齐」架构自身产生的复杂度；另 3 项（schema10 正式验证、加密对象 kind/keyId 与 O_EXCL、失败与 stale lock 不静默）是恢复正确性要求，提案不建议放宽。提案把 schema10 的 67 张表按可再生性分为 T0 不可再生（人工审核决定、审计链、Passkey、`x_manual_submission`，外加 `docs/spec.md`、`docs/decisions/`、478 条 TASK JSON、`design/`）、T1 付费可再生（DeepSeek 双语产出）、T2 免费可再生（RSS 抓取内容与公开投影），并对 T0 用 append-only 日志 + 5 分钟异机推送、对 T1/T2 用每日 `VACUUM INTO` 全量快照。本次只写入该提案文件与本条记录，未修改 `docs/spec.md`、任何 accepted ADR、任务 JSON、代码、SQL 或生产配置；现有 `RPO≤900s` 硬门在用户确认前继续有效。
+
+- 🔬 **`VACUUM INTO` 一致性快照机制已在 disposable 环境实测通过**：`scratch/2026-08-30-rpo-retier-proposal-check/check.mjs`，未触碰生产 DB。SQLite `3.51.3`（`VACUUM INTO` 需 3.27+），源库 `WAL` 模式含 500 行与 1 个 trigger；快照产物为单一自包含文件，无 `-wal`/`-shm` 旁文件，`user_version=10` 与 trigger 均保持，`quick_check=ok`。该结果支持提案中「单文件快照可直接加密异机传输、无需把 DB/WAL/manifest 关联成同一恢复边界」的主张。注意实测使用环境默认 `node v22.23.1`，非项目钉定的 `24.18.0`；机制在 SQLite 层实现，但正式实施仍须在钉定版本复验。
+
+- 📋 **工作区状态盘点（只读，未做任何清理）**：工程工作区存在 545 处未提交改动（460 untracked + 85 modified，约 946 MB），其中 `docs/collaboration/` 下 354 个文件未提交，含 478 个 TASK JSON（共 25,331 行）——即任务真值与产品决策历史当前无异机副本。`.gitignore` 未覆盖 `design/`（920 MB）、`.worktrees/`（75 MB）、`.next/`，根目录 `node_modules/` 规则仍为注释状态。另发现 `app/` 下有 12 个 2026-08-07 由拼错 shell 命令创建的垃圾目录（`--headless=new`、`--screenshot=`、`--window-size=1440,2000`、`http:`、`ls`、`-la`、`~` 等）及根目录一个名为 `-` 的 39 KB 文件。以上均**未**执行删除或 `.gitignore` 修改，等用户决定。
+
+- 🔍 **公开站降级行为已读码核实，修正提案初稿表述**：公开站**从不读数据库**，只读 `<projectionRoot>/active.json` → `generations/<hash>.json` → Ed25519 验签（`app/src/server/review-real/projection.ts:271`）。三种后果：DB 丢失但投影完好=访客完全无感；`active.json` ENOENT=空时间线 200；`active.json` 在但 generation 缺失/验签失败=整站 503。结论：T2「RSS 内容可再生」论断更强；投影文件单列 T2′（重建需 T0 人工发布 + fresh WebAuthn）；**部分丢失比完全丢失更糟**，恢复顺序必须先 `generations/` 后 `active.json`。已写入提案 §4 T2 补充与 §8.6。
+
+- 🧭 **用户就提案 §12 的决定**：q2 T1 =「先测成本再定，暂按 T0」，解除入口 `COST-OBS`（提案 §6）；q3 `FCC322` 由提案决定 = **条件性 supersede**（现在冻结不推进，提案获批才收口，3 项正确性要求逐条转入新任务，见提案 §6.1）；q1 已由上条读码回答；q4 授权 commit+push 但触发下条阻断。
+
+- ⛔ **T0 异机副本被「remote 是公开仓库」阻断，停在 commit 前**：`.gitignore` 已补（`node_modules/`、`.next/`、`.worktrees/`、`design/`、`*.sqlite`/`*.db`），待提交从 946 MB 降至 4.9 MB / 534 条。但 remote `github.com/1404369477-blip/F1-1-website` **visibility=public**（最后 push 2026-08-13 停在 `52e6549`）。`git grep [PRIVATE-TAILNET] 52e6549` 为空即私有 Admin 地址**尚未泄露**，但本地未推送的 `8f305e1` 已含该地址，待提交文件中 Tailscale 私有地址在 5 个文件、Quick Tunnel 地址在 6 个文件，另含 hostname/UID/绝对路径/设备授权细节。真实凭证扫描阴性（`sk-` 命中均为 `TASK-` 误报，DeepSeek key 走环境变量）。直接 push 属 A 级「扩大公网暴露」，故未 commit 未 push，等用户决定仓库可见性方案。**缓解前 T0 实际 RPO 仍为无穷。**
+
+- 🤖 **按用户指示改为多模型子 Agent 并行**：kimi-k3 产出 67 表 T0/T1/T2 分层草案、opus-5 对提案做对抗性审查、gemini-3.7-flash 做待提交文件敏感字符串全量清单，产物统一进 `scratch/2026-08-30-rpo-retier-proposal-check/`，均为草案/证据，未并入正式文档。
+
+- ✅ **用户已选定仓库路线：保持公开，脱敏后推送**。方案定稿见 `scratch/2026-08-30-rpo-retier-proposal-check/scrub-and-push-plan.md`：占位符 + `docs/private-endpoints.local.md` 本地真值文件（`*.local` 已被忽略）；被脱敏文件先存原始副本到 scratch 保审计；5 个未推送 commit 打安全标签后 soft reset 重建为干净提交；推送前逐模式 `git grep` 全零命中才推。执行等 gemini 敏感清单完成后由 grok-4.6 子 Agent 落地，主 Agent 核收验证门后 push。
+
+- 📊 **kimi 逐表分层草案已完成并并入提案**：`scratch/2026-08-30-rpo-retier-proposal-check/table-classification-draft.md`，净 63 表（初稿 67 系误算）：T0=29 / T1=5 / T2=25 / T2′=4，12 表疑义（按规则先按 T0 保护）。两条落地硬约束已由主 Agent 验证并写入提案 §4/§7：①`0007` 第 813 行 `rpo_seconds CHECK(BETWEEN 0 AND 900)` 与第 881 行 `valid_backup_recovery_point_v1` 视图把旧 RPO 写死在 schema 层，提案获批后需 additive 迁移配套（独立合同）；②新增依赖传递规则「任何表的实际恢复保证等于重建链上最弱上游的保证」。草案待独立复核，opus 审查针对的是并入前版本，需注意版本差。
+
+- 下一步：等 opus 对抗审查与 gemini 敏感清单；gemini 完成后派 grok 执行脱敏与重建提交。提案 §7 文档改动与新备份实现仍待提案获批。
+
+## 2026-08-29
+
+- 📚 **当前生产真值、恢复队列与 Agent 接班文档已统一同步**：新增 `docs/当前生产状态与执行待办.md`，集中固定 M5/M1 目录、当前 Public/Quick Tunnel 的置信边界、schema10 DB 与 control 状态、RSS/X 信源现状、Backup V2 独立审查阻断、端到端/Admin 剩余出口、证据索引和接班行为边界。`docs/spec.md`、`docs/roadmap.md` 与 `docs/handoff.md` 已增加 2026-08-29 当前事实覆盖，明确 2026-08-20 及更早的“四源自动运行/自动发布”只保留历史审计价值。正式建立五条当前任务真值：`TASK-20260829-FCC322`（Backup V2整改）、`TASK-20260829-BBFF2A`（M1 schema10恢复与RSS身份闭包）、`TASK-20260829-082F2C`（两源canary与900秒持续采集）、`TASK-20260829-0ED611`（27 X registry与低风险灰度）、`TASK-20260829-E59ACA`（双语/人工审核/Public/Admin端到端上线）。本次文档同步未执行生产DB、服务、LaunchAgent、网络、备份或发布动作。
+
+- ⛔ **Backup V2候选独立对抗审查为BLOCK，禁止部署**：候选语法和固定Node路径可读，但 prune 可能依据损坏point误删、SQLite验证缺schema10完整结构与runtime invariant、DB与projection无共同恢复锚点、RPO时间使用完成时间、consume非幂等、对象身份/路径/O_EXCL不足、projection verifier过宽及stale lock静默等 P0/P1 尚未关闭。整改和 disposable 故障注入由 `TASK-20260829-FCC322` 负责；通过独立复审前不得安装备份LaunchAgent、更新production recovery fence或宣称verified recovery point。
+
+- ⛔ **M1 RSS生产恢复预检为BLOCKED**：生产DB `user_version=10 / quick_check=ok`，Admin/projection `candidate-v10-20260829-091305` 与 Public `candidate-v10-20260829-220859` 文件闭包可核验；但 `backup_recovery_point=0`、`clockTrusted=false`、`writerReady=false`、`phase=disabled`、`global_stop=stopped`、`recovery=fenced`，RSS route/authorization/policy 仍为占位hash，两个旧RSS plist指向2026-08-13 release且未加载，历史1609条queued publication与1条reconcile_wait必须隔离。恢复顺序固定为 Backup V2闭包→verified异机恢复点→合法control与真实RSS hash→新plist→仅Motorsport/The Race单次canary→两个自然900秒周期。
+
+- ✅ **27个X账号只读页面验收已完成，但持续采集仍未实现**：首批5条与剩余22条均在M1现有Chrome登录会话中串行只读通过，未观察到challenge/rate-limit/restricted；该证据只覆盖当次页面可读。生产registry尚未从旧59条收敛到27条，X worker、调度、去重、入库、人工审核和公开投影均待 `TASK-20260829-0ED611` 落地。禁止读取cookie值、绕过挑战或采用Nitter/RSSHub/未文档化GraphQL。
+
+- 🧭 **59 条 X 候选完成用户第二轮精简**：`data/x-source-selection-v1.csv` 已逐条落账为 `keep=27 / replace_with_rss=1 / drop=31`。移除 `Carlossainz55`、`ZBrownCEO`、`autosport`、`Motorsport`，加入并保留 `alex_albon`、`PierreGASLY`；F 组只保留 `ZhouGuanyu24`、`NicoRosberg`，G/I 全部移除，H 三条全部保留。Sky Sports 已实测官方 `https://www.skysports.com/rss/12433` 返回 RSS 2.0，当前 20/20 条均为 F1 内容，因此将 `SkySportsF1` 标为 `replace_with_rss`。精简后为 27 个 X 账号 + 1 条 Sky F1 RSS，共 28 个有效输入；尚未写入生产 source registry 或启用采集。
+
+- ⚡ **消除二次自动定位，实现单次平滑置顶贴靠（发布 candidate-v10-20260829-220859）**：
+  1. **消除二次定位与抖动**：排查并彻底移除了历史代码中随 `detailStates` 异步加载触发的二次居中滑动逻辑（`setTimeout 260ms` 与 `block: "center"`），消除了用户反馈的“放大后画面自动滑动两次”的抖动问题。
+  2. **单次直接贴在顶部（block: "start"）**：
+     - 展开动作仅触发一次直接、平滑的视口顶部对齐（`target?.scrollIntoView({ block: "start" })`，配合 `scroll-margin-top: 0px`）；
+     - 打开瞬间标题完美贴在视口顶端，并且后续绝对不会发生任何二次自动定位；
+     - 用户拥有完全自主、不被打断的上下滑动浏览体验。
+  3. **自动化测试与生产热重载**：
+     - 同步更新测试契约，`public-ui.test.ts` 26/26 项全部绿灯；
+     - M1 生产机完成 Turbopack 编译，签名闭包 SHA-256：`94020755...`；
+     - LaunchAgent 服务（PID 34066）无缝接管，公网 Cloudflare 隧道 200 OK 实时生效。
+
+- 🎯 **卡片视觉纯粹化与自然滚动聚焦优化（发布 candidate-v10-20260829-122910）**：
+  1. **背景同源与去外框（Borderless & Native Background）**：
+     - 响应用户最新纠偏，彻底剔除卡片展开时的任何边框、高亮描边与不同色块背景（`background: transparent; border: none; box-shadow: none`）；
+     - 卡片外观与主页面 100% 同色系无缝融合，纯粹仅将当前卡片内容在原位平滑微放大（`scale(1.025)`），不做任何外加款式。
+  2. **全背景深度虚化（Deep Background Blur）**：
+     - 展开时，页面顶栏、页脚及时间线上所有未展开卡片自动应用高阶虚化（`filter: blur(8px); opacity: 0.18;`），焦点卡片清晰透亮，主次视觉对比极具品质感。
+  3. **标题平滑置顶对齐与解除滑动锁定**：
+     - 彻底解除了之前导致页面无法滑动的 `body overflow: hidden` 锁以及全局遮罩拦截，用户展开后依然可随意上下滑动浏览卡片及其全部长文上下文；
+     - 展开瞬间自动平滑将卡片标题顶部对齐至视口顶部（留出 16px 呼吸间距），彻底解决“标题出画看不见”的问题；
+     - 点击任何虚化的背景区域或按 ESC 键，卡片瞬间丝滑缩回，背景虚化无缝褪去。
+  4. **全量构建与生产验证**：
+     - 本地单元测试 26/26 全部通过，无任何 lint/type 错误；
+     - M1 生产机完成 Turbopack 生产编译，签名闭包 SHA-256：`8f5ca427...`；
+     - LaunchAgent 服务（PID 17633）稳定在岗，公网访问 200 OK。
+
+- ✨ **回归纯粹卡片美感：废除生硬外置弹窗，重构为原地原生卡片平滑浮升微放大动效（发布 candidate-v10-20260829-121654）**：
+  1. **废除外置弹窗**：彻底移除突兀割裂的 `card-modal` 模态弹层及生硬的关闭按钮与顶栏，保持卡片 100% 原始视觉基因与排版结构。
+  2. **原地平滑浮升放大（Fluid In-Place Expansion）**：
+     - 点击卡片时，该卡片自身平滑微放大并向上浮升（`scale(1.02) translateY(-2px)`，配合 340ms 弹性贝塞尔曲线），自然呈现优雅立体阴影与柔和高亮边框；
+     - 提炼内容（`tl-detail`）与核心要点在卡片内部平滑展开，未展开卡片柔和淡出虚化（`filter: blur(1.5px); opacity: 0.25;`）；
+     - 背景铺设轻柔毛玻璃暗色遮罩（`.tl-focus-backdrop`），点击卡片外任意区域或按 `Escape` 键，卡片丝滑缩回时间线原状。
+  3. **排查并消除后台启动挂起与端口竞争**：
+     - 查清界面卡在后台执行命令的根因：原 `serve.ts` 启动时因孤儿进程暂持 3001 端口导致 15 秒超时，进而触发前台命令阻塞；
+     - 将 `STARTUP_TIMEOUT_MS` 安全扩充至 45 秒，清理孤儿进程，并将 LaunchAgent 配置升级为系统级常驻守护（`KeepAlive: true`），彻底终结了界面转圈挂起的问题。
+  4. **构建与生产部署验证**：
+     - Turbopack 生产编译与 89 个运行时闭包哈希核验（SHA: `16a1497b...`）通过；
+     - LaunchAgent 服务（PID 13063）端口 3000/3001 稳定监听，公网 Cloudflare 隧道 200 OK 正常提供服务。
+
+- 🌟 **卡片前置无框窗口展开动效、满宽排版优化与英文原文切换落地（发布 candidate-v10-20260829-115619）**：
+  1. **标题下排版满宽修复**：彻底移除 `globals.css` 中 `.tl-lead` 的 `max-width: 62ch` 限制，改为 `width: 100%; max-width: 100%`，消除大屏和移动端卡片右侧留白死区，排版自然撑满卡片。
+  2. **前置无框窗口展开交互（Elevated Modal Sheet）**：
+     - 点击卡片时平滑放大浮升为前置无框卡片窗口（`scale(0.93) -> scale(1)`，带贝塞尔曲线弹性动效），背景淡入深度毛玻璃暗色遮罩（`backdrop-filter: blur(16px)`）。
+     - 标题与中英切换胶囊自然吸顶停靠（Sticky Header），正文与配图区域支持在窗口内随意纵向滚动阅读上下文。
+     - 点击遮罩外部区域、点击右上角关闭按钮（✕）或按键盘 `Escape` 键，卡片带有柔和弹性动效自动缩小过渡回原位。
+  3. **英文原版切换与展示打通**：
+     - 解决此前在 V1 快照下 `EN` 按钮置灰不可点击的缺陷，打通 `getEnglishFallback` 映射，恢复了中英双语的无缝切换。
+     - 点击 `EN` 可即时展示英文原版标题、出处媒体、英文报道导语与原报道全文直达链接；点击 `中` 可随时切换回深度提炼中文视图。
+  4. **全量生产构建与部署验证**：
+     - 本地 TypeScript 检查与 `public-ui.test.ts`（26/26）全部绿灯通过。
+     - 在 M1 生产机完成 Turbopack 生产编译，签名生成发布候选 `candidate-v10-20260829-115619`。
+     - 更新 `projection-deployment.json` 与 LaunchAgent 配置，重启服务（PID 4666 端口 3000 监听）。公网 Cloudflare 隧道 200 OK 正常提供服务。
+
+- 🎨 **公开站视觉重塑：恢复图片为主视觉，收拢微型中英文切换，上线手机端上下滑卡交互**：
+  1. **移除卡片顶层语言大切换**：彻底移除折叠态卡片头部显眼的 44px 蓝白大方块 `[中文 | English]`，消除干扰。
+  2. **恢复大图主视觉**：移除 96×64 微缩图，恢复大主图限高呈现（桌面 360px、移动 260px，支持原比与点击放大），无论折叠或展开均保持强烈视觉张力。
+  3. **微型化中英切换**：仅在用户主动展开卡片详情后的提炼标题行（`.tl-zh-head`）右侧，内嵌轻量低调的微型切换胶囊（`.lang-pill`，22px 高，11px 字体 `[中 / EN]`）。
+  4. **手机端 TikTok/Reels 上下滑动体验**：落地 `CardDeck` 85dvh 滚动吸附组件，支持移动端沉浸上下滑卡与时间线双模切换。
+  5. **测试与设计原型**：更新 `src/tests/public-ui.test.ts`（26/26 全部通过）；产出交互式全功能对比原型 `design/ui/F1+1-redesign-image-first-20260829/index.html`。
+- 🚀 **已全量构建并部署上线至固定 M1 生产站**：
+  1. 依据用户授权「你有信心的话可以直接部署」，将前端组件与样式内联至闭集运行时，严格遵守 89 个运行时文件不可变闭包合同。
+  2. 在 M1 生产机运行 `prepare-v10-release-candidate.ts` 完成 Turbopack 生产编译与闭包签名，生成不可变发布候选 `candidate-v10-20260829-110621`。
+  3. 更新投影部署清单 `projection-deployment.json` 与 LaunchAgent 配置，重载 `com.f1plus1.public-beta`（PID 85181 在岗，3000/3001 端口正常监听）。
+  4. 验证通过：公网隧道 `[EPHEMERAL-TUNNEL-URL]` 返回 HTTP/2 200 OK，样式与提炼数据正常呈现。
+- 🔧 **修复展开卡片提示「提炼内容暂不可用」与提示语问题（热修并发布 candidate-v10-20260829-112422）**：
+  1. **根因定位**：生产投影目前服务的是已发布的 V1 快照（未包含 V2 bilingual-pointer）。首页 `fetchPublicFeed` 在遇 503 `PUBLIC_READ_INTEGRITY_FAILED` 时能正确降级至 V1 路由，但 `fetchPublicStory` 在 catch 块中遗漏了 `!isBilingualIntegrityUnavailable(error)` 降级条件，导致点击卡片展开详情时向 `/api/public/stories/[id]?v=2` 请求失败并抛错 503，同时 V1 映射未填入 `localized["zh-CN"]`。
+  2. **代码修复**：
+     - 在 `public-api.ts` 的 `fetchPublicStory` 中补全 `!isBilingualIntegrityUnavailable(error)` 自动降级至 V1 详情路由，并在 V1 映射中完整注入 `leadZh`、`bodyZh`、`keyPointsZh`。
+     - 清理 `feed-experience.tsx` 与 `story-detail-experience.tsx` 中生硬的开发者调试文本 `"英文提炼暂不可用，当前保留中文 LKG。"`，统一展示规范的 `sourceNotice`。
+  3. **生产重发与验证**：在 M1 执行打包生成 `candidate-v10-20260829-112422`，重载 `com.f1plus1.public-beta`（PID 88914）。经回放测试，`fetchPublicStory` 成功返回完整中文提炼导语与要点列表，公网站点已全面恢复正常。
+- 📱 **手机端体验极简化与内容面积最大化（发布 candidate-v10-20260829-113405）**：
+  1. **主页面顶栏彻底极简**：移除主页面常驻的 `[时间线 / 沉浸卡片]` 切换按钮，归拢至页面底部的「设置」抽屉面板（`settings-panel`），支持在「时间线」与「沉浸卡片」模式间无缝切换，保证主页首屏 100% 以内容为主角。
+  2. **最大化手机端内容展示面积**：
+     - 容器与顶栏瘦身：`.app` 左右内边距由 `clamp(16px, ...)` 压缩至 `12px`，顶部内边距减少 60%，时间线 kicker 间距减半，大幅释放首屏宝贵视野。
+     - 图片 100% 满宽与原比自适应：废除此前在移动端强行保留 64px 缩略图列导致主图被严重挤扁压缩的缺陷，单图全面满宽展示（最大高度扩展至 300px~320px），视觉冲击力与阅读沉浸感拉满。
+     - 信息流结构紧凑化：时间戳与分类微标紧凑并排，标题与正文行距专业调优，消除冗余留白。
+  3. **生产构建与发布上线**：在 M1 生产机完成 Turbopack 生产编译并对 89 个运行时文件闭包校验签名，生成并部署发布候选 `candidate-v10-20260829-113405`（LaunchAgent PID 94323 在岗，3000/3001 端口正常监听）。公网 Cloudflare 隧道返回 HTTP/2 200 OK。
+
+## 2026-08-20
+
+- ✅ **RaceFans / The Race 配图已按用户授权接入 v4 热链（代码+live 热修；公开站尚未吃到新图）**：用户确认可以采用这两家配图。The Race 只开 `storage.ghost.io/.../content/images/`，RaceFans 只开 `www.racefans.net/wp-content/uploads/`；分类 RSS 无 enclosure 时从文章 `og:image` 取。不是 v5 media-policy，未开 `pbs.twimg.com` / Instagram / 任意 Ghost 租户。parser 接受 `media:content medium=image` 并从扩展名推断 MIME，缺 `length` 时 `declaredBytes=1`。`rss-real` 15/15、`rss-catalog` 1/1。外科拷贝到 collector `fb50b6a5…c789`、Admin `c8e1b263…097a`、public `5d99dc95…eaed`，投影 receiver 已重启；public 重建 `BUILD_ID=Ywl4g4xcwlpKAPt1e2BF6`。回退在 `[M1-HOME]/F1-1-website/.independent-rss-media-20260820/backup/`。无新 SQL，fingerprint 仍 `396af1d6…f8a9`。网络正常时只读核验：The Race 15/15 有 Ghost 图，RaceFans 文章 og:image 指向 `/wp-content/uploads/`。随后 DoH（`1.1.1.1` / `cloudflare-dns.com`）TCP 通但 TLS 握手超时，采集槽位 `1985788`/`1985789` 四源 `CONNECT_TIMEOUT`，审核库尚未写入新图。采集器/润色已恢复 enable，等 VPN/DoH TLS 恢复后下一槽会拉图并走 DeepSeek→自动初审。未部署 B 图先行、未接 X、未提交。
+
+- 📐 **只处理最新内容（用户确认）**：自动初审继续只扫最新 100 条候选。RaceFans 8 条 8/1–8/13 旧稿（中文稿已有）留在 `pending_review` 不自动发布，不扩大扫描窗口、不补发 On This Day。未改代码。
+- ✅ **RaceFans + The Race 已接入 live 采集→初审→自动发布**：按 Autosport `0005` 模式追加 `0006_independent_rss_racefans_the_race.sql`（SHA-256=`8239f037…3daf`），schema fingerprint `396af1d6…f8a9`。同一 review 库 `dev=16777233/ino=24570709` 升到 `user_version=6`（仍**不是** v5 自动发布合同）。The Race 用 `/rss/` 不是 `/feed/`；两家 0 图。catalog 四源 `live`，Formula1.com 仍 blocked。外科拷贝 `sources.ts`/`schema.ts`/`migration.ts`/`runtime.ts`/0006 SQL 到 Admin+collector，public 另拷 sources+schema 后重建 `BUILD_ID=JH8WFKcKLmZKjbvBUdJlV`。回退在 `[M1-HOME]/F1-1-website/.independent-rss-0006-20260820/backup/`。首两份 generation 69 因投影 receiver 仍载旧 schema 而 `DELIVERY_REQUEST_REJECTED`；receiver 重启后第三份 `op-snapshot-c8e45aa5…` 于 16:27Z `succeeded` 并激活 139 条（Motorsport 87 / Autosport 25 / The Race 15 / RaceFans 12）。公开 feed 首页已出现 The Race；RaceFans 最新稿是 8/16，按来源时间排在后面，详情 200、media 空。未整树覆盖、未部署 B 图先行、未接 X、未提交。
+
+## 2026-08-19
+
+- 🔍 **第三 RSS 只读核验（随后已接入）**：当晚对照后选定 The Race 与 RaceFans；当时尚未改采集器。接入结果见 2026-08-20。The Race 生产 URL 后来改成 `/rss/`，因为 `/feed/` 会 301。
+- ✅ **人工 X 链接收件箱 sidecar 已落地（未接审核库、未装 LaunchAgent）**：用户确认先推进「贴链接、定时消化」，且发现仍由人做。新增 `app/src/server/tweet-inbox/`：drop 文件入队 → 只请求官方 `publish.x.com/oembed`（`omit_script`）→ 抽出纯文本写入独立 sqlite。拒绝 cookie/RSSHub/主页 URL/iframe。现行 RSS `source` 闭集与 Admin/投影 DTO 未改。`tweet-inbox.test.ts` 7/7。本机对 `https://x.com/jack/status/20` 官方 oEmbed 一次直连成功（纯文本、无图、无 iframe）。drop 模板已写到 `~/Library/Application Support/F1Plus1/TweetInbox/drop.txt`。下一步：往 drop 贴真实 F1 公开帖并设 `TWEET_INBOX_IO=true` 再跑 `npm run tweet-inbox-once`；通过后再考虑 LaunchAgent 与审核入库。未提交。
+
+- 🔍 **RSS 新闻主链已自动采集→初审→发布；未再热修代码。** 对照 live 审核库 `dev=16777233/ino=24570709`、`user_version=5`、`integrity_check=ok`：98 条候选全部 `published`，当前稿中文草稿缺口 0，投影 generation 33 已 `succeeded` 并激活。采集器 900s（Motorsport+Autosport，最近槽位 `rss-run-1985699` 双源 200/OK）、DeepSeek refiner 900s（最近 `idle`）、Admin 60s 自动初审+`automaticPublishBatch`、receiver 3102、public-beta 3000 均在岗。今日失败是凌晨 VPN `DNS_REJECTED`×5 + `CONNECT_TIMEOUT`×1，之后 DoH 直连已恢复；另有 05:00 `SCHEDULER_GAP`×2。未跑通的是 X/Instagram/Reddit、v5 media-policy/phase 合同、B 图先行（git 有、未部署）。v4 正在自动发布带 RSS 配图的新闻，这与 v5「有图不能自动发」合同并存，上社交图前仍须另开门，不得 silently 放宽。已把 Spec 运行时态从「自动发布为 0 / 仍需人工点发布」覆盖为 2026-08-19 事实。未提交、未改 LaunchAgent、未接 X。
+- ✅ **公开站重复新闻：聚类此前未进 live，现已放宽规则并热修进固定 M1**：用户仍看到双卡，是因为 live `5d99dc95…eaed` 的 snapshot reader 还在按原始记录分页，git 里的 `event-cluster` 从未拷过去。规则也过严（6 小时、标题汉字三元组 0.28、必须 2 个词表实体）。现改为 18 小时窗口、标题 token Jaccard、拉丁别名、动作/主题族，以及主题冲突时不合并。同 `sourceId` 仍不合并。对照当前投影 98 条合成 80 张卡、18 组双源事件；首页 4 组 Autosport+Motorsport 已合成一张。只拷了 `event-cluster.ts`、`snapshot-adapter.ts`、`types.ts`、`public-api.ts` 并给 live 证据行补了第二源原文。`BUILD_ID=zMkQJ8Nr34iEwoYPx941O`。回退在 `[M1-HOME]/F1-1-website/.public-reader-cluster-20260819/backup/`。未整树覆盖，未改审核库/投影，未部署 B 图先行。`event-cluster` + `public-timeline-order` + `public-api` + `public-ui` 最近一次 39 通过（其中 public-api 两例曾因 5s 超时抖动，单独重跑 17/17）。未提交。
+- ✅ **社交呈现选定 B 图先行，已收进正式时间线（未部署 live）**：新闻折叠态标题+导语+96×64 露图；社交/名宿/趣事先出主图、一句中文、展开只露原帖。不嵌 iframe。v0.2 主图 360 合同未改。未部署。
+- 🎨 **事件/社交卡四版 Demo 已落盘**：`design/ui/F1+1-social-event-card-demos-20260819/`。同一条时间线对比 A 同壳、B 图先行、C 一句压图、D 挂事件。默认打开 B。无 iframe、无外链图、不改 v0.2 冻结稿、不进 app。待用户看方向。
+- 📐 **用户 13:07 锁定**：时间线不嵌官方推文 iframe；社交/带图内容走「规则筛选 → 审核 → 自动发布」。不是「永远只人工点发布」，也不是「抓到就倒进时间线」。与 v4「有图不能自动发」冲突，上社交图前必须另开 media-policy successor（白名单 + 签名代理 + 0/1/4），不得 silently 放宽现行门。方向见 [proposed ADR](decisions/system/2026-08-19-F1+1-社交呈现与媒体自动发布-proposed.md)。
+- ✅ **方案 1 事件卡已在 git 工作区落地（未部署 live）**：公开读路径用确定性词表/三元组把双 RSS 同一赛事新闻合成一张卡；证据行 `Motorsport.com · Autosport`，展开后第二源原文链接，详情仍保留被藏那篇。不改审核库、不新开投影 generation。`event-cluster` + `public-timeline-order` + `public-api` + `public-ui` 共 34 通过。同 `sourceId` 不合并，所以 SQLite/快照页级一致测试仍是 12+3。未整树部署。
+- 🔍 **X 信源：GitHub 上没有可上生产的免费方案**。Nitter / RSSHub Twitter 路由 / RSS-Bridge / twikit 都还在，但 2026 年都靠 guest token、登录 cookie 或未文档化 GraphQL，且会随 X 改包每周碎一次。这和 Spec「不绕过访问控制」、安全部 8/2 把 RSSHub 通用路由标 Red、8/8 研究把 X 标 `needs_user_auth + needs_payment` 一致。本机 RSSHub 在跑，但生产 collector 未接线。更优路径是：59 条白名单先当目录不采集；新闻继续走 RSS；X 用官方 embed 做人工精选；若要自动监听只开官方 API + `@F1`/车队闭集 + Filtered Stream + 预算帽。未改代码、未接 X、未付费。
+- 🔍 **对照 AIHOT 后的采集结论**：GitHub `KKKKhazix/khazix-skills/aihot` 只是 Agent Skill/API 合同，不是服务端采集器。公开合同能确认精选/公开池分层、`publishedAt`/`discoveredAt` 双时间、72 小时慢推信源归位、事件聚簇（`sourceCount`）、正文按权利门禁、爆文榜不进公开池。服务端实现未开源。结合 X 调研，不建议刮 X 或把 AIHOT 当上游；更优是事件卡合并双 RSS，以及把社交当信号/官方 embed。未改代码、未接外部 API。
+- 📐 **三方案复评（用户 8/19 13:03）**：方案 1 事件卡可做。方案 2 社交对产品设定有价值，须用符合 v0.2 时间线的不同卡片密度呈现，不进时间线嵌官方推文框。方案 3 可做但图片是主展示；应对齐 v0.2「图片是主要展示内容」和 P-05（官方媒体 URL / 签名代理优先，不刮盘）。与现行 v4「有图不能自动发布」、公开投影 `media.max(1)` 冲突，上社交图前要先开门。未改代码。
+- ✅ **Autosport 已作为第二 RSS 源接入 live 审核库**：新增 `0005_second_rss_autosport.sql`（不是预留的 v5 自动发布 0005）。隔离 live 副本先迁过，指纹 `45c3a15f…3601`；Admin kickstart 后同一 `dev=16777233/ino=24570709` 升到 `user_version=5`，76 条 Motorsport 稿未丢。采集器一次双源：Autosport `20 new`，Motorsport `14 updated / 6 duplicate`，随后 DeepSeek 补齐中文稿并自动初审。回退在 `[M1-HOME]/F1-1-website/.autosport-0005-20260819/backup/`。Formula1.com 仍 blocked；DNS allowlist 未放宽 198.18。
+- ✅ **公开站已读到 generation 19（Autosport + 今日 Motorsport）**：投影 11:48 已激活 96 条（Autosport 20 + Motorsport 76），但公开读者仍只认 Motorsport schema，`/api/public/feed` 报 `PUBLIC_READ_INTEGRITY_FAILED`。只从 collector 拷了 `rss/sources.ts` + `review-real/schema.ts` + `mapping.ts` 到 public release `5d99dc95…eaed` 后重建，`BUILD_ID=ylxPSrAloiIj6vydEC2bd`。本机与隧道 feed 现为 12 条混源、按 `sourcePublishedAt` 降序，首页/详情 200。回退在 `[M1-HOME]/F1-1-website/.public-reader-autosport-20260819/backup/`。库身份仍 `dev=16777233/ino=24570709`。采集器后续槽位全 duplicate，下一条新/更新稿才会出 generation 20。
+- ✅ **Motorsport 采集已用直连 DoH 恢复**：采集器绕过 VPN fake-ip，仍拒绝非公网地址。今日成功槽位含 `rss-run-1985669` 与双源 `1985671`/`1985672`。
+- ✅ **公开站排序/去重 A+B 已部署到固定 M1**：切片 A `4b37f72`（来源时间排序 + cursor v2 `timelineAt`）、切片 B `6b6e4b2`（隐藏重复中文提炼）。live public release 仍是 `5d99dc95…eaed`，A+B 之后又补了双源读者热修。
+- ✅ **v4 自动发布已接到 Admin 并跑通存量**：在现有 `releaseNow` 上增加 `automaticPublishBatch`（actor=`system-auto-publish-v1`，每批最多 20）。这是 v4 运行切片，不是 v5 合同。回退在 `[M1-HOME]/F1-1-website/.auto-publish-v4-20260819/backup/`。
+- 📐 **v0.3-draft rev2 设计候选已落盘待确认**：`design/ui/F1+1-v0.3-timeline-increment-draft-20260818/` 含折叠露图、右侧分类下拉、赛事顶栏平时/周末两态与 `race-detail.html`。v0.2 冻结基线未改。
+- 🧪 **赛事条数据层最小切片已进 `app/src/modules/race/calendar.ts`**：静态 2026 R12/R13 UTC 场次 + 六态状态机；`src/tests/race-calendar.test.ts` 7/7 通过。未接入公开 feed，避免和 A/B 热修文件缠在一起。
+
+## 2026-08-16
+
+- 📐 **发布视频 v0.3「光标驱动交互之旅」草案已落盘(用户直接委派,待确认)**:用户要求聚焦页面设计/交互体验/功能设计,加入动态转场、缩放与模拟鼠标操作。先完成 GitHub 调研(`screenstudio-alt-skill` 的点击簇自动 zoom/弹簧相机/合成光标涟漪/竖版跟随、OpenScreen、video-shotcraft 镜头卡库等,结论:坚持 Remotion 程序化合成主线,录屏路线仅作花絮备选),随后产出 `design/video/F1+1-launch-cursor-showcase-v0.3/`:`storyboard.md`(26 秒 7 镜头:进站→卡片特写→主题切换→详情之旅→响应式→收束,只展示公开站真实能力)、`capture-plan.md`(7 项真实交互状态采集,同一生产候选身份门,hover 必须真实渲染)、`motion-cursor-spec.md`(光标/相机 token,继承 v0.2 全部约束)、`sources.md`(调研来源与权利边界)、`decision-card.md`(5 个确认问题)。v0.2 冻结资产与合同未动;Motorsport 权利门、静音、无域名 CTA 边界不变;未采集、未渲染、未安装任何依赖。
+
+## 2026-08-14
+
+- 📐 **自动发布合同 APC8 首个P1已形成无环release-pair身份successor，等待APC10从头复审**：输入`scratch/TASK-20260814-AUTO-PUBLISH-CONTRACT-REVIEW/security-review-apc8.md` SHA-256=`87501099946b12798ab5e6f1db437753a6a6ab58f12752bb7360884f3f8e88a7`确认APC7的双向`pairedManifestSha256`会形成不可构建SHA固定点。新增`ADR-M5-BACKLOG-AUTO-PUBLISH-003`与实施合同v0.3：full/fallback各自生成独立canonical manifest，安全role精确为`full_v5|v5_manual_only_fallback`，只共享由预冻结Git/tree、migration/schema、operation/fresh/outbox合同和Node target等兼容输入计算且不含任何最终manifest/receipt SHA的`pairContractRoot`。两份manifest封存后在两个release closure外生成`release-pair-receipt-v1`，记录两manifest最终SHA与两边release/content root；receipt最终SHA由外部task/deployment manifest锚定且不回写。M1需分别stage verifier+HTTP/DB smoke，再由独立pair verifier重算manifest/receipt；0005入口把外部receipt SHA和两manifest SHA作为不可覆盖输入。closed canonical JSON、duplicate/unknown key、0600/nlink1/realpath、no-follow FD及replacement/drift负例已冻结。001/002/v0.1/v0.2保持原字节；本次未改app/tests/DB/M1/deploy/key，runtime继续`disabled`，APC8其余first-P1-stop维度不继承PASS。
+- 📐 **自动发布合同 APC6 首个 P1 已形成 v5 双层回退 successor，等待 APC8 独立复审**：输入 `scratch/TASK-20260814-AUTO-PUBLISH-CONTRACT-REVIEW/security-review-apc6.md` SHA-256=`81a066974c89c6f216ba4bd14829d4c7640cda70a7a063be9be3252e627b88dd` 确认现行 v4 opener/repository/collector 无法安全打开或写入 v5，原“回到现行 manual-only runtime并忽略v5附加表”主张不可执行。新增 `ADR-M5-BACKLOG-AUTO-PUBLISH-002` 与实施合同 v0.2：0005 COMMIT前故障只事务回滚并复核精确v4；COMMIT后普通代码回退只能切同候选、预构建且stage演练通过的`v5-manual-only-fallback`，旧v4永不打开v5。fallback完整理解v5 closed union/fresh/outbox producer，保留人工HTTP review/publish/correct/withdraw、fresh pause/stop、只读状态和producer合法outbox的same-delivery sender；硬禁internal auto/system auto、进入或恢复backlog/live、collector/refiner/自动worker与collector网络。迁移前备份恢复只作显式丢失窗口和audit fork的灾难恢复。001/v0.1保留不可变历史，本次没有新增用户产品选择，也没有改app/tests/DB/M1/部署/密钥；full/fallback、0005和运行验收仍未实现，runtime继续`disabled`。
+- 📐 **自动发布合同 APC4 首个新 P1 已完成产品修订，等待 APC6 独立复审**：输入 `scratch/TASK-20260814-AUTO-PUBLISH-CONTRACT-REVIEW/security-review-apc4.md` SHA-256=`3424c861bbf823bcce1366e14d61a2452c18a1756165422a03e939c4eeb05768` 已确认 APC2 原子栅栏关闭，并指出 operation channel/actor/fresh/legacy provenance 仍非 closed union。ADR、实施合同和 Spec 现冻结 `http_post|internal_auto_review|internal_auto_publish|legacy_http_shaped_unknown` 四通道矩阵：所有 phase control 只允许 manifest operator 的 HTTP fresh WebAuthn，且六值 controlAction 绑定 request/resource hash、fresh evidence和phase audit；auto-review revision/approve/reject 只允许 `system-auto-review-v1` internal；auto publish batch 只允许 `system-auto-publish-v1` internal；任何交叉写前拒绝。internal HTTP 字段全 null并使用 closed result DTO，旧 HTTP-shaped 行保持原字段且 provenance unknown。v5 重建 admin_operation/audit_event 会改变物理字节，合同只保证旧字段值与 canonical audit chain/FK/sequence相等；高风险 HTTP operation 持久绑定 fresh evidence与actor。本次仍未改 app/DB/M1/部署，runtime 继续 disabled，实现状态不升级。
+- 📐 **自动发布合同 APC2 首个 P1 已完成产品修订，等待 APC4 独立复审**：输入只读安全报告 `scratch/TASK-20260814-AUTO-PUBLISH-CONTRACT-REVIEW/security-review.md` SHA-256=`77675c89fd820ca25ea619f62cc5abda0a7371fa3458fbc0d929af1fd6ca3dec` 指出 `disabled→backlog` 与 collector claim 之间存在 TOCTOU。ADR、实施合同和 Spec 现冻结同一 review DB 的单一 writer-lock 栅栏：phase 事务必须在一个 `BEGIN IMMEDIATE` 内重读 singleton/source fence、证明 0 running slot并一起写 cutoff/phase/audit；collector claim 必须在自己的 `BEGIN IMMEDIATE` 内先读 singleton，`backlog|paused` 时 0 slot并在 DNS/socket 前 `externalCalls=0` 返回。barrier 验收固定覆盖 claim 先锁与 phase 先锁两种次序；已在 disabled claim 的 collector 必须先提交 terminal，新的 phase 事务才可成功。本次仍只改产品文档，没有修改 app/DB/M1/部署；runtime 继续 `disabled`，实现 P1-blocker 未升级。
+- 📐 **存量优先确定性初审→条件自动发布 successor 已 accepted，实现仍是 P1-blocker**：产品部依据只读差距审计 `scratch/TASK-20260814-AUTO-PUBLISH-GAP/audit.md` SHA-256=`b989068960bb02d98b6e3f7565eef2f9587b9e4f15b41a35d9ac6a39090d4f88` 和 2026-08-14 当前主会话用户授权（message ID unavailable），新增 [ADR-M5-BACKLOG-AUTO-PUBLISH-001](decisions/system/2026-08-14-F1+1-存量优先确定性安全初审与条件自动发布-successor-accepted.md) 与[实施合同 v0.1](spec/F1+1-存量优先确定性安全初审与条件自动发布实施合同-v0.1.md)。决定只开放现有白名单源的 strict schema/URL/media identity 与 ASCII C0/C1/bidi 控制符闭集；unknown source/URL/media/policy 均 fail closed，不声称事实核查、版权判断或广义内容审核。当前 v4 没有 rights/license/policy 机器字段，所以非空 media 固定 `MEDIA_POLICY_UNKNOWN`/`waiting` 并阻止系统发布/live，只有当前无 media candidate 的精确 0 图路径可通过初版 media/policy 门。运行合同为 `disabled|backlog|live|paused`、默认 disabled、v5 additive singleton/cutoff/max20；backlog 时 collector 在 DNS/socket 前零外联，oldest-first 处理 cutoff 存量，`waiting|manual_override|failed` 阻止 live。`system-auto-publish-v1` 只发布当前 source revision/full hash + latest Bundle + approved Decision + queued Publication 全 CAS 一致的项，不扫 raw queued、不伪造 fresh receipt；人工按钮仍需 fresh WebAuthn。每批只有一份全量 snapshot/outbox，unknown 只 reconcile 同一 delivery，public 保持 last-known-good；存量清零后下一自然 900s 才恢复抓取。本次没有修改 app/测试/DB/M1/部署/密钥；M1 仍 `user_version=4`，实际自动发布为 0。
+- ✅ **自动初审、拒绝原因回看和人工恢复已在固定 M1 启用**：规则只检查现有严格数据合同和不可见/双向文本控制字符；缺中文稿保持等待，安全通过只进入 `approved + Publication queued`，公开投影仍需人工发布。生产 catch-up 对 37 个当前来源版本全部通过、0 安全拒绝；另 15 个缺失当前中文稿由 DeepSeek 批处理补齐，最终 `missingCurrentDrafts=0`。生产状态为 candidates 39（approved 37 / published 2）、decisions approved 45、publications queued 39 / published 6；`published_projection=6`、`projection_outbox=6` 与启用前零漂移。collector/refiner 均恢复 `StartInterval=900s` 且主动周期 exit 0；Admin/receiver/public 继续分别只监听 `127.0.0.1:3101/3102/3000`。自动或人工拒绝继续保留原因；人工恢复生成新 revision，同一来源版本不会再次自动打回。
+- ✅ **RSS 采集回滚故障已修复并在固定 M1 完成真实成功周期**：定位到 Motorsport feed 会精确回放历史 payload；旧 collector 会为同一候选/历史 payload 再插一条媒体版本，触发 `RSS_MEDIA_IDENTITY_INVALID`，并把整个 20 条事务降级为 `SQLITE_FAILURE`。`RssRepository` 现把精确历史 payload 回放计为 duplicate、保留当前较新 revision；隔离数据库逐条复现锁定 5 个冲突项，focused Vitest 9/9 与 Node24 typecheck 通过。M1 live collector 补丁 SHA=`de681481…39d3`，旧字节备份在 `[M1-HOME]/F1-1-website/.rss-collector-fix-20260814/backup/repository.ts`；真实 run `rss-run-1985203` 成功，50 条源记录中选取 20 条，`updated=12 / duplicate=8 / new=0 / externalCalls=1`，900 秒 LaunchAgent 保持加载且 last exit=0。
+- ✅ **`REVIEW_CHINESE_REQUIRED` 已改为可操作中文反馈，当前中文草稿积压清零**：Refiner 从只处理 `pending_review` 扩为处理 `pending_review/approved/published` 的缺当前版本草稿项；Admin 单条与批量发布在发请求前显示“等待中文整理”数量，继续保持整批全成或全不成。修复部署后先补齐原有 3 条缺口，再在真实 RSS 成功周期后逐条补齐 12 条新版本草稿；每条均取得 `deepseek-chat` generated 收据且恰有 1 次外调。最终 39 个候选在各自当前 source revision 上的 DeepSeek 草稿缺失数为 0；DB 保持同一 dev/inode、`user_version=4`、`integrity_check=ok`。Admin、receiver、public 与 Quick Tunnel 均保持原有 loopback/运行边界。
+- ✅ **审核台发布状态与批量发布修复已部署到固定 M1 Admin**：只在现行 Admin release `c8e1b263…097a` 原子替换 `index.html`、`app.css`、`app.js`、`repository.ts`、`schema.ts` 五个文件，并仅 `kickstart` `com.f1plus1.admin-service`。Admin 从 PID 18023 更新为 PID 25127，继续唯一监听 `127.0.0.1:3101`；固定 Tailscale 页面与新静态资源均返回 `200/no-store`，未认证 session 正确返回 `401`。候选已关闭来源更新后旧 Bundle 误用、批量范围/反馈、待审核与已发布混排、同候选多版公开投影并存四类问题；生产备份位于 M1 `[M1-HOME]/F1-1-website/.admin-review-fix-20260814/backup`。review DB 保持同一 `dev=16777233/ino=24570709`、`user_version=4`、`integrity_check=ok`，public-beta、receiver、Quick Tunnel 与 RSS jobs 的 PID/状态未因部署改变。真实 Face ID/Passkey 单条与批量发布仍需用户在 iPad/M5 页面执行，部署过程没有代替用户发布内容。
+- ✅ **审核台一键/批量通过已部署到固定 M1 Admin**：只覆盖 live Admin release `c8e1b263…097a` 的 9 个审核 UI/后端文件并 `kickstart` `com.f1plus1.admin-service`。新 PID 监听 `127.0.0.1:3101`；public-beta 3000 与 receiver 3102 未动。回退副本在 M1 `[M1-HOME]/F1-1-website/.admin-quick-release-20260814`。iPad 需硬刷新同一 Tailscale Admin 入口。
+- ✅ **审核台一键/批量通过**：详情主按钮改为「通过并发布」（保存当前中文稿 → 批准 → 一次通行密钥提交投递）。队列支持勾选已有审核版本的候选，一次批量通过并发布最多 20 条，仍只生成一份公开快照。旧的「仅批准 / 拒绝」保留。未改自动发布。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 2026-08-13
+
+- ✅ **小范围可读性收口（本机代码）**：公开时间线不再把摘要复制成「中文提炼」；少于 12 条时不再显示「已经到底了」。新发布会把 DeepSeek `keyPointsZh` 写入公开投影，Admin 详情显示草稿要点。新增 `rss/catalog.ts` 作为下一刀信源清单（Autosport / RaceFans / 手工投递 ready，Formula1.com blocked）。未改 M1 运行库、未新开真实采集、未自动发布。
+- ✅ **公开站已严格回归用户确认的 v0.2 冻结视觉并部署到固定 M1**：设计身份为 `design/ui/F1+1-v0.2-全站设计/F1+1-v0.2-final-20260808.html`，SHA-256 `5a84bfb2…8cb1`；提交 `52e6549…` 已普通非 force 推送。M1 当前运行内容寻址 release `5d99dc95…eaed`，`public-beta` 只监听 `127.0.0.1:3000`，health 继续为 `accepted-public-real-snapshot`；Admin 3101、receiver 3102、review DB、projection generation 1 与 Quick Tunnel 均未修改。主页和独立详情已统一回无外框的时间线视觉，移除五分类按钮、灰色原生按钮/卡片、breadcrumb、status badge 和可见 `PUBLIC API` 技术标签；真实中文标题、中文摘要和来源图片保留。生产 URL 同一候选已完成主页/详情 × 深浅 × 390/1024/1440 共 12 格截图与 DOM 门，横向溢出、分类控件、breadcrumb、status badge、可见旧技术标签均为 0；实体 iPhone/iPad Safari 最终主观复看仍由用户完成。详细收据见 [部署报告](collaboration/部门/开发部/报告/2026-08-13-53677C-公开站v0.2冻结视觉生产部署报告.md)。
+- ✅ **第一版真实内容闭环已在固定 M1 上形成并对外可用**：真实 RSS 继续按 `900s` 周期采集，候选进入同一 owner-only SQLite 审核库；DeepSeek 中文整理、人工修订、批准、fresh re-auth 手动发布、单 sender 投递、generation 1 签名投影与公开 reader 已完成一次真实业务闭环。当前已发布文章具有中文标题、中文摘要、原文链接和真实 HTTPS 来源图；公开 feed、详情 API 与详情页均返回 `200`，Admin/internal 路由在公网继续为 `404`。
+- ✅ **Admin 私有入口与双移动端已实机可用**：Admin 固定入口为 `https://[PRIVATE-ADMIN-HOST]`，只经 Tailscale Serve 到 M1 loopback `127.0.0.1:3101`；receiver 为 `127.0.0.1:3102`。唯一 review DB 已在原 dev/inode 上迁至 `user_version=4` 且 `integrity_check=ok`。用户已在 iPhone 与 iPad 通过同步 Passkey/Face ID 实际进入后台；两台设备仍分别绑定独立 Tailscale 设备身份与 session。M5 浏览器采用同一同步 Passkey 流程，但本轮没有用户实机完成收据。
+- ✅ **公开真实站已切换到内容寻址 release 并完成移动端修复**：发布分支 `codex/first-public-release` 当前为 commit `fb0a938fa42fe9d28a8fe675aa963d5ba715aabb`，远端已同步；M1 live release root 为 `a7540b2e25cd88874986fcf3197ec8cabebc3886f956bdf6c875c5c949c94e3c`，health data gate 为 `accepted-public-real-snapshot`。来源图现在渲染真实 HTTPS 图片，公开文案已移除 synthetic 误导语义；公开页与 Admin 已分别修复 390px 长 ID/壳层宽度问题。390px 设备仿真复验中首页和详情 `document.scrollWidth=390`、越界元素为 0，真实图片自然尺寸为 `1200×799`。
+- ✅ **备份在 schema v4 上继续运行**：M5 异机加密备份已在发布后得到新的 `backup-complete`，数据库 `integrity=ok`、`userVersion=4`，并通过 runner 内置的随机隔离解密与 SQLite 校验。当前备份闭包仍只覆盖 review SQLite，没有把 Public `active.json`/generation 文件纳入同一恢复点；因此只能宣称数据库可恢复，不能宣称公开投影灾难恢复已完整闭合。
+- ⚠️ **当前对外地址边界**：公开站仍使用 Cloudflare Quick Tunnel，地址可能随隧道重启变化且无 SLA；Admin 的 Tailscale HTTPS 地址已经固定在 tailnet 内。自有域名、公开投影同边界备份、M5 实际 Passkey 登录确认和更多真实文章属于后续加固，不阻断当前初版核心闭环使用。
+
 ## 2026-08-12
+
+- ✅ **M1 Admin/投影当前时态已同步，运行出口仍未闭合**：`F3FA8B/B5FA49/B91E89/34285A` 已关闭 deployment-v3、四根解耦、唯一固定 review DB existing-only opener 与 Serve app-cap parser 的本地候选；正式静态 Admin UI 及两项 P1/busy P2 也已闭合。`F031E2` 已在固定 M1 原子固化并验签未加载 `8e70b2b7…30a` release；`C0BACB` 证明唯一 review DB 为 v1/integrity ok、旧 synthetic rollback 与 live plist 可读，3101/3102 无 listener，Admin/Public roots、keypair、deployment 不存在，CertDomains=0、Serve/Funnel 空、目标 app-cap=0。因此 50 项 Function 计数保持 `20/6/24`，未运行用户出口不升级。当前唯一用户门是提供受控 capability DNS 域名并授权受限管理面只读核验真实 login、M5/iPhone selectors、device approval、Grants/shared-node、policy hash 与 CertDomain；通过后才可受控生成 key/sourceRefs/opaque refs，再依次 preflight、prepare-only、load、Passkey 双端、generation 1/manual publish 与 public cutover。
 
 - ✅ **真实审核后端本地候选已完成，产品真值已机械对齐，尚未部署**：数据七表与 mapping、Review Repository/route facade、ProjectionReceiver、PublicSnapshotRepository 和完整 `sqlite_schema` 启动指纹均已落地；唯一端到端临时库正例、固定 Node24 typecheck 与最终限定安全门已有 `C334CE/739DF6/7B47E0` ACK 收据。产品合同的三个客户端 Bundle CAS 字段现与 schema 一致：`latestBundleVersionTag`、`bundleVersionTag`、`approvedBundleVersionTag`，均为 12 位小写十六进制，完整 64 位 hash 继续只由服务端复算和关联。九项 Admin/恢复 Function 继续为 `P1-blocker`：固定 M1 真实库尚未迁移，正式 opener/HTTP server、Tailscale/passkey、Admin UI、投递回执运行和 public origin 切换均未完成；当前公网仍只读 synthetic，真实自动发布为 0。
 
@@ -13,7 +225,7 @@
 
 ## 2026-08-11
 
-- 🌐 **第一版公开 synthetic beta 已通过 SSH 部署到固定 M1 并形成常驻公网入口**：发布分支 `codex/first-public-release` 已同步 GitHub，M1 非 iCloud 运行目录以精确 release package 部署；官方 arm64 Node 24.18.0、一次 `npm ci`、一次 bootstrap、一次 production build均通过。`com.f1plus1.public-beta` 与 `com.f1plus1.quick-tunnel` 正在运行，`com.f1plus1.receipt-refresh` 按 12 小时计划且 last exit=0；应用只监听 loopback。常驻临时地址为 `https://firmware-arch-eagles-slot.trycloudflare.com/`，公网 home/detail=200、Admin session=404。M1 当前接交流电且 AC/电池 `sleep=0`。该 URL 属 Quick Tunnel，重启可能变化、无 SLA，中国大陆异网可达性仍需真实手机网络验证；真实采集、AI 摘要、Admin UI 和自动发布仍未上线。运行与回退见 `docs/runbooks/F1+1-固定M1公开Beta-SSH运行收据-v0.1.md`。
+- 🌐 **第一版公开 synthetic beta 已通过 SSH 部署到固定 M1 并形成常驻公网入口**：发布分支 `codex/first-public-release` 已同步 GitHub，M1 非 iCloud 运行目录以精确 release package 部署；官方 arm64 Node 24.18.0、一次 `npm ci`、一次 bootstrap、一次 production build均通过。`com.f1plus1.public-beta` 与 `com.f1plus1.quick-tunnel` 正在运行，`com.f1plus1.receipt-refresh` 按 12 小时计划且 last exit=0；应用只监听 loopback。常驻临时地址为 `[EPHEMERAL-TUNNEL-URL]`，公网 home/detail=200、Admin session=404。M1 当前接交流电且 AC/电池 `sleep=0`。该 URL 属 Quick Tunnel，重启可能变化、无 SLA，中国大陆异网可达性仍需真实手机网络验证；真实采集、AI 摘要、Admin UI 和自动发布仍未上线。运行与回退见 `docs/runbooks/F1+1-固定M1公开Beta-SSH运行收据-v0.1.md`。
 - 🚀 **用户已选择固定 M1 MacBook 作为第一版临时 beta 主机，部署必需缺口已在 release 分支关闭**：已创建 `codex/first-public-release`。只读预检确认 UU 远程中的目标设备在线、为 arm64，已安装 Git、Homebrew Node/npm 与 gh；现有 Node 为 22.23.1，目标部署必须换用项目固定 Node 24.18.0。新增两份可公开的纯 synthetic legacy SQLite bootstrap 资产、原子 0600 本地安装入口、legacy receipt 自举与每 12 小时刷新入口、M1 用户级 launchd plist 生成器；production proxy 对公开 profile 增加 GET/HEAD 路径 allowlist，Admin 和其他路径统一 404。新代码固定 Node24 typecheck PASS；唯一 production build PASS；最小真实 HTTP 为 health/home/detail=200、Admin=404，随后服务和 3000/3001 已清理。公网隧道/域名仍待确定，尚未宣称公网已上线。
 - ✅ **第一版公开站已形成最小 production 可部署候选，公网目标待确定**：`TASK-20260811-BB3641` 已在不重复 lint/typecheck/build/全量测试的前提下复用唯一 production build，完成首页、24 条双页 feed、分类筛选、详情 API、详情页 SSR 加载壳及真实缺失内容 404 的最小 HTTP 闭环；服务已停止，3000/3001 端口和运行期 SQLite sidecar 已清理，三份 canonical DB 与 `package-lock.json` 字节零漂移。放行范围仅为 `public-multimedia-synthetic` 公开只读站，内容仍为 synthetic；Admin API/页面、真实采集、自动发布及未完成的 390px 设计 successor 不进入本次候选。下一步只需确定独立云服务器或固定 M1 临时 beta 二选一，再按 `docs/runbooks/F1+1-第一版快速上线部署方案-v0.1.md` 执行公网部署、最小上线探针与可回滚发布。
 
@@ -189,3 +401,88 @@
 - ✅ 研究部已完成发布视频(launch video)方案只读调研(用户 2026-08-09 主会话直接委托,无正式 TASK):GitHub 上该场景已收敛为"Remotion 程序化视频引擎 + Agent Skill 方法论"链;官方 anthropics/skills 无 motion/视频类 skill,用户所指最可能为 vibe-motion/skills 或 iart-ai/motion-skills,对"网站发布视频"最对口的是 video-shotcraft(4257★,Apache-2.0,152 镜头卡+8 阶段流水线+判例审美法则);"优质发布视频"已提炼为可操作标准(5 幕结构/节奏与质感判例/反 AI 模板味黑名单/真实资产纪律/逐镜头静帧验收);Remotion 对 ≤3 人组织免费可商用,vibe-motion 与 remotion-dev/skills 许可证未声明列为 B 级待复核。已产出[调研报告](collaboration/部门/研究部/报告/2026-08-09-发布视频方案与视频制作Skill生态调研.md)与[设计部派单建议书](collaboration/部门/研究部/报告/2026-08-09-设计部发布视频任务建议书.md)(任务 A 方向设计 `user_confirmed` + 任务 B 成片制作 `user_required` 双门禁拆分,含可直接执行的 enqueue 命令);本会话非已登记统筹会话,未越权创建 TASK JSON,待统筹部派单。
 - ✅ 研究部已完成 `TASK-20260809-B05A67`《专用 Admin MacBook 私有访问与异机备份候选》只读调研：基于 Tailscale、Headscale、WireGuard、SQLite/Node、restic、Backblaze 与 Apple 官方资料形成三套候选，推荐先验证托管 Tailscale 的网络适配，再验证 Headscale + 自托管 DERP，纯 WireGuard 仅作冷备；P0 网络观测不能替代五分钟签名 freshness 硬门，共同备份管线要求五分钟一致快照、异机加密、manifest/hash、远端认证回读、周期完整验证与隔离恢复。官方资料均未保证中国大陆稳定可达，真实 Mac/iPhone 双端链路、价格/地域、restic/B2 Object Lock 组合与 RPO/RTO 均保持 Unknown，只有唯一 production manifest 获用户批准后才能实测；本轮未登录、安装、购买、改网络、运行真实探针或上传数据。
 - ✅ **多媒体本地 synthetic 后端 `DEV-MM-01..03` 已通过独立门禁，`DEV-MM-04` 继续受视觉确认门禁**：数据前置 `TASK-20260809-385B52`、开发 `TASK-20260809-BA9999`、安全 `TASK-20260809-4A5381`、测试 `TASK-20260809-B98C66` 均已由统筹 ACK。现行候选包含物理隔离的 `public-multimedia-synthetic` SQLite、exact `0001/0002/scoped-0003`、原子 0/1/4 图 seed、5 个 synthetic MediaCandidate、Repository 与默认 V1/精确 V2 的 feed/detail/related API；第五图、hash/rights/safety/order、非法 Accept 与链损坏均按合同 fail closed。独立门禁结论为 `P0=0/P1=0`，旧 M3/public-synthetic DB 与 migration/receipt 零漂移，运行收据为 `externalCalls=0/realMedia=0/writesToBase=false`。公开前端 `DEV-MM-04`、浏览器交互和视觉尚未获用户确认，公开页面媒体导航/lightbox 不得写成完成。P2 保留：`app/.local/f1plus1-public-multimedia-synthetic.pre-update-20260809.sqlite` 不被 runtime 选中但增加留存/备份/误取风险；Turbopack NFT 动态本地路径 tracing 与最终部署包内容尚未验证。真实媒体、provider、飞书 Base、Admin、RSS、发布、部署与外部 I/O 继续 closed。证据：[数据报告](collaboration/部门/数据部/报告/2026-08-09-M3与public-synthetic数据库及closed-receipt独立复验报告.md)、[开发报告](collaboration/部门/开发部/报告/2026-08-09-DEV-MM-BACKEND多媒体独立profile与V1-V2-API完成报告.md)、[安全报告](collaboration/部门/安全部/报告/2026-08-09-多媒体profile与V1-V2-API独立安全复验报告.md)、[测试报告](collaboration/部门/测试部/报告/2026-08-09-B98C66多媒体profile原子seed与V1-V2-HTTP独立验收报告.md)。
+
+- ⚠️ **2026-08-22 R6 发布闭包与六文件 typecheck 修复已按冻结身份集成到共享工作树，但 build gate 仍未抬绿**：R6 current-preimage `21/21`、17-hunk decision map/replay 与 formal artifacts 复核通过；保留 `transport.ts` 两处 `15_000ms` bound 和 Admin manifest 精确 `97` assertion。六文件 typecheck 修复已独立复核；`rss-collect-once.ts` 的 source-id 修复由 R6 merged bytes 已携带，RSS transport 的重叠 hunk 由 exact 三方结果叠加两处 Node24 类型注解修复。精确 Node24.18.0/npm11.16.0 下 full typecheck、聚焦 lint、RaceFans/RSS production-shaped 36/36 测试与隔离 Next build 通过。完整四文件 R6 focused suite 在共享环境未通过：共享 `app/.env` 触发预期 unapproved-env fail-closed，隔离 current candidate 还暴露 `ADMIN_RELEASE_RUNTIME_FILES` 实际 114 与冻结 97 assertion 的契约漂移及两个 public-install 超时；因此 release build gate 保持 `NOT PASS`。未执行生产、M1、真实外网、真实数据库写入、服务/LaunchAgent、发布或付费 API；完整 Vitest 的既有 14 项阻断也未改写。精确收据与 manifest 见 `scratch/2026-08-22-release-integration-r6-typecheck/`。
+
+## 2026-08-23 successor 工程验证更新
+
+- ✅ 在物理隔离 clean tracked single-parent candidate-4 上完成 successor evidence closure：精确 Node 24.18.0/npm 11.16.0、offline `npm ci`、clean causal Next build、Admin manifest/stage verifier、Public closure、target-stage self-contained verifier、RaceFans production-shaped、focused lint、full typecheck 与最终 3-file focused Vitest 全部通过。最终 3-file suite 在同一最终 `.next` 上为 26/26；RaceFans production-shaped 为 36/36。
+- ✅ 当前 release identity 为 Admin 113 与 Public 82。Admin path-list root=`65108cd552f9302990bf397b1fa6ddfda8347c0b0e46c6b53d6a308640813d21`；Public path-list root=`3bfa3d74898c13576f79de8efde27907a7a5da885af19736adff3d99145587a0`。旧 R6 的 `96/98/stale97/114` 数字不再代表当前 successor；旧 `97` 警告保留作历史事实，不能阻断已独立验证的 113 合同。
+- ✅ target stage 只使用收据中标注 `disposable=true` 的临时测试签名；没有生产密钥因此没有伪造生产签名。服务、LaunchAgent、M1、生产、真实数据库写入、部署、真实外网和付费 API 均 `NO`。legacy `public-release-bootstrap.ts` 是 local synthetic/legacy 命令，未进入当前 Admin/Public closure。
+- ✅ 正式证据位于 `scratch/2026-08-23-release-successor-evidence/`：`report.md`、`receipt.json`、`manifest.sha256` 及 `evidence/` 下的 manifest、path-list、closure、verifier、target-stage 与测试日志。共享工作树既有脏改动保留；本任务唯一新增代码验证修复是 Admin 测试 fixture 的 macOS `cp -cR` copy helper，避免扩大固定 60 秒测试门或改变生产运行逻辑。
+
+## 2026-08-24 release successor R2 整改更新
+
+- ✅ 独立 R2 evidence closure 已生成于 `scratch/2026-08-23-release-successor-r2-remediation/`。candidate 为 clean tracked single-parent，HEAD `2d590366159b7b1f83c673351fdce4f7fef9bbbb`、parent `da4fa8d9d7478d38b6787f6ce544c3ad9856e5e3`、tree `e8a191a2cf1770f7ce460934d95d932d0e51f637`。
+- ✅ P1-1 外层 envelope 已由 `envelope-manifest.json`、外部 `envelope-anchor.json` 和独立 `verify-envelope.mjs` 关闭；receipt 单字节篡改三处负例均被拒绝。P1-2 target root、working directory、Node 和 deployment manifest 均位于独立 target-stage；实际 parent/source-entry probes 均 `ENOENT`，`sourceParentAccess` 为 probe 计算结果；target tree hardlink=0、symlink=30 且无 root escape。P1-3 已移除 `/bin/cp -cR`，copy helper 使用 hardlink-preserving recursion 或 native copy 后的 inode/nlink/symlink 审计，并覆盖 hardlink/symlink/path-escape 负例。P1-4 旧 accepted ADR SHA-256 `7192e03d9bdbd98232a7c6896ab737b5bc8da13bfa6e822e84b9208bf2f24ce7` 与 Git HEAD/工作树/candidate 一致，R2 ADR 记录 supersedes。
+- ✅ R2 验收：Admin 113、Public 82、clean causal Next build、Admin stage、target-stage verifier、focused lint、full typecheck、RaceFans 36/36、最终 focused 3-file Vitest 26/26 和 dependency closure 后验均 PASS；最终 manifest SHA `f494863594de2b139099e96a6a940778546c2f66a75ced98099095f510850588`，release root `814e08f792b3b6da134140f2a61ea9a9d50075adf1139fa5fb51d7cb8e9369d0`，Next root `9cbaad3f8c46ad688e7141292d7b4533bcf9c0aaaf265594bfbe6d850a47ca2d`，dependency closure `22490 / e7095066b20d27efb16cdf2047735fbe75be9b232e69e54409d9f43e6342ac39`。
+- ⛔ deploy、M1、production、LaunchAgent、真实签名、网络与付费 API 均 `NOT_RUN`；full `npm run check` 与 full unfiltered Vitest 为 `NOT_RUN`。disposable Vitest cache 已清理，target-stage root/home/rollback 作为审计产物保留。
+
+## 2026-08-24 Slice 0：双语完整 Admin 与公开部署合同
+
+- 用户已确认完整 Admin、双语详细提炼真实接线与最终公开部署目标；工程切片获准按安全合同持续推进。
+- 新 accepted ADR、实施合同和 Function 矩阵已建立，冻结当前 `user_version=6` 后的 `0007→0008→0009→0010` 单一路线，并精确 supersede旧v5的失效 migration编号/schema身份；旧 accepted正文未改。
+- Open Design目标绑定到 `f1plus1-bilingual-detailed-extract-preview` 的冻结文件和SHA：Admin `4a9e088b…002c`、Public `c661a019…b260`、freeze manifest `0431f203…502`；这些文件继续明确 `NOT_DEPLOYED / realApi=false`。
+- 已区分当前实现、隔离工程候选、待实现和production-gated：当前真实链仍是schema6/v4语义；0007未进入共享app/DB，0008/0009/0010未生产实现，Admin/Public双语和完整Ops未部署。
+- `PRODUCTION-DEPLOYMENT-MANIFEST` 继续固定主机、DB、网络/身份、migration/release、签名、模型/预算、source/版权/媒体、备份/恢复、观测和phase/cutoff值。用户目标授权没有跳过该门。
+- 本Slice只写docs；app/data/DB/M1/production/service/network/key/model/publish均未触碰。未commit。
+
+## 2026-08-24 Slice 0 R2 文档整改
+
+- ⚠️ 前一节记录的Slice 0完成含义过早。独立审核 `scratch/2026-08-24-bilingual-admin-contract-review/review-receipt.json` 为 `FAIL / P0=0 / P1=2 / P2=2`；当前状态更正为 `accepted target / R2 review pending`，只有后继独立复审PASS并锚定新receipt后才能记complete。
+- R2候选补齐每组route的strict DTO/Problem、分页/排序/cache/status、operation/CAS/idempotency/fresh/auth capability、逐实体closed transition、response-loss reconcile、Source/X有界合同、统一Ops snapshot/asOf/freshness/unit/unknown union，以及logs/traffic/API/cost/alerts的bounded schema和隐私禁区。
+- Function矩阵已按当前代码缩窄：现有只确认publish后端，correct/withdraw为pending；Audit与Security分别拆成current backend基础和pending Mac/iPhone UI；现有v4 auto workers只标backend窄能力。旧accepted、R3 pin、app/data/DB/production均未改。
+
+## 2026-08-24 Slice 0 R3 极窄文档整改
+
+- ⚠️ R2复审为 `FAIL / P0=0 / P1=2 / P2=1`，Slice 0仍未关闭；时态为 `R3_REVIEW_PENDING`。
+- Source已恢复唯一Spec的正交字段：`lifecycle_status=proposed|active|paused|retired`，`collection_onboarding_status`保留validating等16值及frozen完整edge；ADR默认、migration、DTO、Function矩阵逐字统一，并补四RSS/59X old→new mapping与rollback负例。
+- Public V1按当前 `app/src/server/public/types.ts` hash固定中文compat身份，V2使用独立bilingual DTO；header只闭合应用自有安全header并拒绝forwarded/auth敏感header；FreshAction逐高风险route映射。Release返回版本化manifest role和pair receipt，Cost以actual/estimate各自availability union区分零、未知和估算。未改app/data/old accepted/R3 pin。
+
+## 2026-08-24 Slice 0 R4 唯一P1极窄修订
+
+- ⚠️ Slice 0仍为 `R4_REVIEW_PENDING`。本轮只修Source canonical status与派生fence混写。
+- ADR、实施合同、SourceDTO、0010 mapping和Function矩阵均显式保留`identity_status/relevance_status/monitorability`的当前Spec枚举与unknown默认；四RSS、59X、新source、activate及queued claim均逐项覆盖。
+- 删除`identityFence/relevanceFence/monitorabilityFence/rightsFence/mediaFence`替代字段；改为只读`activation_readiness`五guard与`epoch_fences`五Datum。每个epoch fence均固定唯一真值、clear和Unknown语义；任一blocked/stale/unknown零写零外联。未改app/data/old accepted/R3 external pin。
+
+## 2026-08-24 Slice 0 R4 独立复审关闭
+
+- ✅ R4独立复审为`PASS / P0=0 / P1=0 / P2=0 / Slice0Gate=CLOSED_PASS`；Slice 0目标合同文档门已`COMPLETE`。
+- 关闭pin：`review-report.md` SHA-256 `3e6c69ee2c3f67523b0cfd6c9ea15ed1eee1692c2d61d371516e207345de3a22`；`review-receipt.json` SHA-256 `03327aa1af9119e55681f591e24bd4160c657973392bfe2bc53f45b01fe5d4aa`；`manifest.json` SHA-256 `09fa3a08e3736d29a198ced3e71e4983b9ccc2dbcc26440bfd665ba9cc44f022`；根目录`scratch/2026-08-24-bilingual-admin-contract-review-r4/`。
+- 历史FAIL与R3 external pin保持不变。该关闭只允许进入后继工程切片，不表示0007–0010、完整Admin、双语Public、M1或production已实现/部署；生产动作继续等待不可变`PRODUCTION-DEPLOYMENT-MANIFEST`。
+
+## 2026-08-24 0007 fence/rollback successor 合同落账
+
+- ✅ 新建accepted-contract ADR与实施合同，冻结one-fence/one-verified-receipt、system-supervisor-only、同一`BEGIN IMMEDIATE`、control CAS、fresh receipt、policy/recovery/writer epoch、hash-chained audit、opaque capability及closed edge/seed。
+- ✅ 冻结纯DB composite rollback为`authorized→blocked / BUSINESS_TRANSACTION_ROLLED_BACK`；独立settlement事务必须证明no attempt/no committed business outbox/effect并销毁capability。orphan authorized以owner-session lease过期和相同零效果证明收敛为blocked，禁止自动重授权、重放或clear。
+- ✅ 旧0007 contract `8dffe664…e5ad`、manifest `feb9986e…958b`、SQL raw `ab32bb74…a163`、canonical `d651a156…4797`、post-schema `f3c0c049…d60`只标`SUPERSEDED_FOR_IMPLEMENTATION`；旧证据原字节未改。
+- ⛔ 当前状态：`0007-successor-contract-review-pending / Slice1 BLOCKED`。新SQL/raw/canonical/post-schema/manifest/contract identity均`NOT_CREATED`；app/SQL/tests/data/DB/M1/network/model/publish/deploy均`NOT_RUN/NOT_CHANGED`。
+- R3 external pin与Slice0 R4历史receipt保持原字节。R4历史CLOSED_PASS不覆盖本次新增P0；独立合同复审P0/P1归零前不得恢复Slice1。
+
+- 门禁分层更正：当前`0007-successor-contract-review-pending`只需八份文档独立复审`P0=0/P1=0`，关闭后进入`0007-successor-implementation-review-pending`并只授权另行派发隔离implementation候选；新SQL六身份、authorizer/crash/CAS/rollback和无workaround E2E属于第二门。第二门关闭前Slice1、0008和production继续blocked。
+- R3 V2 marker字节保持不变；本次没有把marker不变外推为当前完整envelope仍PASS。retained target root当前脏树漂移的来源未在本文档任务中归因。
+
+## 2026-08-24 0007 successor 合同门关闭
+
+- ✅ 独立审核闭包固定为report `6c73bd52fc2617717302994f1ffe5571db1b2a78bdc05515a01a87a387e5aa8b`、receipt `74e959ca3a321d191d4fd7f02723f94a2b0e843bea685c93be93ac84c02daff8`、manifest `73ef34bb4466beea632b4cee5552be75f045a235682613acc255800f2828ff4f`，根目录`scratch/2026-08-24-0007-successor-contract-independent-review/`，manifest `2/2 OK`；结论`PASS / P0=0 / P1=0 / P2=0`及`MICRO_PASS / P0=0 / P1=0`。
+- ✅ 当前为`contract CLOSED_PASS / 0007-successor-implementation-review-pending / Slice1 successor implementation AUTHORIZED_PENDING`；可以另行派发隔离implementation候选。
+- ⛔ 第二门尚未关闭：新SQL和六身份仍`NOT_CREATED`，production-faithful E2E仍`NOT_RUN`；Slice1工程门、0008、真实DB、M1与production继续blocked。
+- 历史FAIL、旧0007 frozen evidence、`SUPERSEDED_FOR_IMPLEMENTATION`和R3 external pin均保留。
+
+## 2026-08-24 可信单用户 M1 quick-launch 合同落账
+
+- ✅ 新建accepted quick-launch successor ADR，记录用户选择“可信单用户M1 + 自动RSS采集/双语处理 + 人工审核发布 + Admin私网”及same-UID残余风险接受；状态保持`quick-launch-contract-review-pending`。
+- 路线裁定为`schema6 → shared旧0007 trusted_local_capability_accounting_v1 → 0008 manual X → 0009 bilingual → 0010 source registry`。shared旧0007 raw SHA仍为`ab32bb74fb404656bbdf6f84cc8a6967e18f8ed797f59ec27125291e5c26a163`；只用于可信本地capability/accounting/audit，不作high-assurance claim。R7继续deferred。
+- 首版硬禁automatic review/publish，RSS collect与双语refine可自动；人工publish要求private Admin和fresh≤300秒。59 X proposed/disabled/manual URL，oEmbed disabled。旧0007 bootstrap禁止drop trigger/raw UPDATE；合法Admin control路径失败则重新blocked并另审最小additive替代。
+- 上线门固定private Admin、signed snapshot/LKG、verified off-host backup与RPO≤900秒、COMMIT前rollback、COMMIT后同schema fallback。用户确认没有外部ID，记录`evidenceId=NOT_ISSUED`；production manifest门不变。本轮只写docs，app/data/DB/M1/deploy均未改。
+
+## 2026-08-24 quick-launch automatic-zero 唯一P1整改
+
+- ⚠️ 独立审核为`FAIL / P0=0 / P1=1 / P2=0 / NOT_CLOSED`；report/receipt SHA-256固定为`5fb3c8aa3bbbd453a69a7ef28222ebb9c0b56c69a1343dc1e19bd83cadfa5554`/`96ab78b838856fe5d2dabc20d51eaab5c9a76de1cb7f39bade41efcca9c40624`。当前保持`quick-launch-contract-review-pending`。
+- 新ADR §10定义唯一`AutoAutomationZeroVector`：manifest固定quickLaunchCutoverAt/release/manifest/DB identity/auto process identity set/schedule inventory；review/publish各自process、schedule-registration、owner-handoff、prohibited-operation、prohibited-effect五轴全0。cutover前terminal历史保留且不计数；cutover后任一auto op/effect以及cutover前遗留nonterminal/queued均FAIL。
+- exact域、状态闭集和SQL已覆盖schema7/legacy operation、handoff、audit、publication、internal/projection outbox；缺表、未知status/type、identity或收据为Unknown/NO_DEPLOY。当前Admin内嵌两个60秒timer与两个startup tick明确使schedule轴FAIL，后继quick-launch build必须提供静态call-graph和跨60秒窗口运行收据。
+- Positive/negative已冻结：历史terminal存在=PASS；PID为0但内嵌timer存在=FAIL；cutover后no-work/terminal auto operation任一存在=FAIL。本轮未改app/data/DB/M1/deploy。
+
+## 2026-08-24 quick-launch R2 合同门关闭
+
+R2独立复审结论为`PASS / P0=0 / P1=0 / P2=0 / quick-launch contract gate=CLOSED_PASS`；report SHA-256 `9a75a70c462be4c76d5d0b4c5db8925e6a574b6a9f1fab05e1297dc8674bcadf`、receipt SHA-256 `763737f8c6eddd05d2e09232e948b5e55ebd917369d474558dbe3cba73928d70`、manifest SHA-256 `5020a905065ffaabc1bcc89a1ba43906240429faef22350fe7d526eb39f7687d`，证据根`scratch/2026-08-24-trusted-single-user-m1-quick-launch-independent-review-r2/`。当前状态收口为`contract CLOSED_PASS / engineering authorized pending`。该关闭只授权后继工程候选按既有合同另行实施与复审，不表示实现、production-shaped E2E、M1或production通过。首轮FAIL及其整改历史保留；当前`runtime.ts`两个60秒interval和两个startup tick继续令review/publish的schedule轴`FAIL / NO_DEPLOY`，必须由后继release移除或机械拒绝注册并取得§10全部收据后才可继续部署门。

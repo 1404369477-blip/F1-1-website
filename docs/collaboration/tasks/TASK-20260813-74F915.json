@@ -1,0 +1,55 @@
+{
+  "acceptance_exit": "任务专属受限目录0700、工具与占位输入/输出0600且Git ignored；工具可在synthetic最小fixture上证明幂等、三设备各一Grant、唯一sourceRef、其他规则零漂移、旧策略可完整恢复；0 clipboard read、0 management write、0 Serve/Funnel/device/DB/service操作；提交脱敏报告与TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-13-74F915-Tailscale三设备HuJSON最小合并工具与真实candidate报告.md",
+    "scratch/TASK-20260813-74F915/policy-merge.mjs",
+    "scratch/TASK-20260813-74F915/real-candidate.hujson",
+    "scratch/TASK-20260813-74F915/real-rollback.hujson",
+    "scratch/TASK-20260813-74F915/real-receipt.json"
+  ],
+  "authorization_evidence": "thread-user-message:2026-08-12:授权",
+  "authorization_history": [
+    {
+      "at": "2026-08-13T00:09+08:00",
+      "evidence": "thread-user-message:2026-08-12:授权",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:hujson_policy_tool",
+  "completion_class": "standard",
+  "confirmation": "用户已授权最终Grant/Serve；本任务仅准备无外部副作用工具，等待用户回复已复制",
+  "created_at": "2026-08-13T00:09+08:00",
+  "department": "开发部",
+  "details": "用户已授权三设备Grant/Serve，当前唯一等待是用户从已登录Policies JSON/HuJSON编辑器复制pre-policy到剪贴板。只做本地无外部副作用准备：基于C1FBDB受限提交包与accepted app-cap合同，建立任务专属git-ignored 0700/0600目录和文件化合并/验证工具；输入为稍后落盘的原pre-policy文件，不读取剪贴板，不调用Tailscale API/CLI写，不执行Serve。工具必须解析/保留HuJSON，生成只增加M5/新iPhone/旧iPad三条最小Grant及固定app capability映射的candidate，证明其他规则语义/字节区块零漂移，输出pre/post canonical hash、结构化diff、policy test/validator命令和精确rollback文件。不得把selector/sourceRef/login写进Git/普通报告。",
+  "domain_stage": "tailscale_policy_merge_tooling",
+  "event_receipts": [
+    "TASK_STATE_OK; candidate=e457ee1e50de0fa36df242db77735bf351b9928a24777c59e7cfc5b4a9f7d0bf/3331; pre=rollback=f732d21e94ee9c09ca3c8a90d627ff26c0bf888de14e1e0364054777716e21cf; addedGrants=3; broadRuleRetained=1; clipboardReads=0; externalWrites=0"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "无法无损保留HuJSON注释/顺序或C1FBDB包身份漂移则停止并不生成可提交candidate；任何秘密进入Git/普通报告立即隔离停止；任何外部Tailscale写调用立即停止。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "真实原文、login、selector、sourceRef均仅在ignored restricted artifacts；普通报告只留hash/结构计数。第一次真实执行因输入跨task-root fail closed且0输出/外部写，随后0600原字节复制后生成candidate。没有自动删除宽规则，没有读取剪贴板或调用Tailscale写。",
+  "node": "TAILSCALE-POLICY-MERGE-PREP-001",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-C1FBDB-三设备最小Grant与Serve提交前只读收敛.md"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-13-74F915-Tailscale三设备HuJSON最小合并工具与真实candidate报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260813-74F915",
+  "title": "Tailscale三设备策略最小合并工具准备",
+  "unverified": [
+    "candidate尚未由Tailscale management policy validator编译/提交，尚无post-policy canonical hash；Serve/Funnel未变。现有policy保留1条src/dst/ports全wildcard宽规则，这是统筹已采用的零破坏决策，故不能把整个tailnet网络权限宣称为最小授权。"
+  ],
+  "updated_at": "2026-08-13T00:24+08:00",
+  "verified": [
+    "0700 Git-ignored task root；tool/input/output均0600 owner-only。synthetic首轮精确新增3Grant且非grants语义零漂移，第二次幂等新增0，rollback逐字节恢复。真实pre SHA=f732d21e94ee9c09ca3c8a90d627ff26c0bf888de14e1e0364054777716e21cf；candidate SHA=e457ee1e50de0fa36df242db77735bf351b9928a24777c59e7cfc5b4a9f7d0bf/3331bytes；三selector/sourceRef一一互异；rollback SHA与pre一致；clipboard read=0/external write=0。"
+  ]
+}

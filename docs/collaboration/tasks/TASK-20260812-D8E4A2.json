@@ -1,0 +1,52 @@
+{
+  "acceptance_exit": "代理只作命令级临时配置且系统git config零写；pre remote=54e；唯一非force push exit0；post remote=bb0且GitHub commit/tree/parent匹配；本地HEAD/index/runtime/manifest零漂移；报告/TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-D8E4A2-临时系统代理bb0aa非force推送报告.md"
+  ],
+  "authorization_evidence": "TASK-20260812-3844EF PASS；GitHub connector确认首次网络失败未更新ref；用户持续推进网站搭建。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T21:04+08:00",
+      "evidence": "TASK-20260812-3844EF PASS；GitHub connector确认首次网络失败未更新ref；用户持续推进网站搭建。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:proxy_exact_nonforce_push",
+  "completion_class": "standard",
+  "confirmation": "持续交付目标授权正常推送；3844EF已放行该精确非force写，新增仅为命令级显式使用已运行的本机系统代理，不改持久配置。",
+  "created_at": "2026-08-12T21:04+08:00",
+  "department": "开发部",
+  "details": "承接493C45：首次push因Git未继承macOS系统代理而github:443直连超时；GitHub连接器权威compare确认远端branch与54e identical，bb0 commit不存在；随后只读 `git -c http.proxy=http://127.0.0.1:7890 ls-remote` PASS，fresh target=54e694c、main=ee450639；curl经同代理GitHub 200，127.0.0.1:7890 listener存在。不得写git config。重新核local HEAD=bb0/tree2fdf/parent2ff、chain54e→2ff→bb0、index empty、89 runtime clean/blob、manifest6f4642 Git/roots；紧邻push再用临时 `-c http.proxy=http://127.0.0.1:7890` 只读target必须54e。然后新任务唯一一次 `git -c http.proxy=http://127.0.0.1:7890 push origin bb0aa0266b73b7b2f7af38d3f29ac0a07dee772f:refs/heads/codex/first-public-release`，普通非force/不set-upstream。exit0后同代理只读remote=bb0，再用GitHub connector/fetch commit回读tree2fdf/parent2ff（统筹可补connector）；本地零漂移。禁止重试/force/API写fallback/build/SSH/M1。",
+  "domain_stage": "development",
+  "event_receipts": [
+    "push: smart-HTTP non-force explicit bb0aa0266b73b7b2f7af38d3f29ac0a07dee772f -> refs/heads/codex/first-public-release; exit0; post-ref exact bb0aa026; main unchanged."
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "代理listener/curl/ls-remote或remote pre异常立即block不push；push首错不重试/force/API fallback；post不匹配停且不纠正写。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "Proxy used only via exact command-level -c option; one push, zero retry/force/lease/upstream/API write; main unchanged; no persistent Git config write or local runtime/manifest drift.",
+  "node": "EXACT-NONFORCE-PUSH-WITH-EPHEMERAL-PROXY",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-493C45.json",
+    "docs/collaboration/部门/安全部/报告/2026-08-12-3844EF-bb0aa-clean-release与非force推送最终只读复审报告.md"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-D8E4A2-临时系统代理bb0aa非force推送报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-D8E4A2",
+  "title": "系统代理显式注入的bb0aa非force推送finalizer",
+  "unverified": [
+    "No build/builder/SSH/M1/DB/prepare/load/cutover/deployment; ignored manifest is not in GitHub and M1 fresh stage remains pending."
+  ],
+  "updated_at": "2026-08-12T21:07+08:00",
+  "verified": [
+    "Command-only proxy listener and persistent-config-zero gates PASS; fresh remote pre target=54e694c13b7369819448a2c3b072cb0fbbc49b7b, main=ee450639613ffc43e7b860b3237bdde296f0416d. Exactly one ordinary non-force explicit-refspec smart-HTTP push exited 0 and reported 54e694c..bb0aa02 Done. Post remote target=bb0aa0266b73b7b2f7af38d3f29ac0a07dee772f, main unchanged; commit/tree/parent bb0aa026/2fdf2078/2ff1bdba; local index, 89 runtime and manifest SHA 6f464299 zero drift; repo/user Git configs SHA,size,mtime unchanged with no persistent proxy."
+  ]
+}

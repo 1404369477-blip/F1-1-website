@@ -1,0 +1,44 @@
+{
+  "acceptance_exit": "真实新内容可持续进入候选；中英文详细提炼完整；最近三条与至少一条新内容通过人工审核发布并在公网可见；公开中/EN切换、原文链接、手机端按钮无乱码；Admin Mac+iPhone功能矩阵真实可达，状态/日志/流量/API/信源/备份/成本/告警均有可判定正常/空/错误/离线与恢复；公开/管理入口隔离；形成部署、回退、运行和视觉证据。",
+  "artifacts": [],
+  "authorization_evidence": "2026-08-29当前主线程：用户要求完整同步工作文档，方便其他Agent接手；此前已明确要求持续推进至公开网站和管理后台完整上线。",
+  "authorization_history": [
+    {
+      "at": "2026-08-29T23:49+08:00",
+      "evidence": "2026-08-29当前主线程：用户要求完整同步工作文档，方便其他Agent接手；此前已明确要求持续推进至公开网站和管理后台完整上线。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "等待 RSS 两源持续采集恢复，并吸收27个X registry灰度结果；原型和历史运行不得计上线。",
+  "claimed_by": "开发部/019fb374-7c86-7882-9e51-76114ce69e7f",
+  "completion_class": "standard",
+  "confirmation": "按当前线程用户持续推进目标执行；任何新增付费、凭证、权限、不可逆删除或扩大公网暴露仍需单独用户确认。",
+  "created_at": "2026-08-29T23:49+08:00",
+  "department": "开发部",
+  "details": "承接 schema10、0009 bilingual、0010 source registry 与现有 public candidate。闭合新内容从采集→双语详细提炼→人工审核/修订→人工发布→签名公开投影→公开站中英切换的真实链；处理最近三条回填；部署完整Admin运行页面，覆盖前后端状态、RSS/X采集、日志、错误、访客流量统计、API状态、信源列表/状态/增删停启、任务/队列、备份恢复、成本与告警。Mac/iPhone功能等价，高风险动作fresh re-auth。Public继续Quick Tunnel临时入口，Admin仅私网。必须以当前运行候选与真实API/DB验收，原型或静态假数据不计完成。",
+  "domain_stage": "端到端上线/Admin与公开站验收",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "模型不可用、提炼不完整或版权边界不满足时内容保持待审核，不公开。",
+    "Admin任一高风险操作缺fresh re-auth、审计或双端真实入口时不得上线该操作。",
+    "Public/API/投影完整性失败时保持上一LKG并告警，不以静态fixture覆盖。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "QL3/e2e/admin-ops-public",
+  "pointers": [
+    "docs/当前生产状态与执行待办.md"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260829-E59ACA",
+  "title": "双语详细提炼人工审核公开投影与完整Admin监控上线验收",
+  "unverified": [],
+  "updated_at": "2026-08-29T23:55+08:00",
+  "verified": []
+}

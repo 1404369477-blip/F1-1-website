@@ -1,0 +1,57 @@
+{
+  "acceptance_exit": "正式安全诊断报告明确根因是否成立，绑定当前/历史脚本、模块、receipt validator root及精确代码路径；区分实际完整性错误与日志分类缺口；给出唯一推荐修复、需要保护的旧receipt/DB/源码边界、成功/拒绝/回退验收，P0/P1分级，externalCalls=0、canonical零漂移、临时副本清理；已验证/未验证/错题自检并TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-11-CLI_INTERNAL_ERROR与legacy-receipt验证器漂移独立安全诊断报告.md",
+    "docs/collaboration/部门/安全部/报告/TASK-20260811-2EAD96-evidence/manifest.json"
+  ],
+  "authorization_evidence": "用户2026-08-11明确：Codex桌面端重启后继续推进。",
+  "authorization_history": [
+    {
+      "at": "2026-08-11T18:55+08:00",
+      "evidence": "用户2026-08-11明确：Codex桌面端重启后继续推进。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/019fb377-10f9-7213-ba73-1a717dc76d77",
+  "completion_class": "audit",
+  "confirmation": "用户已明确要求继续推进；本任务为解除初版本地运行前置阻断的只读安全诊断。",
+  "created_at": "2026-08-11T18:55+08:00",
+  "department": "安全部",
+  "details": "只读诊断TASK-20260811-5F3B7D的M3 profile:closed-receipt首错。优先验证精确假设：旧receipt validatorArtifactSha256=2a8c89ac…6d83；历史报告记录legacy脚本SHA=beeae3ab…acb，而当前app/scripts/profile-closed-receipt.ts SHA=f914623d…0793、closed-receipt.ts仍为6466fad6…048；当前两文件canonical validator root复算为8940a34e…92ac。检查generateClosedReceipt的assertExistingReceiptMatches是否因validatorArtifactSha256稳定字段漂移触发RECEIPT_OLD_BYTE_DRIFT，以及security/log.ts未allowlist RECEIPT_*导致runSafeCli降级为CLI_INTERNAL_ERROR。只允许读代码、任务报告、receipt非敏感元字段与hash；可在项目外0700临时副本做至多一次不触碰canonical的验证，禁止修改app/data/DB/receipt、输出receipt正文/绝对路径/stack、放宽freshness、联网或启动服务。给出一条符合链式可信与回退要求的最小修复建议，不实施。",
+  "domain_stage": "M5-local-public-runtime-preflight",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 只读证据不足以唯一定位：结论保持Unknown并列出唯一最小诊断，不猜测；2) 临时副本无法保持相对路径/权限/字节闭集：不运行动态复现；3) 任一诊断会写canonical、泄露receipt载荷或绕过完整性门：立即停止并block。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已区分真实RECEIPT_OLD_BYTE_DRIFT与对外CLI_INTERNAL_ERROR；未把validator漂移推断为DB篡改，未输出receipt载荷/绝对路径/stack，未建议touch、手写、忽略稳定字段或放宽freshness，未运行额外探针或外联。",
+  "node": "定位5F3B7D首错并给出最小安全恢复路径",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260811-5F3B7D.json",
+    "docs/collaboration/部门/开发部/报告/2026-08-11-旧profile封闭收据刷新首错阻断报告.md",
+    "app/src/server/db/closed-receipt.ts",
+    "app/src/server/security/cli.ts",
+    "app/src/server/security/log.ts"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-11-CLI_INTERNAL_ERROR与legacy-receipt验证器漂移独立安全诊断报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260811-2EAD96",
+  "title": "CLI_INTERNAL_ERROR与legacy receipt验证器漂移独立安全诊断",
+  "unverified": [
+    "未实现或运行profile-scoped validator迁移，未生成新receipt；恢复出口保持关闭，待后继开发与独立复验。",
+    "未证明数据库业务内容整体正确；本任务仅闭合首错根因并确认固定hash未漂移。"
+  ],
+  "updated_at": "2026-08-11T19:04+08:00",
+  "verified": [
+    "双层假设成立：共享CLI脚本漂移令legacy validator root由2a8c89ac…6d83变为8940a34e…92ac，并由稳定字段比较触发RECEIPT_OLD_BYTE_DRIFT。",
+    "RECEIPT_*未进入CLI reason allowlist，RECEIPT_OLD_BYTE_DRIFT经safeReasonCode归一为CLI_INTERNAL_ERROR；完整性门仍fail-closed且无载荷泄漏。",
+    "canonical两个DB、三份receipt与四个相关源码hash已回读；externalCalls=0、无动态复现、无正式写入、无精确任务临时根及相关sidecar残留。"
+  ]
+}

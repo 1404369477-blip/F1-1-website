@@ -1,0 +1,50 @@
+{
+  "acceptance_exit": "静态页/login/业务请求均使用新app-cap parser；缺失/重复/非法/交叉/旧X头负例闭合；M5/iPhone两ref派生不同deviceRef且跨ref旧session失败；旧identity schema拒绝；三门各最多一次PASS；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/src/server/admin-service/deployment.ts",
+    "app/src/server/admin-service/server.ts",
+    "app/src/server/admin-service/runtime.ts",
+    "app/scripts/admin-install-macos.ts",
+    "app/scripts/admin-service.ts",
+    "app/src/tests/admin-service.test.ts",
+    "app/ADMIN-SERVICE-PREP.md",
+    "docs/collaboration/部门/开发部/报告/2026-08-12-B5FA49-Serve-app-cap身份parser与deployment-v3实现报告.md"
+  ],
+  "authorization_evidence": "",
+  "authorization_history": [],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:app_cap_identity",
+  "completion_class": "standard",
+  "confirmation": "无需额外确认",
+  "created_at": "2026-08-12T15:32+08:00",
+  "department": "开发部",
+  "details": "严格按ACK的ADR-M5-ADMIN-PRIVATE-IDENTITY-002实现：deployment v3新增tailscaleAppCapabilityId及trustedIdentities.sourceRefs，拒绝旧deviceRefs隐式转换；3101 raw header闭集解析单值ASCII Tailscale-User-Login和单值≤4096 Tailscale-App-Capabilities JSON，只允许唯一目标cap及唯一43-char sourceRef；x-f1-approved-device-ref存在即通用401且值不读/不记；派生operatorRef/tailnetUserRef/deviceRef并保持Passkey challenge/session/fresh绑定。只改Admin deployment/installer/server/聚焦测试/runbook及必要release overlay元数据；不配置tailnet/Serve，不改Review业务/UI/数据根。先等待C59E17完成后claim以满足开发部单在办。只运行一组聚焦Vitest、一次Node24 typecheck、一次限定diff-check，首错即停。",
+  "domain_stage": "candidate",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "C59E17未完成不得claim或改重叠deployment文件；任一首错立即block且不重跑；不得SSH/M1/真实tailnet/DB写/build/launchctl。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查：旧设备头值不读且存在即通用401；原始login/sourceRef不进入session/DTO/log；app-cap未替代Passkey；未扩大真实外部或生产放行；四根与existing-only边界未回退",
+  "node": "M5-ADMIN-PRIVATE-IDENTITY-002-CODE",
+  "pointers": [
+    "docs/decisions/system/2026-08-12-F1+1-Tailscale-Serve-app-cap私有入口身份-successor-accepted.md"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-B5FA49-Serve-app-cap身份parser与deployment-v3实现报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-B5FA49",
+  "title": "Serve app-cap身份parser与deployment-v3实现",
+  "unverified": [
+    "真实tailnet/Grant/Serve/device approval、M5/iPhone真机、真实HTTP/Passkey/撤销重启、build/SSH/M1/LaunchAgent/DB写/cutover均未执行"
+  ],
+  "updated_at": "2026-08-12T16:24+08:00",
+  "verified": [
+    "聚焦Vitest唯一一次PASS：1 file/3 tests；固定Node24 typecheck唯一一次PASS；七目标文件限定diff-check唯一一次PASS；release runtime闭包仍89项且overlay已覆盖五个运行文件"
+  ]
+}

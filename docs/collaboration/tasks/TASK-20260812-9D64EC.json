@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "TASK_STATE_OK；正式报告逐项引用官方链接/版本日期，明确可用header、不可用device header、客户端伪造边界与现有代码PASS/FAIL；给一个可直接实施的最小方案和负向验收。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/研究部/报告/2026-08-12-Tailscale-Serve可信身份头与设备身份官方核验.md"
+  ],
+  "authorization_evidence": "用户：Mac与iPhone都能执行全部操作；接受安装；私有网络。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T14:03+08:00",
+      "evidence": "用户：Mac与iPhone都能执行全部操作；接受安装；私有网络。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "研究部/internal-agent:tailscale_identity",
+  "completion_class": "standard",
+  "confirmation": "用户要求Mac/iPhone都能操作，且接受Tailscale私有网络方案。",
+  "created_at": "2026-08-12T14:03+08:00",
+  "department": "研究部",
+  "details": "仅查Tailscale官方当前文档/源码或官方CLI帮助（禁第三方/百度），核验HTTPS Serve反代到127.0.0.1:3101时：会注入哪些身份headers、是否自动注入tailscale-user-login/name/profile-pic、如何防客户端伪造、是否提供设备ID/device name/node key header、浏览器能否自行设置x-f1-approved-device-ref、Serve与Grants/device approval如何分层。对照现有Admin server要求每次请求`tailscale-user-login`+`x-f1-approved-device-ref`，判断普通Mac/iPhone浏览器能否真实到达静态页/Passkey端点。给最小接线建议：网络层device approval/Grant + Tailscale可信login header + WebAuthn credential/session是否足够；如需LocalAPI WhoIs或独立proxy，明确成本/风险。0本地代码/0Tailscale状态修改，不泄露真实tailnet标识。",
+  "domain_stage": "research",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "官方资料互相冲突时列冲突并fail-closed；若身份headers只在特定HTTPS/Serve模式生效，明确前置；若无设备header，不得凭空声称可用；大陆可达/真机仍Unknown。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未把用户头写成设备头；未把device approval当per-request identity；未信任浏览器自报X头；未把WhoIs(loopback)误写成远端node查询；未外推中国大陆或真机PASS；未安装、登录、改Grant/Serve/Funnel、启动服务、改app或SSH写入。TASK_STATE_OK。",
+  "node": "M1首版上线/Admin私有入口/身份接线合同",
+  "pointers": [
+    "docs/collaboration/部门/研究部/报告/2026-08-12-M1-M5-iPhone-Tailscale私有Admin官方实施核验.md"
+  ],
+  "report": "docs/collaboration/部门/研究部/报告/2026-08-12-Tailscale-Serve可信身份头与设备身份官方核验.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-9D64EC",
+  "title": "Tailscale Serve可信身份头与设备身份官方核验",
+  "unverified": [
+    "真实tailnet的device approval/Grant/app-cap现状、用户控制capability域、精确设备source映射、M1 Serve运行字节/重启/撤销、Mac/iPhone真机、异地切网及中国大陆direct/relay可用性均保持Unknown；本轮未修改app或tailnet。"
+  ],
+  "updated_at": "2026-08-12T14:26+08:00",
+  "verified": [
+    "仅用Tailscale官方文档、官方Go包/源码与本机两版官方CLI帮助核验：Serve三项用户身份头及反伪造；无原生device header；v1.92+ app-capability header；Grants精确source/并集语义；device approval边界；LocalAPI WhoIs输入输出及标准HTTP Serve loopback断点；对照当前3101代码确认静态页与Passkey真实浏览器会因缺失自定义设备头先401。"
+  ]
+}

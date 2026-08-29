@@ -1,0 +1,51 @@
+{
+  "acceptance_exit": "1) 逐项复核 91AF6E/92C716/3D190C/FAD506/907A0B 的状态、报告与关键 SHA；2) 仅在权威 Spec/矩阵中把后端、测试与最终本地 synthetic 安全出口改为已完成事实，并明确适用边界；3) SOURCE-MGMT-001 总状态仍保持 P1-blocker/user-gated，原因精确收敛为当前视觉确认、真实页面实现及同候选三路运行验收；4) 不改 endpoint、Function ID、accepted ADR 或视觉资产；5) 交付差异报告、改动文件 SHA、自审和 TASK_STATE_OK；6) task doctor 通过。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/spec.md",
+    "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-11-SOURCE-MGMT-001后端最终PASS后产品事实同步报告.md"
+  ],
+  "authorization_evidence": "用户持续要求推进网站至可用初版；本任务为已验收事实的文档同步。",
+  "authorization_history": [
+    {
+      "at": "2026-08-11T12:47+08:00",
+      "evidence": "用户持续要求推进网站至可用初版；本任务为已验收事实的文档同步。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/019fb369-ae6d-7131-9199-7dc088542ead",
+  "completion_class": "standard",
+  "confirmation": "本任务仅同步现有事实，不授权真实页面编码、外部采集、生产部署或视觉方向。",
+  "created_at": "2026-08-11T12:47+08:00",
+  "department": "产品部",
+  "details": "沿用现有产品部窗口。基于当前仓库与已落账任务真值，只同步 SOURCE-MGMT-001 的事实时态：开发 TASK-20260810-91AF6E 已 ACK，测试 TASK-20260810-92C716 已 ACK，数据 oracle TASK-20260811-3D190C 已完成，最终安全 TASK-20260811-FAD506 已 ACK/PASS；产品审计 TASK-20260811-907A0B 仍判初版 NOT READY。检查 docs/spec.md、docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md、SOURCE-MGMT v0.3 与页面服务模型 proposed 文档中会误导后继开发的旧状态。只改事实状态/证据指针与明确边界，不改变 Function ID、接口、数据结构、认证、安全、视觉方向或 accepted ADR；`/admin/sources` 真实页面、用户视觉确认、运行态视觉/功能/安全三路验收继续保持未完成。",
+  "domain_stage": "MVP-status-alignment",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "a) 任一输入任务/报告/SHA 不匹配即 block，不猜测；b) 发现多个权威文档语义冲突且无法在纯时态同步中解决，保留首个冲突并 block，另提产品决策；c) 任何改动会实质扩大本地 synthetic、开放真实 provider/网络/生产或绕过视觉用户门，立即停止。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未把后端PASS外推为Function complete；SOURCE-MGMT-001保持P1-blocker且视觉前置保持user-gated；未修改Function ID、接口、数据、认证、安全、视觉、accepted ADR、app/data/design/database；907A0B整体NOT READY保留。",
+  "node": "MVP/SOURCE-MGMT-001/status-alignment",
+  "pointers": [
+    "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-11-SOURCE-MGMT-001后端最终PASS后产品事实同步报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260811-0345AC",
+  "title": "SOURCE-MGMT后端最终PASS后的Spec与功能矩阵事实同步",
+  "unverified": [
+    "v2视觉用户确认、真实/admin/sources页面实现、页面同候选测试/安全/设计三路运行验收；真实provider/Base/数据、非loopback外部I/O、生产访问与部署。"
+  ],
+  "updated_at": "2026-08-11T12:54+08:00",
+  "verified": [
+    "91AF6E/92C716/3D190C/FAD506/907A0B 均为 acknowledged；逐项复算权威报告、manifest/oracle关键SHA；Spec与矩阵仅同步后端最终PASS及剩余三项门禁；矩阵计数仍17/20/13；diff check通过。"
+  ]
+}

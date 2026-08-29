@@ -1,0 +1,42 @@
+{
+  "acceptance_exit": "UU入口fresh SSH PASS；M1 receiver/Admin与3101/3102运行；Serve HTTPS443精确代理Admin并accept唯一cap；Funnel空；HTTPS入口与无cap/legacy头负例闭合；public/RSS/DB身份无任务漂移；输出reset回退收据。",
+  "artifacts": [],
+  "authorization_evidence": "继承52A4F6用户已确认Policy Saved与此前明确Serve/Grant授权；本轮只机械更换已验证可达的M1控制入口。",
+  "authorization_history": [
+    {
+      "at": "2026-08-13T00:36+08:00",
+      "evidence": "继承52A4F6用户已确认Policy Saved与此前明确Serve/Grant授权；本轮只机械更换已验证可达的M1控制入口。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "POSTFLIGHT_FUNNEL_STATUS_MIRRORS_SERVE_CONFIG: after sole Serve write, `tailscale funnel status --json` returned the same HTTPS443 Serve config instead of {}; per contract first action `tailscale serve reset` executed successfully; post-reset Serve={} and Funnel={}, receiver/Admin remain unique loopback listeners on 3102/3101; no DB/policy/public write",
+  "claimed_by": "开发部/internal-agent:tailscale_serve_uu_successor",
+  "completion_class": "standard",
+  "confirmation": "无需额外确认",
+  "created_at": "2026-08-13T00:36+08:00",
+  "department": "开发部",
+  "details": "52A4F6在任何写前因Tailscale IP SSH超时block。统筹已只读验证固定备用入口f1plus1-m1-uu=127.0.0.1:22022存在且BatchMode SSH成功，原home-mac仍超时。继承用户授权与52A4F6完整合同，仅将M1传输控制入口改为f1plus1-m1-uu，从fresh只读preflight开始，执行唯一一次Serve HTTPS443到127.0.0.1:3101并accept精确app-cap，Funnel保持off；不得改policy/DB/public。",
+  "domain_stage": "tailscale_serve_activation",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "UU preflight不符0写停；Serve写或postflight异常第一动作serve reset并确认Funnel空，内部服务保留；不得改DB、policy、public cutover，不得改用第三入口。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "tailscale_serve_activation_uu_successor",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260813-52A4F6.json"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260813-6CFFBA",
+  "title": "M1私有Serve经UU固定备用入口机械续跑",
+  "unverified": [],
+  "updated_at": "2026-08-13T00:38+08:00",
+  "verified": []
+}

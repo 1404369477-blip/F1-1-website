@@ -1,0 +1,42 @@
+{
+  "acceptance_exit": "TASK_STATE_OK；唯一改动为测试夹具身份/mode和路径隔离；继承build/builder roots；聚焦Vitest、typecheck、diff-check各一次PASS；FA5D66完整successor报告修正为最终PASS并列最终源码SHA。",
+  "artifacts": [],
+  "authorization_evidence": "用户本会话：继续。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T12:57+08:00",
+      "evidence": "用户本会话：继续。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "FOCUSED_VITEST_FIRST_ERROR_TMP_MANIFEST_NLINK_COLLISION",
+  "claimed_by": "开发部/internal-agent:projection_runtime_p1_fixture_finalizer",
+  "completion_class": "standard",
+  "confirmation": "用户要求继续快速上线并减少无效测试；本任务只消除已证实夹具问题。",
+  "created_at": "2026-08-12T12:57+08:00",
+  "department": "开发部",
+  "details": "继承blocked TASK-20260812-86A926生产候选与builder成功收据：next322 files/13,373,354 bytes、322×0644、57 dirs×0755、nextRoot b11ef505...、content e9eee919...、release 4f3e25b9...；禁止重跑build或修改production/package/runbook。仅修聚焦测试夹具：(1) fresh-stage复制.next后显式将stage .next root及已在manifest记录的目录精确chmod0755，文件保持manifest mode；(2)installer用例每个test使用独立真实tmpdir/manifest路径并自行cleanup，禁止共享固定/tmp路径与并行互删；不得降低/删除任何断言，不得串行化整个测试套件掩盖隔离问题。然后固定Node24同一聚焦Vitest一次、typecheck一次、限定diff-check一次；首错即停。0外部操作。",
+  "domain_stage": "implementation",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若测试仍出现生产断言失败或需改production代码，立即block；若任何测试使用共享路径/删他人产物，判未闭合；Vitest/typecheck/diff首错即停不重跑。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "M1首版上线/真实投影release/fixture finalizer",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-86A926.json"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-EFE9FE",
+  "title": "Next release聚焦测试fresh-stage夹具隔离finalizer",
+  "unverified": [],
+  "updated_at": "2026-08-12T12:58+08:00",
+  "verified": []
+}

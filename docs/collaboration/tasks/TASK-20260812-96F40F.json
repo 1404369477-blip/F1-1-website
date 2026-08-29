@@ -1,0 +1,57 @@
+{
+  "acceptance_exit": "交付一个accepted successor与Spec/矩阵同步，逐字段冻结wire、bootstrap、sender状态机、密钥/manifest边界、公开reader切换、回退及开发任务可直接实现的文件/接口清单；明确自动发布仍为0，只有用户手动publish后的机器投递可以自动执行；报告与TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/decisions/system/2026-08-12-F1+1-真实RSS公开投影bootstrap与sender-reader闭环-successor-accepted.md",
+    "docs/decisions/system/2026-08-12-F1+1-真实RSS人工审核与公开投影最小纵切-successor-accepted.md",
+    "docs/spec/F1+1-真实RSS人工审核与公开投影最小实施合同-v0.1.md",
+    "docs/spec.md",
+    "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md",
+    "docs/collaboration/部门/产品部/报告/2026-08-12-96F40F-公开投影bootstrap与sender-reader闭环产品报告.md"
+  ],
+  "authorization_evidence": "用户连续要求继续推进并上线第一版；2026-08-12真实RSS与Admin候选已完成。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T09:46+08:00",
+      "evidence": "用户连续要求继续推进并上线第一版；2026-08-12真实RSS与Admin候选已完成。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "产品部/internal-agent:projection_contract",
+  "completion_class": "standard",
+  "confirmation": "用户已授权继续快速搭建、真实采集、固定M1部署及初期人工审核；本任务只冻结既有手动发布后的运行闭环，不新增自动发布授权。",
+  "created_at": "2026-08-12T09:46+08:00",
+  "department": "产品部",
+  "details": "在不改变人工审核、批准与手动发布分离、auto-publish=0的前提下，精确回读真实RSS审核发布实施合同、accepted successor ADR、当前commit 54e694c及review-real/admin-service实现。解决四个已证实的运行闭环缺口：①合同PUT /internal/projections/{deliveryId}与候选POST /internal/projections的单一wire；②全新receiver没有active snapshot时bootstrap pin与首个真实snapshot hash未知造成的循环依赖；③manual publish后唯一outbox的sender领取、签名、投递、response-unknown receipt GET、同一delivery重试/终态语义与最小调度方式；④active snapshot如何被现有公开Next读路径消费，以及切换/回退门。必须用first-principles与最小实体收敛单一第一版方案；实质修改accepted ADR时新建successor，不原地改旧ADR；同步Spec/矩阵/开发交接。不得写业务代码、安装Tailscale、SSH、迁移DB或开启服务。",
+  "domain_stage": "产品/第一版真实发布闭环",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若方案需要降低签名/幂等/last-known-good边界或开启自动发布，停止并标user_required。",
+    "若现有accepted合同与候选冲突，保留旧ADR并用successor取代，禁止静默改写。",
+    "若无法在单M1两资源根下消除首次bootstrap循环，明确阻断并给唯一最小用户决策点，不用占位hash。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未用占位hash或空演示snapshot自举；未把机器delivery扩大为自动内容发布；未让public reader跨读私库或请求级fallback；未原地改写旧accepted决定正文。",
+  "node": "第一版后台/真实发布闭环",
+  "pointers": [
+    "docs/spec/F1+1-真实RSS人工审核与公开投影最小实施合同-v0.1.md"
+  ],
+  "report": "docs/collaboration/部门/产品部/报告/2026-08-12-96F40F-公开投影bootstrap与sender-reader闭环产品报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-96F40F",
+  "title": "冻结首代公开投影bootstrap与sender-receiver真实闭环successor",
+  "unverified": [
+    "0003 migration、sender、deployment-v2、无hash bootstrap、public snapshot adapter、M1真实运行、response-loss/crash replay、cutover/回退均待开发与独立验证；本任务未写业务代码、未SSH、未迁移DB、未启动服务。"
+  ],
+  "updated_at": "2026-08-12T10:01+08:00",
+  "verified": [
+    "对照当前server只接POST、receiver未知bootstrap hash循环、outbox schema/trigger、Repository仅deliveryTask与public runtime仍synthetic的代码事实，冻结单一wire、无占位hash首包、自举连续链、single sender/receipt状态机、密钥与manifest边界、public snapshot adapter及cutover/两层回退。",
+    "旧accepted ADR保留全文并标记superseded；successor、Spec、实施合同与Function矩阵时态机械对齐；auto-publish=0且approve/manual publish两动作不变。"
+  ]
+}

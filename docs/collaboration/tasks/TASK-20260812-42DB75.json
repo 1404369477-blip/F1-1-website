@@ -1,0 +1,51 @@
+{
+  "acceptance_exit": "交付M1只读preflight报告：逐项PASS/FAIL/UNKNOWN、精确但脱敏的运行身份、Admin/Tailscale现状、闭包/依赖清单、部署前置与回退基线；证明本轮0写入/0安装/0load/0DB migration；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-42DB75-固定M1-Admin部署与私有入口只读preflight报告.md"
+  ],
+  "authorization_evidence": "用户明确允许SSH与固定M1部署；当前先进行只读硬门。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T09:46+08:00",
+      "evidence": "用户明确允许SSH与固定M1部署；当前先进行只读硬门。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/internal-agent:m1_admin_preflight",
+  "completion_class": "audit",
+  "confirmation": "用户已明确同意固定M1常驻、Wi-Fi先跑、SSH连接、真实采集与直接部署；本任务仅只读预检，不执行部署。",
+  "created_at": "2026-08-12T09:46+08:00",
+  "department": "安全部",
+  "details": "通过用户已授权的SSH别名f1plus1-m1-uu，对固定M1执行严格只读preflight；不传文件、不安装、不登录、不load、不迁移、不写DB。核对UID/home/arm64/磁盘、固定Node24路径与SHA、目标app根当前git/release状态、3101 listener与com.f1plus1.admin-service是否明确不存在、Tailscale CLI/App/daemon/登录状态是否存在、现有public-beta/quick-tunnel/receipt-refresh/RSS collector状态、source enabled/epoch与最近run、公开DB SHA/size/inode和四个公开页面健康。并在本机只读核对commit 54e694c的Admin运行闭包与生产依赖闭包，列出prepare所需canonical origin/trusted identity/device ref/Ed25519/bootstrap/recovery fence输入，区分已知、可自动发现和必须后继生成。所有输出脱敏，不输出账号、设备名、IP、token或私钥。",
+  "domain_stage": "安全/M1部署预检",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "SSH不可达、目标UID/app根/Node/公开DB身份异常时立即停止，不尝试修复。",
+    "发现3101已有未知listener或Admin label已load时停止，不杀进程、不覆盖。",
+    "Tailscale缺失或未登录只记录UNKNOWN/ABSENT，不安装、不授权；任一命令可能泄露密钥时跳过并说明。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "0传输/0安装/0登录/0load/0migration/0DB写/0服务变更；输出已脱敏。两次SQLite只读查询在SQL prepare阶段因引用错误失败、一次Tailscale只读状态在命令变量赋值前停止，均无写入并已如实写入报告；没有把Unknown写成PASS。",
+  "node": "第一版后台/M1部署预检",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-87555F-M1后台私有入口最小安全合同-v0.1.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-12-42DB75-固定M1-Admin部署与私有入口只读preflight报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-42DB75",
+  "title": "固定M1 Admin部署与私有入口只读preflight",
+  "unverified": [
+    "Serve/TLS/canonical origin/Grant/device approval；M5/iPhone跨网；Admin release manifest与M1同步；投影签名key/bootstrap snapshot；prepare/load/passkey/真实migration；异机备份RPO/RTO；public projection switch。"
+  ],
+  "updated_at": "2026-08-12T09:58+08:00",
+  "verified": [
+    "SSH只读核对M1身份/Node/磁盘、3101与Admin label/plist/root、Tailscale 1.96.5 Running/Online、四项既有服务、RSS source/epoch/private DB/20 candidates/latest run、public DB精确身份、local/public四页面与公网Admin/internal负向；本地核对54e694c Git身份、34文件Admin闭包与SimpleWebAuthn 22包生产依赖闭包。"
+  ]
+}

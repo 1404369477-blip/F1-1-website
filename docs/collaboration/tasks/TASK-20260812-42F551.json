@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "四新SHA和九旧SHA匹配；P1-01 CLOSED或给唯一直接反例；P0/P1/P2明确；无P0/P1则放行UI集成和M1 prepare；报告落盘，TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-42F551-WebAuthn-counter-CAS与backup状态限定复审报告.md"
+  ],
+  "authorization_evidence": "79D620已用一次聚焦测试闭合86C9B9唯一P1。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T08:47+08:00",
+      "evidence": "79D620已用一次聚焦测试闭合86C9B9唯一P1。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/internal-agent:admin_service_cas_review",
+  "completion_class": "audit",
+  "confirmation": "只复审已知WebAuthn状态P1，不重开全量服务审查。",
+  "created_at": "2026-08-12T08:47+08:00",
+  "department": "安全部",
+  "details": "只读绑定新SHA：webauthn fd2e061d…58fd；storage0ce78ba9…776c；authff1426ec…00f7；test9f60833c…007e；其余九候选SHA保持86C9B9值。只裁定86C9B9唯一P1：verification是否透传device/backup；store是否同步credentialId+expectedCounter CAS、非零严格递增/双零允许、device固定、backup false→true单调且singleDevice禁true；login/fresh是否CAS成功后才签session/receipt；阅读并发逆序与负例收据。0修改/0测试/0typecheck/0网络/0DB写，不扩展其他Unknown。",
+  "domain_stage": "安全/认证最终复审",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "发现counter仍可回退/device或backup绕过/失败前发session：FAIL并停止。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "严格限定复审唯一P1；候选修改0、测试0、typecheck0、网络SSH0、DB写0；未重开九旧文件全量审查，未将单实例静态PASS扩展为真机或生产PASS。",
+  "node": "第一版后台/Passkey最终安全门",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-79D620-WebAuthn-counter-CAS与backup状态单调提交successor报告.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-12-42F551-WebAuthn-counter-CAS与backup状态限定复审报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-42F551",
+  "title": "79D620 WebAuthn单调状态提交P1限定复审",
+  "unverified": [
+    "真实Touch ID/iCloud/iPhone/FIDO2/浏览器、Tailscale Serve/Grant/header、异地网络、固定M1 listener/真实DB/RPO、sender/receiver/public switch均Unknown；第二独立hardware credential仍为production停止线；不放行load/生产。"
+  ],
+  "updated_at": "2026-08-12T08:52+08:00",
+  "verified": [
+    "四新SHA与九旧SHA全部MATCH；86C9B9唯一P1 CLOSED；counter以expectedCounter同步CAS，非零严格递增/双零允许，device固定，backup false到true单调且singleDevice禁true；login/fresh只在提交成功后签session/receipt。PASS P0=0/P1=0/P2=1；放行UI集成与M1 prepare-only。"
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "acceptance_exit": "三项P1均有SQL不可绕过约束和聚焦负例；canonical audit hash可build/verify且私有/任意字段不可混入；原数据测试仍通过；0001/采集核心/所有真实与synthetic DB零漂移；三项限定验证一次通过；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/migrations/rss-real/0002_admin_review_publish.sql",
+    "app/src/server/review-real/mapping.ts",
+    "app/src/tests/review-real-data.test.ts",
+    "docs/collaboration/部门/数据部/报告/2026-08-12-D8A278-Publication-Outbox-Audit三项P1最小闭合报告.md"
+  ],
+  "authorization_evidence": "复杂数据候选独立审查发现三项P1，用户要求快速修正并继续第一版。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T06:50+08:00",
+      "evidence": "复杂数据候选独立审查发现三项P1，用户要求快速修正并继续第一版。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "数据部/internal-agent:admin_data_successor",
+  "completion_class": "standard",
+  "confirmation": "只修0D4DCB三项P1；P2保留为未实现repository/receiver动态验证，不扩展。",
+  "created_at": "2026-08-12T06:50+08:00",
+  "department": "数据部",
+  "details": "严格依据0D4DCB报告，只修改 app/migrations/rss-real/0002_admin_review_publish.sql、app/src/server/review-real/mapping.ts 与现有聚焦测试；schema.ts除非类型出口机械必需不得改。P1-01：Publication禁止DELETE；published后published_at及冻结身份/hash/generation不可再改，状态只允许合同有限迁移。P1-02：projection_outbox禁止DELETE；INSERT必须pending、attempt_count=0、lease/receipt/error为空且合同身份/hash闭合；后续有限状态迁移保持。P1-03：audit_event INSERT必须previous_event_hash精确等于同一数据库上一audit_seq的event_hash（首条固定genesis）；mapping新增canonical audit event material/hash build+stored verify，闭合字段且确定性。测试只新增针对三项的最小正/负例，保留原3项；0真实DB/0synthetic/0网络/0API。固定Node24聚焦测试、typecheck、diff-check各仅一次，首错即停。完成后回报新SHA并通知admin_backend恢复。",
+  "domain_stage": "数据/安全修复",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "SQLite触发器无法在不改变产品合同下强制前驱或有限状态：停止并BLOCK，不降低为应用层约定。",
+    "需改schema公共合同或projection record语义：停止并报告精确冲突，等待统筹。",
+    "限定验证首错：立即停止、不重跑，保留首错与当前SHA并BLOCK。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查：仅修改0002、mapping和现有聚焦测试并新增数据部报告；schema.ts SHA不变；0001/采集核心/synthetic/真实DB/API/UI/网络/M1均未触碰；验证预算严格为测试1次/typecheck1次/diff-check1次，无首错、无追加防御",
+  "node": "第一版后台/数据层安全修复",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-0D4DCB-真实RSS审核发布数据层冻结候选独立静态对抗审查报告.md"
+  ],
+  "report": "docs/collaboration/部门/数据部/报告/2026-08-12-D8A278-Publication-Outbox-Audit三项P1最小闭合报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-D8A278",
+  "title": "90942F successor：Publication Outbox Audit三项P1最小闭合",
+  "unverified": [
+    "未运行真实Repository/API/M1/receiver动态验证；0D4DCB P2 snapshot generation/parent link按任务确认保留给后继，不扩展本次范围"
+  ],
+  "updated_at": "2026-08-12T07:00+08:00",
+  "verified": [
+    "固定Node24唯一聚焦测试1次3/3 PASS；固定Node24 typecheck唯一1次exit0；唯一diff-check PASS；Publication DELETE/published_at与身份冻结、ProjectionOutbox DELETE/初始态/attempt/lease/有限迁移、Audit predecessor/canonical build+stored verify正负例均闭合；0001/采集核心/所有现存SQLite SHA-size-mtime零漂移，externalCalls=0"
+  ]
+}

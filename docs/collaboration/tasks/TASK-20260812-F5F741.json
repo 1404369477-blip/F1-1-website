@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "最小delta manifest/archive path闭集和SHA PASS；唯一传输各PASS；clone/apply各一次；stage target verifier唯一一次PASS并匹配6f4642/d42c42/d186/89/322/44；原子rename到d186 final；post final/base/live/jobs/listeners零漂移；0prepare/load/DB/plist；报告/TASK_STATE_OK。",
+  "artifacts": [
+    "scratch/TASK-20260812-F5F741/8e70-to-d186-delta-manifest.json",
+    "scratch/TASK-20260812-F5F741/8e70-to-d186-delta.tar",
+    "docs/collaboration/部门/开发部/报告/2026-08-12-F5F741-bb0aa新release增量同步M1原子固化报告.md"
+  ],
+  "authorization_evidence": "用户：进入快速推进阶段，目前目标直接往前推进，不要多余自动审查。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T21:09+08:00",
+      "evidence": "用户：进入快速推进阶段，目前目标直接往前推进，不要多余自动审查。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:m1_d186_delta_release",
+  "completion_class": "standard",
+  "confirmation": "用户明确要求快速直接推进并停止多余审查；本操作仅新增内容寻址release目录，不加载服务、不切流量，回退为继续使用旧live与旧release。",
+  "created_at": "2026-08-12T21:09+08:00",
+  "department": "开发部",
+  "details": "快速主链，禁止额外审查/重复测试。冻结本地target：manifest `[M5-HOME]/Documents/F1+1/app/.local/release/admin-service-release-manifest.json` SHA6f4642999797aea6d220cc01ec4d9500416a37a5db7de8eaafc573991bff770d，releaseRoot d186e4285198e78185aaa23a0c218313c78f2adf0aa5f377fbf380dc01307de1，content d42c42cb...fefe，git bb0aa026/tree2fdf/parent2ff，runtime89/Next322/13399239/root40746f5f/packages44/deps517c29e4/Nodeee6fb0e0。M1 base只读路径 `[M1-HOME]/F1-1-website/releases/8e70b2b745e3013d4667b7eb646c91f5286e8906b9254deaef5fffb6666ff30a/app`，manifest SHA d14ee6025d55edb238bc8c8ac9e7b189442161ddd543531fa075db6b1b6f811a；新final `[M1-HOME]/F1-1-website/releases/d186e4285198e78185aaa23a0c218313c78f2adf0aa5f377fbf380dc01307de1/app`。直接完成：1) 只读scp base manifest到全新本地scratch并核SHA/0600来源收据；2) 基于旧/新manifest记录集生成最小delta manifest+tar，changed含新manifest，deleted闭集，排除DB/key/.env/secret/token/tests以外实际runtime闭包（测试若在manifest则允许），核tar=changed集合；3) 传两个小文件到全新M1 task root并核SHA；4) M1 preflight只核UID/Node/base目录+base manifest/final+stage absent/空间，不重跑旧base verifier；5) APFS cp -cR clone base到全新stage一次；6) 用现有已证明算法的任务专属apply脚本先全量重算old→new delta闭集、payload身份，再替换changed/删除deleted；7) stage上用M1固定Node和external SHA执行target verifier唯一一次，要求新全部roots；8) 同盘原子rename stage parent到final parent；9) post只读核final manifest SHA、final/stage/base/live身份和3101/3102无listener、既有public/RSS jobs仍存在，不再跑第二verifier。0prepare/load/cutover/DB/plist/service写；首错停不重试。所有scratch/task脚本用apply_patch，local/remote Node --check各一次即可，不跑Vitest/typecheck/build。",
+  "domain_stage": "deployment",
+  "event_receipts": [
+    "M1 release finalized at [M1-HOME]/F1-1-website/releases/d186e4285198e78185aaa23a0c218313c78f2adf0aa5f377fbf380dc01307de1/app; manifest6f464299; stage verifier PASS; live unchanged."
+  ],
+  "execution_state": "completed",
+  "external_artifacts": [],
+  "failure_paths": [
+    "base/final/stage/manifest/Node/delta闭集/transfer/clone/apply/verifier/rename任一首错停止且不重试；stage verifier失败保留stage禁止rename；禁止修改live/base/DB/plist/service，禁止全量重新传输、prepare/load/cutover。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "No repeated Vitest/typecheck/build; no old-base verifier rerun; one clone/apply/stage verifier/rename only; no second verifier; minimum delta only; no live/base/DB/plist/service mutation.",
+  "node": "M1-D186-INCREMENTAL-RELEASE-FINALIZE",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-F055A6-Next空目录xattr探针兼容与release验签finalizer报告.md",
+    "docs/collaboration/部门/开发部/报告/2026-08-12-F031E2-M1-delta-release原子固化报告.md"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-F5F741-bb0aa新release增量同步M1原子固化报告.md",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-F5F741",
+  "title": "bb0aa新release增量同步M1并原子固化",
+  "unverified": [
+    "No prepare/load/cutover/DB/plist/service write; new release is not live; Admin/receiver/sender/passkey/migration/Tailscale/public real-snapshot remain pending. M1 task/payload evidence retained."
+  ],
+  "updated_at": "2026-08-12T21:21+08:00",
+  "verified": [
+    "M1 base manifest copied read-only once and matched d14ee602/root8e70. Local minimal delta closed set PASS: 17 changed/3 deleted, manifest c466d6b0, archive ec0b9493, archive members exact. Delta files each transferred once. M1 preflight PASS; APFS clone once PASS; apply once PASS; stage target verifier exactly once PASS with manifest6f464299/contentd42c42cb/released186e428/runtime89/Next322 bytes13399239 root40746f5f/packages44. Stage parent atomically renamed to final d186; postflight final/base/live identities PASS, 3101/3102 absent, public and RSS jobs retained."
+  ]
+}

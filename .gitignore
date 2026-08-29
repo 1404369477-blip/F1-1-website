@@ -33,9 +33,21 @@ migration/manifests/
 migration/portable-assets/
 migration/scripts/
 
-# ——— 选型后按需启用(取消注释,或删掉不相关的)———
 # 依赖与构建产物
-# node_modules/
+node_modules/
+.next/
+.worktrees/
+
+# 设计产出:体积大(约 920MB),不进 git;需要共享时单独走资产托管
+design/
+
+# 本地数据库与快照:含真实内容数据,不进仓库
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.db
+
+# ——— 选型后按需启用(取消注释,或删掉不相关的)———
 # dist/
 # build/
 # __pycache__/
@@ -49,3 +61,9 @@ migration/scripts/
 # *.gguf
 # *.bin
 # *.onnx
+
+# Local agent/tool state
+.claude/
+
+# Local-only truth files. `*.local` matches `foo.local` but not `*.local.md`.
+*.local.md

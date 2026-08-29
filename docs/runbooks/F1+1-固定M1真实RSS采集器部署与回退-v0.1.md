@@ -6,14 +6,14 @@
 
 固定事实：
 
-- M1 app root：`/Users/chanai/F1-1-website/app`，必须为非 iCloud 路径。
-- Node：`/Users/chanai/.local/node-v24.18.0-darwin-arm64/bin/node`，版本必须为 `24.18.0`。
+- M1 app root：`[M1-HOME]/F1-1-website/app`，必须为非 iCloud 路径。
+- Node：`[M1-HOME]/.local/node-v24.18.0-darwin-arm64/bin/node`，版本必须为 `24.18.0`。
 - label：`com.f1plus1.rss-collector`。
 - schedule：`RunAtLoad=true`、`StartInterval=900`、无 `KeepAlive`。
 - SQLite：`app/.local/f1plus1-rss-real-private.sqlite`，profile `rss-real-private`。
 - release manifest：`app/.local/release/rss-real-release-manifest.json`，其最终文件 SHA 必须由统筹部通过独立通道传入。
 - manifest：`app/.local/rss-real-deployment-manifest.json`。
-- plist：`/Users/chanai/Library/LaunchAgents/com.f1plus1.rss-collector.plist`。
+- plist：`[M1-HOME]/Library/LaunchAgents/com.f1plus1.rss-collector.plist`。
 - 日志：`app/.local/logs/rss-collector.stdout.log` 与 `rss-collector.stderr.log`。
 - 每次真实执行入口：`app/scripts/rss-scheduled-run.ts`；它在动态导入 collector 前复核外部 release manifest 锚、完整运行闭包、目标 Node、deployment manifest 与 DB schema。
 
@@ -28,8 +28,8 @@
 只在精确提交完成、运行文件闭包全部 tracked 且无 staged/unstaged/untracked 漂移后，由 M5 固定 Node24 执行：
 
 ```sh
-cd /Users/hoyin/Documents/F1+1/app
-RSS_TARGET_NODE_PATH='/Users/chanai/.local/node-v24.18.0-darwin-arm64/bin/node' \
+cd [M5-HOME]/Documents/F1+1/app
+RSS_TARGET_NODE_PATH='[M1-HOME]/.local/node-v24.18.0-darwin-arm64/bin/node' \
 ./.local/toolchains/node-v24.18.0-darwin-arm64/bin/node \
   --experimental-strip-types scripts/rss-build-release-manifest.ts
 ```
@@ -51,9 +51,9 @@ launchctl print gui/$(id -u)/com.f1plus1.rss-collector
 把已固定的 release manifest 安装到 `.local/release/rss-real-release-manifest.json`，mode 0600。然后在 M1 精确 app root 中，以统筹部独立传入的 `<EXPECTED_RELEASE_MANIFEST_SHA256>` 执行：
 
 ```sh
-cd /Users/chanai/F1-1-website/app
+cd [M1-HOME]/F1-1-website/app
 RSS_EXPECTED_RELEASE_MANIFEST_SHA256='<EXPECTED_RELEASE_MANIFEST_SHA256>' \
-/Users/chanai/.local/node-v24.18.0-darwin-arm64/bin/node \
+[M1-HOME]/.local/node-v24.18.0-darwin-arm64/bin/node \
   --experimental-strip-types scripts/rss-install-macos.ts
 ```
 
@@ -71,14 +71,14 @@ launchctl print gui/$(id -u)/com.f1plus1.rss-collector
 
 ```sh
 /usr/bin/env -i \
-  HOME=/Users/chanai \
-  TMPDIR=/Users/chanai/F1-1-website/app/.local/tmp \
-  PATH=/Users/chanai/.local/node-v24.18.0-darwin-arm64/bin:/usr/bin:/bin:/usr/sbin:/sbin \
+  HOME=[M1-HOME] \
+  TMPDIR=[M1-HOME]/F1-1-website/app/.local/tmp \
+  PATH=[M1-HOME]/.local/node-v24.18.0-darwin-arm64/bin:/usr/bin:/bin:/usr/sbin:/sbin \
   RSS_REAL_IO=true \
   RSS_RELEASE_MANIFEST_SHA256='<EXPECTED_RELEASE_MANIFEST_SHA256>' \
-  /Users/chanai/.local/node-v24.18.0-darwin-arm64/bin/node \
+  [M1-HOME]/.local/node-v24.18.0-darwin-arm64/bin/node \
   --experimental-strip-types \
-  /Users/chanai/F1-1-website/app/scripts/rss-scheduled-run.ts
+  [M1-HOME]/F1-1-website/app/scripts/rss-scheduled-run.ts
 ```
 
 scheduled wrapper 必须先以该外部 SHA 重算 release manifest、运行文件、递归生产依赖、目标 Node、deployment manifest/plist/权限与 DB schema；任一步失败都在动态导入 collector、打开 collector 写连接或执行 DNS/HTTP 前退出，失败收据固定 `externalCalls=0`。通过后才执行现有 collector。保存唯一 JSON 收据，核对 run/slot/status/reason、`externalCalls`、response hash 与候选计数。不得复制 RSS 正文、header、IP、绝对日志内容或数据库内容到公开文档。
@@ -86,7 +86,7 @@ scheduled wrapper 必须先以该外部 SHA 重算 release manifest、运行文�
 单次运行结束后先停采围栏，再进入审查：
 
 ```sh
-/Users/chanai/.local/node-v24.18.0-darwin-arm64/bin/node \
+[M1-HOME]/.local/node-v24.18.0-darwin-arm64/bin/node \
   --experimental-strip-types scripts/rss-control.ts stop
 ```
 
@@ -96,7 +96,7 @@ scheduled wrapper 必须先以该外部 SHA 重算 release manifest、运行文�
 
 ```sh
 RSS_EXPECTED_RELEASE_MANIFEST_SHA256='<EXPECTED_RELEASE_MANIFEST_SHA256>' \
-/Users/chanai/.local/node-v24.18.0-darwin-arm64/bin/node \
+[M1-HOME]/.local/node-v24.18.0-darwin-arm64/bin/node \
   --experimental-strip-types scripts/rss-control.ts status
 ```
 
@@ -108,7 +108,7 @@ RSS_EXPECTED_RELEASE_MANIFEST_SHA256='<EXPECTED_RELEASE_MANIFEST_SHA256>' \
 
 ```sh
 RSS_EXPECTED_RELEASE_MANIFEST_SHA256='<EXPECTED_RELEASE_MANIFEST_SHA256>' \
-/Users/chanai/.local/node-v24.18.0-darwin-arm64/bin/node \
+[M1-HOME]/.local/node-v24.18.0-darwin-arm64/bin/node \
   --experimental-strip-types scripts/rss-control.ts resume
 ```
 
@@ -118,7 +118,7 @@ RSS_EXPECTED_RELEASE_MANIFEST_SHA256='<EXPECTED_RELEASE_MANIFEST_SHA256>' \
 
 ```sh
 RSS_EXPECTED_RELEASE_MANIFEST_SHA256='<EXPECTED_RELEASE_MANIFEST_SHA256>' \
-/Users/chanai/.local/node-v24.18.0-darwin-arm64/bin/node \
+[M1-HOME]/.local/node-v24.18.0-darwin-arm64/bin/node \
   --experimental-strip-types scripts/rss-control.ts status
 tail -n 50 .local/logs/rss-collector.stdout.log
 tail -n 50 .local/logs/rss-collector.stderr.log
@@ -129,7 +129,7 @@ tail -n 50 .local/logs/rss-collector.stderr.log
 任何异常先执行：
 
 ```sh
-/Users/chanai/.local/node-v24.18.0-darwin-arm64/bin/node \
+[M1-HOME]/.local/node-v24.18.0-darwin-arm64/bin/node \
   --experimental-strip-types scripts/rss-control.ts stop
 ```
 

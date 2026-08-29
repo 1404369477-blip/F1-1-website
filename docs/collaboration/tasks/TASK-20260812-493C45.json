@@ -1,0 +1,42 @@
+{
+  "acceptance_exit": "preflight全PASS；唯一smart-HTTP push exit0且非force；remote ref/tree/parent精确bb0/2fdf/2ff；本地HEAD/index/runtime/manifest零漂移；0重试；报告/TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "用户持续推进网站搭建直至初版落地；TASK-20260812-3844EF安全部PASS仅放行该精确非force push。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T20:56+08:00",
+      "evidence": "用户持续推进网站搭建直至初版落地；TASK-20260812-3844EF安全部PASS仅放行该精确非force push。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "SMART_HTTP_PUSH_FIRST_FAILURE: preflight completed with frozen local chain/index/app/runtime/manifest/transport gates and fresh remote pre-read target=54e694c/main=ee450639; the single allowed non-force push then exited 128 with exact error: fatal: unable to access https://github.com/1404369477-blip/F1-1-website.git/: Failed to connect to github.com port 443 after 75008 ms: Couldn\\x27t connect to server. Per contract no retry, no force, no API fallback, and no post-write assumption. Remote post-state remains Unknown because post-read is disallowed after first failure; local files/Git were not modified by task.",
+  "claimed_by": "开发部/internal-agent:exact_nonforce_push",
+  "completion_class": "standard",
+  "confirmation": "持续交付目标已授权正常发布链推进；安全部3844EF仅放行该一次精确非force push，不包含部署。",
+  "created_at": "2026-08-12T20:56+08:00",
+  "department": "开发部",
+  "details": "承接3844EF PASS。唯一允许外部写为一次显式普通smart-HTTP非force push：local exact source `bb0aa0266b73b7b2f7af38d3f29ac0a07dee772f:refs/heads/codex/first-public-release`。紧邻push前硬门：HEAD=bb0aa/tree2fdf/single parent2ff；链54e694c→2ff1bdba→bb0aa恰两个commit无额外；index empty；89 runtime clean/blob=HEAD；manifest SHA6f464299...770d与git identity bb0aa匹配；remote URL无嵌入凭据、无extraheader/token env、无可执行pre-push hook；`git ls-remote`目标ref必须仍精确54e694c13b7369819448a2c3b072cb0fbbc49b7b。随后唯一一次 `git push origin bb0aa0266b73b7b2f7af38d3f29ac0a07dee772f:refs/heads/codex/first-public-release`（禁止force/lease/set-upstream）。exit0后只读回读remote ref=bb0aa，并用GitHub远端对象读回tree=2fdf、parent=2ff；本地HEAD/index/runtime/manifest不漂移。禁止第二次push、API fallback、build/SSH/M1。",
+  "domain_stage": "development",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "remote pre不等54e或local链/身份漂移立即block不push；push失败/竞态首错停止且不重试/不force/API fallback；post回读不匹配立即block且不做纠正写。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "EXACT-TWO-COMMIT-NONFORCE-PUSH",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-3844EF-bb0aa-clean-release与非force推送最终只读复审报告.md"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-493C45",
+  "title": "bb0aa双commit普通smart-HTTP非force同步",
+  "unverified": [],
+  "updated_at": "2026-08-12T21:00+08:00",
+  "verified": []
+}

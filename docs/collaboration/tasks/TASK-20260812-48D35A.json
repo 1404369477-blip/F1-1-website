@@ -1,0 +1,51 @@
+{
+  "acceptance_exit": "GitHub既定分支回读精确为5d5963671550b45e9c01fbc727bc6aeac73447e4，tree为cc0193fe0082e783ce25befddcecf855ec74e417，唯一parent为7f5cab64e25d01c74005fbb24c4f0e2905291f1d，用户可在既定仓库看到第二版修复提交。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-第二版Node24-RSS修复提交-Git-Data-API同步报告.md"
+  ],
+  "authorization_evidence": "用户已明确指定以后均在该GitHub仓库更新维护，并要求持续推进上线第一版。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T04:03+08:00",
+      "evidence": "用户已明确指定以后均在该GitHub仓库更新维护，并要求持续推进上线第一版。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:github_api_push",
+  "completion_class": "standard",
+  "confirmation": "统筹部核对远端ref/tree/parent回读后决定ACK并放行M1第二release。",
+  "created_at": "2026-08-12T04:03+08:00",
+  "department": "开发部",
+  "details": "目标仓库1404369477-blip/F1-1-website，分支codex/first-public-release。本地目标parent必须为远端当前7f5cab64e25d01c74005fbb24c4f0e2905291f1d，tree必须为cc0193fe0082e783ce25befddcecf855ec74e417。标准smart-HTTP此前连续失败，允许复用已验证Git Data API逐blob/tree/commit精确同步；只有API生成commit SHA逐字符等于本地目标且二次回读远端仍在parent时，才可force=false更新ref。不得force、不得改其他分支/remote/凭证/PR，不得包含工作区未提交文件。",
+  "domain_stage": "发布同步",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [
+    "https://github.com/1404369477-blip/F1-1-website/commit/5d5963671550b45e9c01fbc727bc6aeac73447e4"
+  ],
+  "failure_paths": [
+    "远端起点不等于目标parent时停止且不更新ref，报告实际SHA。",
+    "任一blob/tree/API commit SHA不一致时停止且不更新ref，保留不一致清单。",
+    "GitHub API鉴权、限流或ref更新失败时不重试破坏性操作、不使用force，保持远端原状并报告。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "ref更新前二次核对远端head；逐层使用API返回SHA作为下一门前置；未force、未改其他分支/remote/凭证/SSH key/PR、未包含工作区未提交文件、未输出token或文件正文。",
+  "node": "将本地单父提交5d5963671550b45e9c01fbc727bc6aeac73447e4精确快进到既定GitHub分支",
+  "pointers": [],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-第二版Node24-RSS修复提交-Git-Data-API同步报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-48D35A",
+  "title": "第二版Node24 RSS修复提交精确同步GitHub",
+  "unverified": [
+    "未重试Git smart-HTTP push；未变更或验证仓库可见性、分支保护及其他仓库设置。"
+  ],
+  "updated_at": "2026-08-12T04:07+08:00",
+  "verified": [
+    "远端起点两次精确等于本地目标唯一parent 7f5cab64e25d01c74005fbb24c4f0e2905291f1d；14/14 API blob SHA精确匹配；API tree精确等于cc0193fe0082e783ce25befddcecf855ec74e417；API commit精确等于5d5963671550b45e9c01fbc727bc6aeac73447e4；force=false更新后API回读ref/tree/唯一parent全部精确匹配；本地HEAD/.git/config/index在ref事务前后稳定；API 21次、0重试、0 SHA不一致。"
+  ]
+}

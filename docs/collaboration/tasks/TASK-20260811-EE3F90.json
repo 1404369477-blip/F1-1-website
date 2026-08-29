@@ -1,0 +1,55 @@
+{
+  "acceptance_exit": "交付设计部正式报告和逐项裁定矩阵；每条发现均有独立证据、优先级、精确优化动作、影响文件、验收与回退。交付一份面向开发部的有序实施清单，区分可立即勘误、需用户视觉确认、需产品合同决策、需实机补证。若有视觉变化，交付隔离successor HTML、完整SHA-256清单、1440/1024/390×深浅六格和关键展开态/触控说明；明确推荐唯一方案及与F1358A successor的关系。冻结SHA=5a84基线零修改，用户确认前不替换基线、不放行开发或发布视频。",
+  "artifacts": [],
+  "authorization_evidence": "2026-08-11主会话：用户说“我刚刚让kimi做了一份设计审查报告，你让设计部看看，给出具体的优化方案”",
+  "authorization_history": [
+    {
+      "at": "2026-08-11T13:19+08:00",
+      "evidence": "2026-08-11主会话：用户说“我刚刚让kimi做了一份设计审查报告，你让设计部看看，给出具体的优化方案”",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "用户确认是否允许修复390证据行的nowrap/width冲突，并重新采集与修后候选SHA绑定的1440/1024/390深浅六格及390展开态；当前用户明确禁止重新截图，现有390 PNG直接显示来源和日期被压成近竖排，故不得complete或复用旧图。",
+  "claimed_by": "设计部/当前正式会话",
+  "completion_class": "standard",
+  "confirmation": "用户已授权设计部复核并产出具体优化方案；任何新视觉基线、正式App改动和发布视频启动仍需后续单独确认",
+  "created_at": "2026-08-11T13:19+08:00",
+  "department": "设计部",
+  "details": "用户于2026-08-11明确要求设计部查看Kimi设计审查报告并给出具体优化方案。先完整读取 docs/collaboration/部门/设计部/报告/2026-08-11-frontend-design透镜v0.2冻结设计深度审视.md（SHA-256=a4022a97f139654e1f536754816c70b993384515f901f6269b233cbfb48ae487），独立复核冻结输入 design/ui/F1+1-v0.2-全站设计/index.html（SHA-256=5a84bfb27294ebd727369118a95528f5b788bfacbe2d56cc03fcb006f6168cb1）、design-system.md（SHA-256=6d7a966044ebadff614f60a7d72c0d59e8cf8d805f2883384872c1d2ce4e69e6）与 brand-spec.md（SHA-256=508717c7e2699a153af3a46064177e764c5b04bc3c21a02f7d735936632d2986）。同时对照已ACK的 TASK-20260809-F1358A taste successor，避免重复修饰或回退既有结论。逐条裁定 A1-A5、B1-B2、C1-C3、D1-D2、E1-E3、F1-F2：证据状态（verified/反证/Unknown）、保留/修改/否决、优先级、具体CSS/token/文案/交互改法、受影响文件、开发实现边界、测试方式与回退方式。优先处理规范真值漂移、44px触控、陈旧文案/meta、桌面wheel冲突；E1-E3作为v0.3输入单列，不得在无产品确认时改信息架构。若建议产生视觉变化，必须建立独立 successor 目录，不覆盖5a84基线，提供可打开HTML和1440/1024/390×深浅六格对照；若可用现有F1358A successor吸收，应明确复用与增量差异。不得修改app/、Spec、accepted ADR、正式发布视频或冻结稿。",
+  "domain_stage": "公开页-v0.2视觉勘误与v0.3输入",
+  "event_receipts": [],
+  "execution_state": "waiting_input",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 输入路径/hash、既有F1358A successor或证据不匹配：立即block并回报漂移，不对错误对象下结论；2) 浏览器/字体/远程图片/触控板条件无法验证：保留Unknown并给出唯一补证路径，不用静态推断冒充实测；3) 优化需要改变信息架构、Function ID、发布策略或产品合同：只形成隔离提案并标记user_required，禁止设计部自行冻结；4) 无六格可视化、只写抽象建议、覆盖冻结目录或把Kimi结论直接当事实：任务不得complete。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "独立核验审查结论，裁定冻结稿与规范唯一真值，形成不覆盖基线的可视化优化候选与实施清单",
+  "pointers": [
+    "docs/collaboration/部门/设计部/报告/2026-08-11-frontend-design透镜v0.2冻结设计深度审视.md",
+    "docs/collaboration/tasks/TASK-20260809-F1358A.json",
+    "design/ui/F1+1-v0.2-全站设计/index.html"
+  ],
+  "report": "",
+  "resolution": {
+    "evidence": "设计部EE3F90正式报告定位390近竖排P1；用户2026-08-11重启后明确继续推进；Codex任务工具确认原设计窗口systemError为额度上限。",
+    "reason": "用户已放行唯一390证据行修正，但正式设计部窗口因账户额度上限无法续跑；后继仅承接元数据/动作分行与同SHA六格重采集，不覆盖冻结基线。",
+    "receipt_id": "RES-20260811T203907-6D998320",
+    "replacement_revision": 2,
+    "replacement_state": "claimed",
+    "replacement_task_id": "TASK-20260811-A52E78",
+    "resolved_at": "2026-08-11T20:39+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "superseded",
+    "target_revision_before": 3
+  },
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260811-EE3F90",
+  "title": "复核Kimi frontend-design审查并交付v0.2具体优化方案",
+  "unverified": [],
+  "updated_at": "2026-08-11T20:39+08:00",
+  "verified": []
+}

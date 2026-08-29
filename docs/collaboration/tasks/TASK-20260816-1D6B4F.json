@@ -1,0 +1,42 @@
+{
+  "acceptance_exit": "contract-v4逐项收据齐全；host key/known_hosts绑定；preflight裸feed和health200；exact三件/modes/uid；own label bootstrap一次；首份receipt status ok且<=60s；第二份自然300..420s且distinct/history/latest闭合；七服务/四listener/Public出口postflight无任务引起漂移；databaseReads/Writes=0；独立安装后review P0/P1=0；TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "conversation:2026-08-16 + contract-v4 independent PASS 0d148184ddf374726fadedb6f4e96d8a5aa2afd913c12d4b23c7b9ab42c4dc67",
+  "authorization_history": [
+    {
+      "at": "2026-08-16T03:46+08:00",
+      "evidence": "conversation:2026-08-16 + contract-v4 independent PASS 0d148184ddf374726fadedb6f4e96d8a5aa2afd913c12d4b23c7b9ab42c4dc67",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "",
+  "completion_class": "standard",
+  "confirmation": "用户2026-08-16明确要求持续推进至网站真实运行和持续更新；contract-v4已独立PASS，仅授权此一次observer安装。",
+  "created_at": "2026-08-16T03:46+08:00",
+  "department": "自动化部",
+  "details": "严格执行已审合同 contract-v4，SHA 95915e30c70fd84573f27bc00269514ae6c45882f9058922c891e0901de65406；独立PASS报告SHA 0d148184ddf374726fadedb6f4e96d8a5aa2afd913c12d4b23c7b9ab42c4dc67、receipt SHA 364c53791cec5c198404478925d9d10b699f9cecd2b3f05b5d6ce697c9a68c1d。唯一安装候选manifest 6c437973c101b4fd773ae5a8592b8050a75977545f9e5efb6b9b29cacd69c2b4。执行必须由受限机械runner逐步完成并保留Grok候选来源；Grok不得直接持有生产写权限。只安装observer.py/config.json/plist三件，只bootstrap own label一次，等待首份<=60s和第二自然300..420s，postflight；全程禁止生产DB和其他服务动作。首错按合同非删除回退。",
+  "domain_stage": "observer-live-install",
+  "event_receipts": [],
+  "execution_state": "queued",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一身份/SHA/目标碰撞/feed/文件/bootstrap/receipt/time/postflight失败立即停止；若已有写入，严格按contract-v4固定quarantine映射非删除回退；partial move/cross-device/collision时停止进一步mutation并保留现场；禁止操作其他服务或DB。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "observer-v7-live-install",
+  "pointers": [
+    "scratch/TASK-20260816-OBSERVER-V7-INSTALL-TASK-CONTRACT/contract-v4.md"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 1,
+  "schema_version": 1,
+  "task_id": "TASK-20260816-1D6B4F",
+  "title": "M1 Observer v7 单次安装与双周期验收",
+  "unverified": [],
+  "updated_at": "2026-08-16T03:46+08:00",
+  "verified": []
+}

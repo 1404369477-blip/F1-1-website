@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "安全部正式报告+TASK_STATE_OK；给出实际mode分布、首错根因、唯一明确规则、builder/target verifier/installer的最小修正和P0/P1/P2；明确是否可直接派机械successor。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-378614-Next-production-build文件mode规则只读裁定报告.md"
+  ],
+  "authorization_evidence": "用户本会话：继续；快速上线第一版。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T12:48+08:00",
+      "evidence": "用户本会话：继续；快速上线第一版。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/internal-agent:projection_security_final",
+  "completion_class": "audit",
+  "confirmation": "用户要求快速上线且不做猜测式重试。",
+  "created_at": "2026-08-12T12:48+08:00",
+  "department": "安全部",
+  "details": "只读裁定blocked FA5D66首错：production build PASS后release fresh-stage拒绝.next/server/next-minimal-server.js.nft.json为非owner-controlled single-link。读取首错文件及同build闭包文件的lstat mode/uid/gid/nlink/type/realpath分布、Next构建产物用途与当前release verifier谓词；不运行build/test/typecheck，不改文件。目标是给唯一可实施规则：公开服务只读构建字节允许哪些精确mode（候选应为owner=root/current uid、regular、nlink1、无symlink、group/other不可写，0644/0755按可执行性；私钥/DB/manifest继续0600/0700），是否应在builder完成后对task-owned fresh build闭包机械chmod归一化并将mode入manifest，target verifier逐字核对。不得把group/other写权限、symlink或异主放行。",
+  "domain_stage": "review",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若首错文件为symlink/异主/多链接/越界或其权限来自不可信共享构建根，判阻断并不得建议chmod掩盖；若无法区分可执行文件，保持Unknown并停止；禁止扩大到M1运行。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "严格只读：0 build/test/typecheck/verifier/installer/network/SSH/DB/service；未chmod/chown/改字节；未将目录nlink误判为文件多链接；未放宽group/other write；只写安全部正式报告并用任务工具落账。",
+  "node": "M1首版上线/真实投影release/.next文件身份门",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-FA5D66.json"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-12-378614-Next-production-build文件mode规则只读裁定报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-378614",
+  "title": "Next production build文件mode规则只读裁定",
+  "unverified": [
+    "机械chmod successor尚未实现；归一后的manifest count/root/SHA、聚焦测试/typecheck/diff-check、M1 target身份与installer运行证据均Unknown。"
+  ],
+  "updated_at": "2026-08-12T12:53+08:00",
+  "verified": [
+    "当前候选FAIL；P0=0/P1=1/P2=0。只读lstat/realpath：.next纳入闭包322文件/13373354 bytes；0600=37、0664=285；全部uid501/gid20、regular、nlink1、非symlink、realpath精确，执行位0。57目录为0700=55/0755=2，均uid501、非symlink、无group/other write。首错next-server.js.nft.json只违反group-write禁止。唯一规则与机械successor边界已裁定。报告SHA-256=dd0e4fa0e3e619356609fea2467a88b810119335abadae474fd53c5b4239574e。"
+  ]
+}

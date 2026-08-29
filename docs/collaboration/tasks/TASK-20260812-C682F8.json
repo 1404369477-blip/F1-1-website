@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "取得baseline、execute、postflight三份可信收据；唯一真实RSS请求最多一次且停采确认，成功时真实候选进入pending_review，公开站零漂移。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-C682F8-M1第二release唯一真实RSS三阶段受控执行报告.md"
+  ],
+  "authorization_evidence": "用户明确授权M1 SSH与真实采集；执行器两项P1已独立复审关闭。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T05:32+08:00",
+      "evidence": "用户明确授权M1 SSH与真实采集；执行器两项P1已独立复审关闭。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:m1_release_executor",
+  "completion_class": "standard",
+  "confirmation": "统筹部交安全部做独立运行审查；PASS前不启用900秒。",
+  "created_at": "2026-08-12T05:32+08:00",
+  "department": "开发部",
+  "details": "前置TASK-20260812-12EAF7已ACK/PASS/P0=0/P1=0/P2=0；本地脚本/var/folders/dz/l8yd2gqj22z1xgrcl1z_wbkr0000gn/T/TASK-20260812-B57F41-executor.h1qmBj/controlled-rss-run.mjs，SHA9067b5a08ead7282ea558c57cfbebcaed6d0ed0b71c9b4d22944fc041c9c38be，Node check已PASS。传到全新固定远端路径[M1-HOME]/F1-1-website/.rss-release-TASK-20260812-D460D7/TASK-20260812-9067-controlled-rss-run.mjs，禁止覆盖旧脚本；scp恰1次。远端白名单仅：chmod0600；shasum一次；stat格式必须用无shell元字符的%Lp,%u,%l并要求600,501,1；固定Node24 --check一次；然后在app cwd以固定Node24 --experimental-strip-types分别执行同一脚本 baseline恰1、成功后立即execute恰1、成功后postflight恰1。禁止grep/pipe/变量包装/node-e/heredoc/任何额外诊断。baseline必须实时满足disabled epoch3/unloaded/run1/gap0/running0/candidate0/public基线且slot余量≥60秒，否则停止。execute内部one-shot enable、wrapper最多一次真实请求、统一finally control stop恰1及紧急refence；业务failed收据仍可算execute成功并继续postflight，process级非零/STOP_UNCONFIRMED立即停止。postflight需证明scheduler gap合同、当前run、candidate pending_review/人工字段、20秒零新增、source disabled epoch>3/job unloaded、公开零漂移。禁止重跑任一phase、删除收据、resume/bootstrap/load/自动发布/Admin。所有stage/tar/backup/Trash保留供独立审查。",
+  "domain_stage": "M1唯一真实采集执行",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "远端脚本SHA/stat/check或baseline失败时0 enable/0请求并停止。",
+    "execute非零或STOP_UNCONFIRMED时禁止postflight和重跑，保留最终停采/紧急收据。",
+    "postflight gap/run/candidate/manual/20秒/public任一不符时阻断，保留全部证据。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "scp恰1；远端白名单chmod/shasum/stat/Node check后仅baseline→execute→postflight各1次；无额外诊断/grep/pipe/变量包装；报告未写RSS正文、candidate ID、header、IP或未脱敏DB内容；未load或cleanup。",
+  "node": "将9067安全复审PASS执行器传到M1，按baseline→execute→postflight各一次完成唯一真实请求与停采",
+  "pointers": [],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-C682F8-M1第二release唯一真实RSS三阶段受控执行报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-C682F8",
+  "title": "M1第二release唯一真实RSS三阶段受控执行",
+  "unverified": [
+    "无执行前非空人工字段样本，已有非空人工内容遇真实更新仍保持未获动态证明；900秒load、自动发布与清理未执行。"
+  ],
+  "updated_at": "2026-08-12T05:37+08:00",
+  "verified": [
+    "远端执行器SHA=9067b5a08ead7282ea558c57cfbebcaed6d0ed0b71c9b4d22944fc041c9c38be、mode600/UID501/nlink1、Node24 check PASS；baseline/execute/postflight各恰1次PASS。唯一wrapper=1/externalCalls=1/HTTP200/50 items/20 selected/20 new/status succeeded/OK；唯一stop=1且immediate next action，source disabled、epoch3→4、job unloaded。postflight run succeeded、scheduler_gap=1/running=0、candidate20且pending_review20/machine_invalid0/editor字段计数0、private integrity ok、20秒零新增；公开DB SHA949c78d505e4c032d2495174deaf62d24f9d99b76284ad7ba6fb29a5ac83bb50与size/inode/mode/UID/link、四页面200及三服务身份零漂移。"
+  ]
+}

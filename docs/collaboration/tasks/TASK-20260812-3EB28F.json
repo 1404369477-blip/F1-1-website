@@ -1,0 +1,48 @@
+{
+  "acceptance_exit": "形成PASS/FAIL及P0/P1/P2；只有同一候选的真实成功、停采、候选合同和公开零漂移独立成立时放行下一独立任务启用900秒调度。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-3EB28F-M1第二release真实RSS成功与900秒调度放行独立安全审查报告.md"
+  ],
+  "authorization_evidence": "用户要求快速实采后独立审查再放行常驻；C682F8已成功并保持停采。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T05:37+08:00",
+      "evidence": "用户要求快速实采后独立审查再放行常驻；C682F8已成功并保持停采。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/internal-agent:rss_static_review",
+  "completion_class": "audit",
+  "confirmation": "统筹部据审查决定是否启用15分钟调度；本任务不执行调度。",
+  "created_at": "2026-08-12T05:37+08:00",
+  "department": "安全部",
+  "details": "输入：C682F8已ACK；release manifest34c1032c…c8d95/content2aae0486…/release6d402a5d…；deployment manifest1f681429…ad50；plist60cd3b0d…787e；执行器SHA9067b5a0…38be；唯一wrapper externalCalls1/HTTP200/item50/selected20/new20/responseSHA09754466…17d7f；stop disabled epoch4/unloaded；gap1、当前run succeeded/OK、candidate20/pending_review20/machine_invalid0/editor字段计数0、20秒零新增；public DB SHA949c78d5…bb50与四页面/三服务零漂移。审查者可SSH做只读回读，但禁止运行wrapper/collector、enable/resume/bootstrap/load、修改DB/文件、清理或外部RSS请求。逐项独立核对manifest/runtime/Node/deployment/plist/权限、private schema+integrity、source、所有run分布与本次slot/response/count、scheduler_gap唯一身份、候选machine字段/pending_review/人工字段、任务收据SHA/mode/link、当前短窗零新增、公开DB身份/页面/服务。区分已证实新候选人工字段为空与既有非空人工字段更新保护仍Unknown。",
+  "domain_stage": "真实采集运行独立审查",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一release/deployment/receipt/DB身份或计数不符、source非disabled、job非unloaded、短窗新增时FAIL并给回退。",
+    "缺少非空人工字段动态样本只保留明确Unknown/P2边界，不得伪造；若机器写入人工字段则P1阻断。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "仅SSH只读回读；未执行collector/wrapper、enable/resume/bootstrap/load、修改、清理或外部RSS请求；未把新候选人工字段为空外推为既有非空字段动态保护；未把单次HTTP200外推为未来调度必然成功",
+  "node": "独立只读复核C682F8唯一HTTP200实采、20条pending_review、立即停采与公开零漂移，裁定900秒调度",
+  "pointers": [],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-12-3EB28F-M1第二release真实RSS成功与900秒调度放行独立安全审查报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-3EB28F",
+  "title": "M1第二release真实RSS成功收据独立运行审查",
+  "unverified": [
+    "900秒连续调度尚未执行；既有非空人工字段遇真实更新的动态保持仍Unknown/P2；未来RSS可用性与网络稳定性"
+  ],
+  "updated_at": "2026-08-12T05:48+08:00",
+  "verified": [
+    "同一release/runtime/Node/deployment/plist/executor身份匹配；唯一run HTTP200/externalCalls1/50-20-20/response SHA匹配；20条pending_review且machine-invalid与人工字段非空计数均0；scheduler_gap唯一；stop后disabled/epoch4/unloaded；独立20秒run/candidate零新增；公开DB/四页面/三服务零漂移；P0=0/P1=0/P2=1；放行下一独立900秒调度任务"
+  ]
+}

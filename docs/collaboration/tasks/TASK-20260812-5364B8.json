@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "首个字节差异与完整根因可复现；给单一推荐修正路径、失败门与是否需重建本地commit；远端ref/本地对象均零改；报告落盘，TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-5364B8-GitHub-API-commit-SHA差异只读诊断报告.md"
+  ],
+  "authorization_evidence": "用户要求继续；AB853B因commit SHA硬门阻断且远端ref未动。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T09:25+08:00",
+      "evidence": "用户要求继续；AB853B因commit SHA硬门阻断且远端ref未动。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:git_commit_sha_diagnosis",
+  "completion_class": "standard",
+  "confirmation": "0写GitHub、0本地Git变更、0测试/M1。",
+  "created_at": "2026-08-12T09:25+08:00",
+  "department": "开发部",
+  "details": "严格只读诊断本地commit 95b21d106c95afe076847df8a74442eb7c240de8 与GitHub API已创建但未挂ref的commit 896d5fb623dfbed79f2ff610ab0e32e33edf4560。读取两边raw commit/tree/parent/message/author/committer/date/timezone/encoding/signature字段与字节长度，按Git object `commit <len>\\0<body>`重算SHA，定位首个精确差异字节。不得创建新blob/tree/commit、不得更新ref、不得force、不得改本地commit/config/index/worktree。优先复用官方GitHub API/gh只读GET和本地git cat-file；不得猜测。输出唯一可重复的修正方案：若API字段表达可精确生成本地commit，给精确payload；若GitHub API规范化导致不可精确，说明是否应采用普通git push或接受远端API commit并在本地建立等价对象，以及各自影响。本任务只诊断不执行修正。",
+  "domain_stage": "开发/Git诊断",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "无法读取API commit原始字段或存在凭据输出风险：停止并BLOCK，不尝试写。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "只使用git cat-file、SHA重算与GitHub只读GET；0 GitHub对象创建、0 ref更新、0 force、0本地commit/config/index改写、0测试/build/M1；未将API JSON的UTC显示误判为raw timezone变化。",
+  "node": "第一版后台/Git同步诊断",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-AB853B-Admin第一版Git检查点API-commit-SHA阻断报告.md"
+  ],
+  "report": "不适用",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-5364B8",
+  "title": "AB853B successor：GitHub commit对象SHA差异只读诊断",
+  "unverified": [
+    "未执行推荐的普通Git smart-HTTP fast-forward push；未验证当前网络下smart-HTTP可用性。"
+  ],
+  "updated_at": "2026-08-12T09:30+08:00",
+  "verified": [
+    "本地commit raw body 306字节并重算为95b21d；去除唯一末尾LF后body 305字节并重算为API孤儿commit 896d5f，前305字节完全一致；object preimage首差异为header offset 9的body长度6/5，body首差异为offset305本地LF/API EOF；tree/parent/identity/timestamp/timezone一致；远端ref仍5d5963、本地HEAD仍95b21d。"
+  ]
+}

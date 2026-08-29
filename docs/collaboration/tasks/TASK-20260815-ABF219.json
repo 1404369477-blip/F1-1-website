@@ -1,0 +1,50 @@
+{
+  "acceptance_exit": "提交一份自动化部final报告，逐项列8类服务/备份的可核验状态与证据时间、监听边界、采集链当前断点、自动初审证据强弱、流量producer=not_available基线、需要统筹部处理事项；同时明确productionWrites=0,databaseReads=0,databaseWrites=0,serviceActions=0,launchdActions=0,contentReviewActions=0,publicationActions=0,externalMessages=0。使用精确受管工具绝对路径complete提交产出、已验证、未验证和错题自检，并返回TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "2026-08-15用户授权首张只读盘点；TASK-20260815-3908DB与850FF6均在未领取状态按abandoned收口，本任务保持原只读授权。",
+  "authorization_history": [
+    {
+      "at": "2026-08-15T21:04+08:00",
+      "evidence": "2026-08-15用户授权首张只读盘点；TASK-20260815-3908DB与850FF6均在未领取状态按abandoned收口，本任务保持原只读授权。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "",
+  "completion_class": "standard",
+  "confirmation": "用户已明确同意向已登记M1自动化部派发第一张正式只读盘点任务；本final successor修正两份前置合同错误且权限不扩张。",
+  "created_at": "2026-08-15T21:04+08:00",
+  "department": "自动化部",
+  "details": "在固定M1上只读核对现有RSSHub、rss-collector、rss-refiner、admin-service、public-projection、public-beta、quick-tunnel与异机备份的launchd状态、PID/runs/lastExit、仅loopback监听、公开health/feed以及已有脱敏运行收据的新鲜度；形成采集链断点、自动初审可观察性和流量聚合not_available基线。唯一受管任务工具绝对路径固定为 [M1-HOME]/Documents/F1+1/docs/collaboration/scripts/agent_team_task.py；claim、block、complete、list或doctor只能调用该精确文件，禁止搜索、猜测或改用其他副本。使用deepseek-v4-pro完成跨服务只读盘点。允许写入仅限受管TASK状态和本任务自动化部final报告。禁止连接或查询生产数据库，禁止读取凭证或环境变量值，禁止补抓、重跑worker、kill、kickstart、bootstrap、bootout、重启、安装、修改plist/release/active pointer/投影/发布outbox，禁止审核或发布内容，禁止外部消息和付费调用。领取前仅允许读本TASK和计算其SHA；若领取前验证失败，返回blocked_input且零状态写。领取成功后任一命令exit非0，立即用精确路径block并停止，禁止诊断修复或重试。",
+  "domain_stage": "m1-readonly-baseline-final-successor",
+  "event_receipts": [],
+  "execution_state": "queued",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 领取前taskId/body/session/部门路由/文件SHA不一致时不claim、不写task状态，只返回blocked_input与reason并停止；2) claim成功后任一命令exit非0，或核验需要数据库访问、服务控制、秘密或生产写时，立即用精确受管路径block并停止，禁止搜索修正、重试或扩大权限；3) launchctl/health/receipt证据互相矛盾或过期时保留原始只读证据，标记Unknown与证据强弱；若继续取证需要越权则block，不重跑或修复。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "关闭前两份不可满足合同后的最终派单",
+  "pointers": [
+    "docs/collaboration/部门/自动化部/RUNBOOK.md;docs/collaboration/部门/自动化部/机器交接边界.md;docs/collaboration/部门/自动化部/流量监控与隐私边界.md"
+  ],
+  "report": "",
+  "resolution": {
+    "evidence": "M1 task SHA=7dd9fec07110e0d86cd991ac8dabe4b5dfb1ecde597a26b6c7325babf8fe822e；claim PID65250 exit143；Codex PID65182终止；production/db/service/launchd/review/publication/external副作用均0。",
+    "reason": "M1在File Provider同步仓库中执行受管claim超过60秒无输出，且模型缩写claimed-by违反精确会话身份；统筹终止精确任务PID后JSON仍queued且SHA零漂移。正式机器任务必须等待owner-only OpsHandoff，禁止继续用同步目录充当原子队列。",
+    "receipt_id": "RES-20260815T210919-0F60C0C7",
+    "resolved_at": "2026-08-15T21:09+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "abandoned",
+    "target_revision_before": 1
+  },
+  "revision": 2,
+  "schema_version": 1,
+  "task_id": "TASK-20260815-ABF219",
+  "title": "M1首次正式只读运行基线盘点 final successor",
+  "unverified": [],
+  "updated_at": "2026-08-15T21:09+08:00",
+  "verified": []
+}

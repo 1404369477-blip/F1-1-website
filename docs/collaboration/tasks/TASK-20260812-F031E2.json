@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "新payload前置absent；apply一次33/3 PASS；stage/final verifier各一次PASS d14ee602/35021046/8e70b2b7；新release固化；旧stage证据payload、old base/live不变；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-F031E2-M1-delta-release原子固化报告.md"
+  ],
+  "authorization_evidence": "用户授权固定M1部署；仅固化未加载release",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T18:30+08:00",
+      "evidence": "用户授权固定M1部署；仅固化未加载release",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:m1_delta_apply_final2",
+  "completion_class": "standard",
+  "confirmation": "无需额外确认",
+  "created_at": "2026-08-12T18:30+08:00",
+  "department": "开发部",
+  "details": "承接6B1B40。保留stage与已传delta不变，先复用其已证stage=old base和delta SHA收据；新任务apply脚本唯一机械差异：payload root改为stage/.delta-TASK-20260812-6B1B40-successor-payload并要求前置absent，绝不创建/删除/复用旧.delta-TASK-20260812-50BBC7/payload证据。其他闭集/原子替换算法字节不变。local/remote check+SHA；唯一apply一次→stage target verifier一次→rename到8e70 final→final verifier一次；0prepare/DB/plist/launchctl/load/cutover。首错停。",
+  "domain_stage": "candidate",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "新payload存在或check/apply/verifier/rename任一首错立即block不重试；不得删除旧payload证据、重clone/重传、修改DB/plist/service/old base/live，0prepare/load/cutover。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未重clone或重传；未删除旧payload证据；0 DB/plist/launchctl修改/prepare/load/cutover；首错链均按任务分离，最终仅在全新payload路径执行一次apply；M1路径作为报告内容登记，未伪装http external-artifact",
+  "node": "M5-DEPLOY-V3-IDENTITY-M1-DELTA-APPLY-FINAL-2",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-6B1B40.json"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-F031E2-M1-delta-release原子固化报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-F031E2",
+  "title": "全新payload路径的M1 delta apply最终收口",
+  "unverified": [
+    "未prepare、未启动3101/sender/receiver、未迁移真实DB、未load/cutover；新release仍未加载；动态RSS/public DB内容未查询"
+  ],
+  "updated_at": "2026-08-12T18:35+08:00",
+  "verified": [
+    "继承旧base verifier、APFS clone和两项delta唯一传输PASS；本任务全新payload前置absent，唯一apply 33 changed/3 deleted PASS；stage target verifier唯一PASS；同盘原子rename PASS；final target verifier唯一PASS；postflight旧base/live根身份与三个既有job状态PASS；manifest/content/release roots精确匹配；M1 final路径及原始收据路径已写入报告"
+  ]
+}

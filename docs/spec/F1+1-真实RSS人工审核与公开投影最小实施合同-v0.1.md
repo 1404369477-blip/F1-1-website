@@ -231,7 +231,7 @@ detail{leadZh=summaryZh,bodyZh=[summaryZh],keyPointsZh=[]}
 
 沿用 accepted 双主机 `ProjectionPackageV1/ProjectionReceiptV1`：按 `publicId` Unicode code point 升序、全量 records、generation/previous hash、records hash、manifest hash、Ed25519 签名、staging+fsync+单次 active pointer swap。接收端没有 Admin 主库、Admin route、mutation credential 或签名私钥。
 
-当前单 M1 第一版把 Admin sender 与 public receiver 分成两个 loopback 进程、两个系统资源根和两个服务身份；它们只经 `PUT /internal/projections/{deliveryId}` 与 receipt GET 交互。未来迁到独立 public-host 时只替换 receiver endpoint、mTLS/服务身份和部署 manifest，包、hash、generation、receipt、outbox 与业务 API 不变。
+本节的现行运行细节已由 [ADR-M5-REAL-PROJECTION-RUNTIME-002](../decisions/system/2026-08-12-F1+1-真实RSS公开投影bootstrap与sender-reader闭环-successor-accepted.md) 取代：单 M1 使用两个逻辑服务身份和两个资源根；投递唯一 wire 为 `POST /internal/projections`，对账唯一 wire 为 `GET /internal/projections/receipts/{deliveryId}`。全新 receiver 空根不配置未知 bootstrap hash，而是只接受通过签名全校验的 generation 1/null previous 首包；首次激活后 active pointer 成为链头。未来迁到独立 public-host 时只替换 receiver endpoint、服务身份和 deployment manifest，包、hash、generation、receipt、outbox 与业务 API 不变。
 
 ### 6.3 synthetic 保留与切换
 

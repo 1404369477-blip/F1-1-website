@@ -1,0 +1,52 @@
+{
+  "acceptance_exit": "形成accepted或proposed安全合同与安全部报告；单一方案能让M5/iPhone在不同网络安全访问且公网访问/admin失败；认证/CSRF/fresh re-auth/撤销/应急/回退边界明确；权威来源可溯源；TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-87555F-M1后台私有入口最小安全合同-v0.1.md",
+    "docs/collaboration/部门/安全部/报告/2026-08-12-87555F-M1后台私有入口独立安全审查报告.md"
+  ],
+  "authorization_evidence": "用户已选择私有后台方案C，要求Mac与iPhone可执行全部操作，接受安装并要求合理冗余；固定M1常驻且可SSH/UU远程。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T06:20+08:00",
+      "evidence": "用户已选择私有后台方案C，要求Mac与iPhone可执行全部操作，接受安装并要求合理冗余；固定M1常驻且可SSH/UU远程。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/internal-agent:admin_private_entry",
+  "completion_class": "audit",
+  "confirmation": "本任务只做安全合同与部署门，不安装Tailscale/Cloudflare、不修改M1；正式实施另行派单。",
+  "created_at": "2026-08-12T06:20+08:00",
+  "department": "安全部",
+  "details": "基于用户已选C方案、固定M1 Wi-Fi常驻、M5与iPhone在外网也需全部操作、公开观众不可访问后台，给出并冻结第一版可实施的单一路径。优先评估M1上独立loopback Admin服务+私有overlay网络（例如Tailscale）而非隐藏URL；仅查阅官方/权威文档并记录链接与查询日期。必须明确：公开Cloudflare临时隧道绝不路由/admin；Admin监听地址/端口；Mac/iPhone加入私网与身份；TLS/设备撤销；应用层session、Origin、CSRF、operationId、fresh re-auth；密钥保存与最小权限；UU远程仅作运维通道不得成为观众可达入口；4小时恢复与最多15分钟数据丢失的最小应急路径。输出单一推荐、安装/回退顺序、验收清单、已知Unknown。不得安装软件、改网络、SSH、改app或部署。",
+  "domain_stage": "安全/架构",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "官方能力无法同时满足iPhone/Mac异地访问与loopback隔离：停止并给出阻断，不擅自降低为公网密码页。",
+    "现有产品合同与建议身份/session语义冲突：标注具体冲突并BLOCK，等待统筹裁定。",
+    "需要真实安装、登录或外部账号写操作才能继续：停在实施门前，保持文档交付。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未把私网可达当应用授权，未把URL/404当唯一防线，未把UU或宿主Tailscale当preboot证据，未承诺大陆可用性，未降低iPhone能力，未把文档PASS扩大为生产或恢复PASS；P2为CT主机名可见和同步passkey共同故障域，均有补偿门。",
+  "node": "第一版后台/私有入口",
+  "pointers": [
+    "docs/spec/F1+1-真实RSS人工审核与公开投影最小实施合同-v0.1.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-12-87555F-M1后台私有入口独立安全审查报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-87555F",
+  "title": "SEC-ADMIN-PRIVATE-ENTRY-01 M1后台私有入口最小安全合同",
+  "unverified": [
+    "未安装或登录Tailscale，未SSH或修改M1/网络/app；中国大陆M5/iPhone异地链路、Serve/TLS/设备撤销、应用passkey/session、旧WPA下preboot、UU能力、异机备份及RTO≤4h/RPO≤15m真实演练全部保持Unknown并由deployment manifest/实机任务关闭。"
+  ],
+  "updated_at": "2026-08-12T06:33+08:00",
+  "verified": [
+    "已读取任务要求、产品accepted合同/ADR、Admin/M1运行文档与安全部规则；已用Tailscale、Apple、Next.js、W3C、OWASP官方/权威资料刷新Serve私网边界、设备批准/撤销、TLS/CT、passkey、session/CSRF与FileVault条件；单一Tailscale Serve→127.0.0.1:3101合同、公网Admin 404、UU/RTO/RPO/回退闭集均已落盘；两文件git diff --check通过。"
+  ]
+}

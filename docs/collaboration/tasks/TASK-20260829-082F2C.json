@@ -1,0 +1,44 @@
+{
+  "acceptance_exit": "单次 canary 两源均 HTTP200/succeeded/selected_count>0 且 new+updated+duplicate=selected；排除源无run/health/network mutation；DB/schema10/recovery point/automatic-zero不漂移；随后两个自然900秒周期均成功并有监控/失败告警/停用回退收据；公网现有内容持续可读。",
+  "artifacts": [],
+  "authorization_evidence": "2026-08-29当前主线程：用户要求完整同步工作文档，方便其他Agent接手；此前已明确要求持续推进至公开网站和管理后台完整上线。",
+  "authorization_history": [
+    {
+      "at": "2026-08-29T23:49+08:00",
+      "evidence": "2026-08-29当前主线程：用户要求完整同步工作文档，方便其他Agent接手；此前已明确要求持续推进至公开网站和管理后台完整上线。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "等待 TASK-20260829-BBFF2A 形成 verified recovery point、关闭 schema10恢复门并绑定真实RSS身份。",
+  "claimed_by": "自动化部/01a00560-4fca-7221-9bbb-382a9c2f6195",
+  "completion_class": "standard",
+  "confirmation": "按当前线程用户持续推进目标执行；任何新增付费、凭证、权限、不可逆删除或扩大公网暴露仍需单独用户确认。",
+  "created_at": "2026-08-29T23:49+08:00",
+  "department": "自动化部",
+  "details": "前置为 Schema10恢复门、真实RSS身份闭包和新LaunchAgent候选全部通过。先只运行一次 collection-only canary，source allowlist 精确为 motorsport-f1-news 与 the-race-f1-news；Autosport 与 RaceFans 零网络/零mutation；refiner、reviewer、publisher、projection reconcile 全部为0。canary通过后才启用 StartInterval=900 的 collector；refiner与后续处理另按端到端任务门执行。",
+  "domain_stage": "M1生产灰度/RSS持续采集",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一排除源发生网络或数据库 mutation，立即 stop/bootout 并回退。",
+    "出现 review/publish/reconcile 新操作或 outbox 重放，立即全局停止并 BLOCK。",
+    "连续周期失败、恢复点超龄或 DB/runtime identity 漂移时自动停采并告警。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "QL3/m1/rss-two-source-canary-schedule",
+  "pointers": [
+    "docs/当前生产状态与执行待办.md"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260829-082F2C",
+  "title": "Motorsport与The Race单次Canary及900秒持续采集恢复",
+  "unverified": [],
+  "updated_at": "2026-08-29T23:55+08:00",
+  "verified": []
+}

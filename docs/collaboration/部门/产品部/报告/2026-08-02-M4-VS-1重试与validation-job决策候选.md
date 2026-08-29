@@ -28,12 +28,12 @@ user_confirmation_required: true
 
 | 输入 | 用途 | 当前状态 |
 |---|---|---|
-| [`测试计划 §16`](/Users/hoyin/Documents/F1+1/docs/collaboration/部门/测试部/报告/2026-08-02-M4-VS-1-mock采集链路测试计划.md#16) | 缺口 2（collection retry 精确表）与缺口 6（validation job 形态） | 已核收，精确语义待本报告候选 |
-| [`docs/spec.md`](/Users/hoyin/Documents/F1+1/docs/spec.md) §4–§7 | `validating`、三门、五 fence、queued/collecting、collection_failed/dead_letter、无真实外部 I/O | frozen，未修改 |
-| [`state-machine.json`](/Users/hoyin/Documents/F1+1/data/mvp-contract-v0/state-machine.json) | Source 16 状态、Outbox 任务状态、同 key 重试与人工死信恢复 | frozen，未修改 |
-| [`schema.json`](/Users/hoyin/Documents/F1+1/data/mvp-contract-v0/schema.json) | Source/Outbox 字段、`max_attempts`、`next_attempt_at`、`operation_type` enum | frozen，未修改 |
-| [`runtime-envelope.schema.json`](/Users/hoyin/Documents/F1+1/data/mvp-contract-v0/runtime-envelope.schema.json) | attempt、lease/deadline、五 fence、`reconcile_key=null` | frozen，未修改 |
-| [`accepted M4 ADR`](/Users/hoyin/Documents/F1+1/docs/decisions/system/2026-08-01-F1+1-M4本地Kickoff系统路线-accepted.md) | R9 lease/fence/CAS、R12 deny-all、VS-1 mock 范围 | accepted，未修改 |
+| [`测试计划 §16`]([M5-HOME]/Documents/F1+1/docs/collaboration/部门/测试部/报告/2026-08-02-M4-VS-1-mock采集链路测试计划.md#16) | 缺口 2（collection retry 精确表）与缺口 6（validation job 形态） | 已核收，精确语义待本报告候选 |
+| [`docs/spec.md`]([M5-HOME]/Documents/F1+1/docs/spec.md) §4–§7 | `validating`、三门、五 fence、queued/collecting、collection_failed/dead_letter、无真实外部 I/O | frozen，未修改 |
+| [`state-machine.json`]([M5-HOME]/Documents/F1+1/data/mvp-contract-v0/state-machine.json) | Source 16 状态、Outbox 任务状态、同 key 重试与人工死信恢复 | frozen，未修改 |
+| [`schema.json`]([M5-HOME]/Documents/F1+1/data/mvp-contract-v0/schema.json) | Source/Outbox 字段、`max_attempts`、`next_attempt_at`、`operation_type` enum | frozen，未修改 |
+| [`runtime-envelope.schema.json`]([M5-HOME]/Documents/F1+1/data/mvp-contract-v0/runtime-envelope.schema.json) | attempt、lease/deadline、五 fence、`reconcile_key=null` | frozen，未修改 |
+| [`accepted M4 ADR`]([M5-HOME]/Documents/F1+1/docs/decisions/system/2026-08-01-F1+1-M4本地Kickoff系统路线-accepted.md) | R9 lease/fence/CAS、R12 deny-all、VS-1 mock 范围 | accepted，未修改 |
 
 测试计划已冻结“activation 条件满足前不得生成 activation/collection TaskEnvelope/Outbox，且不得调用 adapter/provider”，但尚未冻结 validation job 的精确数量、队列形态和幂等边界。现有数据合同已冻结 collection 的有限重试出口，却没有精确的 429/5xx/timeout/lock 分类和等待序列。
 

@@ -15,7 +15,7 @@ UI/API、安全 deny-all、Repository、fixture seed、真实端口或完整验�
 
 | 首轮发现 | 严重度 | 事实与影响 | 最小修复 | 复验 |
 | --- | --- | --- | --- | --- |
-| Next 误推断 workspace root | P1 | `/Users/hoyin/package-lock.json` 使 Next 首轮构建报告多 lockfile，并把上层目录推断为 root；构建虽成功，但根边界不可复现 | `next.config.ts` 用 `import.meta.url` 推导 app 配置文件所在目录，并显式写入 `turbopack.root`；未写死用户绝对路径，未删除或修改 Home lock | 两次修复后 build 均 exit 0；`inferred your workspace root` / `multiple lockfiles` 命中 0 |
+| Next 误推断 workspace root | P1 | `[M5-HOME]/package-lock.json` 使 Next 首轮构建报告多 lockfile，并把上层目录推断为 root；构建虽成功，但根边界不可复现 | `next.config.ts` 用 `import.meta.url` 推导 app 配置文件所在目录，并显式写入 `turbopack.root`；未写死用户绝对路径，未删除或修改 Home lock | 两次修复后 build 均 exit 0；`inferred your workspace root` / `multiple lockfiles` 命中 0 |
 | Next 自动改写 TypeScript 配置 | P1 | 首轮 build 对 `tsconfig.json` / `next-env.d.ts` 发生自动配置写入，Git 可见候选面漂移，不能作为可重复构建收据 | 对齐已安装 Next 16.2.11：`target=ES2017`、`jsx=react-jsx`、同时包含 `.next/types`/`.next/dev/types`/`*.mts`，`next-env.d.ts` 显式导入 `.next/types/routes.d.ts` | 重复 build 前后 37 文件聚合 SHA 与 status SHA 完全相同；Next 配置改写提示命中 0 |
 | `tsconfig.tsbuildinfo` 未忽略 | P2 | typecheck/build 产生顶层增量缓存并显示为未跟踪候选 | `app/.gitignore` 增加 `*.tsbuildinfo` | `git check-ignore -v app/tsconfig.tsbuildinfo` 指向 `app/.gitignore`，构建状态面不再出现该文件 |
 
@@ -56,7 +56,7 @@ const nextConfig: NextConfig = {
 ```
 
 该配置在任意用户名/父目录下都由 `next.config.ts` 自身定位，不依赖当前用户的绝对
-路径，也不要求删除 `/Users/hoyin/package-lock.json`。
+路径，也不要求删除 `[M5-HOME]/package-lock.json`。
 
 ### 3.2 `app/tsconfig.json` 与 `app/next-env.d.ts`
 
@@ -298,7 +298,7 @@ C 层安全实现/复验项。
 | `app/.next/` | Next 构建输出 | 保留本地；被 gitignore |
 | `app/tsconfig.tsbuildinfo` | TypeScript 增量缓存 | 保留本地；新增规则后被 gitignore |
 | `app/.local/sqlite-preflight-*` | 两轮 SQLite 临时 DB/WAL/SHM | 两轮均已删除，最终不存在 |
-| `/Users/hoyin/package-lock.json` | 用户 Home 既有 lock | 未读取内容、未修改、未删除 |
+| `[M5-HOME]/package-lock.json` | 用户 Home 既有 lock | 未读取内容、未修改、未删除 |
 
 ## 11. 已验证、未验证与错题自检
 

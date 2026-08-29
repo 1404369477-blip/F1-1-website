@@ -1,0 +1,42 @@
+{
+  "acceptance_exit": "TASK_STATE_OK；唯一production改动为helper参数类型收窄；继承39 tests PASS不重跑；Node24 typecheck与限定diff-check各一次PASS；完整B段报告与最终SHA/88文件release闭包落盘并可交安全复审。",
+  "artifacts": [],
+  "authorization_evidence": "用户本会话：继续；此前确认快速上线和减少冗余测试。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T12:04+08:00",
+      "evidence": "用户本会话：继续；此前确认快速上线和减少冗余测试。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "RELEASE_IDENTITY_METADATA_REQUIRES_SUCCESSOR: the permitted type-only production change passed the single Node24 typecheck, but src/server/public/repository.ts is still classified as a fixed 54e base runtime file by the current release manifest; a manifest-only successor must move it into the exact overlay before the 88-file release closure can verify. Per coordinator ruling B, no manifest expansion here and limited diff-check remains 0.",
+  "claimed_by": "开发部/internal-agent:projection_runtime_type_finalizer",
+  "completion_class": "standard",
+  "confirmation": "用户要求继续快速上线且减少冗余测试。",
+  "created_at": "2026-08-12T12:04+08:00",
+  "department": "开发部",
+  "details": "继承blocked TASK-20260812-8D0CBA：机械timeout已生效，聚焦Vitest唯一一次5 files/39 tests PASS；唯一typecheck首错为src/server/public/repository.ts(485,5) TS2322，disabled originalLink helper的reason参数错误继承包含enabled:true/null的整体联合。只允许将该参数静态类型收窄为disabled分支reason（Exclude<PublicFeedItemV1[\"originalLink\"], {enabled:true}>[\"reason\"]或等价），禁止任何运行行为、返回值、测试、production manifest或其他文件改动。继承Vitest PASS且本任务0重跑；固定Node24 typecheck一次、限定diff-check一次。首错即停。0SSH/M1/网络/DB/cutover/load。",
+  "domain_stage": "implementation",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若类型收窄需要行为改动或暴露第二类型错误，立即block不扩展；typecheck或diff-check首错即停不重跑；不得修改测试/timeout/安全门。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "M1首版上线/真实投影B段/type-only finalizer",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-8D0CBA.json"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-BA4EA9",
+  "title": "公开原文disabled reason类型收窄机械收口",
+  "unverified": [],
+  "updated_at": "2026-08-12T12:05+08:00",
+  "verified": []
+}

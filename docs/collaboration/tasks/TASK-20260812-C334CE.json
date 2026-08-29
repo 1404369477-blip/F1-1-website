@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "四SHA匹配；已知REPLACE/Audit分叉逐项CLOSED；授权versionTag变更与合同§270一致且字段名不误导、服务端完整hash保留；P0/P1/P2明确；无P0/P1则最终放行，报告落盘，TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-C334CE-绑定VersionTag后的数据层最终限定放行报告.md"
+  ],
+  "authorization_evidence": "统筹依据产品合同§270裁定API使用12位versionTag；后端确认schema仅此授权变化。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T07:17+08:00",
+      "evidence": "统筹依据产品合同§270裁定API使用12位versionTag；后端确认schema仅此授权变化。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/internal-agent:admin_data_release_review",
+  "completion_class": "audit",
+  "confirmation": "这是数据层最终放行任务，不再派同层静态审查。",
+  "created_at": "2026-08-12T07:17+08:00",
+  "department": "安全部",
+  "details": "前任B88335仅因并发授权schema身份漂移停止，未审查实现。重新绑定：0002 1d373f90cf881a58a15966ffe12ed01c3a651380d5f4f5aa9de468d79a798263；test ccbe2938c653346e82241ef17fecda74b3ba2c446eeeaa1d51023f8c4fad7b4b；mapping 139f05fdbd2b45e5b5a8d4c95b58b864b8e7a48d99c796a00a489e74a4f3730e；schema新授权SHA 2c00bfc6916f4fded2d8e09f96193c428c157c0797c10081e749aba7620b2fde。schema唯一授权变化是三组API CAS从64位hash改名/收紧为12位VersionTag：latestBundleVersionTag、bundleVersionTag、approvedBundleVersionTag；完整hash仅服务端存储/复算。只读裁定7920C6 REPLACE/Audit分叉是否CLOSED，并核对versionTag命名/长度/Repository使用完整hash前12位语义无降级；0修改/0测试/0typecheck/0网络/0DB写，不扩展。",
+  "domain_stage": "安全/最终复审",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "SHA再漂移或存在一个直接绕过/错误CAS反例：FAIL并停止，不扩展。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "只审已知四个绕过与授权VersionTag；未把数据层PASS外推至API/UI/发布/部署；未运行测试或修改被审产物",
+  "node": "第一版后台/数据层最终安全门",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-B88335.json"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-12-C334CE-绑定VersionTag后的数据层最终限定放行报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-C334CE",
+  "title": "B88335 successor：绑定授权versionTag后的数据层最终放行",
+  "unverified": [
+    "snapshot generation-parent P2保留给receiver；真实migration、API动态并发/session/CSRF、sender/receiver/M1仍未验证"
+  ],
+  "updated_at": "2026-08-12T07:20+08:00",
+  "verified": [
+    "四SHA逐字匹配；Publication/Outbox INSERT OR REPLACE、Audit REPLACE与低位audit_seq分叉全部CLOSED；三个API CAS字段为12位VersionTag且Repository从读后复验的完整bundle hash取前12位，同时保留ID/source/full-hash全链；PASS P0=0 P1=0 P2=1；0测试0修改0网络0DB写"
+  ]
+}

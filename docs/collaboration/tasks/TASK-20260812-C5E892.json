@@ -1,0 +1,42 @@
+{
+  "acceptance_exit": "TASK_STATE_OK；路径门真实、RSS baseline严格JSON与job语义成立；tar local/remote SHA、stage集合身份、manifest SHA58b6da...与target verifier一次PASS；0 formal/prepare/load/DB写。",
+  "artifacts": [],
+  "authorization_evidence": "用户：可以直接部署到M1 MacBook；直接用SSH；继续。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T13:28+08:00",
+      "evidence": "用户：可以直接部署到M1 MacBook；直接用SSH；继续。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "TAR_TRANSFER_SHA_MISMATCH_AND_TRUNCATED_ARCHIVE",
+  "claimed_by": "开发部/internal-agent:projection_runtime_m1_bin_test_finalizer",
+  "completion_class": "standard",
+  "confirmation": "用户已授权M1 SSH部署；仅修命令路径。",
+  "created_at": "2026-08-12T13:28+08:00",
+  "department": "开发部",
+  "details": "继承blocked 09AA81全部输入与schema-aware scratch脚本SHA9f1c66b5...。唯一首错为M1不存在/usr/bin/test，且else误报ABSENT。只允许所有远端路径存在性门使用`/bin/test`或zsh builtin并显式检查命令退出码，禁止失败后打印伪PASS；新task scratch路径必须实际absent才创建。随后按原09AA81：scp脚本一次、remote SHA/mode/owner/nlink、remoteNode --check一次、DB readOnly执行一次、launchctl明确语义；PASS后B04945 manifest唯一tar/传输/stage/target verifier一次。禁止inline node-e/formal/prepare/plist/DB写/key/load/cutover/cleanup；任一首错停不重试。",
+  "domain_stage": "deployment-prep",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "路径门/脚本/scp/check/DB/launchctl/tar/stage/verifier任一首错立即停；禁止用`|| echo`或else掩盖命令失败；不得扩大诊断或使用不存在绝对命令。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "M1首版上线/真实投影部署/fresh-stage shell finalizer",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-09AA81.json"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-C5E892",
+  "title": "M1 task-root /bin/test路径机械修正并续行fresh-stage",
+  "unverified": [],
+  "updated_at": "2026-08-12T13:32+08:00",
+  "verified": []
+}

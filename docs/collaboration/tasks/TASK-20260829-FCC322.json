@@ -1,0 +1,44 @@
+{
+  "acceptance_exit": "两端候选通过固定 Node 语法检查；disposable 故障注入覆盖损坏 point prune 零删除、半写对象、consume 后断链、旧 receipt 回放、schema/trigger/index 篡改、DB-pointer 错配、路径逃逸、stale lock；独立复审 P0=0/P1=0；形成 report/receipt/manifest/hash。生产动作仍为0。",
+  "artifacts": [],
+  "authorization_evidence": "2026-08-29当前主线程：用户要求完整同步工作文档，方便其他Agent接手；此前已明确要求持续推进至公开网站和管理后台完整上线。",
+  "authorization_history": [
+    {
+      "at": "2026-08-29T23:49+08:00",
+      "evidence": "2026-08-29当前主线程：用户要求完整同步工作文档，方便其他Agent接手；此前已明确要求持续推进至公开网站和管理后台完整上线。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/019fb374-7c86-7882-9e51-76114ce69e7f",
+  "completion_class": "standard",
+  "confirmation": "按当前线程用户持续推进目标执行；任何新增付费、凭证、权限、不可逆删除或扩大公网暴露仍需单独用户确认。",
+  "created_at": "2026-08-29T23:49+08:00",
+  "department": "开发部",
+  "details": "承接 scratch/TASK-20260829-BACKUP-V2-UPGRADE/working/ 与独立对抗审查 BLOCK。只整改候选与 disposable 证据：prune 前 strict canonical/schema/HMAC/artifact 校验且任一坏点零删除；SQLite schema10 正式 verifier 与 sqlite_master/trigger/index/invariant 校验；SQLite 与 projection pointer/generation/manifest 同一恢复边界；recoveryPointAt/RPO<=900s/clock skew/单调性；durable point→commit fence→带 tombstone 的幂等 consume；kind+plaintext hash+keyId 对象身份和 O_EXCL；复用生产 strict projection parser；stale lock 非静默。不得安装 LaunchAgent、不得写生产 recovery fence、不得执行真实生产快照。输入与当前真值见 docs/当前生产状态与执行待办.md。",
+  "domain_stage": "开发实现/备份恢复候选整改",
+  "event_receipts": [],
+  "execution_state": "claimed",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任何 invalid point 导致删除动作时立即停止，保留现场并 BLOCK。",
+    "无法取得 schema10 正式 verifier 或共同恢复锚点时不得用行数/quick_check 代替，BLOCK。",
+    "候选需要读取密钥值、安装服务或触碰生产 fence/DB 时停止并回统筹。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "QL3/backup-v2/remediation",
+  "pointers": [
+    "docs/当前生产状态与执行待办.md"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260829-FCC322",
+  "title": "备份V2候选阻断整改与可恢复点闭包",
+  "unverified": [],
+  "updated_at": "2026-08-29T23:55+08:00",
+  "verified": []
+}

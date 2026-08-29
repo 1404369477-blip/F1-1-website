@@ -1,0 +1,42 @@
+{
+  "acceptance_exit": "TASK_STATE_OK；HTTP sender/receiver、公开snapshot reader/Next adapter、deployment-v2/prepare-only、release successor形成单一可部署闭包；A段SHA除任务明确吸收修改的migration/repository/projection外须列前后SHA；一组聚焦测试、Node24 typecheck、diff-check各一次PASS；报告列运行文件计数/manifest SHA、已验证/未验证/回退与0外部操作。",
+  "artifacts": [],
+  "authorization_evidence": "本会话用户连续明确：继续推进、快速搭建并上线第一版、可接入真实采集、不要冗余测试；2026-08-12统筹拆分A/B并核收A。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T10:58+08:00",
+      "evidence": "本会话用户连续明确：继续推进、快速搭建并上线第一版、可接入真实采集、不要冗余测试；2026-08-12统筹拆分A/B并核收A。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "FOCUSED_VITEST_FIRST_RUN_FAILED: RELEASE_DEPENDENCY dependency tree contains a symlink at release-manifest.ts:244; public-real feed active returned 500 instead of 200 at test line 120; public no-active response had undefined items instead of [] at line 157. Per task first-error rule, stopped after one Vitest run; Node24 typecheck and parent limited diff-check were not run.",
+  "claimed_by": "开发部/internal-agent:projection_runtime_b",
+  "completion_class": "standard",
+  "confirmation": "已确认第一版快速上线；先完成再优化；只保留高价值聚焦测试；真实发布仍保持人工审核+第二次手动发布。",
+  "created_at": "2026-08-12T10:58+08:00",
+  "department": "开发部",
+  "details": "严格吸收已ACK的TASK-20260812-39D4DD六项冻结SHA及ADR-M5-REAL-PROJECTION-RUNTIME-002；只完成B段：(1) loopback internal receiver HTTP POST /internal/projections 与 GET /internal/projections/receipts/{deliveryId}，以及single sender transport/CLI，超时只对账、明确404才同包有界重投；(2) 独立public runtime listener与public-real-snapshot只读adapter，Next公开feed/detail通过显式read-mode读取active.json→committed generation→签名/manifest/records，无active合法empty，损坏503，禁止请求级/数据级fallback及私库跨读；(3) admin-service-deployment-v2、Admin/public prepare-only installer与控制脚本，移除旧bootstrap generation/hash，固定Ed25519 keyId/private/public key路径、3101/独立internal端口、私有根/公开projection根权限，prepare不load；(4) package scripts、ADMIN-SERVICE-PREP runbook和Admin exact release-manifest successor overlay，精确列入A+B全部运行文件与生产依赖，明确679786的38项结论被本successor替代；(5)最小高价值测试只覆盖HTTP POST/receipt GET、sender response-loss、gen1 bootstrap、public empty/active/corrupt、Next显式read-mode及deployment-v2拒绝v1。绑定Function ADMIN-PUBLISH-007、ADMIN-RECOVER-008、PUB-FEED-001、PUB-DETAIL-001/003、RECOVER-PUBLIC-001；保持公开v0.2视觉/DOM/CSS不变。禁止SSH/M1/真实DB/cutover/load/Tailscale/真实网络，不改0001/0002、accepted ADR、公开视觉。验证预算：固定Node24聚焦Vitest一组一次、typecheck一次、限定diff-check一次，首错即停。",
+  "domain_stage": "implementation",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "A段冻结SHA或产品ADR不匹配时写前阻断并报告；任何HTTP路径允许公网绑定/私库跨读/unknown直接重投/请求级fallback时立即停止；release闭包、deployment-v2、聚焦测试或typecheck首错时停止且不重跑，不得以缩减安全门换PASS。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "M1首版上线/真实审核发布闭环/B段运行出口",
+  "pointers": [
+    "docs/decisions/system/2026-08-12-F1+1-真实RSS公开投影bootstrap与sender-reader闭环-successor-accepted.md"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-6F15AC",
+  "title": "投影B段：HTTP闭环、公开真实快照读取与部署release successor",
+  "unverified": [],
+  "updated_at": "2026-08-12T11:57+08:00",
+  "verified": []
+}

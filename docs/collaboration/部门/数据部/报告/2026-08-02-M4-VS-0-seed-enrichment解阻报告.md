@@ -22,14 +22,14 @@ execution_mode: offline_local_generator_validator
 
 本任务只创建下列新 bridge artifact，并修订 5B8665 报告中的引用与计数：
 
-- [implementation-mapping.json](/Users/hoyin/Documents/F1+1/data/m4-vs0-seed-enrichment-v0/implementation-mapping.json)
-- [source-seed-enriched.json](/Users/hoyin/Documents/F1+1/data/m4-vs0-seed-enrichment-v0/source-seed-enriched.json)
-- [manifest.json](/Users/hoyin/Documents/F1+1/data/m4-vs0-seed-enrichment-v0/manifest.json)
-- [seed-enrichment-validator.py](/Users/hoyin/Documents/F1+1/data/m4-vs0-seed-enrichment-v0/seed-enrichment-validator.py)
+- [implementation-mapping.json]([M5-HOME]/Documents/F1+1/data/m4-vs0-seed-enrichment-v0/implementation-mapping.json)
+- [source-seed-enriched.json]([M5-HOME]/Documents/F1+1/data/m4-vs0-seed-enrichment-v0/source-seed-enriched.json)
+- [manifest.json]([M5-HOME]/Documents/F1+1/data/m4-vs0-seed-enrichment-v0/manifest.json)
+- [seed-enrichment-validator.py]([M5-HOME]/Documents/F1+1/data/m4-vs0-seed-enrichment-v0/seed-enrichment-validator.py)
 - 本报告
-- 修订后的 [5B8665 C 层 SQLite/Repository 蓝图](/Users/hoyin/Documents/F1+1/docs/collaboration/部门/数据部/报告/2026-08-02-M4-C层SQLite与Repository实现交接蓝图.md)
+- 修订后的 [5B8665 C 层 SQLite/Repository 蓝图]([M5-HOME]/Documents/F1+1/docs/collaboration/部门/数据部/报告/2026-08-02-M4-C层SQLite与Repository实现交接蓝图.md)
 
-唯一 current accepted 实现决策入口为 [ADR-M4-VS0-SEED-002](/Users/hoyin/Documents/F1+1/docs/decisions/system/2026-08-02-F1+1-VS0-M3种子投影-successor-accepted.md)（accepted；SHA-256=`1b1fbceeecbfd5c97fdb2da91cdee12eb4fe6a032aec3463179964aab31e6db6`）。前任 [ADR-M4-VS0-SEED-001](/Users/hoyin/Documents/F1+1/docs/decisions/system/2026-08-02-F1+1-VS0-M3种子投影-accepted.md) 仅作为 predecessor 审计链保留。
+唯一 current accepted 实现决策入口为 [ADR-M4-VS0-SEED-002]([M5-HOME]/Documents/F1+1/docs/decisions/system/2026-08-02-F1+1-VS0-M3种子投影-successor-accepted.md)（accepted；SHA-256=`1b1fbceeecbfd5c97fdb2da91cdee12eb4fe6a032aec3463179964aab31e6db6`）。前任 [ADR-M4-VS0-SEED-001]([M5-HOME]/Documents/F1+1/docs/decisions/system/2026-08-02-F1+1-VS0-M3种子投影-accepted.md) 仅作为 predecessor 审计链保留。
 
 未修改或覆盖：
 
@@ -136,7 +136,7 @@ Bridge 的 `implementation-mapping.json#/field_map_precedence` 规定以下顺�
 
 ### 7.1 Canonical projection
 
-输出文件：[`source-seed-enriched.json`](/Users/hoyin/Documents/F1+1/data/m4-vs0-seed-enrichment-v0/source-seed-enriched.json)
+输出文件：[`source-seed-enriched.json`]([M5-HOME]/Documents/F1+1/data/m4-vs0-seed-enrichment-v0/source-seed-enriched.json)
 
 - 行数：59
 - 字段数：39
@@ -156,7 +156,7 @@ e7a8312c70a9a49922aedb3cfbeaa190db8f5dce8d4ab45db1570748fc329f17
 
 ### 7.2 Bridge artifact manifest
 
-[`manifest.json`](/Users/hoyin/Documents/F1+1/data/m4-vs0-seed-enrichment-v0/manifest.json) 固定：
+[`manifest.json`]([M5-HOME]/Documents/F1+1/data/m4-vs0-seed-enrichment-v0/manifest.json) 固定：
 
 - `mapping_version=m4-vs0-seed-enrichment-v0.3`
 - `manifest_version=m4-vs0-seed-enrichment-manifest-v0.3`
@@ -186,7 +186,7 @@ Manifest 的 `artifact_hashes` 覆盖 current accepted successor ADR、冻结合
 
 ## 8. 只读 validator 与确定性结果
 
-Validator：[`seed-enrichment-validator.py`](/Users/hoyin/Documents/F1+1/data/m4-vs0-seed-enrichment-v0/seed-enrichment-validator.py)
+Validator：[`seed-enrichment-validator.py`]([M5-HOME]/Documents/F1+1/data/m4-vs0-seed-enrichment-v0/seed-enrichment-validator.py)
 
 Validator 不使用网络、provider、Base、飞书或外部库。默认 `--repeat 2`，每轮都独立 reload mapping/schema/M3 JSON 后重新执行 `make_rows` 和全部校验；正式输出根固定为 bridge 目录，拒绝 `--root` 任意覆盖、symlink 和非 regular 输出，并通过原子写入落盘。每次执行：
 

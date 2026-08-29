@@ -1,0 +1,45 @@
+{
+  "acceptance_exit": "聚焦Vitest唯一一次PASS且2测试均闭合；Node24 typecheck唯一一次PASS；限定4文件diff-check唯一一次PASS；生产release-manifest SHA与FF23A7落盘后字节一致；报告/TASK_STATE_OK；明确post-commit门。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/src/tests/admin-release-manifest.test.ts",
+    "docs/collaboration/部门/开发部/报告/2026-08-12-FF23A7-Release-clean-only身份门实现报告.md",
+    "docs/collaboration/部门/开发部/报告/2026-08-12-A85BCA-release-clean-only-fixture机械收口报告.md"
+  ],
+  "authorization_evidence": "",
+  "authorization_history": [],
+  "authorization_state": "none",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:release_identity_fixture_finalizer",
+  "completion_class": "standard",
+  "confirmation": "无需用户确认；仅修复已定位的测试fixture依赖闭包与性能。",
+  "created_at": "2026-08-12T19:51+08:00",
+  "department": "开发部",
+  "details": "继承FF23A7已删除legacy入口的生产候选，禁止修改release-manifest生产逻辑。只改 app/src/tests/admin-release-manifest.test.ts、回填FF23A7报告并落successor短报告。把身份门负例拆成不调用builder的轻量Git fixture：仅需复制89 runtime/两commit，不复制.next/node_modules，优先复用基准或每例轻量创建；builder+target正例的单一重fixture必须复制完整productionDependencies所需44包闭包，可从app/package-lock.json的packages键机械筛选/复制所有manifest将读取的生产包，或一次性复制完整node_modules再由生产门实际读44包，但不得改生产闭包算法。延长单个正例合理timeout但禁止掩盖无界挂起。固定Node24新预算按Vitest→typecheck→限定4文件diff各一次，首错即停。",
+  "domain_stage": "development",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "生产release-manifest字节发生变化立即block；依赖闭包仍缺失或测试超时立即block且不重跑；任何验证首错停止；不得stage/commit/push/build/SSH/M1。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "Fixture-only scope respected: production/runbook/gitignore/package bytes unchanged; exact 44-package closure derived mechanically; heavy assets excluded from Git fixture commits; no validation rerun.",
+  "node": "RELEASE-CLEAN-ONLY-FIXTURE-FINALIZER",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-FF23A7.json"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-A85BCA-release-clean-only-fixture机械收口报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-A85BCA",
+  "title": "clean-only release测试夹具闭包与性能机械收口",
+  "unverified": [
+    "No stage/commit/push/build/SSH/M1; real post-commit clean HEAD still requires rerunning agreed gates before builder/target verifier."
+  ],
+  "updated_at": "2026-08-12T19:58+08:00",
+  "verified": [
+    "Focused Vitest exactly once PASS: 1 file, 2 tests, 12.36s; Node24 tsc --noEmit exactly once PASS; limited four-file git diff --check exactly once PASS; production release-manifest SHA unchanged at 075d11bca11675948bb302a957ac9e071f3e5d733d9b1752fa60297c9004581a."
+  ]
+}

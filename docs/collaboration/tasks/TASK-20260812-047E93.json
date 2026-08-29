@@ -1,0 +1,37 @@
+{
+  "acceptance_exit": "三精确空目录身份门PASS且各rmdir一次/absent；production build不重跑；builder唯一一次PASS built-from-fixed-git-identity/externalCalls0；manifest身份+SHA+git bb0aa/runtime89/Next/packages44预期/Node/content/release roots记录；闭包外harness check一次及实际验签一次PASS；报告/TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "",
+  "authorization_history": [],
+  "authorization_state": "none",
+  "block_reason": "IDENTITY_PROBE_FIRST_FAILURE_BEFORE_ANY_RMDIR: fresh first-target checks reached xattr gate, but the local Python os module has no listxattr attribute (AttributeError). The script failed before os.rmdir, so no target was deleted and builder/harness were not run. No retry or alternate probe under first-error protocol; production build not rerun; no Git/push/SSH/M1/DB/prepare/load/cutover.",
+  "claimed_by": "开发部/internal-agent:next_empty_dir_builder_finalizer",
+  "completion_class": "standard",
+  "confirmation": "无需用户确认；安全部已独立裁定三项均DELETE且允许不重build只重builder，删除限精确空目录并使用非递归rmdir。",
+  "created_at": "2026-08-12T20:35+08:00",
+  "department": "开发部",
+  "details": "继承05CCAF production build唯一一次PASS与69A83A安全裁定PASS。禁止重build。精确目标仅 `[M5-HOME]/Documents/F1+1/app/.next/server/app 2`、`.../.next/server/chunks 2`、`.../.next/static/chunks 2`。逐项fresh核路径位于real .next内、real directory/non-symlink/realpath exact/uid501/gid20/same dev/nlink2/size64/entry0、预期mode分别0700/0755/0755、hidden flag且无ACL/xattr/mount异常；紧邻rmdir前以descriptor再核dev/ino/type/empty，任一异常全停。三项各唯一一次非递归rmdir并回读absent。再核HEAD=bb0aa026.../index empty/89 runtime clean/Node24 SHA。只重跑M1-target builder一次：app cwd，fixed Node24+npm CLI，ADMIN_TARGET_NODE_PATH=[M1-HOME]/.local/node-v24.18.0-darwin-arm64/bin/node。成功后核ignored manifest uid501/mode0600/nlink1/realpath exact/SHA/canonical fields/runtime89/Next/packages/Node/Git/roots。用apply_patch新建git-ignored scratch/TASK-.../verify-m1-target-manifest.mjs，父0700/file0600，Node --check一次、实际验签一次，显式target=M1 path/local=process.execPath。禁止Git写/push/SSH/M1/DB/prepare/load/cutover。",
+  "domain_stage": "development",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一目录身份/空性/ACL/xattr/mount异常立即block且不删后续项；rmdir首错停止；builder首错不建harness；harness首错不制作delta/传输；禁止重build/重builder/Git/SSH/M1。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "NEXT-EMPTY-DIR-RMDIR-BUILDER-LOCAL-VERIFY-FINALIZER",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-69A83A-fresh-Next三项重复空目录只读安全裁定报告.md",
+    "docs/collaboration/tasks/TASK-20260812-05CCAF.json"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-047E93",
+  "title": "三项Next空目录精确清理与M1-target manifest finalizer",
+  "unverified": [],
+  "updated_at": "2026-08-12T20:37+08:00",
+  "verified": []
+}

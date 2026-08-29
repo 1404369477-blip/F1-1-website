@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "安全正式报告+TASK_STATE_OK；明确PASS/FAIL、P0/P1/P2与D17D1B P1-01 CLOSED/OPEN；分别裁定精确Git候选、M1 fresh stage、prepare-only、load/cutover。P0=0/P1=0才放行stage/prepare。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-C0B063-D17D1B唯一P1修复最终限定复审报告.md"
+  ],
+  "authorization_evidence": "用户本会话：继续；快速上线第一版。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T13:02+08:00",
+      "evidence": "用户本会话：继续；快速上线第一版。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/internal-agent:projection_security_final",
+  "completion_class": "audit",
+  "confirmation": "用户授权快速上线，已同意一次高价值复审。",
+  "created_at": "2026-08-12T13:02+08:00",
+  "department": "安全部",
+  "details": "严格只读复审TASK-20260812-0E594C/FA5D66最终候选，只裁定D17D1B P1-01及修复直接引入的同级问题。绑定release-manifest 0f531bf3...、builder 12f25bc7...、verifier ba8d3138...、installer-core 78071e1b...、installer 1337f49f...、public deployment ddd275a3...、release test deef5bef...、installer test 77f5d495...；闭包runtime/overlay/base=89/30/59、next322 files/13,373,354 bytes/322×0644/57×0755、packages44、nextRoot b11ef505...、content e9eee919...、release 4f3e25b9...、manifest SHA16fdd3a4...。只审：(1)build后身份预检→mode归一→manifest顺序、target verifier只读且精确集合/mode/hash；(2)公开installer消费外部manifest路径+SHA并在verify/stage全成功前live三plist零写，提交失败逐字恢复，0 launchctl/disabled；(3)exclude cache/diagnostics/trace/turbopack是否不会被next start运行消费或形成可执行绕过；(4)synthetic rollback anchor仍不从漂移目标自举；(5)是否足够放行M1 fresh stage与prepare-only。0修改/测试/typecheck/build/网络/SSH/DB。发现直接P1即停止并给最小修正。",
+  "domain_stage": "review",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一SHA/计数不匹配立即fail；若next start需要被排除字节、target verifier可修现场、installer可绕过外部SHA/留下live漂移或回退锚从目标自举，判P1并停止；M1动态项保持Unknown。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "严格限定静态只读：0 test/typecheck/build/verifier/installer/network/SSH/DB/service；未输出cache密钥值；未将prepare放行扩大为load/cutover；exclude裁定仅绑定Next16.2.11；只写安全正式报告并用任务工具落账。",
+  "node": "M1首版上线/真实投影release/P1最终放行",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-FA5D66-Next构建闭包与public-prepare原子提交实现报告.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-12-C0B063-D17D1B唯一P1修复最终限定复审报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-C0B063",
+  "title": "D17D1B唯一P1修复最终限定复审",
+  "unverified": [
+    "M1真实stage身份、外部rollback锚来源、prepare前后plist/loaded-state收据、receiver/Admin listener与DB/key、sender到active、公开路由和两层回退均Unknown；load/cutover不放行。"
+  ],
+  "updated_at": "2026-08-12T13:10+08:00",
+  "verified": [
+    "PASS；P0=0/P1=0/P2=1；D17D1B P1-01 CLOSED。指定SHA全部MATCH；manifest runtime/overlay/base=89/30/59、Next=322 files/13373354 bytes/322x0644/57x0755、packages44，roots与manifest SHA匹配。builder顺序为身份预检→归一→manifest；target verifier外部SHA锚定且只读逐项重算；installer在live写前完成manifest/rollback/stage验证，失败恢复，三plist disabled且0 launchctl。放行精确Git候选、M1 fresh stage、fresh verifier PASS后的prepare-only；不放行load/cutover。报告SHA-256=74d7325113a3c574f05ad3e0123fdad824c4d35be5f86fd74be76d9b70cd5d46。"
+  ]
+}

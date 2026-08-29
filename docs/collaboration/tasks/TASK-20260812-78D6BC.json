@@ -1,0 +1,36 @@
+{
+  "acceptance_exit": "不重build/builder；新manifest自洽；本地显式target验签PASS且生产默认未放宽；delta manifest/archive SHA/size/路径落盘，敏感路径0；Node24 typecheck/diff各最多一次PASS；TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "",
+  "authorization_history": [],
+  "authorization_state": "none",
+  "block_reason": "VERIFIER_ENTRYPOINT_CHANGED_AFTER_MANIFEST_BUILD_SO_RUNTIME_CLOSURE_REJECTED_STALE_MANIFEST: CLI_INTERNAL_ERROR; verifier=1 FAIL, first-error-stop, no rebuild/builder/delta/typecheck/diff",
+  "claimed_by": "开发部/internal-agent:release_v3_finalizer",
+  "completion_class": "standard",
+  "confirmation": "无需额外确认",
+  "created_at": "2026-08-12T17:18+08:00",
+  "department": "开发部",
+  "details": "承接blocked 72B4B1，禁止重build/builder。先核对新manifest SHA d14ee602...811a与当前.next/源码/包字节。机械修正或新增仅本地验证入口：允许显式传入targetNodePath=[M1-HOME]/.local/node-v24.18.0-darwin-arm64/bin/node，同时Node bytes仍从固定本机二进制比对；不得改变target verifier生产默认或放宽Node SHA/path门。用新预算本地target verifier一次。PASS后生成相对M1旧f868 release的精确delta manifest/archive（只含新增/修改字节和删除清单，排除DB/.local/密钥/测试报告），并做一次本地纯文件delta重建到新临时根+现有target verifier验证；若该重建会扩大预算则先静态manifest self-check并留M1 target verifier后继。限定typecheck/diff各一次；首错停。",
+  "domain_stage": "candidate",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任何manifest/源码/.next漂移或新首错立即block且不重跑；不得SSH/M1/prepare/DB/launchctl/cutover，不得改业务行为。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "M5-DEPLOY-V3-IDENTITY-RELEASE-FINAL",
+  "pointers": [
+    "docs/collaboration/tasks/TASK-20260812-72B4B1.json"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-78D6BC",
+  "title": "M1目标release本地只读验签与delta finalizer",
+  "unverified": [],
+  "updated_at": "2026-08-12T17:21+08:00",
+  "verified": []
+}

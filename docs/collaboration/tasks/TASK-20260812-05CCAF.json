@@ -1,0 +1,37 @@
+{
+  "acceptance_exit": "build唯一一次PASS；builder唯一一次PASS status built-from-fixed-git-identity/externalCalls0；manifest绑定bb0aa clean HEAD、runtime89、fresh Next闭包、packages闭包、M1 target Node；manifest身份0600/uid501/nlink1/realpath及SHA记录；闭包外harness唯一实际验签PASS并逐字重算git/runtime/Next/deps/Node/content/release roots；报告/TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "",
+  "authorization_history": [],
+  "authorization_state": "none",
+  "block_reason": "BUILDER_FIRST_FAILURE: clean-head/Node/old-manifest preflight PASS; fixed-Node24 production build executed exactly once and PASS (Next 16.2.11, compiled, TypeScript, page generation, routes complete; one NFT warning); post-build 89-runtime clean/blob gate PASS; M1-target builder executed exactly once then exited 1 with exact receipt {\"event\":\"cli_failure\",\"status\":\"rejected\",\"reasonCode\":\"CLI_INTERNAL_ERROR\",\"externalCalls\":0}. Per protocol no harness/check/actual verification followed and no rerun. Existing manifest evidence retained; no Git write/push/SSH/M1/DB/prepare/load/cutover.",
+  "claimed_by": "开发部/internal-agent:clean_head_release_build",
+  "completion_class": "standard",
+  "confirmation": "无需用户确认；属于安全复审已放行checkpoint后的本地可逆构建与内容寻址验签，不部署、不加载服务。",
+  "created_at": "2026-08-12T20:27+08:00",
+  "department": "开发部",
+  "details": "冻结HEAD=bb0aa0266b73b7b2f7af38d3f29ac0a07dee772f/tree=2fdf2078daf7bb2c6327d19c6c8c81809465abf2/parent=2ff1bdba83eadddf01908bfbc884d8efcd0d84d1。继承5CCF1E fixed-Node24 focused Vitest PASS、4-file diff PASS与3BC9C6 fixed-Node24 tsc PASS。先再核index空、89 runtime clean/tracked/blob=HEAD、fixed Node v24.18.0/SHA ee6fb0e0...c04a；现有ignored manifest d14ee602...为uid501/mode0600/nlink1/realpath exact，授权builder成功路径原位覆盖该单一ignored manifest；授权production build重建ignored .next，builder将纳入闭包文件归一0644/目录0755。使用app cwd和PATH固定Node24目录优先，唯一一次 fixed-node npm-cli run build；成功后紧邻复核89 runtime仍clean，再唯一一次 ADMIN_TARGET_NODE_PATH=[M1-HOME]/.local/node-v24.18.0-darwin-arm64/bin/node fixed-node npm-cli run admin:build-release-manifest。产出后核manifest uid501/mode0600/nlink1/realpath/SHA/canonical fields。用apply_patch仅新建git-ignored scratch/TASK-.../verify-m1-target-manifest.mjs（parent0700/file0600），闭包外调用readVerifiedAdminReleaseManifest(local appRoot,new manifest,new external SHA,M1 target path,process.execPath)，Node --check一次后实际验签一次。禁止Git写/push/SSH/M1/DB/prepare/load/cutover；不复用历史roots。",
+  "domain_stage": "development",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一preflight/runtime/Node/旧manifest身份异常立即block；build首错不运行builder；builder首错不运行harness；harness首错不制作delta/传输；manifest残缺或mode异常不得当收据；禁止重跑、Git写、SSH/M1。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "POST-COMMIT-PRODUCTION-BUILD-MANIFEST-LOCAL-VERIFY",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-E4CB53-Release-clean-only身份门最终只读复审报告.md",
+    "docs/collaboration/tasks/TASK-20260812-3BC9C6.json"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-05CCAF",
+  "title": "clean-HEAD正式build与M1-target manifest本地验签",
+  "unverified": [],
+  "updated_at": "2026-08-12T20:29+08:00",
+  "verified": []
+}

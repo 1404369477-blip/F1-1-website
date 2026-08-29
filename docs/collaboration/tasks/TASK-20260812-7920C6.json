@@ -1,0 +1,50 @@
+{
+  "acceptance_exit": "精确SHA匹配；三项P1逐项CLOSED或给出残留精确反例；P0/P1/P2清晰；无P0/P1则放行后端使用，报告落盘，TASK_STATE_OK。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-7920C6-D8A278三项P1修复限定静态复审报告.md"
+  ],
+  "authorization_evidence": "用户要求复杂任务后独立对抗审查；三项P1已修复。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T07:00+08:00",
+      "evidence": "用户要求复杂任务后独立对抗审查；三项P1已修复。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "安全部/internal-agent:admin_data_rereview",
+  "completion_class": "audit",
+  "confirmation": "严格限定修复复审，不重复全量审查。",
+  "created_at": "2026-08-12T07:00+08:00",
+  "department": "安全部",
+  "details": "只读复审D8A278新候选：0002 SHA c0c696fc9f884ea9d74101f687276255687093e8e02736b7fc1efa9fa578c4ee；mapping SHA 139f05fdbd2b45e5b5a8d4c95b58b864b8e7a48d99c796a00a489e74a4f3730e；schema仍389245a0…e456b；测试作为证据阅读。仅裁定0D4DCB三项P1是否CLOSED及修复直接引入的同级问题：Publication删除/冻结、Outbox删除/初态/有限迁移、Audit前驱+canonical hash/verify。保留原P2 snapshot generation-parent供后端receiver审查，不扩展。0修改/0测试/0typecheck/0网络/0DB写。",
+  "domain_stage": "安全/静态复审",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一SHA漂移：停止并BLOCK。",
+    "需运行或修改才能裁定：保持Unknown，不伪报。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "严格未扩大全量审查；只读检查修复目标与测试源码；发现P1立即通知统筹和admin_backend；未修改被审文件/App/Spec/数据库",
+  "node": "第一版后台/数据层安全复审",
+  "pointers": [
+    "docs/collaboration/部门/数据部/报告/2026-08-12-D8A278-真实RSS审核发布数据层三项P1最小闭合报告.md"
+  ],
+  "report": "docs/collaboration/部门/安全部/报告/2026-08-12-7920C6-D8A278三项P1修复限定静态复审报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-7920C6",
+  "title": "D8A278三项P1修复限定复审",
+  "unverified": [
+    "原P2 snapshot generation-parent保留；Repository、connection recursive_triggers、真实migration runner、receiver/M1动态行为均保持Unknown"
+  ],
+  "updated_at": "2026-08-12T07:05+08:00",
+  "verified": [
+    "D8A278三目标SHA逐字匹配；限定复核原P1-01至03及直接同级问题；结论FAIL P0=0 P1=3 P2=1：Publication和Outbox no-delete可被INSERT OR REPLACE绕过，Audit可被REPLACE或显式非最大audit_seq分叉；0测试0typecheck0网络0DB写"
+  ]
+}

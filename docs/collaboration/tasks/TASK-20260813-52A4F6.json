@@ -1,0 +1,42 @@
+{
+  "acceptance_exit": "M1 3101/3102仅loopback且运行；Serve唯一HTTPS443精确代理127.0.0.1:3101并转发唯一cap；Funnel空；canonical HTTPS入口可达；无可信cap与legacy头401零写；至少M5当前设备正向进入登录/bootstrap页，三设备Grant生效可后续逐设备验收；旧public/RSS/DB身份无任务漂移；输出回退收据。",
+  "artifacts": [],
+  "authorization_evidence": "用户此前明确回复“授权”，范围包含三设备最小Grant、Serve、Funnel关闭、3101/3102与DB v3；2026-08-13截图显示Saved tailnet policy file。",
+  "authorization_history": [
+    {
+      "at": "2026-08-13T00:31+08:00",
+      "evidence": "用户此前明确回复“授权”，范围包含三设备最小Grant、Serve、Funnel关闭、3101/3102与DB v3；2026-08-13截图显示Saved tailnet policy file。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "M1_PREFLIGHT_SSH_TIMEOUT_BEFORE_ANY_WRITE: ssh home-mac -> 100.115.142.46:22 returned Operation timed out; Serve/DB/plist/service writes=0; per first-error protocol no retry and no Serve command executed",
+  "claimed_by": "开发部/internal-agent:tailscale_serve_activation",
+  "completion_class": "standard",
+  "confirmation": "无需额外确认",
+  "created_at": "2026-08-13T00:31+08:00",
+  "department": "开发部",
+  "details": "用户已截图确认三设备Grant策略保存成功，并已明确授权receiver/Admin运行、最小Grant、Serve HTTPS443到127.0.0.1:3101且Funnel关闭。执行fresh只读preflight，确认M1 receiver/Admin与3101/3102、prepared identity和Tailscale在线；保存Serve/Funnel前状态；唯一一次启用Serve --accept-app-caps=1404369477-blip.github.io/cap/f1-admin-device --https=443 --bg http://127.0.0.1:3101；显式保证Funnel关闭；回读Serve config与HTTPS；做无cap/旧头/合法cap入口的最小负正验收。不可改policy、DB、public cutover。",
+  "domain_stage": "tailscale_serve_activation",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "preflight不符则0写停止；Serve设置或post-config不符则第一动作tailscale serve reset并验证Funnel空、3101/3102保留；HTTPS/身份负例异常同样reset Serve；不得重试外部写、不得迁移/回滚DB或切public。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "tailscale_serve_activation",
+  "pointers": [
+    "docs/collaboration/部门/开发部/报告/2026-08-13-3446F3-Tailscale三设备Grant-IP选择器纠正报告.md"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260813-52A4F6",
+  "title": "M1三设备App-cap私有Serve启用与回退门",
+  "unverified": [],
+  "updated_at": "2026-08-13T00:34+08:00",
+  "verified": []
+}

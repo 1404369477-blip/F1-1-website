@@ -4,7 +4,7 @@
 
 ## 当前阶段
 
-🟡 **M5 · Build Loop** —— 本地数据、SQLite、公开 Repository/API 与早期 v0.2 前端快照已有独立 ACK；2026-08-08 最终 v0.2 设计已冻结并转为产品实现合同，等待 app 落地及定向复验。真实采集、admin 和全部外部能力继续关闭。
+🔴 **M6 · 固定 M1 生产恢复与持续采集重建** —— Public Beta 已部署并有 2026-08-29 公网 HTTP 200 证据；生产 DB 已到 schema10。持续采集当前受 verified recovery point 缺失、recovery/global-stop 围栏、RSS identity 占位值和旧 LaunchAgent 阻断。27个X账号已完成一次只读页面验收，生产 registry 和 worker 尚未落地。当前唯一执行顺序见 [当前生产状态与执行待办](当前生产状态与执行待办.md)。
 
 ## 里程碑一览
 
@@ -15,26 +15,29 @@
 | **M2 风险检查** | 识别数据、平台、权限、UI 和安全风险 | 研究/安全/测试报告与门禁形成 | 🟢 已完成 |
 | **M3 Spec v1 / 影子验证** | 固化 accepted 产品核心与影子证据 | A→D、公开读模型、M3 59×39 与数据合同获得收据 | 🟢 已完成 |
 | **M4 Kickoff** | 初始化本地工程与受控运行地基 | Node24、lock、SQLite 双 profile、migration/seed/启动门禁通过 | 🟢 已完成 |
-| **M5 Build Loop** | 小步实现本地 MVP | 每个切片经过合同、实现、独立验收和状态同步 | 🟡 进行中 |
-| **M6+ 外部/生产** | 在独立授权下接入真实系统 | 权限、合规、部署、成本和回退逐项获批并验收 | ⚪ 未开始 |
+| **M5 Build Loop** | 小步实现本地 MVP | 每个切片经过合同、实现、独立验收和状态同步 | 🟢 已进入生产候选阶段，历史缺口仍按任务收敛 |
+| **M6 公开部署与生产恢复** | 固定 M1 公开运行、可恢复性与持续采集 | Public可用、verified备份、RSS自然周期、人工审核发布和监控闭环 | 🔴 受阻，正在恢复 |
+| **M7 X与完整Admin运营** | 27个X低风险持续采集、双语链和双端Admin | X灰度扩容、内容持续更新、Mac/iPhone完整运营与告警 | 🟡 已规划，待前置门 |
 
-## M5 当前切片
+## 当前生产切片
 
 | 切片 | 当前事实 | 下一验收出口 |
 | --- | --- | --- |
-| 数据与 SQLite | v0.4 machine contract、`public-synthetic`、双 profile migration/seed 已复验并 ACK | 保持 frozen hash、物理隔离和 fail-closed |
-| 公开 Repository/API | feed/detail 实现、正式测试与安全复审均已 ACK | 与最终 UI 接线后做定向回归，禁止静态 Demo 回退 |
-| 早期 v0.2 前端 | 2026-08-07 实现、测试、安全任务已 ACK | 保留历史审计链；回退只使用可机械证明的最后 ACK 基线 |
-| 最终 v0.2 UI | 设计冻结任务 `TASK-20260808-54BB47` 已 ACK；[最终实现级产品合同](spec/F1+1-v0.2-最终实现级产品合同.md) 已建立 | app 按固定 hash 落地，并完成视觉、交互、无障碍、API 单一数据源复验 |
-| Admin / 真实采集 / 外部能力 | 尚未放行 | 独立任务、授权、测试、安全和用户门禁 |
+| Public Beta | M1 candidate-v10已部署，最近公网200；Quick Tunnel地址可变 | 现场验证当前URL、home/health/feed并保持LKG |
+| Schema10 与备份 | DB基础一致性可读；verified recovery point为0，Backup V2审查BLOCK | `TASK-20260829-FCC322` 关闭P0/P1并形成可恢复点 |
+| RSS持续采集 | 四源registry存在；旧collector/refiner未加载，control fenced | `BBFF2A` 关闭恢复门；`082F2C` 完成两源canary与两个900秒周期 |
+| X信源 | 用户选定27个X+1条Sky RSS；27/27当次页面可读 | `0ED611` 收敛registry、三源canary和分批扩容 |
+| 双语/Public/Admin | 大量候选代码与局部生产UI存在；完整生产链收据不足 | `E59ACA` 关闭新内容双语→人工审核→公开投影及双端Admin监控 |
 
-## 近期动作
+## 当前关键动作
 
-- [x] 冻结 v0.2 最终设计 HTML、SHA-256 与深浅 × 1440/1024/390 六张证据。
-- [x] 将冻结输入转为产品最终实现级合同，并同步 Spec/Roadmap。
-- [ ] 开发部按最终合同实现公开信息流，不改公开 DTO、领域实体或 accepted 核心。
-- [ ] 测试/安全/设计按合同 §9 完成定向复验，保留早期 ACK 与最终快照两段审计链。
-- [ ] Admin、真实采集、Base/provider 切换、部署和自动发布继续等待各自门禁。
+- [ ] 修复 Backup V2 的八项阻断并完成独立复审。
+- [ ] 形成 verified/off-host/encrypted/restore-drilled recovery point，证明 RPO≤900秒。
+- [ ] 通过合法 control 与真实 identity hash 关闭 schema10 RSS 恢复门，生成新 LaunchAgent候选。
+- [ ] 只对 Motorsport/The Race 执行单次 canary，再观察两个自然900秒周期。
+- [ ] 把旧59条收敛为27个X账号与1条Sky RSS，先3源低风险灰度。
+- [ ] 打通新内容双语详细提炼、人工审核发布、签名投影和公开中/EN切换。
+- [ ] 将完整Admin监控部署为真实Mac/iPhone页面，并验收状态、日志、流量、API、信源、备份、成本和告警。
 
 > 状态图例：⚪ 未开始 · 🟡 进行中 · 🟢 已完成 · 🔴 受阻
 

@@ -1,0 +1,51 @@
+{
+  "acceptance_exit": "M1与M5双视图对实际login及两设备selector逐字一致；M5/iPhone selector各自唯一并与PrepareInputs两个sourceRef映射形成owner-only配置；记录CertDomains/Serve/Funnel/device approval/grants可见性；公开报告无敏感原文。若CLI无法证明管理面approval/Grant，精确列为后续用户GUI输入，不阻断login/selector冻结。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/开发部/报告/2026-08-12-3540A4-Tailscale真实login与双端selector只读冻结报告.md"
+  ],
+  "authorization_evidence": "本线程用户确认采用capability命名；2026-08-12",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T21:40+08:00",
+      "evidence": "本线程用户确认采用capability命名；2026-08-12",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/internal-agent:tailscale_identity_freeze",
+  "completion_class": "standard",
+  "confirmation": "用户确认capability命名并要求快速推进；本任务严格只读，无管理面变更。",
+  "created_at": "2026-08-12T21:40+08:00",
+  "department": "开发部",
+  "details": "快速主线、只读：复用7FFA25受限证据与当前M1/M5 Tailscale本地CLI状态，冻结Admin prepare所需的精确ASCII login以及M5/iPhone两个source selector候选的真实字节；核对两个视图一致、设备所有者/在线状态/共享或tag线索、device approval可见性、CertDomains、Serve/Funnel现状。禁止写tailnet policy、禁止启用HTTPS/Serve/Funnel、禁止device approve/rename、禁止prepare/load/DB写。原始login/selector只进入git-ignored 0700/0600 restricted input，普通报告只留hash。用户已确认capability ID=1404369477-blip.github.io/cap/f1-admin-device。",
+  "domain_stage": "tailscale_identity_freeze",
+  "event_receipts": [
+    "IDENTITY_FREEZE_PASS:restricted-config-sha256=33f00a6b0e94543b727c51107fc83b775795e7547579f45d9402fbd125806ab6;login-hash=e1c49663;selector-hashes=f0b5b950,48ee30ca;certDomains=0;serve-funnel=empty;tailnetWrites=0"
+  ],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "视图冲突、多个iOS候选、共享节点/owner不一致则停止；任何管理面或tailnet写调用立即停止；任何原始identity泄露报告/Git则隔离并停止。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "Raw login/selectors/node IDs/keys/IPs remained only in ignored owner-only 0600 scratch; report/task contain hashes only. Local same-owner/no-sharee signals were not promoted to management-plane approval. No tailnet/device/policy/Serve/Funnel write.",
+  "node": "TAILSCALE_IDENTITY_READONLY",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-7FFA25-M5与M1-Tailnet-peer-map双视图机械核收报告.md"
+  ],
+  "report": "docs/collaboration/部门/开发部/报告/2026-08-12-3540A4-Tailscale真实login与双端selector只读冻结报告.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-3540A4",
+  "title": "M1 Tailscale真实login与双端selector只读冻结",
+  "unverified": [
+    "Management-plane device approval, Grants/policy canonical hash, exact selector grammar, and real-world confirmation that the unique iOS peer is the intended iPhone. CertDomain/canonical origin unavailable because CertDomains is empty."
+  ],
+  "updated_at": "2026-08-12T22:14+08:00",
+  "verified": [
+    "Fresh M5/M1 status views have the same 3-node static identity set and exact ASCII login; unique M5 self and unique iOS peer DNS selector candidates frozen owner-only and mapped to existing m5/iphone sourceRef roles. Same UserID, no local tag/sharee evidence. CertDomains count0. M5/M1 Serve and Funnel status all empty. Tailnet writes0."
+  ]
+}

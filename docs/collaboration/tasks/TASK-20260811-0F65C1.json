@@ -1,0 +1,42 @@
+{
+  "acceptance_exit": "交付当前源码/data/build不可变清单和可运行候选；上述Function逐项列真实路由、操作、正常/失败/恢复；production build和127.0.0.1启动成功，App外部调用=0；聚焦测试仅覆盖改动与关键回归并通过，typecheck、lint、build各最多一次最终有效运行；交付开发报告、已验证/未验证、错题自检、TASK_STATE_OK。视觉六格与独立浏览器终验由后继测试/设计任务完成，开发不得自证放行。",
+  "artifacts": [],
+  "authorization_evidence": "当前活动目标：持续推进网站搭建，直到交付有前端界面、必要后端数据库、核心功能可用的初版落地方案",
+  "authorization_history": [
+    {
+      "at": "2026-08-11T18:25+08:00",
+      "evidence": "当前活动目标：持续推进网站搭建，直到交付有前端界面、必要后端数据库、核心功能可用的初版落地方案",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "唯一最终聚焦测试首错：RECEIPT_STALE（legacy closed receipt 超出24小时freshness窗口）；18/19 PASS，按失败路径停止，lint/typecheck/build/production HTTP均NOT_RUN。禁止本任务刷新或放宽integrity；报告：docs/collaboration/部门/开发部/报告/2026-08-11-初版公开站当前候选闭环阻断报告.md",
+  "claimed_by": "开发部/019fb374-7c86-7882-9e51-76114ce69e7f",
+  "completion_class": "standard",
+  "confirmation": "用户持续授权本地初版落地；任务仅实现已确认公开核心，保留多图视觉、Admin、真实来源和生产门禁。",
+  "created_at": "2026-08-11T18:25+08:00",
+  "department": "开发部",
+  "details": "以当前唯一冻结公开设计 design/ui/F1+1-v0.2-全站设计/F1+1-v0.2-final-20260808.html SHA-256=5a84bfb27294ebd727369118a95528f5b788bfacbe2d56cc03fcb006f6168cb1 和最终产品合同为实现输入；设计部正在制作的integrity successor尚未获用户视觉确认，不得吸收或覆盖。先复算当前源码并承认F67080旧11文件aggregate已因后续后端改动漂移。基于当前app关闭 PUB-FEED-003/004/005、PUB-DETAIL-001/004/005、UI-THEME-002、UI-RESP-002、UI-TOP-001、UI-ACCORDION-001、UI-RUNTIME-001、UI-A11Y-001 中真实缺口：/与/stories/[publicId]须消费同一SQLite/Repository；四类筛选、12+12分页、七状态与局部恢复、主题持久化/禁存储回退、回顶焦点、互斥展开/外点关闭、404与错误恢复、无hydration/runtime error、键盘/200%/forced-colors/reduced-motion/reduced-transparency/safe-area均需真实可达。不得实现MEDIA-NAV-003/MEDIA-LIGHTBOX-004的未批准多图视觉，不得改Spec/accepted ADR/design，不得开启真实provider/Base/外联/Admin/部署。优先复用现有实现，发现已完成则只补精确缺口；避免无改动时重复全量测试。",
+  "domain_stage": "M5-初版公开站当前候选闭环",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) 当前数据profile/Repository不能支撑两页或状态恢复：block并指向数据部TASK，不复制静态第二真值；2) 修复必须改变已冻结视觉或吸收未确认integrity successor：立即block退设计/用户确认；3) hydration/runtime、API完整性、no-egress或旧V1/V2合同出现回归：保留首错并停止扩大修改。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "在当前仓库上形成可启动的公开前端+SQLite候选，关闭已授权的公开核心P1，不等待真实外部能力",
+  "pointers": [
+    "docs/spec/F1+1-初版全功能追踪矩阵-v0.1.md"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260811-0F65C1",
+  "title": "初版公开站当前候选实现闭环与可运行冻结",
+  "unverified": [],
+  "updated_at": "2026-08-11T18:43+08:00",
+  "verified": []
+}

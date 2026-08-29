@@ -109,7 +109,7 @@ direct count=9，Unknown=0，未出现本节范围内的禁止或缺失许可证
 | 文件/检查 | 当前 SHA-256 或结果 | 判定 |
 | --- | --- | --- |
 | `app/next.config.ts` | `4cad194c09413d0436f990ddb4a79c886d97611a01c592fd2a43f5f0d9eae313` | `dirname(fileURLToPath(import.meta.url))` 推导配置所在 app root；无 `/Users/...` 字面量 |
-| 动态导入 `next.config.ts` | `turbopack.root=/Users/hoyin/Documents/F1+1/app` | 与 `realpath(app)` 精确相等，退出码 0 |
+| 动态导入 `next.config.ts` | `turbopack.root=[M5-HOME]/Documents/F1+1/app` | 与 `realpath(app)` 精确相等，退出码 0 |
 | `app/tsconfig.json` | `a2ce412e4f078ee7e03aea4f7ac15270d3cb67781d9711ca35dd44e61de82da8` | `target=ES2017`、`jsx=react-jsx`、`.next/types`、`.next/dev/types`、`*.mts` 已预置 |
 | `app/next-env.d.ts` | `7b550dda9686c16f36a17bf9051d5dbf31e98555b30d114ac49fc49a1e712651` | 显式导入 `./.next/types/routes.d.ts` |
 | `app/.gitignore` | `.local/`、`node_modules/`、`.next/`、`*.tsbuildinfo` 全部命中 | 退出码 0 |
@@ -119,7 +119,7 @@ direct count=9，Unknown=0，未出现本节范围内的禁止或缺失许可证
 - `git ls-files` 中 `.local/node_modules/.next/tsbuildinfo` 禁止路径数为 0；
 - `git ls-files --cached --others --exclude-standard -- app` 只返回 37 个仓内候选，全部 `realpath` 位于仓库根内，symlink=0；
 - Git-visible lockfile 只有 `app/package-lock.json`；
-- `/Users/hoyin/package-lock.json` 位于仓库根之外，不在 Git-visible 候选集，Next 的显式 app root 也没有再输出 workspace-root/multiple-lock 警告；
+- `[M5-HOME]/package-lock.json` 位于仓库根之外，不在 Git-visible 候选集，Next 的显式 app root 也没有再输出 workspace-root/multiple-lock 警告；
 - 本安全复验没有发出读取其内容、修改或删除 Home lock 的命令，也没有触碰用户 Home 文件。npm config 复核显式使用 `NPM_CONFIG_USERCONFIG=/dev/null`，不依赖 Home `.npmrc`。
 
 本轮没有进行系统调用级跟踪，因此不声称可证明 Next 内部从未对任何父路径做过 metadata 查询。可验证边界是：配置 root 精确固定为 app、禁止警告为 0、没有 Home 路径进入候选或发生内容/状态漂移。

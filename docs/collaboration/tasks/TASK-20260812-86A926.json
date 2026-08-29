@@ -1,0 +1,42 @@
+{
+  "acceptance_exit": "TASK_STATE_OK；.next闭包身份预检后确定性归一，manifest/target verifier精确mode；聚焦Vitest一次PASS（含篡改mode/hash拒绝与installer失败零live写）、typecheck一次PASS、diff-check一次PASS；报告列next文件/bytes/mode分布、最终manifest/content/release root。",
+  "artifacts": [],
+  "authorization_evidence": "用户本会话：继续；快速上线第一版。",
+  "authorization_history": [
+    {
+      "at": "2026-08-12T12:53+08:00",
+      "evidence": "用户本会话：继续；快速上线第一版。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "FOCUSED_VITEST_FIRST_ERROR_STAGE_NEXT_ROOT_MODE_AND_SHARED_MANIFEST_FIXTURE",
+  "claimed_by": "开发部/internal-agent:projection_runtime_p1_next_mode",
+  "completion_class": "standard",
+  "confirmation": "用户已授权快速上线；安全已裁定为单一机械修正。",
+  "created_at": "2026-08-12T12:53+08:00",
+  "department": "开发部",
+  "details": "继承blocked FA5D66候选与build1 PASS/Vitest首错；严格按安全TASK-20260812-378614裁定。只改builder/release manifest及对应聚焦测试/报告：fresh Node24 production build完成后、manifest生成前，先逐项验证.next闭包身份（当前uid、regular/nlink1/非symlink/realpath/root containment、无group/other write以外问题），再将所有当前非执行闭包文件精确chmod0644、闭包目录0755；当前执行文件0，未来0755只能显式固定allowlist且本任务不得新增。随后manifest记录mode；target verifier只读逐字核对，绝不现场chmod。私钥/DB/manifest仍0600、私有目录0700。不得修改installer原子提交逻辑、sender/receiver/reader/视觉。继承FA5D66 build PASS且不重跑build；新预算只运行release+installer同一聚焦Vitest一次、Node24 typecheck一次、限定diff-check一次，首错即停。0SSH/M1/网络/DB/load/cutover。",
+  "domain_stage": "implementation",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "若预检发现非group-write以外的身份问题、执行文件或chmod后闭包漂移，立即block；若测试/typecheck/diff首错即停不重跑；不得把target verifier改为现场修复或放宽symlink/异主/多链接/group-write。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "M1首版上线/真实投影release/.next mode收口",
+  "pointers": [
+    "docs/collaboration/部门/安全部/报告/2026-08-12-378614-Next-production-build文件mode规则只读裁定报告.md"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260812-86A926",
+  "title": "Next fresh-build闭包权限归一机械successor",
+  "unverified": [],
+  "updated_at": "2026-08-12T12:56+08:00",
+  "verified": []
+}

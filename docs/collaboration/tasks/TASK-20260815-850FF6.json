@@ -1,0 +1,50 @@
+{
+  "acceptance_exit": "提交一份自动化部final报告，逐项列8类服务/备份的可核验状态与证据时间、监听边界、采集链当前断点、自动初审证据强弱、流量producer=not_available基线、需要统筹部处理事项；同时明确productionWrites=0,databaseReads=0,databaseWrites=0,serviceActions=0,launchdActions=0,contentReviewActions=0,publicationActions=0,externalMessages=0。使用精确受管工具绝对路径complete提交产出、已验证、未验证和错题自检，并返回TASK_STATE_OK。",
+  "artifacts": [],
+  "authorization_evidence": "2026-08-15用户授权首张只读盘点；TASK-20260815-3908DB在claim前因错误相对路径失败，本successor权限不扩张。",
+  "authorization_history": [
+    {
+      "at": "2026-08-15T21:03+08:00",
+      "evidence": "2026-08-15用户授权首张只读盘点；TASK-20260815-3908DB在claim前因错误相对路径失败，本successor权限不扩张。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "",
+  "completion_class": "standard",
+  "confirmation": "用户已明确同意向已登记M1自动化部派发第一张正式只读盘点任务；本successor只修复受管工具路径。",
+  "created_at": "2026-08-15T21:03+08:00",
+  "department": "自动化部",
+  "details": "在固定M1上只读核对现有RSSHub、rss-collector、rss-refiner、admin-service、public-projection、public-beta、quick-tunnel与异机备份的launchd状态、PID/runs/lastExit、仅loopback监听、公开health/feed以及已有脱敏运行收据的新鲜度；形成采集链断点、自动初审可观察性和流量聚合not_available基线。唯一受管任务工具绝对路径固定为 [M1-HOME]/Documents/F1+1/docs/collaboration/scripts/agent_team_task.py；claim、block、complete、list或doctor只能调用该精确文件，禁止搜索、猜测或改用其他副本。使用deepseek-v4-pro完成跨服务只读盘点。允许写入仅限受管TASK状态和本任务自动化部最终报告。禁止连接或查询生产数据库，禁止读取凭证或环境变量值，禁止补抓、重跑worker、kill、kickstart、bootstrap、bootout、重启、安装、修改plist/release/active pointer/投影/发布outbox，禁止审核或发布内容，禁止外部消息和付费调用。任何命令exit非0即调用精确block路径并停止，不得诊断修复或重试；结论无证据时标Unknown。",
+  "domain_stage": "m1-readonly-baseline-successor",
+  "event_receipts": [],
+  "execution_state": "queued",
+  "external_artifacts": [],
+  "failure_paths": [
+    "1) taskId/body/session/部门路由/文件SHA不一致时，在任何运行读取前用精确受管路径block并停止；2) 任一命令exit非0或核验需要数据库访问、服务控制、秘密或生产写时立刻block并停止，禁止搜索修正、重试或扩大权限；3) launchctl/health/receipt证据互相矛盾或过期时保留原始只读收据，标记证据强弱并停止归因，不重跑或修复。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "替代TASK-20260815-3908DB的工具路径机械修正版",
+  "pointers": [
+    "docs/collaboration/部门/自动化部/RUNBOOK.md;docs/collaboration/部门/自动化部/机器交接边界.md;docs/collaboration/部门/自动化部/流量监控与隐私边界.md"
+  ],
+  "report": "",
+  "resolution": {
+    "evidence": "supersede预检返回replacement未进入执行生命周期；M1对本任务操作0。",
+    "reason": "机械successor仍错误要求queued状态调用block，违反受管状态机；未发送M1、未领取、未执行。",
+    "receipt_id": "RES-20260815T210437-7101146F",
+    "resolved_at": "2026-08-15T21:04+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "abandoned",
+    "target_revision_before": 1
+  },
+  "revision": 2,
+  "schema_version": 1,
+  "task_id": "TASK-20260815-850FF6",
+  "title": "M1首次正式只读运行基线盘点 successor",
+  "unverified": [],
+  "updated_at": "2026-08-15T21:04+08:00",
+  "verified": []
+}
