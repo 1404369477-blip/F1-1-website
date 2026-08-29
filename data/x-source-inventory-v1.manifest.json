@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "x-source-normalization-manifest-v1",
+  "inputPath": "F1+1信源.md",
+  "inputSha256": "135e9bcae84124a57d1599a9a1cb85ca0a08be1cccda3e54a3d118391a2b074d",
+  "outputPath": "data/x-source-inventory-v1.csv",
+  "outputSha256": "bbb84a7f8f625e8106ae6e0b2714a363940dbf3f20dcbbf300fa6552de1ac01b",
+  "uniqueCount": 59,
+  "inventorySetSha256": "bbb84a7f8f625e8106ae6e0b2714a363940dbf3f20dcbbf300fa6552de1ac01b",
+  "automaticCollection": false,
+  "externalCalls": 0
+}
