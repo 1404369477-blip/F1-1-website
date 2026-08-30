@@ -110,6 +110,48 @@ describe("quick-launch fail-closed control sequence", () => {
       gateway.close();
     }
   });
+  test("stops at recovery ready without clearing stop or entering backlog or live", () => {
+    const values = handoffSet();
+    const database = v10(Object.values(values));
+    const gateway = new SqliteInternalOperationGateway({ database, releaseSha256: RELEASE, manifestSha256: MANIFEST, schemaSha256: SCHEMA10_SHA256, now: () => new Date("2026-08-24T00:00:00.000Z") });
+    try {
+      const result = runQuickLaunchControlSequence({
+        database, gateway, handoffs: values, releaseSha256: RELEASE, manifestSha256: MANIFEST,
+        schemaSha256: SCHEMA10_SHA256, now: () => new Date("2026-08-24T00:00:00.000Z"), until: "ready"
+      });
+      expect(result).toMatchObject({
+        until: "ready",
+        phase: "disabled",
+        globalStopState: "stopped",
+        emergencyStopState: "clear",
+        recoveryState: "ready",
+        deletionFenceState: "clear",
+        publicationFenceState: "clear",
+        writerEpoch: 2,
+        recoveryEpoch: 2,
+        controlVersion: 7,
+        automaticReviewOperations: 0,
+        automaticPublishOperations: 0
+      });
+      expect(result.receipts.map((receipt) => receipt.controlAction)).toEqual([
+        "clear_deletion_singleton_fence",
+        "clear_publication_singleton_fence",
+        "recovery_advance",
+        "recovery_advance",
+        "writer_epoch_bump",
+        "recovery_complete"
+      ]);
+      const operations = database.prepare("SELECT control_action,state FROM internal_operation ORDER BY rowid").all() as Array<Record<string, unknown>>;
+      expect(operations).toHaveLength(6);
+      expect(operations.every((operation) => operation.state === "succeeded")).toBe(true);
+      expect(operations.map((operation) => operation.control_action)).not.toContain("clear_global_stop");
+      expect(operations.map((operation) => operation.control_action)).not.toContain("enter_backlog");
+      expect(operations.map((operation) => operation.control_action)).not.toContain("enter_live");
+      expect(database.prepare("SELECT count(*) AS count FROM projection_outbox WHERE status='reconcile_wait'").get()).toMatchObject({ count: 0 });
+    } finally {
+      gateway.close();
+    }
+  });
   test("rejects a release identity mismatch before database mutation", () => {
     const values = handoffSet();
     const database = v10(Object.values(values));

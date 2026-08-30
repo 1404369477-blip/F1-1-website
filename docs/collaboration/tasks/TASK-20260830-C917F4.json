@@ -1,0 +1,62 @@
+{
+  "acceptance_exit": "G1/G2/G4/G5 各有可运行产物:disposable 库上 register CLI 产生 1 行通过 valid_backup_recovery_point_v1 的记录且 binding 校验通过;fence 写入口在注册后产出 true/true/lastAt 与收据;--until ready 在 disposable 库从 fenced 走到 ready 且 global_stop/phase 不变、reconcile=0;plist 安装器对 schema10 disposable 完成 installed-not-loaded。G3 交付 0011 迁移草案与 hash preimage 定义文档(不 apply)。证据入 scratch/,全程零生产写。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/scripts/backup-recovery-point-register.ts",
+    "app/src/server/internal-operation/backup-recovery-point-register.ts",
+    "app/src/server/internal-operation/recovery-fence-write.ts",
+    "app/src/server/internal-operation/gateway.ts",
+    "app/src/server/internal-operation/quick-launch-control.ts",
+    "app/scripts/quick-launch-enter-live.ts",
+    "app/src/server/rss/deployment.ts",
+    "app/scripts/rss-install-macos.ts",
+    "docs/decisions/system/2026-08-30-F1+1-0011-source-registry-rss-config-v2-draft.md",
+    "app/src/tests/recovery-gate-tooling.test.ts",
+    "app/src/tests/quick-launch-control.test.ts",
+    "scratch/TASK-20260830-C917F4/report.md"
+  ],
+  "authorization_evidence": "2026-08-30 主线程:用户确认继续推进 BBFF2A 链;SNAP 已部署且首个 verified 异机恢复点已形成。",
+  "authorization_history": [
+    {
+      "at": "2026-08-30T23:52+08:00",
+      "evidence": "2026-08-30 主线程:用户确认继续推进 BBFF2A 链;SNAP 已部署且首个 verified 异机恢复点已形成。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/019fb374-7c86-7882-9e51-76114ce69e7f",
+  "completion_class": "standard",
+  "confirmation": "按 2026-08-30 主线程用户『继续往下推进吧』执行;0011 apply 生产、fence 首次生产置 true、任何生产库写仍需用户单独确认。",
+  "created_at": "2026-08-30T23:52+08:00",
+  "department": "开发部",
+  "details": "BBFF2A 勘探证实五缺口(证据 scratch/TASK-20260829-BBFF2A/control-path-gaps.md),按优先级补全:G1 新建 backup-recovery-point-register CLI:走 SqliteInternalOperationGateway 合法路径(backup_worker owner handoff→request→authorize→gateway_write_permit→INSERT backup_recovery_point),字段满足 0007 全部 CHECK 与 valid_backup_recovery_point_v1 判定,消费 SNAP latest.json/manifest 与恢复演练证据,映射并满足 assertRecoveryPointBinding 对 projection_recovery_anchor/writer authority receipt 的要求;设计周期性注册以维持 assertRecoveryFence 的 15 分钟新鲜度(与 deployment/macos/backup-snapshot-cycle.sh 集成)。G2 定义并实现 recovery-fence.json 的合法生产写入口(clockTrusted 判定依据须成文,writerReady 与 lastSuccessfulRecoveryPointAt 在注册成功后原子更新,产出收据)。G4 扩展 quick-launch 控制序列支持 --until ready:recovery_advance×2→writer_epoch_bump→recovery_complete 后停,保持 global_stop=stopped、phase=disabled,复用现有收据机制,禁止触达 enter_backlog/enter_live。G3 设计 additive 迁移 0011 与 route_identity/authorization_receipt/source_policy 三类 hash 的 preimage 定义(成文进 ADR 补充),提供仅 Motorsport/The Race 的合法写路径,保持 v1 行不可变历史;迁移草案待用户单独批准后才可 apply 生产。G5 提供 schema10 兼容的 plist 安装器达成 installed-not-loaded(不打开 v1 库,绑定 release manifest sha/900s/日志)。硬约束:禁止 raw UPDATE/drop trigger/绕过 gateway;全程零生产库写,一切验证在 disposable 库;测试从简(冒烟+关键不变量,禁止低效循环测试)。",
+  "domain_stage": "M1生产预备/恢复门工具链",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "gateway 授权/绑定语义无法从代码闭合推导时 BLOCK 并列出精确阻塞点;任何环节被证实必须 raw UPDATE/drop trigger 才能达成时立即 BLOCK;0011 设计若必须破坏 v1 不可变语义或触碰 accepted 合同则 BLOCK 回统筹。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查 docs/collaboration/错题集.md，无与本任务匹配的条目；未 raw UPDATE/drop trigger/绕过 gateway，未改 0007/0010，未写生产路径，未 commit，未 ACK。",
+  "node": "QL3/m1/recovery-gate-tooling",
+  "pointers": [
+    "scratch/TASK-20260829-BBFF2A/control-path-gaps.md",
+    "docs/collaboration/tasks/TASK-20260829-BBFF2A.json",
+    "docs/decisions/system/2026-08-30-F1+1-数据可再生性分层与RPO重定级-proposed.md"
+  ],
+  "report": "scratch/TASK-20260830-C917F4/report.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260830-C917F4",
+  "title": "恢复门合法控制工具链补全(G1-G5)",
+  "unverified": [
+    "生产库登记与生产 recovery-fence.json 置 true；0011 SQL/apply；与 backup-snapshot-cycle.sh 周期接线；真实异机 off-host；launchd 系统探测；默认 PATH 仍为 Node 22.23.1"
+  ],
+  "updated_at": "2026-08-31T00:10+08:00",
+  "verified": [
+    "G1 disposable: valid_backup_recovery_point_v1=1 and assertRecoveryPointBinding passed via gateway; G2 fence after=writerReady true / clockTrusted true / lastAt=SNAP ms; G4 until-ready triple disabled/stopped/ready and live tests still pass; G5 installed-not-loaded without launchctl or v1 DB open; Node 24.18.0 vitest 6/6"
+  ]
+}

@@ -1693,10 +1693,15 @@ export class SqliteInternalOperationGateway {
     };
     assert(tableName === expectedTable[permit.entityKind], "MUTATION_TABLE_MISMATCH");
     const verb = tableMatch?.[1]?.toUpperCase() ?? "";
+    // 0007 projection_recovery_anchor_insert_guard allows the first singleton
+    // row as INSERT under an activate permit (entity_id='active'). UPDATE is
+    // the subsequent version-bump path. The closed-mutation verb must match
+    // that pair; it must not invent an insert mutation kind the policy lacks.
+    const activateInsert = permit.mutationKind === "activate" && verb.endsWith("INTO") && tableName === "projection_recovery_anchor";
     assert((permit.mutationKind === "insert" && verb.endsWith("INTO")) ||
       (permit.mutationKind === "update" && verb === "UPDATE") ||
       (permit.mutationKind === "delete" && verb === "DELETE FROM") ||
-      (permit.mutationKind === "activate" && verb === "UPDATE") ||
+      (permit.mutationKind === "activate" && (verb === "UPDATE" || activateInsert)) ||
       (permit.mutationKind === "consume" && verb === "UPDATE"), "MUTATION_KIND_MISMATCH");
   }
 

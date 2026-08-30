@@ -12,8 +12,13 @@ export type QuickLaunchControlReceipt = Readonly<{
   operationId: string; controlAction: string; ownerProcess: string;
   expectedControlVersion: number; resultingControlVersion: number; succeededAt: string;
 }>;
+export type QuickLaunchControlUntil = "ready" | "live";
 export type QuickLaunchControlResult = Readonly<{
-  phase: "live"; globalStopState: "clear"; emergencyStopState: "clear"; recoveryState: "ready";
+  until: QuickLaunchControlUntil;
+  phase: "disabled" | "backlog" | "live";
+  globalStopState: "stopped" | "clear";
+  emergencyStopState: "clear";
+  recoveryState: "ready";
   deletionFenceState: "clear"; publicationFenceState: "clear"; writerEpoch: number; recoveryEpoch: number;
   controlVersion: number; receipts: readonly QuickLaunchControlReceipt[];
   automaticReviewOperations: 0; automaticPublishOperations: 0;
@@ -152,6 +157,7 @@ function clearSingletonFence(input: Readonly<{
 export function runQuickLaunchControlSequence(input: Readonly<{
   database: DatabaseLike; gateway: SqliteInternalOperationGateway; handoffs: QuickLaunchControlHandoffSet;
   releaseSha256: string; manifestSha256: string; schemaSha256: string; now?: () => Date;
+  until?: QuickLaunchControlUntil;
 }>): QuickLaunchControlResult {
   for (const handoff of Object.values(input.handoffs)) validateHandoff(handoff, input.releaseSha256, input.manifestSha256);
   const before = control(input.database);
@@ -193,18 +199,31 @@ export function runQuickLaunchControlSequence(input: Readonly<{
     { step: "enter-backlog", action: "enter_backlog", statement: "UPDATE internal_control SET phase='backlog',updated_at=?,updated_by_operation_id=?,version=version+1 WHERE singleton_id=1 AND version=?" },
     { step: "enter-live", action: "enter_live", statement: "UPDATE internal_control SET phase='live',updated_at=?,updated_by_operation_id=?,version=version+1 WHERE singleton_id=1 AND version=?" }
   ];
-  for (const item of sequence) add(runControlStep({
-    database: input.database, gateway: input.gateway, handoff: handoff(item.step),
-    operationId: `quick-launch-${item.step}`, controlAction: item.action, statement: item.statement,
-    releaseSha256: input.releaseSha256, manifestSha256: input.manifestSha256, schemaSha256: input.schemaSha256, now
-  }));
+  const until = input.until ?? "live";
+  const readyStop = new Set<string>(["recovery-restoring", "recovery-verifying", "writer-epoch-bump", "recovery-complete"]);
+  for (const item of sequence) {
+    if (until === "ready" && !readyStop.has(item.step)) continue;
+    add(runControlStep({
+      database: input.database, gateway: input.gateway, handoff: handoff(item.step),
+      operationId: `quick-launch-${item.step}`, controlAction: item.action, statement: item.statement,
+      releaseSha256: input.releaseSha256, manifestSha256: input.manifestSha256, schemaSha256: input.schemaSha256, now
+    }));
+  }
   const after = control(input.database);
-  assert(after.phase === "live" && after.global_stop_state === "clear" && after.emergency_stop_state === "clear"
-    && after.recovery_state === "ready" && after.deletion_fence_state === "clear" && after.publication_fence_state === "clear", "QUICK_LAUNCH_FINAL_STATE_INVALID");
+  if (until === "ready") {
+    assert(after.phase === "disabled" && after.global_stop_state === "stopped" && after.emergency_stop_state === "clear"
+      && after.recovery_state === "ready" && after.deletion_fence_state === "clear" && after.publication_fence_state === "clear", "QUICK_LAUNCH_READY_STATE_INVALID");
+  } else {
+    assert(after.phase === "live" && after.global_stop_state === "clear" && after.emergency_stop_state === "clear"
+      && after.recovery_state === "ready" && after.deletion_fence_state === "clear" && after.publication_fence_state === "clear", "QUICK_LAUNCH_FINAL_STATE_INVALID");
+  }
   const automation = input.database.prepare("SELECT count(*) AS count FROM internal_operation WHERE owner_process IN ('automatic_reviewer','automatic_publisher')").get() as ControlRow;
   assert(Number(automation.count) === 0, "QUICK_LAUNCH_AUTOMATION_PRESENT");
   return Object.freeze({
-    phase: "live", globalStopState: "clear", emergencyStopState: "clear", recoveryState: "ready",
+    until,
+    phase: after.phase as QuickLaunchControlResult["phase"],
+    globalStopState: after.global_stop_state as QuickLaunchControlResult["globalStopState"],
+    emergencyStopState: "clear", recoveryState: "ready",
     deletionFenceState: "clear", publicationFenceState: "clear", writerEpoch: integer(after, "writer_epoch"),
     recoveryEpoch: integer(after, "recovery_epoch"), controlVersion: integer(after, "version"),
     receipts: Object.freeze(receipts), automaticReviewOperations: 0, automaticPublishOperations: 0

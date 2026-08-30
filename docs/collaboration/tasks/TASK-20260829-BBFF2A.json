@@ -10,7 +10,7 @@
     }
   ],
   "authorization_state": "user_confirmed",
-  "block_reason": "等待 TASK-20260829-FCC322 完成 Backup V2 P0/P1 整改、disposable故障注入与独立复审PASS。",
+  "block_reason": "2026-08-30 勘探证实四缺口(G1 backup_recovery_point 无生产写入口;G2 recovery-fence.json 无合法置 true 入口;G3 source_registry_rss_config_v1 占位 hash 不可变无替换路径;G4 控制序列只有一推到 live 无 ready 停点,与 reconcile=0 冲突;附 G5 rss:install-macos 对 schema10 库失败)。证据 scratch/TASK-20260829-BBFF2A/control-path-gaps.md。等待开发部恢复门合法控制工具链补全任务交付后 resume。",
   "claimed_by": "自动化部/01a00560-4fca-7221-9bbb-382a9c2f6195",
   "completion_class": "standard",
   "confirmation": "按当前线程用户持续推进目标执行；任何新增付费、凭证、权限、不可逆删除或扩大公网暴露仍需单独用户确认。",
@@ -34,11 +34,11 @@
   ],
   "report": "",
   "resolution": null,
-  "revision": 3,
+  "revision": 5,
   "schema_version": 1,
   "task_id": "TASK-20260829-BBFF2A",
   "title": "M1 Schema10恢复门与RSS身份闭包生产预备",
   "unverified": [],
-  "updated_at": "2026-08-29T23:55+08:00",
+  "updated_at": "2026-08-30T23:52+08:00",
   "verified": []
 }

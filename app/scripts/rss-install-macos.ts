@@ -1,6 +1,6 @@
 import { existsSync, lstatSync, readFileSync, realpathSync } from "node:fs";
 import { homedir, tmpdir } from "node:os";
-import { basename, dirname, relative, resolve, sep } from "node:path";
+import { basename, dirname, isAbsolute, relative, resolve, sep } from "node:path";
 
 import { ConfigError } from "../src/server/config/env.ts";
 import {
@@ -12,6 +12,7 @@ import {
   assertRssDeploymentHost,
   atomicWritePrivateFile,
   createRssDeploymentManifest,
+  installSchema10RssCollectorPlist,
   prepareRssDeploymentDirectories,
   readVerifiedRssDeploymentManifest,
   renderRssCollectorPlist,
@@ -23,9 +24,41 @@ import { readVerifiedRssReleaseManifest } from "../src/server/rss/release-manife
 import { runSafeCli } from "../src/server/security/cli.ts";
 import { appRoot } from "../src/server/runtime-config.ts";
 
-type InstallMode = Readonly<{ kind: "prepare" }> | Readonly<{ kind: "render"; output: string }>;
+type InstallMode =
+  | Readonly<{ kind: "prepare" }>
+  | Readonly<{ kind: "render"; output: string }>
+  | Readonly<{ kind: "schema10-plist"; plistDir: string; logDir: string; releaseManifestSha256: string }>;
+
+function parseSchema10Mode(arguments_: readonly string[]): InstallMode | null {
+  if (!arguments_.includes("--schema10-plist")) return null;
+  let plistDir: string | undefined;
+  let logDir: string | undefined;
+  let releaseManifestSha256 = process.env.RSS_RELEASE_MANIFEST_SHA256 ?? "";
+  for (let index = 0; index < arguments_.length; index += 1) {
+    const flag = arguments_[index];
+    if (flag === "--schema10-plist") continue;
+    if (flag === "--plist-dir") {
+      plistDir = arguments_[index + 1];
+      index += 1;
+    } else if (flag === "--log-dir") {
+      logDir = arguments_[index + 1];
+      index += 1;
+    } else if (flag === "--release-manifest-sha256") {
+      releaseManifestSha256 = arguments_[index + 1] ?? "";
+      index += 1;
+    } else {
+      throw new ConfigError("CLI_ARGUMENTS_FORBIDDEN", "schema10 installer accepts --plist-dir, --log-dir, --release-manifest-sha256");
+    }
+  }
+  if (typeof plistDir !== "string" || typeof logDir !== "string" || !isAbsolute(plistDir) || !isAbsolute(logDir)) {
+    throw new ConfigError("CLI_ARGUMENTS_FORBIDDEN", "schema10 installer requires absolute --plist-dir and --log-dir");
+  }
+  return { kind: "schema10-plist", plistDir, logDir, releaseManifestSha256 };
+}
 
 function parseMode(arguments_: readonly string[]): InstallMode {
+  const schema10 = parseSchema10Mode(arguments_);
+  if (schema10) return schema10;
   if (arguments_.length === 0) return { kind: "prepare" };
   if (arguments_.length === 2 && arguments_[0] === "--render-plist") {
     const temporaryRoot = realpathSync(tmpdir());
@@ -52,6 +85,20 @@ function parseMode(arguments_: readonly string[]): InstallMode {
 await runSafeCli(() => {
   process.umask(0o077);
   const mode = parseMode(process.argv.slice(2));
+  if (mode.kind === "schema10-plist") {
+    const receipt = installSchema10RssCollectorPlist({
+      appRoot,
+      plistDir: mode.plistDir,
+      logDir: mode.logDir,
+      releaseManifestSha256: mode.releaseManifestSha256
+    });
+    process.stdout.write(`${JSON.stringify({
+      command: "rss:schema10-plist",
+      ...receipt,
+      externalCalls: 0
+    })}\n`);
+    return;
+  }
   const paths = rssDeploymentPaths(appRoot, homedir());
   assertRssDeploymentHost(paths);
 

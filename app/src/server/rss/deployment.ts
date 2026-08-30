@@ -14,7 +14,8 @@ import {
   unlinkSync,
   writeFileSync
 } from "node:fs";
-import { basename, dirname, isAbsolute, relative, resolve, sep } from "node:path";
+import { basename, dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
+import { homedir } from "node:os";
 
 import { assertNodeVersion, ConfigError } from "../config/env.ts";
 import type { RssReleaseManifest } from "./release-manifest.ts";
@@ -418,4 +419,93 @@ export function readVerifiedRssDeploymentManifest(
     throw new ConfigError("RELEASE_PLIST", "RSS collector plist identity changed");
   }
   return expected;
+}
+
+const PRODUCTION_WRITE_PREFIXES = [
+  join(homedir(), "F1-1-website"),
+  join(homedir(), "Library", "Application Support", "F1Plus1"),
+  join(homedir(), "Library", "LaunchAgents")
+] as const;
+
+function assertDisposableInstallTarget(pathValue: string, label: string): string {
+  const path = resolve(pathValue);
+  if (!isAbsolute(pathValue) || path !== resolve(pathValue)) {
+    throw new ConfigError("RELEASE_PATH", `${label} must be an absolute real path`);
+  }
+  for (const prefix of PRODUCTION_WRITE_PREFIXES) {
+    if (path === prefix || path.startsWith(`${prefix}${sep}`)) {
+      throw new ConfigError("RELEASE_PATH", `${label} must not write a production path`);
+    }
+  }
+  if (path.includes(`${sep}Library${sep}LaunchAgents`) || path.endsWith(`${sep}Library${sep}LaunchAgents`)) {
+    throw new ConfigError("RELEASE_PATH", `${label} must not target LaunchAgents`);
+  }
+  return path;
+}
+
+export type Schema10PlistInstallReceipt = Readonly<{
+  status: "installed-not-loaded";
+  label: typeof RSS_COLLECTOR_LABEL;
+  scheduleSeconds: typeof RSS_COLLECTOR_INTERVAL_SECONDS;
+  plistPath: string;
+  plistSha256: string;
+  stdoutLog: string;
+  stderrLog: string;
+  releaseManifestSha256: string;
+  launchctlInvoked: false;
+  databaseOpened: false;
+}>;
+
+/**
+ * schema10 installed-not-loaded installer. Renders the collector plist and
+ * writes it to a parameterized directory. It never opens a v1 RSS library,
+ * never writes ~/Library/LaunchAgents, and never calls launchctl.
+ */
+export function installSchema10RssCollectorPlist(input: Readonly<{
+  appRoot: string;
+  plistDir: string;
+  logDir: string;
+  releaseManifestSha256: string;
+  nodePath?: string;
+}>): Schema10PlistInstallReceipt {
+  if (!/^[0-9a-f]{64}$/.test(input.releaseManifestSha256)) {
+    throw new ConfigError("RELEASE_MANIFEST_ANCHOR", "scheduled release manifest SHA must be one lowercase SHA-256");
+  }
+  const appRoot = resolve(input.appRoot);
+  const plistDir = assertDisposableInstallTarget(input.plistDir, "schema10 plist directory");
+  const logDir = assertDisposableInstallTarget(input.logDir, "schema10 log directory");
+  for (const directory of [plistDir, logDir]) {
+    if (!existsSync(directory)) mkdirSync(directory, { recursive: true, mode: 0o700 });
+    chmodSync(directory, 0o700);
+  }
+  ensurePrivateDirectory(plistDir, plistDir, "schema10 plist directory");
+  ensurePrivateDirectory(logDir, logDir, "schema10 log directory");
+  const stdoutLog = join(logDir, "rss-collector.stdout.log");
+  const stderrLog = join(logDir, "rss-collector.stderr.log");
+  const plistPath = join(plistDir, `${RSS_COLLECTOR_LABEL}.plist`);
+  const paths: RssDeploymentPaths = {
+    ...rssDeploymentPaths(appRoot, plistDir),
+    stdoutLog,
+    stderrLog,
+    plist: plistPath
+  };
+  const plist = renderRssCollectorPlist(paths, input.releaseManifestSha256, input.nodePath ?? process.execPath);
+  if (existsSync(plistPath)) throw new ConfigError("RELEASE_RENDER_PATH", "schema10 plist target already exists");
+  for (const logPath of [stdoutLog, stderrLog]) {
+    if (!existsSync(logPath)) atomicWritePrivateFile(logPath, "");
+    else assertPrivateRegularFile(logPath, "RSS collector log");
+  }
+  atomicWritePrivateFile(plistPath, plist);
+  return Object.freeze({
+    status: "installed-not-loaded",
+    label: RSS_COLLECTOR_LABEL,
+    scheduleSeconds: RSS_COLLECTOR_INTERVAL_SECONDS,
+    plistPath,
+    plistSha256: sha256Bytes(plist),
+    stdoutLog,
+    stderrLog,
+    releaseManifestSha256: input.releaseManifestSha256,
+    launchctlInvoked: false,
+    databaseOpened: false
+  });
 }

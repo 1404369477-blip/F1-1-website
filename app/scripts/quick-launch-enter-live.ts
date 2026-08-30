@@ -35,12 +35,25 @@ function verifyGeneratedReceipt(expected: OwnerSupervisorHandoff): (candidate: O
 
 function fail(code: string): never { throw new Error(code); }
 function assert(condition: unknown, code: string): asserts condition { if (!condition) fail(code); }
-function parseCli(arguments_: readonly string[]): string {
-  assert(arguments_.length === 2, "CLI_ARGUMENTS_INVALID");
-  assert(arguments_[0] === "--manifest", "CLI_ARGUMENTS_INVALID");
-  const manifestPath = arguments_[1]!;
-  assert(isAbsolute(manifestPath), "CLI_ARGUMENT_PATH_MUST_BE_ABSOLUTE");
-  return manifestPath;
+function parseCli(arguments_: readonly string[]): { manifestPath: string; until: "ready" | "live" } {
+  let manifestPath: string | undefined;
+  let until: "ready" | "live" = "live";
+  for (let index = 0; index < arguments_.length; index += 1) {
+    const flag = arguments_[index];
+    if (flag === "--manifest") {
+      manifestPath = arguments_[index + 1];
+      index += 1;
+    } else if (flag === "--until") {
+      const value = arguments_[index + 1];
+      assert(value === "ready" || value === "live", "CLI_UNTIL_INVALID");
+      until = value;
+      index += 1;
+    } else {
+      fail("CLI_ARGUMENTS_INVALID");
+    }
+  }
+  assert(typeof manifestPath === "string" && isAbsolute(manifestPath), "CLI_ARGUMENT_PATH_MUST_BE_ABSOLUTE");
+  return { manifestPath, until };
 }
 
 const STEP_OWNERS = Object.freeze({
@@ -98,7 +111,7 @@ function createHandoffSet(
 }
 
 function main(): void {
-  const manifestPath = parseCli(process.argv.slice(2));
+  const { manifestPath, until } = parseCli(process.argv.slice(2));
   const deployment = readAdminDeploymentManifest(manifestPath);
   const official = readVerifiedAdminReleaseManifest(
     deployment.targetReleaseAppRoot,
@@ -149,7 +162,7 @@ function main(): void {
   let gateway: SqliteInternalOperationGateway | null = null;
   try {
     gateway = new SqliteInternalOperationGateway({ database, releaseSha256, manifestSha256, schemaSha256: activeManifest.schemaSha256 });
-    const result = runQuickLaunchControlSequence({ database, gateway, handoffs, releaseSha256, manifestSha256, schemaSha256: activeManifest.schemaSha256 });
+    const result = runQuickLaunchControlSequence({ database, gateway, handoffs, releaseSha256, manifestSha256, schemaSha256: activeManifest.schemaSha256, until });
     const receipt = Object.freeze({
       schemaVersion: "quick-launch-enter-live-receipt-v1",
       decision: "SUCCESS",
