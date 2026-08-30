@@ -10,7 +10,7 @@
     }
   ],
   "authorization_state": "user_confirmed",
-  "block_reason": "",
+  "block_reason": "ADR-F1PLUS1-DATA-REDERIVABILITY-RPO-RETIER-001 v2 已于 2026-08-30 用户采纳；增量备份候选整改冻结，释放开发部 claim 位；等待 SNAP 快照轮转实现任务 enqueue 后再 supersede。转移清单见该 ADR §6.1。",
   "claimed_by": "开发部/019fb374-7c86-7882-9e51-76114ce69e7f",
   "completion_class": "standard",
   "confirmation": "按当前线程用户持续推进目标执行；任何新增付费、凭证、权限、不可逆删除或扩大公网暴露仍需单独用户确认。",
@@ -19,7 +19,7 @@
   "details": "承接 scratch/TASK-20260829-BACKUP-V2-UPGRADE/working/ 与独立对抗审查 BLOCK。只整改候选与 disposable 证据：prune 前 strict canonical/schema/HMAC/artifact 校验且任一坏点零删除；SQLite schema10 正式 verifier 与 sqlite_master/trigger/index/invariant 校验；SQLite 与 projection pointer/generation/manifest 同一恢复边界；recoveryPointAt/RPO<=900s/clock skew/单调性；durable point→commit fence→带 tombstone 的幂等 consume；kind+plaintext hash+keyId 对象身份和 O_EXCL；复用生产 strict projection parser；stale lock 非静默。不得安装 LaunchAgent、不得写生产 recovery fence、不得执行真实生产快照。输入与当前真值见 docs/当前生产状态与执行待办.md。",
   "domain_stage": "开发实现/备份恢复候选整改",
   "event_receipts": [],
-  "execution_state": "claimed",
+  "execution_state": "blocked",
   "external_artifacts": [],
   "failure_paths": [
     "任何 invalid point 导致删除动作时立即停止，保留现场并 BLOCK。",
@@ -33,12 +33,23 @@
     "docs/当前生产状态与执行待办.md"
   ],
   "report": "",
-  "resolution": null,
-  "revision": 4,
+  "resolution": {
+    "evidence": "2026-08-30 主线程用户采纳 v2 并指示实现；ADR 文件与 docs/progress.md 2026-08-30 节。",
+    "reason": "ADR-F1PLUS1-DATA-REDERIVABILITY-RPO-RETIER-001 v2 已采纳：增量+prune+远端消费架构被快照轮转取代；FCC322 的 3 项正确性要求与转移清单已写入替代任务 acceptance_exit/details（ADR §6.1）。",
+    "receipt_id": "RES-20260830T222948-D3750630",
+    "replacement_revision": 2,
+    "replacement_state": "claimed",
+    "replacement_task_id": "TASK-20260830-370AD2",
+    "resolved_at": "2026-08-30T22:29+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "superseded",
+    "target_revision_before": 5
+  },
+  "revision": 6,
   "schema_version": 1,
   "task_id": "TASK-20260829-FCC322",
   "title": "备份V2候选阻断整改与可恢复点闭包",
   "unverified": [],
-  "updated_at": "2026-08-29T23:55+08:00",
+  "updated_at": "2026-08-30T22:29+08:00",
   "verified": []
 }

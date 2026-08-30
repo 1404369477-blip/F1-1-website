@@ -7,6 +7,18 @@
 
 ## 2026-08-30
 
+- ✅ **SNAP 快照轮转候选已实现（`TASK-20260830-370AD2`）**：产物为 `app/scripts/backup-snapshot-once.ts`、`app/scripts/backup-restore-drill.ts`、`app/src/server/backup-snapshot/core.ts`、`app/src/tests/backup-snapshot.test.ts` 与 disposable 报告 `scratch/TASK-20260830-370AD2/report.md`。93MB 等容 disposable 实测单轮快照 `811ms`，WAL 并发写探针 `blockedMs=1`（未观察到长写锁）；恢复演练 `quick_check/FK/user_version=10/sqlite_master/drill_public_pointer_verified=1` 全过。故障注入一次各：坏包 `DECRYPT_FAILED` 且旧包零删除、半写对象不进保留集、旧 manifest 回放 `MANIFEST_REPLAY_REJECTED`、schema 篡改 `SCHEMA_FINGERPRINT_MISMATCH`、stale lock `STALE_LOCK` 非静默。未验证：钉定 Node 24.18.0 复验（本机 v22.23.1）、生产等容真实 DB。未装 LaunchAgent、未碰生产 DB/fence。
+
+- ✅ **T0 异机副本已落地：3 个脱敏 commit 推送成功**：用户完成 `gh auth login` 后，`b7bc31e / 8dfc6dd / f4390ae` 已推至 `origin/codex/first-public-release`（`52e6549..f4390ae`）。spec、decisions、478 条任务真值与 progress 首次获得异机副本。
+
+- ✅ **SNAP 实现任务链已建立**：`TASK-20260830-370AD2`（SNAP 快照轮转备份实现与 disposable 恢复演练）已 enqueue 并由开发部 claim；`TASK-20260829-FCC322` 经正式任务工具 superseded（收据 `RES-20260830T222948-D3750630`，replacement=370AD2），转移清单按 RETIER-001 §6.1 写入新任务。修复了一处脱敏副作用：`TASK-20260813-53677C` 的 external_artifacts 占位符不是合法 URL 导致任务工具全库校验失败，已改为 `https://redacted-ephemeral-tunnel.invalid/...` 形式。实现执行中，产物与证据出口为 `app/scripts/backup-snapshot-once.ts`、`app/scripts/backup-restore-drill.ts`、`app/src/tests/backup-snapshot.test.ts`、`scratch/TASK-20260830-370AD2/`。
+
+- ✅ **用户采纳 ADR v2；`FCC322` 已 blocked**：`ADR-F1PLUS1-DATA-REDERIVABILITY-RPO-RETIER-001` 状态改为 `accepted / user_confirmed / engineering_authorized_pending`。正式任务工具回报 `TASK_BLOCKED | TASK-20260829-FCC322`（开发部 claim 位已释放）。SNAP 快照轮转实现任务尚未 enqueue；生产配置、schema、代码均未因本次采纳改动。另有既有 `TASK_INDEX_STALE`（`TASK-20260813-53677C` 外部产物 URL 无效），与本次无关。
+
+- ✅ **脱敏与提交重建已完成，push 阻在本机无 GitHub 凭证**：按用户选定的「保持公开仓库、脱敏后推送」路线，已用占位符完成 336 处替换，并以标签 `scrub-backup-20260830`（指向重建前 `f1b6878`）保留原历史后重建为 3 个新 commit：`b7bc31e`（gitignore 与文档脱敏）、`8dfc6dd`（应用层未推送工作）、`f4390ae`（X 源清单）。原始副本在 `scratch/2026-08-30-scrub-originals/`，脱敏日志在 `scratch/2026-08-30-rpo-retier-proposal-check/scrub-log.md`，入库副本在 `docs/decisions/evidence/2026-08-30-rpo-retier/scrub-log.md`。push 因本机无 GitHub 凭证未执行，待用户 `gh auth login` 后进行。
+
+- 🧭 **提案按 opus 审查修订为 v2 快照轮转方案**：`docs/decisions/system/2026-08-30-F1+1-数据可再生性分层与RPO重定级-proposed.md` 改为每 15 分钟整库 `VACUUM INTO` 快照轮转（同轮按 DB → `generations/` 全量 → `active.json` 打包，异机按内容哈希去重），原样满足 `rpo_seconds≤900` CHECK、`valid_backup_recovery_point_v1` 与 Admin 15 分钟写门，零 schema 迁移、零代码字节改动；分层只治理保留与验证深度。对抗审查 BLOCK 的 6 条 P0 全部吸收，报告与 63 表草案已入库 `docs/decisions/evidence/2026-08-30-rpo-retier/`。状态仍为 `proposed / awaiting_user_decision`。
+
 - 🧭 **提出「数据可再生性分层与 RPO 重定级」提案，尚未采纳**：新增 `docs/decisions/system/2026-08-30-F1+1-数据可再生性分层与RPO重定级-proposed.md`，状态 `proposed / awaiting_user_decision`。核心论点：`TASK-20260829-FCC322` 的 8 项阻断中有 5 项（prune 误删、DB与projection共同恢复边界、RPO 取完成时间、远端 consume 幂等/tombstone、projection verifier 过宽）不是标准过高，而是为达成全局 `RPO≤900s` 而选择的「增量 + prune + 远端消费 + 双源对齐」架构自身产生的复杂度；另 3 项（schema10 正式验证、加密对象 kind/keyId 与 O_EXCL、失败与 stale lock 不静默）是恢复正确性要求，提案不建议放宽。提案把 schema10 的 67 张表按可再生性分为 T0 不可再生（人工审核决定、审计链、Passkey、`x_manual_submission`，外加 `docs/spec.md`、`docs/decisions/`、478 条 TASK JSON、`design/`）、T1 付费可再生（DeepSeek 双语产出）、T2 免费可再生（RSS 抓取内容与公开投影），并对 T0 用 append-only 日志 + 5 分钟异机推送、对 T1/T2 用每日 `VACUUM INTO` 全量快照。本次只写入该提案文件与本条记录，未修改 `docs/spec.md`、任何 accepted ADR、任务 JSON、代码、SQL 或生产配置；现有 `RPO≤900s` 硬门在用户确认前继续有效。
 
 - 🔬 **`VACUUM INTO` 一致性快照机制已在 disposable 环境实测通过**：`scratch/2026-08-30-rpo-retier-proposal-check/check.mjs`，未触碰生产 DB。SQLite `3.51.3`（`VACUUM INTO` 需 3.27+），源库 `WAL` 模式含 500 行与 1 个 trigger；快照产物为单一自包含文件，无 `-wal`/`-shm` 旁文件，`user_version=10` 与 trigger 均保持，`quick_check=ok`。该结果支持提案中「单文件快照可直接加密异机传输、无需把 DB/WAL/manifest 关联成同一恢复边界」的主张。注意实测使用环境默认 `node v22.23.1`，非项目钉定的 `24.18.0`；机制在 SQLite 层实现，但正式实施仍须在钉定版本复验。

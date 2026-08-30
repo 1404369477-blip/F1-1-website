@@ -24,7 +24,7 @@
   "event_receipts": [],
   "execution_state": "acknowledged",
   "external_artifacts": [
-    "[EPHEMERAL-TUNNEL-URL]"
+    "https://redacted-ephemeral-tunnel.invalid/EPHEMERAL-TUNNEL-URL"
   ],
   "failure_paths": [
     "任一Git闭包、build、manifest、传输、target verifier、prepare、listener/health/route/visual出口失败：停止后续；若尚未切换则0生产写；若已切换则第一动作bootout public-beta、原子恢复切换前plist、bootstrap/kickstart并验证旧health/home/detail。不得重试同一步、不得force、不得触碰3101/3102/DB/projection/Tailscale。"

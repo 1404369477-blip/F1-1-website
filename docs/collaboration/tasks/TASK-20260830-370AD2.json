@@ -1,0 +1,59 @@
+{
+  "acceptance_exit": "候选在钉定Node上通过语法与单测；93MB等容副本实测快照耗时与写锁窗口；disposable故障注入覆盖坏包零删除、半写对象、旧receipt回放、schema10篡改、stale lock非静默；隔离目标完成一次整包恢复演练（DB+完整投影树，验证 drill_public_pointer_verified 语义）；生产动作0。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "app/scripts/backup-snapshot-once.ts",
+    "app/scripts/backup-restore-drill.ts",
+    "app/src/server/backup-snapshot/core.ts",
+    "app/src/tests/backup-snapshot.test.ts",
+    "scratch/TASK-20260830-370AD2/report.md"
+  ],
+  "authorization_evidence": "2026-08-30 当前主线程：用户采纳 RETIER-001 v2 后明确指示『实现任务』。",
+  "authorization_history": [
+    {
+      "at": "2026-08-30T22:28+08:00",
+      "evidence": "2026-08-30 当前主线程：用户采纳 RETIER-001 v2 后明确指示『实现任务』。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/cursor-main-20260830",
+  "completion_class": "standard",
+  "confirmation": "候选与演练证据完成后由用户决定是否进入生产部署门。",
+  "created_at": "2026-08-30T22:28+08:00",
+  "department": "开发部",
+  "details": "实现 ADR-F1PLUS1-DATA-REDERIVABILITY-RPO-RETIER-001 v2（accepted）的快照轮转备份候选：每15分钟整库 VACUUM INTO 快照，同轮按 DB→generations/全量→active.json 顺序打包投影树为同一恢复边界；异机推送按内容哈希去重（相同只重签manifest，recovery_point_at 取本轮快照事务时刻）；保留最近N份且任何校验失败的包跳过轮转并告警、不删除任何旧包。承接 FCC322 转移清单（ADR §6.1）：钉定Node 24.18.0复验、半写对象注入不得进保留集、旧receipt回放不得推进fence、恢复后schema10正式验证（sqlite_master/trigger/index/invariant）、加密对象绑定kind+keyId且O_EXCL、备份失败与stale lock可判定告警。禁止安装LaunchAgent、禁止写production recovery fence、禁止触碰生产DB与control表；只产出候选代码与disposable证据。",
+  "domain_stage": "开发实现/备份快照轮转候选",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一校验失败的包触发删除动作时立即停止并 block，保留现场。",
+    "候选需要读取密钥值、安装服务或触碰生产 fence/DB 时停止并回统筹。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "已检查错题集，无命中",
+  "node": "QL3/backup-snap/implementation",
+  "pointers": [],
+  "report": "不适用",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260830-370AD2",
+  "title": "SNAP快照轮转备份实现与disposable恢复演练",
+  "unverified": [
+    "钉定 Node 24.18.0 复验（本机 v22.23.1）",
+    "生产等容真实 DB 未测"
+  ],
+  "updated_at": "2026-08-30T22:41+08:00",
+  "verified": [
+    "93MB disposable snapshot elapsed 811ms; restore drill PASS with drill_public_pointer_verified=1",
+    "fault bad-package: DECRYPT_FAILED retentionSkipped, old packages preserved",
+    "fault half-write: truncated object not admitted to retention set",
+    "fault old-manifest replay: MANIFEST_REPLAY_REJECTED",
+    "fault schema tamper: SCHEMA_FINGERPRINT_MISMATCH",
+    "fault stale lock: STALE_LOCK nonzero structured JSON",
+    "vitest src/tests/backup-snapshot.test.ts 5/5; app lint+typecheck no new errors"
+  ]
+}
