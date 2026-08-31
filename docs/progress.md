@@ -7,6 +7,8 @@
 
 ## 2026-08-31
 
+- ✅ **`C917F4` 四步一揽子生产接线已闭合(2026-08-31T08:33+08:00)**:用户批准后完成 budget 种子、首登记、fence 置 true、与 `backup-snapshot-cycle.sh` 周期登记接线。钉定 Node 24.18.0 复跑 `recovery-gate-tooling` + `quick-launch-control` 6/6。`PROJECTION_GENERATION_MEMBER_MISMATCH` 根因是 `readProjectionBinding` 把 `generations/<hash>.json` 文件名当成原始字节哈希;已改为与 `review-real/projection.ts` `readGeneration` 同语义——文件名哈希=内部信封 `package.taskEnvelope.snapshot.snapshotManifestHash`,并校验该成员在 SNAP manifest 中存在且 sha256 与恢复树落盘一致。`--allow-production` 默认拒绝生产路径,周期脚本显式打开。`REGISTER_APP_ROOT` 为过渡态,登记 CLI 走 `$HOME/Documents/F1+1/app`(生产树是公开站应用,无 internal-operation)。首轮周期登记撞上 `REGISTER_ANCHOR_CHECKPOINT_MISMATCH`:`common_checkpoint_sha256` 含 SNAP contentHash,登记本身写库后下轮哈希必变,对 singleton anchor 等值断言从第二轮起永远失败;已改为字段全等则幂等返回,否则走 0007 `projection_recovery_anchor_update_guard` 合法 UPDATE(`version=OLD+1`,activate 许可)。生产只读:`valid_backup_recovery_point_v1` 3 行(首登记 + 手动轮 + launchd 轮),最新 `rp-1788136282868_f817d03d610e4a63` / `2026-08-31T00:31:22.868Z`,anchor version=3,fence `lastSuccessfulRecoveryPointAt=1788136282868`。launchd `com.f1plus1.backup-snapshot` 自动轮 `2026-08-31T00:32:37Z REGISTER ... decision=SUCCESS`。下一步:`BBFF2A` 可 resume `--until ready` 与 plist 安装;0011 仍未 apply。
+
 - ✅ **`C917F4` 统筹核收通过并 ack(2026-08-31T00:10+08:00)**:钉定 Node 24.18.0 独立复跑 `quick-launch-control` + `recovery-gate-tooling` 6/6 通过;`gateway.ts` 唯一改动经与 0007 `projection_recovery_anchor_insert_guard` 比对确认为语义对齐而非放宽(activate 许可下该表首行 INSERT 本就是 schema 预期,触发器仍是权威)。生产侧只读核实:**生产库 `budget_account` 0 行**,且 0007 对该表 INSERT 无守卫(种子级配置,UPDATE/DELETE 锁死),补种 `backup-private` 属 schema 合法直插。下一个 A 级闸门(一揽子,待用户拍板):生产补种 budget 账户 → 真实生产库首次恢复点登记 → fence 首次置 true → 与 `backup-snapshot-cycle.sh` 接线周期登记;完成后 `BBFF2A` 可 resume 走 `--until ready` 与 plist 安装。
 
 ## 2026-08-30

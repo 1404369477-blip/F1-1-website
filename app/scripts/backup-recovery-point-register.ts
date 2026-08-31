@@ -24,11 +24,13 @@ function required(name: string, value: string | undefined): string {
   return value;
 }
 
-function absolute(name: string, value: string): string {
+function absolute(name: string, value: string, allowProduction: boolean): string {
   assert(isAbsolute(value), "CLI_ARGUMENT_PATH_MUST_BE_ABSOLUTE");
   const resolved = resolve(value);
-  for (const prefix of FORBIDDEN) {
-    assert(!resolved.startsWith(prefix), "CLI_PRODUCTION_PATH_FORBIDDEN");
+  if (!allowProduction) {
+    for (const prefix of FORBIDDEN) {
+      assert(!resolved.startsWith(prefix), "CLI_PRODUCTION_PATH_FORBIDDEN");
+    }
   }
   return resolved;
 }
@@ -52,28 +54,32 @@ export function runBackupRecoveryPointRegisterCli(argv: readonly string[]): unkn
       "budget-account-id": { type: "string" },
       "retention-policy-id": { type: "string" },
       "fence-path": { type: "string" },
-      "off-host-verified": { type: "boolean", default: false }
+      "off-host-verified": { type: "boolean", default: false },
+      // 生产路径默认拒绝(disposable 安全网);对真实生产库执行属 A 级动作,
+      // 必须由用户单独授权后显式携带本开关,使授权在命令行上审计可见。
+      "allow-production": { type: "boolean", default: false }
     },
     allowPositionals: false,
     strict: true
   });
   assert(parsed.values["off-host-verified"] === true, "OFF_HOST_NOT_VERIFIED");
-  const databasePath = absolute("db", required("db", parsed.values.db));
+  const allowProduction = parsed.values["allow-production"] === true;
+  const databasePath = absolute("db", required("db", parsed.values.db), allowProduction);
   const identity = inspectExistingPrivateDatabase(databasePath, basename(databasePath));
   const database = openExistingSafeDatabase(databasePath, basename(databasePath), identity, [10]);
   try {
-    const drillReport = JSON.parse(readFileSync(absolute("drill-report", required("drill-report", parsed.values["drill-report"])), "utf8")) as BackupReport;
+    const drillReport = JSON.parse(readFileSync(absolute("drill-report", required("drill-report", parsed.values["drill-report"]), allowProduction), "utf8")) as BackupReport;
     return runBackupRecoveryPointRegister({
       database,
-      backupRoot: absolute("backup-root", required("backup-root", parsed.values["backup-root"])),
+      backupRoot: absolute("backup-root", required("backup-root", parsed.values["backup-root"]), allowProduction),
       drillReport,
-      restoreRoot: absolute("restore-root", required("restore-root", parsed.values["restore-root"])),
+      restoreRoot: absolute("restore-root", required("restore-root", parsed.values["restore-root"]), allowProduction),
       releaseSha256: requiredHash(parsed.values["release-sha256"]),
       manifestSha256: requiredHash(parsed.values["manifest-sha256"]),
       schemaSha256: parsed.values["schema-sha256"] === undefined ? SOURCE_REGISTRY_SCHEMA10_SHA256 : requiredHash(parsed.values["schema-sha256"]),
       budgetAccountId: parsed.values["budget-account-id"] ?? "backup-private",
       retentionPolicyId: parsed.values["retention-policy-id"] ?? "snap-cycle-v1",
-      fencePath: parsed.values["fence-path"] === undefined ? undefined : absolute("fence-path", parsed.values["fence-path"])
+      fencePath: parsed.values["fence-path"] === undefined ? undefined : absolute("fence-path", parsed.values["fence-path"], allowProduction)
     });
   } finally {
     database.close();

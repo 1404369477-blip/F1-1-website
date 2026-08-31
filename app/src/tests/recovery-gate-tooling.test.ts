@@ -78,8 +78,14 @@ function seedSchema10(database: DatabaseSync): void {
 function writeProjection(root: string): void {
   const generations = join(root, "generations");
   mkdirSync(generations, { recursive: true, mode: 0o700 });
-  const body = Buffer.from(JSON.stringify({ fixture: "recovery-gate", n: 1 }), "utf8");
-  const hash = createHash("sha256").update(body).digest("hex");
+  // 生产形状:文件名哈希 = 内部签名信封的 snapshotManifestHash(非原始字节内容寻址)。
+  const hash = createHash("sha256").update("recovery-gate-fixture-envelope-1").digest("hex");
+  const body = Buffer.from(JSON.stringify({
+    schemaVersion: "public-projection-generation-v1",
+    receivedAt: "2026-08-30T00:00:00.000Z",
+    activatedAt: "2026-08-30T00:00:00.000Z",
+    package: { taskEnvelope: { snapshot: { snapshotManifestHash: hash } } }
+  }), "utf8");
   writeFileSync(join(generations, `${hash}.json`), body);
   writeFileSync(join(root, "active.json"), `${JSON.stringify({
     schemaVersion: "projection-active-pointer-v1",
@@ -152,8 +158,55 @@ describe("recovery-gate tooling smokes", () => {
       });
       expect(receipt.fence?.before).toBeNull();
       expect(receipt.fence?.after.lastSuccessfulRecoveryPointAt).toBe(Date.parse(receipt.recoveryPointAt));
-    } finally {
+      const firstAnchor = database.prepare(
+        "SELECT version, common_checkpoint_sha256 FROM projection_recovery_anchor WHERE singleton_id=1"
+      ).get() as { version: number; common_checkpoint_sha256: string };
+      expect(firstAnchor.version).toBe(1);
+      const firstCheckpoint = firstAnchor.common_checkpoint_sha256;
       database.close();
+      const restoreRoot2 = join(workspace, "restore-2");
+      const snapshot2 = runSnapshotOnce({
+        sourceDbPath: dbPath,
+        projectionRoot,
+        outputDir: backupRoot,
+        key,
+        retain: 2
+      });
+      expect(snapshot2.ok).toBe(true);
+      const drill2 = runRestoreDrill({
+        backupRoot,
+        restoreRoot: restoreRoot2,
+        key,
+        expectedUserVersion: 10
+      });
+      expect(drill2.ok).toBe(true);
+      const identity2 = inspectExistingPrivateDatabase(dbPath, "state.sqlite");
+      const database2 = openExistingSafeDatabase(dbPath, "state.sqlite", identity2, [10]);
+      try {
+        const receipt2 = runBackupRecoveryPointRegister({
+          database: database2,
+          backupRoot,
+          drillReport: drill2,
+          restoreRoot: restoreRoot2,
+          releaseSha256: RELEASE,
+          manifestSha256: MANIFEST,
+          schemaSha256: SOURCE_REGISTRY_SCHEMA10_SHA256,
+          budgetAccountId: "backup-private",
+          fencePath: join(fenceDir, "recovery-fence.json")
+        });
+        expect(receipt2.decision).toBe("SUCCESS");
+        const valid2 = database2.prepare("SELECT count(*) AS count FROM valid_backup_recovery_point_v1").get() as { count: number };
+        expect(valid2.count).toBe(2);
+        const secondAnchor = database2.prepare(
+          "SELECT version, common_checkpoint_sha256 FROM projection_recovery_anchor WHERE singleton_id=1"
+        ).get() as { version: number; common_checkpoint_sha256: string };
+        expect(secondAnchor.version).toBe(2);
+        expect(secondAnchor.common_checkpoint_sha256).not.toBe(firstCheckpoint);
+      } finally {
+        database2.close();
+      }
+    } finally {
+      try { database.close(); } catch { /* already closed after first register */ }
     }
   });
 

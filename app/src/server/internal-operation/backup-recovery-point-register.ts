@@ -268,8 +268,21 @@ function readProjectionBinding(restoreRoot: string, manifest: SnapshotManifest):
   const pointerSha256 = createHash("sha256").update(activeRaw).digest("hex");
   const pointerMember = manifest.members.find((member) => member.relativePath === "projection/active.json");
   assert(pointerMember !== undefined && pointerMember.sha256 === pointerSha256, "PROJECTION_POINTER_MEMBER_MISMATCH");
-  const generationMember = manifest.members.find((member) => member.relativePath === `projection/generations/${manifestSha256}.json`);
-  assert(generationMember !== undefined && generationMember.sha256 === manifestSha256, "PROJECTION_GENERATION_MEMBER_MISMATCH");
+  // 生产投影不是原始字节内容寻址:generations/<hash>.json 的文件名哈希指的是
+  // 文件内部签名信封的 snapshotManifestHash(与 review-real/projection.ts 的
+  // readGeneration 判定一致),不等于文件本身的 SHA-256。
+  const generationRelPath = `projection/generations/${manifestSha256}.json`;
+  const generationMember = manifest.members.find((member) => member.relativePath === generationRelPath);
+  assert(generationMember !== undefined, "PROJECTION_GENERATION_MEMBER_MISSING");
+  const generationRaw = readFileSync(join(restoreRoot, "projection", "generations", `${manifestSha256}.json`));
+  assert(createHash("sha256").update(generationRaw).digest("hex") === generationMember.sha256, "PROJECTION_GENERATION_MEMBER_MISMATCH");
+  const generationDoc = JSON.parse(generationRaw.toString("utf8")) as {
+    package?: { taskEnvelope?: { snapshot?: { snapshotManifestHash?: unknown } } };
+  };
+  assert(
+    generationDoc.package?.taskEnvelope?.snapshot?.snapshotManifestHash === manifestSha256,
+    "PROJECTION_GENERATION_ENVELOPE_MISMATCH"
+  );
   return Object.freeze({ generation, manifestSha256, pointerSha256 });
 }
 
@@ -421,21 +434,27 @@ function ensureProjectionAnchor(input: Readonly<{
 }>): void {
   const existing = input.database.prepare("SELECT * FROM projection_recovery_anchor WHERE singleton_id=1").get() as ControlRow | undefined;
   const row = control(input.database);
+  const writerEpoch = integer(row, "writer_epoch");
+  const recoveryEpoch = integer(row, "recovery_epoch");
+  const writerReceipt = String(row.writer_authority_receipt_sha256);
   if (existing !== undefined) {
-    assert(Number(existing.active_generation) === input.generation, "REGISTER_ANCHOR_GENERATION_MISMATCH");
-    assert((existing.active_manifest_sha256 as string | null) === input.projectionManifestSha256, "REGISTER_ANCHOR_MANIFEST_MISMATCH");
-    assert((existing.active_pointer_sha256 as string | null) === input.projectionPointerSha256, "REGISTER_ANCHOR_POINTER_MISMATCH");
-    assert(String(existing.common_checkpoint_sha256) === input.checkpointSha256, "REGISTER_ANCHOR_CHECKPOINT_MISMATCH");
-    assert(Number(existing.writer_epoch) === integer(row, "writer_epoch"), "REGISTER_ANCHOR_WRITER_EPOCH_MISMATCH");
-    assert(Number(existing.recovery_epoch) === integer(row, "recovery_epoch"), "REGISTER_ANCHOR_RECOVERY_EPOCH_MISMATCH");
-    assert(String(existing.writer_authority_receipt_sha256) === String(row.writer_authority_receipt_sha256), "REGISTER_ANCHOR_WRITER_RECEIPT_MISMATCH");
-    return;
+    const unchanged =
+      Number(existing.active_generation) === input.generation &&
+      (existing.active_manifest_sha256 as string | null) === input.projectionManifestSha256 &&
+      (existing.active_pointer_sha256 as string | null) === input.projectionPointerSha256 &&
+      String(existing.common_checkpoint_sha256) === input.checkpointSha256 &&
+      Number(existing.writer_epoch) === writerEpoch &&
+      Number(existing.recovery_epoch) === recoveryEpoch &&
+      String(existing.writer_authority_receipt_sha256) === writerReceipt;
+    if (unchanged) return;
   }
   const at = nowIso(input.now);
   const operationId = `register-anchor-${Date.parse(at)}-${randomBytes(6).toString("hex")}`;
   const phase = String(row.phase) as Phase;
   const budget = input.database.prepare("SELECT account_id FROM budget_account WHERE account_id=?").get(input.budgetAccountId);
   assert(budget !== undefined, "BUDGET_ACCOUNT_MISSING");
+  const nextVersion = existing === undefined ? 1 : Number(existing.version) + 1;
+  assert(Number.isSafeInteger(nextVersion) && nextVersion >= 1, "REGISTER_ANCHOR_VERSION_INVALID");
   runGatewayInsert({
     database: input.database,
     gateway: input.gateway,
@@ -452,15 +471,18 @@ function ensureProjectionAnchor(input: Readonly<{
     entityId: "active",
     identitySelector: "control_singleton",
     mutationKind: "activate",
-    statement: "INSERT INTO projection_recovery_anchor (singleton_id,active_generation,active_manifest_sha256,active_pointer_sha256,writer_epoch,recovery_epoch,writer_authority_receipt_sha256,common_checkpoint_sha256,version,operation_id,updated_at) VALUES(1,?,?,?,?,?,?,?,1,?,?)",
+    statement: existing === undefined
+      ? "INSERT INTO projection_recovery_anchor (singleton_id,active_generation,active_manifest_sha256,active_pointer_sha256,writer_epoch,recovery_epoch,writer_authority_receipt_sha256,common_checkpoint_sha256,version,operation_id,updated_at) VALUES(1,?,?,?,?,?,?,?,?,?,?)"
+      : "UPDATE projection_recovery_anchor SET active_generation=?, active_manifest_sha256=?, active_pointer_sha256=?, writer_epoch=?, recovery_epoch=?, writer_authority_receipt_sha256=?, common_checkpoint_sha256=?, version=?, operation_id=?, updated_at=? WHERE singleton_id=1",
     parameters: [
       input.generation,
       input.projectionManifestSha256,
       input.projectionPointerSha256,
-      integer(row, "writer_epoch"),
-      integer(row, "recovery_epoch"),
-      String(row.writer_authority_receipt_sha256),
+      writerEpoch,
+      recoveryEpoch,
+      writerReceipt,
       input.checkpointSha256,
+      nextVersion,
       operationId,
       at
     ],
