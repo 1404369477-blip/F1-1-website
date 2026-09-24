@@ -6,8 +6,8 @@ department: 产品部
 decision_id: ADR-F1PLUS1-DATA-REDERIVABILITY-RPO-RETIER-001
 authorization_state: user_confirmed
 contract_review_state: closed_pass
-implementation_state: engineering_authorized_pending
-production_state: not_deployed
+implementation_state: snap_cycle_deployed_m1
+production_state: snap_live_recovery_points_registering
 supersedes_clause_of:
   - docs/agent-guide.md#Admin双端能力与入口恢复全局硬门 第6条
   - docs/decisions/system/2026-08-24-F1+1-可信单用户M1快速上线-successor-accepted.md#7

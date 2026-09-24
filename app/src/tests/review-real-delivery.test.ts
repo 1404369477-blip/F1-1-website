@@ -123,6 +123,7 @@ function publishedFixture(suffix: string): Readonly<{
 
 class ReceiverTransport implements ProjectionSenderTransport {
   readonly posted: string[] = [];
+  receiptReads = 0;
   postMode: "commit" | "lose" | "drop" | "conflict" = "commit";
 
   constructor(private readonly receiver: ProjectionReceiver) {}
@@ -137,6 +138,7 @@ class ReceiverTransport implements ProjectionSenderTransport {
   }
 
   async getReceipt(deliveryId: string): Promise<ProjectionTransportResult> {
+    this.receiptReads += 1;
     try {
       return { kind: "response", status: 200, body: this.receiver.getReceipt(deliveryId) };
     } catch {
@@ -178,6 +180,49 @@ describe("ADR-M5-REAL-PROJECTION-RUNTIME-002 sender A", () => {
       expect((await lostSender.tick()).outcome).toBe("succeeded");
       expect(lostTransport.posted).toHaveLength(1);
 
+      const restarted = publishedFixture("restarted");
+      databases.push(restarted.database);
+      const restartedReceiver = new ProjectionReceiver({ root: join(root, "restarted"), signingKeyId: "projection-key", publicKey });
+      const restartedTransport = new ReceiverTransport(restartedReceiver);
+      restartedTransport.postMode = "lose";
+      let reconcileFailure: string | null = "EXTERNAL_RECONCILE_HANDLE_UNAVAILABLE";
+      const restartedSender = new ProjectionSender({
+        repository: restarted.repository,
+        transport: restartedTransport,
+        signingKeyId: "projection-key",
+        privateKey,
+        actorRef: "projection-sender",
+        externalReconcile: async ({ execute }) => {
+          if (reconcileFailure) throw new Error(reconcileFailure);
+          return (await execute({
+            attemptId: "test-reconcile-attempt", operationId: "test-reconcile-operation",
+            attemptNumber: 1, attemptNonce: "test-nonce", capabilitySecret: "test-only",
+            canonicalRequestSha256: "a".repeat(64), requestFingerprintSha256: "b".repeat(64),
+            reconcileIdentitySha256: "c".repeat(64), reconcileAfter: "2026-09-06T00:00:00.000Z"
+          })).value;
+        }
+      });
+      expect((await restartedSender.tick()).outcome).toBe("reconcile_wait");
+      for (const reason of ["EXTERNAL_RECONCILE_HANDLE_UNAVAILABLE", "PHASE_PAUSED", "GLOBAL_OR_EMERGENCY_STOPPED", "ATTEMPT_HANDLE_INVALID"]) {
+        reconcileFailure = reason;
+        expect((await restartedSender.tick()).outcome).toBe("reconcile_wait");
+        expect(restartedTransport.receiptReads).toBe(0);
+        expect(scalar(restarted.database, "SELECT status FROM projection_outbox")).toBe("reconcile_wait");
+      }
+      const attemptOnlySender = new ProjectionSender({
+        repository: restarted.repository, transport: restartedTransport,
+        signingKeyId: "projection-key", privateKey, actorRef: "projection-sender",
+        externalAttempt: async () => { throw new Error("UNEXPECTED_NEW_ATTEMPT"); }
+      });
+      expect((await attemptOnlySender.tick()).outcome).toBe("reconcile_wait");
+      expect(restartedTransport.receiptReads).toBe(0);
+      expect(restartedTransport.posted).toHaveLength(1);
+      reconcileFailure = null;
+      expect((await restartedSender.tick()).outcome).toBe("succeeded");
+      expect(restartedTransport.receiptReads).toBe(1);
+      expect(restartedTransport.posted).toHaveLength(1);
+      expect(scalar(restarted.database, "SELECT status FROM projection_outbox")).toBe("succeeded");
+
       const retry = publishedFixture("retry");
       databases.push(retry.database);
       const retryReceiver = new ProjectionReceiver({ root: join(root, "retry"), signingKeyId: "projection-key", publicKey });
@@ -201,6 +246,52 @@ describe("ADR-M5-REAL-PROJECTION-RUNTIME-002 sender A", () => {
       expect(scalar(conflict.database, "SELECT status FROM projection_outbox")).toBe("terminal_failed");
     } finally {
       for (const database of databases) database.close();
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it("does not acknowledge a generation file until the active pointer commits it", () => {
+    const fixture = publishedFixture("orphan");
+    const root = mkdtempSync(join(realpathSync(tmpdir()), "f1-projection-orphan-"));
+    chmodSync(root, 0o700);
+    const { privateKey, publicKey } = generateKeyPairSync("ed25519");
+    try {
+      const task = fixture.repository.deliveryTask(fixture.deliveryId);
+      const packageOne = signProjectionTaskEnvelope({ envelopeJson: task.envelopeJson, envelopeHash: task.envelopeHash, signingKeyId: "projection-key", privateKey });
+      const receiver = new ProjectionReceiver({ root, signingKeyId: "projection-key", publicKey });
+      receiver.receive(packageOne);
+      const snapshot = buildProjectionSnapshot({
+        snapshotGeneration: 2,
+        previousSnapshotManifestHash: task.envelope.snapshot.snapshotManifestHash,
+        records: task.envelope.snapshot.records
+      });
+      const taskTwo = buildProjectionTaskEnvelope({
+        deliveryId: `op-snapshot-${snapshot.snapshotManifestHash}`,
+        idempotencyKey: `snapshot-sync:0:${snapshot.snapshotManifestHash}`,
+        reconcileKey: `reconcile:snapshot:${snapshot.snapshotManifestHash}`,
+        snapshot,
+        attempt: 0,
+        createdAt: "2026-08-12T02:10:00.000Z",
+        deadlineAt: "2026-08-12T02:25:00.000Z"
+      });
+      const packageTwo = signProjectionTaskEnvelope({ envelopeJson: taskTwo.envelopeJson, envelopeHash: taskTwo.envelopeHash, signingKeyId: "projection-key", privateKey });
+      // Crash image after the generation write, before active.json changes.
+      writeFileSync(join(root, "generations", `${snapshot.snapshotManifestHash}.json`), canonicalJson({
+        schemaVersion: "projection-committed-generation-v1",
+        package: packageTwo,
+        receivedAt: "2026-08-12T02:11:00.000Z",
+        activatedAt: "2026-08-12T02:11:00.000Z"
+      }), { mode: 0o600 });
+      const restarted = new ProjectionReceiver({ root, signingKeyId: "projection-key", publicKey });
+      expect(() => restarted.getReceipt(packageTwo.taskEnvelope.deliveryId)).toThrowError("PROJECTION_RECEIPT_UNKNOWN");
+      expect(restarted.getReceipt(fixture.deliveryId).status).toBe("active");
+      expect(restarted.readActiveSnapshot()?.snapshotGeneration).toBe(1);
+
+      expect(restarted.receive(packageTwo).status).toBe("active");
+      expect(restarted.getReceipt(packageTwo.taskEnvelope.deliveryId).status).toBe("active");
+      expect(restarted.getReceipt(fixture.deliveryId)).toMatchObject({ status: "superseded", activeSnapshotGeneration: 2 });
+    } finally {
+      fixture.database.close();
       rmSync(root, { recursive: true, force: true });
     }
   });
@@ -240,6 +331,8 @@ describe("ADR-M5-REAL-PROJECTION-RUNTIME-002 sender A", () => {
       unlinkSync(join(receiverRoot, "activation.lock"));
       expect(receiver.receive(packageValue).status).toBe("active");
       expect(receiver.receive(packageValue).deliveryId).toBe(fixture.deliveryId);
+      expect(receiver.getReceipt(fixture.deliveryId).status).toBe("active");
+      expect(() => receiver.getReceipt(`op-snapshot-${"0".repeat(64)}`)).toThrowError("PROJECTION_RECEIPT_UNKNOWN");
     } finally {
       fixture.database.close();
       rmSync(root, { recursive: true, force: true });

@@ -1,0 +1,15 @@
+{
+  "observedAt": "2026-09-06T16:38:28.234271+00:00",
+  "release": "[M1-HOME]/F1-1-website/backup-runtime-releases/20260907-v2-05",
+  "runtimeSha256": "ad5749603246a2ea6b967ea0b205cceb7faa2da1b88d6894014254ed81306a17",
+  "oldPlistSha256": "204b9df131e4e122154127b8e04bda31401a9b45cdf01b53cb1d03f6581104c3",
+  "newPlistSha256": "77441c7be2c0bad5b7eae63ddedb5b875fcf0555d7a46cc78a30fbc83d8df7dd",
+  "installedKeyFiles": [
+    "application-drill-private.pem",
+    "application-drill-public.pem",
+    "m5-observer-public.pem"
+  ],
+  "bootstrapExit": 0,
+  "intervalSeconds": 300,
+  "registrationSuccessNotYetClaimed": true
+}

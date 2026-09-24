@@ -1,0 +1,15 @@
+{
+  "at": "2026-09-24T14:01:00.809039+00:00",
+  "archiveCopiesVerified": 11,
+  "archiveOriginalBytes": 453730,
+  "localLinksChecked": 86,
+  "missingLinks": [],
+  "mainTaskUnchanged": true,
+  "taskIndex": "TASK_INDEX_OK",
+  "taskDoctor": "TASK_DOCTOR_OK | tasks=492 | full_history_validated=true",
+  "newEntryLines": 236,
+  "newEntryBytes": 27246,
+  "independentReview": "PASS_CONTENT_AND_ARCHIVE",
+  "independentReviewSha256": "13aa125c28fe21db25c8d16f3788018778a5e711601038af9ad619d1a6bef067",
+  "reviewedEntryHashesVerified": true
+}

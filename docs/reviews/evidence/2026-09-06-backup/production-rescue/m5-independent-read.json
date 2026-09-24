@@ -1,0 +1,30 @@
+{
+  "observer": "M5",
+  "at": "2026-09-06T14:06:28.169411+00:00",
+  "relativeRoot": "rescue-20260906-p9dtug8i",
+  "via": "M5 iCloud independent filesystem read",
+  "files": [
+    {
+      "path": "latest.json",
+      "exists": true,
+      "bytes": 278,
+      "sha256": "2cfef761a9e82f98c719ce842d92e75822fd91c2c90ce166d21d832dd5f45cf9",
+      "matched": true
+    },
+    {
+      "path": "objects/db-projection-snapshot.accaa9e2739cba20cae343e19028176b869c913d81399539dbca0fd5a3b8e90e.e2f2c6fc36e07951",
+      "exists": true,
+      "bytes": 330417035,
+      "sha256": "2e7cc994f4ad033962686600a48dd921e524a5bb7a9ded1c172890fb4bcb7836",
+      "matched": true
+    },
+    {
+      "path": "packages/1788703362185_accaa9e2739cba20/manifest.json",
+      "exists": true,
+      "bytes": 41404,
+      "sha256": "f0e1ca6ed2abed0620ca5126f1d5712000c342ffd375d6b1e06738e711a01ebf",
+      "matched": true
+    }
+  ],
+  "allMatched": true
+}

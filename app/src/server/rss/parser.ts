@@ -1,8 +1,7 @@
-import { createHash } from "node:crypto";
-
 import { XMLParser } from "fast-xml-parser";
 
 import {
+  rssItemPayloadHash,
   RSS_MAX_FIELD_BYTES,
   RSS_MAX_HTML_BYTES,
   RSS_MAX_IMAGE_BYTES,
@@ -215,7 +214,7 @@ export function rssItemWithMedia(item: RssItem, media: RssSourceImage | null): R
     publishedAt: item.publishedAt,
     media
   };
-  return { ...machineFields, sourcePayloadHash: payloadHash(machineFields) };
+  return { ...machineFields, sourcePayloadHash: rssItemPayloadHash(machineFields) };
 }
 
 function sourceImageFromEntry(entry: JsonRecord, source: LiveRssSource): RssSourceImage | null {
@@ -284,18 +283,27 @@ function compareCodePoints(left: string, right: string): number {
   return leftPoints.length - rightPoints.length;
 }
 
-function payloadHash(item: Omit<RssItem, "sourcePayloadHash">): string {
-  const payload = JSON.stringify([
-    item.externalId,
-    item.canonicalUrl,
-    item.title,
-    item.excerpt,
-    item.author,
-    item.publishedAt,
-    item.media
-  ]);
-  return createHash("sha256").update(payload, "utf8").digest("hex");
+const nativeParse = Date.parse.bind(Date);
+
+const RFC822_NAMED_ZONE: Readonly<Record<string, string>> = Object.freeze({
+  UT: "GMT",
+  UTC: "GMT",
+  GMT: "GMT",
+  BST: "+0100"
+});
+
+export function parseRssDate(value: string): number {
+  const trimmed = value.trim();
+  const direct = nativeParse(trimmed);
+  if (Number.isFinite(direct)) return direct;
+  const match = /^(.+?)\s+([A-Za-z]{2,5})$/u.exec(trimmed);
+  if (match === null) return Number.NaN;
+  const zone = RFC822_NAMED_ZONE[match[2]!.toUpperCase()];
+  if (zone === undefined) return Number.NaN;
+  return nativeParse(`${match[1]} ${zone}`);
 }
+
+export { rssItemPayloadHash } from "./types.ts";
 
 function parseItem(entry: JsonRecord, source: LiveRssSource): RssItem {
   const canonicalUrl = canonicalArticleUrl(linkFromEntry(entry), source);
@@ -307,12 +315,12 @@ function parseItem(entry: JsonRecord, source: LiveRssSource): RssItem {
   const authorText = sanitizedField(firstValue(entry, ["author", "creator"]), "ITEM_FIELD_INVALID", true);
   const author = authorText === "" ? null : authorText;
   const publishedText = sanitizedField(firstValue(entry, ["pubdate", "published", "updated"]), "ITEM_FIELD_INVALID", true);
-  const publishedMillis = Date.parse(publishedText);
+  const publishedMillis = parseRssDate(publishedText);
   if (publishedText === "" || !Number.isFinite(publishedMillis)) throw new RssError("ITEM_TIME_INVALID");
   const publishedAt = new Date(publishedMillis).toISOString();
   const media = sourceImageFromEntry(entry, source);
   const machineFields = { externalId, canonicalUrl, title, excerpt, author, publishedAt, media };
-  return { ...machineFields, sourcePayloadHash: payloadHash(machineFields) };
+  return { ...machineFields, sourcePayloadHash: rssItemPayloadHash(machineFields) };
 }
 
 function countXmlNodes(value: unknown): number {

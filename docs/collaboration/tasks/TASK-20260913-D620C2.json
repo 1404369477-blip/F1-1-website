@@ -1,0 +1,44 @@
+{
+  "acceptance_exit": "当前出口：M1模型/工具与真实访问状态有证据，E7真实采集交接可执行，RSS审批发布阻点有只读证据，业务授权与技术阻塞分别记录。整链完成出口：真实三源完整字段及native证据、受控admission/import、更新全量输入和双端闭包、独审与同版本恢复、灰度公开结果和自然周期、27源调度分别通过；未实现/未验证项继续阻断，不标整链完成。",
+  "artifacts": [],
+  "authorization_evidence": "用户2026-09-06既有授权及2026-09-13继续推进、明确保留M1采集；见本任务接续记录。",
+  "authorization_history": [
+    {
+      "at": "2026-09-13T22:54+08:00",
+      "evidence": "用户2026-09-06既有授权及2026-09-13继续推进、明确保留M1采集；见本任务接续记录。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "已完成M1 CLI默认模型/工具配置核查、E7接口/构建漂移审计及三源本机交接、RSS只读审计。用户已确认保留M1，当前主控无M1受支持Chrome连接，待M1本机会话真实工具调用和native三源证据后冻结adapter与后继完整构建。未进行真实采集、模型请求或生产写；gen407仍归旧恢复合同待答。详见docs/reviews/2026-09-13-X真实采集接续与RSS自动链核查.md。",
+  "claimed_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "completion_class": "standard",
+  "confirmation": "无需额外确认",
+  "created_at": "2026-09-13T22:54+08:00",
+  "department": "统筹部",
+  "details": "承接用户9月6日27源M1页面自动采集处理审核网站发布授权，9月13日再次明确继续并保留M1采集。详见docs/reviews/2026-09-13-X真实采集接续与RSS自动链核查.md。统筹真实M1 Chrome入口核验、E7接口及native证据交接、RSS自动链只读核查；真实三源后才冻结adapter和完整候选，更新构建闭包、独审、同版本迁移及备份恢复、三源到27源生产验收。当前不改UI，保留原Function ID/双端既定设计；任何后继开发需绑定精确设计身份与Function ID全部硬门。禁止恢复59源、社交写、cookie/API绕过、模拟证据当真实、原始DB写或重放未知POST。",
+  "domain_stage": "通用执行",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "M1受支持Chrome未连或挑战/登录丢失/限流则停止依赖工作；保留M1，禁止换主机或SSH浏览器旁路。",
+    "模型缺工具/格式错误/截断则报告实际错误并保留原证据，不虚构字段、不换模型冒充验证。",
+    "候选闭包/恢复/独审失败则不部署；RSS未知投递保留原幂等身份与审计，不盲目POST重放。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "QL3/x27/M1-real-capture-resumption",
+  "pointers": [
+    "docs/reviews/2026-09-13-X真实采集接续与RSS自动链核查.md"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260913-D620C2",
+  "title": "M1 X真实采集接续与RSS自动链核查",
+  "unverified": [],
+  "updated_at": "2026-09-13T22:57+08:00",
+  "verified": []
+}

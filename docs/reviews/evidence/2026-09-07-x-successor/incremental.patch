@@ -1,0 +1,350 @@
+--- before/app/scripts/prepare-v10-release-candidate.ts
++++ app/scripts/prepare-v10-release-candidate.ts
+@@ -170,8 +170,8 @@
+ assertAdminReleaseRuntimePathContract();
+ assertPublicReleaseRuntimePathContract();
+ if (
+-  ADMIN_RELEASE_RUNTIME_FILE_COUNT !== 163 ||
+-  ADMIN_RELEASE_RUNTIME_FILES.length !== 163 ||
++  ADMIN_RELEASE_RUNTIME_FILE_COUNT !== 165 ||
++  ADMIN_RELEASE_RUNTIME_FILES.length !== 165 ||
+   adminReleaseRuntimePathSetSha256() !== ADMIN_RELEASE_RUNTIME_PATH_SET_SHA256 ||
+   PUBLIC_RELEASE_RUNTIME_FILE_COUNT !== 89 ||
+   PUBLIC_RELEASE_RUNTIME_FILES.length !== 89
+--- before/app/scripts/ql3-deployment-v10-evidence.ts
++++ app/scripts/ql3-deployment-v10-evidence.ts
+@@ -123,8 +123,8 @@
+ assertAdminReleaseRuntimePathContract();
+ assertPublicReleaseRuntimePathContract();
+ if (
+-  ADMIN_RELEASE_RUNTIME_FILE_COUNT !== 163 ||
+-  ADMIN_RELEASE_RUNTIME_FILES.length !== 163 ||
++  ADMIN_RELEASE_RUNTIME_FILE_COUNT !== 165 ||
++  ADMIN_RELEASE_RUNTIME_FILES.length !== 165 ||
+   adminReleaseRuntimePathSetSha256() !== ADMIN_RELEASE_RUNTIME_PATH_SET_SHA256 ||
+   PUBLIC_RELEASE_RUNTIME_FILE_COUNT !== 89 ||
+   PUBLIC_RELEASE_RUNTIME_FILES.length !== 89
+@@ -629,7 +629,7 @@
+   "- Deployment target: existing-only schema10 / " + SOURCE_REGISTRY_SCHEMA10_SHA256,
+   "- Pair: " + full.releaseId + " + " + fallback.releaseId,
+   "- Shared source commit/tree/preimage: " + full.sourceCommitSha1 + " / " + full.sourceTreeSha1 + " / " + full.sourcePreimageSha256,
+-  "- Admin/Public runtime closures: 157 / 89.",
++  `- Admin/Public runtime closures: ${ADMIN_RELEASE_RUNTIME_FILE_COUNT} / ${PUBLIC_RELEASE_RUNTIME_FILE_COUNT}.`,
+   "- Fallback keeps manual safety/review/publish/withdraw, manual outbox, delivery sender and Public LKG.",
+   "- Fallback collector, model, retry-model, automatic review/publish, system snapshot and phase egress capabilities are closed.",
+   "- The production deployment factory opened full, fallback and rollback runtimes with externally anchored pair bytes and owner-specific DB handoffs; missing identity fails closed.",
+--- before/app/src/server/admin-service/release-manifest.ts
++++ app/src/server/admin-service/release-manifest.ts
+@@ -195,12 +195,14 @@
+   "src/server/source-management/server.ts",
+   "src/server/source-management/types.ts",
+   "src/server/vs1/no-egress.ts",
++  "src/server/x-page/normalize.ts",
++  "src/server/x-page/schema-identity.ts",
+   "tsconfig.json"
+ ] as const;
+ 
+ const ADMIN_RELEASE_LEGACY_BOOTSTRAP_PATH = "scripts/public-release-bootstrap.ts" as const;
+-export const ADMIN_RELEASE_RUNTIME_FILE_COUNT = 163 as const;
+-export const ADMIN_RELEASE_RUNTIME_PATH_SET_SHA256 = "e72601649abef235aec9208dc0f1bfe0d6f1bd2902a78c0656160c48eb1c6ab9" as const;
++export const ADMIN_RELEASE_RUNTIME_FILE_COUNT = 165 as const;
++export const ADMIN_RELEASE_RUNTIME_PATH_SET_SHA256 = "ea75ad37f82ba55e34281c9a9f84569fdaaa85ba020949e43ddc3280bb92f810" as const;
+ export const ADMIN_RELEASE_REQUIRED_RUNTIME_PATHS = Object.freeze([
+   "migrations/rss-real/0005_second_rss_autosport.sql",
+   "migrations/rss-real/0006_independent_rss_racefans_the_race.sql",
+@@ -244,6 +246,8 @@
+   "src/server/rss/rss-config-read.ts",
+   "src/server/rss/source-registry-migration.ts",
+   "src/server/rss/source-registry.ts",
++  "src/server/x-page/normalize.ts",
++  "src/server/x-page/schema-identity.ts",
+   "src/server/public/bilingual-snapshot.ts",
+   "src/server/tweet-inbox/repository.ts",
+   "src/server/tweet-inbox/types.ts",
+--- before/app/src/server/internal-operation/authorizer.ts
++++ app/src/server/internal-operation/authorizer.ts
+@@ -25,6 +25,7 @@
+   | "legacy_publish"
+   | "legacy_projection"
+   | "legacy_source"
++  | "x_page_import"
+   | "x_manual"
+   | "authority_v2"
+   | "source_registry"
+@@ -40,6 +41,7 @@
+ const DENY = c.SQLITE_DENY;
+ 
+ const PROTECTED_TABLES = new Set([
++  "x_page_candidate_capture_v1", "x_page_source_config_v1", "x_page_migration_identity_v1",
+   "owner_authorization_handoff", "internal_operation_policy", "internal_control_action_policy",
+   "internal_required_fence_policy", "gateway_entity_policy", "internal_operation",
+   "operation_entity_binding", "operation_fence_binding", "gateway_write_permit", "internal_control",
+@@ -177,6 +179,12 @@
+     "internal_operation_audit",
+   ].map((table) => [table, new Set([c.SQLITE_INSERT, c.SQLITE_UPDATE])] as const)),
+   legacy_source: new Map([["source", new Set([c.SQLITE_INSERT, c.SQLITE_UPDATE, c.SQLITE_DELETE])], ["internal_operation", new Set([c.SQLITE_UPDATE])], ["internal_operation_audit", new Set([c.SQLITE_INSERT])]]),
++  x_page_import: new Map([
++    ["pending_review_candidate", new Set([c.SQLITE_INSERT, c.SQLITE_UPDATE])],
++    ["x_page_candidate_capture_v1", new Set([c.SQLITE_INSERT])],
++    ["internal_operation", new Set([c.SQLITE_UPDATE])],
++    ["internal_operation_audit", new Set([c.SQLITE_INSERT])]
++  ]),
+   x_manual: new Map([
+     ["x_manual_write_permit", new Set([c.SQLITE_INSERT, c.SQLITE_UPDATE])],
+     ["x_manual_submission", new Set([c.SQLITE_INSERT, c.SQLITE_UPDATE])],
+@@ -196,6 +204,7 @@
+     ["internal_operation_audit", new Set([c.SQLITE_INSERT])]
+   ]),
+   source_registry: new Map([
++    ["source", new Set([c.SQLITE_UPDATE])],
+     ["source_registry_mutation_permit_v1", new Set([c.SQLITE_INSERT, c.SQLITE_UPDATE])],
+     ["source_registry_v1", new Set([c.SQLITE_INSERT, c.SQLITE_UPDATE])],
+     ["source_registry_history_v1", new Set([c.SQLITE_INSERT])],
+--- before/app/src/server/internal-operation/gateway.ts
++++ app/src/server/internal-operation/gateway.ts
+@@ -10,6 +10,7 @@
+   withSqliteAuthorizerContext,
+   type GatewaySqlMethod
+ } from "./authorizer.ts";
++import { X_PAGE_SCHEMA_SHA256 } from "../x-page/schema-identity.ts";
+ import { rssConfigTable } from "../rss/rss-config-read.ts";
+ import { validateOwnerSupervisorHandoff } from "./owner-supervisor.ts";
+ 
+@@ -18,12 +19,12 @@
+ export const INTERNAL_OPERATION_CANONICAL_JSON = "canonical-json-v1" as const;
+ 
+ export type Phase = "disabled" | "backlog" | "live" | "paused";
+-export type OperationKind = "collect" | "refine" | "review" | "publish" | "reconcile" | "projection" | "backfill" | "source_create" | "source_update" | "source_delete" | "system_producer" | "phase_control" | "backup" | "restore" | "withdraw";
+-export type OwnerProcess = "rss_collector" | "rss_refiner" | "automatic_reviewer" | "automatic_publisher" | "projection_sender" | "projection_receiver" | "x_official_adapter" | "bilingual_refiner" | "admin_http" | "admin_telemetry_producer" | "backup_worker" | "restore_operator" | "system_supervisor" | "reconciler";
++export type OperationKind = "x_page_source_update" | "collect" | "refine" | "review" | "publish" | "reconcile" | "projection" | "backfill" | "source_create" | "source_update" | "source_delete" | "system_producer" | "phase_control" | "backup" | "restore" | "withdraw";
++export type OwnerProcess = "x_page_importer" | "rss_collector" | "rss_refiner" | "automatic_reviewer" | "automatic_publisher" | "projection_sender" | "projection_receiver" | "x_official_adapter" | "bilingual_refiner" | "admin_http" | "admin_telemetry_producer" | "backup_worker" | "restore_operator" | "system_supervisor" | "reconciler";
+ export type CapabilityClass = "db_mutation" | "external_attempt" | "reconcile_readonly" | "control" | "backup" | "restore";
+ export type EgressClass = "none" | "rss_https" | "model_https" | "projection_private" | "x_official_https" | "backup_private";
+ export type ControlAction = "enter_backlog" | "enter_live" | "pause" | "disable" | "set_global_stop" | "clear_global_stop" | "set_emergency_stop" | "clear_emergency_stop" | "recovery_begin" | "recovery_advance" | "recovery_complete" | "recovery_abort" | "writer_epoch_bump" | "fence_update";
+-export type EntityKind = "source" | "ingest_run" | "candidate" | "rss_media" | "machine_draft" | "review_bundle" | "review_decision" | "publication" | "published_projection" | "projection_outbox" | "projection_receipt" | "legacy_admin_operation" | "legacy_audit" | "internal_control" | "telemetry_receipt" | "generic_fence" | "backup" | "projection_pointer";
++export type EntityKind = "x_page_capture" | "source" | "ingest_run" | "candidate" | "rss_media" | "machine_draft" | "review_bundle" | "review_decision" | "publication" | "published_projection" | "projection_outbox" | "projection_receipt" | "legacy_admin_operation" | "legacy_audit" | "internal_control" | "telemetry_receipt" | "generic_fence" | "backup" | "projection_pointer";
+ export type MutationKind = "insert" | "update" | "delete" | "activate" | "consume";
+ export type FenceKind = "deletion" | "publication" | "completeness" | "rights" | "media";
+ export type FenceRequiredState = "clear" | "blocked_reconcile_readonly" | "clear_or_blocked_removal";
+@@ -35,13 +36,13 @@
+ const EXTERNAL_METHODS = new Set(["GET", "POST", "PUT", "PATCH", "DELETE"]);
+ const ENDPOINT_CLASSES = new Set(["rss_fetch", "model_refine", "projection_deliver", "x_read", "x_write", "x_reconcile", "backup_copy", "restore_read"]);
+ const HEADER_NAMES = new Set(["accept", "content-type", "idempotency-key", "if-match", "if-none-match", "x-request-id"]);
+-const OPERATION_KINDS = new Set<OperationKind>(["collect", "refine", "review", "publish", "reconcile", "projection", "backfill", "source_create", "source_update", "source_delete", "system_producer", "phase_control", "backup", "restore", "withdraw"]);
+-const OWNER_PROCESSES = new Set<OwnerProcess>(["rss_collector", "rss_refiner", "automatic_reviewer", "automatic_publisher", "projection_sender", "projection_receiver", "x_official_adapter", "bilingual_refiner", "admin_http", "admin_telemetry_producer", "backup_worker", "restore_operator", "system_supervisor", "reconciler"]);
++const OPERATION_KINDS = new Set<OperationKind>(["x_page_source_update", "collect", "refine", "review", "publish", "reconcile", "projection", "backfill", "source_create", "source_update", "source_delete", "system_producer", "phase_control", "backup", "restore", "withdraw"]);
++const OWNER_PROCESSES = new Set<OwnerProcess>(["x_page_importer", "rss_collector", "rss_refiner", "automatic_reviewer", "automatic_publisher", "projection_sender", "projection_receiver", "x_official_adapter", "bilingual_refiner", "admin_http", "admin_telemetry_producer", "backup_worker", "restore_operator", "system_supervisor", "reconciler"]);
+ const CAPABILITY_CLASSES = new Set<CapabilityClass>(["db_mutation", "external_attempt", "reconcile_readonly", "control", "backup", "restore"]);
+ const PHASES = new Set<Phase>(["disabled", "backlog", "live", "paused"]);
+ const EGRESS_CLASSES = new Set<EgressClass>(["none", "rss_https", "model_https", "projection_private", "x_official_https", "backup_private"]);
+ const CONTROL_ACTIONS = new Set<ControlAction>(["enter_backlog", "enter_live", "pause", "disable", "set_global_stop", "clear_global_stop", "set_emergency_stop", "clear_emergency_stop", "recovery_begin", "recovery_advance", "recovery_complete", "recovery_abort", "writer_epoch_bump", "fence_update"]);
+-const ENTITY_KINDS = new Set<EntityKind>(["source", "ingest_run", "candidate", "rss_media", "machine_draft", "review_bundle", "review_decision", "publication", "published_projection", "projection_outbox", "projection_receipt", "legacy_admin_operation", "legacy_audit", "internal_control", "telemetry_receipt", "generic_fence", "backup", "projection_pointer"]);
++const ENTITY_KINDS = new Set<EntityKind>(["x_page_capture", "source", "ingest_run", "candidate", "rss_media", "machine_draft", "review_bundle", "review_decision", "publication", "published_projection", "projection_outbox", "projection_receipt", "legacy_admin_operation", "legacy_audit", "internal_control", "telemetry_receipt", "generic_fence", "backup", "projection_pointer"]);
+ const MUTATION_KINDS = new Set<MutationKind>(["insert", "update", "delete", "activate", "consume"]);
+ const IDENTITY_SELECTORS = new Set<EntityBinding["identitySelector"]>(["source_id", "candidate_id", "publication_id", "public_id", "control_singleton", "bound_child"]);
+ const FENCE_SCOPES = new Set<FenceBinding["scopeKind"]>(["global", "source", "candidate", "publication"]);
+@@ -575,7 +576,7 @@
+   if (kind === "restore") return "recovery_control";
+   if (kind === "backup") return "backup_insert";
+   if (kind === "system_producer") return owner === "system_supervisor" ? "fence_issue" : "response";
+-  if (kind === "collect") return "legacy_collect";
++  if (kind === "collect") return owner === "x_page_importer" ? "x_page_import" : "legacy_collect";
+   if (kind === "refine") return "legacy_refine";
+   if (kind === "review") return "legacy_review";
+   if (kind === "publish" || kind === "withdraw") return "legacy_publish";
+@@ -709,7 +710,8 @@
+     this.schemaSha256 = input.schemaSha256 ?? INTERNAL_OPERATION_SCHEMA_SHA256;
+     validateHash(this.schemaSha256);
+     const version = valueInt((this.database.prepare("PRAGMA user_version").get() as Record<string, unknown>).user_version, "SCHEMA_VERSION_INVALID");
+-    assert(version === INTERNAL_OPERATION_SCHEMA_VERSION || version === 8 || version === 9 || version === 10, "SCHEMA_VERSION_INVALID");
++    assert(version === INTERNAL_OPERATION_SCHEMA_VERSION || version === 8 || version === 9 || version === 10 || version === 11, "SCHEMA_VERSION_INVALID");
++    assert(version !== 11 || input.schemaSha256 === X_PAGE_SCHEMA_SHA256, "X_PAGE_SCHEMA_IDENTITY_REQUIRED");
+     this.releaseWriterLease = acquireSingleWriter(this.database);
+     try {
+       const existingAuthorizer = getInstalledSqliteAuthorizer(this.database);
+@@ -808,7 +810,7 @@
+     const operation = selectOperation(this.database, capability.operationId);
+     assert(operation.state === "authorized" && valueInt(operation.version, "OPERATION_VERSION_INVALID") === capability.version, "OPERATION_STATE_INVALID");
+     assert(operation.owner_process === "admin_http" && operation.source_id === input.sourceId && operation.egress_class === "none", "SOURCE_AUTHORITY_INVALID");
+-    assert((input.action === "retire" ? operation.operation_kind === "source_delete" : operation.operation_kind === "source_update"), "SOURCE_AUTHORITY_INVALID");
++    assert((input.action === "retire" ? operation.operation_kind === "source_delete" : (operation.operation_kind === "source_update" || operation.operation_kind === "x_page_source_update")), "SOURCE_AUTHORITY_INVALID");
+     const at = valueString(operation.updated_at, "SOURCE_OPERATION_TIME_INVALID");
+     const requestHash = valueString(operation.request_hash, "SOURCE_REQUEST_HASH_INVALID");
+     const handoffId = valueString(operation.authorization_handoff_id, "SOURCE_HANDOFF_INVALID");
+@@ -1492,12 +1494,15 @@
+       const op = selectOperation(this.database, capability.operationId);
+       assert(op.state === "requested" && valueInt(op.version, "OPERATION_VERSION_INVALID") === capability.version, "OPERATION_STATE_INVALID");
+       this.precheckFencesInTransaction(capability.operationId, updatedAt);
++      const sourceEnabledClause = op.operation_kind === "x_page_source_update" && op.owner_process === "admin_http" && op.policy_id === "p-x-page-source-update-paused"
++        ? "(s.enabled=1 OR EXISTS(SELECT 1 FROM source_registry_v1 r WHERE r.source_id=s.source_id AND r.source_kind='x_page'))"
++        : "s.enabled=1";
+       const entityDiagnostics = parseRow(this.database.prepare(`SELECT
+         json_array_length(op.entity_set_json) AS json_count,
+         (SELECT count(*) FROM operation_entity_binding b WHERE b.operation_id=op.operation_id) AS binding_count,
+         (SELECT count(*) FROM operation_entity_binding b WHERE b.operation_id=op.operation_id AND b.identity_selector='source_id' AND b.entity_id=op.source_id) AS source_binding_count,
+         (SELECT count(*) FROM operation_entity_binding b WHERE b.operation_id=op.operation_id AND b.identity_selector='candidate_id' AND b.entity_id=op.candidate_id) AS candidate_binding_count,
+-        (SELECT count(*) FROM source s WHERE s.source_id=op.source_id AND s.stop_epoch=op.source_stop_epoch AND s.enabled=1) AS source_count
++        (SELECT count(*) FROM source s WHERE s.source_id=op.source_id AND s.stop_epoch=op.source_stop_epoch AND ${sourceEnabledClause}) AS source_count
+         FROM internal_operation op WHERE op.operation_id=?`).get(capability.operationId));
+       assert(Number(entityDiagnostics.json_count) === Number(entityDiagnostics.binding_count), "OPERATION_ENTITY_SET_COUNT_INVALID");
+       if (op.source_id !== null) assert(Number(entityDiagnostics.source_binding_count) === 1, "OPERATION_SOURCE_BINDING_INVALID");
+@@ -1685,7 +1690,7 @@
+     assert(!mutation.statement.includes(";"), "MUTATION_STATEMENT_NOT_CLOSED");
+     const tableName = tableMatch?.[2]?.toLowerCase();
+     const expectedTable: Readonly<Record<EntityKind, string>> = {
+-      source: "source", ingest_run: "ingest_run", candidate: "pending_review_candidate", rss_media: "rss_media_candidate",
++      x_page_capture: "x_page_candidate_capture_v1", source: "source", ingest_run: "ingest_run", candidate: "pending_review_candidate", rss_media: "rss_media_candidate",
+       machine_draft: "machine_summary_draft", review_bundle: "review_bundle", review_decision: "review_decision",
+       publication: "publication", published_projection: "published_projection", projection_outbox: "projection_outbox",
+       projection_receipt: "projection_delivery_receipt", legacy_admin_operation: "admin_operation", legacy_audit: "audit_event",
+--- before/app/src/server/internal-operation/mutation-port.ts
++++ app/src/server/internal-operation/mutation-port.ts
+@@ -280,12 +280,13 @@
+   }
+ 
+   public mutateSourceRegistry(input: Readonly<SourceRegistryGatewayMutation & { operationId: string }>): number {
+-    const source = this.database.prepare("SELECT source_id,source_safety_epoch FROM source_registry_v1 WHERE source_id=?").get(input.sourceId) as Record<string, unknown> | undefined;
++    const source = this.database.prepare("SELECT source_id,source_kind,source_safety_epoch FROM source_registry_v1 WHERE source_id=?").get(input.sourceId) as Record<string, unknown> | undefined;
+     assert(source !== undefined, "SOURCE_NOT_FOUND");
++    assert(source.source_kind !== "x_page" || input.action !== "retire", "X_PAGE_RETIRE_SUCCESSOR_REQUIRED");
+     const legacy = this.database.prepare("SELECT stop_epoch FROM source WHERE source_id=?").get(input.sourceId) as Record<string, unknown> | undefined;
+     const capability = this.prepareCapability({
+       operationId: input.operationId,
+-      operationKind: input.action === "retire" ? "source_delete" : "source_update",
++      operationKind: input.action === "retire" ? "source_delete" : source.source_kind === "x_page" ? "x_page_source_update" : "source_update",
+       ownerProcess: "admin_http",
+       entityKind: "source",
+       entityId: input.sourceId,
+@@ -297,7 +298,7 @@
+       expectedHash: ZERO,
+       capabilityClass: "control",
+       egressClass: "none",
+-      policyId: input.action === "retire" ? "p-source-delete-paused" : "p-source-update-paused",
++      policyId: input.action === "retire" ? "p-source-delete-paused" : source.source_kind === "x_page" ? "p-x-page-source-update-paused" : "p-source-update-paused",
+       sourceStopEpoch: legacy === undefined ? Number(source.source_safety_epoch) : Number(legacy.stop_epoch)
+     });
+     return this.gateway.runSourceRegistryMutation(capability, input);
+@@ -720,6 +721,11 @@
+    * transaction.  The repository receives only the gateway-owned writer; it
+    * never receives the database handle and cannot open a second transaction.
+    */
++  /** Admission + mutation atomicity for capture import; no additional SQL authority. */
++  public runAtomicAdmission<T>(callback: () => T): T {
++    return this.gateway.runAtomicAdmission(callback);
++  }
++
+   public runTransaction<T>(
+     input: GatewayMutationTransactionInput,
+     callback: (mutate: (mutation: GatewayWriteInput) => number) => T,
+--- before/app/src/server/internal-operation/owner-supervisor.ts
++++ app/src/server/internal-operation/owner-supervisor.ts
+@@ -75,7 +75,7 @@
+ 
+ export function assertOwnerProcess(value: string): asserts value is OwnerProcess {
+   const owners: readonly OwnerProcess[] = [
+-    "rss_collector", "rss_refiner", "automatic_reviewer", "automatic_publisher",
++    "x_page_importer", "rss_collector", "rss_refiner", "automatic_reviewer", "automatic_publisher",
+     "projection_sender", "projection_receiver", "x_official_adapter", "bilingual_refiner",
+     "admin_http", "admin_telemetry_producer", "backup_worker", "restore_operator",
+     "system_supervisor", "reconciler"
+--- before/app/src/server/rss/refinement.ts
++++ app/src/server/rss/refinement.ts
+@@ -2,6 +2,7 @@
+ import type { DatabaseSync } from "node:sqlite";
+ 
+ import { withImmediateTransaction } from "../db/database.ts";
++import { LIVE_RSS_SOURCE_IDS } from "./sources.ts";
+ import { canonicalJson } from "../db/profile.ts";
+ import type { GatewayMutationPort } from "../internal-operation/mutation-port.ts";
+ import {
+@@ -56,7 +57,8 @@
+         `
+     SELECT candidate_id, source_id, source_revision, source_payload_hash, title, excerpt, author, published_at
+     FROM pending_review_candidate AS candidate
+-    WHERE candidate.review_status IN ('pending_review', 'approved', 'published')
++    WHERE candidate.source_id IN (${LIVE_RSS_SOURCE_IDS.map(() => "?").join(",")})
++      AND candidate.review_status IN ('pending_review', 'approved', 'published')
+       AND NOT EXISTS (
+         SELECT 1 FROM machine_summary_draft AS draft
+         WHERE draft.candidate_id = candidate.candidate_id
+@@ -69,7 +71,7 @@
+     LIMIT 1
+   `,
+       )
+-      .get(modelId, DEEPSEEK_PROMPT_SHA256) as CandidateRow | undefined) ?? null
++      .get(...LIVE_RSS_SOURCE_IDS, modelId, DEEPSEEK_PROMPT_SHA256) as CandidateRow | undefined) ?? null
+   );
+ }
+ 
+--- before/app/src/server/rss/source-registry.ts
++++ app/src/server/rss/source-registry.ts
+@@ -1,6 +1,7 @@
+ import { createHash } from "node:crypto";
+ import type { DatabaseSync } from "node:sqlite";
+ 
++import { X_PAGE_HANDLES, X_PAGE_SELECTION } from "../x-page/normalize.ts";
+ import { rssConfigTable } from "./rss-config-read.ts";
+ 
+ export const SOURCE_REGISTRY_SCHEMA = "source-registry-v1" as const;
+@@ -22,8 +23,8 @@
+ export type AdapterAuthorizationStatus = "unknown" | "valid" | "invalid" | "expired";
+ export type PlatformAllowed = "unknown" | "allowed" | "blocked";
+ export type SourceStopStatus = "clear" | "manual" | "compliance" | "authorization" | "platform";
+-export type SourceKind = "rss" | "x_manual";
+-export type CollectionMode = "rss" | "manual_url";
++export type SourceKind = "rss" | "x_manual" | "x_page";
++export type CollectionMode = "rss" | "manual_url" | "browser_visible_dom";
+ export type SourceAction = "propose" | "validate" | "requeue" | "enable" | "disable" | "retire";
+ export type AuthorityCapability = "bilingual_auto_refine" | "bilingual_manual_mutation" | "source_registry_management";
+ 
+@@ -149,13 +150,20 @@
+   for (const key of parsed.searchParams.keys()) {
+     if (/token|secret|key|auth|password|signature|cookie/iu.test(key)) throw new SourceRegistryError("IDENTITY_INVALID", "secret-bearing URL forbidden");
+   }
+-  if (kind === "x_manual" && (!/^https:\/\/x\.com\/[A-Za-z0-9_]{1,15}$/u.test(parsed.href) || parsed.search !== "")) throw new SourceRegistryError("IDENTITY_INVALID", "X source URL invalid");
++  if ((kind === "x_manual" || kind === "x_page") && (!/^https:\/\/x\.com\/[A-Za-z0-9_]{1,15}$/u.test(parsed.href) || parsed.search !== "")) throw new SourceRegistryError("IDENTITY_INVALID", "X source URL invalid");
+   return parsed.href;
+ }
+ 
+ export function sourceIdentity(input: Readonly<{ sourceId: string; canonicalFeedUrl: string | null; siteUrl: string; sourceKind: SourceKind; collectionMode: CollectionMode }>): string {
+   assertId(input.sourceId, "sourceId");
+   if ((input.sourceKind === "rss") !== (input.collectionMode === "rss") || (input.sourceKind === "rss") !== (input.canonicalFeedUrl !== null)) throw new SourceRegistryError("IDENTITY_INVALID");
++  if (input.sourceKind === "x_page") {
++    const pageUrl = safeHttpsUrl(input.siteUrl, input.sourceKind).toLowerCase();
++    const handle = pageUrl.slice("https://x.com/".length);
++    if (input.collectionMode !== "browser_visible_dom" || !(X_PAGE_HANDLES as readonly string[]).includes(handle) || input.sourceId !== `x_${handle}`) throw new SourceRegistryError("IDENTITY_INVALID");
++    return sha256(canonicalJson({ sourceId: input.sourceId, canonicalPageUrl: pageUrl, sourceKind: input.sourceKind, collectionMode: input.collectionMode, selectionSha256: X_PAGE_SELECTION.sha256 }));
++  }
++  if (input.sourceKind === "x_manual" && input.collectionMode !== "manual_url") throw new SourceRegistryError("IDENTITY_INVALID");
+   const siteUrl = safeHttpsUrl(input.siteUrl, input.sourceKind);
+   const canonicalFeedUrl = input.canonicalFeedUrl === null ? null : safeHttpsUrl(input.canonicalFeedUrl, input.sourceKind);
+   return sha256(canonicalJson({ sourceId: input.sourceId, canonicalFeedUrl, siteUrl, sourceKind: input.sourceKind, collectionMode: input.collectionMode }));
+@@ -321,7 +329,7 @@
+   const row = database.prepare("SELECT * FROM source_registry_v1 WHERE source_id=?").get(sourceId) as Record<string, unknown> | undefined;
+   if (!row) throw new SourceRegistryError("SOURCE_NOT_FOUND");
+   const source = rowSource(row);
+-  const config = plain(database.prepare(`SELECT * FROM ${rssConfigTable(database)} WHERE source_id=?`).get(sourceId) as Record<string, unknown> | undefined);
++  const config = plain(database.prepare(`SELECT * FROM ${source.sourceKind === "x_page" ? "x_page_source_config_v1" : rssConfigTable(database)} WHERE source_id=?`).get(sourceId) as Record<string, unknown> | undefined);
+   const health = plain(database.prepare("SELECT * FROM source_registry_health_v1 WHERE source_id=? ORDER BY observed_at DESC,health_id DESC LIMIT 1").get(sourceId) as Record<string, unknown> | undefined);
+   const history = Object.freeze((database.prepare("SELECT * FROM source_registry_history_v1 WHERE source_id=? ORDER BY to_revision DESC,history_id DESC LIMIT 50").all(sourceId) as Array<Record<string, unknown>>).map((entry) => Object.freeze(Object.fromEntries(Object.entries(entry)))));
+   return Object.freeze({ source, config, health, history, activationReadiness: deriveActivationReadiness(source, asOf), epochFences: deriveEpochFences(database, source.sourceId, null, asOf), xAutomation: source.sourceKind === "x_manual" ? X_AUTOMATION_ZERO : null });
+--- before/app/src/tests/admin-release-manifest.test.ts
++++ app/src/tests/admin-release-manifest.test.ts
+@@ -380,7 +380,7 @@
+ describe("Admin exact release manifest", () => {
+   it("freezes the QL1 target closure before any build artifact branch", () => {
+     expect(ADMIN_RELEASE_RUNTIME_FILES).toHaveLength(ADMIN_RELEASE_RUNTIME_FILE_COUNT);
+-    expect(ADMIN_RELEASE_RUNTIME_FILES).toHaveLength(163);
++    expect(ADMIN_RELEASE_RUNTIME_FILES).toHaveLength(165);
+     expect(adminReleaseRuntimePathSetSha256(ADMIN_RELEASE_RUNTIME_FILES)).toBe(ADMIN_RELEASE_RUNTIME_PATH_SET_SHA256);
+     expect(() => assertAdminReleaseRuntimePathContract(ADMIN_RELEASE_RUNTIME_FILES)).not.toThrow();
+     expect(ADMIN_RELEASE_RUNTIME_FILES).not.toContain("scripts/public-release-bootstrap.ts");
+@@ -403,6 +403,8 @@
+       "src/server/internal-operation/handoff-pool.ts",
+       "src/server/internal-operation/quick-launch-control.ts",
+       "src/server/internal-operation/quick-launch-processing.ts",
++      "src/server/x-page/normalize.ts",
++      "src/server/x-page/schema-identity.ts",
+       "next-env.d.ts",
+       "next.config.ts",
+       "package.json",

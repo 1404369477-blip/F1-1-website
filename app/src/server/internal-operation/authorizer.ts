@@ -25,6 +25,8 @@ export type GatewaySqlMethod =
   | "legacy_publish"
   | "legacy_projection"
   | "legacy_source"
+  | "x_page_admission"
+  | "x_page_import"
   | "x_manual"
   | "authority_v2"
   | "source_registry"
@@ -40,6 +42,9 @@ const OK = c.SQLITE_OK;
 const DENY = c.SQLITE_DENY;
 
 const PROTECTED_TABLES = new Set([
+  "rss_automatic_source_binding_v1",
+  "x_page_source_admission_v1", "x_page_producer_receipt_v1", "x_page_admission_identity_v1", "x_page_operation_source_binding_v1", "x_page_automatic_source_binding_v1",
+  "x_page_candidate_capture_v1", "x_page_source_config_v1", "x_page_migration_identity_v1",
   "owner_authorization_handoff", "internal_operation_policy", "internal_control_action_policy",
   "internal_required_fence_policy", "gateway_entity_policy", "internal_operation",
   "operation_entity_binding", "operation_fence_binding", "gateway_write_permit", "internal_control",
@@ -51,7 +56,11 @@ const PROTECTED_TABLES = new Set([
   "quick_launch_authority_v2", "quick_launch_authority_permit_v2", "quick_launch_authority_audit_v2",
   "source_registry_v1", "source_registry_rss_config_v1", "source_registry_health_v1",
   "source_registry_history_v1", "source_registry_outbox_v1", "source_registry_mutation_permit_v1",
-  "source_registry_migration_identity_v1", "bilingual_authority_capability_v1",
+  "source_registry_migration_identity_v1",
+  "source_registry_rss_config_v2",
+  "source_registry_rss_config_v2_identity",
+  "source_registry_rss_config_v3",
+  "source_registry_rss_skysports_identity", "bilingual_authority_capability_v1",
   "bilingual_authority_permit_v1", "bilingual_authority_audit_v1", "bilingual_authority_bridge_marker_v1",
   "bilingual_candidate_lineage_v1", "bilingual_lineage_safety_decision_v1", "bilingual_operation_link_v1", "bilingual_language_slot_v1",
   "bilingual_model_receipt_v1", "bilingual_language_slot_draft_v1", "bilingual_bundle_v1",
@@ -89,6 +98,7 @@ const METHOD_TABLE_ACTIONS: Readonly<Record<GatewaySqlMethod, ReadonlyMap<string
   request: new Map([
     ["internal_operation", new Set([c.SQLITE_INSERT])],
     ["operation_entity_binding", new Set([c.SQLITE_INSERT])],
+    ["x_page_operation_source_binding_v1", new Set([c.SQLITE_INSERT])],
     ["operation_fence_binding", new Set([c.SQLITE_INSERT])],
     ["budget_reservation", new Set([c.SQLITE_INSERT])],
     ["budget_account", new Set([c.SQLITE_UPDATE])],
@@ -143,6 +153,9 @@ const METHOD_TABLE_ACTIONS: Readonly<Record<GatewaySqlMethod, ReadonlyMap<string
   ]),
   fence_issue: new Map([
     ["generic_fence_receipt", new Set([c.SQLITE_INSERT])],
+    // Only the guarded AFTER INSERT receipt trigger snapshots source authority.
+    ["rss_automatic_source_binding_v1", new Set([c.SQLITE_INSERT])],
+    ["x_page_automatic_source_binding_v1", new Set([c.SQLITE_INSERT])],
     ["internal_operation", new Set([c.SQLITE_UPDATE])],
     ["internal_operation_audit", new Set([c.SQLITE_INSERT])]
   ]),
@@ -173,6 +186,24 @@ const METHOD_TABLE_ACTIONS: Readonly<Record<GatewaySqlMethod, ReadonlyMap<string
     "internal_operation_audit",
   ].map((table) => [table, new Set([c.SQLITE_INSERT, c.SQLITE_UPDATE])] as const)),
   legacy_source: new Map([["source", new Set([c.SQLITE_INSERT, c.SQLITE_UPDATE, c.SQLITE_DELETE])], ["internal_operation", new Set([c.SQLITE_UPDATE])], ["internal_operation_audit", new Set([c.SQLITE_INSERT])]]),
+  x_page_admission: new Map([
+    ["x_page_source_admission_v1", new Set([c.SQLITE_INSERT])],
+    ["x_page_source_config_v1", new Set([c.SQLITE_UPDATE])],
+    ["source_registry_v1", new Set([c.SQLITE_UPDATE])],
+    ["source", new Set([c.SQLITE_UPDATE])],
+    ["source_registry_mutation_permit_v1", new Set([c.SQLITE_UPDATE])],
+    ["source_registry_history_v1", new Set([c.SQLITE_INSERT])],
+    ["source_registry_outbox_v1", new Set([c.SQLITE_INSERT])],
+    ["internal_operation", new Set([c.SQLITE_UPDATE])],
+    ["internal_operation_audit", new Set([c.SQLITE_INSERT])]
+  ]),
+  x_page_import: new Map([
+    ["pending_review_candidate", new Set([c.SQLITE_INSERT, c.SQLITE_UPDATE])],
+    ["x_page_candidate_capture_v1", new Set([c.SQLITE_INSERT])],
+    ["x_page_producer_receipt_v1", new Set([c.SQLITE_INSERT])],
+    ["internal_operation", new Set([c.SQLITE_UPDATE])],
+    ["internal_operation_audit", new Set([c.SQLITE_INSERT])]
+  ]),
   x_manual: new Map([
     ["x_manual_write_permit", new Set([c.SQLITE_INSERT, c.SQLITE_UPDATE])],
     ["x_manual_submission", new Set([c.SQLITE_INSERT, c.SQLITE_UPDATE])],
@@ -192,6 +223,9 @@ const METHOD_TABLE_ACTIONS: Readonly<Record<GatewaySqlMethod, ReadonlyMap<string
     ["internal_operation_audit", new Set([c.SQLITE_INSERT])]
   ]),
   source_registry: new Map([
+    ["source", new Set([c.SQLITE_UPDATE])],
+    ["gateway_write_permit", new Set([c.SQLITE_INSERT, c.SQLITE_UPDATE])],
+    ["x_page_source_config_v1", new Set([c.SQLITE_UPDATE])],
     ["source_registry_mutation_permit_v1", new Set([c.SQLITE_INSERT, c.SQLITE_UPDATE])],
     ["source_registry_v1", new Set([c.SQLITE_INSERT, c.SQLITE_UPDATE])],
     ["source_registry_history_v1", new Set([c.SQLITE_INSERT])],

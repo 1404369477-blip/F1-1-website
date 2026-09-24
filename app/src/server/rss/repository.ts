@@ -26,7 +26,7 @@ import {
 } from "./types.ts";
 import { assertIndependentRssSourcesSchema, assertRssMediaRefinementSchema, assertSecondRssAutosportSchema } from "../review-real/migration.ts";
 import { LIVE_RSS_SOURCES, isLiveRssSourceId, type LiveRssSourceId } from "./sources.ts";
-import type { EntityKind, MutationKind } from "../internal-operation/gateway.ts";
+import type { EntityBinding,EntityKind,GatewayWriteInput,MutationKind } from "../internal-operation/gateway.ts";
 import type { GatewayMutationPort } from "../internal-operation/mutation-port.ts";
 
 type SqlRow = Record<string, unknown>;
@@ -263,6 +263,7 @@ export function assertRssSchema(database: DatabaseSync): void {
 export class RssRepository {
   readonly database: DatabaseSync;
   private readonly mutationPort: GatewayMutationPort | undefined;
+  private collectItemWriter: ((input:GatewayWriteInput)=>number) | undefined;
 
   constructor(database: DatabaseSync, mutationPort?: GatewayMutationPort) {
     this.database = database;
@@ -280,6 +281,7 @@ export class RssRepository {
     const version = Number((this.database.prepare("PRAGMA user_version").get() as SqlRow).user_version);
     if (version >= 7) {
       if (!this.mutationPort) throw new RssError("SQLITE_FAILURE");
+      if (this.collectItemWriter) return this.collectItemWriter({...input,expectedVersion:null,expectedHash:"0".repeat(64)});
       return this.mutationPort.mutate({
         operationId: `gateway-collect-${sha256(`${input.statement}\n${JSON.stringify(input.parameters ?? [])}\n${input.entityId}`)}`,
         operationKind: "collect",
@@ -288,13 +290,43 @@ export class RssRepository {
         mutationKind: input.mutationKind,
         statement: input.statement,
         parameters: input.parameters,
-        identity: { sourceId: input.sourceId, candidateId: input.entityKind === "candidate" ? input.entityId : null, publicationId: null, publicId: null },
+        identity: { sourceId: input.sourceId, candidateId: input.entityKind === "candidate" || input.entityKind === "rss_media" ? input.entityId : null, publicationId: null, publicId: null },
         capabilityClass: "external_attempt",
         egressClass: "rss_https",
+        budgetAccountId: "acct-rss",
         sourceStopEpoch: this.readSource(input.sourceId).stopEpoch
       });
     }
     return Number(this.database.prepare(input.statement).run(...((input.parameters ?? []) as any[])).changes);
+  }
+
+  /** The content hash includes media. A candidate and its matching media must
+   * become visible in the same transaction, even if collection is interrupted
+   * before the aggregate ingest receipt is finalized. */
+  private collectItem<T>(run:ClaimedRssRun,dedupeKey:string,payloadHash:string,existing:SqlRow|undefined,callback:()=>T):T {
+    if (Number((this.database.prepare("PRAGMA user_version").get() as SqlRow).user_version)<7) return callback();
+    if (!this.mutationPort?.runTransaction) throw new Error("COLLECT_ITEM_TRANSACTION_REQUIRED");
+    const candidateId=existing?requiredCandidateText(existing,"candidate_id"):`rss-candidate-${dedupeKey.slice(0,32)}`;
+    const expectedVersion=existing?requiredCandidateInteger(existing,"source_revision"):null;
+    const expectedHash=existing?requiredCandidateText(existing,"source_payload_hash"):"0".repeat(64);
+    const entitySet:EntityBinding[]=[
+      {entityKind:"candidate",entityId:candidateId,identitySelector:"candidate_id",expectedVersion,expectedHash},
+      {entityKind:"source",entityId:run.sourceId,identitySelector:"source_id",expectedVersion:null,expectedHash:"0".repeat(64)},
+      {entityKind:"rss_media",entityId:candidateId,identitySelector:"bound_child",expectedVersion:null,expectedHash:"0".repeat(64)},
+    ];
+    const operationId=`gateway-collect-item-${sha256(`${run.runId}\n${candidateId}\n${payloadHash}\n${expectedVersion}`)}`;
+    return this.mutationPort.runTransaction({operationId,operationKind:"collect",ownerProcess:"rss_collector",entitySet,
+      identity:{sourceId:run.sourceId,candidateId,publicationId:null,publicId:null},capabilityClass:"external_attempt",egressClass:"rss_https",
+      sourceStopEpoch:run.stopEpoch,budgetAccountId:"acct-rss"},mutate=>{
+      requireLiveSourceFence(this.database,run);
+      const current=this.database.prepare("SELECT candidate_id,source_revision,source_payload_hash FROM pending_review_candidate WHERE dedupe_key=?").get(dedupeKey);
+      if (existing ? current?.candidate_id!==candidateId || current.source_revision!==expectedVersion || current.source_payload_hash!==expectedHash : current!==undefined) throw new Error("COLLECT_ITEM_STALE");
+      const previous=this.collectItemWriter;
+      this.collectItemWriter=write=>{const binding=entitySet.find(value=>value.entityKind===write.entityKind && value.entityId===write.entityId);
+        if(!binding)throw new Error("COLLECT_ITEM_ENTITY_UNBOUND");
+        return mutate({...write,expectedVersion:binding.expectedVersion,expectedHash:binding.expectedHash});};
+      try{return callback();}finally{this.collectItemWriter=previous;}
+    });
   }
 
   private transaction<T>(callback: () => T): T {
@@ -421,6 +453,7 @@ export class RssRepository {
         const existing = this.database.prepare(
           "SELECT candidate_id, external_id, source_payload_hash, source_revision FROM pending_review_candidate WHERE dedupe_key = ?"
         ).get(dedupeKey) as SqlRow | undefined;
+        this.collectItem(run,dedupeKey,item.sourcePayloadHash,existing,()=>{
         let candidateId: string;
         let sourceRevision: number;
         if (!existing) {
@@ -488,13 +521,14 @@ export class RssRepository {
         ).get(candidateId, sourceRevision) === undefined) {
           this.write({
             entityKind: "rss_media",
-            entityId: `${candidateId}:${sourceRevision}`,
+            entityId: candidateId,
             mutationKind: "insert",
             statement: "INSERT OR IGNORE INTO rss_media_candidate (candidate_id, source_revision, source_payload_hash, media_url, media_type, declared_bytes, observed_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
             parameters: [candidateId, sourceRevision, item.sourcePayloadHash, item.media.url, item.media.mimeType, item.media.declaredBytes, finishedAt],
             sourceId: run.sourceId
           });
         }
+        });
       }
       const finalized = this.write({
         entityKind: "ingest_run",

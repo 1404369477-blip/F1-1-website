@@ -15,6 +15,8 @@ import { BootstrapTokenStore, PasskeyCredentialStore, type StoredPasskeyCredenti
 import type { AdminWebAuthnAdapter } from "./webauthn.ts";
 import { AuthorityMutationSchema, MutationSchema as BilingualMutationSchema, SourceRegistryMutationSchema, prepareAuthorityMutation, prepareBilingualMutation, prepareSourceRegistryMutation } from "./bilingual-admin.ts";
 
+import { ModelCredentialMutationSchema, prepareModelCredentialMutation } from "./model-credentials.ts";
+
 const TOKEN_PATTERN = /^[A-Za-z0-9_-]{43}$/;
 const CHALLENGE_TTL_MS = 2 * 60 * 1000;
 
@@ -40,12 +42,12 @@ export const LoginVerifyRequestSchema = z.object({
 
 export const FreshOptionsRequestSchema = z.object({
   schemaVersion: z.literal("admin-auth-fresh-options-v1"),
-  mutation: z.union([ReleaseNowRequestSchema, PublishRequestSchema, XManualRetireMutationSchema, AuthorityMutationSchema, SourceRegistryMutationSchema, BilingualMutationSchema])
+  mutation: z.union([ReleaseNowRequestSchema, PublishRequestSchema, XManualRetireMutationSchema, AuthorityMutationSchema, SourceRegistryMutationSchema, BilingualMutationSchema, ModelCredentialMutationSchema])
 }).strict();
 
 export const FreshVerifyRequestSchema = z.object({
   schemaVersion: z.literal("admin-auth-fresh-verify-v1"),
-  mutation: z.union([ReleaseNowRequestSchema, PublishRequestSchema, XManualRetireMutationSchema, AuthorityMutationSchema, SourceRegistryMutationSchema, BilingualMutationSchema]),
+  mutation: z.union([ReleaseNowRequestSchema, PublishRequestSchema, XManualRetireMutationSchema, AuthorityMutationSchema, SourceRegistryMutationSchema, BilingualMutationSchema, ModelCredentialMutationSchema]),
   response: z.unknown()
 }).strict();
 
@@ -65,7 +67,7 @@ type ChallengeRecord = Readonly<{
   webauthnUserId?: string;
   freshBinding?: Readonly<{
     operationId: string;
-    action: "publish" | "SOURCE_RETIRE" | "AUTHORITY_ACTIVATE" | "BILINGUAL_SAFETY_REVIEW" | "BILINGUAL_CORRECT" | "BILINGUAL_WITHDRAW";
+    action: "publish" | "SOURCE_RETIRE" | "AUTHORITY_ACTIVATE" | "BILINGUAL_SAFETY_REVIEW" | "BILINGUAL_CORRECT" | "BILINGUAL_WITHDRAW" | "MODEL_CREDENTIAL";
     resourceHash: string;
   }>;
 }>;
@@ -178,10 +180,15 @@ export class AdminPasskeyAuth {
   private prepareFreshBinding(value: unknown): Readonly<{
     binding: Readonly<{
       operationId: string;
-      action: "publish" | "SOURCE_RETIRE" | "AUTHORITY_ACTIVATE" | "BILINGUAL_SAFETY_REVIEW" | "BILINGUAL_CORRECT" | "BILINGUAL_WITHDRAW";
+      action: "publish" | "SOURCE_RETIRE" | "AUTHORITY_ACTIVATE" | "BILINGUAL_SAFETY_REVIEW" | "BILINGUAL_CORRECT" | "BILINGUAL_WITHDRAW" | "MODEL_CREDENTIAL";
       resourceHash: string;
     }>;
   }> {
+    const credential = ModelCredentialMutationSchema.safeParse(value);
+    if (credential.success) {
+      const prepared = prepareModelCredentialMutation(credential.data);
+      return { binding: { operationId: prepared.binding.operationId, action: "MODEL_CREDENTIAL", resourceHash: prepared.binding.resourceHash } };
+    }
     const authority = AuthorityMutationSchema.safeParse(value);
     if (authority.success) {
       const prepared = prepareAuthorityMutation(authority.data);

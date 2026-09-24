@@ -1,0 +1,63 @@
+{
+  "acceptance_exit": "同一固定候选六格视觉及首页/筛选/分页/详情直达/媒体/主题/404/网络恢复；完整已激活generation公开DTO与泄漏扫描；Pages真实HTTPS全链；M1自然同步与无变化幂等、断网恢复及撤回/空站反例；独立安全/行为审查通过；f1入口同步、回退与交接完整。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/reviews/2026-09-12-GitHub-Pages公开新闻站实施合同.md",
+    "docs/reviews/2026-09-12-GitHub-Pages部署与验收记录.md",
+    "scratch/github-pages-20260912/independent-frontend-browser-review-r2.md",
+    "scratch/github-pages-20260912/independent-publisher-review-r2.md",
+    "scratch/github-pages-20260912/root-live-pages-r1.json",
+    "scratch/github-pages-20260912/exporter-sync/timer-natural-observation.json",
+    "scratch/github-pages-20260912/site-status-successor/r3/independent-review.md",
+    "scratch/github-pages-20260912/site-status-successor/r3/root-actual-acceptance.json"
+  ],
+  "authorization_evidence": "用户2026-09-12在GitHub Pages作用选择中回复：托管完整的只读新闻站，M1 更新后同步静态内容（推荐）。",
+  "authorization_history": [
+    {
+      "at": "2026-09-12T20:29+08:00",
+      "evidence": "用户2026-09-12在GitHub Pages作用选择中回复：托管完整的只读新闻站，M1 更新后同步静态内容（推荐）。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "completion_class": "standard",
+  "confirmation": "用户已确认方案与必要部署，无需重复确认",
+  "created_at": "2026-09-12T20:29+08:00",
+  "department": "统筹部",
+  "details": "用户2026-09-12选择完整只读新闻站/M1更新后同步。主控协调隔离前端构建、公开DTO导出与自动同步及独立审查。复用冻结v0.2 HTML SHA5a84bfb27294ebd727369118a95528f5b788bfacbe2d56cc03fcb006f6168cb1，Function矩阵第3节公开阅读媒体与SYS-API-002/SYS-SAFE-003/部署恢复；具体出口及历史状态见实施合同，不提升无关功能。不上传私有库/密钥/草稿、不改gen407及RSS备份、不混合提交脏树。",
+  "domain_stage": "通用执行",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "快照混代/验签失败/私有数据进入输出/新旧版本竞态时禁止上传或切换；保留当前站与证据。",
+    "部署请求结果未知先查远端与部署状态，不盲重放；撤回后禁止回退含旧内容版本。",
+    "缺权限/固定视觉或必要浏览器与独审证据时不得complete；持续执行独立可推进部分。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "区分首次push与实际DEPLOYED；保留Actions首失败、f1 R2超时与原业务缺口。冻结包与实际文件分别主控/独审重算，生产与隔离证据分列，未虚报自然新代或手机实收；不混合提交脏树，不人工推进gen407。",
+  "node": "production/public-github-pages-20260912",
+  "pointers": [
+    "docs/reviews/2026-09-12-GitHub-Pages公开新闻站实施合同.md"
+  ],
+  "report": "docs/reviews/2026-09-12-GitHub-Pages部署与验收记录.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260912-C9F7C8",
+  "title": "GitHub Pages完整只读新闻站与M1公开投影持续同步",
+  "unverified": [
+    "生产406→新generation自动push组合路径未自然出现；首次真实链+自然同入口+隔离变化反例按合同核收，待下一合法active补证，不制造生产代。",
+    "本轮未重复手机微信/Telegram实收，固定reporter现场通过；f1探针同步新鲜度仍unknown。",
+    "既有RSS队列/41unknown/1未决投递与gen407新合同、真实Admin登录、X生产、原UI占位及外图失败表现保持原归属，本轮不覆盖。"
+  ],
+  "updated_at": "2026-09-12T22:44+08:00",
+  "verified": [
+    "实际GitHub Pages commit c6cb6c0adb90629c5695b6a103c33c9a4a05a55f Actions34697727765 attempt2成功，HTTPS42产品字节及公开DTO/首页/详情/404/Admin边界通过。",
+    "固定R2 UI首页详情12张三宽深浅截图、2075规范请求、搜索/分页/媒体/恢复及保留的历史缺口独审通过；Safari真实公网首页详情刷新通过。",
+    "M1固定52件runtime/27输入、专用repo key、30秒timer启用及两个自然无变化周期remote/live对账通过；18项publisher、15项installer、4项OS锁与撤回/空站/失败恢复反例通过，业务身份保持。",
+    "f1 R3固定14件原子安装，前14/原13恢复材料和Hermes配置保留；两实际reporter3.1555/3.9754秒Pages200/12条，独审PASS；正式55项/独审99项与类型检查通过。"
+  ]
+}

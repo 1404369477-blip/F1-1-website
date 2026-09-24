@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="F1+1 私有信源名册（只读）。">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; font-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
+  <title>F1+1 · 信源名册</title>
+  <link rel="stylesheet" href="/admin/assets/app.css">
+  <script defer src="/admin/assets/sources.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#src-main">跳到信源名册</a>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">F1+1</span>
+      <span class="route" id="route-label">私有 Admin · /admin/sources</span>
+    </div>
+    <nav class="topbar-nav" aria-label="后台目录">
+      <a class="topbar-link" href="/admin/ops" id="nav-ops">运行</a>
+      <a class="topbar-link" href="/admin/reviews" id="nav-reviews">审核</a>
+      <a class="topbar-link is-current" href="/admin/sources" id="nav-sources" aria-current="page">信源</a>
+      <a class="topbar-link" href="/admin/x-submissions" id="nav-submissions">投稿</a>
+      <a class="topbar-link" href="/admin/settings" id="nav-settings">设置</a>
+    </nav>
+    <div class="top-actions">
+      <span class="connection-state" id="connection-state" aria-live="polite">正在检查会话</span>
+      <button class="icon-button" id="theme-toggle" type="button" aria-label="当前深色主题，切换主题">深</button>
+    </div>
+  </header>
+
+  <main id="src-main">
+    <section class="auth-shell" id="auth-view" aria-labelledby="auth-title">
+      <div class="auth-card">
+        <p class="eyebrow">Private operator access</p>
+        <h1 id="auth-title">进入信源名册</h1>
+        <p class="auth-intro">此入口只读查看新闻网站和车手账号。不会新增、停用或开始采集。</p>
+        <div class="auth-status" id="auth-status" role="status">
+          <span class="spinner" aria-hidden="true"></span>
+          <div>
+            <strong>正在检查会话</strong>
+            <span>等待同源 Admin 服务响应。</span>
+          </div>
+        </div>
+        <div class="auth-actions" id="auth-actions" hidden>
+          <button class="primary-button" id="login-passkey" type="button">使用通行密钥登录</button>
+          <a class="secondary-button x-link-button" href="/admin/reviews">首次配置请前往审核台</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="ops-app" id="app-view" hidden aria-label="信源名册">
+      <div class="ops-wrap" id="src-wrap">
+        <header class="ops-header">
+          <div>
+            <p class="ops-eyebrow">私有后台 · 信源名册</p>
+            <h1 id="src-title">正在读取</h1>
+          </div>
+          <p class="ops-as-of" id="src-as-of">—</p>
+        </header>
+
+        <section class="ops-hero">
+          <article class="ops-hero-main">
+            <div class="ops-flag" id="src-flag"><span class="ops-flag-dot" aria-hidden="true"></span><span id="src-flag-text">正在读取</span></div>
+            <h2 id="src-hero-title">正在读取名册</h2>
+            <p id="src-hero-copy">登录后只读查看新闻网站和车手账号。</p>
+          </article>
+          <article class="ops-side">
+            <div class="ops-metric"><span id="src-metric-value">—</span><small id="src-metric-hint">已接入的新闻网站</small></div>
+          </article>
+        </section>
+
+        <section class="ops-lanes" aria-label="新闻网站与车手通讯录">
+          <article class="ops-card">
+            <p class="ops-lane-kicker">可以进流水线</p>
+            <h2>新闻网站</h2>
+            <p class="ops-source-empty" id="src-rss-summary">正在读取</p>
+            <ul class="ops-source-list" id="src-rss-list"></ul>
+            <p class="ops-source-empty" id="src-rss-empty" hidden>还没有新闻源。</p>
+          </article>
+          <article class="ops-card">
+            <p class="ops-lane-kicker">只是通讯录</p>
+            <h2>车手 X</h2>
+            <p class="ops-source-empty" id="src-x-summary">正在读取</p>
+            <ul class="ops-source-list" id="src-x-list"></ul>
+            <p class="ops-source-empty" id="src-x-empty" hidden>车手账号还没进入正式名单。选定了也不等于已经在采。</p>
+            <p class="ops-x-note">不会轮询、搜索或走非官方接口。</p>
+            <a class="ops-lane-link" href="/admin/x-accounts">打开账号明细</a>
+          </article>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

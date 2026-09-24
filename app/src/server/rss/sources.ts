@@ -2,12 +2,14 @@ export const MOTORSPORT_SOURCE_ID = "motorsport-f1-news" as const;
 export const AUTOSPORT_SOURCE_ID = "autosport-f1-news" as const;
 export const RACEFANS_SOURCE_ID = "racefans-f1-news" as const;
 export const THE_RACE_SOURCE_ID = "the-race-f1-news" as const;
+export const SKYSPORTS_SOURCE_ID = "skysports-f1-news" as const;
 
 export const LIVE_RSS_SOURCE_IDS = [
   MOTORSPORT_SOURCE_ID,
   AUTOSPORT_SOURCE_ID,
   RACEFANS_SOURCE_ID,
-  THE_RACE_SOURCE_ID
+  THE_RACE_SOURCE_ID,
+  SKYSPORTS_SOURCE_ID
 ] as const;
 export type LiveRssSourceId = (typeof LIVE_RSS_SOURCE_IDS)[number];
 
@@ -15,7 +17,8 @@ export const LIVE_RSS_DISPLAY_NAMES = [
   "Motorsport.com",
   "Autosport",
   "RaceFans",
-  "The Race"
+  "The Race",
+  "Sky Sports F1"
 ] as const;
 export type LiveRssDisplayName = (typeof LIVE_RSS_DISPLAY_NAMES)[number];
 
@@ -33,6 +36,7 @@ const MOTORSPORT_MEDIA_HOST = /^cdn-[0-9]+\.motorsport\.com$/;
 const AUTOSPORT_MEDIA_HOST = /^(cdn-[0-9]+\.motorsport\.com|cdn-[0-9]+\.autosport\.com)$/;
 const RACEFANS_MEDIA_HOST = /^www\.racefans\.net$/;
 const THE_RACE_MEDIA_HOST = /^storage\.ghost\.io$/;
+const SKYSPORTS_MEDIA_HOST = /^e[0-9]+\.365dm\.com$/;
 const IMAGE_PATH_EXTENSION = /\.(?:jpe?g|png|webp|avif)$/i;
 
 export const LIVE_RSS_SOURCES: Readonly<Record<LiveRssSourceId, LiveRssSource>> = Object.freeze({
@@ -71,6 +75,15 @@ export const LIVE_RSS_SOURCES: Readonly<Record<LiveRssSourceId, LiveRssSource>> 
     feedPath: "/category/formula-1/rss/",
     articleHost: "www.the-race.com",
     mediaHostPattern: THE_RACE_MEDIA_HOST
+  }),
+  [SKYSPORTS_SOURCE_ID]: Object.freeze({
+    sourceId: SKYSPORTS_SOURCE_ID,
+    displayName: "Sky Sports F1",
+    feedUrl: "https://www.skysports.com/rss/12433",
+    feedHost: "www.skysports.com",
+    feedPath: "/rss/12433",
+    articleHost: "www.skysports.com",
+    mediaHostPattern: SKYSPORTS_MEDIA_HOST
   })
 });
 
@@ -126,6 +139,9 @@ export function isLiveRssMediaUrl(value: string): boolean {
     url.pathname.includes("/content/images/") &&
     IMAGE_PATH_EXTENSION.test(url.pathname)
   ) {
+    return true;
+  }
+  if (SKYSPORTS_MEDIA_HOST.test(url.hostname) && IMAGE_PATH_EXTENSION.test(url.pathname)) {
     return true;
   }
   return false;

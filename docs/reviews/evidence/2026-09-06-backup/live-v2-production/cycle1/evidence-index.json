@@ -1,0 +1,89 @@
+{
+  "scope": "Accepted RunAtLoad",
+  "files": [
+    {
+      "file": "application-public.pem",
+      "sourceSha256": "a2e944019ad16e229392391116a259b4bddb9b60037527c10adde7d99589e09a",
+      "evidenceSha256": "a2e944019ad16e229392391116a259b4bddb9b60037527c10adde7d99589e09a",
+      "hostPathRedacted": false
+    },
+    {
+      "file": "application-receipt.json",
+      "sourceSha256": "2f6b9b09d8b88fff064ba1fb4b171e21965d4aa88fd7222f0bcd4b2dbe428220",
+      "evidenceSha256": "2f6b9b09d8b88fff064ba1fb4b171e21965d4aa88fd7222f0bcd4b2dbe428220",
+      "hostPathRedacted": false
+    },
+    {
+      "file": "application.json",
+      "sourceSha256": "a4ded54698a7c9bef43d08473f0bb647df3cb08390bc2bd5b5b6444d1e1d62f0",
+      "evidenceSha256": "a4ded54698a7c9bef43d08473f0bb647df3cb08390bc2bd5b5b6444d1e1d62f0",
+      "hostPathRedacted": false
+    },
+    {
+      "file": "business-health.json",
+      "sourceSha256": "8b61e3123726f79952ea0631ff66e9b1491d621edaa4a59ba25346dd2eb80585",
+      "evidenceSha256": "5314e50bea820fe12fdd651d5d28adf6893708b20570b241d0c309ea975f131b",
+      "hostPathRedacted": true
+    },
+    {
+      "file": "capture.json",
+      "sourceSha256": "b23eb5dc322f1d70b4c5d9c78e8f7a0e1a7318018e4764ded9909b0449c77c09",
+      "evidenceSha256": "1b222e43f2c9d3a44fe7fb39f7a18a602e0229c8801d7bfadfd59777943ae886",
+      "hostPathRedacted": true
+    },
+    {
+      "file": "drill.json",
+      "sourceSha256": "1a49d107f46d243f1f4b3ecbb21400472811e5e4e52542983eef3cc1228be3f8",
+      "evidenceSha256": "1a49d107f46d243f1f4b3ecbb21400472811e5e4e52542983eef3cc1228be3f8",
+      "hostPathRedacted": false
+    },
+    {
+      "file": "independent-verification.json",
+      "sourceSha256": "67897421e591e16e409556a2d5b7651f0aad016e632f24621373f6b310fcfbde",
+      "evidenceSha256": "67897421e591e16e409556a2d5b7651f0aad016e632f24621373f6b310fcfbde",
+      "hostPathRedacted": false
+    },
+    {
+      "file": "latest-pointer.json",
+      "sourceSha256": "0f1e93f866a47acc3a221799f118c4f4ad6aabc0f1037931d559c7a8a64da6cc",
+      "evidenceSha256": "0f1e93f866a47acc3a221799f118c4f4ad6aabc0f1037931d559c7a8a64da6cc",
+      "hostPathRedacted": false
+    },
+    {
+      "file": "manifest.json",
+      "sourceSha256": "bd2f39acebf7ffbf88cc27fd828e5c70304b77a63bfda41af430a690a4eb3ec1",
+      "evidenceSha256": "bd2f39acebf7ffbf88cc27fd828e5c70304b77a63bfda41af430a690a4eb3ec1",
+      "hostPathRedacted": false
+    },
+    {
+      "file": "offhost-public.pem",
+      "sourceSha256": "0eadbe753076348bb0be0856a6148f02ed3af99da30f966b17e89d3fffe8f60c",
+      "evidenceSha256": "0eadbe753076348bb0be0856a6148f02ed3af99da30f966b17e89d3fffe8f60c",
+      "hostPathRedacted": false
+    },
+    {
+      "file": "offhost-receipt.json",
+      "sourceSha256": "273c9a341f051dc693d099ece893303b7a99dcdbd736748b7563e885c31ebbcb",
+      "evidenceSha256": "273c9a341f051dc693d099ece893303b7a99dcdbd736748b7563e885c31ebbcb",
+      "hostPathRedacted": false
+    },
+    {
+      "file": "register.json",
+      "sourceSha256": "bd1fc0095b78046094caef3c1de0a763d721cb5a15e245a0c8081a27e2bdfd7f",
+      "evidenceSha256": "bd1fc0095b78046094caef3c1de0a763d721cb5a15e245a0c8081a27e2bdfd7f",
+      "hostPathRedacted": false
+    },
+    {
+      "file": "snapshot.json",
+      "sourceSha256": "06715483333642c7619fa0e376c3702776137ba87bd57f7f56701465712c24bd",
+      "evidenceSha256": "06715483333642c7619fa0e376c3702776137ba87bd57f7f56701465712c24bd",
+      "hostPathRedacted": false
+    },
+    {
+      "file": "status.json",
+      "sourceSha256": "bc9d81d6a27f4c22bcd4926423f1d8428fa667acdffcd5cec12ea8dcbf5046c8",
+      "evidenceSha256": "bc9d81d6a27f4c22bcd4926423f1d8428fa667acdffcd5cec12ea8dcbf5046c8",
+      "hostPathRedacted": false
+    }
+  ]
+}

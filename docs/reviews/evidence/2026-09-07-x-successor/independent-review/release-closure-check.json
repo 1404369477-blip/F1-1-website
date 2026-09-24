@@ -1,0 +1,78 @@
+{
+  "status": "PASS",
+  "node": "v24.18.0",
+  "admin": {
+    "declaredCount": 165,
+    "derivedCount": 158,
+    "pathSet": "ea75ad37f82ba55e34281c9a9f84569fdaaa85ba020949e43ddc3280bb92f810",
+    "recomputedPathSet": "ea75ad37f82ba55e34281c9a9f84569fdaaa85ba020949e43ddc3280bb92f810",
+    "xDependencyEdges": [
+      {
+        "from": "src/server/internal-operation/gateway.ts",
+        "request": "../x-page/schema-identity.ts",
+        "to": "src/server/x-page/schema-identity.ts",
+        "kind": "es-module"
+      },
+      {
+        "from": "src/server/rss/source-registry.ts",
+        "request": "../x-page/normalize.ts",
+        "to": "src/server/x-page/normalize.ts",
+        "kind": "es-module"
+      }
+    ]
+  },
+  "scriptCounts": [
+    {
+      "file": "scripts/prepare-v10-release-candidate.ts",
+      "sha256": "a0499a0ac579e5031212bb37714f26f94bfc48188dbd832c6f60c6b7149b87d9",
+      "closedCount": 165
+    },
+    {
+      "file": "scripts/ql3-deployment-v10-evidence.ts",
+      "sha256": "0b267c242ef63c7e74f80dc580bec89462d17373f101faaf9ba6a966c93142ee",
+      "closedCount": 165
+    }
+  ],
+  "backup": {
+    "rootSha256": "e98bb1576f080c13845d791c3e143febef43185857caba8ee090903bf1225f42",
+    "fileCount": 762,
+    "localModulesImported": 31,
+    "importedPaths": [
+      "scripts/backup-off-host-observe.ts",
+      "scripts/backup-recovery-point-register.ts",
+      "scripts/backup-restore-drill.ts",
+      "scripts/backup-snapshot-once.ts",
+      "src/server/admin-service/quiesce-absence-guard.ts",
+      "src/server/backup-snapshot/application-drill-receipt.ts",
+      "src/server/backup-snapshot/core.ts",
+      "src/server/backup-snapshot/off-host-receipt.ts",
+      "src/server/config/env.ts",
+      "src/server/db/database.ts",
+      "src/server/db/profile.ts",
+      "src/server/internal-operation/authorizer.ts",
+      "src/server/internal-operation/backup-package-binding.ts",
+      "src/server/internal-operation/backup-recovery-point-register.ts",
+      "src/server/internal-operation/gateway.ts",
+      "src/server/internal-operation/owner-supervisor.ts",
+      "src/server/internal-operation/phase.ts",
+      "src/server/internal-operation/recovery-fence-write.ts",
+      "src/server/internal-operation/recovery.ts",
+      "src/server/review-real/error.ts",
+      "src/server/review-real/mapping.ts",
+      "src/server/review-real/migration.ts",
+      "src/server/review-real/projection.ts",
+      "src/server/review-real/schema.ts",
+      "src/server/rss/rss-config-read.ts",
+      "src/server/rss/source-registry-migration.ts",
+      "src/server/rss/sources.ts",
+      "src/server/tweet-inbox/repository.ts",
+      "src/server/tweet-inbox/types.ts",
+      "src/server/tweet-inbox/url.ts",
+      "src/server/x-page/schema-identity.ts"
+    ],
+    "xPaths": [
+      "src/server/x-page/schema-identity.ts"
+    ],
+    "verifiedBeforeAndAfterImports": true
+  }
+}

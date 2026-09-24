@@ -1,3 +1,6 @@
+import { readXPageCommittedDelivery } from "../x-page/delivery-authority.ts";
+import { xPageAutomaticContentBindings } from "../x-page/content-authority.ts";
+import { xPageRefinementReadBindings } from "../x-page/source-authority.ts";
 import { createHash, randomBytes } from "node:crypto";
 import type { DatabaseSync } from "node:sqlite";
 
@@ -184,6 +187,8 @@ export type GatewayMutationPort = Readonly<{
   ): T;
   runExternal?<T>(input: GatewayExternalAttemptInput<T>): Promise<T>;
   runReconcile?<T>(input: GatewayExternalReconcileInput<T>): Promise<T>;
+  prepareUnstartedProjectionLeaseRetry?(deliveryId: string): boolean;
+  recordProjectionReconcileAttention?(deliveryId: string, reasonCode: string): void;
 }>;
 
 export type XManualAuthorityPort = Readonly<{
@@ -280,12 +285,16 @@ export class SqliteGatewayMutationPort implements GatewayMutationPort, XManualAu
   }
 
   public mutateSourceRegistry(input: Readonly<SourceRegistryGatewayMutation & { operationId: string }>): number {
-    const source = this.database.prepare("SELECT source_id,source_safety_epoch FROM source_registry_v1 WHERE source_id=?").get(input.sourceId) as Record<string, unknown> | undefined;
+    const source = this.database.prepare("SELECT source_id,source_kind,source_safety_epoch,identity_sha256 FROM source_registry_v1 WHERE source_id=?").get(input.sourceId) as Record<string, unknown> | undefined;
     assert(source !== undefined, "SOURCE_NOT_FOUND");
+    assert(source.source_kind !== "x_page" || input.action !== "retire", "X_PAGE_RETIRE_SUCCESSOR_REQUIRED");
+    const xAdmissionSchema = source.source_kind === "x_page" && this.database.prepare("SELECT 1 FROM sqlite_schema WHERE name='x_page_source_admission_v1' AND type='table'").get() !== undefined;
+    assert(!xAdmissionSchema || input.action === "disable", "X_PAGE_TRUSTED_READMISSION_REQUIRED");
+    const execute = () => {
     const legacy = this.database.prepare("SELECT stop_epoch FROM source WHERE source_id=?").get(input.sourceId) as Record<string, unknown> | undefined;
     const capability = this.prepareCapability({
       operationId: input.operationId,
-      operationKind: input.action === "retire" ? "source_delete" : "source_update",
+      operationKind: input.action === "retire" ? "source_delete" : source.source_kind === "x_page" && !xAdmissionSchema ? "x_page_source_update" : "source_update",
       ownerProcess: "admin_http",
       entityKind: "source",
       entityId: input.sourceId,
@@ -293,14 +302,16 @@ export class SqliteGatewayMutationPort implements GatewayMutationPort, XManualAu
       statement: "UPDATE source SET enabled=enabled WHERE source_id=?",
       parameters: [input.sourceId],
       identity: { sourceId: input.sourceId, candidateId: null, publicationId: null, publicId: null },
-      expectedVersion: null,
-      expectedHash: ZERO,
+      expectedVersion: xAdmissionSchema ? input.expectedRevision : null,
+      expectedHash: xAdmissionSchema ? String(source.identity_sha256) : ZERO,
       capabilityClass: "control",
       egressClass: "none",
-      policyId: input.action === "retire" ? "p-source-delete-paused" : "p-source-update-paused",
+      policyId: input.action === "retire" ? "p-source-delete-paused" : source.source_kind === "x_page" ? "p-x-page-source-update-paused" : "p-source-update-paused",
       sourceStopEpoch: legacy === undefined ? Number(source.source_safety_epoch) : Number(legacy.stop_epoch)
     });
     return this.gateway.runSourceRegistryMutation(capability, input);
+    };
+    return xAdmissionSchema ? this.gateway.runAtomicAdmission(execute) : execute();
   }
 
   /**
@@ -507,8 +518,18 @@ export class SqliteGatewayMutationPort implements GatewayMutationPort, XManualAu
     const expectedHash = input.expectedHash ?? ZERO;
     assert(HASH.test(expectedHash), "EXPECTED_ENTITY_HASH_INVALID");
     const identity = Object.freeze({ ...input.identity });
+    let sourceStopEpoch = input.sourceStopEpoch ?? null;
+    if (input.operationKind === "collect") {
+      assert(this.ownerProcess === "rss_collector" && identity.sourceId !== null, "COLLECT_SOURCE_BINDING_REQUIRED");
+      const source = this.database.prepare("SELECT stop_epoch FROM source WHERE source_id=?").get(identity.sourceId);
+      assert(source !== undefined && (sourceStopEpoch === null || sourceStopEpoch === Number(source.stop_epoch)), "COLLECT_SOURCE_STALE");
+      sourceStopEpoch = Number(source.stop_epoch);
+      if (input.entityKind === "rss_media") {
+        assert(input.entityId === input.parameters?.[0] && identity.candidateId === input.entityId, "COLLECT_MEDIA_IDENTITY_INVALID");
+      }
+    }
     const identitySelector = this.identitySelector(input.entityKind);
-    const entitySet: readonly EntityBinding[] = [
+    const entitySet: EntityBinding[] = [
       Object.freeze({
         entityKind: input.entityKind,
         entityId: id(input.entityId, "ENTITY_ID_INVALID"),
@@ -517,6 +538,13 @@ export class SqliteGatewayMutationPort implements GatewayMutationPort, XManualAu
         expectedHash,
       }),
     ];
+    if (input.operationKind === "collect") {
+      for (const [selector, kind, value] of [["source_id", "source", identity.sourceId], ["candidate_id", "candidate", identity.candidateId]] as const) {
+        if (value !== null && !entitySet.some(binding => binding.identitySelector === selector && binding.entityId === value)) {
+          entitySet.push({ entityKind: kind, entityId: value, identitySelector: selector, expectedVersion: null, expectedHash: ZERO });
+        }
+      }
+    }
     const requiredFenceSet =
       input.requiredFenceSet ??
       this.readRequiredFenceSet(policyId, identity, control);
@@ -563,7 +591,7 @@ export class SqliteGatewayMutationPort implements GatewayMutationPort, XManualAu
           schemaSha256: this.gateway.expectedSchemaSha256(),
           releaseSha256: handoff.releaseSha256,
           manifestSha256: handoff.manifestSha256,
-          sourceStopEpoch: input.sourceStopEpoch ?? null,
+          sourceStopEpoch,
           writerEpoch: Number(control.writer_epoch),
           epochs: {
             sourceConfig: Number(control.source_config_epoch),
@@ -580,7 +608,7 @@ export class SqliteGatewayMutationPort implements GatewayMutationPort, XManualAu
             ? null
             : {
                 reservationId: `reservation-${operationId}`,
-                accountId: input.budgetAccountId ?? "gateway-unconfigured",
+                accountId: input.budgetAccountId ?? (input.operationKind === "collect" ? "acct-rss" : "gateway-unconfigured"),
                 units: 1,
               },
         modelRouteRef: input.modelRouteRef ?? null,
@@ -720,10 +748,16 @@ export class SqliteGatewayMutationPort implements GatewayMutationPort, XManualAu
    * transaction.  The repository receives only the gateway-owned writer; it
    * never receives the database handle and cannot open a second transaction.
    */
+  /** Admission + mutation atomicity for capture import; no additional SQL authority. */
+  public runAtomicAdmission<T>(callback: () => T): T {
+    return this.gateway.runAtomicAdmission(callback);
+  }
+
   public runTransaction<T>(
     input: GatewayMutationTransactionInput,
     callback: (mutate: (mutation: GatewayWriteInput) => number) => T,
   ): T {
+    if (input.policyId === "p-x-page-refine-store-live") input = { ...input, entitySet: xPageRefinementReadBindings(this.database, input.entitySet, input.identity, this.now()) };
     const prepared = this.prepareCapability(
       {
         ...input,
@@ -755,6 +789,17 @@ export class SqliteGatewayMutationPort implements GatewayMutationPort, XManualAu
   public async runExternal<T>(
     input: GatewayExternalAttemptInput<T>,
   ): Promise<T> {
+    const xPublication = input.identity.publicationId && input.entityKind === "projection_outbox"
+      ? this.database.prepare("SELECT s.source_kind FROM publication p JOIN review_bundle b ON b.bundle_id=p.bundle_id JOIN pending_review_candidate c ON c.candidate_id=b.candidate_id JOIN source_registry_v1 s ON s.source_id=c.source_id WHERE p.publication_id=?").get(input.identity.publicationId) : undefined;
+    const xDelivery = ["p-x-page-projection-live", "p-x-page-reconcile-live"].includes(String(input.policyId)) || xPublication?.source_kind === "x_page"
+      ? readXPageCommittedDelivery(this.database, input.entityId, {schemaSha256:this.gateway.expectedSchemaSha256(),releaseSha256:this.gateway.expectedReleaseSha256(),manifestSha256:this.gateway.expectedManifestSha256(),
+          verifiedFullManifestSha256:this.gateway.verifiedRssAutomaticFullManifest(),verifiedFallbackManifestSha256:this.gateway.verifiedRssAutomaticFallbackManifest(),now:this.now()}) : null;
+    if(xDelivery) {
+      assert(input.entityKind === "projection_outbox", "X_PAGE_DELIVERY_OUTBOX_BINDING_REQUIRED");
+      assert(input.policyId === undefined || ["p-x-page-projection-live", "p-x-page-reconcile-live"].includes(input.policyId), "X_PAGE_DELIVERY_POLICY_INVALID");
+      assert((input.expectedVersion === undefined || input.expectedVersion === Number(xDelivery.row.snapshot_generation)) && (input.expectedHash === undefined || input.expectedHash === xDelivery.row.task_envelope_hash), "X_PAGE_DELIVERY_OUTBOX_STALE");
+      input={...input,policyId:input.operationKind === "reconcile" ? "p-x-page-reconcile-live" : "p-x-page-projection-live",expectedVersion:Number(xDelivery.row.snapshot_generation),expectedHash:String(xDelivery.row.task_envelope_hash),identity:{sourceId:String(xDelivery.row.source_id),candidateId:String(xDelivery.row.candidate_id),publicationId:String(xDelivery.row.publication_id),publicId:String(xDelivery.row.public_id)},sourceStopEpoch:Number(xDelivery.source.stop_epoch)};
+    }
     const operationId = id(input.operationId, "OPERATION_ID_INVALID");
     const existing = this.database
       .prepare(
@@ -789,7 +834,7 @@ export class SqliteGatewayMutationPort implements GatewayMutationPort, XManualAu
     );
     const identity = Object.freeze({ ...input.identity });
     const entityId = id(input.entityId, "ENTITY_ID_INVALID");
-    const entitySet: readonly EntityBinding[] = [
+    const entitySet: EntityBinding[] = [
       Object.freeze({
         entityKind: input.entityKind,
         entityId,
@@ -798,6 +843,21 @@ export class SqliteGatewayMutationPort implements GatewayMutationPort, XManualAu
         expectedHash: input.expectedHash ?? ZERO,
       }),
     ];
+    for (const [selector, kind, value] of [
+      ["source_id", "source", identity.sourceId], ["candidate_id", "candidate", identity.candidateId],
+      ["publication_id", "publication", identity.publicationId], ["public_id", "published_projection", identity.publicId],
+    ] as const) {
+      if (value !== null && !entitySet.some(binding => binding.identitySelector === selector && binding.entityId === value)) {
+        entitySet.push({ entityKind: kind, entityId: value, identitySelector: selector, expectedVersion: null, expectedHash: ZERO });
+      }
+    }
+    if (xDelivery) for (const binding of xPageAutomaticContentBindings(xDelivery.content,xDelivery.target)) {
+      const at=entitySet.findIndex(item=>item.entityKind===binding.entityKind&&item.entityId===binding.entityId);
+      if(at<0)entitySet.push(binding);else {
+        assert((entitySet[at].expectedVersion===null&&entitySet[at].expectedHash===ZERO)||canonicalJsonV1(entitySet[at])===canonicalJsonV1(binding),"X_PAGE_DELIVERY_READ_BINDING_STALE");entitySet[at]=binding;
+      }
+    }
+    if (input.policyId === "p-x-page-refine-live") entitySet.splice(0, entitySet.length, ...xPageRefinementReadBindings(this.database, entitySet, identity, this.now()));
     assert(
       HASH.test(entitySet[0].expectedHash),
       "EXPECTED_ENTITY_HASH_INVALID",
@@ -943,6 +1003,59 @@ export class SqliteGatewayMutationPort implements GatewayMutationPort, XManualAu
     });
     this.reconcileHandles.delete(input.reconcileKey);
     return value;
+  }
+
+  /** RSS automatic delivery uses durable original-attempt identity and a new
+   * read-only observation grant. The callback receives the genuine GET handle;
+   * no capability for the original POST is reconstructed. */
+  public async runProjectionReconcile<T>(input: GatewayExternalReconcileInput<T>): Promise<T> {
+    assert(this.ownerProcess === "reconciler", "PROJECTION_RECONCILE_OWNER_REQUIRED");
+    this.gateway.recoverProjectionReconcileOriginal(input.reconcileKey);
+    const settled = this.gateway.settledProjectionReconcileReceipt(input.reconcileKey);
+    if (settled !== null) return settled as T;
+    const target = this.gateway.projectionReconcileTarget(input.reconcileKey);
+    const latest = this.database.prepare("SELECT observed.created_at FROM internal_operation observed JOIN operation_entity_binding binding ON binding.operation_id=observed.operation_id AND binding.entity_kind='projection_outbox' AND binding.entity_id=? WHERE observed.owner_process='reconciler' AND observed.operation_kind='reconcile' ORDER BY observed.created_at DESC LIMIT 1").get(target.deliveryId);
+    assert(latest === undefined || this.now().getTime() - Date.parse(String(latest.created_at)) >= 60_000, "PROJECTION_RECONCILE_BACKOFF");
+    const operationId = `projection-observe-${randomBytes(24).toString("hex")}`;
+    let response!: ClosedExternalResponse;
+    let responseBodyJson!: string;
+    const value = await this.runExternal({
+      operationId, operationKind: "reconcile", ownerProcess: "reconciler", capabilityClass: "reconcile_readonly",
+      policyId: target.operation.policy_id === "p-x-page-projection-live" ? "p-x-page-reconcile-live" : `p-reconcile-projection-${readPhaseSnapshot(this.database).phase}`, endpointClass: "projection_deliver",
+      providerResource: target.receiptResource, routeId: "route-projection", method: "GET", bodySha256: null,
+      externalIdempotencyKey: `observe-${target.attempt.attempt_id}-${operationId}`,
+      reconcileKey: `readonly-${target.attempt.attempt_id}-${operationId}`,
+      identity: target.request.entityIdentity, entityKind: "projection_outbox", entityId: target.deliveryId,
+      expectedVersion: target.generation, expectedHash: target.envelopeHash, egressClass: "projection_private", budgetAccountId: "acct-projection",
+      execute: async (handle) => {
+        const result = await input.execute({ ...handle, reconcileAfter: handle.startedAt });
+        const observed = result.value as Record<string, unknown>;
+        assert(observed !== null && typeof observed === "object" && observed.kind === "response"
+          && Number.isSafeInteger(observed.status) && Number(observed.status) >= 100 && Number(observed.status) <= 599,
+        "PROJECTION_RECONCILE_RESPONSE_INVALID");
+        responseBodyJson = JSON.stringify(observed.body);
+        response = result.response;
+        assert(String(observed.status) === response.providerStatus && response.providerResourceIdentity === target.request.providerResource
+          && response.responseBodySha256 === sha256(responseBodyJson), "PROJECTION_RECONCILE_RESPONSE_MISMATCH");
+        return { value: result.value, response: { ...response, providerResourceIdentity: target.receiptResource } };
+      },
+    });
+    // A completed GET may truthfully report 404 or unusable receiver data.
+    // Its observation stays recorded while the original POST remains unknown.
+    assert(/^2\d\d$/.test(response.providerStatus), "PROJECTION_RECONCILE_RECEIPT_UNAVAILABLE");
+    this.gateway.validateProjectionReconcileReceipt(input.reconcileKey, responseBodyJson, response);
+    this.gateway.settleProjectionReconcile({ reconcileKey: input.reconcileKey, observationOperationId: operationId, responseBodyJson, response });
+    return value;
+  }
+
+  public prepareUnstartedProjectionLeaseRetry(deliveryId: string): boolean {
+    assert(this.ownerProcess === "projection_sender", "PROJECTION_RECONCILE_OWNER_REQUIRED");
+    return this.gateway.prepareUnstartedProjectionLeaseRetry(deliveryId);
+  }
+
+  public recordProjectionReconcileAttention(deliveryId: string, reasonCode: string): void {
+    assert(this.ownerProcess === "projection_sender", "PROJECTION_RECONCILE_OWNER_REQUIRED");
+    this.gateway.recordProjectionReconcileAttention(deliveryId, reasonCode);
   }
 
   private prepareCapability(
@@ -1156,9 +1269,17 @@ export class SqliteGatewayMutationPort implements GatewayMutationPort, XManualAu
               ? identity.candidateId
               : identity.publicationId;
       assert(scopeKind === "global" || scopeId !== null, "FENCE_SCOPE_MISSING");
+      const hasAutomaticAuthority = this.database.prepare("SELECT 1 FROM sqlite_schema WHERE name='rss_automatic_fence_current_v1' AND type='view'").get() !== undefined;
+      const requireCurrent = hasAutomaticAuthority && (policyId.startsWith("p-review-auto-") || policyId.startsWith("p-publish-auto-") || policyId.startsWith("p-refine-rss-"));
+      const requireXCurrent = ["p-x-page-refine-live", "p-x-page-refine-store-live", "p-x-page-auto-review-live", "p-x-page-auto-publish-live"].includes(policyId);
+      const currentClause = requireXCurrent
+        ? " AND EXISTS(SELECT 1 FROM x_page_automatic_fence_current_v1 v JOIN internal_operation issuer ON issuer.operation_id=v.issued_by_operation_id WHERE v.fence_receipt_id=generic_fence_receipt.fence_receipt_id AND v.candidate_id=? AND v.source_id=? AND issuer.expected_schema_sha256=? AND issuer.expected_release_sha256=? AND issuer.expected_manifest_sha256=?)"
+        : requireCurrent
+        ? " AND EXISTS(SELECT 1 FROM rss_automatic_fence_current_v1 v JOIN internal_operation issuer ON issuer.operation_id=v.issued_by_operation_id WHERE v.fence_receipt_id=generic_fence_receipt.fence_receipt_id AND v.candidate_id=? AND v.source_id=? AND issuer.expected_schema_sha256=? AND issuer.expected_release_sha256=? AND issuer.expected_manifest_sha256=?)"
+        : policyId.startsWith("p-collect-") ? " AND reason_code<>'RSS_AUTOMATIC_CURRENT_V1'" : "";
       const receipt = this.database
         .prepare(
-          "SELECT fence_receipt_id,receipt_sha256 FROM generic_fence_receipt WHERE scope_kind=? AND scope_id IS ? AND fence_kind=? AND policy_epoch=? AND recovery_epoch=? AND writer_epoch=? AND state='clear' AND expires_at>? ORDER BY observed_at DESC,fence_receipt_id DESC LIMIT 1",
+          `SELECT fence_receipt_id,receipt_sha256 FROM generic_fence_receipt WHERE scope_kind=? AND scope_id IS ? AND fence_kind=? AND policy_epoch=? AND recovery_epoch=? AND writer_epoch=? AND state='clear' AND expires_at>?${currentClause} ORDER BY observed_at DESC,fence_receipt_id DESC LIMIT 1`,
         )
         .get(
           ...([
@@ -1169,6 +1290,7 @@ export class SqliteGatewayMutationPort implements GatewayMutationPort, XManualAu
             Number(control.recovery_epoch),
             Number(control.writer_epoch),
             now,
+            ...((requireCurrent || requireXCurrent) ? [identity.candidateId, identity.sourceId, this.gateway.expectedSchemaSha256(), this.gateway.expectedReleaseSha256(), this.gateway.expectedManifestSha256()] : []),
           ] as any[]),
         ) as Record<string, unknown> | undefined;
       assert(receipt !== undefined, "GATEWAY_FENCE_MISSING");

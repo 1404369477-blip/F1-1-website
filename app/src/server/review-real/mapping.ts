@@ -3,6 +3,7 @@ import type { z } from "zod";
 
 import { canonicalJson } from "../db/profile.ts";
 import { liveRssDisplayName } from "../rss/sources.ts";
+import type { VerifiedXCapture } from "../x-page/trusted-capture.ts";
 import {
   ADMIN_REVIEW_DTO_SCHEMAS,
   AuditEventPayloadSchema,
@@ -15,6 +16,7 @@ import {
   PublicProjectionRecordSchema,
   ReviewBundlePublicPayloadSchema,
   ReviewEditableSchema,
+  XPageReviewBundlePublicPayloadSchema,
   UtcTimestampSchema,
   type CandidateSourceSnapshot,
   type ProjectionSnapshot,
@@ -153,6 +155,39 @@ export function derivePublicId(candidateId: string, bundleHash: string): string 
     throw new ReviewDataError("REVIEW_DATA_INVALID");
   }
   return `public-rss-${sha256(`${parsedCandidateId.data}\u001f${parsedBundleHash.data}`)}`;
+}
+
+/** Independent identity domain. Existing RSS public ids and signing bytes are unchanged. */
+export function deriveXPagePublicId(candidateId: string, bundleHash: string): string {
+  if (!/^xpage-[0-9a-f]{64}$/.test(candidateId) || !HashSchema.safeParse(bundleHash).success) throw new ReviewDataError("REVIEW_DATA_INVALID");
+  return `public-x-${sha256(`f1plus1-x-page-public-id-v1\n${canonicalJson({ candidateId, bundleHash })}`)}`;
+}
+
+/** Pure private bundle construction. The content authority validates producer,
+ * current source, model result and manual overrides before any gateway write. */
+export function buildXPageReviewBundleMaterial(input: Readonly<{
+  bundleId: string; bundleRevision: number; createdAt: string;
+  target: Readonly<{ candidateId: string; sourceRevision: number; inputContentHash: string }>;
+  capture: VerifiedXCapture; editable: ReviewEditable;
+}>): ReviewBundleMaterial {
+  const { normalized, captureSha256 } = input.capture;
+  const editable = ReviewEditableSchema.safeParse(input.editable);
+  if (!IdentifierSchema.safeParse(input.bundleId).success || !UtcTimestampSchema.safeParse(input.createdAt).success
+    || !Number.isSafeInteger(input.bundleRevision) || input.bundleRevision < 1 || !editable.success
+    || input.target.candidateId !== `xpage-${normalized.identity}` || input.target.inputContentHash !== normalized.sourceVersionHash
+    || sha256(canonicalJson(input.capture.capture)) !== captureSha256) throw new ReviewDataError("REVIEW_DATA_INVALID");
+  const publicPayload = XPageReviewBundlePublicPayloadSchema.parse({
+    candidateId: input.target.candidateId, sourceId: `x_${normalized.authorHandle}`, sourceRevision: input.target.sourceRevision,
+    sourcePayloadHash: input.target.inputContentHash, canonicalUrl: normalized.canonicalUrl, sourceTitle: normalized.text,
+    sourceAuthor: `${normalized.authorDisplayName} (@${normalized.authorHandle})`, sourcePublishedAt: normalized.publishedAt,
+    sourcePlatform: "x", contentType: "driver_social", titleZh: editable.data.titleZh, summaryZh: editable.data.summaryZh,
+    media: [], sourceDisplayName: normalized.authorDisplayName, authorHandle: normalized.authorHandle,
+    relations: normalized.relations, xCaptureSha256: captureSha256,
+  });
+  const publicPayloadJson = canonicalJson(publicPayload), publicPayloadHash = sha256(publicPayloadJson);
+  const bundleHash = sha256(canonicalJson({ bundle_id: input.bundleId, bundle_revision: input.bundleRevision,
+    public_payload_hash: publicPayloadHash, editor_notes: editable.data.notes, created_at: input.createdAt }));
+  return { publicPayload, publicPayloadJson, publicPayloadHash, editorNotes: editable.data.notes, bundleHash };
 }
 
 export function buildReviewBundleMaterial(input: Readonly<{
@@ -298,7 +333,26 @@ export function buildPublicProjectionRecord(input: Readonly<{
   if (!payload.success || !publishedAt.success || !bundleHash.success) {
     throw new ReviewDataError("REVIEW_DATA_INVALID");
   }
-  requireEqual(input.publicId, derivePublicId(payload.data.candidateId, bundleHash.data));
+  requireEqual(input.publicId, payload.data.contentType === "driver_social"
+    ? deriveXPagePublicId(payload.data.candidateId, bundleHash.data) : derivePublicId(payload.data.candidateId, bundleHash.data));
+
+  if (payload.data.contentType === "driver_social") {
+    const x = payload.data;
+    const attribution: string[] = [];
+    if (x.relations.repostedByHandle !== null) attribution.push(`原帖作者为 @${x.authorHandle}，由 @${x.relations.repostedByHandle} 转帖。`);
+    if (x.relations.quotedStatusUrl !== null) attribution.push(`原帖引用了另一条帖子，引用内容的归属请参见：${x.relations.quotedStatusUrl}`);
+    if (x.relations.replyToStatusUrl !== null) attribution.push(`原帖是对以下帖子的回复：${x.relations.replyToStatusUrl}`);
+    const core = PublicProjectionRecordCoreSchema.parse({
+      publicId: input.publicId, publishGeneration: 1, contentType: "driver_social", state: "media_missing",
+      titleZh: x.titleZh, summaryZh: x.summaryZh, publishedAt: publishedAt.data, sourcePublishedAt: x.sourcePublishedAt,
+      sourceTimeStatus: "known", source: { sourceId: x.sourceId, platform: "x", displayName: x.sourceDisplayName,
+        byline: x.sourceAuthor, accessStatus: "available" }, media: null,
+      originalLink: { enabled: true, url: x.canonicalUrl, reason: null },
+      detail: { leadZh: x.summaryZh, bodyZh: [x.summaryZh, ...(attribution.length ? [attribution.join("\n")] : [])],
+        keyPointsZh: normalizeProjectionKeyPoints(input.keyPointsZh) },
+    });
+    return PublicProjectionRecordSchema.parse({ ...core, projectionHash: projectionHash(core) });
+  }
 
   const media = payload.data.media[0] ?? null;
 

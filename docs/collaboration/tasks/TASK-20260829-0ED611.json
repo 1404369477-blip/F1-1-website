@@ -1,17 +1,27 @@
 {
   "acceptance_exit": "生产 registry 精确27 X + Sky F1 RSS，无被drop账号 active；三源canary能取得canonical status URL/内容候选并生成去重收据；challenge/rate-limit/login-loss 会停用且有告警；扩容门、频率、抖动、单账号熔断、总预算和回退可观测；0社交写操作、0绕过、0自动公开；形成运行报告与source状态清单。",
   "artifacts": [],
-  "authorization_evidence": "2026-08-29当前主线程：用户要求完整同步工作文档，方便其他Agent接手；此前已明确要求持续推进至公开网站和管理后台完整上线。",
+  "authorization_evidence": "用户2026-09-06已确认27源M1页面自动抓取审核发布，2026-09-13明确继续推进并再次选择保留M1采集；见docs/reviews/2026-09-07-X页面导入本地切片与生产接续.md与docs/reviews/2026-09-13-X真实采集接续与RSS自动链核查.md。旧业务授权等待被覆盖，真实访问与独审/生产验收门保持。",
   "authorization_history": [
     {
       "at": "2026-08-29T23:49+08:00",
       "evidence": "2026-08-29当前主线程：用户要求完整同步工作文档，方便其他Agent接手；此前已明确要求持续推进至公开网站和管理后台完整上线。",
       "state": "user_confirmed"
+    },
+    {
+      "at": "2026-08-31T09:12+08:00",
+      "evidence": "旧的同步文档/持续推进证据不授权当前生产registry写入或真实X canary；两类生产动作均需新的分别明确确认。",
+      "state": "user_required"
+    },
+    {
+      "at": "2026-09-13T22:48+08:00",
+      "evidence": "用户2026-09-06已确认27源M1页面自动抓取审核发布，2026-09-13明确继续推进并再次选择保留M1采集；见docs/reviews/2026-09-07-X页面导入本地切片与生产接续.md与docs/reviews/2026-09-13-X真实采集接续与RSS自动链核查.md。旧业务授权等待被覆盖，真实访问与独审/生产验收门保持。",
+      "state": "user_confirmed"
     }
   ],
   "authorization_state": "user_confirmed",
-  "block_reason": "",
-  "claimed_by": "",
+  "block_reason": "等待TASK-20260831-F7B06E完成；生产source registry写入与使用登录态的X真实canary均需用户分别明确确认。阻断期间仅允许候选代码与disposable验证，禁止生产写、禁止真实X访问。",
+  "claimed_by": "开发部/019fb374-7c86-7882-9e51-76114ce69e7f",
   "completion_class": "standard",
   "confirmation": "按当前线程用户持续推进目标执行；任何新增付费、凭证、权限、不可逆删除或扩大公网暴露仍需单独用户确认。",
   "created_at": "2026-08-29T23:49+08:00",
@@ -19,7 +29,7 @@
   "details": "以 data/x-source-selection-v1.csv 为唯一选择输入：keep=27，SkySportsF1 改官方 RSS，drop=31。后续不得恢复旧59全量。先把生产 source registry 收敛到27个 X proposed/disabled/manual-only 与1条 Sky F1 RSS candidate；复用 M1 已完成的27/27登录态页面只读证据，只证明当次可访问。实现最低风险采集：单账号串行、低频有抖动、会话健康/挑战/限流即停、无点赞转发关注回复发帖、不得读取cookie值或绕过挑战、不得用Nitter/RSSHub/未文档化GraphQL。先3源 canary，成功后分批扩容；所有内容进入审核链，不直接公开。",
   "domain_stage": "开发实现/X信源灰度",
   "event_receipts": [],
-  "execution_state": "queued",
+  "execution_state": "blocked",
   "external_artifacts": [],
   "failure_paths": [
     "出现 challenge、rate limit、login loss 或 restricted 页面立即停止该账号，不自动重试绕过。",
@@ -33,12 +43,23 @@
     "docs/当前生产状态与执行待办.md"
   ],
   "report": "",
-  "resolution": null,
-  "revision": 1,
+  "resolution": {
+    "evidence": "docs/reviews/2026-09-13-X真实采集接续与RSS自动链核查.md",
+    "reason": "用户已明确M1采集和自动审批发布；旧manual-only合同不再代表当前授权，由后继统筹任务保留全部技术验收与真实入口阻塞。",
+    "receipt_id": "RES-20260913T225525-E07CD2EC",
+    "replacement_revision": 2,
+    "replacement_state": "claimed",
+    "replacement_task_id": "TASK-20260913-D620C2",
+    "resolved_at": "2026-09-13T22:55+08:00",
+    "resolved_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+    "state": "superseded",
+    "target_revision_before": 5
+  },
+  "revision": 6,
   "schema_version": 1,
   "task_id": "TASK-20260829-0ED611",
   "title": "27个X信源Registry收敛与低风险只读采集灰度",
   "unverified": [],
-  "updated_at": "2026-08-29T23:49+08:00",
+  "updated_at": "2026-09-13T22:55+08:00",
   "verified": []
 }

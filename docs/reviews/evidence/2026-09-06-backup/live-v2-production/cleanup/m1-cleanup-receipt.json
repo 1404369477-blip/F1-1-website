@@ -1,0 +1,106 @@
+{
+  "schemaVersion": "f1-live-v2-precise-cleanup-receipt-v1",
+  "machine": "m1",
+  "startedAt": "2026-09-06T17:10:15.016256+00:00",
+  "manifestSha256": "ad1515b837ef0d63ff015654568d5a51214761534374ab22ec6cc2fbbf6ba17c",
+  "authorizationSha256": "e625195d02f3ffd9285aa9e607081c06bdbabc30dd8d600d408bd44635546a0d",
+  "freeBytesBefore": 219772776448,
+  "deleted": [
+    {
+      "path": "[M1-HOME]/F1-1-website/backups/live-v2-stage-20260906-02/restore/db/snapshot.sqlite",
+      "dev": 16777233,
+      "ino": 39895387,
+      "size": 241504256,
+      "allocatedBytes": 241504256
+    },
+    {
+      "path": "[M1-HOME]/F1-1-website/backups/live-v2-stage-20260906-02/restore-02/db/snapshot.sqlite",
+      "dev": 16777233,
+      "ino": 39896161,
+      "size": 241504256,
+      "allocatedBytes": 241504256
+    },
+    {
+      "path": "[M1-HOME]/F1-1-website/backups/live-v2-stage-20260906-02/restore-03/db/snapshot.sqlite",
+      "dev": 16777233,
+      "ino": 39896814,
+      "size": 241504256,
+      "allocatedBytes": 241504256
+    },
+    {
+      "path": "[M1-HOME]/F1-1-website/backups/live-v2-stage-20260906-02/restore-04/db/snapshot.sqlite",
+      "dev": 16777233,
+      "ino": 39899163,
+      "size": 241504256,
+      "allocatedBytes": 241504256
+    },
+    {
+      "path": "[M1-HOME]/F1-1-website/backups/live-v2-stage-20260906-02/restore-05/db/snapshot.sqlite",
+      "dev": 16777233,
+      "ino": 39900054,
+      "size": 241504256,
+      "allocatedBytes": 241504256
+    },
+    {
+      "path": "[M1-HOME]/F1-1-website/backups/live-v2-stage-20260906-02/frozen-01/objects/db-projection-snapshot.60364844270a141b1911daafa3943ff76df7891bd52211027202577c549c374e.e2f2c6fc36e07951",
+      "dev": 16777233,
+      "ino": 39900009,
+      "size": 332821387,
+      "allocatedBytes": 332824576
+    },
+    {
+      "path": "[M1-HOME]/F1-1-website/backups/live-v2-stage-20260906-02/clone-01/f1plus1-rss-real-private.sqlite",
+      "dev": 16777233,
+      "ino": 39900513,
+      "size": 241504256,
+      "allocatedBytes": 241504256
+    },
+    {
+      "path": "[M1-HOME]/F1-1-website/backups/live-v2-stage-20260906-02/snap/objects/db-projection-snapshot.60364844270a141b1911daafa3943ff76df7891bd52211027202577c549c374e.e2f2c6fc36e07951",
+      "dev": 16777233,
+      "ino": 39895359,
+      "size": 332821387,
+      "allocatedBytes": 332824576
+    },
+    {
+      "path": "[M1-HOME]/F1-1-website/backups/live-v2-stage-20260906-02/preflight-02/restore/db/snapshot.sqlite",
+      "dev": 16777233,
+      "ino": 39902117,
+      "size": 242167808,
+      "allocatedBytes": 242167808
+    },
+    {
+      "path": "[M1-HOME]/F1-1-website/backups/live-v2-stage-20260906-02/preflight-02/clone/f1plus1-rss-real-private.sqlite",
+      "dev": 16777233,
+      "ino": 39902568,
+      "size": 242294784,
+      "allocatedBytes": 258945024
+    },
+    {
+      "path": "[M1-HOME]/F1-1-website/backups/live-v2-stage-20260906-02/preflight-02/clone/f1plus1-rss-real-private.sqlite-shm",
+      "dev": 16777233,
+      "ino": 39902943,
+      "size": 32768,
+      "allocatedBytes": 32768
+    },
+    {
+      "path": "[M1-HOME]/F1-1-website/backups/live-v2-stage-20260906-02/preflight-02/clone/f1plus1-rss-real-private.sqlite-wal",
+      "dev": 16777233,
+      "ino": 39902942,
+      "size": 0,
+      "allocatedBytes": 0
+    },
+    {
+      "path": "[M1-HOME]/F1-1-website/backups/live-v2-stage-20260906-02/preflight-02/snap/objects/db-projection-snapshot.726300d58f464af2c690ff1a0853a2ce4da01dc6c8d9850a5b58c7d349435530.e2f2c6fc36e07951",
+      "dev": 16777233,
+      "ino": 39901249,
+      "size": 333484939,
+      "allocatedBytes": 333488128
+    }
+  ],
+  "preservedAllDirectories": true,
+  "preservedAllJsonLogsKeysProjection": true,
+  "ok": true,
+  "finishedAt": "2026-09-06T17:10:15.043918+00:00",
+  "freeBytesAfter": 222722056192
+}

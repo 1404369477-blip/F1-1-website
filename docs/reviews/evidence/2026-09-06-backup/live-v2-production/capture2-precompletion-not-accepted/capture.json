@@ -1,0 +1,285 @@
+{
+  "observedAt": "2026-09-06T16:57:55.308Z",
+  "nodeVersion": "v24.18.0",
+  "complete": true,
+  "status": {
+    "schemaVersion": "backup-cycle-status-v2",
+    "observedAt": "2026-09-06T16:49:58.724Z",
+    "stage": "COMPLETE",
+    "ok": true,
+    "archiveStatus": "failed"
+  },
+  "snapshot": {
+    "ok": true,
+    "code": "SNAPSHOT_OK",
+    "retentionSkipped": false,
+    "recoveryPointAt": "2026-09-06T16:55:08.054Z",
+    "contentHash": "881779d346ba022e5f9f53d4b39468335bda8d05943f1d8c61f4cca491f839e1",
+    "packageId": "1788713708054_881779d346ba022e",
+    "keyId": "e2f2c6fc36e07951",
+    "deduped": false,
+    "retainedCount": 11,
+    "userVersion": 10,
+    "sqliteMasterSha256": "f94aee2f197ea720657de8e27b9464ed227cb4214cd4819701a713d39b63c100",
+    "elapsedMs": 17199
+  },
+  "application": {
+    "ok": true,
+    "code": "APPLICATION_DRILL_OK",
+    "packageId": "1788713708054_881779d346ba022e",
+    "adminHttp": 200,
+    "unauthorizedAdminHttp": 401,
+    "publicHealth": 200,
+    "publicFeed": 200,
+    "publicItems": 12,
+    "elapsedMs": 35782,
+    "childrenExited": true,
+    "bootRootCleaned": true,
+    "passkeyRestoreVerified": false
+  },
+  "register": {
+    "activationApplied": false,
+    "applicationDrillReceiptSha256": "72da0f7aabe6d3586247e8410966a2858fe3fe48d97e1313d44e43c8c375e441",
+    "backupBindingPassed": true,
+    "backupSetId": "1788713708054_881779d346ba022e",
+    "checkpointAlgorithm": "f1plus1-backup-checkpoint-v2",
+    "checkpointSha256": "57fa9725e7f7feba3db0805461d39e49616d7be39b42487bc0d4d2e93caec7a7",
+    "decision": "SUCCESS",
+    "fence": {
+      "after": {
+        "clockTrusted": true,
+        "lastSuccessfulRecoveryPointAt": 1788713708054,
+        "schemaVersion": "admin-recovery-fence-v1",
+        "writerReady": true
+      },
+      "before": {
+        "clockTrusted": true,
+        "lastSuccessfulRecoveryPointAt": 1788713207622,
+        "schemaVersion": "admin-recovery-fence-v1",
+        "writerReady": true
+      },
+      "clockTrustedReason": "no compared timestamp is more than 120000ms ahead of the writer clock",
+      "pathSha256": "3d2be131f175b90028086c3487a11fad6ceb10455e446d36296772d246ab71ff",
+      "schemaVersion": "recovery-fence-write-receipt-v1"
+    },
+    "fenceReasonCode": null,
+    "operationId": "register-backup-v2-1788713834890-9abb29bcee4e",
+    "recoveryEpoch": 2,
+    "recoveryPointAt": "2026-09-06T16:55:08.054Z",
+    "recoveryPointId": "rp-1788713708054_881779d346ba022e",
+    "reused": false,
+    "schemaVersion": "backup-recovery-point-register-receipt-v2",
+    "validBackupRecoveryPoint": true,
+    "writerEpoch": 2
+  },
+  "backupService": {
+    "label": "com.f1plus1.backup-snapshot",
+    "loaded": true,
+    "state": "running",
+    "pid": 83835,
+    "runs": 2,
+    "lastExitCode": "0",
+    "runInterval": "300 seconds",
+    "spawnType": "daemon (3)"
+  },
+  "files": [
+    {
+      "name": "snapshot.json",
+      "source": "[M1-HOME]/Library/Application Support/F1Plus1/Backup/last-snapshot.json",
+      "bytes": 414,
+      "sha256": "eb47f5b53d687f3293aa8ca7e1499fc54841a85a0a0ff302fd6aede056e1ce9b"
+    },
+    {
+      "name": "drill.json",
+      "source": "[M1-HOME]/Library/Application Support/F1Plus1/Backup/last-drill.json",
+      "bytes": 578,
+      "sha256": "44979f4594141ace34eea78abdeeab721045176d93a40062cb1788d763e570a2"
+    },
+    {
+      "name": "application.json",
+      "source": "[M1-HOME]/Library/Application Support/F1Plus1/Backup/last-application-drill.json",
+      "bytes": 278,
+      "sha256": "ce7efbedbd56ebb0ebfca4f2959932f67842dca9100fd48c751512d8ec086cd7"
+    },
+    {
+      "name": "register.json",
+      "source": "[M1-HOME]/Library/Application Support/F1Plus1/Backup/last-register.json",
+      "bytes": 1194,
+      "sha256": "a341505d105f82ba46361d6eb72f998e6c69b4803503fb66a18cd0cfaa350d6d"
+    },
+    {
+      "name": "status.json",
+      "source": "[M1-HOME]/Library/Application Support/F1Plus1/Backup/last-cycle.json",
+      "bytes": 137,
+      "sha256": "bc9d81d6a27f4c22bcd4926423f1d8428fa667acdffcd5cec12ea8dcbf5046c8"
+    },
+    {
+      "name": "application-receipt.json",
+      "source": "[M1-HOME]/Library/Application Support/F1Plus1/Backup/application-receipts/1788713708054_881779d346ba022e.json",
+      "bytes": 1532,
+      "sha256": "b0d0eb5648472376406ab92efb1258e54534cfe419c32406dd4eac7a41de1abf"
+    },
+    {
+      "name": "offhost-receipt.json",
+      "source": "[M1-HOME]/F1-1-website/backups/off-host-receipts/1788713708054_881779d346ba022e.json",
+      "bytes": 680,
+      "sha256": "1bf8ca4895896bf6543b58e6ad512998e88a1d20158aef20d90b891df3e323dc"
+    },
+    {
+      "name": "manifest.json",
+      "source": "[M1-HOME]/F1-1-website/backups/snap/packages/1788713708054_881779d346ba022e/manifest.json",
+      "bytes": 41404,
+      "sha256": "eb90ac6f56be2ac4f6d1945622bfe55ea992c381616a094bd9593b72cee10d29"
+    },
+    {
+      "name": "latest-pointer.json",
+      "source": "[M1-HOME]/F1-1-website/backups/snap/latest.json",
+      "bytes": 278,
+      "sha256": "0611e3e399278973514ed0320a3717665e4f9bdbb8f6b422cbbe06f5c3ab4746"
+    },
+    {
+      "name": "application-public.pem",
+      "source": "[M1-HOME]/Library/Application Support/F1Plus1/Backup/application-drill-public.pem",
+      "bytes": 113,
+      "sha256": "a2e944019ad16e229392391116a259b4bddb9b60037527c10adde7d99589e09a"
+    },
+    {
+      "name": "offhost-public.pem",
+      "source": "[M1-HOME]/Library/Application Support/F1Plus1/Backup/m5-observer-public.pem",
+      "bytes": 113,
+      "sha256": "0eadbe753076348bb0be0856a6148f02ed3af99da30f966b17e89d3fffe8f60c"
+    }
+  ],
+  "database": {
+    "readOnly": true,
+    "observedAt": "2026-09-06T16:57:55.319Z",
+    "deploymentManifestSha256": "9774ce67901f7ab409567a80c8153ce2da9bde6419405e1411b6ea7df69beea6",
+    "control": {
+      "singleton_id": 1,
+      "phase": "live",
+      "global_stop_state": "clear",
+      "emergency_stop_state": "clear",
+      "recovery_state": "ready",
+      "deletion_fence_state": "clear",
+      "publication_fence_state": "clear",
+      "source_config_epoch": 1,
+      "source_safety_epoch": 1,
+      "authorization_version": 1,
+      "policy_epoch": 1,
+      "recovery_epoch": 2,
+      "writer_epoch": 2,
+      "writer_authority_receipt_sha256": "496577fad873c3f81929ffeffe90709ab885d3969ccfc4955a48214ffca36a61",
+      "version": 22,
+      "updated_at": "2026-09-05T12:55:26.519Z",
+      "updated_by_operation_id": "ac5cc2-enter-live-pub-fences-1788612926437"
+    },
+    "anchor": {
+      "singleton_id": 1,
+      "active_generation": 141,
+      "active_manifest_sha256": "1b766c29dfaf203e89cca6e20cec1fa979ac3b5478a0d6e32edd8b0968150271",
+      "active_pointer_sha256": "00b6eb720f803496803be9c354240713a32b1e319980d8e0661984eab8312da5",
+      "writer_epoch": 2,
+      "recovery_epoch": 2,
+      "writer_authority_receipt_sha256": "496577fad873c3f81929ffeffe90709ab885d3969ccfc4955a48214ffca36a61",
+      "common_checkpoint_sha256": "5c8da48b10edb8fa0a462fcde65e6fdfa1c6763b8e07f1196ce1d64aafe633f1",
+      "version": 95,
+      "operation_id": "register-anchor-1788221643825-fc2e76b270a5",
+      "updated_at": "2026-09-01T00:14:03.825Z"
+    },
+    "backupCount": 97,
+    "validBackupCount": 97,
+    "point": {
+      "recovery_point_id": "rp-1788713708054_881779d346ba022e",
+      "backup_set_id": "1788713708054_881779d346ba022e",
+      "backup_manifest_sha256": "eb90ac6f56be2ac4f6d1945622bfe55ea992c381616a094bd9593b72cee10d29",
+      "database_snapshot_sha256": "0934ec8250973e667e99e761ba28058f7072a47bdbc57005560890bae1fa172d",
+      "database_schema_sha256": "36e6f60ba0cdd3a5d2254884a1e0a97dcf5cdff9ae473f0989d99f2505977849",
+      "sqlite_snapshot_method": "vacuum_into_verified",
+      "source_db_wal_shm_identity_sha256": "d6cfd13e16da33dea33f84c9a52b123bdad2530a39a7ec4d4ffb934b37f6eddd",
+      "file_manifest_sha256": "d06c166f0cef1393950f65fcc123afe9c50a472e38596b78592e9eeceb692a7a",
+      "total_bytes": 334120107,
+      "release_sha256": "1f8fab4ba1c91a9239c0e744e213c7cbfcf0aa8763217e0a5aaf886cec73a703",
+      "deployment_manifest_sha256": "9774ce67901f7ab409567a80c8153ce2da9bde6419405e1411b6ea7df69beea6",
+      "projection_generation": 201,
+      "projection_manifest_sha256": "7290f16e72c37d4bc06dbfdd4c64ee16e35f1c5cbcba32bd1a00bd64532086a6",
+      "projection_pointer_sha256": "4a82d2028ebb71420aaf77ebfaa3c47de2773f6f5466bea6b8741e08a25e868b",
+      "writer_epoch": 2,
+      "recovery_epoch": 2,
+      "writer_authority_receipt_sha256": "496577fad873c3f81929ffeffe90709ab885d3969ccfc4955a48214ffca36a61",
+      "common_checkpoint_sha256": "57fa9725e7f7feba3db0805461d39e49616d7be39b42487bc0d4d2e93caec7a7",
+      "recovery_point_at": "2026-09-06T16:55:08.054Z",
+      "completed_at": "2026-09-06T16:57:17.799Z",
+      "rpo_seconds": 900,
+      "off_host_verified": 1,
+      "remote_receipt_sha256": "22b361e685f57fbbea12ad4a4db180ce7bace082021ec50cbd7e68c7e05c6a49",
+      "encrypted": 1,
+      "encryption_key_version": "e2f2c6fc36e07951",
+      "retention_policy_id": "snap-cycle-v2",
+      "restore_drill_state": "verified",
+      "restore_duration_seconds": 36,
+      "drill_isolated": 1,
+      "drill_decryption_verified": 1,
+      "drill_hash_verified": 1,
+      "drill_integrity_verified": 1,
+      "drill_fk_verified": 1,
+      "drill_schema_verified": 1,
+      "drill_bootable": 1,
+      "drill_business_point_verified": 1,
+      "drill_public_pointer_verified": 1,
+      "incident_declared_at": "2026-09-06T16:56:38.427Z",
+      "admin_available_at": "2026-09-06T16:57:11.974Z",
+      "public_available_at": "2026-09-06T16:57:13.809Z",
+      "operation_id": "register-backup-v2-1788713834890-9abb29bcee4e"
+    },
+    "validPoint": {
+      "recovery_point_id": "rp-1788713708054_881779d346ba022e"
+    },
+    "operation": {
+      "operation_id": "register-backup-v2-1788713834890-9abb29bcee4e",
+      "state": "succeeded",
+      "request_hash": "fd1eeee2b214e32d2c80bf519be7e8ff1eb507aa6d97d266bca78bde70f25f2d"
+    }
+  },
+  "fence": {
+    "sha256": "249efe8602d0234302c37da823438ec614c8285130fd820ef3ce1c2a99627065",
+    "payload": {
+      "clockTrusted": true,
+      "lastSuccessfulRecoveryPointAt": 1788713708054,
+      "schemaVersion": "admin-recovery-fence-v1",
+      "writerReady": true
+    }
+  },
+  "businessServices": [
+    {
+      "label": "com.f1plus1.admin-service",
+      "loaded": true,
+      "state": "running",
+      "pid": 97019,
+      "runs": 2,
+      "lastExitCode": "1",
+      "spawnType": "background (5)"
+    },
+    {
+      "label": "com.f1plus1.public-beta",
+      "loaded": true,
+      "state": "running",
+      "pid": 31197,
+      "runs": 1,
+      "lastExitCode": "(never exited)",
+      "spawnType": "background (5)"
+    },
+    {
+      "label": "com.f1plus1.public-projection",
+      "loaded": true,
+      "state": "running",
+      "pid": 31200,
+      "runs": 1,
+      "lastExitCode": "(never exited)",
+      "spawnType": "background (5)"
+    }
+  ],
+  "packageId": "1788713708054_881779d346ba022e",
+  "finishedAt": "2026-09-06T16:57:55.339Z",
+  "captureOrdinal": 2,
+  "expectedTrigger": "StartInterval_300_seconds"
+}

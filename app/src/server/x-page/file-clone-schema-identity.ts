@@ -1,0 +1,4 @@
+// Separate from the synthetic in-memory 0013 successor. No runtime compatibility grant.
+export const X_PAGE_FILE_CLONE_PREDECESSOR_SHA256 = "81a13c75401a12e32777cc641e0a4db3a0658a9d6195172d3387ae34fa603c20";
+export const X_PAGE_FILE_CLONE_MIGRATION_SHA256 = "91bbcfe67a090e6f9669f696371430d895f78324960a68fb689706dc0b2c25e6";
+export const X_PAGE_FILE_CLONE_SCHEMA_SHA256 = "86ab5526d1d47ffe5e1c54df93216668d887d0623c60113a666dfbba77b6cea1";

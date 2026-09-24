@@ -136,7 +136,10 @@ export function validateRecoveryPointReceipt(receipt: RecoveryPointReceipt, opti
     // eligible merely because its hash fields are present.
     fail("RECOVERY_DRILL_FAILED");
   }
-  if (options.now !== undefined) assert(completedAt <= options.now, "RECOVERY_COMPLETION_IN_FUTURE");
+  if (options.now !== undefined) {
+    assert(completedAt <= options.now, "RECOVERY_COMPLETION_IN_FUTURE");
+    assert(recoveryPointAt <= options.now && options.now - recoveryPointAt <= 900_000, "RECOVERY_RPO_BREACH");
+  }
   if (options.expectedSchemaSha256 !== undefined) assert(receipt.databaseSchemaSha256 === options.expectedSchemaSha256, "RECOVERY_SCHEMA_MISMATCH");
   if (options.expectedReleaseSha256 !== undefined) assert(receipt.releaseSha256 === options.expectedReleaseSha256, "RECOVERY_RELEASE_MISMATCH");
   if (options.expectedManifestSha256 !== undefined) assert(receipt.deploymentManifestSha256 === options.expectedManifestSha256, "RECOVERY_MANIFEST_MISMATCH");
@@ -190,4 +193,28 @@ export function assertRecoveryPointBinding(database: DatabaseSync, receipt: Reco
     commonCheckpointSha256: requiredHashRow(anchor, "common_checkpoint_sha256"),
     remoteReceiptSha256: receipt.remoteReceiptSha256
   });
+}
+
+/** Algorithm identity is persisted in the immutable gateway operation id; never guess from a hash. */
+export function backupCheckpointHash(receipt: Pick<RecoveryPointReceipt, "operationId" | "backupSetId" | "backupManifestSha256" | "recoveryPointAt" | "writerEpoch" | "recoveryEpoch" | "databaseSchemaSha256" | "projectionGeneration" | "projectionManifestSha256" | "projectionPointerSha256">, contentHash: string): Readonly<{ algorithm: "f1plus1-backup-checkpoint-v2" | "f1plus1-common-checkpoint-v1"; hash: string }> {
+  validateHash(contentHash);
+  const common = { contentHash, writerEpoch: receipt.writerEpoch, recoveryEpoch: receipt.recoveryEpoch,
+    schemaSha256: receipt.databaseSchemaSha256, generation: receipt.projectionGeneration,
+    projectionManifestSha256: receipt.projectionManifestSha256, projectionPointerSha256: receipt.projectionPointerSha256 };
+  if (/^register-backup-v2-[0-9]{13}-[0-9a-f]{12}$/.test(receipt.operationId)) {
+    const algorithm = "f1plus1-backup-checkpoint-v2";
+    const payload = { checkpointVersion: 2, packageId: receipt.backupSetId, backupManifestSha256: receipt.backupManifestSha256,
+      recoveryPointAt: receipt.recoveryPointAt, ...common };
+    return Object.freeze({ algorithm, hash: hash(`${algorithm}\n${canonicalJsonV1(payload)}`) });
+  }
+  assert(/^register-backup-[0-9]{13}-[0-9a-f]{12}$/.test(receipt.operationId), "RECOVERY_CHECKPOINT_VERSION_UNKNOWN");
+  const algorithm = "f1plus1-common-checkpoint-v1";
+  return Object.freeze({ algorithm, hash: hash(`${algorithm}\n${canonicalJsonV1(common)}`) });
+}
+
+export function assertBackupCheckpointBinding(receipt: RecoveryPointReceipt, manifest: Readonly<{ contentHash: string; recovery_point_at: string; manifestSha256: string; packageId: string }>): void {
+  validateRecoveryPointReceipt(receipt);
+  assert(manifest.manifestSha256 === receipt.backupManifestSha256 && manifest.packageId === receipt.backupSetId, "RECOVERY_BACKUP_MANIFEST_MISMATCH");
+  assert(new Date(manifest.recovery_point_at).toISOString() === receipt.recoveryPointAt, "RECOVERY_BACKUP_POINT_MISMATCH");
+  assert(backupCheckpointHash(receipt, manifest.contentHash).hash === receipt.commonCheckpointSha256, "RECOVERY_CHECKPOINT_MISMATCH");
 }

@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "backup-off-host-transfer-independent-review-v1",
+  "reviewedAt": "2026-09-06T16:28:06Z",
+  "reviewer": "/root/backup_implementation",
+  "scope": [
+    "deployment/macos/backup-off-host-transfer.mjs",
+    "app/src/tests/backup-off-host-transfer.test.mjs",
+    "deployment/macos/backup-off-host-observe.sh",
+    "deployment/macos/backup-snapshot-cycle.sh"
+  ],
+  "fileSha256": {
+    "deployment/macos/backup-off-host-transfer.mjs": "ab09ed4c3e51deb2f6ff31f08dfdf7ee26906cdad3ac90b8be9846a0ceedaa3f",
+    "app/src/tests/backup-off-host-transfer.test.mjs": "5dd5f84bbd7bf0b5cbf2422dc46cd5a826526cc82ec1b5f16ccbc93fc05958fc",
+    "deployment/macos/backup-off-host-observe.sh": "a6f8b1a5f17dd2ebfe2f560fd67f348d3b0af96eb8068897d48f1627a44bd23b",
+    "deployment/macos/backup-snapshot-cycle.sh": "f5a394e7db86fad3cca50d5ee0d6d05d69bad0db31226bf4b431e4a012d82be1"
+  },
+  "result": "PASS_WITH_FIELD_DEPLOYMENT_VERIFICATION_REQUIRED",
+  "openBlockingFindings": [],
+  "testEvidence": {
+    "nodePath": "[M5-HOME]/Documents/F1+1/scratch/toolchains/node-v24.18.0/bin/node",
+    "nodeVersion": "v24.18.0",
+    "command": "scratch/toolchains/node-v24.18.0/bin/node --test app/src/tests/backup-off-host-transfer.test.mjs",
+    "passed": 14,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 3028.641667,
+    "shellSyntax": {
+      "deployment/macos/backup-off-host-observe.sh": "PASS",
+      "deployment/macos/backup-snapshot-cycle.sh": "PASS"
+    }
+  },
+  "verifiedBoundaries": [
+    "Transport uses the fixed home-mac host and fixed backup source and receipt destination; dynamic remote path components are validated package IDs and hexadecimal hashes.",
+    "M5 creates the signed observation from bytes actually read into its local ciphertext cache, and detects ciphertext or manifest replacement before publishing a receipt.",
+    "Cached observations and existing signed M1 observations retain the exact original receipt bytes and timestamps on retry; old observations are not renewed.",
+    "The signing private key stays in M5 private state; the separate archive worker receives only the public key.",
+    "Two complete owned cache entries are retained, including the current package; unknown, incomplete, modified or linked entries are preserved.",
+    "Timeout tests verify termination of an ignoring process and its ignoring grandchild.",
+    "Receipt delivery to M1 precedes optional M5 iCloud archival, and archive failure returns a visible ARCHIVE_FAILED state without revoking the completed independent read.",
+    "M1 snapshot cycle performs all iCloud mkdir, rsync, cp and mv actions after successful legal registration, under a 60-second bound, recording archiveStatus=failed and ICLOUD_ARCHIVE_FAILED on failure.",
+    "Archive retention deletes only validated, locally signed receipts strictly older than seven days, preserving current/cache-pinned observations and unknown, unsigned or linked files."
+  ],
+  "closedFindings": [
+    {
+      "priority": "P1",
+      "finding": "M1 iCloud work was in the registration critical path.",
+      "closure": "All archive operations now follow successful register and run under a bounded if branch with visible nonfatal failure state; shell syntax and control flow independently rechecked."
+    },
+    {
+      "priority": "P2",
+      "finding": "Archive publication used existsSync and overwrote an unknown dangling symlink.",
+      "minimalReproductionBeforeFix": "A synthetic dangling final receipt symlink was replaced by archiveReceipt; its target was absent.",
+      "closure": "lstat detects existing links; linkSync performs atomic publication without replacement; EEXIST validates unchanged matching bytes. Regression tests independently passed for dangling links, a concurrently created different file, and preservation/rejection of an interrupted nlink=2 publication."
+    }
+  ],
+  "fieldVerificationStillRequired": [
+    "Root deployment owner verifies actual home-mac SSH access and source/destination state, stages the reviewed file hashes, and captures an actual M5 signed read delivered to M1.",
+    "Root deployment owner verifies retired old backup producers and manual register/deploy/restore writers are absent before cutting only the backup job.",
+    "The old sealed deployment tools have not gained the new fence mutex merely through this backup-only cut; later deploy/restore must stop backup and use the compatible locked tools."
+  ],
+  "executionBoundaries": {
+    "productionTransferExecutedByReviewer": false,
+    "productionBackupOrRestoreExecutedByReviewer": false,
+    "implementationEditedByReviewerForThisReview": false,
+    "testsUseInjectedLocalTransport": true,
+    "actualSshSuccessClaimed": false
+  }
+}

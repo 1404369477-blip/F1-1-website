@@ -1,0 +1,89 @@
+{
+  "scope": "Accepted natural StartInterval cycle",
+  "files": [
+    {
+      "file": "application-public.pem",
+      "sourceSha256": "a2e944019ad16e229392391116a259b4bddb9b60037527c10adde7d99589e09a",
+      "evidenceSha256": "a2e944019ad16e229392391116a259b4bddb9b60037527c10adde7d99589e09a",
+      "hostPathRedacted": false
+    },
+    {
+      "file": "application-receipt.json",
+      "sourceSha256": "b0d0eb5648472376406ab92efb1258e54534cfe419c32406dd4eac7a41de1abf",
+      "evidenceSha256": "b0d0eb5648472376406ab92efb1258e54534cfe419c32406dd4eac7a41de1abf",
+      "hostPathRedacted": false
+    },
+    {
+      "file": "application.json",
+      "sourceSha256": "ce7efbedbd56ebb0ebfca4f2959932f67842dca9100fd48c751512d8ec086cd7",
+      "evidenceSha256": "ce7efbedbd56ebb0ebfca4f2959932f67842dca9100fd48c751512d8ec086cd7",
+      "hostPathRedacted": false
+    },
+    {
+      "file": "business-health.json",
+      "sourceSha256": "436793e60a7b5d38c2ac735392a3102c9b0a4f1645da200b391be3405b9ac4b9",
+      "evidenceSha256": "451509bd94c23bff99b9179acc19a8a46d6b41e4122f83095b0978d2375c990e",
+      "hostPathRedacted": true
+    },
+    {
+      "file": "capture.json",
+      "sourceSha256": "2cedc26f33ab5f81be109d84d2a5ac2a70c023ee7dc8019a9c97ae2390d7575c",
+      "evidenceSha256": "4ef335144b932e435d63e8688a5dc8f8346dd85139feef122351778592eeace5",
+      "hostPathRedacted": true
+    },
+    {
+      "file": "drill.json",
+      "sourceSha256": "44979f4594141ace34eea78abdeeab721045176d93a40062cb1788d763e570a2",
+      "evidenceSha256": "44979f4594141ace34eea78abdeeab721045176d93a40062cb1788d763e570a2",
+      "hostPathRedacted": false
+    },
+    {
+      "file": "independent-verification.json",
+      "sourceSha256": "c644825d97431f3c32bd2c2361d6d601a4b42a4c127775055ac8250ab6f08da1",
+      "evidenceSha256": "c644825d97431f3c32bd2c2361d6d601a4b42a4c127775055ac8250ab6f08da1",
+      "hostPathRedacted": false
+    },
+    {
+      "file": "latest-pointer.json",
+      "sourceSha256": "0611e3e399278973514ed0320a3717665e4f9bdbb8f6b422cbbe06f5c3ab4746",
+      "evidenceSha256": "0611e3e399278973514ed0320a3717665e4f9bdbb8f6b422cbbe06f5c3ab4746",
+      "hostPathRedacted": false
+    },
+    {
+      "file": "manifest.json",
+      "sourceSha256": "eb90ac6f56be2ac4f6d1945622bfe55ea992c381616a094bd9593b72cee10d29",
+      "evidenceSha256": "eb90ac6f56be2ac4f6d1945622bfe55ea992c381616a094bd9593b72cee10d29",
+      "hostPathRedacted": false
+    },
+    {
+      "file": "offhost-public.pem",
+      "sourceSha256": "0eadbe753076348bb0be0856a6148f02ed3af99da30f966b17e89d3fffe8f60c",
+      "evidenceSha256": "0eadbe753076348bb0be0856a6148f02ed3af99da30f966b17e89d3fffe8f60c",
+      "hostPathRedacted": false
+    },
+    {
+      "file": "offhost-receipt.json",
+      "sourceSha256": "1bf8ca4895896bf6543b58e6ad512998e88a1d20158aef20d90b891df3e323dc",
+      "evidenceSha256": "1bf8ca4895896bf6543b58e6ad512998e88a1d20158aef20d90b891df3e323dc",
+      "hostPathRedacted": false
+    },
+    {
+      "file": "register.json",
+      "sourceSha256": "a341505d105f82ba46361d6eb72f998e6c69b4803503fb66a18cd0cfaa350d6d",
+      "evidenceSha256": "a341505d105f82ba46361d6eb72f998e6c69b4803503fb66a18cd0cfaa350d6d",
+      "hostPathRedacted": false
+    },
+    {
+      "file": "snapshot.json",
+      "sourceSha256": "eb47f5b53d687f3293aa8ca7e1499fc54841a85a0a0ff302fd6aede056e1ce9b",
+      "evidenceSha256": "eb47f5b53d687f3293aa8ca7e1499fc54841a85a0a0ff302fd6aede056e1ce9b",
+      "hostPathRedacted": false
+    },
+    {
+      "file": "status.json",
+      "sourceSha256": "7fe06b73d681d5509653c56a7f102be93d3534537819152646e7f6cf7fa02788",
+      "evidenceSha256": "7fe06b73d681d5509653c56a7f102be93d3534537819152646e7f6cf7fa02788",
+      "hostPathRedacted": false
+    }
+  ]
+}

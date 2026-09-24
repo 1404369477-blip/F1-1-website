@@ -8,9 +8,9 @@
 
 | 场景 | 必读 | 按需读 |
 |------|------|--------|
-| 每次开始任务 | `docs/spec.md`、`docs/progress.md` 最新记录 | `docs/overview.md`、`docs/roadmap.md` |
+| 每次开始任务 | `docs/spec.md`、`docs/progress.md` 最新记录、`docs/当前生产状态与执行待办.md`、`docs/collaboration/当前工作分工与交接.md` | `docs/overview.md`、`docs/roadmap.md` |
 | 技术选择 / 新依赖 | `docs/spec.md`、`docs/decisions/` | `docs/conventions.md` |
-| 接续中断工作 | `docs/handoff.md`、`docs/progress.md` | 相关代码和决策记录 |
+| 接续中断工作 | `docs/当前生产状态与执行待办.md`、`docs/collaboration/当前工作分工与交接.md`、`docs/handoff.md`、`docs/progress.md` | 相关代码和决策记录 |
 | 大改方向 | `docs/spec.md`、`docs/roadmap.md`、`docs/decisions/` | `docs/overview.md` |
 | 写代码 | `docs/spec.md`、`docs/conventions.md` | 相关代码、测试、已有相似实现 |
 
@@ -61,6 +61,13 @@
 - 大改先更新 `docs/spec.md`;如果 Spec 与其他文档冲突,以 Spec 为准并提示同步修正。
 - 涉及删除、付款、授权、发送消息、发布内容、生产配置和外部付费 API 时,必须先让用户明确确认。
 - 实验脚本、调试输出、临时大文件放 `scratch/`(用完即弃,不提交);**正式测试是代码,属于 `app/`**,按 `docs/conventions.md` 定的布局归位,不要丢进 `scratch/`。
+
+## 临时大文件收尾
+
+- 在 M1 创建测试数据库、封存副本、下载副本或恢复目录前，明确其用途、复用关系、预计峰值空间和清理时点。可用空间必须覆盖本次峰值与正在运行的备份所需余量；不足时先清理已核定无用的本任务副本，不继续复制。
+- 成功、失败、超时和中断均须进入收尾：确认本任务子进程退出，保留日志、清单、hash、签名及失败收据；已无后续用途的大文件按精确清单删除并验证空间。SIGKILL 或断电未能收尾的，下一次接续先核查遗留，不直接创建另一套副本。
+- 下阶段确需使用的副本只保留必要的一份，并记录路径、大小、使用步骤与释放条件。保留失败证据不等于无限期保留完整数据库和密文副本；删除应留下可核对的清理收据。
+- 清理仅覆盖已确认归属本任务且不再使用的产物，不扫描删除生产数据、有效备份保留集或 iCloud 文件。冻结历史入口不得通过重放来重建已清理的产物。
 
 ## 完成标准
 
@@ -145,6 +152,7 @@
 
 - 协作总则:`docs/collaboration/README.md`
 - 任务流转:`docs/collaboration/任务交接模板.md`;任务真值:`docs/collaboration/tasks/TASK-*.json`
+- 现行任务归类:`docs/collaboration/当前工作分工与交接.md`;运行钉:`docs/当前生产状态与执行待办.md`
 - 会话创建与换班:`docs/collaboration/会话启动清单.md`;会话真值:`docs/collaboration/会话启动状态.json`
 - 部门首次接班:读取本部门 `上岗引导.md`
 <!-- agent-team-guide:end -->

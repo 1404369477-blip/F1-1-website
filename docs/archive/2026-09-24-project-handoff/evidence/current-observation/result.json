@@ -1,0 +1,8 @@
+{
+  "startedAt": "2026-09-24T13:51:28.132321+00:00",
+  "completedAt": "2026-09-24T13:51:28.765792+00:00",
+  "exitCode": 1,
+  "commandSha256": "242e08922a72b88f5a68c4cd817a6534bd73fc6f992e557bb95d50334f55b7f8",
+  "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "timedOut": false
+}

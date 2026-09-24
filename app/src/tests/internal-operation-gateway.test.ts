@@ -24,8 +24,8 @@ import {
   releaseSourcePreimageSha256,
   type ReleaseCandidateManifest
 } from "../server/internal-operation/release.ts";
-import { ADMIN_RELEASE_RUNTIME_FILES, ADMIN_RELEASE_RUNTIME_PATH_SET_SHA256 } from "../server/admin-service/release-manifest.ts";
-import { PUBLIC_RELEASE_RUNTIME_FILES, PUBLIC_RELEASE_RUNTIME_PATH_SET_SHA256 } from "../server/public/release-manifest.ts";
+import { ADMIN_RELEASE_RUNTIME_FILE_COUNT, ADMIN_RELEASE_RUNTIME_FILES, ADMIN_RELEASE_RUNTIME_PATH_SET_SHA256 } from "../server/admin-service/release-manifest.ts";
+import { PUBLIC_RELEASE_RUNTIME_FILE_COUNT, PUBLIC_RELEASE_RUNTIME_FILES, PUBLIC_RELEASE_RUNTIME_PATH_SET_SHA256 } from "../server/public/release-manifest.ts";
 import {
   SOURCE_REGISTRY_MIGRATION_SHA256,
   SOURCE_REGISTRY_SCHEMA10_SHA256,
@@ -475,8 +475,8 @@ describe("release pair", () => {
       schemaSha256: SOURCE_REGISTRY_SCHEMA10_SHA256,
       migration0009RawSha256: SOURCE_REGISTRY_SOURCE_0009_RAW_SHA256,
       migration0010RawSha256: SOURCE_REGISTRY_MIGRATION_SHA256,
-      adminRuntimeFileCount: 153 as const, adminRuntimePathSetSha256: ADMIN_RELEASE_RUNTIME_PATH_SET_SHA256,
-      publicRuntimeFileCount: 89 as const, publicRuntimePathSetSha256: PUBLIC_RELEASE_RUNTIME_PATH_SET_SHA256,
+      adminRuntimeFileCount: ADMIN_RELEASE_RUNTIME_FILE_COUNT, adminRuntimePathSetSha256: ADMIN_RELEASE_RUNTIME_PATH_SET_SHA256,
+      publicRuntimeFileCount: PUBLIC_RELEASE_RUNTIME_FILE_COUNT, publicRuntimePathSetSha256: PUBLIC_RELEASE_RUNTIME_PATH_SET_SHA256,
       packageLockSha256: files.find((file) => file.path === "package-lock.json")!.sha256,
       packageRootSha256: "2".repeat(64), pathRootSha256: releasePathRoot(files)
     } as const;

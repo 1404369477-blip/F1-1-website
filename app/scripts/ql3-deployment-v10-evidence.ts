@@ -1,3 +1,4 @@
+import { withRecoveryFenceWriterLock } from "../src/server/internal-operation/recovery-fence-write.ts";
 import { createHash, generateKeyPairSync, sign } from "node:crypto";
 import { execFileSync, spawnSync } from "node:child_process";
 import {
@@ -122,11 +123,11 @@ if (
 assertAdminReleaseRuntimePathContract();
 assertPublicReleaseRuntimePathContract();
 if (
-  ADMIN_RELEASE_RUNTIME_FILE_COUNT !== 153 ||
-  ADMIN_RELEASE_RUNTIME_FILES.length !== 153 ||
+  ADMIN_RELEASE_RUNTIME_FILE_COUNT !== 207 ||
+  ADMIN_RELEASE_RUNTIME_FILES.length !== 207 ||
   adminReleaseRuntimePathSetSha256() !== ADMIN_RELEASE_RUNTIME_PATH_SET_SHA256 ||
-  PUBLIC_RELEASE_RUNTIME_FILE_COUNT !== 89 ||
-  PUBLIC_RELEASE_RUNTIME_FILES.length !== 89
+  PUBLIC_RELEASE_RUNTIME_FILE_COUNT !== 90 ||
+  PUBLIC_RELEASE_RUNTIME_FILES.length !== 90
 ) throw new Error("RELEASE_RUNTIME_CLOSURE_DRIFT");
 
 mkdirSync(runRoot, { recursive: true, mode: 0o700 });
@@ -217,9 +218,9 @@ try {
     schemaSha256: SOURCE_REGISTRY_SCHEMA10_SHA256,
     migration0009RawSha256: SOURCE_REGISTRY_SOURCE_0009_RAW_SHA256,
     migration0010RawSha256: SOURCE_REGISTRY_MIGRATION_SHA256,
-    adminRuntimeFileCount: 153 as const,
+    adminRuntimeFileCount: ADMIN_RELEASE_RUNTIME_FILE_COUNT,
     adminRuntimePathSetSha256: ADMIN_RELEASE_RUNTIME_PATH_SET_SHA256,
-    publicRuntimeFileCount: 89 as const,
+    publicRuntimeFileCount: PUBLIC_RELEASE_RUNTIME_FILE_COUNT,
     publicRuntimePathSetSha256: PUBLIC_RELEASE_RUNTIME_PATH_SET_SHA256,
     packageLockSha256: files.find((file) => file.path === "package-lock.json")!.sha256,
     packageRootSha256,
@@ -332,7 +333,9 @@ try {
   const signingKeyPath = resolve(keyRoot, "projection-private.pem");
   const verifyKeyPath = resolve(keyRoot, "projection-public.pem");
   writeFileSync(sessionHashKeyPath, Buffer.alloc(32, 7).toString("base64url"), { mode: 0o600 });
+  withRecoveryFenceWriterLock(recoveryFencePath, () => {
   writeFileSync(recoveryFencePath, canonicalJsonV1({ schemaVersion: "admin-recovery-fence-v1", clockTrusted: true, writerReady: true, lastSuccessfulRecoveryPointAt: Date.now() }), { mode: 0o600 });
+  });
   const signingKeys = generateKeyPairSync("ed25519");
   writeFileSync(signingKeyPath, signingKeys.privateKey.export({ format: "pem", type: "pkcs8" }), { mode: 0o600 });
   writeFileSync(verifyKeyPath, signingKeys.publicKey.export({ format: "pem", type: "spki" }), { mode: 0o600 });
@@ -570,9 +573,9 @@ const receipt = Object.freeze({
     migration0010RawSha256: SOURCE_REGISTRY_MIGRATION_SHA256
   },
   releaseClosures: {
-    adminRuntimeFileCount: 153,
+    adminRuntimeFileCount: ADMIN_RELEASE_RUNTIME_FILE_COUNT,
     adminRuntimePathSetSha256: ADMIN_RELEASE_RUNTIME_PATH_SET_SHA256,
-    publicRuntimeFileCount: 89,
+    publicRuntimeFileCount: PUBLIC_RELEASE_RUNTIME_FILE_COUNT,
     publicRuntimePathSetSha256: PUBLIC_RELEASE_RUNTIME_PATH_SET_SHA256,
     officialReleaseManifestSha256: releaseManifestSha256
   },
@@ -626,7 +629,7 @@ const report = [
   "- Deployment target: existing-only schema10 / " + SOURCE_REGISTRY_SCHEMA10_SHA256,
   "- Pair: " + full.releaseId + " + " + fallback.releaseId,
   "- Shared source commit/tree/preimage: " + full.sourceCommitSha1 + " / " + full.sourceTreeSha1 + " / " + full.sourcePreimageSha256,
-  "- Admin/Public runtime closures: 153 / 89.",
+  `- Admin/Public runtime closures: ${ADMIN_RELEASE_RUNTIME_FILE_COUNT} / ${PUBLIC_RELEASE_RUNTIME_FILE_COUNT}.`,
   "- Fallback keeps manual safety/review/publish/withdraw, manual outbox, delivery sender and Public LKG.",
   "- Fallback collector, model, retry-model, automatic review/publish, system snapshot and phase egress capabilities are closed.",
   "- The production deployment factory opened full, fallback and rollback runtimes with externally anchored pair bytes and owner-specific DB handoffs; missing identity fails closed.",

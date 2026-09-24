@@ -1,0 +1,17 @@
+{
+  "observedAt": "2026-09-06T16:46:40.481463+00:00",
+  "processType": "Standard",
+  "oldPlistSha256": "77441c7be2c0bad5b7eae63ddedb5b875fcf0555d7a46cc78a30fbc83d8df7dd",
+  "newPlistSha256": "7d0b55b54a0d286a85f4637c4048cb60603154d08f214f6ea567e483516a9d7c",
+  "lockRecovery": {
+    "ok": true,
+    "mode": "recover",
+    "status": "quarantined",
+    "incidentDirectory": "lock-incident-oaFePq",
+    "lockSha256": "3b428870b3c713c70f16f4e92bdef55ed601675233e9ca88029e904baca7ddc1",
+    "pid": 82601,
+    "stopEvidenceSha256": "99ae97579fd5681e423a4c942d2f05d6b8d461ac8425bfdb88be0e1d4f192ef2"
+  },
+  "bootstrapExit": 0,
+  "successPendingRealCycle": true
+}

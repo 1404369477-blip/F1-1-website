@@ -1,3 +1,4 @@
+import { withRecoveryFenceWriterLock } from "../internal-operation/recovery-fence-write.ts";
 import {
   createHash,
   createPrivateKey,
@@ -16,6 +17,7 @@ import {
   mkdirSync,
   openSync,
   readFileSync,
+  realpathSync,
   renameSync,
   writeFileSync
 } from "node:fs";
@@ -27,6 +29,10 @@ import { canonicalJson } from "../db/profile.ts";
 import { inspectExistingPrivateDatabase } from "../db/database.ts";
 import { loadReleaseRuntimeGate } from "../internal-operation/release.ts";
 import { SOURCE_REGISTRY_SCHEMA10_SHA256 } from "../rss/source-registry-migration.ts";
+import { RSS_AUTOMATIC_SCHEMA_SHA256 } from "../rss-automatic/schema-identity.ts";
+import { RSS_AUTOMATIC_SOURCE_EPOCH_SCHEMA_SHA256, isRssAutomaticSchemaSha256 } from "../rss-automatic/source-epoch-schema-identity.ts";
+import { X_PAGE_ADMISSION_SCHEMA_SHA256 } from "../x-page/admission-schema-identity.ts";
+import { readXCapturePrivateFile } from "../x-page/private-artifact-file.ts";
 import { readVerifiedAdminReleaseManifest } from "./release-manifest.ts";
 import { assertPrivateDirectory, assertPrivateFile, BootstrapTokenStore } from "./storage.ts";
 import { ADMIN_BIND_HOST, ADMIN_BIND_PORT } from "./server.ts";
@@ -117,7 +123,11 @@ export const AdminDeploymentManifestSchema = z.object({
   reviewDatabasePath: z.literal(ADMIN_REVIEW_DATABASE_PATH),
   reviewDatabaseIdentity: ReviewDatabaseIdentitySchema,
   reviewSchemaTarget: z.literal(10),
-  reviewSchemaSha256: z.literal(SOURCE_REGISTRY_SCHEMA10_SHA256),
+  reviewSchemaSha256: z.union([z.literal(SOURCE_REGISTRY_SCHEMA10_SHA256), z.literal(RSS_AUTOMATIC_SCHEMA_SHA256), z.literal(RSS_AUTOMATIC_SOURCE_EPOCH_SCHEMA_SHA256), z.literal(X_PAGE_ADMISSION_SCHEMA_SHA256)]),
+  rssAutomaticCutoffIso: z.string().datetime({ offset: false }).optional(),
+  xPageAutomaticCutoffIso: z.string().datetime({ offset: false, precision: 3 }).optional(),
+  xPageTrustConfigurationPath: AbsolutePathSchema.optional(),
+  xPageTrustConfigurationSha256: z.string().regex(/^[0-9a-f]{64}$/).optional(),
   dataRoot: AbsolutePathSchema,
   staticRoot: AbsolutePathSchema,
   sessionHashKeyPath: AbsolutePathSchema,
@@ -135,6 +145,18 @@ export const AdminDeploymentManifestSchema = z.object({
   preparedAt: z.string().datetime({ offset: true }),
   serviceState: z.literal("disabled")
 }).strict().superRefine((manifest, context) => {
+  const xPage = manifest.reviewSchemaSha256 === X_PAGE_ADMISSION_SCHEMA_SHA256;
+  if ((isRssAutomaticSchemaSha256(manifest.reviewSchemaSha256) || xPage) !== (manifest.rssAutomaticCutoffIso !== undefined)) {
+    context.addIssue({ code: "custom", path: ["rssAutomaticCutoffIso"], message: "RSS automatic successor requires its explicit cutoff" });
+  }
+  for (const field of ["xPageAutomaticCutoffIso", "xPageTrustConfigurationPath", "xPageTrustConfigurationSha256"] as const) {
+    if (xPage !== (manifest[field] !== undefined)) context.addIssue({ code: "custom", path: [field], message: "The exact X page production successor requires its deployment trust configuration and cutoff" });
+  }
+  if (manifest.xPageTrustConfigurationPath !== undefined &&
+      (resolve(manifest.xPageTrustConfigurationPath) !== manifest.xPageTrustConfigurationPath ||
+       !pathContains(manifest.dataRoot, manifest.xPageTrustConfigurationPath) || manifest.dataRoot === manifest.xPageTrustConfigurationPath)) {
+    context.addIssue({ code: "custom", path: ["xPageTrustConfigurationPath"], message: "X trust configuration must be an absolute file path inside the private data root" });
+  }
   if (manifest.trustedIdentities[0]?.operatorRef !== manifest.operatorRef) {
     context.addIssue({
       code: z.ZodIssueCode.custom,
@@ -145,6 +167,34 @@ export const AdminDeploymentManifestSchema = z.object({
 });
 
 export type AdminDeploymentManifest = z.infer<typeof AdminDeploymentManifestSchema>;
+
+/** Read-only byte and private-directory checks. Capture data never supplies
+ * these pins; the verified deployment owns this file location and digest. */
+export function assertXPageDeploymentTrustConfiguration(manifest: Pick<AdminDeploymentManifest,
+  "reviewSchemaSha256" | "dataRoot" | "xPageTrustConfigurationPath" | "xPageTrustConfigurationSha256"
+>): void {
+  if (manifest.reviewSchemaSha256 !== X_PAGE_ADMISSION_SCHEMA_SHA256) {
+    if (manifest.xPageTrustConfigurationPath !== undefined || manifest.xPageTrustConfigurationSha256 !== undefined) throw new Error("ADMIN_X_PAGE_TRUST_SCHEMA_INVALID");
+    return;
+  }
+  const path = manifest.xPageTrustConfigurationPath, expected = manifest.xPageTrustConfigurationSha256;
+  if (path === undefined || expected === undefined || !/^[0-9a-f]{64}$/.test(expected) ||
+      resolve(path) !== path || resolve(manifest.dataRoot) !== manifest.dataRoot ||
+      !pathContains(manifest.dataRoot, path) || manifest.dataRoot === path) throw new Error("ADMIN_X_PAGE_TRUST_CONFIG_INVALID");
+  const directories = [];
+  for (let current = dirname(path); ; current = dirname(current)) {
+    const stat = lstatSync(current);
+    if (realpathSync(current) !== current || !stat.isDirectory() || stat.isSymbolicLink() || stat.uid !== process.getuid?.() || (stat.mode & 0o077) !== 0) throw new Error("ADMIN_X_PAGE_TRUST_DIRECTORY_INVALID");
+    directories.push({ path: current, dev: stat.dev, ino: stat.ino, mode: stat.mode, uid: stat.uid });
+    if (current === manifest.dataRoot) break;
+  }
+  const file = readXCapturePrivateFile(path, 64 * 1024);
+  if (file === null || sha256(file.text) !== expected) throw new Error("ADMIN_X_PAGE_TRUST_CONFIG_IDENTITY_INVALID");
+  for (const initial of directories) {
+    const stat = lstatSync(initial.path);
+    if (realpathSync(initial.path) !== initial.path || stat.dev !== initial.dev || stat.ino !== initial.ino || stat.mode !== initial.mode || stat.uid !== initial.uid) throw new Error("ADMIN_X_PAGE_TRUST_DIRECTORY_CHANGED");
+  }
+}
 
 export type AdminDeploymentPaths = Readonly<{
   dataRoot: string;
@@ -272,6 +322,7 @@ function assertEd25519KeyPair(privateKeyPath: string, verifyKeyPath: string): vo
 }
 
 function assertManifestResourceBoundary(manifest: AdminDeploymentManifest): void {
+  assertXPageDeploymentTrustConfiguration(manifest);
   for (const path of [
     manifest.targetReleaseAppRoot,
     manifest.fullReleaseManifestPath,
@@ -342,7 +393,7 @@ export function renderAdminServicePlist(input: Readonly<{
 <key>WorkingDirectory</key><string>${xml(input.targetReleaseAppRoot)}</string>
 <key>RunAtLoad</key><false/>
 <key>KeepAlive</key><false/>
-<key>ProcessType</key><string>Background</string>
+<key>ProcessType</key><string>Standard</string>
 <key>StandardOutPath</key><string>${xml(input.stdoutLog)}</string>
 <key>StandardErrorPath</key><string>${xml(input.stderrLog)}</string>
 <key>Umask</key><integer>63</integer>
@@ -365,6 +416,10 @@ export function prepareAdminDeployment(input: Readonly<{
   reviewDatabasePath: string;
   reviewDatabaseExpectedDev: number;
   reviewDatabaseExpectedIno: number;
+  rssAutomaticCutoffIso?: string;
+  xPageAutomaticCutoffIso?: string;
+  xPageTrustConfigurationPath?: string;
+  xPageTrustConfigurationSha256?: string;
   nodePath: string;
   canonicalOrigin: string;
   rpName: string;
@@ -435,48 +490,6 @@ export function prepareAdminDeployment(input: Readonly<{
   }
   assertEd25519KeyPair(projectionSigningPrivateKeyPath, projectionVerifyKeyPath);
   const now = input.now ?? Date.now();
-  const manifest = AdminDeploymentManifestSchema.parse({
-    schemaVersion: "admin-service-deployment-v3",
-    label: ADMIN_SERVICE_LABEL,
-    bindHost: ADMIN_BIND_HOST,
-    bindPort: ADMIN_BIND_PORT,
-    canonicalOrigin: origin.origin,
-    rpName: input.rpName,
-    operatorRef: input.operatorRef,
-    tailscaleAppCapabilityId: input.tailscaleAppCapabilityId,
-    trustedIdentities: input.trustedIdentities,
-    targetReleaseAppRoot,
-    activeReleaseRole: input.activeReleaseRole,
-    fullReleaseManifestPath,
-    fullReleaseManifestSha256: input.fullReleaseManifestSha256,
-    fallbackReleaseManifestPath,
-    fallbackReleaseManifestSha256: input.fallbackReleaseManifestSha256,
-    releasePairReceiptPath,
-    releasePairReceiptSha256: input.releasePairReceiptSha256,
-    officialReleaseManifestPath,
-    officialReleaseManifestSha256: input.officialReleaseManifestSha256,
-    reviewDatabasePath,
-    reviewDatabaseIdentity,
-    reviewSchemaTarget: 10,
-    reviewSchemaSha256: SOURCE_REGISTRY_SCHEMA10_SHA256,
-    dataRoot: paths.dataRoot,
-    staticRoot: resolve(targetReleaseAppRoot, "src/admin-ui"),
-    sessionHashKeyPath: paths.sessionHashKey,
-    recoveryFencePath: paths.recoveryFence,
-    publicProjectionRoot: paths.publicProjectionRoot,
-    projectionSigningKeyId: input.projectionSigningKeyId,
-    projectionSigningPrivateKeyPath,
-    projectionVerifyKeyPath,
-    projectionInternalEndpoint: PROJECTION_INTERNAL_ENDPOINT,
-    publicReadMode: input.publicReadMode,
-    syntheticRollbackRelease: input.syntheticRollbackRelease,
-    syntheticRollbackHash: input.syntheticRollbackHash,
-    projectionSenderServiceIdentity: input.projectionSenderServiceIdentity,
-    projectionReceiverServiceIdentity: input.projectionReceiverServiceIdentity,
-    preparedAt: new Date(now).toISOString(),
-    serviceState: "disabled"
-  });
-  assertManifestResourceBoundary(manifest);
   if (!existsSync(targetReleaseAppRoot) || !lstatSync(targetReleaseAppRoot).isDirectory()) {
     throw new Error("ADMIN_TARGET_RELEASE_ROOT_INVALID");
   }
@@ -502,6 +515,52 @@ export function prepareAdminDeployment(input: Readonly<{
     activatedAt: new Date(now).toISOString(),
     previousActivationId: null
   });
+  const manifest = AdminDeploymentManifestSchema.parse({
+    schemaVersion: "admin-service-deployment-v3",
+    label: ADMIN_SERVICE_LABEL,
+    bindHost: ADMIN_BIND_HOST,
+    bindPort: ADMIN_BIND_PORT,
+    canonicalOrigin: origin.origin,
+    rpName: input.rpName,
+    operatorRef: input.operatorRef,
+    tailscaleAppCapabilityId: input.tailscaleAppCapabilityId,
+    trustedIdentities: input.trustedIdentities,
+    targetReleaseAppRoot,
+    activeReleaseRole: input.activeReleaseRole,
+    fullReleaseManifestPath,
+    fullReleaseManifestSha256: input.fullReleaseManifestSha256,
+    fallbackReleaseManifestPath,
+    fallbackReleaseManifestSha256: input.fallbackReleaseManifestSha256,
+    releasePairReceiptPath,
+    releasePairReceiptSha256: input.releasePairReceiptSha256,
+    officialReleaseManifestPath,
+    officialReleaseManifestSha256: input.officialReleaseManifestSha256,
+    reviewDatabasePath,
+    reviewDatabaseIdentity,
+    reviewSchemaTarget: 10,
+    reviewSchemaSha256: release.gate.receipt.schemaSha256,
+    ...(input.rssAutomaticCutoffIso === undefined ? {} : { rssAutomaticCutoffIso: input.rssAutomaticCutoffIso }),
+    ...(input.xPageAutomaticCutoffIso === undefined ? {} : { xPageAutomaticCutoffIso: input.xPageAutomaticCutoffIso }),
+    ...(input.xPageTrustConfigurationPath === undefined ? {} : { xPageTrustConfigurationPath: input.xPageTrustConfigurationPath }),
+    ...(input.xPageTrustConfigurationSha256 === undefined ? {} : { xPageTrustConfigurationSha256: input.xPageTrustConfigurationSha256 }),
+    dataRoot: paths.dataRoot,
+    staticRoot: resolve(targetReleaseAppRoot, "src/admin-ui"),
+    sessionHashKeyPath: paths.sessionHashKey,
+    recoveryFencePath: paths.recoveryFence,
+    publicProjectionRoot: paths.publicProjectionRoot,
+    projectionSigningKeyId: input.projectionSigningKeyId,
+    projectionSigningPrivateKeyPath,
+    projectionVerifyKeyPath,
+    projectionInternalEndpoint: PROJECTION_INTERNAL_ENDPOINT,
+    publicReadMode: input.publicReadMode,
+    syntheticRollbackRelease: input.syntheticRollbackRelease,
+    syntheticRollbackHash: input.syntheticRollbackHash,
+    projectionSenderServiceIdentity: input.projectionSenderServiceIdentity,
+    projectionReceiverServiceIdentity: input.projectionReceiverServiceIdentity,
+    preparedAt: new Date(now).toISOString(),
+    serviceState: "disabled"
+  });
+  assertManifestResourceBoundary(manifest);
   const rollback = input.activeReleaseRole === "full_v10" ? release.fallback : release.full;
   const rollbackHash = input.activeReleaseRole === "full_v10" ? release.pair.fallbackManifestSha256 : release.pair.fullManifestSha256;
   if (input.syntheticRollbackRelease !== rollback.releaseId || input.syntheticRollbackHash !== rollbackHash) {
@@ -512,12 +571,15 @@ export function prepareAdminDeployment(input: Readonly<{
   if (existsSync(paths.manifest) || existsSync(paths.plist)) throw new Error("ADMIN_DEPLOYMENT_ALREADY_PREPARED");
   const sessionKey = randomBytes(32).toString("base64url");
   atomicPrivateWrite(paths.sessionHashKey, sessionKey);
-  atomicPrivateWrite(paths.recoveryFence, canonicalJson({
-    schemaVersion: "admin-recovery-fence-v1",
-    clockTrusted: false,
-    writerReady: false,
-    lastSuccessfulRecoveryPointAt: null
-  }));
+  withRecoveryFenceWriterLock(paths.recoveryFence, () => {
+    if (existsSync(paths.recoveryFence)) throw new Error("ADMIN_RECOVERY_FENCE_ALREADY_EXISTS");
+    atomicPrivateWrite(paths.recoveryFence, canonicalJson({
+      schemaVersion: "admin-recovery-fence-v1",
+      clockTrusted: false,
+      writerReady: false,
+      lastSuccessfulRecoveryPointAt: null
+    }));
+  });
   atomicPrivateWrite(paths.stdoutLog, "");
   atomicPrivateWrite(paths.stderrLog, "");
   const bootstrap = new BootstrapTokenStore(paths.dataRoot).prepare(now);
@@ -539,7 +601,7 @@ export function prepareAdminDeployment(input: Readonly<{
   };
 }
 
-export function readAdminDeploymentManifest(path: string): AdminDeploymentManifest {
+export function readAdminDeploymentManifestWithIdentity(path: string): Readonly<{ manifest: AdminDeploymentManifest; sha256: string }> {
   assertPrivateFile(path);
   const raw = readFileSync(path, "utf8");
   let value: unknown;
@@ -562,7 +624,11 @@ export function readAdminDeploymentManifest(path: string): AdminDeploymentManife
     parsed.data.projectionSigningPrivateKeyPath,
     parsed.data.projectionVerifyKeyPath
   );
-  return parsed.data;
+  return Object.freeze({ manifest: parsed.data, sha256: createHash("sha256").update(raw, "utf8").digest("hex") });
+}
+
+export function readAdminDeploymentManifest(path: string): AdminDeploymentManifest {
+  return readAdminDeploymentManifestWithIdentity(path).manifest;
 }
 
 export function adminDeploymentStatus(path: string): Readonly<{

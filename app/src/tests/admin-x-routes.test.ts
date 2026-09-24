@@ -526,4 +526,29 @@ it("bridges schema10 identity without pinning mutable X governance state", () =>
   expect(new XManualInboxRepository(database).listSources()).toHaveLength(59);
   disposeAdmittedReviewDatabases();
 });
+
+it("serves the X directory on /api/admin/x-sources without requiring the source-registry list schema", () => {
+  const runtime = setup();
+  const listed = runtime.routes.handle(context({
+    method: "GET",
+    path: "/api/admin/x-sources",
+    cookie: runtime.cookie
+  }));
+  expect(listed).toMatchObject({
+    status: 200,
+    body: { schemaVersion: "admin-x-manual-v1" }
+  });
+  const items = (listed.body as { items: Array<{ sourceId: string }> }).items;
+  expect(items.length).toBeGreaterThan(0);
+  const firstId = items[0]!.sourceId;
+  const detail = runtime.routes.handle(context({
+    method: "GET",
+    path: `/api/admin/x-sources/${firstId}`,
+    cookie: runtime.cookie
+  }));
+  expect(detail).toMatchObject({
+    status: 200,
+    body: { schemaVersion: "admin-x-manual-v1", source: { sourceId: firstId } }
+  });
+});
 });

@@ -1,5 +1,7 @@
 # 自动化部（M1运行办公室）RUNBOOK
 
+> 2026-09-05：日常生产钉与红线见 [`docs/当前生产状态与执行待办.md`](../../../当前生产状态与执行待办.md) 和 [`STATUS.md`](STATUS.md)。下方 08-15 observer 合同仍有效时，**不要**把 RSSHub `:1200` 或 60 秒 automatic review tick 当成现行生产形态。
+
 ## 日常只读巡检
 
 1. 从 M1 owner-only inbox 读取唯一 task contract，验证 taskId、有效期、body SHA 和治理文档 SHA。

@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "单次canary两源HTTP200/succeeded/selected_count>0且计数守恒；排除源零run/health/network mutation；既有reconcile_wait 1条identity/status不变，本任务新增review/publish/reconcile operation/effect delta=0；schema10/recovery/automatic-zero不漂移；两个自然900秒周期成功并有停止、告警与回退收据。",
+  "artifacts": [],
+  "authorization_evidence": "R2任务正文含错误formal supersede与旧authorization_state时态，禁止授权或resume；只使用TASK-20260831-AC5CC2 R3。",
+  "authorization_history": [
+    {
+      "at": "2026-08-31T09:12+08:00",
+      "evidence": "需要用户在恢复门闭合后对Motorsport/The Race真实生产canary作独立明确确认；当前确认尚未取得。",
+      "state": "user_required"
+    },
+    {
+      "at": "2026-08-31T09:14+08:00",
+      "evidence": "R2任务正文含错误formal supersede与旧authorization_state时态，禁止授权或resume；只使用TASK-20260831-AC5CC2 R3。",
+      "state": "user_required"
+    }
+  ],
+  "authorization_state": "user_required",
+  "block_reason": "verified recovery point前置已满足；当前等待TASK-20260831-F7B06E完成0011、recovery=ready与schema10 RSS plist installed-not-loaded，并等待Motorsport/The Race单次canary的独立生产确认。",
+  "claimed_by": "自动化部/01a00560-4fca-7221-9bbb-382a9c2f6195",
+  "completion_class": "standard",
+  "confirmation": "单次生产canary与后续900秒collector启用均需用户明确确认；当前authorization_state=none。",
+  "created_at": "2026-08-31T09:01+08:00",
+  "department": "自动化部",
+  "details": "承接将被supersede的TASK-20260829-082F2C。前置为Schema10恢复门R2完成并另获canary生产确认。只运行Motorsport与The Race collection-only单次canary；Autosport/RaceFans零网络零mutation；refiner/reviewer/publisher/projection reconcile均不运行。既有projection_outbox reconcile_wait 1条必须保持同一identity/status，零消费、零删除；验收口径只要求本任务新增review/publish/reconcile operation/effect delta=0。单次canary通过并再次确认后才启用900秒collector并观察两个自然周期。",
+  "domain_stage": "M1生产灰度/RSS持续采集R2",
+  "event_receipts": [],
+  "execution_state": "blocked",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一排除源发生网络或数据库mutation时立即stop/bootout并回退。",
+    "既有reconcile_wait被消费/删除/改变，或出现新增review/publish/reconcile effect时立即全局停止。",
+    "恢复点超龄、DB/runtime identity漂移或周期失败时自动停采并告警。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "QL3/m1/rss-two-source-canary-schedule-r2",
+  "pointers": [
+    "docs/当前生产状态与执行待办.md"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 5,
+  "schema_version": 1,
+  "task_id": "TASK-20260831-C5189A",
+  "title": "Motorsport与The Race单次Canary及900秒持续采集恢复R2",
+  "unverified": [],
+  "updated_at": "2026-08-31T09:14+08:00",
+  "verified": []
+}

@@ -55,6 +55,7 @@ describe("RSS Chinese refinement", () => {
       }
     });
     expect(receipt.status).toBe("generated");
+    expect(receipt.model).toBe("deepseek-chat");
     expect(receipt.externalCalls).toBe(1);
     expect(requestBody).toContain("Cadillac names new F1 team boss");
     expect(requestBody).not.toContain(`sk-${"x".repeat(30)}`);
@@ -122,10 +123,59 @@ describe("RSS Chinese refinement", () => {
         usage: { prompt_tokens: 72, completion_tokens: 48 }
       }), { status: 200, headers: { "content-type": "application/json" } })
     });
-    expect(updatedReceipt).toMatchObject({ status: "generated", sourceRevision: 2, externalCalls: 1 });
+    expect(updatedReceipt).toMatchObject({ status: "generated", sourceRevision: 2, externalCalls: 1, model: "deepseek-chat" });
     expect(database.prepare(
       "SELECT COUNT(*) AS count FROM machine_summary_draft WHERE candidate_id = ?"
     ).get("rss-candidate-refine")).toMatchObject({ count: 2 });
+    database.close();
+  });
+
+  it("blocks unsupported GLM persistence before reading credentials, calling the API, or writing data", async () => {
+    const database = new DatabaseSync(":memory:");
+    database.exec("PRAGMA foreign_keys=ON; PRAGMA recursive_triggers=ON;");
+    database.exec(migration("0001_rss_real.sql"));
+    applyReviewRealAdminMigration(database, migration("0002_admin_review_publish.sql"));
+    applyProjectionDeliveryRuntimeMigration(database, migration("0003_projection_delivery_runtime.sql"));
+    applyRssMediaRefinementMigration(database, migration("0004_rss_media_and_chinese_refinement.sql"));
+    database.prepare(`
+      INSERT INTO pending_review_candidate (
+        candidate_id, source_id, external_id, dedupe_key, canonical_url, title, excerpt,
+        author, published_at, source_payload_hash, source_revision, first_seen_at, last_seen_at
+      ) VALUES (?, 'motorsport-f1-news', 'guid-refine-glm', ?, 'https://www.motorsport.com/f1/news/refine-glm/',
+        'Cadillac names new F1 team boss', 'Graeme Lowdon leaves the role after a leadership change.',
+        'F1 Desk', '2026-08-13T00:00:00.000Z', ?, 1, '2026-08-13T00:00:00.000Z', '2026-08-13T00:00:00.000Z')
+    `).run("rss-candidate-refine-glm", "a".repeat(64), "b".repeat(64));
+    const root = mkdtempSync(join(realpathSync(tmpdir()), "f1-refine-glm-"));
+    const keyPath = join(root, "glm-api-key");
+    // Leave the credential path absent: a read would fail this test.
+    const changesBefore = database.prepare("SELECT total_changes() AS count").get();
+    let externalCalls = 0;
+    const receipt = await refineOneCandidate({
+      database,
+      apiKeyPath: keyPath,
+      modelId: "glm-5.3-flash",
+      now: () => new Date("2026-08-13T01:00:00.000Z"),
+      fetchImpl: async () => {
+        externalCalls += 1;
+        throw new Error("UNEXPECTED_MODEL_REQUEST");
+      }
+    });
+    expect(receipt).toMatchObject({
+      status: "blocked",
+      reasonCode: "MODEL_SCHEMA_UNSUPPORTED",
+      model: "glm-5.3-flash",
+      candidateId: "rss-candidate-refine-glm",
+      sourceRevision: 1,
+      responseSha256: null,
+      inputTokens: 0,
+      outputTokens: 0,
+      externalCalls: 0
+    });
+    expect(externalCalls).toBe(0);
+    expect(database.prepare("SELECT total_changes() AS count").get()).toEqual(changesBefore);
+    expect(database.prepare("SELECT COUNT(*) AS count FROM machine_summary_draft").get()).toMatchObject({
+      count: 0
+    });
     database.close();
   });
 });

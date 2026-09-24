@@ -1,6 +1,6 @@
 import { spawnSync } from "node:child_process";
 import { createHash, randomBytes } from "node:crypto";
-import { chmodSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, rmSync, writeFileSync } from "node:fs";
+import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
@@ -20,6 +20,28 @@ const roots: string[] = [];
 
 afterEach(() => {
   while (roots.length > 0) rmSync(roots.pop()!, { recursive: true, force: true });
+});
+
+describe("snapshot failure storage boundaries", () => {
+  it("does not grow objects or packages on repeated retries when an existing package is damaged", () => {
+    const f = fixtureWorkspace("f1-backup-retention-preflight-");
+    const input = { sourceDbPath: f.sourceDbPath, projectionRoot: f.projectionRoot, outputDir: f.outputDir, key: f.key, retain: 2 };
+    const first = runSnapshotOnce({ ...input, now: () => new Date("2026-09-06T12:00:00.000Z") });
+    const layout = backupLayout(f.outputDir), beforeObjects = readdirSync(layout.objectsDir), beforeLatest = readFileSync(layout.latestPath);
+    writeFileSync(join(layout.packagesDir, first.packageId!, "manifest.json"), "broken");
+    changeSourceNote(f.sourceDbPath, "later content");
+    for (let i = 0; i < 2; i++) expect(() => runSnapshotOnce(input)).toThrow("MANIFEST_INVALID");
+    expect(readdirSync(layout.objectsDir)).toEqual(beforeObjects); expect(readdirSync(layout.packagesDir)).toEqual([first.packageId]);
+    expect(readFileSync(layout.latestPath)).toEqual(beforeLatest); expect(existsSync(layout.lockPath)).toBe(false);
+  });
+  it("cleans a newly written object and staging after failure before publishing a package", () => {
+    const f = fixtureWorkspace("f1-backup-cleanup-");
+    expect(() => runSnapshotOnce({ sourceDbPath: f.sourceDbPath, projectionRoot: f.projectionRoot, outputDir: f.outputDir, key: f.key, retain: 2,
+      testOnlyAfterObjectWrite: () => { throw new Error("INJECTED_FAILURE"); } })).toThrow("INJECTED_FAILURE");
+    const layout = backupLayout(f.outputDir);
+    expect(readdirSync(layout.objectsDir)).toEqual([]); expect(readdirSync(layout.packagesDir)).toEqual([]);
+    expect(readdirSync(layout.stagingDir)).toEqual([]); expect(existsSync(layout.lockPath)).toBe(false); expect(existsSync(layout.latestPath)).toBe(false);
+  });
 });
 
 function scratch(prefix: string): string {

@@ -1,0 +1,65 @@
+{
+  "status": "PASS_LOCAL_SYNTHETIC_CLONE_IMPORTER_SCOPE",
+  "reviewedAt": "2026-09-06T17:06:51.839847+00:00",
+  "reviewer": "handoff_audit",
+  "implementationEditedByReviewer": false,
+  "node": "v24.18.0",
+  "schemaSha256": "56cae0d03f60303061c568de278f0f51b468b85759f4afc99e35dc5e48a07d3d",
+  "migrationSha256": "9c57f97e45dd24413e5ef6a043bb727da86083dbb53273c8151079b96d88130a",
+  "files": {
+    "app/migrations/rss-real/0013_x_page_import.sql": "9c57f97e45dd24413e5ef6a043bb727da86083dbb53273c8151079b96d88130a",
+    "app/src/server/x-page/migration.ts": "fc6376b1688bab37615269242ddf9126f14a26ffe5fab07c09484c06e0b0423e",
+    "app/src/server/x-page/bridge.ts": "ca62bda8b4c1f8d7c74cbe96739df918de1c7b81e8c07d860f909277bfde5311",
+    "app/src/server/x-page/normalize.ts": "45d729fe5d4ab03d05ddccba07f072a56ae2f242834ce86d622a20aaf75c2bc5",
+    "app/src/server/x-page/schema-identity.ts": "44a9e3e3abd5cdc8ec2ff6cc0b81d10bd458431694bfec3dc3e13fda019cf40c",
+    "app/src/server/internal-operation/authorizer.ts": "0aa48e6be3897de7e1d5392b380492f5d61e33c316acf6f4b565e1e3a950a066",
+    "app/src/server/internal-operation/gateway.ts": "2b8b7a0cee5f8bf75276e7f7bb370888e8f35b4901285e3d2c0cda95fe9ffce8",
+    "app/src/server/internal-operation/mutation-port.ts": "f8b80a0f2ceaaf90a2582731c882fab3823d517aa9d10df8bcc32fc4c58944d9",
+    "app/src/server/internal-operation/owner-supervisor.ts": "75c1c49cd5feb29a0c7b701b164cb947ff00bf5042f0355371faf480187fa47f",
+    "app/src/server/rss/source-registry.ts": "f65e22e686bc7afb88eb5d481706e357932b2745eba845e8275d26e239b1e16b",
+    "app/src/server/rss/refinement.ts": "848d1420662e0713f0ab27e017f19928f9a22f39a1a664b5ae648e19c08030d8",
+    "app/src/tests/x-page-import.test.ts": "407ea7e4628f8ddc35adc2ff5f280f3929806f9812d9a292f1ee275e286e0ade",
+    "app/src/tests/helpers/x-page-database.ts": "0045387b119a2bc518740f83c1006b05e415ebd4b73d89a8fa28768534df6901"
+  },
+  "verification": {
+    "targeted": "2 files, 71 tests passed",
+    "regression": "6 files, 54 tests passed",
+    "finalImporterAfterFixtureAndRetireFix": "1 file, 17 tests passed (overlaps targeted)",
+    "uniqueTests": 125,
+    "schema": {
+      "beforeObjects": 325,
+      "afterObjects": 342,
+      "removedObjects": 0,
+      "changedExistingTables": 6,
+      "changedExistingTriggers": 4,
+      "otherExistingSchemaSqlUnchanged": true,
+      "foreignKeyCheck": [],
+      "integrityCheck": "ok",
+      "legacyGatewaySchemaIdentityRejected": true
+    },
+    "nonemptyHistory": "Existing repository-generated RSS candidate, review bundle, decision, publication and outbox rows compared exactly across migration; 59 manual registry rows preserved. Manual submission, backup and anchor business tables remain empty in fixture; their schema and triggers are unchanged."
+  },
+  "resolvedReviewGaps": [
+    "Nonempty RSS associated history fixture added and independently rerun.",
+    "X retire outside dedicated action slice now fails early with X_PAGE_RETIRE_SUCCESSOR_REQUIRED; old source_update cannot bypass X dedicated permit."
+  ],
+  "unresolvedFindingsWithinScope": [],
+  "scopeLimits": [
+    "Synthetic in-memory migration and explicitly labeled capture fixtures only; no real browser capture, production migration or production runtime closure reviewed here.",
+    "No model/refinement, approval or publishing route is enabled by this importer; existing RSS refiner excludes X previews.",
+    "Before a future production source-management integration, verifyAuthorityActivationReceipt in source-registry-migration.ts still expects the old schema and must receive an explicit successor design/verification. This is not called by the reviewed local importer."
+  ],
+  "evidence": [
+    "tests.log",
+    "regression-tests.log",
+    "importer-final-tests.log",
+    "schema-check.mts",
+    "schema-check.json",
+    "schema-check.log"
+  ],
+  "releaseClosureIntegrationReview": {
+    "status": "PASS_X_DEPENDENCY_RELEASE_CLOSURE_INTEGRATION",
+    "report": "release-closure-review.json",
+    "reportSha256": "72301126ba906aab2d7820a358f7b5389cc0028c99f163db84d1f341641b85ca"
+  }
+}

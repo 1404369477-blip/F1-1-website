@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.f1plus1.lean</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/Users/chanai/.local/node-v24.18.0-darwin-arm64/bin/node</string>
+    <string>--no-warnings</string>
+    <string>--experimental-transform-types</string>
+    <string>scripts/lean-cycle.ts</string>
+  </array>
+  <key>WorkingDirectory</key>
+  <string>/Users/chanai/F1-1-website/lean-runtime/app</string>
+  <key>StartInterval</key>
+  <integer>600</integer>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>Nice</key>
+  <integer>10</integer>
+  <key>Umask</key>
+  <integer>63</integer>
+  <key>StandardOutPath</key>
+  <string>/Users/chanai/F1-1-website/lean-data/cycle.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/chanai/F1-1-website/lean-data/cycle.log</string>
+</dict>
+</plist>

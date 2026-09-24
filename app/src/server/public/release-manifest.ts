@@ -94,12 +94,13 @@ export const PUBLIC_RELEASE_RUNTIME_FILES = [
   "src/server/public/runtime.ts",
   "src/server/public/snapshot-adapter.ts",
   "src/server/public/types.ts",
-  "tsconfig.json"
+  "tsconfig.json",
+  "src/server/x-page/normalize.ts",
 ] as const;
 
 const PUBLIC_RELEASE_LEGACY_BOOTSTRAP_PATH = "scripts/public-release-bootstrap.ts" as const;
-export const PUBLIC_RELEASE_RUNTIME_FILE_COUNT = 89 as const;
-export const PUBLIC_RELEASE_RUNTIME_PATH_SET_SHA256 = "b6f5a3885d9d0402f0634bd37ce9c3b4b51f25d33a7dc0c52f1768d7fac70665" as const;
+export const PUBLIC_RELEASE_RUNTIME_FILE_COUNT = 90 as const;
+export const PUBLIC_RELEASE_RUNTIME_PATH_SET_SHA256 = "60aba46344c35477957cd28cd082cc5820bcb0147adabf69b39fb7ad93b81b12" as const;
 export const PUBLIC_RELEASE_REQUIRED_RUNTIME_PATHS = Object.freeze([
   "migrations/rss-real/0005_second_rss_autosport.sql",
   "migrations/rss-real/0006_independent_rss_racefans_the_race.sql",

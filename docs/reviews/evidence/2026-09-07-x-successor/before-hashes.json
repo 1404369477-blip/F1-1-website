@@ -1,0 +1,12 @@
+{
+  "app/src/server/internal-operation/gateway.ts": "771ffeeeda07504457d8002ee67b42fe4aeea7904b61ee3b5790734d4715f140",
+  "app/src/server/internal-operation/authorizer.ts": "fce98fb415fc2f89c7c8ed33096222e91510605cae5aa762f509fb3feb732b3f",
+  "app/src/server/internal-operation/owner-supervisor.ts": "e05fde88c0807348621993a875dcd59fa43089c6ade1813711faa832cc974b11",
+  "app/src/server/internal-operation/mutation-port.ts": "81a3c6a1f5bc34dce2b4410fcfb6c545afbf1166f7e036c4f7f8b6a0e415ee3d",
+  "app/src/server/rss/refinement.ts": "e7f5aaa907efdc4f06fd956c159f559c800b255ee088e350bef5f2bcbab38e1b",
+  "app/src/server/rss/source-registry.ts": "b07e060a263087456c247b35cbb807b9ca20a4fc761264211c392fe55c1f401c",
+  "app/src/server/admin-service/release-manifest.ts": "9655fc67f260d59c23c8df65a26abadfe2d24c571455d6911dcb74e0b4326492",
+  "app/scripts/prepare-v10-release-candidate.ts": "04fb9090c974841689c28ed2ffd1fcfc9be2643fedb2128f436f938388994f26",
+  "app/scripts/ql3-deployment-v10-evidence.ts": "44f5eff8c3e72e2efd77ba12b91e8a5ceb127d4c30796d3781087a1805d4c97a",
+  "app/src/tests/admin-release-manifest.test.ts": "e7903c54d9ecc802e57db99e4719010ce5352d3f40f5892ccad1960acca6e0f6"
+}

@@ -15,11 +15,18 @@ import {
 } from "../public/release-manifest.ts";
 import {
   assertSourceRegistrySchema,
+  sourceRegistrySchemaFingerprint,
   SOURCE_REGISTRY_MIGRATION_SHA256,
   SOURCE_REGISTRY_SCHEMA10_SHA256,
   SOURCE_REGISTRY_SOURCE_0009_RAW_SHA256
 } from "../rss/source-registry-migration.ts";
 import { canonicalJsonV1 } from "./gateway.ts";
+import { RSS_AUTOMATIC_SOURCE_EPOCH_SCHEMA_SHA256, isRssAutomaticSchemaSha256 } from "../rss-automatic/source-epoch-schema-identity.ts";
+import { X_PAGE_ADMISSION_SCHEMA_SHA256 } from "../x-page/admission-schema-identity.ts";
+
+function isAutomaticProductionSchemaSha256(value: string): boolean {
+  return isRssAutomaticSchemaSha256(value) || value === X_PAGE_ADMISSION_SCHEMA_SHA256;
+}
 
 const HASH = /^[0-9a-f]{64}$/;
 const GIT_HASH = /^[0-9a-f]{40}$/;
@@ -44,8 +51,8 @@ export type CapabilitySet = Readonly<{
   manualOutboxCreate: true;
   publicLkg: true;
   sameDeliverySender: true;
-  automaticReview: false;
-  automaticPublish: false;
+  automaticReview: boolean;
+  automaticPublish: boolean;
   collectorNetwork: boolean;
   modelNetwork: boolean;
   retryModelCalls: boolean;
@@ -70,9 +77,9 @@ export type ReleaseCandidateManifest = Readonly<{
   schemaSha256: string;
   migration0009RawSha256: string;
   migration0010RawSha256: string;
-  adminRuntimeFileCount: 153;
+  adminRuntimeFileCount: typeof ADMIN_RELEASE_RUNTIME_FILE_COUNT;
   adminRuntimePathSetSha256: string;
-  publicRuntimeFileCount: 89;
+  publicRuntimeFileCount: typeof PUBLIC_RELEASE_RUNTIME_FILE_COUNT;
   publicRuntimePathSetSha256: string;
   packageLockSha256: string;
   packageRootSha256: string;
@@ -227,7 +234,7 @@ export function assertReleaseCandidate(manifest: ReleaseCandidateManifest): void
     "packageRootSha256", "pathRootSha256"
   ] as const) validateHash(manifest[field], `RELEASE_${field.toUpperCase()}_INVALID`);
   assert(
-    manifest.schemaSha256 === SOURCE_REGISTRY_SCHEMA10_SHA256 &&
+    (manifest.schemaSha256 === SOURCE_REGISTRY_SCHEMA10_SHA256 || isAutomaticProductionSchemaSha256(manifest.schemaSha256)) &&
     manifest.migration0009RawSha256 === SOURCE_REGISTRY_SOURCE_0009_RAW_SHA256 &&
     manifest.migration0010RawSha256 === SOURCE_REGISTRY_MIGRATION_SHA256,
     "RELEASE_SCHEMA_IDENTITY_MISMATCH"
@@ -271,7 +278,15 @@ export function collectReleaseFiles(sourceRoot: string, paths: readonly string[]
   return Object.freeze(files);
 }
 
-export function fullV10Capabilities(): CapabilitySet {
+export function releaseSchemaForBuildOptions(args: readonly string[]): typeof SOURCE_REGISTRY_SCHEMA10_SHA256 | typeof RSS_AUTOMATIC_SOURCE_EPOCH_SCHEMA_SHA256 | typeof X_PAGE_ADMISSION_SCHEMA_SHA256 {
+  assert(args.length === 0 || (args.length === 1 && ["--rss-automatic", "--x-page-production"].includes(args[0])), "RELEASE_BUILD_OPTIONS_INVALID");
+  if (args[0] === "--x-page-production") return X_PAGE_ADMISSION_SCHEMA_SHA256;
+  return args.length === 1 ? RSS_AUTOMATIC_SOURCE_EPOCH_SCHEMA_SHA256 : SOURCE_REGISTRY_SCHEMA10_SHA256;
+}
+
+export function fullV10Capabilities(input: Readonly<{ schemaSha256: string }> = { schemaSha256: SOURCE_REGISTRY_SCHEMA10_SHA256 }): CapabilitySet {
+  assert(input.schemaSha256 === SOURCE_REGISTRY_SCHEMA10_SHA256 || isAutomaticProductionSchemaSha256(input.schemaSha256), "RELEASE_SCHEMA_IDENTITY_MISMATCH");
+  const automatic = isAutomaticProductionSchemaSha256(input.schemaSha256);
   return Object.freeze({
     read: true,
     freshPauseStop: true,
@@ -279,8 +294,8 @@ export function fullV10Capabilities(): CapabilitySet {
     manualOutboxCreate: true,
     publicLkg: true,
     sameDeliverySender: true,
-    automaticReview: false,
-    automaticPublish: false,
+    automaticReview: automatic,
+    automaticPublish: automatic,
     collectorNetwork: true,
     modelNetwork: true,
     retryModelCalls: true,
@@ -325,7 +340,11 @@ export function assertFallbackCapabilities(manifest: ReleaseCandidateManifest): 
 export function assertFullCapabilities(manifest: ReleaseCandidateManifest): void {
   assertReleaseCandidate(manifest);
   assert(manifest.role === "full_v10", "FULL_ROLE_INVALID");
-  assert(manifest.capabilities.automaticReview === false && manifest.capabilities.automaticPublish === false, "FULL_AUTOMATION_REGISTRATION_OPEN");
+  const review = manifest.capabilities.automaticReview;
+  const publish = manifest.capabilities.automaticPublish;
+  assert(typeof review === "boolean" && typeof publish === "boolean" && review === publish &&
+    (!review || isAutomaticProductionSchemaSha256(manifest.schemaSha256)) &&
+    (manifest.schemaSha256 !== X_PAGE_ADMISSION_SCHEMA_SHA256 || review), "FULL_AUTOMATION_REGISTRATION_OPEN");
   for (const field of [
     "read", "freshPauseStop", "manualSafetyReviewPublishWithdraw", "manualOutboxCreate",
     "publicLkg", "sameDeliverySender", "collectorNetwork", "modelNetwork",
@@ -437,7 +456,8 @@ export function activateReleaseCandidate(
   activatedAt: string,
   previousActivationId: string | null
 ): ReleaseRuntimeGate {
-  assertReleaseCandidate(manifest);
+  if (manifest.role === "full_v10") assertFullCapabilities(manifest);
+  else assertFallbackCapabilities(manifest);
   assert(pair.schemaVersion === "f1plus1-release-pair-v10", "RELEASE_PAIR_SCHEMA_INVALID");
   const expectedReleaseId = manifest.role === "full_v10" ? pair.fullReleaseId : pair.fallbackReleaseId;
   const expectedManifestSha256 = manifest.role === "full_v10" ? pair.fullManifestSha256 : pair.fallbackManifestSha256;
@@ -471,10 +491,11 @@ export function activateReleaseCandidate(
     ...core,
     activationId: hash(`f1plus1-release-activation-v10\n${canonicalJsonV1(core)}`)
   });
-  const allows = (action: ReleaseRuntimeAction): boolean => manifest.capabilities[ACTION_CAPABILITY[action]];
+  const capabilities = Object.freeze({ ...manifest.capabilities });
+  const allows = (action: ReleaseRuntimeAction): boolean => capabilities[ACTION_CAPABILITY[action]];
   return Object.freeze({
     receipt,
-    capabilities: manifest.capabilities,
+    capabilities,
     allows,
     run<T>(action: ReleaseRuntimeAction, callback: () => T): T {
       assert(allows(action), `RELEASE_RUNTIME_ACTION_CLOSED:${action}`);
@@ -560,8 +581,8 @@ export type ReleaseRuntimeObservation = Readonly<{
   outboxRows: number;
   idempotencyRows: number;
   externalCalls: number;
-  automaticReviewRegistrations: 0;
-  automaticPublishRegistrations: 0;
+  automaticReviewRegistrations: number;
+  automaticPublishRegistrations: number;
   publicLkgSha256: string;
 }>;
 
@@ -576,8 +597,8 @@ export type ReleaseSwitchReceipt = Readonly<{
   databaseUnchanged: true;
   outboxUnchanged: true;
   idempotencyUnchanged: true;
-  automaticReviewRegistrations: 0;
-  automaticPublishRegistrations: 0;
+  automaticReviewRegistrations: number;
+  automaticPublishRegistrations: number;
 }>;
 
 function rowValue(value: unknown): unknown {
@@ -624,7 +645,11 @@ export function observeReleaseRuntime(
     const autoPublish = Number((database.prepare(
       "SELECT COUNT(*) AS count FROM internal_operation WHERE owner_process='automatic_publisher'"
     ).get() as Record<string, unknown>).count);
-    assert(autoReview === 0 && autoPublish === 0, "RELEASE_AUTOMATION_REGISTRATION_NONZERO");
+    const automaticSchema = isAutomaticProductionSchemaSha256(gate.receipt.schemaSha256);
+    const physicalSchema = sourceRegistrySchemaFingerprint(database);
+    assert(automaticSchema ? physicalSchema === gate.receipt.schemaSha256 : !isAutomaticProductionSchemaSha256(physicalSchema), "RELEASE_DATABASE_SCHEMA_IDENTITY_MISMATCH");
+    assert(Number.isSafeInteger(autoReview) && autoReview >= 0 && Number.isSafeInteger(autoPublish) && autoPublish >= 0, "RELEASE_AUTOMATION_COUNT_INVALID");
+    if (!automaticSchema) assert(autoReview === 0 && autoPublish === 0, "RELEASE_AUTOMATION_REGISTRATION_NONZERO");
     const externalCalls = (database.prepare(
       "SELECT external_calls FROM internal_external_attempt"
     ).all() as Array<Record<string, unknown>>).reduce((total, row) => total + Number(row.external_calls), 0);
@@ -643,13 +668,13 @@ export function observeReleaseRuntime(
       role: gate.receipt.role,
       manifestSha256: gate.receipt.manifestSha256,
       schemaVersion: 10 as const,
-      schemaSha256: SOURCE_REGISTRY_SCHEMA10_SHA256,
+      schemaSha256: gate.receipt.schemaSha256,
       databaseLogicalSha256: releaseDatabaseLogicalSha256(database),
       outboxRows,
       idempotencyRows,
       externalCalls,
-      automaticReviewRegistrations: 0 as const,
-      automaticPublishRegistrations: 0 as const,
+      automaticReviewRegistrations: autoReview,
+      automaticPublishRegistrations: autoPublish,
       publicLkgSha256
     });
   });
@@ -677,7 +702,12 @@ export function buildReleaseSwitchReceipt(
   );
   for (const observation of [fullBefore, fallbackAfter, rollbackAfter]) {
     assert(observation.schemaVersion === 10 && observation.schemaSha256 === pair.schemaSha256, "RELEASE_SWITCH_SCHEMA_MISMATCH");
-    assert(observation.automaticReviewRegistrations === 0 && observation.automaticPublishRegistrations === 0, "RELEASE_SWITCH_AUTOMATION_NONZERO");
+    if (isAutomaticProductionSchemaSha256(pair.schemaSha256)) {
+      assert(Number.isSafeInteger(observation.automaticReviewRegistrations) && observation.automaticReviewRegistrations >= 0 &&
+        Number.isSafeInteger(observation.automaticPublishRegistrations) && observation.automaticPublishRegistrations >= 0 &&
+        observation.automaticReviewRegistrations === fullBefore.automaticReviewRegistrations &&
+        observation.automaticPublishRegistrations === fullBefore.automaticPublishRegistrations, "RELEASE_SWITCH_AUTOMATION_DRIFT");
+    } else assert(observation.automaticReviewRegistrations === 0 && observation.automaticPublishRegistrations === 0, "RELEASE_SWITCH_AUTOMATION_NONZERO");
   }
   assert(
     fullBefore.databaseLogicalSha256 === fallbackAfter.databaseLogicalSha256 &&
@@ -711,7 +741,7 @@ export function buildReleaseSwitchReceipt(
     databaseUnchanged: true,
     outboxUnchanged: true,
     idempotencyUnchanged: true,
-    automaticReviewRegistrations: 0,
-    automaticPublishRegistrations: 0
+    automaticReviewRegistrations: fullBefore.automaticReviewRegistrations,
+    automaticPublishRegistrations: fullBefore.automaticPublishRegistrations
   });
 }

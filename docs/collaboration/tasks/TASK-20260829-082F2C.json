@@ -1,16 +1,21 @@
 {
   "acceptance_exit": "单次 canary 两源均 HTTP200/succeeded/selected_count>0 且 new+updated+duplicate=selected；排除源无run/health/network mutation；DB/schema10/recovery point/automatic-zero不漂移；随后两个自然900秒周期均成功并有监控/失败告警/停用回退收据；公网现有内容持续可读。",
   "artifacts": [],
-  "authorization_evidence": "2026-08-29当前主线程：用户要求完整同步工作文档，方便其他Agent接手；此前已明确要求持续推进至公开网站和管理后台完整上线。",
+  "authorization_evidence": "legacy合同禁止恢复且不接受新授权；只允许后继canary R2/R3按各自门禁推进。",
   "authorization_history": [
     {
       "at": "2026-08-29T23:49+08:00",
       "evidence": "2026-08-29当前主线程：用户要求完整同步工作文档，方便其他Agent接手；此前已明确要求持续推进至公开网站和管理后台完整上线。",
       "state": "user_confirmed"
+    },
+    {
+      "at": "2026-08-31T09:12+08:00",
+      "evidence": "legacy合同禁止恢复且不接受新授权；只允许后继canary R2/R3按各自门禁推进。",
+      "state": "user_required"
     }
   ],
-  "authorization_state": "user_confirmed",
-  "block_reason": "等待 TASK-20260829-BBFF2A 形成 verified recovery point、关闭 schema10恢复门并绑定真实RSS身份。",
+  "authorization_state": "user_required",
+  "block_reason": "旧合同已由TASK-20260831-C5189A R2替代，禁止恢复执行。verified recovery point前置已满足；R2等待F7B06E完成0011、recovery=ready与schema10 RSS plist installed-not-loaded，并等待两源canary独立生产确认；既有reconcile_wait保持不变。",
   "claimed_by": "自动化部/01a00560-4fca-7221-9bbb-382a9c2f6195",
   "completion_class": "standard",
   "confirmation": "按当前线程用户持续推进目标执行；任何新增付费、凭证、权限、不可逆删除或扩大公网暴露仍需单独用户确认。",
@@ -34,11 +39,11 @@
   ],
   "report": "",
   "resolution": null,
-  "revision": 3,
+  "revision": 6,
   "schema_version": 1,
   "task_id": "TASK-20260829-082F2C",
   "title": "Motorsport与The Race单次Canary及900秒持续采集恢复",
   "unverified": [],
-  "updated_at": "2026-08-29T23:55+08:00",
+  "updated_at": "2026-08-31T09:12+08:00",
   "verified": []
 }

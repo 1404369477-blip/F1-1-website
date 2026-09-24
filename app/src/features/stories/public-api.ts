@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+import { IS_PUBLIC_STATIC_SITE } from "./public-site-config";
+import { createPublicStaticFetch, PublicStaticGenerationChangedError } from "./public-static-transport";
+
 import type {
   PublicBilingualFeedResponseV2,
   PublicBilingualStoryCardV2,
@@ -224,6 +227,7 @@ export type PublicStoryDetailViewModel = PublicStoryCardViewModel & {
 export type PublicFeedViewModel = {
   stories: PublicStoryCardViewModel[];
   page: PublicFeedResponseV1["page"];
+  staticBundleId?: string;
 };
 
 export type PublicStoryDetailPageViewModel = {
@@ -413,6 +417,7 @@ async function requestClosedJson<T>({
     });
   } catch (error) {
     if (error instanceof Error && error.name === "AbortError") throw error;
+    if (error instanceof PublicStaticGenerationChangedError) throw error;
     throw new PublicApiClientError(0, null);
   }
 
@@ -437,19 +442,23 @@ export async function fetchPublicFeed({
   contentType = null,
   cursor = null,
   signal,
-  fetchImpl = globalThis.fetch
+  fetchImpl,
+  staticBundleId
 }: {
   contentType?: PublicContentType | null;
   cursor?: PublicFeedResponseV1["page"]["nextCursor"];
   signal?: AbortSignal;
   fetchImpl?: PublicApiFetch;
+  staticBundleId?: string;
 } = {}): Promise<PublicFeedViewModel> {
+  const staticRequest = !fetchImpl && IS_PUBLIC_STATIC_SITE ? createPublicStaticFetch({ expectedBundleId: staticBundleId }) : null;
+  const requestFetch = fetchImpl ?? staticRequest?.fetch ?? globalThis.fetch;
   let response: PublicFeedResponseV1 | PublicBilingualFeedResponseV2;
   try {
     response = await requestClosedJson<PublicFeedResponseV1 | PublicBilingualFeedResponseV2>({
       path: buildPublicFeedPath({ contentType, cursor }),
       schema: publicFeedAnySchema,
-      fetchImpl,
+      fetchImpl: requestFetch,
       signal
     });
   } catch (error) {
@@ -457,31 +466,37 @@ export async function fetchPublicFeed({
     response = await requestClosedJson<PublicFeedResponseV1>({
       path: buildSyntheticFallbackFeedPath({ contentType, cursor }),
       schema: publicFeedResponseSchema,
-      fetchImpl,
+      fetchImpl: requestFetch,
       signal
     });
   }
+  const bundle = staticRequest?.getBundleId();
+  const staticIdentity = bundle ? { staticBundleId: bundle } : {};
   if (response.schemaVersion === "public-read-bilingual-v2") {
-    return { stories: response.items.map(mapBilingualItem), page: { pageSize: 12, hasMore: response.page.nextCursor !== null, nextCursor: response.page.nextCursor ? { cursorAt: response.page.asOf, cursorId: `bilingual:${response.page.nextCursor}` } : null } };
+    return { stories: response.items.map(mapBilingualItem), page: { pageSize: 12, hasMore: response.page.nextCursor !== null, nextCursor: response.page.nextCursor ? { cursorAt: response.page.asOf, cursorId: `bilingual:${response.page.nextCursor}` } : null }, ...staticIdentity };
   }
-  return { stories: response.items.map(mapFeedItem), page: response.page };
+  return { stories: response.items.map(mapFeedItem), page: response.page, ...staticIdentity };
 }
 
 export async function fetchPublicStory({
   publicId,
   signal,
-  fetchImpl = globalThis.fetch
+  fetchImpl,
+  staticBundleId
 }: {
   publicId: string;
   signal?: AbortSignal;
   fetchImpl?: PublicApiFetch;
+  staticBundleId?: string;
 }): Promise<PublicStoryDetailPageViewModel> {
+  const staticRequest = !fetchImpl && IS_PUBLIC_STATIC_SITE ? createPublicStaticFetch({ expectedBundleId: staticBundleId }) : null;
+  const requestFetch = fetchImpl ?? staticRequest?.fetch ?? globalThis.fetch;
   let response: PublicStoryDetailResponseV1 | PublicBilingualStoryDetailResponseV2;
   try {
     response = await requestClosedJson<PublicStoryDetailResponseV1 | PublicBilingualStoryDetailResponseV2>({
       path: `/api/public/stories/${encodeURIComponent(publicId)}?v=2`,
       schema: publicDetailAnySchema,
-      fetchImpl,
+      fetchImpl: requestFetch,
       signal
     });
   } catch (error) {
@@ -489,7 +504,7 @@ export async function fetchPublicStory({
     response = await requestClosedJson<PublicStoryDetailResponseV1>({
       path: `/api/public/stories/${encodeURIComponent(publicId)}`,
       schema: publicStoryDetailResponseSchema,
-      fetchImpl,
+      fetchImpl: requestFetch,
       signal
     });
   }

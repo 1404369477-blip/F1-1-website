@@ -75,7 +75,7 @@ export function persistOwnerSupervisorHandoff(
 
 export function assertOwnerProcess(value: string): asserts value is OwnerProcess {
   const owners: readonly OwnerProcess[] = [
-    "rss_collector", "rss_refiner", "automatic_reviewer", "automatic_publisher",
+    "x_page_importer", "rss_collector", "rss_refiner", "automatic_reviewer", "automatic_publisher",
     "projection_sender", "projection_receiver", "x_official_adapter", "bilingual_refiner",
     "admin_http", "admin_telemetry_producer", "backup_worker", "restore_operator",
     "system_supervisor", "reconciler"

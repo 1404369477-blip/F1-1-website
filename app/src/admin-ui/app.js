@@ -53,6 +53,7 @@
     refreshQueue: document.querySelector("#refresh-queue"),
     selectAllEligible: document.querySelector("#select-all-eligible"),
     batchRelease: document.querySelector("#batch-release"),
+    publishGateNotice: document.querySelector("#publish-gate-notice"),
     queueNotice: document.querySelector("#queue-notice"),
     queueList: document.querySelector("#queue-list"),
     mobileBack: document.querySelector("#mobile-back"),
@@ -802,7 +803,7 @@
   const reviewStatePresentation = Object.freeze({
     pending_review: ["待审核", "核对来源与中文整理后选择批准或拒绝。批准不会自动发布。"],
     source_updated: ["来源已更新", "当前审核版本已过期。请基于最新来源保存新版本后重新决定。"],
-    approved_waiting_publish: ["已批准，等待手动发布", "批准决定已绑定当前版本。发布仍需要第二次显式确认和新鲜通行密钥。"],
+    approved_waiting_publish: ["已通过，还没上公开站", "点「通过并发布」会在一次通行密钥里完成投递。如果发不出去，通常是上一版公开稿还没投递完。"],
     rejected: ["已拒绝", "拒绝决定与原因已保留，没有创建 Publication。"],
     published_delivery_pending: ["业务发布已提交", "公开投递尚未确认 active。只检查同一 delivery，不创建第二发布。"],
     published: ["公开投递已确认", "当前发布与投递收据已经确认。"],
@@ -1280,6 +1281,7 @@
     elements.sourceRegistryList.replaceChildren();
     if (fixtureMode) {
       elements.operationsStatus.textContent = "Fixture 不模拟 schema 10 运行生产器。";
+      if (elements.publishGateNotice) elements.publishGateNotice.hidden = true;
       return;
     }
     try {
@@ -1292,6 +1294,22 @@
       const control = overview.control ?? {};
       const collection = overview.collection ?? {};
       const errors = overview.observability?.errors ?? {};
+      const pipeline = overview.pipeline ?? {};
+      const waitingPublish = Number(pipeline.waitingPublishCount);
+      const publishBlocked = pipeline.publishBlocked === true;
+      if (elements.publishGateNotice) {
+        if (publishBlocked) {
+          elements.publishGateNotice.hidden = false;
+          elements.publishGateNotice.textContent = waitingPublish > 0
+            ? `上一版公开稿还没投递完，所以「通过并发布」现在发不出去。已通过、等上站 ${Math.trunc(waitingPublish)} 条。`
+            : "上一版公开稿还没投递完，所以「通过并发布」现在发不出去。";
+        } else if (waitingPublish > 0) {
+          elements.publishGateNotice.hidden = false;
+          elements.publishGateNotice.textContent = `有 ${Math.trunc(waitingPublish)} 条已经通过、还没上公开站。勾选后点「批量通过并发布」。`;
+        } else {
+          elements.publishGateNotice.hidden = true;
+        }
+      }
 
       elements.operationsGrid.hidden = false;
       elements.operationsGenerated.textContent = formatTime(overview.generatedAt);
@@ -1511,7 +1529,7 @@
         state.detail.delivery.status === "succeeded" ? "ok" : "warning"
       );
     } else if (state.detail.publication?.status === "queued") {
-      showOperationStatus("手动发布守卫可检查", "Decision=approved · Publication=queued · 仍未公开");
+      showOperationStatus("已通过，还没上公开站", "请用「通过并发布」。如果按钮失败，是上一版公开稿还没投递完。");
     } else if (state.detail.decision?.decision === "rejected") {
       showOperationStatus("拒绝原因已保留", safeString(state.detail.decision.rejectionReason));
     }
@@ -1660,6 +1678,14 @@
       showOperationStatus(
         "有内容等待中文整理",
         "当前来源版本还没有合格的中文标题和摘要；翻译完成后再重新发布这一批。",
+        "warning"
+      );
+      return;
+    }
+    if (adminError.reasonCode === "PUBLICATION_RECONCILE_WAIT") {
+      showOperationStatus(
+        "上一版公开稿还没投递完",
+        "这批不能发出去。请稍后再试「通过并发布」；不用再点「仅批准」。",
         "warning"
       );
       return;
@@ -1829,10 +1855,10 @@
     const detail = state.detail;
     const data = {
       approve: [
-        "确认批准当前版本",
-        "批准会记录当前 Bundle 的不可变审核决定，并预留唯一 Publication。批准后仍需手动发布。",
+        "确认仅批准、暂不发布",
+        "只会记下通过决定，不会上公开站。要上站请用「通过并发布」。",
         `候选：${detail.candidateId}\nBundle：${detail.latestBundle?.versionTag ?? "不可用"}\n标题：${safeString(detail.titleZh, detail.sourceTitle)}`,
-        "确认批准"
+        "确认仅批准"
       ],
       reject: [
         "确认拒绝当前版本",
@@ -1841,10 +1867,10 @@
         "确认拒绝"
       ],
       publish: [
-        "确认手动发布",
-        "发布是批准后的第二次显式动作。继续后需要使用通行密钥完成新鲜再认证。",
-        `Public ID：${detail.publication?.publicId ?? "不可用"}\nBundle：${detail.latestBundle?.versionTag ?? "不可用"}\n当前状态：Publication=queued`,
-        "验证并手动发布"
+        "确认发布到公开站",
+        "会把已经通过的这一版提交公开投递。继续后请用通行密钥确认。",
+        `标题：${safeString(detail.titleZh, detail.sourceTitle)}\n来源：${detail.sourceDisplayName}`,
+        "验证并发布"
       ],
       discard: [
         "丢弃未保存输入？",

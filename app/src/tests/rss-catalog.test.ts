@@ -3,12 +3,13 @@ import { describe, expect, it } from "vitest";
 import { RSS_SOURCE_CATALOG, liveRssSources, readyRssSources } from "../server/rss/catalog.ts";
 
 describe("rss source catalog", () => {
-  it("keeps four independent F1 RSS sources live and Formula1.com blocked", () => {
+  it("keeps five independent F1 RSS sources live and Formula1.com blocked", () => {
     expect(liveRssSources().map((entry) => entry.sourceId)).toEqual([
       "motorsport-f1-news",
       "autosport-f1-news",
       "racefans-f1-news",
-      "the-race-f1-news"
+      "the-race-f1-news",
+      "skysports-f1-news"
     ]);
     expect(readyRssSources().map((entry) => entry.sourceId)).toEqual([
       "operator-manual"

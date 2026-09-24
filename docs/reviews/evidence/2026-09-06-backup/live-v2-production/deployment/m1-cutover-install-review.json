@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "backup-only-cutover-install-independent-review-v1",
+  "reviewedAt": "2026-09-06T16:37:01Z",
+  "reviewer": "/root/backup_implementation",
+  "result": "PASS_FOR_BACKUP_ONLY_CUTOVER_EXECUTION",
+  "script": "scratch/backup-live-20260906/install-m1-v2.py",
+  "scriptSha256": "c73173fa775a951da0c62b082bafd87f05bbb1c64444feb354e3dc39060df8da",
+  "runtimeSha256": "ad5749603246a2ea6b967ea0b205cceb7faa2da1b88d6894014254ed81306a17",
+  "releaseSuffix": "backup-runtime-releases/20260907-v2-05",
+  "baseline": "m1-precut-baseline.json",
+  "baselineStartedAt": "2026-09-06T16:35:01.854Z",
+  "baselineCompletedAt": "2026-09-06T16:35:14.546Z",
+  "baselineResult": {
+    "nodeVersion": "v24.18.0",
+    "databaseReadOnly": true,
+    "knownManualWriterProcesses": 0,
+    "snapshotOrCycleProcesses": 0,
+    "snapshotLockPresent": false,
+    "cycleLockPresent": false,
+    "backupLaunchAgentLoaded": true,
+    "backupLaunchAgentRunning": false,
+    "backupLaunchAgentIntervalSeconds": 900,
+    "backupLaunchAgentLastExitCode": 1,
+    "backupLaunchAgentSha256": "204b9df131e4e122154127b8e04bda31401a9b45cdf01b53cb1d03f6581104c3",
+    "oldHelperRelativePath": ".admin-backup/bin/m1-snapshot-helper.mjs",
+    "oldHelperSha256": "f44b8b907f343fac023c484a3394f378d751bfa858252bc534a66a3dd70d860b",
+    "oldHelperMode": "600",
+    "oldHelperParentModeSeparatelyReadOnlyVerified": "700",
+    "adminPid": 97019,
+    "publicPid": 31197,
+    "projectionPid": 31200,
+    "publicHealth": "200 ready / ok / accepted-public-real-snapshot",
+    "publicFeed": "200 / public-read-v0.1 / 12 items",
+    "adminAnonymousProbe": "404 ADMIN_REQUEST_INVALID, expected responsive rejection boundary",
+    "projectionAnonymousProbe": "404 PROJECTION_REQUEST_INVALID, expected responsive rejection boundary",
+    "control": "live / clear / ready / version 22 / writer epoch 2 / recovery epoch 2",
+    "anchor": "generation 141 / version 95",
+    "backupCount": 95,
+    "validBackupViewCount": 95,
+    "latestRegisteredRecoveryPointAt": "2026-09-01T00:13:13.164Z",
+    "fenceLastSuccessfulRecoveryPointAt": 1788221593164,
+    "fenceStableAcrossRead": true
+  },
+  "closedFindings": [
+    {
+      "finding": "Failure after backup bootout and before the installation try block could leave the old scheduler unloaded without rollback.",
+      "closure": "The first bootout and all subsequent helper retirement, key installation, plist replacement and bootstrap steps are now within the try/rollback boundary."
+    },
+    {
+      "finding": "The old scheduled job could start between the initial idle check and bootout, leaving a writer or lock after interruption while installation continued.",
+      "closure": "The installer now rechecks writer processes and both snapshot/cycle locks after bootout and refuses to proceed on a race; rejection goes through rollback. The known-writer pattern set additionally includes admin-install-macos.ts and backup-application-drill.mjs.",
+      "limit": "The checks detect and reject a raced stop; they are not claimed to atomically prevent any concurrent start or an opaque operator script."
+    }
+  ],
+  "approvalBoundary": [
+    "Only the backup LaunchAgent is stopped and replaced; Admin/Public/Projection are not restarted by this installer.",
+    "Current production control and projection anchor are comparison baselines and must remain unchanged by backup-only registration.",
+    "A successful bootstrap is not a successful registration. Actual same-package snapshot, M5 read, application drill and legal registration receipts must be independently checked after execution.",
+    "The old helper remains retired on rollback by design; original old-cycle entrypoints do not call that helper.",
+    "This review performs no remote mutations, secret-key reads, scheduler changes or backup/restore execution."
+  ],
+  "openBlockingFindings": [],
+  "reviewedRevisions": [
+    {
+      "sha256": "022f5306e0f59b1a7d39e81baefaa94cb7b4e69e423418f774f8d476b7374d15",
+      "result": "PASS_INITIAL_REVIEW"
+    },
+    {
+      "sha256": "c73173fa775a951da0c62b082bafd87f05bbb1c64444feb354e3dc39060df8da",
+      "reviewedAt": "2026-09-06T16:38:34.492590+00:00",
+      "result": "PASS_INCREMENTAL_PUBLIC_PARENT_PERMISSION_CHECK",
+      "delta": "Allow owner-controlled, nonsymlink public code parent with no group/world writes (022); sensitive child roots retain strict 077 prohibition. Keep failed case05; use new case06. No chmod of the production code parent.",
+      "executionFactProvenance": "Root reported first attempt stopped at preflight before scheduler stop, keys or helper retirement; reviewer checked revised source only."
+    }
+  ]
+}

@@ -44,6 +44,10 @@ import {
 } from "../server/admin-service/release-manifest.ts";
 import { ADMIN_BUILD_ROOT_INPUTS, deriveAdminBuildClosure } from "../server/release/build-closure.ts";
 import { readStableRegularFile } from "../server/release/local-closure.ts";
+import { loadReleaseRuntimeGate } from "../server/internal-operation/release.ts";
+import { AdminDeploymentManifestSchema } from "../server/admin-service/deployment.ts";
+import { X_PAGE_ADMISSION_SCHEMA_SHA256 } from "../server/x-page/admission-schema-identity.ts";
+import { writeXPageReleasePair, xPageDeploymentFixture, xPageReleasePair } from "./helpers/x-page-release.ts";
 
 const projectRoot = resolve(import.meta.dirname, "../../..");
 const appRoot = resolve(projectRoot, "app");
@@ -380,7 +384,7 @@ afterAll(() => {
 describe("Admin exact release manifest", () => {
   it("freezes the QL1 target closure before any build artifact branch", () => {
     expect(ADMIN_RELEASE_RUNTIME_FILES).toHaveLength(ADMIN_RELEASE_RUNTIME_FILE_COUNT);
-    expect(ADMIN_RELEASE_RUNTIME_FILES).toHaveLength(153);
+    expect(ADMIN_RELEASE_RUNTIME_FILES).toHaveLength(207);
     expect(adminReleaseRuntimePathSetSha256(ADMIN_RELEASE_RUNTIME_FILES)).toBe(ADMIN_RELEASE_RUNTIME_PATH_SET_SHA256);
     expect(() => assertAdminReleaseRuntimePathContract(ADMIN_RELEASE_RUNTIME_FILES)).not.toThrow();
     expect(ADMIN_RELEASE_RUNTIME_FILES).not.toContain("scripts/public-release-bootstrap.ts");
@@ -390,6 +394,11 @@ describe("Admin exact release manifest", () => {
       "migrations/rss-real/0005_second_rss_autosport.sql",
       "migrations/rss-real/0006_independent_rss_racefans_the_race.sql",
       "src/server/rss/bilingual-gateway-port.ts",
+      "src/server/rss/rss-config-read.ts",
+      "src/server/rss/refine-model.ts",
+      "src/server/admin-service/refinement-model-settings.ts",
+      "src/admin-ui/settings.html",
+      "src/admin-ui/settings.js",
       "src/server/admin-service/deployment.ts",
       "scripts/quick-launch-enter-live.ts",
       "scripts/quick-launch-handoff-pool.ts",
@@ -398,6 +407,8 @@ describe("Admin exact release manifest", () => {
       "src/server/internal-operation/handoff-pool.ts",
       "src/server/internal-operation/quick-launch-control.ts",
       "src/server/internal-operation/quick-launch-processing.ts",
+      "src/server/x-page/normalize.ts",
+      "src/server/x-page/schema-identity.ts",
       "next-env.d.ts",
       "next.config.ts",
       "package.json",
@@ -500,6 +511,26 @@ describe("Admin exact release manifest", () => {
     expect(readVerifiedAdminReleaseManifest(
       root, manifestPath, sha256File(manifestPath), undefined, process.execPath
     )).toEqual(manifest);
+    // The official runtime manifest, paired capabilities and deployment pins
+    // share one clean fixture Git/package/file identity. This uses the existing
+    // explicit synthetic build-receipt fixture, never a production build claim.
+    const pair = xPageReleasePair(root, X_PAGE_ADMISSION_SCHEMA_SHA256, manifest);
+    const pairInput = writeXPageReleasePair(root, pair);
+    expect(loadReleaseRuntimeGate(pairInput).gate.receipt.schemaSha256).toBe(X_PAGE_ADMISSION_SCHEMA_SHA256);
+    expect(loadReleaseRuntimeGate({ ...pairInput, activeRole: "manual_only_fallback_v10" }).gate.allows("automatic_publish")).toBe(false);
+    const privateDataRoot = join(resolve(root, ".."), "admin-private"); mkdirSync(privateDataRoot, { mode: 0o700 });
+    const configPath = join(privateDataRoot, "trust.json"); writeFileSync(configPath, "synthetic pin-only configuration\n", { mode: 0o600 });
+    const deployment = xPageDeploymentFixture({ appRoot: root, dataRoot: privateDataRoot, pair, configPath, configSha256: sha256File(configPath) });
+    const pinnedDeployment = AdminDeploymentManifestSchema.parse({ ...deployment,
+      fullReleaseManifestPath: pairInput.fullManifestPath, fullReleaseManifestSha256: pairInput.fullManifestSha256,
+      fallbackReleaseManifestPath: pairInput.fallbackManifestPath, fallbackReleaseManifestSha256: pairInput.fallbackManifestSha256,
+      releasePairReceiptPath: pairInput.pairReceiptPath, releasePairReceiptSha256: pairInput.pairReceiptSha256,
+      officialReleaseManifestPath: manifestPath, officialReleaseManifestSha256: sha256File(manifestPath) });
+    expect(pinnedDeployment.reviewSchemaSha256).toBe(pair.full.schemaSha256);
+    expect(pair.full.sourceCommitSha1).toBe(manifest.gitCommit); expect(pair.full.packageRootSha256).toBe(manifest.releaseRootSha256);
+    expect(pair.full.files.find((file) => file.path === "migrations/rss-real/0017_x_page_production_admission.sql")?.sha256)
+      .toBe(manifest.runtimeFiles.find((file) => file.path === "migrations/rss-real/0017_x_page_production_admission.sql")?.sha256);
+    expect(() => loadReleaseRuntimeGate({ ...pairInput, expectedPackageRootSha256: "e".repeat(64) })).toThrow("RELEASE_EXTERNAL_ANCHOR_MISMATCH");
     const manifestBytes = readFileSync(manifestPath, "utf8");
     expect(() => readVerifiedAdminReleaseManifest(
       root, manifestPath, "0".repeat(64), targetNodePath, process.execPath

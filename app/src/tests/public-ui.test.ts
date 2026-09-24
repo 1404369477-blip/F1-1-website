@@ -6,6 +6,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
 import { F1StoryCard } from "../components/f1/story-parts";
+import { publicStoryHref } from "../features/stories/public-site-config";
 import {
   F1_THEME_STORAGE_KEY,
   readThemePreference,
@@ -23,11 +24,16 @@ import {
   type PublicApiFetch
 } from "../features/stories/public-api";
 import {
+  editorialSectionLabel,
+  originalArticleCta,
+  originalArticleNote,
   formatTimelineKicker,
   hasEditorialExtras,
   isDuplicateEditorialBody,
   isImageFirstCategory,
-  shouldShowEndOfFeed
+  shouldShowEndOfFeed,
+  shouldShowExpandedLead,
+  uniqueEditorialParagraphs
 } from "../features/stories/editorial";
 import {
   FeedExperience,
@@ -546,6 +552,7 @@ describe("public frontend API single-source integration", () => {
     expect(feedSource).toContain("detailRequestedRef.current.delete(openId)");
     expect(feedSource).toContain("detailRequestedRef.current.delete(publicId)");
     expect(feedSource).not.toContain("if (opened && isImageFirstCategory(opened.category)) return;");
+    expect(feedSource).toContain("shouldShowExpandedLead(storyCopy?.summary ?? story.summary, detailCopy.lead)");
     expect(feedSource).toContain('className="tl-zh tl-detail-lead">{detailCopy.lead}</p>');
     expect(feedSource).toContain("onClick={() => retryDetail(story.publicId)}");
     expect(feedSource).toMatch(/这条内容已不可用（404）。[\s\S]{0,260}>重试<\/button>/);
@@ -734,9 +741,19 @@ describe("public frontend API single-source integration", () => {
 describe("small-publication editorial presentation", () => {
   it("hides duplicated 中文提炼 and the end-of-feed box on a short live list", () => {
     expect(isDuplicateEditorialBody("同一段中文摘要", ["同一段中文摘要"])).toBe(true);
+    expect(isDuplicateEditorialBody("导语", [])).toBe(true);
     expect(isDuplicateEditorialBody("导语", ["第一段", "第二段"])).toBe(false);
     expect(hasEditorialExtras("同一段中文摘要", ["同一段中文摘要"], [])).toBe(false);
+    expect(hasEditorialExtras("同一段中文摘要", [], [])).toBe(false);
     expect(hasEditorialExtras("同一段中文摘要", ["同一段中文摘要"], ["佩雷斯转会传闻被否认"])).toBe(true);
+    expect(shouldShowExpandedLead("同一段中文摘要", "同一段中文摘要")).toBe(false);
+    expect(shouldShowExpandedLead("卡片摘要", "更完整的导语")).toBe(true);
+    expect(uniqueEditorialParagraphs("同一段中文摘要", ["同一段中文摘要"])).toEqual([]);
+    expect(uniqueEditorialParagraphs("导语", ["第一段", "第二段"])).toEqual(["第一段", "第二段"]);
+    expect(originalArticleCta("zh-CN", "The Race")).toBe("在 The Race 阅读完整原文");
+    expect(originalArticleNote("zh-CN")).toBe("本页只展示中文提炼与要点，不转载信源全文。");
+    expect(editorialSectionLabel("zh-CN", { lead: "同一段中文摘要", body: ["同一段中文摘要"], keyPoints: ["佩雷斯转会传闻被否认"] })).toBe("内容要点");
+    expect(editorialSectionLabel("zh-CN", { lead: "导语", body: ["第一段"], keyPoints: [] })).toBe("中文提炼");
     expect(formatTimelineKicker(0)).toBe("F1 中文精选");
     expect(formatTimelineKicker(1)).toBe("F1 中文精选 · 1 条");
     expect(shouldShowEndOfFeed(1, false)).toBe(false);
@@ -751,9 +768,22 @@ describe("small-publication editorial presentation", () => {
     expect(feedSource).toContain("查看原帖");
     expect(feedSource).not.toMatch(/原帖 ↗|前往原文 ↗/);
     expect(feedSource).toContain("hasEditorialExtras(detailCopy.lead, detailCopy.body, detailCopy.keyPoints)");
+    expect(feedSource).toContain("editorialSectionLabel(selectedLanguage");
+    expect(feedSource).toContain("uniqueEditorialParagraphs(detailCopy.lead, detailCopy.body)");
+    expect(feedSource).toContain("打开站内详情");
+    expect(publicStoryHref("public-demo-01")).toBe("/stories/public-demo-01");
+    expect(feedSource).toContain("disabled={!hasEnglishExtract}");
+    expect(feedSource).not.toContain("getEnglishFallback");
     expect(feedSource).toContain("shouldShowEndOfFeed(stories.length, page?.hasMore === true)");
     expect(feedSource).toContain("formatTimelineKicker(stories.length)");
     expect(detailSource).toContain("hasEditorialExtras(copy.lead, copy.body, copy.keyPoints)");
+    expect(detailSource).toContain("editorialSectionLabel(selectedLanguage, copy)");
+    expect(detailSource).toContain("originalArticleCta(selectedLanguage, story.sourceName)");
+    expect(detailSource).toContain("originalArticleNote(selectedLanguage)");
+    expect(detailSource).toContain("timeline-detail-english");
+    expect(detailSource).toContain("独立英文整理，不是信源原文或官方翻译。");
     expect(detailSource).not.toContain("信息 + 时间 + 时间线 · 公开详情");
+    expect(globalCss).toContain(".timeline-detail-original-link");
+    expect(globalCss).toContain(".tl-detail-page-link");
   });
 });

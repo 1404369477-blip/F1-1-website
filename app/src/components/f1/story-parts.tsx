@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import type { PublicStoryCardViewModel, StoryCategory } from "../../features/stories/public-api";
+import { publicStoryHref } from "../../features/stories/public-site-config";
 
 type BadgeKind = "available" | "restricted" | "missing";
 
@@ -166,7 +167,7 @@ export function F1StoryCard({
           <F1StatusBadge story={story} />
         </div>
         <Heading className="story-title">
-          <Link className="story-title-link" href={`/stories/${story.publicId}`}>{story.title}</Link>
+          <Link className="story-title-link" href={publicStoryHref(story.publicId)}>{story.title}</Link>
         </Heading>
         <p className="story-summary">{story.summary}</p>
         <F1SourceMeta story={story} />

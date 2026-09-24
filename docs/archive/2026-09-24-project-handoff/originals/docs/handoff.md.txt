@@ -1,0 +1,332 @@
+# 交接文档
+
+> **2026-09-24 08:58 清理接续**：已清本轮云验证/性能测试副本及废弃staging，实际释放约15.77GB，M1可用29GiB。旧死锁已官方隔离且原调度自然运行，09:00新快照成功并正常清理；完整新合法RP仍待。r4仅保留2.39GB readback供应用恢复，sealed已释放，不可重放byte/resume/prepare。恢复验收后须清restored/readback并留小收据。详见[当前唯一状态](当前生产状态与执行待办.md)与`scratch/m1-space-cleanup-20260924/`；cleanup和recover-and-clean固定入口也已消费。
+
+> **2026-09-24 接续入口**：已吸收用户提供的GPT分析，按当前真实生产阶段收敛范围。r4同包隔离云端字节往返实际通过，首次4355失败保留；应用恢复、生产云备份切换、X链仍未完成。准确证据、验证缺口与下一步统一看[当前生产状态与执行待办](当前生产状态与执行待办.md)顶部，避免把下方较早记录当作当前。M1 00:29可用磁盘约11GiB；不得直接并发增加大副本。`run-byte-fixed.py`首次入口及`run-resume-fixed.py`接续均已使用，禁止重放。
+
+> **2026-09-23 23:43 中断后状态核查**：RSS23:30自然槽三源成功，新增2条/更新10条；此前新TheRace完整审核发布至Pages已验，但这2条未另验完整发布。旧备份仍运行，最新合法RP23:30:28.878于23:38:31登记SUCCESS，当前新鲜；连续15分钟RPO仍有超龄缺口，M5服务尚未退出。iCloud r4仅实机暂存和源捕获通过，2.39GB隔离云往返尚未执行；canary收尾信号测试与固定入口最终独审待核，production trust仍r3，不能重放既有stage/启用/回退。X r4安装机制26例及材料接口9例已独审本地通过，正式安装、维护认证、0017、X生产导入仍未完成（0条）。GitHub本轮3错已归因：2次过时head检查、1次Pages HTTP500；后续部署与公网匹配已验。D1BAB4保持claimed，严禁称整链完成。
+
+> **2026-09-23 23:09 当前实证**：原备份调度已于23:03:45正规回退恢复，old7facc/新inode47473265，23:04:45新快照已生成，合法登记仍待。iCloud新包23:07只读元数据已显示两云文件上传完成、无Apple错误，但22:52–23:03失败时没有保存原字段，不能追认当时原因；该包已超15分钟，不能补作新鲜恢复点。RSS此前新稿自动闭环保持，持续运行仍受备份新鲜度约束；X r4安装阶段修复已形成并独审中，正式安装/0017/生产导入仍未完成。GitHub截图中的push已成功，两次部署因旧任务落后分支最新提交而主动退出；后续23:02部署成功，23:06公网marker与该成功commit逐字一致。D1BAB4保持claimed，M5备份服务继续运行；下方保留历史。
+
+> **2026-09-23 23:01 当前实证**：RSS新TheRace650→Pages651完整自动链及21:45三源新增24条/更新3条已有实证，尚不能证明持续无中断。修正版iCloud r3调度22:50:14实际启用，22:51:17快照成功；自22:52:34起上传阶段连续PROVIDER_UPLOAD_ERROR，未形成新云端恢复点。最后旧合法RP22:42:15.387已超过15分钟；正在按原helper正规回退调度并只读诊断云上传，M5备份服务保留。X新维护APP未安装、0017未应用、生产导入0；已查明原安装恢复步骤与正常自动发布竞争，r4正修正验收顺序，未降低恢复门。D1BAB4保持claimed；下方保留历史，准确回件见本轮状态和云端执行记录。
+
+> **2026-09-23 22:25 当前实证**：RSS三源21:45自然槽新增24条/更新3条，此前新TheRace650审核到Pages651完整链已验。旧X r2未实施安装已安全撤销并独审，X生产导入仍0。新iCloud调度22:07:54已实际启用，但首轮暴露macOS Bash空数组错误，未产生新云恢复点且错误输出CYCLE_OK；本轮功能验收失败，不能称M1独立备份已完成。22:16:42已通过正规五步回退恢复原4参数备份调度，原工具和所有备份保留；M5 observer继续运行。r3仅修改一个shell叶，真实系统Bash3.2的8例及800叶完整包已独审，22:24:40已暂存M1；新trust与调度尚未切换。旧调度新RP22:17:31.561已于22:23:19登记成功，当前恢复新鲜；22:15:15至22:23:19超龄缺口保留。D1BAB4保持claimed；当前原件与接续见[本轮状态](../scratch/rss-resume-20260921/STATUS.md)及云端REPORT，下方为历史。
+
+> **2026-09-23 22:07 当前实证**：21:45自然采集槽三RSS源全部成功，新增24条、更新3条（本次22:06只读核实）；此前TheRace新候选650已完成自动审核、一次投递和Pages651列表/详情。旧X未实施安装已于21:59:27通过明确cancel-before出口撤销，八配置前像和原服务保持，旧owner/shared归档并留墓碑；独审通过，不能解释为X升级成功。旧备份新增21:52:03.569合法RP，22:00周期运行中；旧iCloud归档失败已定位rsync清理11个旧目录时报Directory not empty/exit23，未擅自删除。新iCloud启用顺序程序正在等待自然备份idle，仅明确未变更WAIT才重试；首个新云RP、M5服务退场、X正式安装/0017/生产导入仍待验。D1BAB4保持claimed；证据与接续见[本轮状态](../scratch/rss-resume-20260921/STATUS.md)，下方为对应时间历史。
+
+> **2026-09-23 21:46 当前实证**：RSS一条新稿已自然完整闭环：TheRace首见昨日23:26的revision1经自动精炼、审核、发布650进入Pages651默认列表和详情，Public652完整签名链通过（差1代，未声称跨端原子同代）。新RP21:29:39.576、21:36:53.776连续两轮REGISTER成功；此前超龄/120秒演练超时保留，旧脚本iCloud归档仍失败，原因核查中。今日21:30采集槽三源外调0失败发生在上次恢复点超龄期间，下一自然采集待验。iCloud启用程序已实机准备并独审，尚未启用；旧X安装始终8配置before，原服务已恢复，成功核收多次与自然业务竞争，现实现明确撤销未实施安装的独立出口，不能当升级通过。X正式新安装/0017/生产导入均未完成。D1BAB4保持claimed；最新证据、失败和接续唯一入口见[本轮状态](../scratch/rss-resume-20260921/STATUS.md)，下方保留历史。
+
+> **2026-09-23 00:08 M1+iCloud / X 接续**：RSS 自动审核、发布及 Pages 公网详情已有本轮真实成功与独审：目标616已进入Pages628，随后Public629完整签名链通过，滞后一代且默认feed不含目标，不宣称同步同代。三RSS源23:26自然采集成功新增2条/更新2条；00:06新两稿仍待审核，队列已由49条推进到11条，未把既有内容revision审核算作新稿闭环。原备份路径已连续重新产出合法点，最近实读RP23:55:14.790、00:01:55周期COMPLETE；此前启动超时/遗锁/RPO超龄保留。iCloud历史包云端重新下载和隔离应用恢复已独核，新的799叶运行包及专用公钥/信任实际暂存初始化完成，定时服务尚未切换，日常仍依赖旧M5证明。X维护新APP实际构建与配置加载通过；installation-r2已独审、实际stage-only与preflight通过，00:08新owner已建立，首次pause因备份仍运行而WAIT_NATURAL_IDLE，未停止服务、未切八配置。后续按固定journal完成安装/历史GET归类/新身份备份/恢复，再做真实passkey、当前完整库0017及正式X入库；X生产导入仍0。D1BAB4保持claimed，root独占生产；当前证据见[本轮状态](../scratch/rss-resume-20260921/STATUS.md)与[云端执行记录](../scratch/backup-icloud-audit-20260922/REPORT.md)，范围见[实施合同](reviews/2026-09-22-M1-iCloud备份与X正式接入实施合同.md)。下方保留各时间历史。
+
+> **2026-09-22 23:25 M1+iCloud / X 接续**：用户已授权M1独立日常运行、现有iCloud备份和maintenance-design-r2正式实现。23:06已通过官方入口精确隔离死PID90032遗锁并恢复原备份调度，原件独核；随后23:07:51与23:14:40两新恢复点均自然登记SUCCESS，23:13/23:21周期COMPLETE。此前22:30应用启动超时、后续快照遗锁及RPO超龄历史保留，不宣称根因或连续稳定性已收口。23:15–23:19的RSS 614–616自动审核、发布、各一次投递及预算/审计独核通过；是既有Motorsport内容的revision7/8/9，不能算三条新采集。23:24采集器运行中，上一15:00 UTC槽因SQLITE_FAILURE失败；最近数据库成功采集仍14:15 UTC，TheRace超时及14:00缺档保留。iCloud历史c022包约2.076GB的真实云端重新下载/hash、隔离数据库/应用恢复及Ed25519原件独核通过，旧RP超龄未REGISTER；新云端定时后继仍在最终独审，未部署。X双schema正式M1构建及真实Admin/Public配置加载已通过；新维护版本未安装，历史GET正式归类、真实passkey/0017/生产导入仍未完成，X生产入库0。当前实证见[本轮状态](../scratch/rss-resume-20260921/STATUS.md)与[云端盘点](../scratch/backup-icloud-audit-20260922/REPORT.md)，范围见[实施合同](reviews/2026-09-22-M1-iCloud备份与X正式接入实施合同.md)。D1BAB4保持claimed，root独占生产；下方仅对应历史。
+
+> **2026-09-22 06:49 当前事实**：RSS三源采集、普通自动发布与Pages同步已恢复。Public481签名链、Pages480公网列表及目标466详情验收通过（滞后1代，不代表目标在默认列表）。Standard首轮采集约4分18秒，仅是单轮改善；累计新增41条的新稿完整审核链仍待验，调度缺档历史保留。X三指定账号共9条native捕获记录，其中3条满足完整正文归一化条件；生产导入仍0；维护入口已有静态预览与本地交互证据，等待用户视觉确认及正式认证、迁移准入。D1BAB4为waiting_input/user_confirmed/rev9，整链未标完成。实际证据、失败历史和禁止重放边界统一见[本轮状态](../scratch/rss-resume-20260921/STATUS.md)；下方保留历史。
+
+> **2026-09-22 05:23 当前事实**：RSS普通自动发布/投递已持续到444，442–444均成功且各有1次POST；05:16–05:17 Pages441完整签名链及公网列表、详情HTTPS验收通过。两轮自然采集累计新增40条，最新Motorsport/The Race/Sky均HTTP200；这40条新稿的自动审核闭环尚未证实，442–444复用了历史批准。采集启动延迟及21:00 UTC槽的SCHEDULER_GAP仍保留，RSS ProcessType Background→Standard单字段修复准备中。X生产导入仍0，维护UI视觉确认及正式认证接线待完成；D1BAB4继续claimed。准确证据与接续见[本轮状态](../scratch/rss-resume-20260921/STATUS.md)，下方保留历史。
+
+> **2026-09-22 04:45 当前事实**：RSS服务已恢复，普通自动发布/投递已持续到426；本轮自然采集新增29条、更新1条（Motorsport/Sky成功，The Race连接超时），新自动review尚待验。Public417完整签名链已核；Pages仍408，实际导出因重复全量聚类耗时约3.65分钟、期间版本更新而失败，最小性能修复正在独审准备。合法异机备份持续登记。X生产导入仍0，维护界面视觉确认及正式认证接线待完成。准确证据与接续统一见[本轮状态](../scratch/rss-resume-20260921/STATUS.md)，D1BAB4继续claimed。下方保留历史。
+
+
+> **2026-09-22 03:36 接续入口**：Worker两配置已纠正，备份已恢复调度；Admin/RSS仍在维护期等待cache正式后继与新自然备份，尚未验收自动发布。实际成功/失败回执和下一步统一见[本轮状态](../scratch/rss-resume-20260921/STATUS.md)最新记录；root独占M1，s准备cache安装，w核发行输入与安装审查，q核纠正后验及自然发布验收。D1BAB4继续claimed。
+
+> **2026-09-22 02:17 当前事实**：RSS generation408唯一受控恢复已实际成功并完成独立业务/收尾审查，新增POST恰1、原历史记录保持，接收服务已就绪，controller正常退出且旧锁完整归档。常规RSS自动链路仍待Worker安装与自然发布验证。X真实只读采集已通过、生产导入仍0；正式升级所缺维护认证入口已形成预览，等待新增界面确认，后端可行性继续。准确证据/命令/边界统一见[本轮状态](../scratch/rss-resume-20260921/STATUS.md)，D1BAB4继续claimed。
+
+> **2026-09-22 01:51 当前事实**：RSS 408旧未知投递已凭完整链证据唯一negative结算，额外发送槽仍未消费；本次恢复因60秒lease跨秒计算缺陷及旧receiver迟到就绪而失败，原记录/锁保留，v3修复及精确归档正在独验。backup流式runtime已有连续几轮合法点，启动稳定性仍待实测。X真实只读采集已通过，正式producer的ctime兼容缺陷已本地修复并独审；生产导入仍0。真实回执与剩余接续统一见[本轮状态](../scratch/rss-resume-20260921/STATUS.md)，D1BAB4保持claimed。下方为历史记录。
+
+> **2026-09-22 01:22 当前事实**：backup流式runtime已实际安装，首轮与第三轮合法点通过，第二轮Admin启动超时仍在修复；不能宣称连续RPO通过。旧408 v1失败ROOT/锁已完整归档，新v2于01:18安装、01:19实际inspect通过，额外POST仍0，正等新鲜合法点启动唯一恢复。X r7真实读取通过且正式本地候选已独审，生产导入仍0。准确回执、稳定单次槽与接续顺序统一见[本轮状态](../scratch/rss-resume-20260921/STATUS.md)；下方保留各时间历史，D1BAB4继续claimed。
+
+> **2026-09-22 00:50 当前接续**：先读[本轮执行状态](../scratch/rss-resume-20260921/STATUS.md)。408首轮恢复已失败退出且新POST0，不重放旧launcher；旧锁保留。X r7真实读取/退出通过、0生产导入，不再重复unsigned采集。新backup runtime已stage，root负责自然idle切换及实际后验；各Agent仅本地后继实现/独审。
+
+> **2026-09-21 当前接续**：以[本轮执行状态](../scratch/rss-resume-20260921/STATUS.md)为准。两机同网及桌面已恢复；M1 samewire 源目录已存在，不得重复 stage。RSS 仍须完成408受控恢复和Worker切换；X r2失败原件保留，需新捕获。
+
+> **2026-09-20 当前入口**：先读[当前生产状态与执行待办](当前生产状态与执行待办.md)和[本轮接续状态](../scratch/rss-resume-20260920/STATUS.md)。用户已选择暂时先完善代码；本轮没有新grant、M1 stage或恢复POST。samewire408代码、测试、独审与本地准备材料在上述状态文档汇总，旧407与既有Worker capture stage均禁止重放/覆盖。D1BAB4保持未完成。
+
+> 2026-09-16 23:28 中断接续：已刷新M1原生/408数据库/备份事实，仍未恢复RSS持续运行；当前分工与事实统一见 `docs/当前生产状态与执行待办.md` 首段，历史记录保留。
+
+> 2026-09-15 03:20 接续：Worker正式候选已构建未部署；408受控恢复与后继安装准备中；X实机新连接失败且本机解锁待答。当前执行真值统一见 `docs/当前生产状态与执行待办.md` 首段，历史记录保留。
+
+> **2026-09-15 02:42 接续入口**：最新生产事实及未完成项统一见[当前生产状态与执行待办](当前生产状态与执行待办.md)的02:42段。D1BAB4保持claimed，root独占生产；以下保留历史时间记录。
+
+> **2026-09-15 02:15 当前事实覆盖**：RSS gen407唯一恢复POST已成功，本地结算与r2业务后验全部通过，原v6服务已通过既有service-restore-only恢复，Pages默认V1已部署407且详情核验通过；禁止重放恢复POST。备份死锁已由正式CLI隔离，原调度恢复后的自然周期于02:04登记第67个合法备份。02:05自动发布实际生成408，但其投递再次进入reconcile_wait/EXTERNAL_UNKNOWN；02:14接收端active仍407且408文件不存在，持续自动运行尚未验收，正查常规发送路径。X真实三源9帖已验，source-admit隔离CLI25新增+32回归及独审通过，固定MCP生产采集器仍在整合，0生产导入。任务D1BAB4保持claimed，root独占生产。当前证据见[执行记录](../scratch/rss-recovery-claim-20260914/STATUS.md)，以下均为历史时间。
+
+> **2026-09-15 01:37 当前事实覆盖**：RSS v4已在M1完成独立构建、三件准备、完整校验、seq6正式安装和8hash inspect，全部exit0；唯一recover-once现PID/PGID36614运行，尚未完成，不得重复启动。seq6 `ba2fff87…7f9a0d`，新有限技术窗POST至03:31:47.863、本地至04:31:47.863（UTC+8），旧v3及之前记录完整保留。恢复前业务核验allChecksPass=true、新POST0/旧POST1；65个备份合法，原生旧进程/owner排他通过。root独占生产，运行证据及下一步以[当前执行记录](../scratch/rss-recovery-claim-20260914/STATUS.md)为准。X三源9帖真实采集已验，修后纯解析器21项与独审通过，但9帖均需补采、0生产导入；隔离fresh producer接线在继续。D1BAB4仍claimed，下方旧状态均保留历史时间。
+
+> **2026-09-15 00:50 当前事实覆盖**：X在M1沿用GLM/API key的真实三源9帖已核验，尚未生产导入/发布。RSS v3已完成实际构建、完整预检、seq5安装及inspect；唯一recover在claim因自身installer历史目录追加不被接受而exit1，正式后验新POST0/旧POST1、无本次lock或warm。修复未完成，不重跑v3/不删改seq5。现隔离v4/seq6修正式install→release→claim整段兼容，沿原业务授权生成新有限技术窗，旧记录保留；pipeline执行Darwin、x执行后继安装、q独审、root独占生产。D1BAB4继续claimed。具体版本、失败原件、边界及接续以[当前执行记录](../scratch/rss-recovery-warm-20260914/STATUS.md)为准，下方均为历史。
+
+> **2026-09-14 23:53 当前接续**：用户已明确允许 Playwright 浏览器连接。M1 保留 GLM/custom/API key，真实三源 canary 完成：F1、McLarenF1、ChrisMedlandF1 各3帖，共9帖；14次实际MCP调用全部成功，root对9帖正文、绝对时间、原帖链接和媒体地址逐项核对原生DOM返回。证据见[X核验收据](../scratch/x-playwright-m1-20260914/canary5-evidence/root-verification.json)。此为真实只读采集验收，尚未完成生产producer准入、签名捕获和自动发布，不把canary追认成生产导入。RSS仍未恢复：已定位v6冷启动超时与Admin同模式chmod导致备份ctime误拦；独立v3候选采用先预热同一receiver进程再做新P2，保留≤60秒、新增最多1次POST、同RID/物理键及原窗口。保持原v2 index和三文件，候选仅追加严格seq5后继；崩溃收尾、原生父子关系及独审正在验证，未部署v3、未新增POST。D1BAB4继续claimed，root独占生产，pipeline负责warm协议/服务，x负责seq5/安装，q负责独审。
+
+> **2026-09-14 23:23 当前实施**：RSS v2 已通过独审并完成M1构建/完整预检/唯一index安装；实际恢复在receiver冷启动就绪校验失败，随后备份资源时间校验阻断正式恢复收据。后验确认新增POST0、旧POST1、未新增未知投递。23:20原生回读Admin与receiver已重新监听3101/3102；自动发布仍未恢复，继续修启动耗时和备份分类。X已通过屏幕共享看到Playwright待授权页面，当前真实采集0帖；用户对实际浏览器权限范围的确认待答。最新事实及禁止重放边界见[执行状态](../scratch/rss-recovery-fix-20260914/STATUS.md)。
+
+> **2026-09-14 22:20 当前覆盖**：从[本轮报告](../scratch/rss-cause-fix-20260914/REPORT.md)接续。备份和RSS采集已出现恢复证据；发布仍待gen407，原完整恢复复验新增AUDIT_SET_CHANGED拒绝，95条旧记录未变、现役对账追加1条attention。新plan保留未安装，不能重跑prepare或提交index，不能只换摘要；旧R7/seq4/早间归档禁止重放。X已完成GitHub替代研究，Playwright MCP候选未安装，不再重复要求用户重连ChatGPT扩展。
+
+> **2026-09-14 晚间接续入口**：当前事实统一见[生产状态](当前生产状态与执行待办.md)和[本轮重试证据](../scratch/rss-retry-20260914-evening-r1/REPORT.md)。M1 Chrome已能绑定，实际操作被apikey登录方式拒绝；RSS最新完整异机传输尚未形成M1合法恢复点。旧R7/seq4、service-restore-only及早间已完成的归档均禁止重放；下方逐次失败/恢复状态保留原时间，不作为新动作授权或现场真值。
+
+> **2026-09-14 03:50 实际失败后接续**：R5 `recover-once` 已于 03:36:23–03:42:29 实际执行并退出 1，PID/PGID 31187，最终错误 `PROJECTION_RECOVERY_SERVICE_RESTORE_REQUIRED`；禁止据旧“运行中”记录重复启动。03:46:27 只读业务后验 SHA `007f20eb0b76f969b86585b02ffea7026ecf1f0bdbf4b33cfa8886018d858820` 全部检查通过但 completed=false：原 unknown/预算及旧 1 次 POST 保留，新 attempt/mapping/negative 均不存在，GET 1653 单列。Admin 已停止；receiver 已 bootstrap 但 loaded/not-running。两个原固定 plist 均 RunAtLoad=false、KeepAlive=false，现役恢复代码缺显式启动，正准备固定身份、无 -k 的启动适配并独审，再由原 service-restore-only 收口；不修改冻结源码/pins/record/预算。首 native fence 的真实父子及 58.463 秒剩余 TTL 已验证；只读 parent observer 遇进程退出竞态 ARGV_READ_UNCERTAIN 后停止，后续不能补称已观察。原始前置失败与最新备份时效仍在只读核查。X 等待 M1 Chrome 接通，D1BAB4 未完成。
+
+
+> **2026-09-14 03:37 接续**：R5单record技术修复已于03:28正式提交，record SHA `da0d45fa236649bf27f7abfdc29e6e993e32f881908065c3edfc49c7706231e8`；原R4 pins/plan/deployment字节+身份保持，原R4 loader已只读实证拒绝新record。03:29双hashinspect与新业务后验通过：原POST1/unknown、GET1650、新attempt/mapping0。03:36:23唯一R5 `recover-once` 已启动，PID/PGID31187，native observer从03:30:44就绪；尚无完成结果，不可重复启动。03:24备份REGISTER再次60秒超时，但后继03:25恢复点已合法登记，前点到新登记789.920秒<900，独审准许按当前fresh门继续；失败另留档，不宣称无故障。R5只按原窗口/同RID/最多一次新增POST推进，参见[固定入口与实际状态](../scratch/rss-gen407-recovery-20260913/installation/r5/COMMANDS.md)。X仍待M1 Chrome接通，D1BAB4保持claimed。
+
+> **2026-09-14 03:06 接续**：已放弃暂停备份方案；严格计入下一恢复点的超时预算后，无法保证暂停仍满足900秒RPO。备份保持自然运行，恢复改为隔离R5技术修复：精确验证REGISTER60备份进程身份，保留原始内核观测，旧服务PID/PGID及未知进程仍阻断。原R4源码、pins/plan/deployment与原窗口完全保留，通过固定单次repair record关闭旧入口并绑定新源码，业务core/RID/原包/逻辑键及最多一次新增POST均不变。当前R5仍在实现和独立验证，尚未安装或再次执行恢复；[R5协议](../scratch/rss-gen407-recovery-20260913/installation/r5/pin-successor-design.md)。02:29首次R4失败后零新增POST结论保持，X仍待M1 Chrome连接，统筹D1BAB4未完成。
+
+> **2026-09-14 02:39 接续**：REGISTER60三完整自然周期及严格RPO已独审通过。首次R4 recover已执行并在prepared前拒绝：owner释放、0新POST、原预算/服务保持。合法backup应用演练进程被原服务probe计作额外进程已只读复现；继续准备受严格RPO约束的临时backup维护与原样恢复入口，不能盲重跑或改R4冻结材料。准确运行钉及任务分工见[当前生产状态](当前生产状态与执行待办.md)，D1BAB4 claimed，M1 Chrome仍待连接。
+
+> **2026-09-14 02:13 接续**：REGISTER60工具已实际安装、02:12:03恢复backup原调度且安装独审通过；须核三个安装后自然合法点及严格900秒RPO。RSS新只读基线全部检查通过：原gen407只有1次POST，GET另计，新attempt不存在，completed=false；R4初装已完成、恢复尚未执行，禁止重跑初装和旧候选。x准备只读新周期observer，q独审，root独占生产。准确身份与剩余出口统一见[当前生产状态](当前生产状态与执行待办.md)。M1 Chrome仍待连接，模型工具成功不代表X已采到帖。
+
+> **2026-09-14 01:53 接续**：用户已授权继续M1 X采集与原gen407限定一次恢复，统筹D1BAB4 claimed。R4正式恢复入口与pins已安装，真实只读inspect通过；初装不得重跑，旧R1–R3不能执行。recover/服务停止/新POST尚未发生，执行前备份登记出现新失败，须先核新合法点和登记原因。主控、源码分析与独审正在继续，准确身份、命令与分工统一见[当前生产状态](当前生产状态与执行待办.md)和[本轮合同](reviews/2026-09-13-X采集与RSS受控恢复实施合同.md)。M1 GLM已实际调用原生工具，Chrome连接仍待用户完成；不得以工具能调用替代真实采集成功。
+
+> **2026-09-12 22:41 Pages交接**：本轮固定公开站、M1定时同步和`/f1`R3实际接续已通过主控与独立验收。C9F7C8已completed/acknowledged（22:44）；新代自然自动发布补证项、既有gen407/RSS问题与回退命令统一见[当前生产状态](当前生产状态与执行待办.md)及[验收记录](reviews/2026-09-12-GitHub-Pages部署与验收记录.md)。本轮安装已经完成，不重跑stage/apply；旧3B83D5仍waiting_input。
+
+
+> **2026-09-12 11:08 接续真值**：网络与流式备份修复已核收，RSS恢复首轮部分失败（The Race CONNECT_TIMEOUT）。3B83D5 waiting_input；gen407新合同待答，unknown38/未决投递1保持。x_integration完成源码与184回归，x_scoped完成安装/RSS helper增量，qos完成实际周期及RSS终态独审，主控已核验证据；无待执行安装/重启动作。准确当前身份、证据与禁止重放边界见[当前生产状态](当前生产状态与执行待办.md)。以下为历史，不重跑旧helper。
+
+> **2026-09-12 07:00 接续入口**：本轮部署和运行恢复已核收，正式任务3B83D5为waiting_input。准确当前状态、待决合同和最小后续验证统一见[当前生产状态与执行待办](当前生产状态与执行待办.md)与[当前工作分工](collaboration/当前工作分工与交接.md)。下方逐次快照仅为历史，不重复执行安装、重启或旧helper。
+
+
+> **2026-09-12 01:34**：固定传输候选27ca…/安装器46829…最终独审通过，74件独审输入/证据主控复算一致。01:25–27先停M1再停M5、两plist精确替换后先恢复M5再M1；无kick，M5 RunAtLoad自动首轮。安装39件证据d6c96d…冻结，runtime/control/DB/RSS/业务保持。新首点01:28:30.389、01:30:32.982登记，744528033字节密文、双签及实际应用周期独审通过，另两新自然轮待验。generation361原成功POST补全程序与永久防复发分支分别独审，真实业务维护尚未开始。严格15分钟采集时效与浏览器登录等缺口继续保留。[统一证据](reviews/2026-09-11-Admin备份修复与生产恢复.md)。
+
+> **2026-09-12 00:58 接续覆盖**：备份 P4/P5/P6 连续三自然周期已独审通过，RSS 于00:36:30恢复，首轮新增38条、首个自然后继槽1987939已正常退出。公网V1访问恢复，/f1固定地址于00:40:43同步。自动发布仍受 generation361 对账缺口阻断：原POST已成功且公网已激活，本地outbox未完成；实际v5只读目标校验拒绝该成功状态。正在隔离修复只读GET确认及本地结算，禁止重复POST。传输预算后继已通过735MB合成本地限速实验，但安装工具和独审未收口，尚未部署。任务3B83D5保持claimed，准确身份和证据见[当前生产状态](当前生产状态与执行待办.md)与[恢复合同](reviews/2026-09-11-Admin备份修复与生产恢复.md)。
+
+> **2026-09-12 00:20 接续覆盖**：3B83D5 继续 claimed。备份修复已部署；首两轮通过、第三轮异机等待失败，第四轮于00:13完整通过后恢复新鲜点，失败后的连续验收仍未齐。RSS保持卸载；公网原配置单次重启后经历530与自行重连，正独立验连续性，/f1地址尚未同步。准确状态统一看[当前生产状态](当前生产状态与执行待办.md)和[恢复合同](reviews/2026-09-11-Admin备份修复与生产恢复.md)。
+
+> **本地后继源码已同步**：23:57将已审快照认证复用及锁释放修复增量合入两个备份源文件和7个正式测试/fixture，保留本地X manifest/artifact/trust与目录写入guard。9件最终hash/mode已核对，候选98项回归、独审81项正式检查及18项缓存/锁检查通过；见[应用收据](../scratch/admin-recovery-20260911/workspace-source-sync-application.json)。9月10日冻结的X构建输入清单对这些源文件已过时；后续构建须重算输入与闭包，不得直接复用旧清单导致修复回退。未构建或部署X，未混合提交共享脏树。
+
+> **2026-09-11 23:29 接续覆盖**：TASK-20260911-3B83D5 已获用户修复/生产恢复授权并 claimed。先完成备份候选与安装独审，再按[恢复合同](reviews/2026-09-11-Admin备份修复与生产恢复.md)进行维护、三个真实备份周期、RSS和公网及/f1接续；当前尚未生产部署，不能跳过尚未关闭的候选锁释放失败。下段 /f1 验收仍为21:59历史证据。
+
+> 当前接班状态统一见 [当前生产状态与执行待办](当前生产状态与执行待办.md)，同步于2026-09-11 22:12。`/f1` 固定入口已安装并完成真实验收：Gateway21:58重启为5281，21:59请求约3.027秒后发起1050字符回复，用户已回传完整正文；时间、60秒TTL、四个年龄和全部unknown独立核对通过。95D001与3B70C6均completed/acknowledged，安装26件与新增12件清单主控复算一致；FAB9DA/E37及旧自然回复FAIL保留。后续使用空闲、无更新待答且前置hook未接管的 `/f1`，无须重复安装、重启或本次验证。巡检发现的公网、RSS与备份故障尚待生产恢复；既有证据和配置备份保留。[合同与最终验收](reviews/2026-09-10-Hermes微信只读巡检.md)。
+
+## 接班（5分钟）
+
+1. 读 `docs/agent-guide.md`、`docs/spec.md` 与 [当前生产状态](当前生产状态与执行待办.md)，按时间核对实际candidate、schema、control、服务及最新恢复点。
+2. 读 [当前工作分工](collaboration/当前工作分工与交接.md) 和现行TASK；只经正式工具更新协议，不领取被取代的BB/082/R2，不虚报complete/ACK。
+3. RSS现役为v6修复版本，部署身份以主状态文件为准；不加载旧0145/1408 sidecar或旧refiner。X尚缺M1真实页面、E及artifact备份，不用合成证据启用生产源。
+4. 按主状态文件中的冻结manifest、剩余验收和回退顺序继续；旧库不得覆盖运行库，兼容回退不等于历史缺陷已通过。
+
+## 历史快照（不得当作当前运行态）
+
+- **2026-09-05 18:47 Sky 已审核，公开投递被 `091305`/`0930` 目录挡住**（已被上面 20:57 覆盖）：当时公开 generation **177**。含 Sky 的 generation 178 不能投现活 receiver/public reader。该阻断已关闭。
+
+- **2026-09-05 15:57 0012 已 apply；Admin `1408`；Sky 自然槽入库 20**：指纹 `36e6f60b…7849`。公开仍 `0930`，`:3102` 未切。collector WD `0145` + runtime，opener `1408`。`1987325` BST 失败后装 `rss-date.ts` shim；`1987327` 三源成功 Sky `newCount=20`。当时 20 条 pending_review。回退：Admin `[M1-HOME]/F1-1-website/.admin-load-20260905-1408/`；库 `[M1-HOME]/F1-1-website/.0012-apply-20260905-1408/pre-0012.sqlite`。已被上面 18:47 覆盖运行态。
+
+- **2026-09-05 11:40 采集/提炼/发布 sidecar 已上线；公开 generation 176**：现活 Admin/公开仍 `candidate-v10-20260901-0930`。投影 `:3102` 未切 WD。collector 仍钉 `0145` + `.ac5cc2/runtime/scheduled-collect.ts`。cutoff `2026-09-05T02:30:00.000Z` 的 35 条 Motorsport/The Race 已 refine → sidecar 审核发布 → sender，公开首页可见当日中文稿。refiner LaunchAgent 已改钉 `0145` runtime（不要加载 08-13 `fb50b6a5…`）。签名 caps 仍关。`AC5CC2` 两个成功自然 900s 未核收。新稿缺 candidate fence 时 refine 会跳过；发布没有周期 Agent。回退：Admin `[M1-HOME]/F1-1-website/.admin-load-20260901-0930/`；Public `[M1-HOME]/F1-1-website/.public-load-20260901-0930/`。接班以 [当前生产状态与执行待办](当前生产状态与执行待办.md) 为准。
+
+- **2026-09-01 12:06 Admin/公开 UI 已切 `0930`；当时采集管道未上线（已被上面 09-05 覆盖）**：当时 refiner 未加载、公开仍读 141 LKG。运行事实以 09-05 快照为准。回退：Admin `[M1-HOME]/F1-1-website/.admin-load-20260901-0930/`；Public `[M1-HOME]/F1-1-website/.public-load-20260901-0930/`。
+
+- **2026-09-01 08:35 `AC5CC2` 进行中：已进 live，两源 canary 成功，collector 已加载**：control=`live/clear/ready`。当时现活 Admin 仍 `candidate-v10-20260901-0145`。公开 `3000` 与投影 `3102` 当时未切。generation 141 已 `succeeded`。已被上面 12:06 覆盖。回退：Admin `[M1-HOME]/F1-1-website/.admin-load-20260901-0145/`；库 `[M1-HOME]/F1-1-website/.0011-apply-20260901-0145/pre-0011.sqlite`。接班以 [当前生产状态与执行待办](当前生产状态与执行待办.md) 为准。
+
+- **2026-09-01 02:37 `ECADB7` 已完成；当时采集/发布仍未跑（已被上面 08:35 覆盖）**：当时 control=`disabled/stopped/ready`，141 仍 `reconcile_wait`，collector 未加载。这些运行事实已被同日 08:35 快照取代。
+
+- **2026-08-31 22:21 Admin 新签名页已上生产 Admin**：现活 candidate `candidate-v10-20260831-221426`，`3101` 监听；`/admin/ops` 与双轨 `/admin/sources` 已在该 release 的 static 树。公开站与投影进程未切。详见 `docs/progress.md` 当日第一条。接班仍以 [当前生产状态与执行待办](当前生产状态与执行待办.md) 为准。
+
+- **2026-08-31 21:40 Admin 恢复补充**：当时生产 Admin `3101` 已重新监听，但工程树运行页/信源页尚未进入签名 release。已被 22:21 新 candidate 取代。
+
+- **2026-08-31 当前唯一接班入口（09:14现场复核）**：先读 [当前生产状态与执行待办](当前生产状态与执行待办.md)。SNAP 15 分钟备份与恢复点登记已在 M1 生产上线；现场回读 5 条有效恢复点，最新 `2026-08-31T01:03:04.724Z`，fence `writerReady/clockTrusted=true`。Public 与 Quick Tunnel running，M1 loopback和M5公网的 `/`、`/api/health`、`/api/public/feed` 均为200，但内容仍是LKG。`phase=disabled / global_stop=stopped / recovery=fenced`，RSS collector/refiner未加载，四源 identity仍为占位hash，X不能自动抓取。下一执行切片为 `TASK-20260831-ECADB7` R3（queued/user_required），等待用户确认0011、`--until ready`和schema10 plist安装；随后是 `AC5CC2` R3（也需独立 canary 确认）。`0ED611 / E59ACA`保持blocked；旧BB/082和R2均机械锁定、禁止恢复。`FCC322`已superseded，`370AD2`/`C917F4`已ack。下方2026-08-29及更早快照只作历史。
+
+- **2026-08-29 历史接班快照（已过期）**：当时 verified recovery point 为 0、Backup V2 审查 BLOCK、fence false。这些事实已被 2026-08-30/31 SNAP 部署与登记接线取代。当时任务队列以 `FCC322` 为首；现已 superseded。Public candidate `candidate-v10-20260829-220859` 与 Quick Tunnel `[EPHEMERAL-TUNNEL-URL]` 仍可能是最近已知公开站身份，接班必须现场重新发现并验证。
+
+- **2026-08-13 第一版真实闭环历史运行锚点（当前已失效）**：发布分支 `codex/first-public-release` 与远端均为 `fb0a938fa42fe9d28a8fe675aa963d5ba715aabb`；固定 M1 当时运行内容寻址 release `a7540b2e25cd88874986fcf3197ec8cabebc3886f956bdf6c875c5c949c94e3c`。真实 RSS 当时以 `900s` 调度，DeepSeek 生成中文整理，唯一 review SQLite 为 v4/integrity ok；用户已经完成一次 revision→approve→fresh re-auth manual publish，outbox succeeded，Public active generation=1。公开 feed/detail/API、中文标题/摘要和来源图当时均已实跑；公开 Admin/internal 路由为 404。Admin 当时固定入口是 `https://[PRIVATE-ADMIN-HOST]`，iPhone 与 iPad Passkey 实机登录已由用户确认；M5 登录流程相同但当轮没有用户实机完成收据。公开站当时由 Quick Tunnel 暴露，URL 可变；M5 的 v4 异机加密备份已再次 `backup-complete`，但未把 Public active/generation 文件纳入同一恢复点。390px 公开首页/详情和 Admin 长 delivery ID 溢出当时已修复并进入该 release。下方 2026-08-12 及更早快照是历史状态，不得据此推导当前运行态。
+- **第一版公开 beta / M1 部署（2026-08-12 00:22）**：第一版 synthetic 公开站已上线到固定 M1。release 分支为 `codex/first-public-release`；M1 使用精确 release package、官方 arm64 Node 24.18.0 与非 iCloud 运行目录 `[M1-HOME]/F1-1-website`。`com.f1plus1.public-beta` 和 `com.f1plus1.quick-tunnel` 正在运行，receipt refresh 每 12 小时执行且 last exit=0；M1 当前 AC 供电、AC/电池 `sleep=0`。常驻临时地址为 `[EPHEMERAL-TUNNEL-URL]`，公网 home/detail=200、Admin session=404。运维主通道为 UU 映射后的 `ssh f1plus1-m1-uu`。Quick Tunnel 地址重启会变化且无 SLA，中国大陆异网质量仍 Unknown；真实采集、AI 摘要、Admin UI 和自动发布不随本次上线开放。完整运行/关闭/回退见 [SSH 运行收据](runbooks/F1+1-固定M1公开Beta-SSH运行收据-v0.1.md)。
+- **v0.2 公开页 Kimi/frontend-design 审查跟进（2026-08-11 13:35）**：用户已明确要求设计部复核并给出具体优化方案，统筹已建立 `TASK-20260811-EE3F90`（`queued / user_confirmed`，输入报告 SHA=`a4022a97…a487`，冻结 HTML SHA=`5a84bfb2…f6168cb1`）。现有设计部窗口未归档且上一 turn 已结束，但 Codex 线程写入接口未送达派单；不得误写为设计部已领取。为避免停摆，统筹已形成一份不替代设计部结论的[只读预审](collaboration/部门/统筹部/报告/2026-08-11-Kimi-frontend-design审查统筹只读预审.md)，SHA=`f58aee1d…b29d8`：多数代码级发现成立，B2（证据行/原文 22px）和 E2（中文提炼层级）存在反证；推荐独立 integrity successor 只闭合真值、44px、错误文案/alt/meta 与媒体边界，不自动并入未获用户确认的 taste 审美变化。正式设计部仍须领取任务、独立核验并交付隔离 HTML、六格证据和 hash；用户确认前不得替换冻结稿、派公开页视觉实现或启动发布视频。
+- **SOURCE-MGMT-001 最终后端事实（2026-08-11 12:54）**：开发 `TASK-20260810-91AF6E`、测试 `TASK-20260810-92C716`、数据 oracle `TASK-20260811-3D190C` 与安全 `TASK-20260811-FAD506` 已形成完整本地 synthetic 后端闭环，FAD506 已由统筹 ACK，最终结论 `PASS / P0=0 / P1=0 / P2=0`。closed DB SHA=`ddf3778c…e939`、logical root=`7cae9bb8…e6a`、oracle SHA=`1ced08f0…248e`；正式 DB handle=0、`externalCalls=0`。产品 `TASK-20260811-0345AC` 已完成并 ACK Spec/功能矩阵时态同步，当前 Function 仍为 `P1-blocker`，只剩视觉确认、真实页面实现和同候选三路运行验收；不得再按本文件下方 2026-08-10 的“最终安全仍 pending”历史段落恢复旧探针链。
+- **SOURCE-MGMT-001 视觉确认恢复（2026-08-11 13:00）**：设计 `TASK-20260811-A32E0E` 与测试后继 `TASK-20260811-E1DCF2` 均在首张当前截图前被宿主浏览器启动权限阻断，未建立候选缺陷；前者已 superseded，后者已按 `ENVIRONMENT_BLOCKED` 收口。四张既有 PNG 仍只属于最后一次结构修订前参考图；当前固定 HTML SHA=`0d73ea29…6d68`，应由用户直接打开 [交互候选](../design/ui/F1+1-M5-admin-sources-preview-v0.1/index.html) 做方向确认。确认只覆盖 Mac 表格+Drawer、iPhone 卡片+全屏详情和六操作稳定入口，不覆盖真实页面、运行态响应式或安全验收。
+
+- **信源管理修复后复验（2026-08-10 12:29）**：开发 `875B6C` 已 ACK。测试最终后继 `TASK-20260810-92C716` 已以 `PASS / P0=0 / P1=0 / P2=0` 完成并由统筹 ACK：closed DB 副本 integrity=ok，Repository 精确为59 baseline+1 `local_synthetic`，本地项为 retired/stopped/disabled，AdminSessionStore create/get/destroy 与销毁后401语义通过；本轮没有重开 server，最终结论组合 A3293F 同候选真实 HTTP、进程内 Store 与 `http.ts` 静态映射，不能外推真实 provider、Admin UI 或部署。安全 `70EC0F` 与后继 `AD6AD9` 均因安全 harness 自身首错 blocked，未建立产品缺陷：前者误把 `cpSync.mode` 当文件权限，后者把弱权限副本已经正确 fail-closed 的 `DB_PATH` 过度限定为 `DB_PERMISSIONS`。正式 DB SHA 始终为 `ddf3778c…e939`，未启动 server/readiness/fixture、`externalCalls=0`、零残留；错误 basename、SQLite/profile/audit 内容根与第二 writer 出口仍 `NOT_RUN`。下一安全后继只允许复用已证明的弱权限拒绝，并单次运行剩余出口，禁止重复 raw/session/CSRF/identity/no-egress 与完整 HTTP 矩阵。
+- **信源管理页面架构（2026-08-10 01:20）**：产品 `TASK-20260810-8A055D` 已完成并由统筹 ACK，唯一 proposed 候选为 B：一个 Node 进程、一个 source profile、一个 SQLite writer、一个 exact-loopback raw listener；raw gate 先行，同一请求随后进入同进程 Next production handler，`/admin/sources`、Admin API、health 与 closed hashed assets 同源。候选合同 SHA `7d7bf37f…a6681`、产品报告 SHA `664ef910…c135`。禁止 sidecar、第二进程/端口/writer、静态假数据页、孤立 Next page 与 raw gate 绕过。页面/CSS/运行接线仍关闭，直到 `91AF6E` 与同候选独立测试/安全闭环，并获得用户对 v2 视觉 manifest 的精确确认。
+- **信源管理后端（2026-08-10 07:58）**：开发 `TASK-20260810-91AF6E` 已完成并由统筹 ACK。三文件精确 SHA 与冻结值一致；固定 Node24 typecheck、production build、唯一 `127.0.0.1:3019` HTTP、session/CSRF、59 baseline + 1 local overlay、list/add/validate/activate/stop/retire、operation、response-loss replay、closed receipt与candidate/protected内容前后比对均 PASS，`externalCalls=0`。closed DB SHA=`ddf3778c…e939`，logical root=`7cae9bb8…e6a`；PID/端口/profile lock/WAL/SHM/tmp均已清理。开发[报告](collaboration/部门/开发部/报告/2026-08-10-91AF6E五项Node24静态类型收敛与SOURCE-MGMT启动闭环报告.md) SHA=`65d2ea23…9374`，[manifest](../app/evidence/TASK-20260810-91AF6E/manifest.json) SHA=`7b0658d9…87b3`。原测试 `2467B0` 与安全 `59C88E` 仍绑定 blocked `F1466E`，不得领取；精确 successor 测试 `TASK-20260810-37CA8F` 与安全 `TASK-20260810-A5F239` 已派入既有正式窗口，等待同候选独立 `P0=0/P1=0` 后再评估后端完整核收。
+- **早期公开页复验时态（2026-08-10 01:00）**：已恢复的安全 `TASK-20260809-22EC6D` 与设计 `TASK-20260809-379161` 都发现当前五实现文件相对 `TASK-20260809-34476E` 旧快照全量 SHA 漂移；两部门均未启动服务、浏览器或新采样。安全任务以 `FAIL / SNAPSHOT_DRIFT / P0=0 / P1=1 / P2=0` 完成并由统筹 ACK；设计任务按失败路径 blocked。旧34476E六图、运行收据、lightbox焦点和React #418结论只属于旧快照，不能证明当前F67080候选。恢复出口是固定M1普通Terminal下的同SHA浏览器矩阵，再创建或恢复绑定新候选的设计/安全复验；不授权379161只审历史快照。
+- **当前最短关键路径（2026-08-09 22:38）**：测试任务 `TASK-20260809-47EF67` 已按 `ENVIRONMENT BLOCKED` 收口；Codex 宿主中的 `sandbox-exec` 在 App/浏览器启动前返回 `sandbox_apply: Operation not permitted`（exit 71），所以浏览器矩阵次数仍为 0、五个 Function 全部 `NOT_RUN`，候选没有被判成功或失败。安全后继 `TASK-20260809-43AE8C` 已完成并 ACK，唯一推荐路径是在固定 M1 的普通 Terminal 以当前用户执行冻结 runner：先做不启动 App/浏览器的双 Seatbelt Phase 0，只有两份 profile apply 与精确 loopback 正/负例全通过才进入唯一一次功能矩阵。该后继仍需用户一次精确确认；禁止 `sudo`、安装、下载、外网、候选修改、系统 Chrome与无 Seatbelt 降级。
+- **信源管理**：产品 v0.3（SHA `90ee4ed…b2f1fe`）和安全复验均已 ACK，合同层 `P0=0/P1=0/P2=0`；开发可行性勘察也已核收。`/admin/sources` 候选已生成四图和交互 HTML；设计部同一正式窗口后来恢复并完成诚实收口，任务 `TASK-20260809-08CCEF` 已 ACK。现行 [统筹冻结 manifest v2](collaboration/部门/统筹部/报告/2026-08-09-SOURCE-MGMT-001视觉候选统筹冻结manifest.json) 绑定当前候选、SHA 清单、报告、v0.3 和安全复验，[用户确认入口](collaboration/部门/统筹部/报告/2026-08-09-SOURCE-MGMT-001视觉候选恢复冻结与用户确认入口.md) 已同步；四张 PNG 仍是最后一次结构修订前参考图，正式实现必须独立关闭 sticky actions、键盘横滚和 390 无横溢的运行 `Unknown`。用户确认前不派正式实现。
+- **人工审核台**：`/admin/reviews` 的 [产品合同](spec/F1+1-M5最小人工审核台纵切产品合同-v0.1.md)、111 槽位机器映射和 approve→唯一 queued Publication→显式 manual publish 时序已核收；[交互候选](../design/ui/F1+1-M5-admin-reviews-preview-v0.1/index.html) 任务 `69BC5A` 已 ACK。产品后端先行裁决 `TASK-20260809-DCEFF8` 已 ACK，唯一结论 B：现行合同同时保留 `ADMIN-DECISION` 与 `ADMIN-VISUAL`，`review-synthetic` 第三物理 SQLite profile successor 仍是 `draft / user_required`，所以当前不得派 SQLite/API/session/CSRF/worker 或 UI 实现。后端唯一解锁问题是用户是否批准纯本地 loopback、manual-only、`external_calls=0` 的第三 profile 与 Admin 后端；获批后还须先形成 accepted successor，且 UI/CSS/client 继续等待视觉确认。后继 `133584` 的 8 图包因当前宿主渲染能力阻断，没有改候选；现有交互 HTML 仍可直接判断方向。正式运行证据均未实现。
+- **固定 M1 Mac**：TEMP-LOCAL v0.5 的 [精确执行 runbook](runbooks/F1+1-固定M1-Mac-TEMP-LOCAL精确执行runbook-v0.5.md)、[closed manifest](runbooks/F1+1-固定M1-Mac-TEMP-LOCAL精确执行runbook-v0.5.manifest.json) 与 [Codex/DeepSeek 交接提示词](runbooks/F1+1-固定M1-Mac-TEMP-LOCAL执行交接提示词-v0.5.md) 已完成并 ACK。该包仍为 `WAIT_47EF67`，且 `47EF67` 已环境 `BLOCKED`，所以旧包不能运行。现行后继依据为 [最小替代执行面安全裁决](collaboration/部门/安全部/报告/2026-08-09-47EF67环境阻断后最小替代执行面安全裁决.md)：获得用户精确确认后，测试部先生成冻结 runner，再由用户在固定 M1 普通 Terminal 运行 Phase 0；只有 Phase 0 通过才进入一次 loopback/synthetic 浏览器矩阵。旧 WPA 不因此开放远程、网络变更、真实数据或生产。
+- **阶段**：M5 本地 Build Loop；`public-synthetic` 公开链与第三个 `public-multimedia-synthetic` 后端 profile 均已有正式完成和独立证据。多媒体后端 `DEV-MM-01..03` 已通过门禁，公开页 `DEV-MM-04` 仍等待用户视觉确认；任何后端 PASS 都不能外推为公开页面完成。
+- **目标机**：Apple M5、arm64、macOS 26.6；迁移及经用户授权的精确清理完成后，独立终验已通过，P0=0、P1=0。
+- **公开前端**：原开发任务 `TASK-20260802-C29BB8` 与后继 P1 整改 `TASK-20260803-CD4228` 均已由统筹 `acknowledged`；整改后精确快照的独立测试 `TASK-20260803-5991EE` 和设计核验 `TASK-20260803-8C9709` 均为 `PASS / P0=0 / P1=0 / P2=2` 且已由统筹 `acknowledged`。该 PASS 覆盖固定 Node24、51/51、390/1440 深浅主题、四项原 P1、44px、共享 Shell、HTTP/console/零外部资源；AT 实机、原生 200% 缩放、真实 forced-colors 与 public-demo+SQLite/API 接线后的新 SHA 快照仍须复验。
+- **启动安全**：原安全任务 `TASK-20260802-68F43E` 的 `FAIL / P0=0 / P1=1` 历史保留；后继开发 `TASK-20260802-3760F6` 已完成受控 Next 子进程输出与信号清理。测试 `TASK-20260804-9F2DAD` 为启动 `PASS / P0=0 / P1=0 / P2=0`；安全任务 `TASK-20260804-B9D885` 后续发现的 `NODE_ENV=test` 数据库覆盖 P1 已由 `TASK-20260804-A01DF7` 关闭，并经 `TASK-20260804-A1A095` 真实 CLI 复验通过。相关任务均已 ACK；R5/R12 与整体生产放行仍不随之开放。
+- **公开后端前置**：用户已确认 U1/U2；[ADR-M4-PUBLIC-READ-001](decisions/system/2026-08-03-F1+1-公开读模型与API接线-v0.4-successor-accepted.md) 已冻结双 profile/SQLite、最小 `mvp-local-v0.4`、12 个 `public-demo-*`、projection-first feed/detail DTO/cursor/Problem、迁移/回退与失败关闭。首轮数据安全/测试 FAIL 历史保留；数据整改 `TASK-20260803-D53BF3`、安全复验 `TASK-20260804-0AEACE`、测试复验 `TASK-20260804-00972D` 均已 ACK。双 profile migration/seed/四 root pin 的 `TASK-20260804-253A43` 及其测试/安全整改闭包也已 ACK。
+- **多媒体后端**：数据 `TASK-20260809-385B52`、开发 `TASK-20260809-BA9999`、安全 `TASK-20260809-4A5381`、测试 `TASK-20260809-B98C66` 均已 `acknowledged`。已验证独立 SQLite、exact migration、原子 0/1/4 图 seed、5 个 synthetic media、Repository、默认 V1/精确 V2 API、406/500/no-store 和旧 profile 零漂移；结论限 `DEV-MM-01..03`，`externalCalls=0/realMedia=0/writesToBase=false`。
+- **最新产品状态同步（2026-08-09）**：产品 `TASK-20260809-DE4B65` 已由统筹 ACK，多媒体状态同步只解除产品文档旧时态；`DEV-MM-04` 仍等待用户对运行中公开页候选的视觉确认。VS1 的 `COLLECT-MOCK-002`、`CONTENT-PROCESS-003`、`SUMMARY-MOCK-004` 已由开发 `D6114C/3A8C0E`、数据 `5A9316`、测试 `C66A73/9D61AD`、安全 `BCF8B1/D33AF3` 的 ACK 证据闭合为 `complete`，出口限固定 Node24、本地 synthetic operator 与 V-OP/25-case 收据。真实媒体/provider、飞书 Base、外部 AI、Admin 实现、OS 级 no-egress、部署和全部非 loopback 外部 I/O 继续 closed 或保持独立门禁。
+
+- **2026-08-22 R6/typecheck 集成交接**：共享工作树已应用 R6 current-source patch（21 files / 17 frozen hunks）及独立 PASS 的六文件 typecheck 修复；`app/scripts/rss-collect-once.ts` 使用 R6 merged bytes 保留 source-id 修复，`app/src/server/rss/transport.ts` 的重叠部分最终 hash 单独记录。full typecheck、focused lint、RaceFans/RSS 36/36 与隔离 Next build PASS；R6 全套 release focused gate 仍 NOT PASS，原因包括共享 `.env` fail-closed、当前 runtime 文件集 114 与冻结 `toHaveLength(97)` assertion 漂移，以及 public-install 两项超时。P0=0；R6 P2=2，typecheck review P2=1。未部署、未启动服务/LaunchAgent、未触碰 M1/生产/真实数据库/外网。收据：`scratch/2026-08-22-release-integration-r6-typecheck/`。继续推进前应先由统筹决定 97/114 契约是否进入新的冻结决策并完成 isolated public-install gate；不得把当前 partial PASS 写成可发布。
+- **多媒体 P2**：保留的 `app/.local/f1plus1-public-multimedia-synthetic.pre-update-20260809.sqlite` 不被精确 runtime 路径选中，但仍增加同故障域留存、备份和误取风险，须由后继数据保留策略处置；Turbopack NFT 对动态本地路径的 tracing warning 与最终部署包内容尚未验证，须留到另行获授权的部署打包门禁。
+- **旧状态校正**：`795FB0` 已由任务工具取代为 `54BB47`；`3AF992` 已取代为已 ACK 的 `4451C2`。`C25855` 继续保留 `blocked`，因为它是更早 `16B34F` 的替代锚点，协议禁止再次收口以免历史链失效；其现行能力缺口已由 `F01A13` 的启动/脱敏/HTTP 后继证据覆盖，但生产部署、R5、R12 与真实外部能力仍未放行。
+- **会话提示**：部门正式窗口已经登记；后续只续用现有窗口与当前 TASK JSON，不创建重复部门窗口，不重复领取已完成、已取代或由现会话 `claimed` 的任务。
+
+## 目标机终验与清理真值
+
+- 已 ACK 的测试终验 `TASK-20260802-574A6D` 结论为 `pass`：M5/macOS 26.6、Git 基线、项目 Node 24.18.0/npm 11.16.0、两份 SQLite、关键断点 hash、9/9 个 Codex 任务同步和清理后保留边界均通过；测试报告记录当时 `task doctor=93`。
+- 清理共释放约 `298.6 MiB` 项目空间，另清理 Homebrew 旧 `simdjson` 约 `6.6 MB`。
+- `migration/bundles/`、`migration/manifests/`、`migration/portable-assets/`、`migration/scripts/` 已按授权删除；相关归档、manifest、vendored 资产和恢复脚本只保留历史验证收据，不再是现存或可执行产物，也不得为本断点重建。
+- 明确保留：`app/node_modules/`、项目内精确 Node 24 工具链、`app/.local/f1plus1.sqlite`、`app/.local/vs0-acceptance.sqlite`、`.git/`、任务/报告、迁移交接文档及 `migration/conversations/`。
+- 旧机 Obsidian Local REST `data.json` 已在用户授权和删除前门禁满足后删除；插件代码、启用记录和精确 `.gitignore` 规则保留。安全部 `TASK-20260802-026EC3` 的 read-only `fail` 历史不覆写，后续删除结果由测试部 post-clean `pass` 收据闭环；未记录任何凭证值。
+
+## 怎么把本地环境跑起来
+
+项目以 `app/.local/toolchains/node-v24.18.0-darwin-arm64/` 中的精确 Node 24.18.0/npm 11.16.0 为已验证运行层，`app/node_modules/` 当前保留。执行命令前先读 `app/README.md` 和当前任务真值；不要使用已删除的迁移验证脚本，也不要把已核收的启动/SQLite 局部门禁扩张为 R5、R12、Repository/API、真实外部能力或生产放行。
+
+- 本地跑公开站点（2026-08-07 已核收的早期 v0.2 实现）：在 `app/` 内按序 `npm run verify:env`、`npm run db:migrate`、`npm run seed:fixtures`、`npm run build`，再 `npm run start`，浏览器打开 `http://127.0.0.1:3000/` 与一条 `/stories/public-demo-*`（早期 v0.2 时间线界面，`public-synthetic` 数据）。`npm run check` 与 `npm run test:public-http` 为全量/真实 HTTP 验证命令；该 app 尚未落地 2026-08-08 冻结候选。
+- 已知限制：`npm run dev` 因 Next 16 dev（Turbopack）向其 dev-server 子进程注入 `NODE_OPTIONS`，与应用 R1 fail-closed 拒绝冲突，dev 模式下公开 API 路由返回 `ENV_FORBIDDEN`；浏览器演示与正式验证以 `npm run start` 为准。
+
+## 现在卡在哪 / 待决策
+
+- `DEV-MM-04` 是当前多媒体公开页唯一剩余实施门：需先绑定运行中候选、精确 app/data hash 与视觉证据并取得用户确认，再实施/验收 thumbnail、键盘、pointer/touch/trackpad、lightbox 和焦点返回；在此前保持 `user-gated`。
+- `DEV-MM-01..03` 的独立 profile、seed、Repository 与 V1/V2 API 已完成且有开发/安全/测试 ACK；不得把该局部闭环外推到公开 UI、真实采集、真实媒体、生产部署或系统级 no-egress。
+- 59 个真实 Source 继续留在 `m3-shadow` 且全部 disabled/validating；12 条内容只在物理隔离的 `public-synthetic` 中逐字复用 `src-active`。首轮数据 FAIL 与启动/数据库覆盖 FAIL 继续作为历史缺陷输入，不得删除或改写；后继整改 PASS 也不得外推到 API、前端接线或真实平台。
+- accepted R5 的同 UID TOCTOU 威胁模型仍需用户决定；未确认前保持 closed。
+- R12 OS/系统调用级 no-egress 仍为 pending。
+- SOURCE-MGMT-001 本地 synthetic raw 管理 API、session/Origin/一次性 CSRF、identity、operation/audit、单 writer 与失败关闭已经开发、测试、数据 oracle 和安全最终门闭合；真实 `/admin/sources` 页面仍未编码，当前等待用户确认固定交互候选。审核队列仍只有合同与候选，业务/视觉门未关闭。
+- 飞书重新登录后的 auth、真实 Base/provider/Collector、真实平台采集、AI/媒体处理、公开发布、部署、付费和其他外部 I/O 均保持 closed/Unknown。
+
+## 关键文件
+
+- 当前开发准绳：[spec.md](spec.md)
+- 公开读模型/API accepted 合同：[ADR-M4-PUBLIC-READ-001](decisions/system/2026-08-03-F1+1-公开读模型与API接线-v0.4-successor-accepted.md)
+- accepted 系统决策：[decisions/system/](decisions/system/)
+- 当前进度：[progress.md](progress.md)
+- 多媒体后端开发完成：[DEV-MM-01..03 完成报告](collaboration/部门/开发部/报告/2026-08-09-DEV-MM-BACKEND多媒体独立profile与V1-V2-API完成报告.md)
+- 多媒体独立安全门禁：[多媒体 profile 与 V1/V2 API 独立安全复验报告](collaboration/部门/安全部/报告/2026-08-09-多媒体profile与V1-V2-API独立安全复验报告.md)
+- 多媒体独立测试门禁：[多媒体 profile 原子 seed 与 V1/V2 HTTP 独立验收报告](collaboration/部门/测试部/报告/2026-08-09-B98C66多媒体profile原子seed与V1-V2-HTTP独立验收报告.md)
+- 当前工作分工与任务索引：[collaboration/当前工作分工与交接-2026-08-07.md](collaboration/当前工作分工与交接-2026-08-07.md)
+- 任务真值：[collaboration/tasks/](collaboration/tasks/)
+- 最终设计冻结任务：[TASK-20260808-54BB47](collaboration/tasks/TASK-20260808-54BB47.json)
+- 当前统筹真值校正任务：[TASK-20260808-4802F7](collaboration/tasks/TASK-20260808-4802F7.json)
+- 公开前端实现报告：[M4 VS-1 公开信息流与内容详情前端实现报告](collaboration/部门/开发部/报告/2026-08-02-M4-VS-1公开信息流与内容详情前端实现报告.md)
+- 公开前端浏览器收据：[M4 VS-1 公开前端本地浏览器验收收据](collaboration/部门/统筹部/报告/2026-08-02-M4-VS-1公开前端本地浏览器验收收据.md)
+- 公开前端独立测试 PASS：[M4 VS-1 公开前端 P1 整改独立回归报告](collaboration/部门/测试部/报告/2026-08-03-M4-VS-1公开前端P1整改独立回归报告.md)
+- 公开前端独立设计 PASS：[M4 VS-1 公开前端 P1 整改独立设计核验报告](collaboration/部门/设计部/报告/2026-08-03-M4-VS-1公开前端P1整改独立设计核验报告.md)
+- v0.4 数据首轮安全 FAIL：[v0.4 公开数据机器合同独立安全审查](collaboration/部门/安全部/报告/2026-08-03-v0.4公开数据机器合同独立安全审查.md)
+- v0.4 数据首轮测试 FAIL：[v0.4 公开数据机器合同与 12 条发布图独立测试报告](collaboration/部门/测试部/报告/2026-08-03-v0.4公开数据机器合同与12条发布图-独立测试报告.md)
+- v0.4 数据五项 P1 整改交付：[v0.4 公开数据机器合同五项 P1 整改报告](collaboration/部门/数据部/报告/2026-08-04-v0.4公开数据机器合同五项P1整改报告.md)
+- v0.4 数据整改安全复验：[v0.4 公开数据机器合同五项 P1 整改安全聚焦复验](collaboration/部门/安全部/报告/2026-08-04-v0.4公开数据机器合同五项P1整改-安全聚焦复验.md)
+- v0.4 数据整改测试复验：[v0.4 公开数据机器合同五项 P1 整改聚焦测试复验](collaboration/部门/测试部/报告/2026-08-04-v0.4公开数据机器合同五项P1整改-聚焦测试复验报告.md)
+- 双 profile SQLite 实现：[v0.4 双 profile SQLite 迁移与原子 seed 实现](collaboration/部门/开发部/报告/2026-08-04-v0.4双profile-SQLite迁移与原子seed实现报告.md)
+- SQLite 与稳定启动测试闭包：[双 profile SQLite 与稳定启动闭包独立测试](collaboration/部门/测试部/报告/2026-08-04-双profile-SQLite与稳定启动闭包-独立测试报告.md)
+- 数据库覆盖与 Next 安全出口复验：[真实 CLI 数据库覆盖与 Next 安全出口聚焦复验](collaboration/部门/安全部/报告/2026-08-04-真实CLI数据库覆盖与Next安全出口聚焦复验.md)
+- 早期 v0.2 生产 HTTP / 体验测试 PASS：[v0.2 时间线前端独立验收](collaboration/部门/测试部/报告/2026-08-07-v0.2时间线前端独立验收报告.md)
+- 早期 v0.2 M4 安全 PASS：[v0.2 前端 M4 门禁独立安全复验](collaboration/部门/安全部/报告/2026-08-07-v0.2前端M4门禁独立安全复验报告.md)
+- 启动错误脱敏独立安全复审：[VS-0 启动参数与 CLI 脱敏整改快照独立安全复审](collaboration/部门/安全部/报告/2026-08-02-M4-VS-0启动参数与CLI脱敏整改快照独立安全复审.md)
+- post-clean 迁移断点：[../migration/CURRENT-HANDOFF.md](../migration/CURRENT-HANDOFF.md)
+- 新 Mac 独立终验：[新 Mac 迁移完整复验与清理后回归报告](collaboration/部门/测试部/报告/2026-08-02-新Mac迁移完整复验与清理后回归报告.md)
+- 对话保留索引：[../migration/conversations/INDEX.md](../migration/conversations/INDEX.md)
+
+---
+最近更新：2026-08-31（顶部接班快照）；下方 2026-08-23 及更早段落保留历史
+
+## 2026-08-23 release successor 交接
+
+- successor 工程验证已形成 `PASS_NO_DEPLOY` 闭包。审计入口：[release successor report](../scratch/2026-08-23-release-successor-evidence/report.md)、[receipt](../scratch/2026-08-23-release-successor-evidence/receipt.json)、[manifest hashes](../scratch/2026-08-23-release-successor-evidence/manifest.sha256)；最终候选为 `../scratch/2026-08-23-release-successor-evidence/candidate-4`。
+- 当前身份固定为 Admin 113 / root `65108cd552f9302990bf397b1fa6ddfda8347c0b0e46c6b53d6a308640813d21` 与 Public 82 / root `3bfa3d74898c13576f79de8efde27907a7a5da885af19736adff3d99145587a0`。final `.next` 在 focused Vitest 之后由 Admin verifier 重验，byte identity 与 dependency closure 未漂移。
+- 接班者必须把 target-stage 收据中的 disposable test key 与生产签名区分开；本次未获得生产密钥，deploy/M1/production 继续 `NO`。任何 runtime root 漂移、target stage 回读源码父目录或 final `.next` focused test 失败，都应立即 fail closed，不得放宽 timeout、绕过 `.env`、权限或签名门。
+- `app/scripts/public-release-bootstrap.ts` 仅属 legacy/local synthetic 命令，不是当前 Admin/Public target release。历史 `96/98/stale97/114` 记录不覆盖当前 113/82 successor identity；保留历史记录以便追溯。
+
+<!-- F1PLUS1-R3-EXTERNAL-ENVELOPE-PIN-BEGIN -->
+```json
+{
+  "schemaVersion": "f1plus1-r3-envelope-trust-root-pin-v1",
+  "evidenceRootRelative": "scratch/2026-08-23-release-successor-r2-remediation/evidence",
+  "envelopeAnchorRelative": "scratch/2026-08-23-release-successor-r2-remediation/evidence/envelope-anchor.json",
+  "envelopeAnchorSha256": "7215c03755c2892d67c7beb8ce890d7caa2ba54e5787933f098e2f4c75dd035b",
+  "envelopeManifestSha256": "99f0410c1dfdcef109fb379757b6c0b569e576f7e9728adce397e45cc3fed9c3",
+  "envelopeRootSha256": "a2265c9d119b131e1b7920dc4c7e791abea7a7177ce2673754158825a7ed078d",
+  "selfReference": false
+}
+```
+<!-- F1PLUS1-R3-EXTERNAL-ENVELOPE-PIN-END -->
+
+R3 pin v1 above is superseded by the following final receipt-normalized pin; the verifier binds only this V2 marker.
+
+<!-- F1PLUS1-R3-EXTERNAL-ENVELOPE-PIN-V2-BEGIN -->
+```json
+{
+  "schemaVersion": "f1plus1-r3-envelope-trust-root-pin-v2",
+  "evidenceRootRelative": "scratch/2026-08-23-release-successor-r2-remediation/evidence",
+  "envelopeAnchorRelative": "scratch/2026-08-23-release-successor-r2-remediation/evidence/envelope-anchor.json",
+  "envelopeAnchorSha256": "dd80ea7db78dcf099cd729e6cc2e0f577311445982a9e7c0cf0cbedf308c3a36",
+  "envelopeManifestSha256": "003785d940c0a12c9db2dc22b6a7912028dc4e27b6cd329fe277da1d2cac6bf3",
+  "envelopeRootSha256": "15f35cd51d813fadecfe09e93d01af9e9b5e6c253d0d11a568919380c00d8407",
+  "selfReference": false
+}
+```
+<!-- F1PLUS1-R3-EXTERNAL-ENVELOPE-PIN-V2-END -->
+
+## 2026-08-24 release successor R2 交接
+
+- R2 唯一证据根：`../scratch/2026-08-23-release-successor-r2-remediation/`。先读 `report.md`、`receipt.json`、`envelope-manifest.json`、`envelope-anchor.json`，再运行独立 `evidence/verify-envelope.mjs`；receipt 任意 byte 漂移必须 fail closed。
+- 当前 candidate：HEAD `2d590366159b7b1f83c673351fdce4f7fef9bbbb`，唯一 parent `da4fa8d9d7478d38b6787f6ce544c3ad9856e5e3`，tree `e8a191a2cf1770f7ce460934d95d932d0e51f637`；Admin manifest SHA `f494863594de2b139099e96a6a940778546c2f66a75ced98099095f510850588`；release root `814e08f792b3b6da134140f2a61ea9a9d50075adf1139fa5fb51d7cb8e9369d0`；Next root `9cbaad3f8c46ad688e7141292d7b4533bcf9c0aaaf265594bfbe6d850a47ca2d`。
+- R2 验收已记录 Admin 113 / Public 82、focused 26/26、RaceFans 36/36、Admin stage、真正 self-contained target verifier、focused lint、full typecheck 与 dependency closure 后验 PASS。target 服务仍 `disabled`，仅 disposable test key；deploy/M1/production/LaunchAgent/真实签名/网络保持 `NO`。
+- P1-2 复验要点：target verifier 的 `verifierWorkingDirectory` 与 target root 相同，target root tree hardlink=0、symlink=30，parent/source-entry probes 为 `ENOENT`；任何 target manifest/plist 指向 candidate/app 或父目录，或者 legacy bootstrap 进入 closure，都停止并回报。
+- P1-4 旧 accepted ADR 原字节 SHA-256 为 `7192e03d9bdbd98232a7c6896ab737b5bc8da13bfa6e822e84b9208bf2f24ce7`，R2 ADR `docs/decisions/system/2026-08-24-F1+1-release-successor-R2-工程证据闭包-v2.md` 记录 supersedes；旧正文保持 immutable。full `npm run check` 与 full unfiltered Vitest 为 `NOT_RUN`。
+
+## 2026-08-24 双语完整 Admin successor 接班入口
+
+接班先读：
+
+1. [accepted successor ADR](decisions/system/2026-08-24-F1+1-v6到v10双语完整Admin生产successor-accepted.md)；
+2. [实施合同 v1.0](spec/F1+1-v6到v10双语完整Admin与公开部署实施合同-v1.0.md)；
+3. [Function 矩阵 v1.0](spec/F1+1-双语完整Admin与公开部署Function矩阵-v1.0.md)。
+
+当前唯一顺序是 `schema6 → 0007 gateway/recovery/phase → 0008 X manual inbox → 0009 bilingual → 0010 source registry`。旧 accepted v5文件保留历史语义和原字节，其中 `0005_auto_publish_policy/user_version=5` 实施身份已被新ADR精确取代；现行0005/0006分别仍是Autosport和RaceFans/The Race。
+
+Slice 0只有文档产出。R3只关闭engineering release/build evidence gate；0007是未应用frozen candidate，0008/0009/0010、双语Public、完整Admin/ops和production仍未实现或未部署。Open Design frozen目标仍标记`NOT_DEPLOYED / realApi=false`，不能作为真实API/DB收据。
+
+用户已授权最终部署目标和持续工程推进；生产瞬时值与不可逆动作继续等待不可变`PRODUCTION-DEPLOYMENT-MANIFEST`。任何后继开发任务必须逐Function ID绑定Mac+iPhone真实入口、状态/恢复、冻结视觉身份和production gate；Admin不得使用公网裸入口。
+
+## 2026-08-24 双语完整 Admin Slice 0 R2 交接更正
+
+前一接班段只能理解为目标合同入口，不能理解为Slice 0已通过。首轮独立审核根 `../scratch/2026-08-24-bilingual-admin-contract-review/` 的receipt为 `FAIL / P0=0 / P1=2 / P2=2`；R2已更新同三份新文档并保持旧accepted、R3外部pin、app/data不变。当前时态是 `R2_REVIEW_PENDING`。
+
+R2复审必须机械确认：所有route strict DTO/Problem与HTTP/cache/pagination；CAS/idempotency/fresh/capability；Candidate/LanguageSlot/Bundle/Approval/Publication/Projection/Source/X/Phase/Operation/Attempt/Delivery的closed transition；unknown response只查同一identity；Ops统一snapshot的asOf/freshness/unit/unavailable union及logs/traffic/API/cost/alert隐私边界；Function矩阵不再把correct/withdraw、Audit UI或Security UI记成current。复审PASS及其receipt/manifest hash落账前，不得进入Slice 1或写complete。
+
+## 2026-08-24 双语完整 Admin Slice 0 R3 交接更正
+
+R2复审根 `../scratch/2026-08-24-bilingual-admin-contract-review-r2/` 结论为 `FAIL / P0=0 / P1=2 / P2=1`；R3只修改三份Slice 0新文档并在三份主文档尾部追加本更正，当前为 `R3_REVIEW_PENDING`。接班复审应机械核对：Source两个正交enum及0010映射无冲突；PublicFeed/PublicDetail V1与V2完全分型；标准浏览器header不被应用allowlist误杀且forwarded/auth敏感header拒绝；FreshAction逐route closed；无`plus`、`0..max`、`action:string`、无类型field或无上限integer；Release role后缀与pair receipt同schema；Cost明确actual zero、actual unknown、estimate-only三态。独立PASS前禁止进入Slice 1。
+
+## 2026-08-24 双语完整 Admin Slice 0 R4 交接更正
+
+当前状态为 `R4_REVIEW_PENDING`。唯一复审焦点是Source：三份新文档必须逐字保留canonical `identity_status/relevance_status/monitorability`，枚举和默认与当前Spec一致；0010必须覆盖普通新source、四RSS和59X mapping；activate与queued claim必须显式读取三列、五个activation guard和五个epoch fence。派生read model只能返回clear/blocked/unknown或clear/stale/unknown，不能成为持久字段或canonical alias。任一真值/receipt/identity Unknown时零写零外联。独立PASS前禁止进入Slice 1。
+
+R4语义校正：上一句的`identity Unknown`只指派生guard/fence的真值身份或receipt identity为Unknown；canonical `identity_status=unknown`、`relevance_status=unknown`、`monitorability=unknown`按当前Spec允许`statusGuard=clear`，不得因此单独阻断。只有派生guard=`blocked|unknown`或epoch fence=`stale|unknown`时零写零外联。
+
+## 2026-08-24 双语完整 Admin Slice 0 R4 关闭交接
+
+独立复审根`scratch/2026-08-24-bilingual-admin-contract-review-r4/`已给出`PASS / P0=0 / P1=0 / P2=0 / Slice0Gate=CLOSED_PASS`，Slice 0目标合同文档门现为`COMPLETE`。固定身份：report SHA-256 `3e6c69ee2c3f67523b0cfd6c9ea15ed1eee1692c2d61d371516e207345de3a22`；receipt SHA-256 `03327aa1af9119e55681f591e24bd4160c657973392bfe2bc53f45b01fe5d4aa`；manifest SHA-256 `09fa3a08e3736d29a198ced3e71e4983b9ccc2dbcc26440bfd665ba9cc44f022`。
+
+接班者可进入后继工程切片，但必须继续逐Function保持`implementation-pending/engineering-candidate/production-gated`真值。历史FAIL、R3 external pin、Open Design `NOT_DEPLOYED / realApi=false`和`PRODUCTION-DEPLOYMENT-MANIFEST`生产门均未被本次文档关闭覆盖。
+
+## 2026-08-24 0007 fence/rollback successor 接班更正
+
+前一段“可进入后继工程切片”已被0007 fence P0覆盖。当前先读：
+
+1. [0007 fence/rollback successor accepted ADR](decisions/system/2026-08-24-F1+1-0007-fence与rollback-successor-accepted.md)；
+2. [0007 successor实施合同](spec/F1+1-0007-fence与rollback-successor实施合同-v1.0.md)；
+3. [独立P0裁决](../scratch/2026-08-24-0007-fence-contradiction-audit/report.md)。
+
+旧 frozen 0007确有Admin `phase_control/fence_update` transition，Slice1报告称trigger让合法operator永远无法clear不成立；真正P0是该路径无需verified truth receipt即可clear singleton fences。旧identity全部`SUPERSEDED_FOR_IMPLEMENTATION`且原字节保留。当前为`0007-successor-contract-review-pending / Slice1 BLOCKED`；0008/0009/0010和production继续blocked。
+
+接班复审必须机械确认：one-fence/one-receipt、supervisor-only、clear仅disabled/paused、收紧edge四phase可用、receipt+singleton CAS+permit+audit+terminal同一事务；business rollback收敛blocked、no attempt/outbox/effect证明、secret销毁和orphan lease。新SQL与六类identity仍未创建。R3 external pin、Open Design和production manifest门均保持不变。
+
+门禁禁止混用：当前contract review只审八份文档，`P0=0/P1=0`后进入`0007-successor-implementation-review-pending`；届时才可另行派发隔离SQL/identity/E2E任务。实现复审关闭前Slice1和0008继续blocked。R3 V2 marker原字节保留只表示pin未被本任务改写，不表示当前retained target root已重新通过完整envelope verifier。
+
+## 2026-08-24 0007 successor 合同关闭交接
+
+独立审核闭包固定为report `6c73bd52fc2617717302994f1ffe5571db1b2a78bdc05515a01a87a387e5aa8b`、receipt `74e959ca3a321d191d4fd7f02723f94a2b0e843bea685c93be93ac84c02daff8`、manifest `73ef34bb4466beea632b4cee5552be75f045a235682613acc255800f2828ff4f`，根目录`scratch/2026-08-24-0007-successor-contract-independent-review/`，manifest `2/2 OK`；结论`PASS / P0=0 / P1=0 / P2=0`及`MICRO_PASS / P0=0 / P1=0`。
+
+接班者现在可以另行派发隔离的0007 successor implementation候选，当前门为`0007-successor-implementation-review-pending`。授权范围仅含新SQL、六身份、实现、负例与无workaround E2E；在第二门独立复审`P0=0/P1=0`前，Slice1工程关闭、0008、真实DB、M1和production继续blocked。旧FAIL、旧0007及R3 external pin不得重写。
+
+## 2026-08-24 可信单用户 M1 quick-launch 交接
+
+用户已选择可信单用户M1快速上线并接受same-UID残余风险；现行入口是[quick-launch successor ADR](decisions/system/2026-08-24-F1+1-可信单用户M1快速上线-successor-accepted.md)，当前`review-pending`。该overlay在首版quick-launch范围内覆盖上一段high-assurance 0007先行阻断，R7保留为`DEFERRED / NOT_SHARED / NOT_PRODUCTION`，旧accepted与全部复审证据不改。
+
+接班顺序：shared旧0007 exact raw `ab32bb74fb404656bbdf6f84cc8a6967e18f8ed797f59ec27125291e5c26a163`作为trusted-local capability/accounting → 0008 X manual disabled → 0009 bilingual → 0010 source registry → full_v10/manual_only_fallback_v10。bootstrap必须走gateway/authorizer和既有Admin `phase_control/fence_update`，一次一fence；禁止drop trigger、裸UPDATE或test workaround。合法路径在production-shaped disposable DB失败时立即退回blocked，另立最小additive候选复审。
+
+首版自动能力只有RSS collect与zh-CN/en refine；人工review，private/fresh人工publish；automatic review/publish、59 X自动采集和oEmbed均disabled。上线前必须证明Admin loopback/Tailscale-only/Funnel=0、Passkey/session/Origin/CSRF/fresh/audit、auto worker五处为0、signed snapshot/LKG、off-host backup age与RPO≤900秒、COMMIT前rollback及COMMIT后同schema fallback。用户确认绑定本线程自然语言，`evidenceId=NOT_ISSUED`；production manifest仍固定真实host/UID/path/network/key/model/source/backup/cutover值。
+
+## 2026-08-24 quick-launch automatic-zero P1 交接更正
+
+上段“auto worker五处为0”由[quick-launch ADR §10唯一`AutoAutomationZeroVector`](decisions/system/2026-08-24-F1+1-可信单用户M1快速上线-successor-accepted.md#10-autoautomationzerovector-唯一合同)精确覆盖，不能解释为独立worker PID或WebAuthn fresh operation。Manifest必须固定`quickLaunchCutoverAt/release/manifest/reviewDatabaseIdentity/autoProcessIdentitySetSha256/scheduleInventorySha256`。
+
+接班实现必须分别对`automatic_reviewer/review/system-auto-review-v1`与`automatic_publisher/publish/system-auto-publish-v1`生成五轴收据：active process、schedule registration、active owner handoff、post-cutover或遗留nonterminal operation、post-cutover或遗留queued/nonterminal effect均为0。exact SQL、owner/kind/channel/producer/outbox type/status闭集见ADR §10；cutover前terminal legacy/audit/provenance必须保留。
+
+当前`runtime.ts`仍无条件注册两个60秒interval并在listen后启动两个tick，因此现行build为FAIL；即使独立PID为0也不能放行。后继release需静态AST/call-graph和跨至少一个60秒窗口的进程外运行收据。独立FAIL report/receipt pin为`5fb3c8aa3bbbd453a69a7ef28222ebb9c0b56c69a1343dc1e19bd83cadfa5554`/`96ab78b838856fe5d2dabc20d51eaab5c9a76de1cb7f39bade41efcca9c40624`；当前仍`review-pending`，app/DB/M1/production未改。
+
+## 2026-08-24 quick-launch R2 合同门关闭交接
+
+R2独立复审结论为`PASS / P0=0 / P1=0 / P2=0 / quick-launch contract gate=CLOSED_PASS`；report SHA-256 `9a75a70c462be4c76d5d0b4c5db8925e6a574b6a9f1fab05e1297dc8674bcadf`、receipt SHA-256 `763737f8c6eddd05d2e09232e948b5e55ebd917369d474558dbe3cba73928d70`、manifest SHA-256 `5020a905065ffaabc1bcc89a1ba43906240429faef22350fe7d526eb39f7687d`，证据根`scratch/2026-08-24-trusted-single-user-m1-quick-launch-independent-review-r2/`。当前状态收口为`contract CLOSED_PASS / engineering authorized pending`。该关闭只授权后继工程候选按既有合同另行实施与复审，不表示实现、production-shaped E2E、M1或production通过。首轮FAIL及其整改历史保留；当前`runtime.ts`两个60秒interval和两个startup tick继续令review/publish的schedule轴`FAIL / NO_DEPLOY`，必须由后继release移除或机械拒绝注册并取得§10全部收据后才可继续部署门。

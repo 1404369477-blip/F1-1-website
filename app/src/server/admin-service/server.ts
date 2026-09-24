@@ -294,7 +294,10 @@ function staticFile(path: string, staticRoot: string): Readonly<{ path: string; 
   if (path === "/admin/reviews" || path === "/admin/reviews/") {
     return { path: join(staticRoot, "index.html"), type: "text/html; charset=utf-8" };
   }
-  if (/^\/admin\/(?:sources|x-submissions)(?:\/[a-z0-9][a-z0-9_-]{1,63})?\/?$/.test(path)) {
+  if (path === "/admin/sources" || path === "/admin/sources/") {
+    return { path: join(staticRoot, "sources.html"), type: "text/html; charset=utf-8" };
+  }
+  if (/^\/admin\/(?:sources|x-accounts|x-submissions)(?:\/[a-z0-9][a-z0-9_-]{1,63})?\/?$/.test(path)) {
     return { path: join(staticRoot, "x-management.html"), type: "text/html; charset=utf-8" };
   }
   if (path === "/admin/assets/app.css") {
@@ -305,6 +308,24 @@ function staticFile(path: string, staticRoot: string): Readonly<{ path: string; 
   }
   if (path === "/admin/assets/x-management.js") {
     return { path: join(staticRoot, "x-management.js"), type: "text/javascript; charset=utf-8" };
+  }
+  if (path === "/admin/ops" || path === "/admin/ops/") {
+    return { path: join(staticRoot, "ops.html"), type: "text/html; charset=utf-8" };
+  }
+  if (path === "/admin/assets/ops.js") {
+    return { path: join(staticRoot, "ops.js"), type: "text/javascript; charset=utf-8" };
+  }
+  if (path === "/admin/assets/sources.js") {
+    return { path: join(staticRoot, "sources.js"), type: "text/javascript; charset=utf-8" };
+  }
+  if (path === "/admin/settings" || path === "/admin/settings/") {
+    return { path: join(staticRoot, "settings.html"), type: "text/html; charset=utf-8" };
+  }
+  if (path === "/admin/assets/settings.css") {
+    return { path: join(staticRoot, "settings.css"), type: "text/css; charset=utf-8" };
+  }
+  if (path === "/admin/assets/settings.js") {
+    return { path: join(staticRoot, "settings.js"), type: "text/javascript; charset=utf-8" };
   }
   return null;
 }

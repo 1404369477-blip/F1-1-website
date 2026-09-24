@@ -1,0 +1,47 @@
+{
+  "capturedAt": "2026-09-24T13:53:45.270039+00:00",
+  "files": [
+    {
+      "source": "scratch/m1-space-cleanup-20260924/review/actual-review.json",
+      "archivedPath": "evidence/reference-snapshots/scratch/m1-space-cleanup-20260924/review/actual-review.json",
+      "bytes": 1433,
+      "sha256": "669f2a61f9810ac8f18bcd7ad3a8c09bf289117a306ad0bbf1154402efa3f78e"
+    },
+    {
+      "source": "scratch/m1-space-cleanup-20260924/natural-snapshot-after.json",
+      "archivedPath": "evidence/reference-snapshots/scratch/m1-space-cleanup-20260924/natural-snapshot-after.json",
+      "bytes": 515,
+      "sha256": "2216de01910705cc050eadc78f8fa7723d9d9e67afd97b3fac4e13682f94e3d2"
+    },
+    {
+      "source": "scratch/pro-analysis-20260923/canary-review/byte-actual-review.json",
+      "archivedPath": "evidence/reference-snapshots/scratch/pro-analysis-20260923/canary-review/byte-actual-review.json",
+      "bytes": 3182,
+      "sha256": "4ac85fad58f90b192b43dbb3468847097282f62069fb5641fad797e82b8a9640"
+    },
+    {
+      "source": "scratch/pro-analysis-20260923/canary-review/resume-review.json",
+      "archivedPath": "evidence/reference-snapshots/scratch/pro-analysis-20260923/canary-review/resume-review.json",
+      "bytes": 3561,
+      "sha256": "3a9188b0752c8ca939783439f6e291c28e8bb56d9976820335390f177248401e"
+    },
+    {
+      "source": "scratch/pro-analysis-20260923/shared-analysis.txt",
+      "archivedPath": "evidence/reference-snapshots/scratch/pro-analysis-20260923/shared-analysis.txt",
+      "bytes": 16420,
+      "sha256": "beee627cb3a7d24cf2c11e2120c07349fea251c164dfc9a8672bef1ca93b7f1d"
+    },
+    {
+      "source": "scratch/github-pages-run-audit-20260923-r1/REPORT.md",
+      "archivedPath": "evidence/reference-snapshots/scratch/github-pages-run-audit-20260923-r1/REPORT.md",
+      "bytes": 1055,
+      "sha256": "1dfba966bd7df7167e3b50d8cd5f7048520e3bb0d16771bf6724370a634c28fe"
+    },
+    {
+      "source": "docs/collaboration/tasks/TASK-20260913-D1BAB4.json",
+      "archivedPath": "evidence/reference-snapshots/docs/collaboration/tasks/TASK-20260913-D1BAB4.json",
+      "bytes": 3407,
+      "sha256": "7fbe1951a27b2d8cfd783089d1bc68eb57ae3698ef77e2edf7d0aa6e7aee7601"
+    }
+  ]
+}

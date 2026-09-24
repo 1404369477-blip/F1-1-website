@@ -1,0 +1,30 @@
+[
+  {
+    "path": "backup-admin-drill-child.mjs",
+    "sha256": "1988ec98cecd4fc22de4f2239b53e528075cc3552e3bb80d959a4ea8d1475cb9"
+  },
+  {
+    "path": "backup-application-drill.mjs",
+    "sha256": "33bab7a9d8cf87d90c1f961a2eabbc753deeb4bf0318acaea5fe9e1e3ad183f9"
+  },
+  {
+    "path": "backup-off-host-observe.sh",
+    "sha256": "a6f8b1a5f17dd2ebfe2f560fd67f348d3b0af96eb8068897d48f1627a44bd23b"
+  },
+  {
+    "path": "backup-off-host-transfer.mjs",
+    "sha256": "ab09ed4c3e51deb2f6ff31f08dfdf7ee26906cdad3ac90b8be9846a0ceedaa3f"
+  },
+  {
+    "path": "backup-snapshot-cycle.sh",
+    "sha256": "f5a394e7db86fad3cca50d5ee0d6d05d69bad0db31226bf4b431e4a012d82be1"
+  },
+  {
+    "path": "bounded-backup-command.mjs",
+    "sha256": "515fa063e3a3e1b2a156a207906a21e00877a09cd0fc99047c609b6fcab802b7"
+  },
+  {
+    "path": "verify-backup-runtime.mjs",
+    "sha256": "f2a4e7485211ac9280cb17da4dca20af0eb73d82d1e8420349bcc17112d2f717"
+  }
+]

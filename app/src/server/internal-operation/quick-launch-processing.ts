@@ -9,6 +9,7 @@ import { canonicalJsonV1, SqliteInternalOperationGateway, type OwnerProcess, typ
 import { loadReleaseRuntimeGate } from "./release.ts";
 import { persistOwnerSupervisorHandoff } from "./owner-supervisor.ts";
 import { SOURCE_REGISTRY_SCHEMA10_SHA256, SOURCE_REGISTRY_SOURCE_SCHEMA9_SHA256, verifyAuthorityActivationReceipt } from "../rss/source-registry-migration.ts";
+import { rssConfigTable } from "../rss/rss-config-read.ts";
 
 export const QUICK_LAUNCH_PROCESSING_SCHEMA_VERSION = "quick-launch-processing-preflight-v1" as const;
 export const QUICK_LAUNCH_PROCESSING_MAX_LIMIT = 50 as const;
@@ -371,7 +372,7 @@ export function planQuickLaunchProcessingPreflight(input: Readonly<{
       LEFT JOIN bilingual_candidate_lineage_v1 l ON l.candidate_id=c.candidate_id
       JOIN source legacy ON legacy.source_id=c.source_id
       LEFT JOIN source_registry_v1 r ON r.source_id=c.source_id
-      LEFT JOIN source_registry_rss_config_v1 cfg ON cfg.source_id=c.source_id
+      LEFT JOIN ${rssConfigTable(database)} cfg ON cfg.source_id=c.source_id
       JOIN internal_control control ON control.singleton_id=1
      WHERE c.review_status='pending_review'
      ORDER BY c.published_at DESC,c.candidate_id ASC

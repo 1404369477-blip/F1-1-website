@@ -1,0 +1,63 @@
+{
+  "acceptance_exit": "同一固定候选通过正常/异常/过期/身份与权限边界测试、独立审查、M1工具实际调用、Gateway加载，并取得真实微信询问及收件证据；阶段如未取得手机证据必须明确等待，不能整体complete。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/reviews/2026-09-10-Hermes微信只读巡检.md",
+    "app/scripts/f1-status-report.py",
+    "app/scripts/f1-status-mcp.py",
+    "app/scripts/site-status.ts",
+    "app/src/tests/test_site_status_report.py",
+    "scratch/hermes-site-status-direct-20260911/INSTALL.md",
+    "scratch/hermes-site-status-activation-20260911/installation-receipt.json",
+    "scratch/hermes-site-status-activation-20260911/installed-check.json",
+    "scratch/hermes-site-status-activation-20260911/user-weixin-reply-215911.json",
+    "docs/collaboration/部门/测试部/报告/2026-09-11-TASK-20260911-3B70C6-Hermes微信f1实收验收附录.md"
+  ],
+  "authorization_evidence": "2026-09-11 用户在上一轮明确说明/f1候选、空闲及无更新待答前提、安装加载和微信实收步骤后回复：可以，继续推进吧。确认/f1作为正式巡检入口，授权按已独审固定候选继续必要安装、配置接入和验收；原自然问句失败仍保留历史，微信新入口须真实验收。",
+  "authorization_history": [
+    {
+      "at": "2026-09-10T22:03+08:00",
+      "evidence": "2026-09-10本会话用户“推进下一步吧”，承接已给出的微信只读巡检下一步。",
+      "state": "user_confirmed"
+    },
+    {
+      "at": "2026-09-11T21:39+08:00",
+      "evidence": "2026-09-11 用户在上一轮明确说明/f1候选、空闲及无更新待答前提、安装加载和微信实收步骤后回复：可以，继续推进吧。确认/f1作为正式巡检入口，授权按已独审固定候选继续必要安装、配置接入和验收；原自然问句失败仍保留历史，微信新入口须真实验收。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "开发部/01a0895d-8147-75f0-8f8c-fad73e46be80",
+  "completion_class": "standard",
+  "confirmation": "无需额外确认",
+  "created_at": "2026-09-10T22:03+08:00",
+  "department": "开发部",
+  "details": "按 docs/reviews/2026-09-10-Hermes微信只读巡检.md 实施固定无参数MCP和Node只读采样。实际主执行01a0895d-8147-75f0-8f8c-fad73e46be80；子Agent实施与独审身份留报告。代码限定新增site-status模块、命令、测试及部署适配器，保留共享脏树。设计版本/路径/hash及六格视觉不适用：纯operator无页面改动；Function ID不新增不升级；Admin Mac/iPhone既有功能不变。真实出口微信询问→MCP→带时间结果。不得更改业务服务、生产写入、schema、control、fence或备份执行。",
+  "domain_stage": "通用执行",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "读取或观测失败→unknown且不伪装0/healthy；候选/配置不符→停止接入并保留原配置；微信未使用工具或未收件→保留待验证不得complete。无UI设计锚点变更；若需新增界面则另走设计门。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "保留全部旧失败与冻结审查，未将MCP注册当本次原生工具调用，未把发送尝试单独当实收，未把粘贴时间当送达时刻。无业务写入/维修/未知请求重发/定时主动消息；共享脏树未混合commit或push。",
+  "node": "Hermes只读巡检",
+  "pointers": [
+    "docs/reviews/2026-09-10-Hermes微信只读巡检.md"
+  ],
+  "report": "docs/reviews/2026-09-10-Hermes微信只读巡检.md",
+  "resolution": null,
+  "revision": 11,
+  "schema_version": 1,
+  "task_id": "TASK-20260910-95D001",
+  "title": "Hermes 微信固定只读巡检实现与接入",
+  "unverified": [
+    "无本次已确认/f1范围的剩余验收阻塞。未直接捕获该调用父链、原始stdout/DTO、模型API网络跟踪或精确手机送达时间；以独立交叉证据验收。繁忙/更新待答/hook分流和旧自然问句无普遍直出保证；报告发现的公网、RSS、备份故障及Admin登录、增长率、任务存活和根因核实不属于本次接入修复。"
+  ],
+  "updated_at": "2026-09-11T22:12+08:00",
+  "verified": [
+    "用户已确认/f1正式入口，固定direct-r1十文件107769B候选的正常/异常/过期/身份与权限边界、超时清理及独立审查通过；M1已安装13文件，原配置逐字备份且只追加quick_commands.f1，原r4保持；安装后精确命令与新进程loader通过；用户/restart后Gateway5281，21:59实际请求/标准报告/微信实收交叉核验通过，报告时间与未知语义完整，后继审查3B70C6已ACK。"
+  ]
+}

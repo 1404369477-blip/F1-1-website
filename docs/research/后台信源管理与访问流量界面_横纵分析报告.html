@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <style>
+@page {
+    size: A4;
+    margin: 25mm 20mm 20mm 20mm;
+
+    @top-center {
+        content: "后台信源管理与访问流量界面  |  横纵分析法深度研究报告";
+        font-family: "Droid Sans Fallback", Helvetica, Arial, sans-serif;
+        font-size: 8pt;
+        color: #95a5a6;
+        border-bottom: 0.5pt solid #ecf0f1;
+        padding-bottom: 3mm;
+    }
+
+    @bottom-center {
+        content: "第 " counter(page) " 页";
+        font-family: "Droid Sans Fallback", Helvetica, Arial, sans-serif;
+        font-size: 8pt;
+        color: #95a5a6;
+        border-top: 0.8pt solid #1a5276;
+        padding-top: 2mm;
+    }
+}
+
+@page :first {
+    @top-center { content: none; }
+    @bottom-center { content: none; }
+}
+
+body {
+    font-family: "Droid Sans Fallback", Helvetica, Arial, sans-serif;
+    font-size: 10.5pt;
+    line-height: 1.75;
+    color: #2c3e50;
+    text-align: justify;
+}
+
+/* 封面 */
+.cover {
+    page-break-after: always;
+    text-align: center;
+    padding-top: 45%;
+}
+.cover h1 {
+    font-size: 28pt;
+    color: #1a5276;
+    margin-bottom: 8mm;
+    font-weight: bold;
+    letter-spacing: 2pt;
+}
+.cover .subtitle {
+    font-size: 14pt;
+    color: #95a5a6;
+    margin-bottom: 6mm;
+}
+.cover .meta {
+    font-size: 11pt;
+    color: #95a5a6;
+    margin-bottom: 4mm;
+}
+.cover .divider {
+    width: 60%;
+    margin: 8mm auto;
+    border: none;
+    border-top: 1.5pt solid #1a5276;
+}
+
+/* 一级标题 */
+h1 {
+    font-size: 20pt;
+    color: #1a5276;
+    margin-top: 16mm;
+    margin-bottom: 6mm;
+    padding-bottom: 3mm;
+    border-bottom: 2pt solid #1a5276;
+    page-break-before: always;
+    font-weight: bold;
+}
+
+/* 二级标题 */
+h2 {
+    font-size: 14pt;
+    color: #1e8449;
+    margin-top: 10mm;
+    margin-bottom: 5mm;
+    font-weight: bold;
+}
+
+/* 三级标题 */
+h3 {
+    font-size: 12pt;
+    color: #2e86c1;
+    margin-top: 6mm;
+    margin-bottom: 3mm;
+    font-weight: bold;
+}
+
+h4 {
+    font-size: 11pt;
+    color: #5b2c6f;
+    margin-top: 5mm;
+    margin-bottom: 2mm;
+    font-weight: bold;
+}
+
+/* 段落 */
+p {
+    margin-top: 1.5mm;
+    margin-bottom: 1.5mm;
+    orphans: 3;
+    widows: 3;
+}
+
+/* 引用块 */
+blockquote {
+    margin: 4mm 0;
+    padding: 4mm 4mm 4mm 10mm;
+    background: #f8f9fa;
+    border-left: 3pt solid #1a5276;
+    color: #5d6d7e;
+    font-size: 10pt;
+}
+blockquote p {
+    margin: 1mm 0;
+}
+
+/* 粗体 */
+strong, b {
+    font-weight: bold;
+    color: #1a252f;
+}
+
+/* 行内代码 */
+code {
+    font-family: "Courier New", Courier, monospace;
+    background: #fdf2e9;
+    color: #c0392b;
+    padding: 0.5mm 1.5mm;
+    border-radius: 2pt;
+    font-size: 9.5pt;
+}
+
+/* 表格 */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 4mm 0;
+    font-size: 9.5pt;
+}
+thead th {
+    background: #1a5276;
+    color: white;
+    padding: 3mm;
+    text-align: left;
+    font-weight: bold;
+}
+tbody td {
+    padding: 2.5mm 3mm;
+    border-bottom: 0.5pt solid #bdc3c7;
+}
+tbody tr:nth-child(even) {
+    background: #f8f9fa;
+}
+
+/* 分隔线 */
+hr {
+    border: none;
+    border-top: 0.5pt solid #bdc3c7;
+    margin: 4mm 0;
+}
+
+/* 列表 */
+ul, ol {
+    margin: 2mm 0;
+    padding-left: 8mm;
+}
+li {
+    margin-bottom: 1mm;
+}
+
+/* 链接 */
+a {
+    color: #2e86c1;
+    text-decoration: none;
+}
+</style>
+</head>
+<body>
+
+    <div class="cover">
+        <h1 style="page-break-before: avoid; border: none;">后台信源管理与访问流量界面</h1>
+        <div class="subtitle">横纵分析法深度研究报告</div>
+        <div class='meta'>研究时间：2026-08-31 | 所属领域：运营后台界面 | 研究对象类型：界面范式（两个相邻功能）</div>
+        <hr class="divider">
+        <div class="meta">作者: F1+1 研究</div>
+    </div>
+    
+
+<blockquote>
+<p>研究时间：2026-08-31 | 所属领域：运营后台界面 | 研究对象类型：界面范式（两个相邻功能）</p>
+</blockquote>
+<h2>一、一句话定义</h2>
+<p>信源管理是「这条源现在能不能被系统抓」的名册；访问流量是「公开站入口这 15 分钟接到了多少请求」的记账。两者都不是阅读器，也不是「有多少人来过网站」。</p>
+<h2>二、纵向分析：两条界面传统怎样长成今天这个样子</h2>
+<h3>1. 信源界面：从订阅夹到「会失败的开关」</h3>
+<p>2005 年前后，RSS 还是一种个人阅读协议。Google Reader 把「源」做成文件夹和未读数。用户关心的是今晚有没有新文章，不是采集器是否拿到授权、是否被平台挡住。2013 年 Reader 关停之后，Feedly、NewsBlur、The Old Reader、后来的 Inoreader，几乎都沿着同一条河往下走：左侧树、右侧条目、OPML 进出。Inoreader 2024 年给团队计划加的 Team folders，仍然是「管理员改共享订阅、成员跟着看」，心智还是阅读，不是采集运维。</p>
+<p>另一条河是自托管。FreshRSS、Tiny Tiny RSS，以及 Miniflux。Miniflux 把自己写成「只用来读 feed，别的一概不做」。它的源管理就是分类、轮询间隔、偶尔一条过滤规则。界面刻意像 Hacker News：为了扫条目，不为了扫健康。2026 年还有人给 Miniflux 做漂亮的桌面壳（Minikyu），恰恰说明：内核仍是阅读器，壳再好看也还是阅读器。</p>
+<p>F1+1 要的不是这条河。</p>
+<p>公开站的读者并不订阅 RSS。后台操作者要决定：Motorsport 能不能进采集队列，Ferrari 的 X 账号现在能不能自动读。这更接近另一类产品——「会失败的外部端点」。Stripe 的 Webhook 列表就是这种：一条 URL、启用或停用、最近一次投递是 Delivered / Pending / Failed，失败可以重试。GitHub 的 webhook Recent deliveries 也是同一结构。Uptime Kuma 把端点做成磁贴墙，断了变红。Cloudflare 的 origin pool、Prometheus 的 scrape target，工程师看得懂，运营者不一定。</p>
+<p>F1+1 自己 2026 年 8 月已经走过一截。信源后端 <code>SOURCE-MGMT-001</code> 在本地 synthetic 上闭合了添加、验证、激活、停止、退役、死信重入。视觉冻结稿是一张 11 列表格，列名直接是 lifecycle、enabled、onboarding、normalization、dedup、三门。那份稿覆盖了合同里每一条状态，所以它作为「详情真值」是完整的。它没有被用户点头，也从来没有变成真实 <code>/admin/sources</code> 页面。同一时期活着的后台，是 X 人工管理：59 个账号加一条公开帖 URL，明确不轮询。</p>
+<p>所以今天的起点不是零。起点是：后端会做六件事，旧视觉把六件事铺在首屏，用户刚刚才确认「运行」要用人话流水线，而不是技术字段卡。</p>
+<h3>2. 流量界面：从日志、到访客、再到「不许认出人」</h3>
+<p>网站流量界面的第一代是服务器日志。1990 年代的 Analog、Webalizer 数的是请求。它们不知道「人」，只知道 GET。第二代是 Urchin 变成 Google Analytics。界面中心变成 Unique Visitors、会话、来源、转化。运营者被训练成问「今天多少人」。第三代是 GDPR 和 Cookie 横幅。2019 年前后 Plausible、Fathom、Simple Analytics、GoatCounter、后来的 Umami，把卖点写成：不设 Cookie、不跟跨站、一张屏看完。</p>
+<p>即便这些「隐私优先」产品，也还在数人。Plausible 的公开数据政策写得很清楚：用</p>
+<p><code>hash(daily_salt + website_domain + ip_address + user_agent)</code></p>
+<p>做当日访客，盐每 24 小时扔掉。IP 和 UA 原文不落库，但哈希这一步发生过。GoatCounter 更瘦，仍然给浏览器、分辨率、来路。Cloudflare Zone Analytics 走另一条路：不靠页面脚本，从边缘日志出 Requests、Bandwidth、Unique Visitors；付费档还能按国家、Referer、设备、完整 path 过滤。Cloudflare 自己也承认，他们的「访客」常常比页面分析高，因为机器人、插件、只拉碎片的客户端都算。</p>
+<p>F1+1 的合同比 Plausible 更严。<code>ADMIN-TRAFFIC-015</code> 规定公开入口只交密封收据：最多 672 个 15 分钟桶，字段是路由大类、状态码大类、请求数、出站字节、耗时 p50/p95。禁止 IP 及其哈希、Cookie、UA、正文、查询串、完整 URL、来源、单请求。没有 producer 时必须标 unavailable，禁止填 0。</p>
+<p>这意味着：业界仪表盘上最醒目的那个数字——独立访客——在 F1+1 里不仅做不到，而且不允许假装做得到。能画的，其实回到了第一代：请求。只是记账周期改成 15 分钟，并且连 path 都不许留下。</p>
+<p>2026 年 8 月 31 日的生产事实更硬：流量 producer 不存在。任何画着「今天 1284 次」的界面，若不当成演示，就是假健康。这和备份旁路同一条纪律：机器上也许在跑，页面没接线就写没接线。</p>
+<h3>3. 两条线在 F1+1 上交会的时刻</h3>
+<p>用户先要的是运行状况。设计预览把内容卡在第 2 站，备份不当成主链。同一天接着要信源管理和访问流量。顺序是对的。信源是流水线第 1 站的清单，流量是第 5 站外面的旁路。若先做一张 59 行总表，或先做一张 GA 式访客图，运行页刚建立的「人话」会被立刻冲掉。</p>
+<h2>三、横向分析：现在能参照的界面分别活成什么样</h2>
+<h3>1. 阅读器族：Feedly / Inoreader / Miniflux</h3>
+<p>它们解决的是「我跟了太多源，怎么读完」。Inoreader 的团队文件夹让管理员改组织订阅；Miniflux 把功能砍到只剩阅读。用户喜欢它们，是因为未读数和键盘。F1+1 的操作者没有未读数。把 59 个 X 放进文件夹，只会暗示它们正在被读。</p>
+<p>可借的只有克制：名单要短，首屏字段要少。</p>
+<h3>2. 连接账号族：Buffer / Typefully / 各类「已授权」</h3>
+<p>社工后台常把「已接通的账号」和「还没授权的目录」分开。这个分法对 F1+1 几乎是现成的。新闻 RSS 是已接通（至少合同上可以抓），X 是目录（生产登记都还没进，更没有 worker）。把两类源铺在同一张表里，等于告诉人：点启用就能抓 X。那是假的。</p>
+<h3>3. 端点族：Stripe Webhooks / GitHub deliveries / Uptime Kuma</h3>
+<p>Stripe 的 Event deliveries 教的是：状态只有成功、等待、失败，点开才看 HTTP 码和重试。GitHub 类似。Uptime Kuma 把健康做成墙，适合「谁断了」而不是「这份名单的法律状态是什么」。F1+1 现在只有两条可能在采的新闻源，墙会大面积灰色。墙是以后的界面，不是此刻的界面。</p>
+<p>还要注意：Uptime Kuma 会主动对外探测。F1+1 的 Admin GET 不允许对外探测、不能因为打开流量页就去打公开站。健康只能来自已经写下的收据。</p>
+<h3>4. 隐私分析族：Plausible / Umami / GoatCounter</h3>
+<p>Plausible 的单屏是好的：大数字、趋势、少控件。GoatCounter 更愿意空着。Umami 更接近「可自建的 Plausible」。它们共同的原罪相对 F1+1 合同：都还在从浏览器或 IP 侧写「人」。抄布局可以，抄指标不行。</p>
+<h3>5. 边缘请求族：Cloudflare HTTP Traffic / Vercel 一类主机指标</h3>
+<p>请求、带宽、状态码、耗时，这才是 F1+1 桶结构的亲戚。Cloudflare 仪表盘同时塞了地图、访客、Referer，那些亲戚必须剃掉。剩下的图，给排障看可以，给「今天站还活着吗」当第一眼太重。</p>
+<h3>6. F1+1 自己已经有的两张稿</h3>
+<p>旧信源冻结稿：完整、难读、用户未确认。<br>
+运行页 v0.2：人话、五站、旁路、用户倾向「做成这样」。</p>
+<p>横向位置因此很清楚。信源首屏应站在「连接账号族」和 Miniflux 的克制之间，把端点族的失败状态藏进详情。流量第一刀应站在运行页旁路，而不是新开一间 Plausible 房间。</p>
+<h2>四、横纵交汇：现在该画成什么样，以及三种往后的剧本</h2>
+<p>历史上，阅读器把「源」训练成文件夹，分析工具把「流量」训练成人数。F1+1 的合同把这两件事都剪断了。剩下能诚实显示的，是开关和请求。</p>
+<p>所以六套方案不是审美游戏，是把历史包袱拆开。</p>
+<p>信源 A 双轨名册：承认新闻和 X 不是同一种东西。这是现在唯一能用真实生产事实填满的首屏。<br>
+信源 B 接入流水线和运行页同构，适合教「贴链接之后还要过关」，不适合当名册。<br>
+信源 C 状态墙继承 Uptime Kuma，等源变多、真的有红块时再上。</p>
+<p>流量 C 运行页旁路：跟备份同一语法，当前只能写未接线。这是唯一现在就能上、又不会撒谎的流量界面。<br>
+流量 A 人话总览：计数器接上之后的完整页，大数字是请求不是人数。<br>
+流量 B 运维图：给以后的 5xx，不当第一眼。</p>
+<p>最可能的剧本：用户确认信源 A 和流量 C，工程树先出页面，生产 Admin 另一次发布才看得到。计数器仍要单独的 producer 和保留策略，不会因为页面先画了就有数据。</p>
+<p>最危险的剧本：把旧 11 列表格和一张「独立访客」图一并做进后台。前者用户读不懂，后者直接撞上流量隐私条款。假 0 和假人数都会让人以为站在被看，或以为采集在转。</p>
+<p>最乐观的剧本：名册先把 RSS 启停做成人能用的开关；X 继续当通讯录直到官方 API 和预算被单独批准；流量收据从公开入口进来之后，运行页旁路变成「今天 300 次请求，没有 5xx」，再升一页人话总览。全程不出现访客、来源、地图。</p>
+<h2>五、信息来源</h2>
+<ul>
+<li>Miniflux 设计立场：https://miniflux.app/opinionated.html （2026-08-31 读取）</li>
+<li>Inoreader Team folders：https://www.inoreader.com/blog/2024/01/manage-shared-feeds-with-new-team-folders.html （2026-08-31）</li>
+<li>Stripe Webhook 投递：https://docs.stripe.com/webhooks （2026-08-31）</li>
+<li>Plausible 数据政策：https://plausible.io/data-policy （文内标注 2026-03 更新；2026-08-31 读取）</li>
+<li>Cloudflare Zone Analytics：https://developers.cloudflare.com/analytics/account-and-zone-analytics/zone-analytics/ （文档标注 2026-06-05；2026-08-31 读取）</li>
+<li>Cloudflare Analytics 访客口径：https://developers.cloudflare.com/analytics/faq/about-analytics/ （2026-08-31）</li>
+<li>项目合同：<code>docs/spec/F1+1-v6到v10双语完整Admin与公开部署实施合同-v1.0.md</code> §5.10 traffic；Function <code>ADMIN-SOURCES-007</code>、<code>ADMIN-TRAFFIC-015</code>、<code>SOURCE-MGMT-001</code></li>
+<li>旧视觉候选：<code>design/ui/F1+1-M5-admin-sources-preview-v0.1/</code></li>
+<li>运行页预览：<code>design/ui/F1+1-admin-ops-preview-v0.1/</code></li>
+</ul>
+<h2>方法论说明</h2>
+<p>横纵分析法由数字生命卡兹克提出：纵轴追界面传统怎么演变，横轴在同一天对比活着的产品，交汇处给出可执行的界面判断。本文的对象是两类后台界面，不是一家公司。</p>
+</body>
+</html>

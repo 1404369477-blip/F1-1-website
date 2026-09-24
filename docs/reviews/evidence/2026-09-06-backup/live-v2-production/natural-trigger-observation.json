@@ -1,0 +1,9 @@
+{
+  "schemaVersion": "production-cycle-natural-trigger-observation-v1",
+  "pollFile": "scratch/off-host-transfer-review/production-cycles/polls/2026-09-06T165528702Z.json",
+  "firstCycleCompletedAt": "2026-09-06T16:49:58.724Z",
+  "nextSnapshotPointAt": "2026-09-06T16:55:08.054Z",
+  "launchdRuns": 2,
+  "noTriggerIssuedByObserver": true,
+  "note": "Second invocation observed after first completion plus about 300 seconds; use actual point timestamps for RPO rather than assuming StartInterval from initial bootstrap."
+}

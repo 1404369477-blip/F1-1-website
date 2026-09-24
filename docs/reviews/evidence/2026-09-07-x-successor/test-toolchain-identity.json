@@ -1,0 +1,16 @@
+{
+  "scope": "isolated-test-toolchain-only",
+  "nodePath": "[M5-HOME]/Documents/F1+1/scratch/x-successor-20260907/test-toolchain-node24-npm11.16/bin/node",
+  "nodeSource": "[M5-HOME]/Documents/F1+1/scratch/toolchains/node-v24.18.0/bin/node",
+  "nodeVersion": "v24.18.0",
+  "nodeSha256": "ee6fb0e015284d83a91e8ec5213f43a157f8a392b58555301682892ba928c04a",
+  "npmPath": "[M5-HOME]/Documents/F1+1/scratch/x-successor-20260907/test-toolchain-node24-npm11.16/bin/npm",
+  "npmVersion": "11.16.0",
+  "npmLauncherSha256": "8e5f6f3429f8cdbe693cdc29904e9d5a7b127a494bd15c804bd54c7403bfcbe7",
+  "npmMetadataUrl": "https://registry.npmjs.org/npm/11.16.0",
+  "npmTarballUrl": "https://registry.npmjs.org/npm/-/npm-11.16.0.tgz",
+  "npmTarballSha256": "30fc15697c771002878665c29f49dddde9aa8667fa5719854b2f52d3cd19230b",
+  "npmRegistryIntegrity": "sha512-A74XL8OxmcegZDMWPkWb5bEQppg8HdYwW3rBD2sPoS4UQHVajfaxBkqyzLeJ3wR0kZ+5xoTjItxXaF7eIXUsyw==",
+  "npmFilesRootSha256": "2d95277114517ffef1e71e1b643bc01adafa377ed8c3511f48848545554d601f",
+  "npmFileCount": 1933
+}

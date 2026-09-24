@@ -1,29 +1,32 @@
 # 自动化部（M1运行办公室）当前状态
 
-更新时间：2026-08-15
+更新时间：2026-09-05 21:17（Asia/Shanghai）
 
-事实快照观察时间：`2026-08-14T17:06:24Z`；超过 30 分钟的运行状态一律按 `Unknown`，需重新取得 observer/inventory receipt。详细证据见 `scratch/TASK-20260815-M1-CODEX-LAUNCHD-HANDOFF/READINESS-REPORT.md`。
+> 运行钉以 [`docs/当前生产状态与执行待办.md`](../../../当前生产状态与执行待办.md) 为准。本文件只给人看摘要；超过当班后必须现场回读 LaunchAgent / sqlite / `active.json`。
+> 2026-08-14/15 的 RSSHub、60 秒 automatic review tick、无 SNAP 等旧观察已失效，不要当现行能力。
 
 ## 治理登记
 
-- `auto` 已通过受管 add-role 事务登记，正式目录和路由已生成。
-- 真实 M1 Codex 会话 ID 尚未登记，部门仍为 `pending/待启用`。
-- 最新协议上的 role-policy overlay 命令返回 `UPGRADE_NOT_NEEDED`，协议 `role_policy_overlays` 仍为空；M1 项目职责暂由明确标注的 non-managed 补充章程承载。
+- `auto` 已通过受管 add-role 事务登记。真实 M1 Codex 会话 ID 当时未登记；这不阻断当前生产 sidecar。
+- 任务协议：只续 `TASK-20260831-AC5CC2`（`claimed / user_confirmed`）。不要 complete。
 
-## 已核实运行能力
+## 已核实运行能力（2026-09-05 21:17 现场）
 
-- RSSHub `127.0.0.1:1200`；collector/refiner 每 900 秒；Admin `127.0.0.1:3101` 内含 60 秒 automatic review/sender tick；Public `127.0.0.1:3000`；receiver/projection `127.0.0.1:3102`；receipt refresh 每 43200 秒。
-- Quick Tunnel 的 live cloudflared 与磁盘 plist `/usr/bin/false` 存在漂移。
-- production collector 尚未引用 RSSHub/1200/catalog；RSSHub 尚未接入主采集链。
-- M5 异机备份任务曾因旧 SSH alias 超时而违反 15 分钟 RPO；M1 本地没有同等独立备份 LaunchAgent。
+- Admin `:3101` = `candidate-v10-20260905-1408`。
+- Public `:3000` 与投影 `:3102` = 同一 `1408`。公开 pointer generation **201**，`dataGate=accepted-public-real-snapshot`，首页含 Sky Sports F1。
+- collector / refiner WorkingDirectory = `candidate-v10-20260901-0145`；opener 读 `1408`。`StartInterval` collector 900s / refiner 120s。周期之间 collector `not running` 是正常间歇态。
+- 最近自然槽 `1987348`（`2026-09-05T13:00:00.000Z`）三源 `succeeded` / `new_count=0`。
+- 签名 caps：`automaticReview=false` / `automaticPublish=false`。
+- SNAP 15 分钟整库快照 + iCloud 密文镜像已上线。Backup V2 增量候选已废弃。
+- **没有**生产 RSSHub；**不要**把 08-15 的 `:1200` 写成现行采集链。
+- snapshot 投递：**不要 HTTP POST `:3102`**；走 `[M1-HOME]/F1-1-website/.ac5cc2/runtime/scheduled-sender.ts` 进程内 receive。
 
-## Codex
+## 回退
 
-M1 安装并运行 ChatGPT desktop `26.803.61601`，内置 `codex-cli 0.147.0-alpha.6.5`；PATH 无独立 `codex`。用户说明已接好 `deepseek-v4-flash` 和 `deepseek-v4-pro`；本部门不读取或复制其凭据。Scheduled UI 是否列出这两个模型仍为 `Unknown`。
+- 公开+`:3102`：`[M1-HOME]/F1-1-website/.public-load-20260905-1408/`
+- Admin：`[M1-HOME]/F1-1-website/.admin-load-20260905-1408/`
+- 0012 前库：`[M1-HOME]/F1-1-website/.0012-apply-20260905-1408/pre-0012.sqlite`
 
 ## 流量监控现状
 
-- Public 最外层代理当前只做代理与 route allowlist，没有请求计数、状态类别、延迟、错误率或路由聚合代码。
-- public-beta 的 stdout 当前为空，stderr 仅有旧启动类输出；不能从现有日志可靠重建流量指标。
-- Quick Tunnel 配置了 stdout/stderr 路径，但当前磁盘 plist 已禁用，且没有可验证的结构化、隐私最小化访问聚合收据。
-- 因此首版流量监控能力状态为 `not_available`；本任务未为取得指标而重启或改动服务。
+首版结构化、隐私最小化访问聚合仍 `not_available`。不能从 public-beta 空 stdout 推断访问量。

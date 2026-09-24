@@ -1,0 +1,138 @@
+{
+  "note": "Host paths are redacted; raw plist rollback copies remain in each host cutover case. This evidence cannot be installed as a literal plist.",
+  "files": [
+    {
+      "file": "m1-cutover-case-cutover-receipt.json",
+      "sourceSha256": "cd8521f510d081062f650e171feefbe08ec8a661df4eb1442366fdc180f93a93",
+      "evidenceSha256": "0e93494efd13e89e969df85e071e83c1aca3de44485d7056aa407bce2a8025d3",
+      "hostPathRedacted": true
+    },
+    {
+      "file": "m1-cutover-case-first-failure-stop.json",
+      "sourceSha256": "902998d1184cc5e9deb803ba9d64a21b7aca2eb00d8f0d3bc284f176c777afeb",
+      "evidenceSha256": "f4bb8a4259261884f4b63f3b9e6d16b7d3654c1439f65155afbc66f170bd296b",
+      "hostPathRedacted": true
+    },
+    {
+      "file": "m1-cutover-case-installed.plist",
+      "sourceSha256": "77441c7be2c0bad5b7eae63ddedb5b875fcf0555d7a46cc78a30fbc83d8df7dd",
+      "evidenceSha256": "f7c7f35c991877b8c7cf07a10ca5f912a3b57044145509d867a4a1cb53339264",
+      "hostPathRedacted": true
+    },
+    {
+      "file": "m1-cutover-case-legacy-helper-retired.json",
+      "sourceSha256": "e499271482c13e6b3c29f4bcf3389d2177cfc920bcb46e40b725fc0ac4fe9317",
+      "evidenceSha256": "390e9b9d336548f1aa1447d837db4afe9e60ae5d47ff0b1616e50e46e04f88c8",
+      "hostPathRedacted": true
+    },
+    {
+      "file": "m1-cutover-case-manual-retention-timing.json",
+      "sourceSha256": "2572725ff0e4aad48954b4cb890a9091546b18e2c4633b04acb05c2b7ea18fbb",
+      "evidenceSha256": "2572725ff0e4aad48954b4cb890a9091546b18e2c4633b04acb05c2b7ea18fbb",
+      "hostPathRedacted": false
+    },
+    {
+      "file": "m1-cutover-case-original.plist",
+      "sourceSha256": "204b9df131e4e122154127b8e04bda31401a9b45cdf01b53cb1d03f6581104c3",
+      "evidenceSha256": "ae91ccaeaee3b4b6f9f561d76281c39d0d946e2ffa64d90d264c64d9f8559f3c",
+      "hostPathRedacted": true
+    },
+    {
+      "file": "m1-cutover-case-standard-cutover-receipt.json",
+      "sourceSha256": "062b956bf509a6ed7948945f7e9e63118af40b9df3e497ff58296a48d8fb5d2c",
+      "evidenceSha256": "062b956bf509a6ed7948945f7e9e63118af40b9df3e497ff58296a48d8fb5d2c",
+      "hostPathRedacted": false
+    },
+    {
+      "file": "m1-cutover-case-standard.plist",
+      "sourceSha256": "7d0b55b54a0d286a85f4637c4048cb60603154d08f214f6ea567e483516a9d7c",
+      "evidenceSha256": "c54a71b723f55d5d0720abd087156f2fbf0bd7d59b710f8fce6f2d795a86e75b",
+      "hostPathRedacted": true
+    },
+    {
+      "file": "m1-cutover-case-state-before.json",
+      "sourceSha256": "13ea5c122b68b932394cbb574f8e0f14fa67fcb5a598b8a22f9199502a51b31d",
+      "evidenceSha256": "13ea5c122b68b932394cbb574f8e0f14fa67fcb5a598b8a22f9199502a51b31d",
+      "hostPathRedacted": false
+    },
+    {
+      "file": "m1-cutover-case-timeout-lock-recovery.json",
+      "sourceSha256": "80f939d9a5f6a372b3e7360c0e520d035da009404104f19e00774a49f7eacd01",
+      "evidenceSha256": "80f939d9a5f6a372b3e7360c0e520d035da009404104f19e00774a49f7eacd01",
+      "hostPathRedacted": false
+    },
+    {
+      "file": "m1-cutover-case-timeout-lock-stop-evidence.json",
+      "sourceSha256": "99ae97579fd5681e423a4c942d2f05d6b8d461ac8425bfdb88be0e1d4f192ef2",
+      "evidenceSha256": "99ae97579fd5681e423a4c942d2f05d6b8d461ac8425bfdb88be0e1d4f192ef2",
+      "hostPathRedacted": false
+    },
+    {
+      "file": "m1-cutover-case-writers-after-stop.json",
+      "sourceSha256": "755d442cf44919879856407fe199e916c770d206e3f6b050d6eb286b7af73782",
+      "evidenceSha256": "755d442cf44919879856407fe199e916c770d206e3f6b050d6eb286b7af73782",
+      "hostPathRedacted": false
+    },
+    {
+      "file": "m1-cutover-case-writers-before.json",
+      "sourceSha256": "755d442cf44919879856407fe199e916c770d206e3f6b050d6eb286b7af73782",
+      "evidenceSha256": "755d442cf44919879856407fe199e916c770d206e3f6b050d6eb286b7af73782",
+      "hostPathRedacted": false
+    },
+    {
+      "file": "m5-transfer-cutover-first-transfer-latest.json",
+      "sourceSha256": "7fd1c457c3db71fe6122c3fcca926300328f8428b52ca778989f556d39948230",
+      "evidenceSha256": "7fd1c457c3db71fe6122c3fcca926300328f8428b52ca778989f556d39948230",
+      "hostPathRedacted": false
+    },
+    {
+      "file": "m5-transfer-cutover-first-transfer-ownership.json",
+      "sourceSha256": "bb68b56a987f336c14bc9f4b70c9e6bfe224c337a201e6d75b05d2d32dabdb32",
+      "evidenceSha256": "bb68b56a987f336c14bc9f4b70c9e6bfe224c337a201e6d75b05d2d32dabdb32",
+      "hostPathRedacted": false
+    },
+    {
+      "file": "m5-transfer-cutover-first-transfer-receipt.json",
+      "sourceSha256": "764838b461d3b367733966bed118f0957f46115d8ed2c10d4d9fa79c48f4ab2b",
+      "evidenceSha256": "764838b461d3b367733966bed118f0957f46115d8ed2c10d4d9fa79c48f4ab2b",
+      "hostPathRedacted": false
+    },
+    {
+      "file": "m5-transfer-cutover-original.plist",
+      "sourceSha256": "a385e0e572c07e8a06729844771fc52f271dabaf6a638f19d6a403b615baa5f8",
+      "evidenceSha256": "fe75143b7c248a61a64efc118866afd29e5e47feba9c119046d778fc261a8f9f",
+      "hostPathRedacted": true
+    },
+    {
+      "file": "m5-transfer-cutover-receipt.json",
+      "sourceSha256": "68244c5d02491a06aed247d0ed36f0fd28a5c67ed125709b825ac2e0dcdda775",
+      "evidenceSha256": "ec9e65cae21e3817672539b6fcb9a7f3d31d3161b422f84e244aefa16ea3726f",
+      "hostPathRedacted": true
+    },
+    {
+      "file": "tools-05-identity.json",
+      "sourceSha256": "4d993abc753e1fcbe275f76ce602657e74486d715b93b1459dfe326dca0c5e73",
+      "evidenceSha256": "4d993abc753e1fcbe275f76ce602657e74486d715b93b1459dfe326dca0c5e73",
+      "hostPathRedacted": false
+    },
+    {
+      "file": "independent-review.json",
+      "sourceSha256": "acf10ada4d07c9186e3a732c564b88794822b57fb45a28cbc65ac54aee731c53",
+      "evidenceSha256": "b3fcc29d97688563e533dcd423a624736aa96df43e3f70adb5443d447fda5ae2",
+      "hostPathRedacted": true
+    },
+    {
+      "file": "m1-cutover-install-review.json",
+      "sourceSha256": "bb5029fc5b519b557bf1b7bceef98e511e99cf09babfe98e89d5e3f088e00ed2",
+      "evidenceSha256": "bb5029fc5b519b557bf1b7bceef98e511e99cf09babfe98e89d5e3f088e00ed2",
+      "hostPathRedacted": false
+    },
+    {
+      "file": "final-install-and-lock-state.json",
+      "source": "scratch/off-host-transfer-review/production-cycles/final-install-and-lock-state.json",
+      "sourceSha256": "aed2e25108f4f0071b9588de98795a37aa671ff66f85885f55c35cf4bd1b1998",
+      "evidenceSha256": "1528f1fc15617d2a8145acab4d9e9e0179fc0b8cbf9ea5b23a9ec218234c2bd8",
+      "hostPathRedacted": true
+    }
+  ]
+}

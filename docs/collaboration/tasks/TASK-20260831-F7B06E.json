@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "现场冻结并复核release/manifest/DB/migration身份；0011只产生两源v2现势配置且v1历史不可变；control停在disabled/stopped/ready；schema10 plist为900s且installed-not-loaded；既有reconcile_wait 1条identity/status不变，任务新增review/publish/reconcile operation/effect delta=0；automatic review/publish=0；形成生产前后receipt/manifest/hash与回退步骤。",
+  "artifacts": [],
+  "authorization_evidence": "R2任务正文含错误formal supersede与旧authorization_state时态，禁止授权或resume；只使用TASK-20260831-ECADB7 R3。",
+  "authorization_history": [
+    {
+      "at": "2026-08-31T09:12+08:00",
+      "evidence": "需要用户对0011 apply、生产--until ready、schema10 RSS plist installed-not-loaded三项A类动作作新的明确确认；当前确认尚未取得。",
+      "state": "user_required"
+    },
+    {
+      "at": "2026-08-31T09:14+08:00",
+      "evidence": "R2任务正文含错误formal supersede与旧authorization_state时态，禁止授权或resume；只使用TASK-20260831-ECADB7 R3。",
+      "state": "user_required"
+    }
+  ],
+  "authorization_state": "user_required",
+  "block_reason": "等待用户单独确认A类生产动作：现场身份复核后执行0011 additive migration apply、quick-launch --until ready、schema10 RSS plist installed-not-loaded；确认前保持零生产写且collector/refiner不加载。",
+  "claimed_by": "自动化部/01a00560-4fca-7221-9bbb-382a9c2f6195",
+  "completion_class": "standard",
+  "confirmation": "0011 apply、生产--until ready与plist安装均为A类动作；当前authorization_state=none，必须用户明确确认后authorize/resume。",
+  "created_at": "2026-08-31T09:01+08:00",
+  "department": "自动化部",
+  "details": "承接已supersede的TASK-20260829-BBFF2A。前置SNAP恢复点、C917F4合法控制工具链和Admin fence true已满足。执行前必须现场复核Admin/RSS release、manifest、DB identity与0011 migration身份，不能沿用旧candidate假设。用户单独确认后按顺序：apply 0011 additive v2配置，仅写Motorsport/The Race真实route/release/manifest/authorization/source-policy identity；运行quick-launch --until ready，终态必须phase=disabled/global_stop=stopped/recovery=ready；安装schema10 RSS plist为installed-not-loaded。Autosport/RaceFans保持隔离。既有projection_outbox reconcile_wait 1条必须保持同一identity/status，零消费、零删除；本任务新增review/publish/reconcile operation/effect delta必须为0。",
+  "domain_stage": "M1生产预备/恢复门与RSS闭包R2",
+  "event_receipts": [],
+  "execution_state": "waiting_input",
+  "external_artifacts": [],
+  "failure_paths": [
+    "release/manifest/DB/migration身份任一Unknown或漂移时零生产写并等待输入。",
+    "既有reconcile_wait发生消费、删除、identity/status变化，或新增review/publish/reconcile effect时立即停止并回退。",
+    "合法0011/control/plist路径失败时不得raw UPDATE、drop trigger或加载旧plist，立即停止。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "QL3/m1/schema10-recovery-rss-closure-r2",
+  "pointers": [
+    "docs/当前生产状态与执行待办.md"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 5,
+  "schema_version": 1,
+  "task_id": "TASK-20260831-F7B06E",
+  "title": "M1 Schema10恢复门与RSS身份闭包生产预备R2",
+  "unverified": [],
+  "updated_at": "2026-08-31T09:14+08:00",
+  "verified": []
+}

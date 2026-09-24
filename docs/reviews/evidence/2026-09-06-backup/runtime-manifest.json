@@ -1,0 +1,152 @@
+{
+  "schemaVersion": "backup-runtime-v1",
+  "nodeVersion": "v24.18.0",
+  "entrypoints": [
+    "scripts/backup-snapshot-once.ts",
+    "scripts/backup-restore-drill.ts",
+    "scripts/backup-recovery-point-register.ts"
+  ],
+  "files": [
+    {
+      "path": "migrations/rss-real/0008_x_manual_inbox.sql",
+      "sha256": "f11756ac22bff56f7f42b640e816c36ffcf12a863eed42b17afc156907ac1246",
+      "bytes": 25338
+    },
+    {
+      "path": "migrations/rss-real/0010_source_registry.sql",
+      "sha256": "83c1aa4e350bc32fee594ffa4bec9caa85201ae120c29e21834c32463e36bb7a",
+      "bytes": 49585
+    },
+    {
+      "path": "migrations/tweet-inbox/0001_tweet_inbox.sql",
+      "sha256": "459c3a2c64f2fe40418e83be3c8b949a2a1c0c4010b07d7c9c7dd662c59a31e8",
+      "bytes": 2247
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "09af041323719abb803b7ebf306a82028810d6189af46702a3fd122c422ab24d",
+      "bytes": 265144
+    },
+    {
+      "path": "package.json",
+      "sha256": "7601f290788dc3e1e0ba94abfcad1ac39406dc5eab94eac37fce084123601702",
+      "bytes": 4512
+    },
+    {
+      "path": "scripts/backup-recovery-point-register.ts",
+      "sha256": "3ec6106be599b65d079ed24ec3d0adf565082fec348118324a8bf2b0a7583c5e",
+      "bytes": 4825
+    },
+    {
+      "path": "scripts/backup-restore-drill.ts",
+      "sha256": "33fb38a98ec7e822e4af3ae5c209301fdd19b47194498c2433f7b342febe8031",
+      "bytes": 2671
+    },
+    {
+      "path": "scripts/backup-snapshot-once.ts",
+      "sha256": "824ae28e74664a281d6c9b73acec1b6902892949311d4acbb35fc99f72f8d439",
+      "bytes": 2153
+    },
+    {
+      "path": "src/server/admin-service/quiesce-absence-guard.ts",
+      "sha256": "f2105c0fc8e0fbbf128f70f4419fdfa7a8c371424d2c1ef3beb0af3d01f3b693",
+      "bytes": 3429
+    },
+    {
+      "path": "src/server/backup-snapshot/core.ts",
+      "sha256": "8fbc8966cf137155e3d577ad34582583c49b5abaedc56501d79e13f2ee6cc60a",
+      "bytes": 35293
+    },
+    {
+      "path": "src/server/config/env.ts",
+      "sha256": "443c7250266f01ed04a9104ac12e3ed6245d960809fd6764a4195d2288b0ce47",
+      "bytes": 20094
+    },
+    {
+      "path": "src/server/db/database.ts",
+      "sha256": "25bae98723dbff99f7bd9c1ae46c42a174f520240b377510cfdd9710932cff58",
+      "bytes": 48066
+    },
+    {
+      "path": "src/server/db/profile.ts",
+      "sha256": "e2ff860118308e779b1c83b9664628dd5d45986970f48861fe7e79d08f544c17",
+      "bytes": 6820
+    },
+    {
+      "path": "src/server/internal-operation/authorizer.ts",
+      "sha256": "fce98fb415fc2f89c7c8ed33096222e91510605cae5aa762f509fb3feb732b3f",
+      "bytes": 17141
+    },
+    {
+      "path": "src/server/internal-operation/backup-recovery-point-register.ts",
+      "sha256": "8e7f35e3d78a5a919c0204da9cfebc677ef1002520926d3ddb3df595e53bc47f",
+      "bytes": 31748
+    },
+    {
+      "path": "src/server/internal-operation/gateway.ts",
+      "sha256": "771ffeeeda07504457d8002ee67b42fe4aeea7904b61ee3b5790734d4715f140",
+      "bytes": 165232
+    },
+    {
+      "path": "src/server/internal-operation/owner-supervisor.ts",
+      "sha256": "e05fde88c0807348621993a875dcd59fa43089c6ade1813711faa832cc974b11",
+      "bytes": 4409
+    },
+    {
+      "path": "src/server/internal-operation/phase.ts",
+      "sha256": "e33eb95c98310922828fd566982fc31f15f70ea5ff7c6eca0d37fbc99446af77",
+      "bytes": 7878
+    },
+    {
+      "path": "src/server/internal-operation/recovery-fence-write.ts",
+      "sha256": "86ae86c089bde510f3a308f046f548c1d9240a26158ee60905e18633383ca339",
+      "bytes": 6056
+    },
+    {
+      "path": "src/server/internal-operation/recovery.ts",
+      "sha256": "07fd2bf409fa6e06877f54c2fcd19256338bf0cc79f833d5711f57dfcb1769c8",
+      "bytes": 12159
+    },
+    {
+      "path": "src/server/review-real/error.ts",
+      "sha256": "4f22aee257e54fe6cc1c1f5b66e26500c24f3969b50230fdc2552141e83b1400",
+      "bytes": 2063
+    },
+    {
+      "path": "src/server/review-real/migration.ts",
+      "sha256": "7f4c114d49b8d26edcf985eac84f11ca192841289c0a1dcd78787c453bf55196",
+      "bytes": 20026
+    },
+    {
+      "path": "src/server/rss/rss-config-read.ts",
+      "sha256": "24e4efc6d248667d673f5ec510cab123c9c0ca5c044a0ff10d64f9bf3a40c8c4",
+      "bytes": 496
+    },
+    {
+      "path": "src/server/rss/source-registry-migration.ts",
+      "sha256": "11423acdd99366c1bd0fc9cfc9933c0484f9031d403b2299cf8aab19c71e38c7",
+      "bytes": 25085
+    },
+    {
+      "path": "src/server/tweet-inbox/repository.ts",
+      "sha256": "e231ec5d0bd7cc679d385f7084cbfd61900315b1052be5c84ed9cfc3709a1f0f",
+      "bytes": 33722
+    },
+    {
+      "path": "src/server/tweet-inbox/types.ts",
+      "sha256": "7aa7b9012946aa1c5fc73fc3802c1481c733655110c460482ff895fe5ce24e47",
+      "bytes": 6623
+    },
+    {
+      "path": "src/server/tweet-inbox/url.ts",
+      "sha256": "501ee902df1888e6ea09581b1b5e5b5535f2edc842cf2c221c79c4de67329339",
+      "bytes": 4815
+    },
+    {
+      "path": "tsconfig.json",
+      "sha256": "f0bc1b5065bef0e55c337792a6227010bfe48685af0be4dcea076c3cb391519b",
+      "bytes": 705
+    }
+  ],
+  "rootSha256": "8f71ee46946c38df360c2d0bbf9274936b2eb8dba748e72769d7afc8faeb69c1"
+}

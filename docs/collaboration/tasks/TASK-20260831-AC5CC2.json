@@ -1,0 +1,47 @@
+{
+  "acceptance_exit": "ECADB7完成；单次两源canary成功且零排除源访问；连续两个自然900秒周期按预期运行；既有reconcile_wait同identity/status不变；新增review/publish/reconcile delta=0；形成可回放receipt/manifest/hash与停机回退步骤。",
+  "artifacts": [],
+  "authorization_evidence": "2026-09-01 用户确认都可以进行：独立确认 AC5CC2 Motorsport/The Race 生产 canary；clear global_stop 并 enter_live；合法关闭 generation 141（磁盘已对齐则记 succeeded）。自动审核/发布保持关。Autosport/RaceFans 隔离。",
+  "authorization_history": [
+    {
+      "at": "2026-08-31T09:13+08:00",
+      "evidence": "需要TASK-20260831-ECADB7完成后，用户对Motorsport/The Race真实生产canary作独立明确确认。",
+      "state": "user_required"
+    },
+    {
+      "at": "2026-09-01T08:04+08:00",
+      "evidence": "2026-09-01 用户确认都可以进行：独立确认 AC5CC2 Motorsport/The Race 生产 canary；clear global_stop 并 enter_live；合法关闭 generation 141（磁盘已对齐则记 succeeded）。自动审核/发布保持关。Autosport/RaceFans 隔离。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "自动化部/01a00560-4fca-7221-9bbb-382a9c2f6195",
+  "completion_class": "standard",
+  "confirmation": "真实生产canary需用户在ECADB7闭合后新的独立确认；当前user_required。",
+  "created_at": "2026-08-31T09:13+08:00",
+  "department": "自动化部",
+  "details": "承接blocked legacy TASK-20260829-082F2C与受协议措辞缺陷影响的C5189A R2；旧任务因历史替代链不能formal supersede，均禁止恢复，只使用本R3。依赖TASK-20260831-ECADB7完成且获得本任务独立生产确认。仅Motorsport/The Race单次canary，Autosport/RaceFans保持隔离；随后观察两个自然900秒周期。既有reconcile_wait 1条保持同identity/status且零消费零删除；本任务新增automatic review/publish/reconcile operation/effect delta=0。",
+  "domain_stage": "M1生产canary/RSS两源R3",
+  "event_receipts": [],
+  "execution_state": "claimed",
+  "external_artifacts": [],
+  "failure_paths": [
+    "ECADB7未完成、缺独立确认、任一identity漂移、访问排除源、既有reconcile_wait变化、出现新增自动审核/发布/reconcile effect或挑战限流异常时立即停止并保持collector/refiner安全关闭。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "QL4/m1/rss-two-source-canary-r3",
+  "pointers": [
+    "docs/当前生产状态与执行待办.md"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 3,
+  "schema_version": 1,
+  "task_id": "TASK-20260831-AC5CC2",
+  "title": "Motorsport与The Race单次Canary及900秒持续采集恢复R3",
+  "unverified": [],
+  "updated_at": "2026-09-01T08:04+08:00",
+  "verified": []
+}

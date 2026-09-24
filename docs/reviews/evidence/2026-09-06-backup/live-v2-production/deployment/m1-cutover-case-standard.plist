@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>KeepAlive</key>
+	<false/>
+	<key>Label</key>
+	<string>com.f1plus1.backup-snapshot</string>
+	<key>ProcessType</key>
+	<string>Standard</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/bin/bash</string>
+		<string>[M1-HOME]/F1-1-website/backup-runtime-releases/20260907-v2-05/tools/backup-snapshot-cycle.sh</string>
+		<string>[M1-HOME]/F1-1-website/backup-runtime-releases/20260907-v2-05/runtime</string>
+		<string>ad5749603246a2ea6b967ea0b205cceb7faa2da1b88d6894014254ed81306a17</string>
+	</array>
+	<key>RunAtLoad</key>
+	<true/>
+	<key>StandardErrorPath</key>
+	<string>[M1-HOME]/Library/Application Support/F1Plus1/Backup/backup-agent.stderr.log</string>
+	<key>StandardOutPath</key>
+	<string>[M1-HOME]/Library/Application Support/F1Plus1/Backup/backup-agent.stdout.log</string>
+	<key>StartInterval</key>
+	<integer>300</integer>
+	<key>Umask</key>
+	<integer>63</integer>
+</dict>
+</plist>

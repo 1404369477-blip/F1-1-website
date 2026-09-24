@@ -1,0 +1,113 @@
+{
+  "status": "PASS_X_DEPENDENCY_RELEASE_CLOSURE_INTEGRATION",
+  "reviewedAt": "2026-09-06T17:22:53.982727+00:00",
+  "reviewer": "handoff_audit",
+  "scope": "Read-only integration review; only independent-review evidence created. No production writes or service actions. Existing 125 business tests were not repeated.",
+  "files": {
+    "app/src/server/admin-service/release-manifest.ts": "4a3dc7fd082d26c65ab90bfb47f7930c34be287bb98556f57ca883d8f670241b",
+    "app/scripts/prepare-v10-release-candidate.ts": "a0499a0ac579e5031212bb37714f26f94bfc48188dbd832c6f60c6b7149b87d9",
+    "app/scripts/ql3-deployment-v10-evidence.ts": "ea837eacb1e4ed5a5511477e00ff73c3bacf7b120d9a3aa504dfcadd0d064fd5",
+    "app/src/tests/admin-release-manifest.test.ts": "ca5b683baecd371c52606be76378a9f31b3cb3c710e099c0091a8ffdb528fc47",
+    "app/scripts/prepare-backup-runtime.ts": "743781e71a3559e51fd7b9195913a3f8d3432c2a8039660035ebd791bec7c888",
+    "app/src/server/x-page/normalize.ts": "45d729fe5d4ab03d05ddccba07f072a56ae2f242834ce86d622a20aaf75c2bc5",
+    "app/src/server/x-page/schema-identity.ts": "44a9e3e3abd5cdc8ec2ff6cc0b81d10bd458431694bfec3dc3e13fda019cf40c",
+    "app/src/server/internal-operation/gateway.ts": "2b8b7a0cee5f8bf75276e7f7bb370888e8f35b4901285e3d2c0cda95fe9ffce8",
+    "app/src/server/rss/source-registry.ts": "f65e22e686bc7afb88eb5d481706e357932b2745eba845e8275d26e239b1e16b"
+  },
+  "admin": {
+    "declaredCount": 165,
+    "derivedCount": 158,
+    "pathSet": "ea75ad37f82ba55e34281c9a9f84569fdaaa85ba020949e43ddc3280bb92f810",
+    "recomputedPathSet": "ea75ad37f82ba55e34281c9a9f84569fdaaa85ba020949e43ddc3280bb92f810",
+    "xDependencyEdges": [
+      {
+        "from": "src/server/internal-operation/gateway.ts",
+        "request": "../x-page/schema-identity.ts",
+        "to": "src/server/x-page/schema-identity.ts",
+        "kind": "es-module"
+      },
+      {
+        "from": "src/server/rss/source-registry.ts",
+        "request": "../x-page/normalize.ts",
+        "to": "src/server/x-page/normalize.ts",
+        "kind": "es-module"
+      }
+    ]
+  },
+  "countContracts": {
+    "prepareV10": 165,
+    "ql3": 165,
+    "ql3TextReport": "uses ADMIN_RELEASE_RUNTIME_FILE_COUNT and PUBLIC_RELEASE_RUNTIME_FILE_COUNT",
+    "publicCount": 89,
+    "xImporterAndMigration13Included": false
+  },
+  "backup": {
+    "rootSha256": "e98bb1576f080c13845d791c3e143febef43185857caba8ee090903bf1225f42",
+    "fileCount": 762,
+    "localModulesImported": 31,
+    "importedPaths": [
+      "scripts/backup-off-host-observe.ts",
+      "scripts/backup-recovery-point-register.ts",
+      "scripts/backup-restore-drill.ts",
+      "scripts/backup-snapshot-once.ts",
+      "src/server/admin-service/quiesce-absence-guard.ts",
+      "src/server/backup-snapshot/application-drill-receipt.ts",
+      "src/server/backup-snapshot/core.ts",
+      "src/server/backup-snapshot/off-host-receipt.ts",
+      "src/server/config/env.ts",
+      "src/server/db/database.ts",
+      "src/server/db/profile.ts",
+      "src/server/internal-operation/authorizer.ts",
+      "src/server/internal-operation/backup-package-binding.ts",
+      "src/server/internal-operation/backup-recovery-point-register.ts",
+      "src/server/internal-operation/gateway.ts",
+      "src/server/internal-operation/owner-supervisor.ts",
+      "src/server/internal-operation/phase.ts",
+      "src/server/internal-operation/recovery-fence-write.ts",
+      "src/server/internal-operation/recovery.ts",
+      "src/server/review-real/error.ts",
+      "src/server/review-real/mapping.ts",
+      "src/server/review-real/migration.ts",
+      "src/server/review-real/projection.ts",
+      "src/server/review-real/schema.ts",
+      "src/server/rss/rss-config-read.ts",
+      "src/server/rss/source-registry-migration.ts",
+      "src/server/rss/sources.ts",
+      "src/server/tweet-inbox/repository.ts",
+      "src/server/tweet-inbox/types.ts",
+      "src/server/tweet-inbox/url.ts",
+      "src/server/x-page/schema-identity.ts"
+    ],
+    "xPaths": [
+      "src/server/x-page/schema-identity.ts"
+    ],
+    "verifiedBeforeAndAfterImports": true
+  },
+  "tests": {
+    "initial": "3 files: 12 pass, 1 blocked by missing sibling npm next to standalone pinned Node.",
+    "resolvedEnvironment": "Independent verified Node24.18.0 and npm11.16.0 toolchain hashes, then reran only failed manifest clean-build case.",
+    "finalRerun": "1 passed, 3 skipped; skipped cases had passed initial run.",
+    "uniqueIntegrationTestsPassed": 13,
+    "logs": [
+      "release-closure-tests.log",
+      "release-manifest-final-test.log"
+    ]
+  },
+  "findingsResolved": [
+    "QL3 text report had stale 157 runtime count; now derives both counts from contract constants.",
+    "Admin clean-build fixture needed actual pinned npm beside pinned Node; isolated toolchain supplied without weakening assertions."
+  ],
+  "remainingFindings": [],
+  "limits": [
+    "This validates current source candidate packaging and actual import resolution. It does not validate a new production deployment or enable X browser/import/publish capabilities."
+  ],
+  "evidence": [
+    "release-closure-check.mts",
+    "release-closure-check.json",
+    "release-closure-check.log",
+    "backup-runtime-prepare.log",
+    "backup-runtime-closure-01/backup-runtime-manifest.json",
+    "release-closure-tests.log",
+    "release-manifest-final-test.log"
+  ]
+}

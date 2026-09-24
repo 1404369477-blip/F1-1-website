@@ -15,6 +15,7 @@ import {
   type SqliteInternalOperationGateway,
 } from "../internal-operation/gateway.ts";
 import { assertPhaseAllowsExternal, readPhaseSnapshot } from "../internal-operation/phase.ts";
+import { rssConfigTable } from "./rss-config-read.ts";
 import {
   BILINGUAL_PROMPT_SCHEMA,
   BilingualContractError,
@@ -450,7 +451,7 @@ export class SqliteBilingualGatewayMutationPort implements BilingualMutationPort
       control.recovery_epoch AS control_recovery_epoch,control.writer_epoch
       FROM source legacy
       JOIN source_registry_v1 registry ON registry.source_id=legacy.source_id
-      LEFT JOIN source_registry_rss_config_v1 config ON config.source_id=registry.source_id
+      LEFT JOIN ${rssConfigTable(this.database)} config ON config.source_id=registry.source_id
       JOIN internal_control control ON control.singleton_id=1
       WHERE legacy.source_id=?`, caller.sourceId);
     const observedAt = this.now().toISOString();
@@ -459,7 +460,7 @@ export class SqliteBilingualGatewayMutationPort implements BilingualMutationPort
       && trusted.adapter_status === "ready" && trusted.adapter_authorization_status === "valid" && trusted.platform_allowed === "allowed"
       && (trusted.authorization_expires_at === null || Date.parse(String(trusted.authorization_expires_at)) > Date.parse(observedAt)), "SOURCE_DRIFT");
     invariant(Number.isSafeInteger(Number(trusted.registry_revision)) && Number(trusted.registry_revision) >= 1 && HASH.test(String(trusted.identity_sha256)), "SOURCE_DRIFT");
-    invariant(Number(trusted.config_revision) === 1 && HASH.test(String(trusted.authorization_receipt_sha256)) && HASH.test(String(trusted.source_policy_sha256)), "SOURCE_DRIFT");
+    invariant(Number(trusted.config_revision) >= 1 && HASH.test(String(trusted.authorization_receipt_sha256)) && HASH.test(String(trusted.source_policy_sha256)), "SOURCE_DRIFT");
 
     // Source configuration can make a candidate more restrictive. It cannot
     // self-assert a publishable clearance. Clear/screened facts require the

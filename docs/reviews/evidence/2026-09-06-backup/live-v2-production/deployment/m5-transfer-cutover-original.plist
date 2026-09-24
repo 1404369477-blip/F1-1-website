@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>com.f1plus1.backup-observer</string>
+	<key>ProcessType</key>
+	<string>Background</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/bin/bash</string>
+		<string>[M5-HOME]/Library/Application Support/F1Plus1/BackupObserver/releases/20260906-02/tools/backup-off-host-observe.sh</string>
+		<string>[M5-HOME]/Library/Application Support/F1Plus1/BackupObserver/releases/20260906-02/runtime</string>
+		<string>ad5749603246a2ea6b967ea0b205cceb7faa2da1b88d6894014254ed81306a17</string>
+		<string>[M5-HOME]/Library/Application Support/F1Plus1/BackupObserver/node-v24.18.0</string>
+	</array>
+	<key>RunAtLoad</key>
+	<true/>
+	<key>StandardErrorPath</key>
+	<string>/dev/null</string>
+	<key>StandardOutPath</key>
+	<string>/dev/null</string>
+	<key>StartInterval</key>
+	<integer>60</integer>
+	<key>Umask</key>
+	<integer>63</integer>
+</dict>
+</plist>

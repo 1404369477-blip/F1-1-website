@@ -1,3 +1,9 @@
+import { assertXPageCommittedDeliveryFence, assertXPageCommittedDeliveryIssuanceRequest, readXPageCommittedDelivery } from "../x-page/delivery-authority.ts";
+import { assertXPageAutomaticOperation } from "../x-page/content-authority.ts";
+import { assertXPageOperationFences } from "../x-page/current-fences.ts";
+import { AutomaticMutationResultSchema } from "../rss-automatic/contract.ts";
+import {assertCommittedAutomaticDeliveryFence,assertCommittedDeliveryIssuanceRequest,readCommittedDelivery,RSS_COMMITTED_DELIVERY_FENCE_REASON} from "../rss-automatic/delivery-authority.ts";
+import {ProjectionReceiptSchema} from "../review-real/projection.ts";
 import { createHash, randomBytes } from "node:crypto";
 import type { DatabaseSync } from "node:sqlite";
 
@@ -10,6 +16,12 @@ import {
   withSqliteAuthorizerContext,
   type GatewaySqlMethod
 } from "./authorizer.ts";
+import { assertXPageGatewayRequest, assertXPageOperationSourcesCurrent } from "../x-page/source-authority.ts";
+import { XPageTrustedImportResultSchema } from "../x-page/trusted-importer.ts";
+import { X_PAGE_ADMISSION_SCHEMA_SHA256 } from "../x-page/admission-schema-identity.ts";
+import { assertXPageAdmissionSchema } from "../x-page/admission-migration.ts";
+import { X_PAGE_SCHEMA_SHA256 } from "../x-page/schema-identity.ts";
+import { rssConfigTable } from "../rss/rss-config-read.ts";
 import { validateOwnerSupervisorHandoff } from "./owner-supervisor.ts";
 
 export const INTERNAL_OPERATION_SCHEMA_VERSION = 7 as const;
@@ -17,12 +29,12 @@ export const INTERNAL_OPERATION_SCHEMA_SHA256 = "f3c0c049575b3121cccc8e66438481c
 export const INTERNAL_OPERATION_CANONICAL_JSON = "canonical-json-v1" as const;
 
 export type Phase = "disabled" | "backlog" | "live" | "paused";
-export type OperationKind = "collect" | "refine" | "review" | "publish" | "reconcile" | "projection" | "backfill" | "source_create" | "source_update" | "source_delete" | "system_producer" | "phase_control" | "backup" | "restore" | "withdraw";
-export type OwnerProcess = "rss_collector" | "rss_refiner" | "automatic_reviewer" | "automatic_publisher" | "projection_sender" | "projection_receiver" | "x_official_adapter" | "bilingual_refiner" | "admin_http" | "admin_telemetry_producer" | "backup_worker" | "restore_operator" | "system_supervisor" | "reconciler";
+export type OperationKind = "x_page_source_update" | "collect" | "refine" | "review" | "publish" | "reconcile" | "projection" | "backfill" | "source_create" | "source_update" | "source_delete" | "system_producer" | "phase_control" | "backup" | "restore" | "withdraw";
+export type OwnerProcess = "x_page_importer" | "rss_collector" | "rss_refiner" | "automatic_reviewer" | "automatic_publisher" | "projection_sender" | "projection_receiver" | "x_official_adapter" | "bilingual_refiner" | "admin_http" | "admin_telemetry_producer" | "backup_worker" | "restore_operator" | "system_supervisor" | "reconciler";
 export type CapabilityClass = "db_mutation" | "external_attempt" | "reconcile_readonly" | "control" | "backup" | "restore";
 export type EgressClass = "none" | "rss_https" | "model_https" | "projection_private" | "x_official_https" | "backup_private";
 export type ControlAction = "enter_backlog" | "enter_live" | "pause" | "disable" | "set_global_stop" | "clear_global_stop" | "set_emergency_stop" | "clear_emergency_stop" | "recovery_begin" | "recovery_advance" | "recovery_complete" | "recovery_abort" | "writer_epoch_bump" | "fence_update";
-export type EntityKind = "source" | "ingest_run" | "candidate" | "rss_media" | "machine_draft" | "review_bundle" | "review_decision" | "publication" | "published_projection" | "projection_outbox" | "projection_receipt" | "legacy_admin_operation" | "legacy_audit" | "internal_control" | "telemetry_receipt" | "generic_fence" | "backup" | "projection_pointer";
+export type EntityKind = "x_page_producer_receipt" | "x_page_source_admission" | "x_page_source_config" | "x_page_source_registry" | "x_page_capture" | "source" | "ingest_run" | "candidate" | "rss_media" | "machine_draft" | "review_bundle" | "review_decision" | "publication" | "published_projection" | "projection_outbox" | "projection_receipt" | "legacy_admin_operation" | "legacy_audit" | "internal_control" | "telemetry_receipt" | "generic_fence" | "backup" | "projection_pointer";
 export type MutationKind = "insert" | "update" | "delete" | "activate" | "consume";
 export type FenceKind = "deletion" | "publication" | "completeness" | "rights" | "media";
 export type FenceRequiredState = "clear" | "blocked_reconcile_readonly" | "clear_or_blocked_removal";
@@ -34,13 +46,13 @@ const UTC = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 const EXTERNAL_METHODS = new Set(["GET", "POST", "PUT", "PATCH", "DELETE"]);
 const ENDPOINT_CLASSES = new Set(["rss_fetch", "model_refine", "projection_deliver", "x_read", "x_write", "x_reconcile", "backup_copy", "restore_read"]);
 const HEADER_NAMES = new Set(["accept", "content-type", "idempotency-key", "if-match", "if-none-match", "x-request-id"]);
-const OPERATION_KINDS = new Set<OperationKind>(["collect", "refine", "review", "publish", "reconcile", "projection", "backfill", "source_create", "source_update", "source_delete", "system_producer", "phase_control", "backup", "restore", "withdraw"]);
-const OWNER_PROCESSES = new Set<OwnerProcess>(["rss_collector", "rss_refiner", "automatic_reviewer", "automatic_publisher", "projection_sender", "projection_receiver", "x_official_adapter", "bilingual_refiner", "admin_http", "admin_telemetry_producer", "backup_worker", "restore_operator", "system_supervisor", "reconciler"]);
+const OPERATION_KINDS = new Set<OperationKind>(["x_page_source_update", "collect", "refine", "review", "publish", "reconcile", "projection", "backfill", "source_create", "source_update", "source_delete", "system_producer", "phase_control", "backup", "restore", "withdraw"]);
+const OWNER_PROCESSES = new Set<OwnerProcess>(["x_page_importer", "rss_collector", "rss_refiner", "automatic_reviewer", "automatic_publisher", "projection_sender", "projection_receiver", "x_official_adapter", "bilingual_refiner", "admin_http", "admin_telemetry_producer", "backup_worker", "restore_operator", "system_supervisor", "reconciler"]);
 const CAPABILITY_CLASSES = new Set<CapabilityClass>(["db_mutation", "external_attempt", "reconcile_readonly", "control", "backup", "restore"]);
 const PHASES = new Set<Phase>(["disabled", "backlog", "live", "paused"]);
 const EGRESS_CLASSES = new Set<EgressClass>(["none", "rss_https", "model_https", "projection_private", "x_official_https", "backup_private"]);
 const CONTROL_ACTIONS = new Set<ControlAction>(["enter_backlog", "enter_live", "pause", "disable", "set_global_stop", "clear_global_stop", "set_emergency_stop", "clear_emergency_stop", "recovery_begin", "recovery_advance", "recovery_complete", "recovery_abort", "writer_epoch_bump", "fence_update"]);
-const ENTITY_KINDS = new Set<EntityKind>(["source", "ingest_run", "candidate", "rss_media", "machine_draft", "review_bundle", "review_decision", "publication", "published_projection", "projection_outbox", "projection_receipt", "legacy_admin_operation", "legacy_audit", "internal_control", "telemetry_receipt", "generic_fence", "backup", "projection_pointer"]);
+const ENTITY_KINDS = new Set<EntityKind>(["x_page_producer_receipt", "x_page_source_admission", "x_page_source_config", "x_page_source_registry", "x_page_capture", "source", "ingest_run", "candidate", "rss_media", "machine_draft", "review_bundle", "review_decision", "publication", "published_projection", "projection_outbox", "projection_receipt", "legacy_admin_operation", "legacy_audit", "internal_control", "telemetry_receipt", "generic_fence", "backup", "projection_pointer"]);
 const MUTATION_KINDS = new Set<MutationKind>(["insert", "update", "delete", "activate", "consume"]);
 const IDENTITY_SELECTORS = new Set<EntityBinding["identitySelector"]>(["source_id", "candidate_id", "publication_id", "public_id", "control_singleton", "bound_child"]);
 const FENCE_SCOPES = new Set<FenceBinding["scopeKind"]>(["global", "source", "candidate", "publication"]);
@@ -569,12 +581,13 @@ function assertExactFenceTemplate(database: DatabaseSync, input: GatewayOperatio
   assert(expected.length === actual.length && expected.every((value, index) => value === actual[index]), "FENCE_SET_TEMPLATE_MISMATCH");
 }
 
-function mapAuthorizerMethod(kind: OperationKind, owner: OwnerProcess): GatewaySqlMethod {
+function mapAuthorizerMethod(kind: OperationKind, owner: OwnerProcess, policyId: string): GatewaySqlMethod {
+  if (policyId === "p-x-page-source-admit-paused") return "x_page_admission";
   if (kind === "phase_control") return "phase_control";
   if (kind === "restore") return "recovery_control";
   if (kind === "backup") return "backup_insert";
   if (kind === "system_producer") return owner === "system_supervisor" ? "fence_issue" : "response";
-  if (kind === "collect") return "legacy_collect";
+  if (kind === "collect") return owner === "x_page_importer" ? "x_page_import" : "legacy_collect";
   if (kind === "refine") return "legacy_refine";
   if (kind === "review") return "legacy_review";
   if (kind === "publish" || kind === "withdraw") return "legacy_publish";
@@ -692,6 +705,8 @@ export class SqliteInternalOperationGateway {
   private readonly releaseSha256: string;
   private readonly manifestSha256: string;
   private readonly schemaSha256: string;
+  private readonly verifiedRssAutomaticFullManifestSha256: string | null;
+  private readonly verifiedRssAutomaticFallbackManifestSha256: string | null;
   private readonly clock: () => Date;
   private readonly authorizer: ReturnType<typeof installSqliteAuthorizer>;
   private readonly releaseWriterLease: () => void;
@@ -700,15 +715,24 @@ export class SqliteInternalOperationGateway {
   private atomicAdmissionDepth = 0;
   private readonly xManualFailureInjector: ((point: XManualFailurePoint) => void) | null;
 
-  public constructor(input: Readonly<{ database: DatabaseSync; releaseSha256: string; manifestSha256: string; schemaSha256?: string; now?: () => Date; xManualFailureInjector?: (point: XManualFailurePoint) => void }>) {
+  public constructor(input: Readonly<{ database: DatabaseSync; releaseSha256: string; manifestSha256: string; schemaSha256?: string; verifiedRssAutomaticFullManifestSha256?:string; verifiedRssAutomaticFallbackManifestSha256?:string; now?: () => Date; xManualFailureInjector?: (point: XManualFailurePoint) => void }>) {
     validateHash(input.releaseSha256); validateHash(input.manifestSha256);
     this.database = input.database;
     this.releaseSha256 = input.releaseSha256;
     this.manifestSha256 = input.manifestSha256;
     this.schemaSha256 = input.schemaSha256 ?? INTERNAL_OPERATION_SCHEMA_SHA256;
+    if(input.verifiedRssAutomaticFullManifestSha256!==undefined)validateHash(input.verifiedRssAutomaticFullManifestSha256);
+    this.verifiedRssAutomaticFullManifestSha256=input.verifiedRssAutomaticFullManifestSha256??null;
+    if(input.verifiedRssAutomaticFallbackManifestSha256!==undefined)validateHash(input.verifiedRssAutomaticFallbackManifestSha256);
+    this.verifiedRssAutomaticFallbackManifestSha256=input.verifiedRssAutomaticFallbackManifestSha256??null;
     validateHash(this.schemaSha256);
     const version = valueInt((this.database.prepare("PRAGMA user_version").get() as Record<string, unknown>).user_version, "SCHEMA_VERSION_INVALID");
-    assert(version === INTERNAL_OPERATION_SCHEMA_VERSION || version === 8 || version === 9 || version === 10, "SCHEMA_VERSION_INVALID");
+    assert(version === INTERNAL_OPERATION_SCHEMA_VERSION || version === 8 || version === 9 || version === 10 || version === 11, "SCHEMA_VERSION_INVALID");
+    assert(version !== 11 || input.schemaSha256 === X_PAGE_SCHEMA_SHA256, "X_PAGE_SCHEMA_IDENTITY_REQUIRED");
+    if (input.database.prepare("SELECT 1 FROM sqlite_schema WHERE type='table' AND name='x_page_source_admission_v1'").get()) {
+      assert(input.schemaSha256 === X_PAGE_ADMISSION_SCHEMA_SHA256, "X_PAGE_ADMISSION_SCHEMA_IDENTITY_REQUIRED");
+      assertXPageAdmissionSchema(input.database);
+    }
     this.releaseWriterLease = acquireSingleWriter(this.database);
     try {
       const existingAuthorizer = getInstalledSqliteAuthorizer(this.database);
@@ -727,6 +751,10 @@ export class SqliteInternalOperationGateway {
   public close(): void { this.releaseWriterLease(); this.authorizer.uninstall(); this.secrets.clear(); this.xManualOperations.clear(); }
 
   public expectedSchemaSha256(): string { return this.schemaSha256; }
+  public expectedReleaseSha256(): string { return this.releaseSha256; }
+  public expectedManifestSha256(): string { return this.manifestSha256; }
+  public verifiedRssAutomaticFullManifest():string|null {return this.verifiedRssAutomaticFullManifestSha256;}
+  public verifiedRssAutomaticFallbackManifest():string|null {return this.verifiedRssAutomaticFallbackManifestSha256;}
 
   /**
    * The only runtime path that transitions a schema-10 quick-launch
@@ -807,7 +835,7 @@ export class SqliteInternalOperationGateway {
     const operation = selectOperation(this.database, capability.operationId);
     assert(operation.state === "authorized" && valueInt(operation.version, "OPERATION_VERSION_INVALID") === capability.version, "OPERATION_STATE_INVALID");
     assert(operation.owner_process === "admin_http" && operation.source_id === input.sourceId && operation.egress_class === "none", "SOURCE_AUTHORITY_INVALID");
-    assert((input.action === "retire" ? operation.operation_kind === "source_delete" : operation.operation_kind === "source_update"), "SOURCE_AUTHORITY_INVALID");
+    assert((input.action === "retire" ? operation.operation_kind === "source_delete" : (operation.operation_kind === "source_update" || operation.operation_kind === "x_page_source_update")), "SOURCE_AUTHORITY_INVALID");
     const at = valueString(operation.updated_at, "SOURCE_OPERATION_TIME_INVALID");
     const requestHash = valueString(operation.request_hash, "SOURCE_REQUEST_HASH_INVALID");
     const handoffId = valueString(operation.authorization_handoff_id, "SOURCE_HANDOFF_INVALID");
@@ -816,7 +844,13 @@ export class SqliteInternalOperationGateway {
     this.tx("source_registry", () => {
       this.database.prepare("INSERT INTO source_registry_mutation_permit_v1(permit_id,operation_id,source_id,action,expected_revision,request_hash,reason_code,authorization_ref,one_time_nonce,created_at,consumed_at) VALUES(?,?,?,?,?,?,?,?,?,?,NULL)")
         .run(permitId, capability.operationId, input.sourceId, input.action, input.expectedRevision, requestHash, input.reasonCode, handoffId, nonce(), at);
-      const common = "revision=revision+1,current_operation_id=?,current_request_hash=?,updated_at=?,source_config_epoch=?,source_safety_epoch=?,authorization_version=?,policy_epoch=?,recovery_epoch=?";
+      const xStop = operation.policy_id === "p-x-page-source-update-paused" && operation.operation_kind === "source_update";
+      const sourceWrite = xStop ? this.insertWritePermitInTransaction(capability,
+        {entityKind:"source",entityId:input.sourceId,mutationKind:"update",expectedVersion:Number(operation.expected_entity_version),expectedHash:String(operation.expected_entity_hash)},
+        `permit-x-stop-${hash(capability.operationId).slice(0,40)}`,at) : null;
+      const common = xStop
+        ? "revision=revision+1,current_operation_id=?,current_request_hash=?,updated_at=?,source_config_epoch=source_config_epoch+1,source_safety_epoch=source_safety_epoch+1,authorization_version=authorization_version+1"
+        : "revision=revision+1,current_operation_id=?,current_request_hash=?,updated_at=?,source_config_epoch=?,source_safety_epoch=?,authorization_version=?,policy_epoch=?,recovery_epoch=?";
       const edge = input.action === "disable"
         ? "enabled=0,lifecycle_status='paused',collection_onboarding_status='stopped',source_stop_status='manual'"
         : input.action === "requeue"
@@ -825,8 +859,9 @@ export class SqliteInternalOperationGateway {
             ? "enabled=1,lifecycle_status='active',collection_onboarding_status='queued',source_stop_status='clear'"
             : "enabled=0,lifecycle_status='retired',collection_onboarding_status='cancelled',source_stop_status='manual'";
       changes = Number(this.database.prepare(`UPDATE source_registry_v1 SET ${common},${edge} WHERE source_id=? AND revision=?`)
-        .run(capability.operationId, requestHash, at, Number(operation.source_config_epoch), Number(operation.source_safety_epoch), Number(operation.authorization_version), Number(operation.policy_epoch), Number(operation.recovery_epoch), input.sourceId, input.expectedRevision).changes);
+        .run(...sqlValues([capability.operationId, requestHash, at, ...(xStop ? [] : [Number(operation.source_config_epoch), Number(operation.source_safety_epoch), Number(operation.authorization_version), Number(operation.policy_epoch), Number(operation.recovery_epoch)]), input.sourceId, input.expectedRevision])).changes);
       assert(changes === 1, "SOURCE_MUTATION_CONFLICT");
+      if (sourceWrite) this.consumeWritePermitInTransaction(sourceWrite, at);
       const terminal = parseRow(this.database.prepare("SELECT state,result_hash FROM internal_operation WHERE operation_id=?").get(capability.operationId));
       assert(terminal.state === "succeeded" && terminal.result_hash === requestHash, "SOURCE_OPERATION_NOT_COMPLETED");
     });
@@ -992,7 +1027,7 @@ export class SqliteInternalOperationGateway {
         control.source_config_epoch AS control_source_config_epoch,control.source_safety_epoch AS control_source_safety_epoch,
         control.authorization_version AS control_authorization_version,control.policy_epoch AS control_policy_epoch,
         control.recovery_epoch AS control_recovery_epoch
-        FROM source_registry_v1 registry JOIN source_registry_rss_config_v1 config ON config.source_id=registry.source_id
+        FROM source_registry_v1 registry JOIN ${rssConfigTable(this.database)} config ON config.source_id=registry.source_id
         JOIN internal_control control ON control.singleton_id=1 WHERE registry.source_id=?`).get(input.sourceId));
       const decidedAt = nowIso(this.clock);
       assert(Date.parse(authorization.verifiedAt) <= Date.parse(decidedAt) && Date.parse(decidedAt) - Date.parse(authorization.verifiedAt) <= 300_000, "BILINGUAL_SAFETY_FRESHNESS_INVALID");
@@ -1359,7 +1394,7 @@ export class SqliteInternalOperationGateway {
     const source = parseRow(this.database.prepare(`SELECT registry.*,config.source_revision AS config_revision,control.source_config_epoch AS control_source_config_epoch,
       control.source_safety_epoch AS control_source_safety_epoch,control.authorization_version AS control_authorization_version,
       control.policy_epoch AS control_policy_epoch,control.recovery_epoch AS control_recovery_epoch
-      FROM source_registry_v1 registry JOIN source_registry_rss_config_v1 config ON config.source_id=registry.source_id
+      FROM source_registry_v1 registry JOIN ${rssConfigTable(this.database)} config ON config.source_id=registry.source_id
       JOIN internal_control control ON control.singleton_id=1 WHERE registry.source_id=?`).get(sourceId));
     assert(Number(source.revision) >= 1 && HASH.test(String(source.identity_sha256)) && Number(source.config_revision) >= 1, "BILINGUAL_PUBLICATION_SOURCE_AUTHORITY_INVALID");
     for (const value of [source.source_config_epoch, source.source_safety_epoch, source.authorization_version, source.policy_epoch, source.recovery_epoch,
@@ -1426,6 +1461,7 @@ export class SqliteInternalOperationGateway {
 
   public request(handoff: OwnerSupervisorHandoff, input: GatewayOperationRequest): OperationCapability {
     validateOperationShape(input);
+    assertXPageGatewayRequest(this.database, input, this.clock());
     assert(input.authorizationHandoffId === handoff.handoffId, "HANDOFF_ID_MISMATCH");
     validateOwnerSupervisorHandoff(handoff, 0);
     assert(handoff.ownerProcess === input.ownerProcess, "HANDOFF_OWNER_MISMATCH");
@@ -1433,6 +1469,8 @@ export class SqliteInternalOperationGateway {
     validateHash(input.requestHash); validateHash(input.requestFingerprint); validateEntitySet(input.entitySet); validateFenceSet(input.requiredFenceSet);
     assert(input.expected.schemaSha256 === this.schemaSha256 && input.expected.releaseSha256 === this.releaseSha256 && input.expected.manifestSha256 === this.manifestSha256, "RELEASE_IDENTITY_MISMATCH");
     assert(handoff.releaseSha256 === this.releaseSha256 && handoff.manifestSha256 === this.manifestSha256, "HANDOFF_RELEASE_IDENTITY_MISMATCH");
+    if(handoff.handoffId.startsWith("rss-delivery-supervisor-"))assertCommittedDeliveryIssuanceRequest(this.database,input,{
+      schemaSha256:this.schemaSha256,releaseSha256:this.releaseSha256,manifestSha256:this.manifestSha256,verifiedFullManifestSha256:this.verifiedRssAutomaticFullManifestSha256,verifiedFallbackManifestSha256:this.verifiedRssAutomaticFallbackManifestSha256,now:this.clock()});
     const handoffRow = parseRow(this.database.prepare("SELECT * FROM owner_authorization_handoff WHERE handoff_id=?").get(handoff.handoffId));
     for (const field of ["owner_process", "issuer", "one_time_nonce", "release_sha256", "manifest_sha256", "receipt_sha256", "verified_at", "expires_at"] as const) {
       assert(handoffRow[field] === handoff[field === "owner_process" ? "ownerProcess" : field === "issuer" ? "issuer" : field === "one_time_nonce" ? "oneTimeNonce" : field === "release_sha256" ? "releaseSha256" : field === "manifest_sha256" ? "manifestSha256" : field === "receipt_sha256" ? "receiptSha256" : field === "verified_at" ? "verifiedAt" : "expiresAt"], "HANDOFF_RECEIPT_MISMATCH");
@@ -1456,6 +1494,10 @@ export class SqliteInternalOperationGateway {
     const budgetId = input.budgetRequest === null ? null : (input.budgetRequest.reservationId ?? input.budgetRequest.ledgerRef ?? null);
     const secret = nonce();
     this.tx("request", () => {
+      assertXPageGatewayRequest(this.database, input, this.clock());
+      if (["p-x-page-refine-live", "p-x-page-refine-store-live", "p-x-page-auto-review-live", "p-x-page-auto-publish-live", "p-x-page-fence-live"].includes(input.policyId)) (input.policyId === "p-x-page-fence-live" && input.entitySet.some(binding => binding.entityKind === "projection_outbox") ? assertXPageCommittedDeliveryIssuanceRequest : assertXPageAutomaticOperation)(this.database, input, {
+        schemaSha256:this.schemaSha256,releaseSha256:this.releaseSha256,manifestSha256:this.manifestSha256,
+        verifiedFullManifestSha256:this.verifiedRssAutomaticFullManifestSha256,verifiedFallbackManifestSha256:this.verifiedRssAutomaticFallbackManifestSha256,now:this.clock()});
       this.database.prepare(`INSERT INTO internal_operation(operation_id,idempotency_key,operation_kind,owner_process,capability_class,policy_id,authorization_handoff_id,control_action,state,version,candidate_id,source_id,publication_id,public_id,phase,attempt,budget_reservation_id,egress_class,model_route_ref,expected_schema_sha256,expected_release_sha256,expected_manifest_sha256,source_config_epoch,source_safety_epoch,authorization_version,policy_epoch,recovery_epoch,source_stop_epoch,global_stop_state,emergency_stop_state,recovery_state,deletion_fence_state,publication_fence_state,request_hash,request_fingerprint,expected_control_version,expected_entity_version,expected_entity_hash,entity_set_json,entity_set_hash,required_fence_set_json,required_fence_set_hash,expected_writer_epoch,result_hash,reason_code,created_at,updated_at) VALUES(${Array.from({ length: 47 }, () => "?").join(",")})`)
         .run(...sqlValues([input.operationId, input.idempotencyKey, input.operationKind, input.ownerProcess, input.capabilityClass, input.policyId, handoff.handoffId, input.controlAction, "requested", 1,
           input.identity.candidateId, input.identity.sourceId, input.identity.publicationId, input.identity.publicId, input.phase, 0, budgetId, input.egressClass, input.modelRouteRef,
@@ -1491,12 +1533,16 @@ export class SqliteInternalOperationGateway {
       const op = selectOperation(this.database, capability.operationId);
       assert(op.state === "requested" && valueInt(op.version, "OPERATION_VERSION_INVALID") === capability.version, "OPERATION_STATE_INVALID");
       this.precheckFencesInTransaction(capability.operationId, updatedAt);
+      const sourceEnabledClause = op.policy_id === "p-x-page-source-admit-paused" && op.owner_process === "system_supervisor" && op.operation_kind === "system_producer"
+        ? "s.source_kind='x_page'" : op.operation_kind === "x_page_source_update" && op.owner_process === "admin_http" && op.policy_id === "p-x-page-source-update-paused"
+        ? "(s.enabled=1 OR EXISTS(SELECT 1 FROM source_registry_v1 r WHERE r.source_id=s.source_id AND r.source_kind='x_page'))"
+        : "s.enabled=1";
       const entityDiagnostics = parseRow(this.database.prepare(`SELECT
         json_array_length(op.entity_set_json) AS json_count,
         (SELECT count(*) FROM operation_entity_binding b WHERE b.operation_id=op.operation_id) AS binding_count,
         (SELECT count(*) FROM operation_entity_binding b WHERE b.operation_id=op.operation_id AND b.identity_selector='source_id' AND b.entity_id=op.source_id) AS source_binding_count,
         (SELECT count(*) FROM operation_entity_binding b WHERE b.operation_id=op.operation_id AND b.identity_selector='candidate_id' AND b.entity_id=op.candidate_id) AS candidate_binding_count,
-        (SELECT count(*) FROM source s WHERE s.source_id=op.source_id AND s.stop_epoch=op.source_stop_epoch AND s.enabled=1) AS source_count
+        (SELECT count(*) FROM source s WHERE s.source_id=op.source_id AND s.stop_epoch=op.source_stop_epoch AND ${sourceEnabledClause}) AS source_count
         FROM internal_operation op WHERE op.operation_id=?`).get(capability.operationId));
       assert(Number(entityDiagnostics.json_count) === Number(entityDiagnostics.binding_count), "OPERATION_ENTITY_SET_COUNT_INVALID");
       if (op.source_id !== null) assert(Number(entityDiagnostics.source_binding_count) === 1, "OPERATION_SOURCE_BINDING_INVALID");
@@ -1619,7 +1665,43 @@ export class SqliteInternalOperationGateway {
     return receipt;
   }
 
+  private assertCurrentAutomaticFences(operationId: string): void {
+    assertXPageOperationSourcesCurrent(this.database, operationId, this.clock());
+    assertXPageOperationFences(this.database, operationId, this.clock());
+    if (this.database.prepare("SELECT 1 FROM sqlite_schema WHERE type='table' AND name='x_page_source_admission_v1'").get()) {
+      const consumer=this.database.prepare("SELECT policy_id FROM internal_operation WHERE operation_id=?").get(operationId);
+      const xFences=this.database.prepare("SELECT f.fence_receipt_id FROM operation_fence_binding b JOIN generic_fence_receipt f ON f.fence_receipt_id=b.fence_receipt_id WHERE b.operation_id=? AND f.reason_code IN ('X_PAGE_AUTOMATIC_CURRENT_V1','X_PAGE_AUTOMATIC_COMMITTED_DELIVERY_V1')").all(operationId);
+      for(const fence of xFences) {
+        if (["p-x-page-projection-live", "p-x-page-reconcile-live"].includes(String(consumer?.policy_id))) assertXPageCommittedDeliveryFence(this.database,operationId,String(fence.fence_receipt_id),{
+          schemaSha256:this.schemaSha256,releaseSha256:this.releaseSha256,manifestSha256:this.manifestSha256,
+          verifiedFullManifestSha256:this.verifiedRssAutomaticFullManifestSha256,verifiedFallbackManifestSha256:this.verifiedRssAutomaticFallbackManifestSha256,now:this.clock()});
+        else assert(this.database.prepare(`SELECT 1 FROM x_page_automatic_fence_current_v1 f JOIN internal_operation issuer ON issuer.operation_id=f.issued_by_operation_id JOIN internal_operation op ON op.operation_id=?
+          WHERE f.fence_receipt_id=? AND f.candidate_id=op.candidate_id AND f.source_id=op.source_id AND issuer.expected_schema_sha256=op.expected_schema_sha256
+          AND issuer.expected_release_sha256=op.expected_release_sha256 AND issuer.expected_manifest_sha256=op.expected_manifest_sha256`).get(operationId,String(fence.fence_receipt_id)),"X_PAGE_AUTOMATIC_FENCE_STALE");
+      }
+    }
+    if (this.database.prepare("SELECT 1 FROM sqlite_schema WHERE name='rss_automatic_fence_current_v1' AND type='view'").get() === undefined) return;
+    const invalid = this.database.prepare(`SELECT f.fence_receipt_id FROM operation_fence_binding b
+      JOIN generic_fence_receipt f ON f.fence_receipt_id=b.fence_receipt_id
+      JOIN internal_operation consumer ON consumer.operation_id=b.operation_id
+      WHERE b.operation_id=? AND f.reason_code IN ('RSS_AUTOMATIC_CURRENT_V1',?)
+      AND (consumer.owner_process IN ('projection_sender','reconciler') OR NOT EXISTS(SELECT 1 FROM rss_automatic_fence_current_v1 current
+        JOIN internal_operation issuer ON issuer.operation_id=current.issued_by_operation_id
+        WHERE current.fence_receipt_id=f.fence_receipt_id
+        AND issuer.expected_schema_sha256=consumer.expected_schema_sha256 AND issuer.expected_release_sha256=consumer.expected_release_sha256
+        AND issuer.expected_manifest_sha256=consumer.expected_manifest_sha256
+        AND (consumer.candidate_id IS NULL OR current.candidate_id=consumer.candidate_id)
+        AND (consumer.source_id IS NULL OR current.source_id=consumer.source_id)))`).all(operationId,RSS_COMMITTED_DELIVERY_FENCE_REASON);
+    for(const row of invalid){
+      try {assertCommittedAutomaticDeliveryFence(this.database,operationId,String(row.fence_receipt_id),{
+        schemaSha256:this.schemaSha256,releaseSha256:this.releaseSha256,manifestSha256:this.manifestSha256,
+        verifiedFullManifestSha256:this.verifiedRssAutomaticFullManifestSha256,verifiedFallbackManifestSha256:this.verifiedRssAutomaticFallbackManifestSha256,now:this.clock()});}
+      catch {throw new Error("RSS_AUTO_FENCE_STALE");}
+    }
+  }
+
   private precheckFencesInTransaction(operationId: string, at: string): number {
+    this.assertCurrentAutomaticFences(operationId);
     const rows = this.database.prepare(
       "SELECT f.fence_receipt_id,f.prechecked_at,f.consumed_at,f.postchecked_at,r.state,r.receipt_sha256,r.policy_epoch,r.recovery_epoch,r.writer_epoch,r.expires_at FROM operation_fence_binding f JOIN generic_fence_receipt r ON r.fence_receipt_id=f.fence_receipt_id WHERE f.operation_id=? ORDER BY f.fence_receipt_id"
     ).all(operationId) as Array<Record<string, unknown>>;
@@ -1684,7 +1766,7 @@ export class SqliteInternalOperationGateway {
     assert(!mutation.statement.includes(";"), "MUTATION_STATEMENT_NOT_CLOSED");
     const tableName = tableMatch?.[2]?.toLowerCase();
     const expectedTable: Readonly<Record<EntityKind, string>> = {
-      source: "source", ingest_run: "ingest_run", candidate: "pending_review_candidate", rss_media: "rss_media_candidate",
+      x_page_producer_receipt: "x_page_producer_receipt_v1", x_page_source_admission: "x_page_source_admission_v1", x_page_source_config: "x_page_source_config_v1", x_page_source_registry: "source_registry_v1", x_page_capture: "x_page_candidate_capture_v1", source: "source", ingest_run: "ingest_run", candidate: "pending_review_candidate", rss_media: "rss_media_candidate",
       machine_draft: "machine_summary_draft", review_bundle: "review_bundle", review_decision: "review_decision",
       publication: "publication", published_projection: "published_projection", projection_outbox: "projection_outbox",
       projection_receipt: "projection_delivery_receipt", legacy_admin_operation: "admin_operation", legacy_audit: "audit_event",
@@ -1736,9 +1818,10 @@ export class SqliteInternalOperationGateway {
     assert(this.secrets.get(capability.operationId) === capability.capabilitySecret, "CAPABILITY_INVALID");
     const operation = selectOperation(this.database, capability.operationId);
     assert(operation.state === "authorized" && valueInt(operation.version, "OPERATION_VERSION_INVALID") === capability.version, "OPERATION_STATE_INVALID");
-    const method = mapAuthorizerMethod(String(operation.operation_kind) as OperationKind, String(operation.owner_process) as OwnerProcess);
+    const method = mapAuthorizerMethod(String(operation.operation_kind) as OperationKind, String(operation.owner_process) as OwnerProcess, String(operation.policy_id));
     let result!: T;
     this.tx(method, () => {
+      this.assertCurrentAutomaticFences(capability.operationId);
       const mutate = (input: GatewayWriteInput): number => {
         const permitId = `permit-${nonce()}`;
         const createdAt = nowIso(this.clock);
@@ -1750,10 +1833,27 @@ export class SqliteInternalOperationGateway {
       const at = nowIso(this.clock);
       withSqliteAuthorizerContext(this.database, "response", () => {
         this.postcheckFencesAt(capability.operationId, at);
-        const resultHash = domainHash("f1plus1-operation-result-v1", { operationId: capability.operationId, at });
+        const automatic = capability.ownerProcess === "automatic_reviewer" || capability.ownerProcess === "automatic_publisher";
+        const automaticResult = automatic ? AutomaticMutationResultSchema.parse(result) : null;
+        if (automaticResult) {
+          assert(automaticResult.operationId === capability.operationId && automaticResult.candidateId === operation.candidate_id
+            && automaticResult.sourceRevision === operation.expected_entity_version && automaticResult.inputContentHash === operation.expected_entity_hash
+            && (automaticResult.kind === "review" ? capability.ownerProcess === "automatic_reviewer" : capability.ownerProcess === "automatic_publisher"), "AUTOMATIC_RESULT_IDENTITY_INVALID");
+        }
+        const xImportResult = operation.policy_id === "p-x-page-trusted-import-live" ? XPageTrustedImportResultSchema.parse(result) : null;
+        if (xImportResult) {
+          const receipt = this.database.prepare("SELECT receipt_json,receipt_sha256 FROM x_page_producer_receipt_v1 WHERE operation_id=?").get(capability.operationId);
+          assert(xImportResult.operationId === capability.operationId && xImportResult.sourceId === operation.source_id && xImportResult.candidateId === operation.candidate_id
+            && receipt && hash(String(receipt.receipt_json)) === receipt.receipt_sha256
+            && canonicalJsonV1(JSON.parse(String(receipt.receipt_json)).result) === canonicalJsonV1(xImportResult), "X_PAGE_IMPORT_ATOMIC_RESULT_INVALID");
+        }
+        const resultHash = xImportResult ? domainHash("f1plus1-x-page-import-result-v1", xImportResult) : automaticResult
+          ? domainHash("f1plus1-automatic-result-v1", automaticResult)
+          : domainHash("f1plus1-operation-result-v1", { operationId: capability.operationId, at });
+        this.releaseUnusedDatabaseReservation(operation);
         const changed = this.database.prepare("UPDATE internal_operation SET state='succeeded',version=version+1,result_hash=?,updated_at=? WHERE operation_id=? AND state='authorized'").run(resultHash, at, capability.operationId).changes;
         assert(changed === 1, "OPERATION_COMPLETE_CONFLICT");
-        operationAuditEvent(this.database, capability.operationId, "operation_succeeded", capability.ownerProcess, { resultHash }, at);
+        operationAuditEvent(this.database, capability.operationId, "operation_succeeded", capability.ownerProcess, automaticResult ? { resultHash, automaticResult } : xImportResult ? { resultHash, xImportResult } : { resultHash }, at);
       });
     });
     return result;
@@ -1763,7 +1863,7 @@ export class SqliteInternalOperationGateway {
     assert(permit.capabilitySecret === this.secrets.get(permit.operationId), "PERMIT_INVALID");
     assert(mutation.entityKind === permit.entityKind && mutation.entityId === permit.entityId && mutation.mutationKind === permit.mutationKind, "PERMIT_ENTITY_MISMATCH");
     const operation = selectOperation(this.database, permit.operationId);
-    const method = mapAuthorizerMethod(String(operation.operation_kind) as OperationKind, String(operation.owner_process) as OwnerProcess);
+    const method = mapAuthorizerMethod(String(operation.operation_kind) as OperationKind, String(operation.owner_process) as OwnerProcess, String(operation.policy_id));
     let result: T | undefined;
     this.tx(method, () => {
       const persistedPermit = parseRow(this.database.prepare("SELECT * FROM gateway_write_permit WHERE permit_id=?").get(permit.permitId));
@@ -1790,9 +1890,18 @@ export class SqliteInternalOperationGateway {
       for (const row of rows) this.database.prepare("UPDATE operation_fence_binding SET postchecked_at=?,version=version+1 WHERE operation_id=? AND fence_receipt_id=?").run(...sqlValues([at, capability.operationId, row.fence_receipt_id]));
       assert(op.state === "authorized", "OPERATION_STATE_INVALID");
       const resultHash = domainHash("f1plus1-operation-result-v1", { operationId: capability.operationId, at });
+      this.releaseUnusedDatabaseReservation(op);
       this.database.prepare("UPDATE internal_operation SET state='succeeded',version=version+1,result_hash=?,updated_at=? WHERE operation_id=? AND state='authorized'").run(resultHash, at, capability.operationId);
       operationAuditEvent(this.database, capability.operationId, "operation_succeeded", capability.ownerProcess, { resultHash }, at);
     });
+  }
+
+  private releaseUnusedDatabaseReservation(operation: Record<string, unknown>): void {
+    if (operation.budget_reservation_id === null) return;
+    assert(operation.state === "authorized" && Number(operation.attempt) === 0
+      && this.database.prepare("SELECT 1 FROM internal_external_attempt WHERE operation_id=?").get(String(operation.operation_id)) === undefined,
+    "DATABASE_OPERATION_EXTERNAL_ATTEMPT_CONFLICT");
+    assert(this.database.prepare("UPDATE budget_reservation SET state='released',version=version+1 WHERE reservation_id=? AND state='reserved'").run(String(operation.budget_reservation_id)).changes === 1, "DATABASE_OPERATION_BUDGET_CONFLICT");
   }
 
   public commitAttemptIntent(capability: OperationCapability, request: ClosedExternalRequest): CommittedAttemptHandle {
@@ -1918,7 +2027,255 @@ export class SqliteInternalOperationGateway {
     });
   }
 
+  /** Recover only the durable identity of an already-started RSS projection.
+   * This grants no original POST capability and cannot resend its bytes. */
+  public projectionReconcileTarget(reconcileKey: string) {
+    const attempt = parseRow(this.database.prepare("SELECT * FROM internal_external_attempt WHERE reconcile_key=?").get(reconcileKey));
+    assert(!(attempt.state === "intent_committed" && attempt.external_calls === 0), "PROJECTION_RECONCILE_NOT_STARTED_NEEDS_ATTENTION");
+    const operation = selectOperation(this.database, String(attempt.operation_id));
+    assert(operation.owner_process === "projection_sender" && operation.operation_kind === "projection"
+      && operation.capability_class === "external_attempt" && operation.egress_class === "projection_private"
+      && attempt.external_calls === 1 && attempt.started_at !== null, "PROJECTION_RECONCILE_ORIGINAL_INVALID");
+    assert((operation.state === "reconcile_required" && attempt.state === "reconcile_required" && attempt.outcome === "unknown" && attempt.reconcile_consumed_at === null)
+      || (["succeeded", "terminal_failed"].includes(String(operation.state)) && attempt.state === "response_committed" && attempt.outcome === "succeeded" && attempt.reconcile_consumed_at !== null)
+      || (operation.state === "succeeded" && attempt.state === "response_committed" && attempt.outcome === "succeeded" && attempt.reconcile_consumed_at === null)
+      || (operation.state === "in_flight" && attempt.state === "started" && attempt.outcome === "pending" && !this.secrets.has(String(operation.operation_id))), "PROJECTION_RECONCILE_ORIGINAL_STATE_INVALID");
+    // A normal successful POST may lose only its local outbox acknowledgement.
+    // Its response and consumed reservation must retain their original identity.
+    if (operation.state === "succeeded" && attempt.reconcile_consumed_at === null) {
+      assert(attempt.response_hash === attempt.response_identity_sha256 && HASH.test(String(attempt.response_hash))
+        && operation.result_hash === domainHash("f1plus1-operation-result-v1", { attemptId: attempt.attempt_id, responseHash: attempt.response_hash })
+        && this.database.prepare("SELECT 1 FROM budget_reservation WHERE reservation_id=? AND operation_id=? AND state='consumed' AND consumed_at IS NOT NULL").get(String(operation.budget_reservation_id), String(operation.operation_id)),
+      "PROJECTION_RECONCILE_ORIGINAL_SUCCESS_INVALID");
+    }
+    const request = validateClosedExternalRequest(JSON.parse(String(attempt.canonical_request_json)) as ClosedExternalRequest);
+    assert(request.method === "POST" && request.providerResource === "127.0.0.1:3102/internal/projections"
+      && request.endpointClass === "projection_deliver" && request.routeId === "route-projection" && request.bodySha256 !== null
+      && request.reconcileKey === reconcileKey && request.externalIdempotencyKey === attempt.external_idempotency_key
+      && request.attemptIdentity.operationId === attempt.operation_id && request.attemptIdentity.attemptNumber === attempt.attempt_number
+      && request.attemptIdentity.attemptNonce === attempt.attempt_nonce
+      && canonicalExternalRequestHash(request) === attempt.canonical_request_hash && requestFingerprintHash(request) === attempt.request_fingerprint
+      && reconcileIdentityHash(request) === attempt.reconcile_identity_sha256
+      && operation.request_hash === attempt.canonical_request_hash && operation.request_fingerprint === attempt.request_fingerprint,
+    "PROJECTION_RECONCILE_ORIGINAL_IDENTITY_INVALID");
+    assert(operation.expected_schema_sha256 === this.schemaSha256 && operation.expected_release_sha256 === this.releaseSha256
+      && (operation.expected_manifest_sha256 === this.manifestSha256 || operation.expected_manifest_sha256 === this.verifiedRssAutomaticFullManifestSha256)
+      && request.expected.schemaSha256 === operation.expected_schema_sha256 && request.expected.releaseSha256 === operation.expected_release_sha256
+      && request.expected.manifestSha256 === operation.expected_manifest_sha256, "PROJECTION_RECONCILE_RELEASE_STALE");
+    const bindings = this.database.prepare("SELECT entity_id FROM operation_entity_binding WHERE operation_id=? AND entity_kind='projection_outbox'").all(String(operation.operation_id));
+    assert(bindings.length === 1, "PROJECTION_RECONCILE_OUTBOX_INVALID");
+    const deliveryId = String(bindings[0].entity_id);
+    const proof = this.readProjectionDeliveryProof(deliveryId, { schemaSha256: this.schemaSha256, releaseSha256: this.releaseSha256,
+      manifestSha256: this.manifestSha256, verifiedFullManifestSha256: this.verifiedRssAutomaticFullManifestSha256, verifiedFallbackManifestSha256: this.verifiedRssAutomaticFallbackManifestSha256, now: this.clock() });
+    assert(["reconcile_wait", "leased"].includes(String(proof.row.status)) && proof.row.reconcile_key === reconcileKey
+      && proof.row.idempotency_key === request.externalIdempotencyKey && proof.row.publication_id === operation.publication_id
+      && proof.row.public_id === operation.public_id && request.entityIdentity.publicationId === operation.publication_id
+      && request.entityIdentity.publicId === operation.public_id && request.entityIdentity.sourceId === operation.source_id
+      && request.entityIdentity.candidateId === operation.candidate_id, "PROJECTION_RECONCILE_OUTBOX_INVALID");
+    if (operation.state === "in_flight") assert(proof.row.status === "reconcile_wait" && proof.row.last_reason_code === "DELIVERY_LEASE_EXPIRED" && proof.row.lease_token === null && proof.row.lease_expires_at === null, "PROJECTION_RECONCILE_LIVE_ATTEMPT_FORBIDDEN");
+    const route = parseRow(this.database.prepare("SELECT * FROM route_registry WHERE route_id='route-projection'").get());
+    assert(route.state === "active" && route.endpoint_class === "projection_deliver" && route.egress_class === "projection_private"
+      && route.endpoint_identity_sha256 === request.expected.routeIdentitySha256, "PROJECTION_RECONCILE_ROUTE_STALE");
+    return { attempt, operation, request, deliveryId, generation: Number(proof.row.snapshot_generation), envelopeHash: String(proof.row.task_envelope_hash),
+      snapshotManifestHash: String(proof.row.snapshot_manifest_hash), receiptResource: `${request.providerResource}/receipts/${deliveryId}` };
+  }
+
+  private readProjectionDeliveryProof(deliveryId:string,identity:Parameters<typeof readCommittedDelivery>[2]) {
+    const x = this.database.prepare("SELECT 1 FROM sqlite_schema WHERE type='table' AND name='x_page_source_admission_v1'").get()
+      && this.database.prepare("SELECT 1 FROM projection_outbox o JOIN publication p ON p.publication_id=o.publication_id JOIN review_bundle b ON b.bundle_id=p.bundle_id JOIN pending_review_candidate c ON c.candidate_id=b.candidate_id JOIN source s ON s.source_id=c.source_id WHERE o.delivery_id=? AND s.source_kind='x_page'").get(deliveryId);
+    return x ? readXPageCommittedDelivery(this.database,deliveryId,identity) : readCommittedDelivery(this.database,deliveryId,identity);
+  }
+
+  /** An expired lease with no attempt identity cannot have entered the
+   * supported egress adapter. Cancel only orphaned, unstarted authorization
+   * requests and release their unused budget before the repository retries. */
+  public prepareUnstartedProjectionLeaseRetry(deliveryId: string): boolean {
+    const outbox = this.database.prepare("SELECT * FROM projection_outbox WHERE delivery_id=? AND status='leased' AND lease_expires_at<=?").get(deliveryId, nowIso(this.clock)) as Record<string, unknown> | undefined;
+    if (!outbox) return false;
+    if (this.database.prepare("SELECT 1 FROM internal_external_attempt WHERE external_idempotency_key=? OR reconcile_key=?").get(String(outbox.idempotency_key), String(outbox.reconcile_key))) return false;
+    if (this.database.prepare("SELECT 1 FROM sqlite_schema WHERE name='rss_automatic_fence_current_v1'").get() === undefined) return false;
+    const at = nowIso(this.clock);
+    this.tx("response", () => {
+      this.readProjectionDeliveryProof(deliveryId, { schemaSha256: this.schemaSha256, releaseSha256: this.releaseSha256,
+        manifestSha256: this.manifestSha256, verifiedFullManifestSha256: this.verifiedRssAutomaticFullManifestSha256,
+        verifiedFallbackManifestSha256: this.verifiedRssAutomaticFallbackManifestSha256, now: this.clock() });
+      assert(!this.database.prepare("SELECT 1 FROM internal_external_attempt WHERE external_idempotency_key=? OR reconcile_key=?").get(String(outbox.idempotency_key), String(outbox.reconcile_key)), "PROJECTION_RECONCILE_ATTEMPT_APPEARED");
+      const operations = this.database.prepare("SELECT op.* FROM internal_operation op JOIN operation_entity_binding binding ON binding.operation_id=op.operation_id AND binding.entity_kind='projection_outbox' AND binding.entity_id=? WHERE op.owner_process='projection_sender' AND op.operation_kind='projection' AND op.capability_class='external_attempt' AND op.state IN ('requested','authorized')").all(deliveryId) as Array<Record<string, unknown>>;
+      for (const operation of operations) {
+        assert(!this.secrets.has(String(operation.operation_id)) && Number(operation.attempt) === 0
+          && !this.database.prepare("SELECT 1 FROM internal_external_attempt WHERE operation_id=?").get(String(operation.operation_id)), "PROJECTION_RECONCILE_LIVE_ATTEMPT_FORBIDDEN");
+        if (operation.budget_reservation_id !== null) {
+          const reservation = this.database.prepare("SELECT state FROM budget_reservation WHERE reservation_id=?").get(String(operation.budget_reservation_id));
+          if (reservation !== undefined) assert(this.database.prepare("UPDATE budget_reservation SET state='released',version=version+1 WHERE reservation_id=? AND state='reserved'").run(String(operation.budget_reservation_id)).changes === 1, "PROJECTION_RECONCILE_BUDGET_CONFLICT");
+        }
+        assert(this.database.prepare("UPDATE internal_operation SET state='cancelled',version=version+1,reason_code='LEASE_EXPIRED_BEFORE_ATTEMPT',updated_at=? WHERE operation_id=? AND state IN ('requested','authorized')").run(at, String(operation.operation_id)).changes === 1, "PROJECTION_RECONCILE_CONFLICT");
+        operationAuditEvent(this.database, String(operation.operation_id), "operation_cancelled", "projection_sender", { deliveryId, reasonCode: "LEASE_EXPIRED_BEFORE_ATTEMPT", externalCalls: 0 }, at);
+      }
+    });
+    return true;
+  }
+
+  /** Append a local observation failure without rewriting the immutable
+   * delivery transition or pretending an unstarted POST had a remote outcome. */
+  public recordProjectionReconcileAttention(deliveryId: string, reasonCode: string): void {
+    assert(/^PROJECTION_RECONCILE_[A-Z0-9_]{1,96}$/.test(reasonCode) && reasonCode !== "PROJECTION_RECONCILE_BACKOFF", "PROJECTION_RECONCILE_ATTENTION_INVALID");
+    this.tx("reconcile", () => {
+      const row = this.database.prepare(`SELECT op.operation_id,op.state AS operation_state,attempt.attempt_id,attempt.state AS attempt_state,attempt.outcome
+        FROM projection_outbox outbox JOIN internal_external_attempt attempt ON attempt.reconcile_key=outbox.reconcile_key
+        JOIN internal_operation op ON op.operation_id=attempt.operation_id
+        JOIN operation_entity_binding binding ON binding.operation_id=op.operation_id AND binding.entity_kind='projection_outbox' AND binding.entity_id=outbox.delivery_id
+        WHERE outbox.delivery_id=? AND outbox.status='reconcile_wait' AND op.owner_process='projection_sender' AND op.operation_kind='projection'
+          AND op.capability_class='external_attempt' AND op.egress_class='projection_private'`).get(deliveryId) as Record<string, unknown> | undefined;
+      if (!row) return;
+      const previous = this.database.prepare("SELECT json_extract(event_json,'$.projectionAttention.reasonCode') AS reason FROM internal_operation_audit WHERE operation_id=? AND json_extract(event_json,'$.projectionAttention.deliveryId')=? ORDER BY audit_seq DESC LIMIT 1").get(String(row.operation_id), deliveryId);
+      if (previous?.reason === reasonCode) return;
+      operationAuditEvent(this.database, String(row.operation_id), "operation_blocked", "projection_sender", {
+        action: "reconcile_observation", projectionAttention: { deliveryId, reasonCode, originalAttemptId: row.attempt_id,
+          operationStatePreserved: row.operation_state, attemptStatePreserved: row.attempt_state, originalOutcomePreserved: row.outcome }
+      }, nowIso(this.clock));
+    });
+  }
+
+  /** A new writer may classify an orphaned started POST only after the
+   * existing lease recovery operation has durably moved its outbox to wait. */
+  public recoverProjectionReconcileOriginal(reconcileKey: string): void {
+    const target = this.projectionReconcileTarget(reconcileKey);
+    if (target.operation.state !== "in_flight") return;
+    const at = nowIso(this.clock);
+    this.tx("response", () => {
+      const current = this.projectionReconcileTarget(reconcileKey);
+      assert(current.operation.state === "in_flight" && current.attempt.state === "started", "PROJECTION_RECONCILE_CONFLICT");
+      assert(this.database.prepare("UPDATE internal_operation SET state='reconcile_required',version=version+1,reason_code='OWNER_EXIT_AFTER_POST_STARTED',updated_at=? WHERE operation_id=? AND state='in_flight'").run(at, String(current.operation.operation_id)).changes === 1, "PROJECTION_RECONCILE_CONFLICT");
+      assert(this.database.prepare("UPDATE budget_reservation SET state='reconcile_required',version=version+1 WHERE reservation_id=? AND state='reserved'").run(String(current.operation.budget_reservation_id)).changes === 1, "PROJECTION_RECONCILE_BUDGET_CONFLICT");
+      assert(this.database.prepare("UPDATE internal_external_attempt SET state='reconcile_required',outcome='unknown',reason_code='OWNER_EXIT_AFTER_POST_STARTED' WHERE attempt_id=? AND state='started' AND external_calls=1").run(String(current.attempt.attempt_id)).changes === 1, "PROJECTION_RECONCILE_CONFLICT");
+      operationAuditEvent(this.database, String(current.operation.operation_id), "operation_reconcile_required", "reconciler", { attemptId: current.attempt.attempt_id, deliveryId: current.deliveryId, reasonCode: "OWNER_EXIT_AFTER_POST_STARTED" }, at);
+    });
+  }
+
+  /** Exact receiver evidence is the only successful settlement. HTTP 404,
+   * malformed receipts and failed observations leave the original unknown. */
+  public validateProjectionReconcileReceipt(reconcileKey: string, responseBodyJson: string, response: ClosedExternalResponse) {
+    const target = this.projectionReconcileTarget(reconcileKey);
+    validateClosedExternalResponse(response);
+    let body: unknown;
+    try { body = JSON.parse(responseBodyJson); } catch { throw new Error("PROJECTION_RECONCILE_RECEIPT_MISMATCH"); }
+    const parsed = ProjectionReceiptSchema.safeParse(body);
+    assert(parsed.success, "PROJECTION_RECONCILE_RECEIPT_MISMATCH");
+    const receipt = parsed.data;
+    assert(response.providerResourceIdentity === target.request.providerResource && /^2\d\d$/.test(response.providerStatus)
+      && response.outcome === "succeeded" && response.reasonCode === null && response.responseBodySha256 === hash(responseBodyJson)
+      && receipt.deliveryId === target.deliveryId && receipt.snapshotGeneration === target.generation
+      && receipt.snapshotManifestHash === target.snapshotManifestHash, "PROJECTION_RECONCILE_RECEIPT_MISMATCH");
+    assert(Date.parse(receipt.receivedAt) <= this.clock().getTime() && Date.parse(receipt.activatedAt) <= this.clock().getTime(), "PROJECTION_RECONCILE_RECEIPT_TIME_INVALID");
+    return { target, receipt };
+  }
+
+  private projectionObservation(target: ReturnType<SqliteInternalOperationGateway["projectionReconcileTarget"]>, observationOperationId: string, response: ClosedExternalResponse, replay = false) {
+    const observation = selectOperation(this.database, observationOperationId);
+    const attempt = parseRow(this.database.prepare("SELECT * FROM internal_external_attempt WHERE operation_id=?").get(observationOperationId));
+    const request = validateClosedExternalRequest(JSON.parse(String(attempt.canonical_request_json)) as ClosedExternalRequest);
+    const observationResponse = { ...response, providerResourceIdentity: target.receiptResource };
+    assert(observation.owner_process === "reconciler" && observation.operation_kind === "reconcile" && observation.capability_class === "reconcile_readonly"
+      && observation.egress_class === "projection_private" && observation.state === "succeeded"
+      && observation.expected_schema_sha256 === this.schemaSha256 && observation.expected_release_sha256 === this.releaseSha256
+      && (observation.expected_manifest_sha256 === this.manifestSha256 || replay && [this.verifiedRssAutomaticFullManifestSha256, this.verifiedRssAutomaticFallbackManifestSha256].includes(String(observation.expected_manifest_sha256)))
+      && observation.publication_id === target.operation.publication_id && observation.public_id === target.operation.public_id
+      && attempt.state === "response_committed" && attempt.outcome === "succeeded" && attempt.external_calls === 1
+      && request.method === "GET" && request.bodySha256 === null && request.providerResource === target.receiptResource
+      && request.routeId === target.request.routeId && request.endpointClass === target.request.endpointClass
+      && request.externalIdempotencyKey === `observe-${target.attempt.attempt_id}-${observationOperationId}`
+      && request.reconcileKey === `readonly-${target.attempt.attempt_id}-${observationOperationId}`
+      && request.attemptIdentity.operationId === observationOperationId && request.attemptIdentity.attemptNonce === attempt.attempt_nonce
+      && request.attemptIdentity.attemptNumber === attempt.attempt_number && canonicalExternalRequestHash(request) === attempt.canonical_request_hash
+      && requestFingerprintHash(request) === attempt.request_fingerprint && reconcileIdentityHash(request) === attempt.reconcile_identity_sha256
+      && attempt.response_identity_sha256 === responseIdentityHash({ attemptId: String(attempt.attempt_id), canonicalRequestSha256: String(attempt.canonical_request_hash) }, observationResponse),
+    "PROJECTION_RECONCILE_OBSERVATION_INVALID");
+    assert(this.database.prepare("SELECT 1 FROM operation_entity_binding WHERE operation_id=? AND entity_kind='projection_outbox' AND entity_id=? AND expected_entity_version=? AND expected_entity_hash=?").get(
+      observationOperationId, target.deliveryId, target.generation, target.envelopeHash), "PROJECTION_RECONCILE_OBSERVATION_BINDING_INVALID");
+    return observation;
+  }
+
+  /** Finalize the original external outcome using a separately authorized GET.
+   * Expired local POST authority is recorded honestly without changing its
+   * successful remote outcome, old fences, timestamps or generation. */
+  public settleProjectionReconcile(input: Readonly<{ reconcileKey: string; observationOperationId: string; responseBodyJson: string; response: ClosedExternalResponse }>): void {
+    const at = nowIso(this.clock);
+    this.tx("reconcile", () => {
+      const { target } = this.validateProjectionReconcileReceipt(input.reconcileKey, input.responseBodyJson, input.response);
+      const committedSuccess = target.operation.state === "succeeded" && target.attempt.state === "response_committed" && target.attempt.reconcile_consumed_at === null;
+      assert(committedSuccess || target.attempt.state === "reconcile_required", "PROJECTION_RECONCILE_ALREADY_SETTLED");
+      this.projectionObservation(target, input.observationOperationId, input.response);
+      this.assertCurrentAutomaticFences(input.observationOperationId);
+      const invalidObservationFence = this.database.prepare("SELECT 1 FROM operation_fence_binding f JOIN generic_fence_receipt r ON r.fence_receipt_id=f.fence_receipt_id WHERE f.operation_id=? AND (f.postchecked_at IS NULL OR r.expires_at<=?) LIMIT 1").get(input.observationOperationId, at);
+      assert(!invalidObservationFence, "PROJECTION_RECONCILE_OBSERVATION_EXPIRED");
+      if (committedSuccess) {
+        assert(this.settledProjectionReconcileReceipt(input.reconcileKey) === null, "PROJECTION_RECONCILE_ALREADY_SETTLED");
+        const confirmation = { schemaVersion: "projection-success-confirmation-v1", originalAttemptId: target.attempt.attempt_id,
+          originalOperationId: target.operation.operation_id, originalResultHash: target.operation.result_hash,
+          originalResponseHash: target.attempt.response_identity_sha256, reconcileIdentitySha256: target.attempt.reconcile_identity_sha256,
+          observationOperationId: input.observationOperationId, deliveryId: target.deliveryId, taskEnvelopeHash: target.envelopeHash,
+          responseBodyJson: input.responseBodyJson, response: input.response };
+        // Append only the independently authorized observation. The original
+        // operation, attempt, reservation and original fence clocks stay intact.
+        operationAuditEvent(this.database, String(target.operation.operation_id), "operation_succeeded", "reconciler", {
+          resultHash: target.operation.result_hash, projectionSuccessConfirmationHash: domainHash("f1plus1-projection-success-confirmation-v1", confirmation), projectionSuccessConfirmation: confirmation
+        }, at);
+        return;
+      }
+      const expired = this.database.prepare("SELECT 1 FROM operation_fence_binding f JOIN generic_fence_receipt r ON r.fence_receipt_id=f.fence_receipt_id WHERE f.operation_id=? AND r.expires_at<=? LIMIT 1").get(String(target.operation.operation_id), at) !== undefined;
+      if (!expired) this.postcheckFencesAt(String(target.operation.operation_id), at);
+      const responseHash = responseIdentityHash({ attemptId: String(target.attempt.attempt_id), canonicalRequestSha256: String(target.attempt.canonical_request_hash) }, input.response);
+      const resolution = { schemaVersion: "projection-durable-reconcile-v1", originalAttemptId: target.attempt.attempt_id, originalOperationId: target.operation.operation_id,
+        reconcileIdentitySha256: target.attempt.reconcile_identity_sha256, observationOperationId: input.observationOperationId, deliveryId: target.deliveryId,
+        taskEnvelopeHash: target.envelopeHash, responseBodyJson: input.responseBodyJson, response: input.response, responseHash,
+        remoteOutcome: "succeeded", localCompletion: expired ? "LOCAL_COMPLETION_AUTHORITY_EXPIRED" : "succeeded" };
+      const resultHash = domainHash("f1plus1-projection-durable-reconcile-v1", resolution);
+      assert(this.database.prepare("UPDATE budget_reservation SET state='consumed',version=version+1,consumed_at=? WHERE reservation_id=? AND state='reconcile_required'").run(at, String(target.operation.budget_reservation_id)).changes === 1, "PROJECTION_RECONCILE_BUDGET_CONFLICT");
+      assert(this.database.prepare("UPDATE internal_external_attempt SET state='response_committed',outcome='succeeded',response_hash=?,response_identity_sha256=?,reconcile_consumed_at=?,reason_code=NULL WHERE attempt_id=? AND state='reconcile_required' AND reconcile_consumed_at IS NULL").run(responseHash, responseHash, at, String(target.attempt.attempt_id)).changes === 1, "PROJECTION_RECONCILE_CONFLICT");
+      assert(this.database.prepare("UPDATE internal_operation SET state=?,version=version+1,result_hash=?,reason_code=?,updated_at=? WHERE operation_id=? AND state='reconcile_required'").run(
+        expired ? "terminal_failed" : "succeeded", resultHash, expired ? "LOCAL_COMPLETION_AUTHORITY_EXPIRED" : null, at, String(target.operation.operation_id)).changes === 1, "PROJECTION_RECONCILE_CONFLICT");
+      operationAuditEvent(this.database, String(target.operation.operation_id), expired ? "operation_terminal_failed" : "operation_succeeded", "reconciler", { resultHash, projectionReconcile: resolution }, at);
+    });
+  }
+
+  /** A crash after settlement but before local outbox completion replays the
+   * immutable receipt; the original budget is never consumed twice. */
+  public settledProjectionReconcileReceipt(reconcileKey: string): Readonly<{ kind: "response"; status: number; body: unknown }> | null {
+    const target = this.projectionReconcileTarget(reconcileKey);
+    if (target.attempt.state === "reconcile_required") return null;
+    if (target.operation.state === "succeeded" && target.attempt.reconcile_consumed_at === null) {
+      const audit = this.database.prepare("SELECT event_json FROM internal_operation_audit WHERE operation_id=? AND json_extract(event_json,'$.projectionSuccessConfirmation.schemaVersion')='projection-success-confirmation-v1' ORDER BY audit_seq DESC LIMIT 1").get(String(target.operation.operation_id));
+      if (audit === undefined) return null;
+      const event = JSON.parse(String(audit.event_json)) as Record<string, unknown>;
+      const confirmation = event.projectionSuccessConfirmation as Record<string, unknown>;
+      const response = validateClosedExternalResponse(confirmation.response as ClosedExternalResponse);
+      assert(event.resultHash === target.operation.result_hash && event.projectionSuccessConfirmationHash === domainHash("f1plus1-projection-success-confirmation-v1", confirmation)
+        && confirmation.originalAttemptId === target.attempt.attempt_id && confirmation.originalOperationId === target.operation.operation_id
+        && confirmation.originalResultHash === target.operation.result_hash && confirmation.originalResponseHash === target.attempt.response_identity_sha256
+        && confirmation.reconcileIdentitySha256 === target.attempt.reconcile_identity_sha256 && confirmation.deliveryId === target.deliveryId
+        && confirmation.taskEnvelopeHash === target.envelopeHash, "PROJECTION_RECONCILE_DURABLE_RECEIPT_INVALID");
+      this.validateProjectionReconcileReceipt(reconcileKey, String(confirmation.responseBodyJson), response);
+      this.projectionObservation(target, String(confirmation.observationOperationId), response, true);
+      return { kind: "response", status: Number(response.providerStatus), body: JSON.parse(String(confirmation.responseBodyJson)) as unknown };
+    }
+    const audit = parseRow(this.database.prepare("SELECT event_json FROM internal_operation_audit WHERE operation_id=? AND json_extract(event_json,'$.projectionReconcile.schemaVersion')='projection-durable-reconcile-v1' ORDER BY audit_seq DESC LIMIT 1").get(String(target.operation.operation_id)));
+    const event = JSON.parse(String(audit.event_json)) as Record<string, unknown>;
+    const resolution = event.projectionReconcile as Record<string, unknown>;
+    const response = validateClosedExternalResponse(resolution.response as ClosedExternalResponse);
+    assert(event.resultHash === target.operation.result_hash && event.resultHash === domainHash("f1plus1-projection-durable-reconcile-v1", resolution)
+      && resolution.originalAttemptId === target.attempt.attempt_id && resolution.originalOperationId === target.operation.operation_id
+      && resolution.reconcileIdentitySha256 === target.attempt.reconcile_identity_sha256 && resolution.deliveryId === target.deliveryId
+      && resolution.taskEnvelopeHash === target.envelopeHash && resolution.remoteOutcome === "succeeded"
+      && target.attempt.response_identity_sha256 === resolution.responseHash
+      && resolution.responseHash === responseIdentityHash({ attemptId: String(target.attempt.attempt_id), canonicalRequestSha256: String(target.attempt.canonical_request_hash) }, response)
+      && ((target.operation.state === "succeeded" && resolution.localCompletion === "succeeded") || (target.operation.state === "terminal_failed" && target.operation.reason_code === "LOCAL_COMPLETION_AUTHORITY_EXPIRED" && resolution.localCompletion === target.operation.reason_code)), "PROJECTION_RECONCILE_DURABLE_RECEIPT_INVALID");
+    this.validateProjectionReconcileReceipt(reconcileKey, String(resolution.responseBodyJson), response);
+    this.projectionObservation(target, String(resolution.observationOperationId), response, true);
+    return { kind: "response", status: Number(response.providerStatus), body: JSON.parse(String(resolution.responseBodyJson)) as unknown };
+  }
+
   private postcheckFencesAt(operationId: string, at: string): void {
+    this.assertCurrentAutomaticFences(operationId);
     const rows = this.database.prepare("SELECT fence_receipt_id FROM operation_fence_binding WHERE operation_id=? AND postchecked_at IS NULL").all(operationId) as Array<Record<string, unknown>>;
     for (const row of rows) this.database.prepare("UPDATE operation_fence_binding SET postchecked_at=?,version=version+1 WHERE operation_id=? AND fence_receipt_id=?").run(...sqlValues([at, operationId, row.fence_receipt_id]));
   }

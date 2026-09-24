@@ -46,7 +46,7 @@ type FreshRecord = {
   digest: string;
   sessionDigest: string;
   operationId: string;
-  action: "publish" | "SOURCE_RETIRE" | "AUTHORITY_ACTIVATE" | "BILINGUAL_SAFETY_REVIEW" | "BILINGUAL_CORRECT" | "BILINGUAL_WITHDRAW";
+  action: "publish" | "SOURCE_RETIRE" | "AUTHORITY_ACTIVATE" | "BILINGUAL_SAFETY_REVIEW" | "BILINGUAL_CORRECT" | "BILINGUAL_WITHDRAW" | "MODEL_CREDENTIAL";
   resourceHash: string;
   verifiedAt: number;
   expiresAt: number;
@@ -74,7 +74,7 @@ export type ReviewMutationBinding = Readonly<{
   path: string;
   operationId: string;
   bodyHash: string;
-  freshAction?: "publish" | "SOURCE_RETIRE" | "AUTHORITY_ACTIVATE" | "BILINGUAL_SAFETY_REVIEW" | "BILINGUAL_CORRECT" | "BILINGUAL_WITHDRAW";
+  freshAction?: "publish" | "SOURCE_RETIRE" | "AUTHORITY_ACTIVATE" | "BILINGUAL_SAFETY_REVIEW" | "BILINGUAL_CORRECT" | "BILINGUAL_WITHDRAW" | "MODEL_CREDENTIAL";
   resourceHash?: string;
 }>;
 
@@ -172,6 +172,10 @@ export class ReviewAdminSecurity {
     bytes.fill(0);
     if (!TOKEN_PATTERN.test(token)) throw new ReviewRealError("ADMIN_INTERNAL_FAILURE", 500);
     return token;
+  }
+
+  modelCredentialRevision(identity: string): string {
+    return createHmac("sha256", this.hashKey).update(`model-credential-revision\n${identity}`, "utf8").digest("hex");
   }
 
   private digest(kind: "session" | "csrf" | "fresh", token: string): string {
@@ -307,7 +311,7 @@ export class ReviewAdminSecurity {
 
   acceptVerifiedFreshReauth(
     context: RawAdminContext,
-    binding: Readonly<{ operationId: string; action: "publish" | "SOURCE_RETIRE" | "AUTHORITY_ACTIVATE" | "BILINGUAL_SAFETY_REVIEW" | "BILINGUAL_CORRECT" | "BILINGUAL_WITHDRAW"; resourceHash: string }>
+    binding: Readonly<{ operationId: string; action: "publish" | "SOURCE_RETIRE" | "AUTHORITY_ACTIVATE" | "BILINGUAL_SAFETY_REVIEW" | "BILINGUAL_CORRECT" | "BILINGUAL_WITHDRAW" | "MODEL_CREDENTIAL"; resourceHash: string }>
   ): Readonly<{ setCookie: string; cookieHeader: string; freshReceipt: string }> {
     this.assertOrigin(context);
     const oldSession = this.session(context);

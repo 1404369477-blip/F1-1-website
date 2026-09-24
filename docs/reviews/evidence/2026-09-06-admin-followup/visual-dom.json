@@ -1,0 +1,200 @@
+[
+  {
+    "descriptions": [
+      {
+        "column": "2",
+        "text": "有已启用的新闻信源",
+        "width": 240
+      },
+      {
+        "column": "2",
+        "text": "控制门已开，采集运行待确认",
+        "width": 240
+      },
+      {
+        "column": "2",
+        "text": "有待审稿，整理运行待确认",
+        "width": 240
+      },
+      {
+        "column": "2",
+        "text": "有 9 条待审",
+        "width": 240
+      },
+      {
+        "column": "2",
+        "text": "仍在播上次那一版。最新稿 9 月 6 日",
+        "width": 240
+      }
+    ],
+    "height": 1000,
+    "scrollWidth": 390,
+    "theme": "light",
+    "width": 390
+  },
+  {
+    "descriptions": [
+      {
+        "column": "2",
+        "text": "有已启用的新闻信源",
+        "width": 240
+      },
+      {
+        "column": "2",
+        "text": "控制门已开，采集运行待确认",
+        "width": 240
+      },
+      {
+        "column": "2",
+        "text": "有待审稿，整理运行待确认",
+        "width": 240
+      },
+      {
+        "column": "2",
+        "text": "有 9 条待审",
+        "width": 240
+      },
+      {
+        "column": "2",
+        "text": "仍在播上次那一版。最新稿 9 月 6 日",
+        "width": 240
+      }
+    ],
+    "height": 1000,
+    "scrollWidth": 390,
+    "theme": "dark",
+    "width": 390
+  },
+  {
+    "descriptions": [
+      {
+        "column": "auto",
+        "text": "有已启用的新闻信源",
+        "width": 170
+      },
+      {
+        "column": "auto",
+        "text": "控制门已开，采集运行待确认",
+        "width": 170
+      },
+      {
+        "column": "auto",
+        "text": "有待审稿，整理运行待确认",
+        "width": 170
+      },
+      {
+        "column": "auto",
+        "text": "有 9 条待审",
+        "width": 170
+      },
+      {
+        "column": "auto",
+        "text": "仍在播上次那一版。最新稿 9 月 6 日",
+        "width": 170
+      }
+    ],
+    "height": 1000,
+    "scrollWidth": 1024,
+    "theme": "light",
+    "width": 1024
+  },
+  {
+    "descriptions": [
+      {
+        "column": "auto",
+        "text": "有已启用的新闻信源",
+        "width": 170
+      },
+      {
+        "column": "auto",
+        "text": "控制门已开，采集运行待确认",
+        "width": 170
+      },
+      {
+        "column": "auto",
+        "text": "有待审稿，整理运行待确认",
+        "width": 170
+      },
+      {
+        "column": "auto",
+        "text": "有 9 条待审",
+        "width": 170
+      },
+      {
+        "column": "auto",
+        "text": "仍在播上次那一版。最新稿 9 月 6 日",
+        "width": 170
+      }
+    ],
+    "height": 1000,
+    "scrollWidth": 1024,
+    "theme": "dark",
+    "width": 1024
+  },
+  {
+    "descriptions": [
+      {
+        "column": "auto",
+        "text": "有已启用的新闻信源",
+        "width": 189.1953125
+      },
+      {
+        "column": "auto",
+        "text": "控制门已开，采集运行待确认",
+        "width": 189.203125
+      },
+      {
+        "column": "auto",
+        "text": "有待审稿，整理运行待确认",
+        "width": 189.1953125
+      },
+      {
+        "column": "auto",
+        "text": "有 9 条待审",
+        "width": 189.203125
+      },
+      {
+        "column": "auto",
+        "text": "仍在播上次那一版。最新稿 9 月 6 日",
+        "width": 189.1953125
+      }
+    ],
+    "height": 1000,
+    "scrollWidth": 1440,
+    "theme": "light",
+    "width": 1440
+  },
+  {
+    "descriptions": [
+      {
+        "column": "auto",
+        "text": "有已启用的新闻信源",
+        "width": 189.1953125
+      },
+      {
+        "column": "auto",
+        "text": "控制门已开，采集运行待确认",
+        "width": 189.203125
+      },
+      {
+        "column": "auto",
+        "text": "有待审稿，整理运行待确认",
+        "width": 189.1953125
+      },
+      {
+        "column": "auto",
+        "text": "有 9 条待审",
+        "width": 189.203125
+      },
+      {
+        "column": "auto",
+        "text": "仍在播上次那一版。最新稿 9 月 6 日",
+        "width": 189.1953125
+      }
+    ],
+    "height": 1000,
+    "scrollWidth": 1440,
+    "theme": "dark",
+    "width": 1440
+  }
+]

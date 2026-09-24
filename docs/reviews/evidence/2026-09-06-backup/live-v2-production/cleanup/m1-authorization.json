@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "f1-live-v2-cleanup-authorization-v1",
+  "machine": "m1",
+  "manifestSha256": "ad1515b837ef0d63ff015654568d5a51214761534374ab22ec6cc2fbbf6ba17c",
+  "approvedCandidatePaths": [
+    "[M1-HOME]/F1-1-website/backups/live-v2-stage-20260906-02/restore/db/snapshot.sqlite",
+    "[M1-HOME]/F1-1-website/backups/live-v2-stage-20260906-02/restore-02/db/snapshot.sqlite",
+    "[M1-HOME]/F1-1-website/backups/live-v2-stage-20260906-02/restore-03/db/snapshot.sqlite",
+    "[M1-HOME]/F1-1-website/backups/live-v2-stage-20260906-02/restore-04/db/snapshot.sqlite",
+    "[M1-HOME]/F1-1-website/backups/live-v2-stage-20260906-02/restore-05/db/snapshot.sqlite",
+    "[M1-HOME]/F1-1-website/backups/live-v2-stage-20260906-02/frozen-01/objects/db-projection-snapshot.60364844270a141b1911daafa3943ff76df7891bd52211027202577c549c374e.e2f2c6fc36e07951",
+    "[M1-HOME]/F1-1-website/backups/live-v2-stage-20260906-02/clone-01/f1plus1-rss-real-private.sqlite",
+    "[M1-HOME]/F1-1-website/backups/live-v2-stage-20260906-02/snap/objects/db-projection-snapshot.60364844270a141b1911daafa3943ff76df7891bd52211027202577c549c374e.e2f2c6fc36e07951",
+    "[M1-HOME]/F1-1-website/backups/live-v2-stage-20260906-02/preflight-02/restore/db/snapshot.sqlite",
+    "[M1-HOME]/F1-1-website/backups/live-v2-stage-20260906-02/preflight-02/clone/f1plus1-rss-real-private.sqlite",
+    "[M1-HOME]/F1-1-website/backups/live-v2-stage-20260906-02/preflight-02/clone/f1plus1-rss-real-private.sqlite-shm",
+    "[M1-HOME]/F1-1-website/backups/live-v2-stage-20260906-02/preflight-02/clone/f1plus1-rss-real-private.sqlite-wal",
+    "[M1-HOME]/F1-1-website/backups/live-v2-stage-20260906-02/preflight-02/snap/objects/db-projection-snapshot.726300d58f464af2c690ff1a0853a2ce4da01dc6c8d9850a5b58c7d349435530.e2f2c6fc36e07951"
+  ],
+  "threeSuccessfulProductionCycles": [
+    {
+      "packageId": "1788713207622_3b384e93441136c3",
+      "evidenceSha256": "b23eb5dc322f1d70b4c5d9c78e8f7a0e1a7318018e4764ded9909b0449c77c09"
+    },
+    {
+      "packageId": "1788713708054_881779d346ba022e",
+      "evidenceSha256": "2cedc26f33ab5f81be109d84d2a5ac2a70c023ee7dc8019a9c97ae2390d7575c"
+    },
+    {
+      "packageId": "1788714207435_38f4e575edff42cf",
+      "evidenceSha256": "1f4db96ef23e6b7fe02723cc62af532419fbc6e35d108c7057f81591e88ff1fe"
+    }
+  ],
+  "coordinatorVerifiedThreeCycleSuccess": true,
+  "evidencePreservationConfirmed": true,
+  "approvedAt": "2026-09-06T17:09:33.579444+00:00",
+  "scope": "User-authorized exact cleanup of obsolete artifacts created during this task; JSON/projection/logs/keys/directories retained"
+}

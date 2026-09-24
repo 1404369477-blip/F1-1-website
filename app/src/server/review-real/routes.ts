@@ -412,8 +412,12 @@ export class ReviewAdminRoutes {
 
   handle(context: RawAdminContext, body?: unknown): ReviewAdminRouteResult {
     try {
-      if (context.method === "GET" && context.path === "/api/admin/sources") {
+      if (context.method === "GET" && (context.path === "/api/admin/x-sources" || context.path === "/api/admin/sources")) {
         return this.xSourceList(context);
+      }
+      const xSourceId = routeSegment(context.path, /^\/api\/admin\/x-sources\/([^/]+)$/);
+      if (context.method === "GET" && xSourceId !== null) {
+        return this.xSourceDetail(context, xSourceId);
       }
       const sourceId = routeSegment(context.path, /^\/api\/admin\/sources\/([^/]+)$/);
       if (context.method === "GET" && sourceId !== null) {

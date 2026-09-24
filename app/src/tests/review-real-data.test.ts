@@ -179,17 +179,20 @@ describe("DATA-REAL-REVIEW-MAP-01", () => {
         "../../migrations/rss-real/0001_rss_real.sql",
         "c03c5c0bd5887e9e74453c91602bae76f6a7c74db513a2d9ff808ad498807ef3",
       ],
-      // Exact current successor byte pins. The transport pin includes the
-      // Slice1 durable-attempt wrapper; the other three pins are the accepted
-      // R6/Slice1 multi-source, receipt, runtime-closure, and real-data test
-      // successor. Equality remains strict so any later drift fails closed.
+      // Current implementation pins for repository/parser/types/deployment
+      // match the accepted RSS source-epoch v5 source manifest and M1 bytes:
+      // scratch/rss-source-epochs-20260907/v5/source-final-v5-manifest.json.
+      // They include collectItem atomicity/live-source fencing, the shared
+      // payload hash and BST parser, and the schema10 plist installer.
+      // Transport keeps its Slice1 durable-attempt wrapper pin; all other
+      // historical pins remain unchanged. Later drift still fails closed.
       [
         "../server/rss/repository.ts",
-        "26e9093b9a54a13329385db29a51d0771ef3464cafceb41ee90ab3e24631ad49",
+        "9e5fb7e1c018aa694b33d2538b1e3f40f51e6c501f5d28abd8ee49b5b5d9256a",
       ],
       [
         "../server/rss/parser.ts",
-        "971e628b42d5d18f423bdfc78dec6f396d3412b3f8b74e588f3dc3ef4a219b08",
+        "129e1d96abe565291c4cbdc36218d9193693c701b4ede4aef9faf24f1fbbf74f",
       ],
       [
         "../server/rss/transport.ts",
@@ -197,11 +200,11 @@ describe("DATA-REAL-REVIEW-MAP-01", () => {
       ],
       [
         "../server/rss/types.ts",
-        "97cdc79bf899ae4828e94936ff0741a27fa21200e3762e497571df11c2c53cce",
+        "4392929ba3a88f40cc77ee6691111ef50a60ebbda308b57d0fcbf39c9d8b69ae",
       ],
       [
         "../server/rss/deployment.ts",
-        "2b09bedf9bc087e79a33e0b48fc25360e432887afd24bdad4de8bd9540f89539",
+        "20094dd1804f1005862f107181a772efbfdcf22cf364d1e5d65e44d16d2cb8ed",
       ],
       [
         "../server/rss/release-manifest.ts",

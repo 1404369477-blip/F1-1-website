@@ -269,7 +269,8 @@ async function main(): Promise<void> {
         releaseGate: config.releaseGate
       });
       database = opened.database;
-      const repository = new RssRepository(database);
+      if (opened.mutationPort === null) throw new RssError("SQLITE_FAILURE");
+      const repository = new RssRepository(database, opened.mutationPort);
       const sources = repository.readEnabledSources();
       const targets = sources.length > 0 ? sources : [repository.readSource()];
       const receipts: RssRunReceipt[] = [];

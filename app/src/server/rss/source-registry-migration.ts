@@ -3,13 +3,19 @@ import { readFileSync } from "node:fs";
 import type { DatabaseSync } from "node:sqlite";
 
 import { X_MANUAL_SOURCE_REGISTRY_SET_SHA256 } from "../tweet-inbox/repository.ts";
+import { assertXPageAdmissionSchema } from "../x-page/admission-migration.ts";
+import { X_PAGE_ADMISSION_SCHEMA_SHA256 } from "../x-page/admission-schema-identity.ts";
 
 export const SOURCE_REGISTRY_SOURCE_0009_RAW_SHA256 = "d3a8e3de9ade121766af72e648b1cc5986bfd93556c091563ae66e58b0eedebd";
 export const SOURCE_REGISTRY_SOURCE_0009_CANONICAL_SHA256 = "1b6a3814c0ac6ec65cb46eaec5b39a415848f2acc5226d69ac940e995796b273";
+import { isRssAutomaticSchemaSha256 } from "../rss-automatic/source-epoch-schema-identity.ts";
+
 export const SOURCE_REGISTRY_SOURCE_SCHEMA9_SHA256 = "d2460592cb4c6aaec099155ff483224e33706dc6efaafb7a17dc1b22e86121f4";
 export const SOURCE_REGISTRY_MIGRATION_SHA256 = "83c1aa4e350bc32fee594ffa4bec9caa85201ae120c29e21834c32463e36bb7a";
 export const SOURCE_REGISTRY_MIGRATION_CANONICAL_SHA256 = "0421148d7cbe5fb39218f01495d2bd514e61764bc1d20c09051866ac7058cfe3";
 export const SOURCE_REGISTRY_SCHEMA10_SHA256 = "e802727799654dd3e02f1b8abe6ce071dc7c96a09d9a6110c52be080d13dda4f";
+export const SOURCE_REGISTRY_SCHEMA10_0011_SHA256 = "359aff3628b85b2f9d86ede9474c992f97612a82fb3d3f097c9ccec74364defa";
+export const SOURCE_REGISTRY_SCHEMA10_0012_SHA256 = "36e6f60ba0cdd3a5d2254884a1e0a97dcf5cdff9ae473f0989d99f2505977849";
 
 export const SOURCE_REGISTRY_TABLES = Object.freeze([
   "quick_launch_authority_v2",
@@ -334,5 +340,23 @@ export function applySourceRegistryMigration(
 }
 
 export function assertSourceRegistrySchema(database: DatabaseSync): void {
-  assertSchema10(database);
+  // Only the pinned production successors are admitted at user_version 10.
+  // The separate X/schema-11 experiment remains outside this runtime opener.
+  const fingerprint = sourceRegistrySchemaFingerprint(database);
+  if (fingerprint === X_PAGE_ADMISSION_SCHEMA_SHA256) {
+    assertSchema10(database, fingerprint);
+    assertXPageAdmissionSchema(database);
+    return;
+  }
+  if (isRssAutomaticSchemaSha256(fingerprint)) {
+    assertSchema10(database, fingerprint);
+    return;
+  }
+  const hasSky = database.prepare("SELECT 1 FROM sqlite_schema WHERE type='table' AND name='source_registry_rss_skysports_identity'").get() !== undefined;
+  const hasV2 = database.prepare("SELECT 1 FROM sqlite_schema WHERE type='table' AND name='source_registry_rss_config_v2'").get() !== undefined;
+  if (hasSky) {
+    assertSchema10(database, SOURCE_REGISTRY_SCHEMA10_0012_SHA256);
+    return;
+  }
+  assertSchema10(database, hasV2 ? SOURCE_REGISTRY_SCHEMA10_0011_SHA256 : SOURCE_REGISTRY_SCHEMA10_SHA256);
 }

@@ -13,6 +13,7 @@ import { DatabaseSync } from "node:sqlite";
 import { afterEach, describe, expect, test } from "vitest";
 
 import {
+  ADMIN_RELEASE_RUNTIME_FILE_COUNT,
   ADMIN_RELEASE_RUNTIME_FILES,
   ADMIN_RELEASE_RUNTIME_PATH_SET_SHA256
 } from "../server/admin-service/release-manifest.ts";
@@ -34,7 +35,7 @@ import {
 } from "../server/internal-operation/release.ts";
 import { canonicalJsonV1, SqliteInternalOperationGateway, type OwnerSupervisorHandoff } from "../server/internal-operation/gateway.ts";
 import { applyInternalOperationMigration } from "../server/review-real/migration.ts";
-import {
+import { PUBLIC_RELEASE_RUNTIME_FILE_COUNT,
   PUBLIC_RELEASE_RUNTIME_FILES,
   PUBLIC_RELEASE_RUNTIME_PATH_SET_SHA256
 } from "../server/public/release-manifest.ts";
@@ -98,9 +99,9 @@ function releasePair(): Readonly<{
     schemaSha256: SOURCE_REGISTRY_SCHEMA10_SHA256,
     migration0009RawSha256: SOURCE_REGISTRY_SOURCE_0009_RAW_SHA256,
     migration0010RawSha256: SOURCE_REGISTRY_MIGRATION_SHA256,
-    adminRuntimeFileCount: 153 as const,
+    adminRuntimeFileCount: ADMIN_RELEASE_RUNTIME_FILE_COUNT,
     adminRuntimePathSetSha256: ADMIN_RELEASE_RUNTIME_PATH_SET_SHA256,
-    publicRuntimeFileCount: 89 as const,
+    publicRuntimeFileCount: PUBLIC_RELEASE_RUNTIME_FILE_COUNT,
     publicRuntimePathSetSha256: PUBLIC_RELEASE_RUNTIME_PATH_SET_SHA256,
     packageLockSha256: files.find((file) => file.path === "package-lock.json")!.sha256,
     packageRootSha256: "c".repeat(64),
@@ -140,8 +141,8 @@ describe("schema10 deployment release pair", () => {
     expect(pair.full.sourcePreimageSha256).toBe(pair.fallback.sourcePreimageSha256);
     expect(pair.full.pathRootSha256).toBe(pair.fallback.pathRootSha256);
     expect(pair.full.packageRootSha256).toBe(pair.fallback.packageRootSha256);
-    expect(pair.fallback.adminRuntimeFileCount).toBe(153);
-    expect(pair.fallback.publicRuntimeFileCount).toBe(89);
+    expect(pair.fallback.adminRuntimeFileCount).toBe(ADMIN_RELEASE_RUNTIME_FILE_COUNT);
+    expect(pair.fallback.publicRuntimeFileCount).toBe(PUBLIC_RELEASE_RUNTIME_FILE_COUNT);
     expect(pair.fallback.capabilities.manualSafetyReviewPublishWithdraw).toBe(true);
     expect(pair.fallback.capabilities.manualOutboxCreate).toBe(true);
     expect(pair.fallback.capabilities.publicLkg).toBe(true);

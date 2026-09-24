@@ -1,4 +1,4 @@
-import { chmodSync, mkdtempSync, readFileSync, realpathSync } from "node:fs";
+import { chmodSync, lstatSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { DatabaseSync } from "node:sqlite";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -25,6 +25,7 @@ import { SqliteGatewayMutationPort } from "../server/internal-operation/mutation
 import { applyXManualInboxMigration } from "../server/tweet-inbox/repository.ts";
 import type { RawAdminContext } from "../server/source-management/security.ts";
 import { createHash } from "node:crypto";
+import { prepareModelCredentialMutation } from "../server/admin-service/model-credentials.ts";
 
 const APP_ROOT = new URL("../../", import.meta.url).pathname.replace(/\/$/u, "");
 
@@ -187,6 +188,80 @@ describe("schema9 bilingual Admin interim integration", () => {
     database.close();
   });
 
+  test("settings POST rejects unsupported models before writing and still saves supported DeepSeek", () => {
+    const database = database9();
+    const privateDir = mkdtempSync(join(realpathSync(tmpdir()), "f1-settings-route-"));
+    const configPath = join(privateDir, "refinement-model.json");
+    const initial = `${JSON.stringify({ schemaVersion: "refinement-model-v1", modelId: "deepseek-chat", updatedAt: "2026-09-01T01:02:03.000Z" })}\n`;
+    const deepseekKey = `sk-${"D".repeat(24)}`;
+    const glmKey = `${"G".repeat(20)}.${"g".repeat(12)}`;
+    writeFileSync(configPath, initial, { mode: 0o600 });
+    writeFileSync(join(privateDir, "deepseek-api-key"), deepseekKey, { mode: 0o600 });
+    writeFileSync(join(privateDir, "glm-api-key"), glmKey, { mode: 0o600 });
+    const security = new ReviewAdminSecurity({
+      canonicalOrigin: "https://f1-admin.example.ts.net",
+      sessionHashKey: Buffer.alloc(32, 7),
+      now: () => Date.parse("2026-08-24T12:05:00.000Z"),
+      readRecoveryFence: () => ({ clockTrusted: true, writerReady: true, lastSuccessfulRecoveryPointAt: Date.parse("2026-08-24T12:04:00.000Z") })
+    });
+    const session = security.acceptVerifiedSession({ operatorRef: "operator", deviceRef: "device", tailnetUserRef: "tailnet-user" });
+    const routes = new BilingualAdminRoutes(new BilingualAdminRepository(database), security, undefined, undefined, privateDir);
+    const path = "/api/admin/settings/refinement-model";
+    let seq = 0;
+    const post = (modelId: "deepseek-chat" | "glm-5.3-flash") => {
+      const unsigned = { schemaVersion: "admin-refinement-model-v1", modelId, idempotencyKey: `settings-route-${++seq}`, clientRequestId: `settings-client-${seq}` };
+      const mutation = { ...unsigned, requestHash: sha256(canonicalJson({ method: "POST", canonicalPath: path, body: unsigned })) };
+      const csrfResult = routes.tryHandle(context({ path: "/api/admin/csrf", cookie: session.cookieHeader }), { schemaVersion: ADMIN_BILINGUAL_SCHEMA, mutation });
+      const csrf = (csrfResult?.body as { csrfToken: string }).csrfToken;
+      return routes.tryHandle(context({ path, cookie: session.cookieHeader, csrf, idempotencyKey: unsigned.idempotencyKey }), mutation);
+    };
+    try {
+      const before = lstatSync(configPath);
+      const denied = post("glm-5.3-flash");
+      expect(denied).toEqual({ status: 409, body: { schemaVersion: "admin-refinement-model-v1", status: "failed", reasonCode: "REFINEMENT_MODEL_UNSUPPORTED", modelId: "glm-5.3-flash" } });
+      expect(readFileSync(configPath, "utf8")).toBe(initial);
+      expect(lstatSync(configPath).mtimeMs).toBe(before.mtimeMs);
+      expect(lstatSync(configPath).mode).toBe(before.mode);
+      writeFileSync(join(privateDir, "deepseek-api-key"), "", { mode: 0o600 });
+      expect(post("deepseek-chat")).toMatchObject({ status: 409, body: { reasonCode: "REFINEMENT_KEY_MISSING" } });
+      expect(readFileSync(configPath, "utf8")).toBe(initial);
+      writeFileSync(join(privateDir, "deepseek-api-key"), deepseekKey, { mode: 0o600 });
+      const saved = post("deepseek-chat");
+      expect(saved).toMatchObject({ status: 200, body: { status: "succeeded", current: { modelId: "deepseek-chat", keyPresent: true, persistSupported: true } } });
+      expect(JSON.parse(readFileSync(configPath, "utf8"))).toMatchObject({ schemaVersion: "refinement-model-v1", modelId: "deepseek-chat" });
+      expect(JSON.stringify([denied, saved])).not.toContain(deepseekKey);
+      expect(JSON.stringify([denied, saved])).not.toContain(glmKey);
+    } finally {
+      database.close();
+      rmSync(privateDir, { recursive: true, force: true });
+    }
+  });
+
+  test("connects credentials GET, CSRF, fresh binding and asynchronous POST in the actual Admin route", async () => {
+    const database = database9();
+    const privateDir = mkdtempSync(join(realpathSync(tmpdir()), "f1-credentials-route-"));
+    const security = new ReviewAdminSecurity({ canonicalOrigin: "https://f1-admin.example.ts.net", sessionHashKey: Buffer.alloc(32, 7),
+      now: () => Date.parse("2026-09-07T00:00:00.000Z"), readRecoveryFence: () => ({ clockTrusted: true, writerReady: true, lastSuccessfulRecoveryPointAt: Date.parse("2026-09-06T23:59:00.000Z") }) });
+    const session = security.acceptVerifiedSession({ operatorRef: "operator", deviceRef: "device", tailnetUserRef: "tailnet-user" });
+    const routes = new BilingualAdminRoutes(new BilingualAdminRepository(database), security, undefined, undefined, privateDir, async () => ({ status: "verified", reasonCode: null }), () => true);
+    const path = "/api/admin/settings/model-credentials";
+    const key = `sk-${"I".repeat(24)}`;
+    const unsigned = { schemaVersion: "admin-model-credential-mutation-v1", action: "replaceKey", modelId: "deepseek-chat", apiKey: key, expectedRevision: null, idempotencyKey: "credential-route-1", clientRequestId: "credential-route-client-1" };
+    const mutation = { ...unsigned, requestHash: sha256(canonicalJson({ method: "POST", canonicalPath: path, body: unsigned })) };
+    try {
+      const read = routes.tryHandle({ ...context({ path, cookie: session.cookieHeader }), method: "GET" });
+      expect(read).toMatchObject({ status: 200, body: { schemaVersion: "admin-model-credentials-v1", providers: [{ modelId: "deepseek-chat", keyConfigured: false }, { modelId: "glm-5.3-flash" }] } });
+      const prepared = prepareModelCredentialMutation(mutation);
+      const fresh = security.acceptVerifiedFreshReauth(context({ path: "/api/admin/auth/fresh/verify", cookie: session.cookieHeader }), { operationId: prepared.binding.operationId, action: "MODEL_CREDENTIAL", resourceHash: prepared.binding.resourceHash });
+      const csrf = routes.tryHandle(context({ path: "/api/admin/csrf", cookie: fresh.cookieHeader }), { schemaVersion: ADMIN_BILINGUAL_SCHEMA, mutation });
+      expect(csrf?.status).toBe(200);
+      const saved = await routes.tryHandleAsync(context({ path, cookie: fresh.cookieHeader, fresh: fresh.freshReceipt, csrf: (csrf?.body as { csrfToken: string }).csrfToken, idempotencyKey: mutation.idempotencyKey }), mutation);
+      expect(saved).toMatchObject({ status: 200, body: { status: "succeeded", credential: { keyConfigured: true, validation: { status: "verified" } } } });
+      expect(readFileSync(join(privateDir, "deepseek-api-key"), "utf8").trim()).toBe(key);
+      expect(JSON.stringify([read, saved])).not.toContain(key);
+    } finally { database.close(); rmSync(privateDir, { recursive: true, force: true }); }
+  });
+
   test("requires a fresh passkey receipt for correct and binds it to the publication revision", () => {
     const database = database9();
     const security = new ReviewAdminSecurity({
@@ -290,9 +365,29 @@ describe("schema10 Admin authority integration", () => {
       unavailableReasonCode: "BILINGUAL_MANUAL_SUBSTRATE_UNAVAILABLE"
     });
     expect(repository.sources()).toMatchObject({ schemaVersion: "admin-source-registry-v1", rssActive: 4, xManualDisabled: 59, authority: { enabled: false } });
+    const lastPublishedAt = (() => {
+      const row = database.prepare(
+        "SELECT MAX(published_at) AS last_published_at FROM publication WHERE publication_status = 'published'"
+      ).get() as { last_published_at: string | null };
+      return typeof row.last_published_at === "string" ? row.last_published_at : null;
+    })();
+    const pendingReviewCount = Number((database.prepare(
+      "SELECT count(*) AS count FROM pending_review_candidate WHERE review_status = 'pending_review'"
+    ).get() as { count: number }).count);
+    const control = database.prepare(
+      "SELECT phase,global_stop_state,recovery_state FROM internal_control WHERE singleton_id=1"
+    ).get() as { phase: string; global_stop_state: string; recovery_state: string };
+    const collectionLive = control.phase === "live" && control.global_stop_state === "clear" && control.recovery_state === "ready";
     expect(repository.operationsOverview()).toMatchObject({
       sources: { total: 63, rssActive: 4, xManualDisabled: 59 },
       collection: { automaticReviewRegistrations: 0, automaticPublishRegistrations: 0 },
+      pipeline: {
+        lastPublishedAt,
+        pendingReviewCount,
+        collectionLive,
+        automaticReview: 0,
+        automaticPublish: 0
+      },
       observability: {
         health: { frontend: { status: "unavailable", reasonCode: "PRODUCER_NOT_CONFIGURED" }, backend: { status: "available" }, adminApi: { status: "available" } },
         apis: { bilingualRead: { status: "available" }, sourceRead: { status: "available" }, operationsRead: { status: "available" }, bilingualManualWrite: { status: "unavailable", reasonCode: "BILINGUAL_MANUAL_SUBSTRATE_UNAVAILABLE" } },

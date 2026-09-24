@@ -1,0 +1,138 @@
+{
+  "schemaVersion": "rss-predirty-canonical-v1",
+  "syntheticSigningSeedHex": "4343434343434343434343434343434343434343434343434343434343434343",
+  "vectors": [
+    {
+      "name": "text",
+      "input": {
+        "bundleId": "rss-golden-bundle-text",
+        "bundleRevision": 2,
+        "createdAt": "2026-09-07T00:01:00.000Z",
+        "candidate": {
+          "candidateId": "rss-golden-text",
+          "sourceId": "motorsport-f1-news",
+          "sourceRevision": 3,
+          "sourcePayloadHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "canonicalUrl": "https://www.motorsport.com/f1/news/golden/",
+          "sourceTitle": "RSS original title",
+          "sourceExcerpt": "RSS original excerpt",
+          "sourceAuthor": null,
+          "sourcePublishedAt": "2026-09-07T00:00:00.000Z",
+          "editorTitle": null,
+          "editorExcerpt": null,
+          "editorNotes": null,
+          "editorBasedOnSourceRevision": null,
+          "reviewStatus": "pending_review",
+          "firstSeenAt": "2026-09-07T00:00:01.000Z",
+          "lastSeenAt": "2026-09-07T00:00:01.000Z"
+        },
+        "editable": {
+          "titleZh": "既有RSS中文标题",
+          "summaryZh": "既有RSS中文摘要",
+          "notes": "private-review-notes"
+        },
+        "media": null
+      },
+      "bundle": {
+        "publicPayload": {
+          "candidateId": "rss-golden-text",
+          "sourceId": "motorsport-f1-news",
+          "sourceRevision": 3,
+          "sourcePayloadHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "canonicalUrl": "https://www.motorsport.com/f1/news/golden/",
+          "sourceTitle": "RSS original title",
+          "sourceAuthor": "Motorsport.com",
+          "sourcePublishedAt": "2026-09-07T00:00:00.000Z",
+          "contentType": "race_news",
+          "titleZh": "既有RSS中文标题",
+          "summaryZh": "既有RSS中文摘要",
+          "media": [],
+          "sourceDisplayName": "Motorsport.com"
+        },
+        "publicPayloadJson": "{\"candidateId\":\"rss-golden-text\",\"canonicalUrl\":\"https://www.motorsport.com/f1/news/golden/\",\"contentType\":\"race_news\",\"media\":[],\"sourceAuthor\":\"Motorsport.com\",\"sourceDisplayName\":\"Motorsport.com\",\"sourceId\":\"motorsport-f1-news\",\"sourcePayloadHash\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"sourcePublishedAt\":\"2026-09-07T00:00:00.000Z\",\"sourceRevision\":3,\"sourceTitle\":\"RSS original title\",\"summaryZh\":\"既有RSS中文摘要\",\"titleZh\":\"既有RSS中文标题\"}",
+        "publicPayloadHash": "ef6f2563fa91e010227cda3f1543b42c5553efca37ee40357a517fbb00f9bea4",
+        "editorNotes": "private-review-notes",
+        "bundleHash": "36cf73293fef330c7bd996531f147b0415e61e9f9d81d9d0f923154e97bcef67"
+      },
+      "publicId": "public-rss-5bc88397c81c702112a57a01f4959661615e229baf2a86e5c5a2592a0a6223a4",
+      "projectionJson": "{\"contentType\":\"race_news\",\"detail\":{\"bodyZh\":[\"既有RSS中文摘要\"],\"keyPointsZh\":[\"既有要点\"],\"leadZh\":\"既有RSS中文摘要\"},\"media\":null,\"originalLink\":{\"enabled\":true,\"reason\":null,\"url\":\"https://www.motorsport.com/f1/news/golden/\"},\"projectionHash\":\"245af48ffe708f7376d50597ab5fcc5f85c5caa1ac368cedbc44c05794a840c7\",\"publicId\":\"public-rss-5bc88397c81c702112a57a01f4959661615e229baf2a86e5c5a2592a0a6223a4\",\"publishGeneration\":1,\"publishedAt\":\"2026-09-07T00:02:00.000Z\",\"source\":{\"accessStatus\":\"available\",\"byline\":\"Motorsport.com\",\"displayName\":\"Motorsport.com\",\"platform\":\"rss\",\"sourceId\":\"motorsport-f1-news\"},\"sourcePublishedAt\":\"2026-09-07T00:00:00.000Z\",\"sourceTimeStatus\":\"known\",\"state\":\"media_missing\",\"summaryZh\":\"既有RSS中文摘要\",\"titleZh\":\"既有RSS中文标题\"}",
+      "projectionHash": "245af48ffe708f7376d50597ab5fcc5f85c5caa1ac368cedbc44c05794a840c7",
+      "envelopeJson": "{\"attempt\":0,\"createdAt\":\"2026-09-07T00:02:00.000Z\",\"deadlineAt\":\"2026-09-07T00:17:00.000Z\",\"deliveryId\":\"op-snapshot-bd9f304b543989f0348f3974ccf5124b66dc5bd1ec0fed8c116d90c7cfb38df8\",\"idempotencyKey\":\"snapshot-sync:0:bd9f304b543989f0348f3974ccf5124b66dc5bd1ec0fed8c116d90c7cfb38df8\",\"operationType\":\"snapshot_sync\",\"reconcileKey\":\"reconcile:snapshot:bd9f304b543989f0348f3974ccf5124b66dc5bd1ec0fed8c116d90c7cfb38df8\",\"schemaVersion\":\"projection-snapshot-task-v1\",\"snapshot\":{\"previousSnapshotManifestHash\":null,\"records\":[{\"contentType\":\"race_news\",\"detail\":{\"bodyZh\":[\"既有RSS中文摘要\"],\"keyPointsZh\":[\"既有要点\"],\"leadZh\":\"既有RSS中文摘要\"},\"media\":null,\"originalLink\":{\"enabled\":true,\"reason\":null,\"url\":\"https://www.motorsport.com/f1/news/golden/\"},\"projectionHash\":\"245af48ffe708f7376d50597ab5fcc5f85c5caa1ac368cedbc44c05794a840c7\",\"publicId\":\"public-rss-5bc88397c81c702112a57a01f4959661615e229baf2a86e5c5a2592a0a6223a4\",\"publishGeneration\":1,\"publishedAt\":\"2026-09-07T00:02:00.000Z\",\"source\":{\"accessStatus\":\"available\",\"byline\":\"Motorsport.com\",\"displayName\":\"Motorsport.com\",\"platform\":\"rss\",\"sourceId\":\"motorsport-f1-news\"},\"sourcePublishedAt\":\"2026-09-07T00:00:00.000Z\",\"sourceTimeStatus\":\"known\",\"state\":\"media_missing\",\"summaryZh\":\"既有RSS中文摘要\",\"titleZh\":\"既有RSS中文标题\"}],\"recordsHash\":\"1c98072a06d600097a2e439cadcf19b8304215dfa9a34d1f8a19425d6ee841b6\",\"snapshotGeneration\":1,\"snapshotManifestHash\":\"bd9f304b543989f0348f3974ccf5124b66dc5bd1ec0fed8c116d90c7cfb38df8\"}}",
+      "envelopeHash": "173e46b3de75fdc31373a6afc784eb8cfd6778d7cf0df06d877a5b46c9fd6d75",
+      "signedJson": "{\"schemaVersion\":\"admin-public-projection-signed-v1\",\"signature\":\"Qy4uRjiW9YQWiQZ-kDRABxmBmb7A7nOz9ftT4bD3m9JaAB6jeRmKYRIdtouYDkKuyVIZylH8AtPhJRfMt4uEBg\",\"signingKeyId\":\"synthetic-golden-key\",\"taskEnvelope\":{\"attempt\":0,\"createdAt\":\"2026-09-07T00:02:00.000Z\",\"deadlineAt\":\"2026-09-07T00:17:00.000Z\",\"deliveryId\":\"op-snapshot-bd9f304b543989f0348f3974ccf5124b66dc5bd1ec0fed8c116d90c7cfb38df8\",\"idempotencyKey\":\"snapshot-sync:0:bd9f304b543989f0348f3974ccf5124b66dc5bd1ec0fed8c116d90c7cfb38df8\",\"operationType\":\"snapshot_sync\",\"reconcileKey\":\"reconcile:snapshot:bd9f304b543989f0348f3974ccf5124b66dc5bd1ec0fed8c116d90c7cfb38df8\",\"schemaVersion\":\"projection-snapshot-task-v1\",\"snapshot\":{\"previousSnapshotManifestHash\":null,\"records\":[{\"contentType\":\"race_news\",\"detail\":{\"bodyZh\":[\"既有RSS中文摘要\"],\"keyPointsZh\":[\"既有要点\"],\"leadZh\":\"既有RSS中文摘要\"},\"media\":null,\"originalLink\":{\"enabled\":true,\"reason\":null,\"url\":\"https://www.motorsport.com/f1/news/golden/\"},\"projectionHash\":\"245af48ffe708f7376d50597ab5fcc5f85c5caa1ac368cedbc44c05794a840c7\",\"publicId\":\"public-rss-5bc88397c81c702112a57a01f4959661615e229baf2a86e5c5a2592a0a6223a4\",\"publishGeneration\":1,\"publishedAt\":\"2026-09-07T00:02:00.000Z\",\"source\":{\"accessStatus\":\"available\",\"byline\":\"Motorsport.com\",\"displayName\":\"Motorsport.com\",\"platform\":\"rss\",\"sourceId\":\"motorsport-f1-news\"},\"sourcePublishedAt\":\"2026-09-07T00:00:00.000Z\",\"sourceTimeStatus\":\"known\",\"state\":\"media_missing\",\"summaryZh\":\"既有RSS中文摘要\",\"titleZh\":\"既有RSS中文标题\"}],\"recordsHash\":\"1c98072a06d600097a2e439cadcf19b8304215dfa9a34d1f8a19425d6ee841b6\",\"snapshotGeneration\":1,\"snapshotManifestHash\":\"bd9f304b543989f0348f3974ccf5124b66dc5bd1ec0fed8c116d90c7cfb38df8\"}},\"taskEnvelopeHash\":\"173e46b3de75fdc31373a6afc784eb8cfd6778d7cf0df06d877a5b46c9fd6d75\"}",
+      "signedSha256": "9df337244912c199985fd20911db9e73dd106e5a0cbcfd669e0494644035e17f"
+    },
+    {
+      "name": "image",
+      "input": {
+        "bundleId": "rss-golden-bundle-image",
+        "bundleRevision": 2,
+        "createdAt": "2026-09-07T00:01:00.000Z",
+        "candidate": {
+          "candidateId": "rss-golden-image",
+          "sourceId": "motorsport-f1-news",
+          "sourceRevision": 3,
+          "sourcePayloadHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "canonicalUrl": "https://www.motorsport.com/f1/news/golden/",
+          "sourceTitle": "RSS original title",
+          "sourceExcerpt": "RSS original excerpt",
+          "sourceAuthor": null,
+          "sourcePublishedAt": "2026-09-07T00:00:00.000Z",
+          "editorTitle": null,
+          "editorExcerpt": null,
+          "editorNotes": null,
+          "editorBasedOnSourceRevision": null,
+          "reviewStatus": "pending_review",
+          "firstSeenAt": "2026-09-07T00:00:01.000Z",
+          "lastSeenAt": "2026-09-07T00:00:01.000Z"
+        },
+        "editable": {
+          "titleZh": "既有RSS中文标题",
+          "summaryZh": "既有RSS中文摘要",
+          "notes": "private-review-notes"
+        },
+        "media": {
+          "kind": "source_image",
+          "url": "https://cdn-9.motorsport.com/images/mgl/example/golden.jpg",
+          "mimeType": "image/jpeg",
+          "declaredBytes": 1234
+        }
+      },
+      "bundle": {
+        "publicPayload": {
+          "candidateId": "rss-golden-image",
+          "sourceId": "motorsport-f1-news",
+          "sourceRevision": 3,
+          "sourcePayloadHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "canonicalUrl": "https://www.motorsport.com/f1/news/golden/",
+          "sourceTitle": "RSS original title",
+          "sourceAuthor": "Motorsport.com",
+          "sourcePublishedAt": "2026-09-07T00:00:00.000Z",
+          "contentType": "race_news",
+          "titleZh": "既有RSS中文标题",
+          "summaryZh": "既有RSS中文摘要",
+          "media": [
+            {
+              "kind": "source_image",
+              "url": "https://cdn-9.motorsport.com/images/mgl/example/golden.jpg",
+              "mimeType": "image/jpeg",
+              "declaredBytes": 1234
+            }
+          ],
+          "sourceDisplayName": "Motorsport.com"
+        },
+        "publicPayloadJson": "{\"candidateId\":\"rss-golden-image\",\"canonicalUrl\":\"https://www.motorsport.com/f1/news/golden/\",\"contentType\":\"race_news\",\"media\":[{\"declaredBytes\":1234,\"kind\":\"source_image\",\"mimeType\":\"image/jpeg\",\"url\":\"https://cdn-9.motorsport.com/images/mgl/example/golden.jpg\"}],\"sourceAuthor\":\"Motorsport.com\",\"sourceDisplayName\":\"Motorsport.com\",\"sourceId\":\"motorsport-f1-news\",\"sourcePayloadHash\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"sourcePublishedAt\":\"2026-09-07T00:00:00.000Z\",\"sourceRevision\":3,\"sourceTitle\":\"RSS original title\",\"summaryZh\":\"既有RSS中文摘要\",\"titleZh\":\"既有RSS中文标题\"}",
+        "publicPayloadHash": "87adea19304b03d2365da556d088d1325f2f2163bf4955650688325daf0304b1",
+        "editorNotes": "private-review-notes",
+        "bundleHash": "a11ba03fdf4d72d97c561ff9d9d440dc4e18d3e1f7c184286e5544fde6b0d46c"
+      },
+      "publicId": "public-rss-1cd19343d5a5a9039699c72f05edac1760760de13514ff1676040cb4d2151220",
+      "projectionJson": "{\"contentType\":\"race_news\",\"detail\":{\"bodyZh\":[\"既有RSS中文摘要\"],\"keyPointsZh\":[\"既有要点\"],\"leadZh\":\"既有RSS中文摘要\"},\"media\":{\"altZh\":\"既有RSS中文标题\",\"assetRef\":\"https://cdn-9.motorsport.com/images/mgl/example/golden.jpg\",\"declaredBytes\":1234,\"kind\":\"source_image\",\"mimeType\":\"image/jpeg\"},\"originalLink\":{\"enabled\":true,\"reason\":null,\"url\":\"https://www.motorsport.com/f1/news/golden/\"},\"projectionHash\":\"5d08a567e660789f9dc4cc8dcd01c1f4e4218bf7b5b74e98180b98daa64e1dd4\",\"publicId\":\"public-rss-1cd19343d5a5a9039699c72f05edac1760760de13514ff1676040cb4d2151220\",\"publishGeneration\":1,\"publishedAt\":\"2026-09-07T00:02:00.000Z\",\"source\":{\"accessStatus\":\"available\",\"byline\":\"Motorsport.com\",\"displayName\":\"Motorsport.com\",\"platform\":\"rss\",\"sourceId\":\"motorsport-f1-news\"},\"sourcePublishedAt\":\"2026-09-07T00:00:00.000Z\",\"sourceTimeStatus\":\"known\",\"state\":\"ready\",\"summaryZh\":\"既有RSS中文摘要\",\"titleZh\":\"既有RSS中文标题\"}",
+      "projectionHash": "5d08a567e660789f9dc4cc8dcd01c1f4e4218bf7b5b74e98180b98daa64e1dd4",
+      "envelopeJson": "{\"attempt\":0,\"createdAt\":\"2026-09-07T00:02:00.000Z\",\"deadlineAt\":\"2026-09-07T00:17:00.000Z\",\"deliveryId\":\"op-snapshot-3baa1d5d75f62ad9ff878f0ed0a1f63b1cdba687c4f9d2c8a7b05f41bd1cbe7a\",\"idempotencyKey\":\"snapshot-sync:0:3baa1d5d75f62ad9ff878f0ed0a1f63b1cdba687c4f9d2c8a7b05f41bd1cbe7a\",\"operationType\":\"snapshot_sync\",\"reconcileKey\":\"reconcile:snapshot:3baa1d5d75f62ad9ff878f0ed0a1f63b1cdba687c4f9d2c8a7b05f41bd1cbe7a\",\"schemaVersion\":\"projection-snapshot-task-v1\",\"snapshot\":{\"previousSnapshotManifestHash\":null,\"records\":[{\"contentType\":\"race_news\",\"detail\":{\"bodyZh\":[\"既有RSS中文摘要\"],\"keyPointsZh\":[\"既有要点\"],\"leadZh\":\"既有RSS中文摘要\"},\"media\":{\"altZh\":\"既有RSS中文标题\",\"assetRef\":\"https://cdn-9.motorsport.com/images/mgl/example/golden.jpg\",\"declaredBytes\":1234,\"kind\":\"source_image\",\"mimeType\":\"image/jpeg\"},\"originalLink\":{\"enabled\":true,\"reason\":null,\"url\":\"https://www.motorsport.com/f1/news/golden/\"},\"projectionHash\":\"5d08a567e660789f9dc4cc8dcd01c1f4e4218bf7b5b74e98180b98daa64e1dd4\",\"publicId\":\"public-rss-1cd19343d5a5a9039699c72f05edac1760760de13514ff1676040cb4d2151220\",\"publishGeneration\":1,\"publishedAt\":\"2026-09-07T00:02:00.000Z\",\"source\":{\"accessStatus\":\"available\",\"byline\":\"Motorsport.com\",\"displayName\":\"Motorsport.com\",\"platform\":\"rss\",\"sourceId\":\"motorsport-f1-news\"},\"sourcePublishedAt\":\"2026-09-07T00:00:00.000Z\",\"sourceTimeStatus\":\"known\",\"state\":\"ready\",\"summaryZh\":\"既有RSS中文摘要\",\"titleZh\":\"既有RSS中文标题\"}],\"recordsHash\":\"66bb3b485ddda173bb9e57e74cb2414f7eab6d01dbb49be347316a7fe8bd6654\",\"snapshotGeneration\":1,\"snapshotManifestHash\":\"3baa1d5d75f62ad9ff878f0ed0a1f63b1cdba687c4f9d2c8a7b05f41bd1cbe7a\"}}",
+      "envelopeHash": "f21e3d4788980acda48d95aa1156d196ce45b989ced55dec53357b25f0502e68",
+      "signedJson": "{\"schemaVersion\":\"admin-public-projection-signed-v1\",\"signature\":\"oQnLNLbWzrjWircKAadYzwrln0JiYawkOOZ09OM7c9IjirvmbuLNOU343VKZcy_ZOb-VLjmVZ8xawtY-_98ZDQ\",\"signingKeyId\":\"synthetic-golden-key\",\"taskEnvelope\":{\"attempt\":0,\"createdAt\":\"2026-09-07T00:02:00.000Z\",\"deadlineAt\":\"2026-09-07T00:17:00.000Z\",\"deliveryId\":\"op-snapshot-3baa1d5d75f62ad9ff878f0ed0a1f63b1cdba687c4f9d2c8a7b05f41bd1cbe7a\",\"idempotencyKey\":\"snapshot-sync:0:3baa1d5d75f62ad9ff878f0ed0a1f63b1cdba687c4f9d2c8a7b05f41bd1cbe7a\",\"operationType\":\"snapshot_sync\",\"reconcileKey\":\"reconcile:snapshot:3baa1d5d75f62ad9ff878f0ed0a1f63b1cdba687c4f9d2c8a7b05f41bd1cbe7a\",\"schemaVersion\":\"projection-snapshot-task-v1\",\"snapshot\":{\"previousSnapshotManifestHash\":null,\"records\":[{\"contentType\":\"race_news\",\"detail\":{\"bodyZh\":[\"既有RSS中文摘要\"],\"keyPointsZh\":[\"既有要点\"],\"leadZh\":\"既有RSS中文摘要\"},\"media\":{\"altZh\":\"既有RSS中文标题\",\"assetRef\":\"https://cdn-9.motorsport.com/images/mgl/example/golden.jpg\",\"declaredBytes\":1234,\"kind\":\"source_image\",\"mimeType\":\"image/jpeg\"},\"originalLink\":{\"enabled\":true,\"reason\":null,\"url\":\"https://www.motorsport.com/f1/news/golden/\"},\"projectionHash\":\"5d08a567e660789f9dc4cc8dcd01c1f4e4218bf7b5b74e98180b98daa64e1dd4\",\"publicId\":\"public-rss-1cd19343d5a5a9039699c72f05edac1760760de13514ff1676040cb4d2151220\",\"publishGeneration\":1,\"publishedAt\":\"2026-09-07T00:02:00.000Z\",\"source\":{\"accessStatus\":\"available\",\"byline\":\"Motorsport.com\",\"displayName\":\"Motorsport.com\",\"platform\":\"rss\",\"sourceId\":\"motorsport-f1-news\"},\"sourcePublishedAt\":\"2026-09-07T00:00:00.000Z\",\"sourceTimeStatus\":\"known\",\"state\":\"ready\",\"summaryZh\":\"既有RSS中文摘要\",\"titleZh\":\"既有RSS中文标题\"}],\"recordsHash\":\"66bb3b485ddda173bb9e57e74cb2414f7eab6d01dbb49be347316a7fe8bd6654\",\"snapshotGeneration\":1,\"snapshotManifestHash\":\"3baa1d5d75f62ad9ff878f0ed0a1f63b1cdba687c4f9d2c8a7b05f41bd1cbe7a\"}},\"taskEnvelopeHash\":\"f21e3d4788980acda48d95aa1156d196ce45b989ced55dec53357b25f0502e68\"}",
+      "signedSha256": "e51fb895d03f47886c662995648cb49e9fbf75e91faf705d7cca12f9a1d804a9"
+    }
+  ]
+}

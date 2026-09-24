@@ -1,0 +1,9 @@
+{
+  "app/scripts/backup-lock-recover.ts": "b7592f4e7911fef080493b417e9a64d85dd0899d53ef37c0d409568dbe4a3c2c",
+  "app/src/server/backup-snapshot/lock-recovery.ts": "cc8a8d08b18c83ac45fcfd3df4baa4a7d6712d0703bc6e873935b5336dccd12e",
+  "app/scripts/prepare-backup-runtime.ts": "966cc76fc909bc0790659d427e2f4cc4594ef991d3eb11adcb2b1051036f7ee7",
+  "app/src/server/internal-operation/backup-recovery-point-register.ts": "8e7f35e3d78a5a919c0204da9cfebc677ef1002520926d3ddb3df595e53bc47f",
+  "app/src/tests/backup-lock-recovery.test.ts": "58c2b3480b501554c1449b21d322fd9cc7638fdca7e6328c251e387df836d068",
+  "app/src/tests/backup-runtime-release.test.ts": "2146ce9343b238e9007e908f86561239804f60c62318db052b7a09375972bd59",
+  "app/src/tests/recovery-gate-tooling.test.ts": "6c18ec2ca3104d20a71f4de77d0708088300ed85cd579ab7afab6c3ba70de79e"
+}

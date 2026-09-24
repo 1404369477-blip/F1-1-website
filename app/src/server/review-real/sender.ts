@@ -1,5 +1,5 @@
 import { createHash, type KeyObject } from "node:crypto";
-import { request as httpRequest } from "node:http";
+import { requestProjectionJson as requestJson } from "./projection-http-transport.ts";
 
 import {
   ProjectionReceiptSchema,
@@ -27,89 +27,7 @@ export interface ProjectionSenderTransport {
 }
 
 const INTERNAL_ENDPOINT = "http://127.0.0.1:3102/internal/projections";
-const MAX_RECEIPT_BYTES = 64 * 1024;
 
-function requestJson(
-  input: Readonly<{
-    method: "GET" | "POST";
-    path: string;
-    body?: unknown;
-    serviceIdentity: string;
-    timeoutMs: number;
-  }>,
-): Promise<ProjectionTransportResult> {
-  return new Promise((resolveResult) => {
-    const body =
-      input.body === undefined
-        ? null
-        : Buffer.from(JSON.stringify(input.body), "utf8");
-    const request = httpRequest(
-      {
-        protocol: "http:",
-        hostname: "127.0.0.1",
-        port: 3102,
-        method: input.method,
-        path: input.path,
-        agent: false,
-        headers: {
-          Host: "127.0.0.1:3102",
-          Accept: "application/json",
-          "X-F1-Service-Identity": input.serviceIdentity,
-          ...(body === null
-            ? {}
-            : {
-                "Content-Type": "application/json",
-                "Content-Length": String(body.byteLength),
-              }),
-        },
-      },
-      (response) => {
-        const chunks: Buffer[] = [];
-        let size = 0;
-        response.on("data", (chunk: Buffer | string) => {
-          const bytes = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
-          size += bytes.byteLength;
-          if (size > MAX_RECEIPT_BYTES)
-            request.destroy(new Error("PROJECTION_RESPONSE_TOO_LARGE"));
-          else chunks.push(bytes);
-        });
-        response.on("aborted", () => resolveResult({ kind: "unknown" }));
-        response.on("end", () => {
-          if (!response.complete) {
-            resolveResult({ kind: "unknown" });
-            return;
-          }
-          let value: unknown = null;
-          if (size > 0) {
-            try {
-              value = JSON.parse(
-                Buffer.concat(chunks).toString("utf8"),
-              ) as unknown;
-            } catch {
-              resolveResult({
-                kind: "response",
-                status: Number(response.statusCode ?? 500),
-                body: null,
-              });
-              return;
-            }
-          }
-          resolveResult({
-            kind: "response",
-            status: Number(response.statusCode ?? 500),
-            body: value,
-          });
-        });
-      },
-    );
-    request.setTimeout(input.timeoutMs, () =>
-      request.destroy(new Error("PROJECTION_REQUEST_TIMEOUT")),
-    );
-    request.once("error", () => resolveResult({ kind: "unknown" }));
-    if (body !== null) request.end(body);
-    else request.end();
-  });
-}
 
 export class ProjectionHttpTransport implements ProjectionSenderTransport {
   private readonly serviceIdentity: string;
@@ -129,7 +47,7 @@ export class ProjectionHttpTransport implements ProjectionSenderTransport {
       throw new Error("PROJECTION_TRANSPORT_CONFIG_INVALID");
     }
     this.serviceIdentity = input.serviceIdentity;
-    this.timeoutMs = input.timeoutMs ?? 10_000;
+    this.timeoutMs = input.timeoutMs ?? 30_000;
     if (
       !Number.isSafeInteger(this.timeoutMs) ||
       this.timeoutMs < 1_000 ||
@@ -201,6 +119,7 @@ export class ProjectionSender {
   private readonly actorRef: string;
   private readonly externalAttempt: RssExternalAttemptRunner | undefined;
   private readonly externalReconcile: RssExternalReconcileRunner | undefined;
+  private readonly prepareDeliveryAuthority: (() => void) | undefined;
   private running = false;
 
   constructor(
@@ -212,6 +131,7 @@ export class ProjectionSender {
       actorRef: string;
       externalAttempt?: RssExternalAttemptRunner;
       externalReconcile?: RssExternalReconcileRunner;
+      prepareDeliveryAuthority?: () => void;
     }>,
   ) {
     this.repository = input.repository;
@@ -221,6 +141,7 @@ export class ProjectionSender {
     this.actorRef = input.actorRef;
     this.externalAttempt = input.externalAttempt;
     this.externalReconcile = input.externalReconcile;
+    this.prepareDeliveryAuthority = input.prepareDeliveryAuthority;
   }
 
   async tick(): Promise<ProjectionSenderTickResult> {
@@ -233,6 +154,7 @@ export class ProjectionSender {
     }
     this.running = true;
     try {
+      this.prepareDeliveryAuthority?.();
       this.repository.recoverExpiredLease(this.actorRef);
       const reconcile = this.repository.nextReconcile();
       if (reconcile !== null) return await this.reconcile(reconcile);
@@ -266,6 +188,7 @@ export class ProjectionSender {
             endpointClass: "projection_deliver",
             providerResource: "127.0.0.1:3102/internal/projections",
             routeId: "route-projection",
+            budgetAccountId: "acct-projection",
             method: "POST",
             externalIdempotencyKey: work.envelope.idempotencyKey,
             reconcileKey: work.envelope.reconcileKey,
@@ -346,50 +269,60 @@ export class ProjectionSender {
     return { outcome: "terminal_failed", deliveryId: work.deliveryId };
   }
 
+  private async readDeliveryReceipt(
+    work: ProjectionDeliveryWork,
+  ): Promise<ProjectionTransportResult> {
+    if (this.externalReconcile) {
+      // Authorization and attempt-handle failures must leave this delivery
+      // unresolved; an unguarded GET would bypass the reconciliation gate.
+      return await this.externalReconcile({
+        reconcileKey: work.envelope.reconcileKey,
+        execute: async () => {
+          const value = await this.transport.getReceipt(work.deliveryId);
+          if (value.kind === "unknown")
+            throw new Error("PROJECTION_RECONCILE_UNKNOWN");
+          const body = JSON.stringify(value.body);
+          return {
+            value,
+            response: {
+              providerResourceIdentity:
+                "127.0.0.1:3102/internal/projections",
+              providerStatus: String(value.status),
+              responseBodySha256: createHash("sha256")
+                .update(body, "utf8")
+                .digest("hex"),
+              responseHeaderHashes: [],
+              outcome:
+                value.status >= 200 && value.status < 500
+                  ? ("succeeded" as const)
+                  : ("known_failed" as const),
+              reasonCode:
+                value.status >= 200 && value.status < 500
+                  ? null
+                  : "PROJECTION_HTTP_STATUS",
+            },
+          };
+        },
+      });
+    }
+    if (this.externalAttempt) throw new Error("EXTERNAL_RECONCILE_HANDLE_UNAVAILABLE");
+    return await this.transport.getReceipt(work.deliveryId);
+  }
+
   private async reconcile(
     work: ProjectionDeliveryWork,
   ): Promise<ProjectionSenderTickResult> {
     let result: ProjectionTransportResult;
     try {
-      if (this.externalReconcile) {
-        result = await this.externalReconcile({
-          reconcileKey: work.envelope.reconcileKey,
-          execute: async () => {
-            const value = await this.transport.getReceipt(work.deliveryId);
-            if (value.kind === "unknown")
-              throw new Error("PROJECTION_RECONCILE_UNKNOWN");
-            const body = JSON.stringify(value.body);
-            return {
-              value,
-              response: {
-                providerResourceIdentity:
-                  "127.0.0.1:3102/internal/projections",
-                providerStatus: String(value.status),
-                responseBodySha256: createHash("sha256")
-                  .update(body, "utf8")
-                  .digest("hex"),
-                responseHeaderHashes: [],
-                outcome:
-                  value.status >= 200 && value.status < 500
-                    ? ("succeeded" as const)
-                    : ("known_failed" as const),
-                reasonCode:
-                  value.status >= 200 && value.status < 500
-                    ? null
-                    : "PROJECTION_HTTP_STATUS",
-              },
-            };
-          },
-        });
-      } else if (this.externalAttempt) {
-        // An attempt-backed delivery has an original handle.  A fresh
-        // reconcile operation would create a second external attempt, so the
-        // sender waits for a caller that can consume the same handle.
-        return { outcome: "reconcile_wait", deliveryId: work.deliveryId };
-      } else {
-        result = await this.transport.getReceipt(work.deliveryId);
+      result = await this.readDeliveryReceipt(work);
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        /^PROJECTION_RECONCILE_[A-Z0-9_]{1,96}$/.test(error.message) &&
+        error.message !== "PROJECTION_RECONCILE_BACKOFF"
+      ) {
+        this.repository.markDeliveryReconcileWait(work, error.message, this.actorRef);
       }
-    } catch {
       result = { kind: "unknown" };
     }
     if (

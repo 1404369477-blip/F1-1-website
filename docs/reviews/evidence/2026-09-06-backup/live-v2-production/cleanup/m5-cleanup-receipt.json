@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "f1-live-v2-precise-cleanup-receipt-v1",
+  "machine": "m5",
+  "startedAt": "2026-09-06T17:09:54.719016+00:00",
+  "manifestSha256": "b144d01aa94a71d8aa6fdc208dd3225334cfc39508aa7a633d3a6d54d5182ec3",
+  "authorizationSha256": "612bea35ef093fb6a48c7fc3135dfcb97c73bbba402880bf8b41270543085dd6",
+  "freeBytesBefore": 211118354432,
+  "deleted": [
+    {
+      "path": "[M5-HOME]/Library/Application Support/F1Plus1/BackupObserver/manual-preflight-02/objects/db-projection-snapshot.726300d58f464af2c690ff1a0853a2ce4da01dc6c8d9850a5b58c7d349435530.e2f2c6fc36e07951",
+      "dev": 16777231,
+      "ino": 24570737,
+      "size": 333484939,
+      "allocatedBytes": 335802368
+    }
+  ],
+  "preservedAllDirectories": true,
+  "preservedAllJsonLogsKeysProjection": true,
+  "ok": true,
+  "finishedAt": "2026-09-06T17:09:54.720505+00:00",
+  "freeBytesAfter": 211454140416
+}

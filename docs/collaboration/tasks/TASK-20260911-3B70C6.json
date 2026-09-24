@@ -1,0 +1,53 @@
+{
+  "acceptance_exit": "提交绑定固定候选和真实安装收据的独立报告；只有用户确认的新/f1请求到达原生执行、报告完整准确且手机收件证据闭合后才给真实出口pass。暂缺用户微信操作时可给明确安装/运行层结论，开发继续waiting_input。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-09-11-TASK-20260911-3B70C6-Hermes微信f1实收验收附录.md",
+    "docs/collaboration/部门/测试部/报告/2026-09-11-TASK-20260911-3B70C6-Hermes固定f1安装与加载独立审查.md",
+    "scratch/hermes-site-status-activation-review-20260911/evidence-manifest.json",
+    "scratch/hermes-site-status-activation-review-20260911/wechat-215911-evidence-manifest.json",
+    "scratch/hermes-site-status-activation-20260911/root-weixin-review-verification.json"
+  ],
+  "authorization_evidence": "用户已确认可以，继续推进吧，承接/f1正式入口、必要安装加载及微信验收。",
+  "authorization_history": [
+    {
+      "at": "2026-09-11T21:40+08:00",
+      "evidence": "用户已确认可以，继续推进吧，承接/f1正式入口、必要安装加载及微信验收。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "测试部/agent_options_research",
+  "completion_class": "audit",
+  "confirmation": "无需额外确认",
+  "created_at": "2026-09-11T21:40+08:00",
+  "department": "测试部",
+  "details": "承接95D001和已ACK的FAB9DA技术准备审查。用户2026-09-11确认/f1正式入口，复用direct-r1冻结十文件与helper。独立只读核查现役Hermes分发源码未漂移、实际安装13文件/权限/配置前后身份/原MCP保留、运行命令和报告语义；实际Gateway加载、微信/f1请求与手机收件另核。不得改代码、apply、重启、发送消息或调用模型；旧冻结报告和证据不覆盖。纯文字operator，设计身份/六格/既有Admin双端Function ID不适用，不提升任何原Function ID。",
+  "domain_stage": "通用执行",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "发现候选/配置/分发源码漂移则停止放行并保留现场；仅进程或CLI结果不等于Gateway或手机验收；报告省略未知/时间错误/被模型改写则真实出口FAIL并保持95D001未完成。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "发送尝试不独立等于送达，history为0不独立等于API未调用；手机粘贴时间不当送达时间。旧26件、早先41件及自然问句FAIL证据保留，未虚报捕获21:59父链或重复要求用户查询。",
+  "node": "微信固定只读巡检/安装激活与实收",
+  "pointers": [
+    "docs/reviews/2026-09-10-Hermes微信只读巡检.md"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-09-11-TASK-20260911-3B70C6-Hermes微信f1实收验收附录.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260911-3B70C6",
+  "title": "Hermes固定f1入口安装与真实微信出口后继审查",
+  "unverified": [
+    "本次未直接捕获调用父链、服务器stdout/原始DTO、模型API线级跟踪或精确手机送达时间；交叉证据已足以通过本次已确认原生入口与用户实收。繁忙/pending update/hook接管、旧自然问句普遍准确性及业务故障恢复不在本次PASS范围。"
+  ],
+  "updated_at": "2026-09-11T22:12+08:00",
+  "verified": [
+    "未参与实现的审核者直接核验M1安装13文件、原r4/配置备份、真实安装收据与新进程loader；重启后Gateway5281/runs2、固定配置及源码保持，21:59同一请求/采样/1050字符发送窗口与用户全文交叉对应；北京时间、60秒TTL、四个年龄和全部重要unknown正确。主控已读两报告并重算原26件及新增12件清单，零不一致。"
+  ]
+}

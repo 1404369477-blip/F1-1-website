@@ -1,0 +1,5 @@
+// Exact physical successor of RSS 0016. user_version stays 10; no 0013/0015 prerequisite.
+export const X_PAGE_ADMISSION_PREDECESSOR_SHA256 = 'ae757027a0d6ce2ed4437989dc98634b0e320ff70cd76b852fe5e753dcb2383e';
+export const X_PAGE_ADMISSION_SCHEMA_SHA256 = '4aa8876e5e197232a7e1ff2b04a21c7a66789734c2f58c619a29f4ed33c3ff72';
+export const X_PAGE_ADMISSION_MIGRATION_SHA256 = 'd38d1d888d9f959d68a59fcb1e73172a3db17e9312f6e2ebcaa35bf1f3af5f08';
+export const X_PAGE_ADMISSION_POLICY_SHA256 = 'd60640f122cfa66982367c8a8f8df29c5f2d4fbf2de8ecde4c6c2d3fe292cf16';

@@ -408,6 +408,13 @@ function openExistingSafeDatabaseInternal(
     database.exec("PRAGMA busy_timeout=250;");
     database.exec("PRAGMA temp_store=MEMORY;");
     database.exec("PRAGMA trusted_schema=OFF;");
+    // A connection-local page cache keeps repeated startup integrity/FK scans
+    // from cycling the default 2 MiB cache; every original check still runs.
+    // This does not write SQLite's persistent default_cache_size header.
+    database.exec("PRAGMA cache_size=-65536;");
+    if (Number((database.prepare("PRAGMA cache_size").get() as Record<string, unknown>).cache_size) !== -65536) {
+      throw new ConfigError("SQLITE_PRAGMA", "required SQLite page cache was not applied");
+    }
     const runtime = readSqliteRuntime(database);
     const [major, minor, patch] = runtime.sqliteVersion.split(".").map(Number);
     const versionNumber = major * 1_000_000 + minor * 1_000 + patch;

@@ -43,6 +43,7 @@ import {
 const DELIVERY_PATTERN = /^op-snapshot-[0-9a-f]{64}$/;
 const SIGNATURE_PATTERN = /^[A-Za-z0-9_-]{80,128}$/;
 const MAX_PACKAGE_BYTES = 2 * 1024 * 1024;
+const MAX_VERIFIED_GENERATIONS = 4096;
 
 export const SignedProjectionPackageSchema = z.object({
   schemaVersion: z.literal("admin-public-projection-signed-v1"),
@@ -83,9 +84,29 @@ export type SignedProjectionPackage = z.infer<typeof SignedProjectionPackageSche
 export type ProjectionReceipt = z.infer<typeof ProjectionReceiptSchema>;
 type ActivePointer = z.infer<typeof ActivePointerSchema>;
 type CommittedGeneration = z.infer<typeof CommittedGenerationSchema>;
+type VerifiedGeneration = Readonly<{
+  snapshotGeneration: number;
+  snapshotManifestHash: string;
+  previousSnapshotManifestHash: string | null;
+  deliveryId: string;
+  receivedAt: string;
+  activatedAt: string;
+}>;
 
-function sha256(value: string): string {
-  return createHash("sha256").update(value, "utf8").digest("hex");
+function generationProof(generation: CommittedGeneration): VerifiedGeneration {
+  const snapshot = generation.package.taskEnvelope.snapshot;
+  return Object.freeze({
+    snapshotGeneration: snapshot.snapshotGeneration,
+    snapshotManifestHash: snapshot.snapshotManifestHash,
+    previousSnapshotManifestHash: snapshot.previousSnapshotManifestHash,
+    deliveryId: generation.package.taskEnvelope.deliveryId,
+    receivedAt: generation.receivedAt,
+    activatedAt: generation.activatedAt
+  });
+}
+
+function sha256(value: string | Buffer): string {
+  return createHash("sha256").update(value).digest("hex");
 }
 
 function signaturePayload(snapshotManifestHash: string): Buffer {
@@ -216,11 +237,10 @@ function writeExclusive(path: string, value: string): void {
   }
 }
 
-function parseCanonicalFile<T>(path: string, schema: z.ZodType<T>): T {
+function readProjectionFile(path: string): Buffer {
   const noFollow = fsConstants.O_NOFOLLOW ?? 0;
   let descriptor: number | null = null;
-  let raw: string;
-  let value: unknown;
+  let raw: Buffer;
   try {
     descriptor = openSync(path, fsConstants.O_RDONLY | noFollow);
     const before = fstatSync(descriptor);
@@ -231,7 +251,7 @@ function parseCanonicalFile<T>(path: string, schema: z.ZodType<T>): T {
       (before.mode & 0o077) !== 0 || pathIdentity.isSymbolicLink() ||
       before.dev !== pathIdentity.dev || before.ino !== pathIdentity.ino || before.size > MAX_PACKAGE_BYTES
     ) throw new Error("PUBLIC_SNAPSHOT_FILE_IDENTITY_INVALID");
-    raw = readFileSync(descriptor, "utf8");
+    raw = readFileSync(descriptor);
     const after = fstatSync(descriptor);
     const finalPathIdentity = lstatSync(path);
     if (
@@ -240,17 +260,27 @@ function parseCanonicalFile<T>(path: string, schema: z.ZodType<T>): T {
       after.dev !== finalPathIdentity.dev || after.ino !== finalPathIdentity.ino ||
       finalPathIdentity.isSymbolicLink()
     ) throw new Error("PUBLIC_SNAPSHOT_FILE_CHANGED");
-    value = JSON.parse(raw) as unknown;
   } catch {
     throw new ReviewRealError("PUBLIC_SNAPSHOT_INTEGRITY_FAILED", 503);
   } finally {
     if (descriptor !== null) closeSync(descriptor);
   }
+  return raw;
+}
+
+function parseCanonicalValue<T>(raw: string, schema: z.ZodType<T>): T {
+  let value: unknown;
+  try { value = JSON.parse(raw) as unknown; }
+  catch { throw new ReviewRealError("PUBLIC_SNAPSHOT_INTEGRITY_FAILED", 503); }
   const parsed = schema.safeParse(value);
   if (!parsed.success || raw !== canonicalJson(parsed.data)) {
     throw new ReviewRealError("PUBLIC_SNAPSHOT_INTEGRITY_FAILED", 503);
   }
   return parsed.data;
+}
+
+function parseCanonicalFile<T>(path: string, schema: z.ZodType<T>): T {
+  return parseCanonicalValue(readProjectionFile(path).toString("utf8"), schema);
 }
 
 function assertReadableProjectionDirectory(path: string): void {
@@ -309,6 +339,7 @@ export class ProjectionReceiver {
   private readonly publicKey: KeyObject;
   private readonly activationLockPath: string;
   private readonly now: () => number;
+  private readonly verifiedGenerations = new Map<string, Readonly<{ rawSha256: string; proof: VerifiedGeneration }>>();
 
   constructor(input: Readonly<{
     root: string;
@@ -335,12 +366,20 @@ export class ProjectionReceiver {
   }
 
   private readPointer(): ActivePointer | null {
+    assertReadableProjectionDirectory(this.root);
+    assertReadableProjectionDirectory(this.generationsRoot);
     if (!existsSync(this.activePath)) return null;
     return parseCanonicalFile(this.activePath, ActivePointerSchema);
   }
 
-  private readGeneration(hash: string): CommittedGeneration {
-    const generation = parseCanonicalFile(this.generationPath(hash), CommittedGenerationSchema);
+  private readGeneration(hash: string): VerifiedGeneration {
+    // Read and hash current bytes on every traversal. Cache only the expensive
+    // canonical/schema/signature verification, never the file or chain checks.
+    const raw = readProjectionFile(this.generationPath(hash));
+    const rawSha256 = sha256(raw);
+    const cached = this.verifiedGenerations.get(hash);
+    if (cached?.rawSha256 === rawSha256) return cached.proof;
+    const generation = parseCanonicalValue(raw.toString("utf8"), CommittedGenerationSchema);
     verifySignedProjectionPackage(generation.package, {
       signingKeyId: this.signingKeyId,
       publicKey: this.publicKey
@@ -348,17 +387,21 @@ export class ProjectionReceiver {
     if (generation.package.taskEnvelope.snapshot.snapshotManifestHash !== hash) {
       throw new ReviewRealError("PUBLIC_SNAPSHOT_INTEGRITY_FAILED", 503);
     }
-    return generation;
+    const proof = generationProof(generation);
+    if (!this.verifiedGenerations.has(hash) && this.verifiedGenerations.size >= MAX_VERIFIED_GENERATIONS) {
+      this.verifiedGenerations.delete(this.verifiedGenerations.keys().next().value!);
+    }
+    this.verifiedGenerations.set(hash, Object.freeze({ rawSha256, proof }));
+    return proof;
   }
 
-  private receiptFor(generation: CommittedGeneration, active: ActivePointer): ProjectionReceipt {
-    const snapshot = generation.package.taskEnvelope.snapshot;
+  private receiptFor(generation: VerifiedGeneration, active: ActivePointer): ProjectionReceipt {
     return ProjectionReceiptSchema.parse({
       schemaVersion: "admin-public-projection-receipt-v1",
-      deliveryId: generation.package.taskEnvelope.deliveryId,
-      snapshotManifestHash: snapshot.snapshotManifestHash,
-      snapshotGeneration: snapshot.snapshotGeneration,
-      status: snapshot.snapshotManifestHash === active.snapshotManifestHash ? "active" : "superseded",
+      deliveryId: generation.deliveryId,
+      snapshotManifestHash: generation.snapshotManifestHash,
+      snapshotGeneration: generation.snapshotGeneration,
+      status: generation.snapshotManifestHash === active.snapshotManifestHash ? "active" : "superseded",
       activeSnapshotGeneration: active.snapshotGeneration,
       activeSnapshotManifestHash: active.snapshotManifestHash,
       reasonCode: null,
@@ -373,16 +416,17 @@ export class ProjectionReceiver {
     let hash: string | null = active.snapshotManifestHash;
     let expectedGeneration = active.snapshotGeneration;
     let steps = 0;
-    let matched: CommittedGeneration | null = null;
+    let matched: VerifiedGeneration | null = null;
     while (hash !== null && steps <= active.snapshotGeneration) {
       const generation = this.readGeneration(hash);
-      if (generation.package.taskEnvelope.snapshot.snapshotGeneration !== expectedGeneration) {
+      if (generation.snapshotGeneration !== expectedGeneration ||
+          (steps === 0 && generation.activatedAt !== active.activatedAt)) {
         throw new ReviewRealError("PUBLIC_SNAPSHOT_INTEGRITY_FAILED", 503);
       }
-      if (generation.package.taskEnvelope.deliveryId === deliveryId) {
+      if (generation.deliveryId === deliveryId) {
         matched = generation;
       }
-      const previousHash = generation.package.taskEnvelope.snapshot.previousSnapshotManifestHash;
+      const previousHash = generation.previousSnapshotManifestHash;
       if (expectedGeneration === 1 && previousHash === null) {
         hash = null;
         expectedGeneration = 0;
@@ -399,6 +443,11 @@ export class ProjectionReceiver {
       throw new ReviewRealError("PUBLIC_SNAPSHOT_INTEGRITY_FAILED", 503);
     }
     return matched === null ? null : this.receiptFor(matched, active);
+  }
+
+  /** Cold verification belongs before the HTTP listener accepts delivery work. */
+  verifyActiveChain(): void {
+    this.findCommitted(`op-snapshot-${"0".repeat(64)}`);
   }
 
   receive(value: unknown): ProjectionReceipt {
@@ -435,7 +484,7 @@ export class ProjectionReceiver {
       }
       if (active !== null) {
         const activeGeneration = this.readGeneration(active.snapshotManifestHash);
-        if (activeGeneration.package.taskEnvelope.snapshot.snapshotGeneration !== active.snapshotGeneration) {
+        if (activeGeneration.snapshotGeneration !== active.snapshotGeneration || activeGeneration.activatedAt !== active.activatedAt) {
           throw new ReviewRealError("PUBLIC_SNAPSHOT_INTEGRITY_FAILED", 503);
         }
       }
@@ -474,7 +523,7 @@ export class ProjectionReceiver {
       });
       writeAtomic(this.activePath, canonicalJson(pointer));
       fsyncDirectory(this.root);
-      return this.receiptFor(committed, pointer);
+      return this.receiptFor(generationProof(committed), pointer);
     } catch (error) {
       if (error instanceof ReviewRealError) throw error;
       if ((error as NodeJS.ErrnoException).code === "EEXIST") {
@@ -491,6 +540,8 @@ export class ProjectionReceiver {
     if (!DELIVERY_PATTERN.test(deliveryId)) {
       throw new ReviewRealError("PROJECTION_RECEIPT_UNKNOWN", 404);
     }
+    // Generation files precede pointer activation and can survive a failed
+    // activation. Only membership in the active chain proves a commit.
     const receipt = this.findCommitted(deliveryId);
     if (receipt === null) throw new ReviewRealError("PROJECTION_RECEIPT_UNKNOWN", 404);
     return receipt;

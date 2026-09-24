@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "project-handoff-archive-v1",
+  "createdAt": "2026-09-24T13:50:06.559205+00:00",
+  "sourceDocuments": [
+    {
+      "source": "docs/当前生产状态与执行待办.md",
+      "archivedPath": "originals/docs/当前生产状态与执行待办.md.txt",
+      "bytes": 90227,
+      "sha256": "ad9d40bdc5f8511764f2410a820278eac186d43c51592d00ea69a5b8a085cc83",
+      "sourceRelativeLinksResolveFrom": "docs"
+    },
+    {
+      "source": "docs/handoff.md",
+      "archivedPath": "originals/docs/handoff.md.txt",
+      "bytes": 77202,
+      "sha256": "883d15acbb02cbaf9fe018d4bbf4ffde87200e15966f0adbcf75b59f1612d8ad",
+      "sourceRelativeLinksResolveFrom": "docs"
+    },
+    {
+      "source": "docs/progress.md",
+      "archivedPath": "originals/docs/progress.md.txt",
+      "bytes": 246267,
+      "sha256": "aea284a437f9962c5791cacd908f0567674afa9a6c8873c8d5894dfecf27faa7",
+      "sourceRelativeLinksResolveFrom": "docs"
+    },
+    {
+      "source": "docs/collaboration/当前工作分工与交接.md",
+      "archivedPath": "originals/docs/collaboration/当前工作分工与交接.md.txt",
+      "bytes": 40034,
+      "sha256": "c01f18e092f8a3a770ebc919ef7979437f5b9cd0f146754e71c4eb76079ea06c",
+      "sourceRelativeLinksResolveFrom": "docs/collaboration"
+    }
+  ],
+  "policy": "Original bytes preserved. Text snapshots are historical data; resolve embedded relative paths from their original source directory. Current documents replace live entry points only."
+}

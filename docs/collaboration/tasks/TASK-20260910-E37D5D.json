@@ -1,0 +1,50 @@
+{
+  "acceptance_exit": "提交测试部报告附同一候选身份、独立探针和发现；本地及M1工具层通过可单独pass，明确真实微信送达证据若缺仍由开发任务等待，不能替代整体出口完成。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-09-10-TASK-20260910-E37D5D-Hermes只读巡检r4独立审查.md",
+    "scratch/hermes-site-status-review-20260910/evidence-manifest-r4.json"
+  ],
+  "authorization_evidence": "用户2026-09-10要求推进既有微信只读巡检，依项目规则独立审查。",
+  "authorization_history": [
+    {
+      "at": "2026-09-10T22:08+08:00",
+      "evidence": "用户2026-09-10要求推进既有微信只读巡检，依项目规则独立审查。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "测试部/agent_options_research",
+  "completion_class": "audit",
+  "confirmation": "无需额外确认",
+  "created_at": "2026-09-10T22:08+08:00",
+  "department": "测试部",
+  "details": "独立复核TASK-20260910-95D001同一候选，重点参数边界、SQL只读、身份/过期/未知误报、签名备份、HTTP固定白名单与重定向、无凭据泄漏、原子配置及排空重载。审核不得修实现；实际reviewer /root/agent_options_research未参与实现。纯operator不改UI，设计身份六格及Admin双端不适用，不改变Function ID。",
+  "domain_stage": "通用执行",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "任一误绿/越权/读写/配置覆盖/泄漏→fail退开发；缺生产或微信证据→精确列未验证范围，不能用CLI探针冒充Gateway或手机收件。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未把SDK调用当Gateway或手机送达，未把r3微信链路与新版准确性混用；未根据过期记录推断任务未运行或人为根因。CONTROL_CLOSED唯一失败正文遗漏已用真实Node fixture复验；配置重排严格语义等价但仍固定唯一当前SHA与CAS，未放宽输入。",
+  "node": "Hermes只读巡检独审",
+  "pointers": [
+    "docs/reviews/2026-09-10-Hermes微信只读巡检.md"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-09-10-TASK-20260910-E37D5D-Hermes只读巡检r4独立审查.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260910-E37D5D",
+  "title": "Hermes 只读巡检候选与接入独立审查",
+  "unverified": [
+    "新版Gateway注册与描述刷新、真实Weixin r4查询/准确最终回复和手机收件尚未取得；技术审查通过仅覆盖合同允许的代码、升级与M1工具层，实施95D001保持waiting_input。原Hermes同UID及通用终端能力未被本工具隔离。"
+  ],
+  "updated_at": "2026-09-10T23:55+08:00",
+  "verified": [
+    "固定r4 manifest5970667e5bcb5d5c7210d0a09cd02470e8b6f04c72ec9ff21bbda3c56a7c7ad3：独立10项格式反例、7项真实协议边界、13项升级自测及5项独立升级反例通过；M1安装字节/权限/精确两路径变化与安装后SDK中文文本及严格DTO通过。主控重新复算30件冻结证据零不一致，原r3报告与微信FAIL证据保留。"
+  ]
+}

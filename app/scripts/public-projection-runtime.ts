@@ -21,6 +21,7 @@ await runSafeCli(async () => {
     signingKeyId: manifest.projectionSigningKeyId,
     publicKey: createPublicKey(readFileSync(manifest.projectionVerifyKeyPath, "utf8"))
   });
+  receiver.verifyActiveChain();
   const server = createProjectionReceiverServer({
     receiver,
     senderServiceIdentity: manifest.projectionSenderServiceIdentity

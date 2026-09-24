@@ -50,6 +50,7 @@ export const RSS_RELEASE_RUNTIME_FILES = [
   "src/server/review-real/schema.ts",
   "src/server/review-real/security.ts",
   "src/server/review-real/sender.ts",
+  "src/server/review-real/projection-http-transport.ts",
   "src/server/rss/article-batch.ts",
   "src/server/rss/deployment.ts",
   "src/server/rss/parser.ts",

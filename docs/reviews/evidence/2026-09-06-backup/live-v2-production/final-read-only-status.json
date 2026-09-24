@@ -1,0 +1,29 @@
+{
+  "observedAt": "2026-09-06T17:30:38.343Z",
+  "sourceScriptSha256": "1d526fbda503feb776d743ab3a9b854f11d43fca39ce7046862bb285a457b839",
+  "scope": "final read-only status, not an additional independently accepted cycle",
+  "completeReceiptGates": false,
+  "status": {
+    "schemaVersion": "backup-cycle-status-v2",
+    "observedAt": "2026-09-06T17:23:52.962Z",
+    "stage": "COMPLETE",
+    "ok": true,
+    "archiveStatus": "failed"
+  },
+  "packageId": null,
+  "backupService": {
+    "label": "com.f1plus1.backup-snapshot",
+    "loaded": true,
+    "state": "running",
+    "pid": 85503,
+    "runs": 6,
+    "lastExitCode": "0",
+    "runInterval": "300 seconds",
+    "spawnType": "daemon (3)"
+  },
+  "control": null,
+  "backupCount": null,
+  "pointCompletedAt": null,
+  "fence": null,
+  "businessServices": null
+}

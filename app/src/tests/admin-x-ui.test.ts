@@ -19,7 +19,7 @@ describe("Admin X management UI wiring", () => {
   });
 
   it("provides real source and submission operations with closed metadata and recovery states", () => {
-    expect(script).toContain('sources: "/api/admin/sources"');
+    expect(script).toContain('sources: "/api/admin/x-sources"');
     expect(script).toContain('submissions: "/api/admin/x-submissions"');
     expect(script).toContain('operationType, mutation');
     expect(script).toContain('"Idempotency-Key": idempotencyKey');
@@ -33,6 +33,11 @@ describe("Admin X management UI wiring", () => {
     expect(html).toContain('id="list-state"');
     expect(html).toContain('id="detail-state"');
     expect(html).toContain('id="submit-error"');
+    expect(html).toContain(">信源</a>");
+    expect(html).toContain('class="topbar-nav"');
+    expect(html).toContain('href="/admin/settings"');
+    expect(html).not.toContain("x-admin-nav");
+    expect(script).toContain("/admin/x-accounts");
     expect(html).toContain('externalCalls=0');
     expect(script).not.toContain("resolve-oembed");
     expect(script).not.toContain("XManualSubmitLegacy");

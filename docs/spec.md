@@ -1,22 +1,60 @@
 # Spec
 
+> **2026-09-22 M1 iCloud 与 X 后继已授权**：用户明确 M5 为随身笔记本，要求继续推进 M1 直接 iCloud 备份及 X 链路，并确认 maintenance-design-r2“采用当前预览，继续实现”。日常运行不再以 M5 在线为新方案前提；复用现有 iCloud，保留一致性、真实云端取回/恢复、RPO≤15分钟及权限保护。X 正式维护认证/UI、同版本迁移、真实准入与自然发布按[本轮实施合同](reviews/2026-09-22-M1-iCloud备份与X正式接入实施合同.md)接续；授权不等于已部署或验收。旧异机证明和成功/失败历史保留，不冒签、不重放407/408。
+
+> **2026-09-15 原授权内claim兼容后继约束**：v3正式安装后新增自身installer历史导致claim确定性拒绝，原v3及seq5全部原位保留，不删除/覆盖/重放。新不可变v4可由typed seq6显式绑定v3前驱、当前历史和自身installer tail，统一完整load与实际claim规则；只接受确切归属且完整验证的tail，未知追加或活旧进程均失败。新successor的正式prepare可生成有限notBefore/POST/local技术窗，旧v3窗口原样保留；原RID/core/delivery/body/所有逻辑及物理键/最多1新增POST不变。必须验证正式install→commit→release→actual claim正向及崩溃、目录/owner/argv/身份变化反例，不能用单层inspect代替整段验收。
+
+> **2026-09-14 已授权修复内的v3实现约束**：针对v2实际receiver冷启动与备份ctime误拦，独立warm修复继续保持同core/RID/delivery/body/逻辑及物理键、原POST与本地结束窗口、最多1次新增POST。冷验证在同一临时receiver进程完成，再做全量重新绑定和fresh P2；匿名管道一次性释放监听，P2至完成监听仍≤60秒，不放宽新鲜度。预热不得执行HTTP/DB/activation写入；原v6构造器仅可对已存在且精确0700的两个目录执行同模式chmod，预热后重新绑定。Admin deployment已固定内容/持久文件身份且mtime不晚于备份周期时，允许其后续同模式chmod的ctime更新；其余资源时序规则保持。共享v2 index与v2三文件原位保留，只追加唯一typed seq5修复记录；旧v2入口必须拒绝该后继，未知记录及回滚拒绝。临时进程必须精确退出并留收据后恢复原v6服务，崩溃后仅本地恢复入口可接管已证明旧parent退出的绑定child，任何不确定保持失败。上述为原授权内缺陷修复验收要求，未宣称通过或部署。
+
+> **2026-09-14 RSS兼容修复与X替代接入已授权**：用户在获知当前AUDIT_SET_CHANGED缺陷及Playwright MCP方案后要求“修复吧，赶紧恢复正常信息运行”。实施独立resumption-v2：保留原95条完整历史绑定，新增当前唯一attention及其全局前驱的固定行摘要、同事务读取与时间上界，不改同core/RID/delivery/body/逻辑物理键及最多一次新增POST；旧候选、审计与未安装材料保持。实际完整预检、独审、现场门通过后恢复gen407，再验自然下一代和Pages首页/详情。X沿M1/当前GLM/API key，验证独立Playwright MCP+用户批准的Chrome扩展连接，先三源小样本后来源准入，不提取登录cookie或执行X账号写操作。
+
+> **2026-09-13 X采集与RSS限定恢复已授权**：用户明确要求“把这两个事项都推进下去”。继续M1默认GLM的受支持Chrome真实三源验证；对原generation407，在旧sender/receiver退出并完整验签证明未提交后，实施正式入口的一次受控同delivery恢复。保留逻辑key、历史及预算，单纯404/超时仍不得重发；实际部署/外发须候选独审与当前恢复门通过。此限定后继补充下方9月7日同投递合同，其他unknown保持原语义。完整范围、失败、用户出口和回退见[实施合同](reviews/2026-09-13-X采集与RSS受控恢复实施合同.md)。授权不等于技术验收完成。
+
+> **2026-09-12 已确认 GitHub Pages 完整只读公开站**：用户明确选择“托管完整的只读新闻站，M1 更新后同步静态内容”。授权静态适配、隔离验证、Pages公开部署与M1已激活合法公开投影的自动同步；后台、采集审核、未知投递和备份边界保持，不上传私有数据或混入未部署业务。视觉复用已确认公开站，具体功能、失败、撤回/回退与验收见[实施合同](reviews/2026-09-12-GitHub-Pages公开新闻站实施合同.md)。授权不等于部署或验收完成。
+
+> **2026-09-11 Admin故障修复与生产恢复已授权**：用户在故障诊断后要求“修复吧，然后按步骤进行，最后执行生产回复”，按上下文执行生产恢复。范围为现役备份重复认证耗时、异常锁收尾、固定候选与独审、精确遗锁隔离、完整新合法恢复点及Admin/RSS/公网恢复核验；保持证据门与业务模型/X边界。具体顺序、失败条件和回退见 [恢复计划](reviews/2026-09-11-Admin备份修复与生产恢复.md)，正式任务 `TASK-20260911-3B83D5`。授权不等于修复或生产验收完成。
+
+> **2026-09-11 已确认巡检正式入口**：用户在查看固定候选、独立审查及使用前提后回复“可以，继续推进吧”，确认采用微信 `/f1` 作为本切片正式巡检入口，继续按冻结 `candidate-site-status-20260911-direct-r1` 安装、加载和实收验收。原生直出适用于已授权的空闲会话、没有更新待答且前置hook未接管的情况；不承诺任意会话状态均绕过模型。旧自然问句的r4准确性FAIL保留，正式出口改为用户 `/f1` → 固定无参数只读采样/标准报告 → 微信实际收件；其他只读、时间/未知语义和业务边界不变。[已确认合同及固定候选](reviews/2026-09-10-Hermes微信只读巡检.md)。
+
+> **2026-09-10 已确认 Hermes 微信巡检切片**：用户确认继续实施既有微信 → M1 Hermes → 固定无参数 `get_site_status()` 的只读链路，合同与验收见 [Hermes 微信只读巡检](reviews/2026-09-10-Hermes微信只读巡检.md)。包括采样时间与过期语义、网站/RSS/投递/合法备份/存储分项、有界只读与失败不误报；不改变业务写入、schema、控制门或现有 UI，不含定时主动消息及自主维修。安装与独立验证不等同于真实微信收件已验收。
+
+> **2026-09-09接续运行提示**：当前生产事实及恢复顺序唯一见[当前生产状态与执行待办](当前生产状态与执行待办.md)。RSS v5已部署，当前恢复进展与剩余缺口均由上述入口维护；X尚未生产。下方9月7日及更早运行段为历史，已确认业务与UI合同继续有效。
+
+> 运行状态统一以 [当前生产状态与执行待办](当前生产状态与执行待办.md) 为准；下方带时间的运行观察保留原时态，已确认产品合同继续适用。RSS v5与模型详情部署、备份边界修复及X剩余验收不在本Spec重复维护。
+
+> **历史诊断（2026-09-07 08:21）与本轮已确认实施范围**：三源 cutoff 后 95 条新待审稿没有当前中文稿和 candidate 准入 fence，现役 refiner 因筛选返回 idle；另有 25 条已发布稿的来源更新未进入持续重审入口。持续审核发布后继尚未接通，现役 Admin sender 存在但无新 outbox。数量仅代表本次只读快照。按既有自动审批/发布及部署授权，继续实现绑定当前来源版本的合法准入、自动 owner、更新重审与唯一投递调度，维持 cutoff、来源允许名单、人工拒绝、恢复与停机门，禁止沿人工身份伪造自动处理。X 页面自动链的独立生产缺口继续推进，RSS 修复不依赖 X 浏览器连接。
+
+> **模型详情已确认**：用户要求点击模型卡片进入详情并在页面更换 Key，已明确确认“按这版界面实现”。视觉版本为 [F1+1-admin-model-details-v0.1](../design/ui/F1+1-admin-model-details-v0.1/design-notes.md)，完整身份见该目录 manifest.json。实际功能需具有 Mac 右侧详情与 iPhone 全屏详情的等价操作、仅写入的 Key、更换前的真实有界连接验证、凭证操作 fresh re-auth、并发版本检查、原子保存与失败保留原配置。验证时间与 Key 更新时间分别展示，不以文件存在宣称可调用；未支持的模型禁止切为当前提炼模型。现役 worker 必须读取同一已保存配置与 Key；已有草稿不自动重跑。变更影响设置 UI、身份绑定、私有配置、模型连接及 worker 接线；通过路径安全/凭证不泄漏/失败/并发/超时/真实入口与双端视觉验证后独立审查，按固定候选部署。生产切换前保留旧包及配置；失败回退经过兼容验证的旧包，凭证不得进入代码包或报告。此段为已获授权的验收合同，不能据此宣称功能或部署完成。
+
+> **RSS 同投递恢复验收补充（2026-09-07，既有自动链授权内的实现约束）**：发送响应丢失并重启后，必须从持久原 attempt、固定 envelope/delivery/reconcile identity 恢复受当前授权约束的只读凭据查询；精确已接收凭据可自动结算原尝试和原预算并完成同一 outbox，不得重发未知 POST。若原操作的完成授权已过期，允许原 attempt 如实记录远端成功、原 operation 以 `LOCAL_COMPLETION_AUTHORITY_EXPIRED` 结束，并由明确关联的新成功对账操作采用该凭据；不得将远端成功写成失败，不得回填过去时间或替换旧不可变绑定。对账已持久提交但 outbox 未更新时崩溃，须仅本地重放完成；原预算只能结算一次。404、超时、错误凭据仍保持待对账并有可判定原因，不承诺信息不足时自动判成功。该合同不放宽来源授权、停止/撤销、恢复与 writer 门，不修改历史 0007 SQL，也不表示已验收。
+
+> **历史状态（2026-09-07 01:20）**：备份 v2 已部署并通过三轮独立生产验收，旧快照泄漏生产者退休且两批精确清理完成；M1 附加 iCloud 归档仍失败。X 页面路线与网站自动链已获用户确认，本地合成导入通过，真实 M1 捕获、生产后继及上站未完成。准确身份、证据和接续顺序统一见 [当前生产状态与执行待办](当前生产状态与执行待办.md)。此前时间段保留为历史，不覆盖本段。
+
+> **2026-09-06 已确认范围（09-07 状态见上）**：用户确认采用 [live 备份登记后继方案](reviews/2026-09-06-live备份登记后继设计草案.md) 并继续落地部署，同时明确要求 X 白名单信源“自动抓取、自动审批并发布”到 F1 网站。该授权覆盖必要的后继接线、验证和部署，不等于实现或验收完成；X 不执行对外账号发帖、回复或私信。用户后续明确按 `TASK-20260829-0ED611` 的 M1 已登录页面读取路线继续；27 个 X 账号使用该路线，Sky 使用官方 RSS，不另要求 X API 采购。访问被阻断时不伪造抓取结果。用户同时要求处理 M1/M5 无效快照及持续占盘问题，允许确认依赖后停用失效生产者并精确清理已证明无用的临时产物，保留有效备份、当前恢复材料和失败证据。
+
+> **历史：2026-09-06 22:20 受控恢复结果**：孤立锁已隔离，22:02 新生产救援快照与隔离恢复通过，M5 独立读到同包完整密文且三文件 hash 一致；原备份调度器已恢复加载；下一自然周期也已生成 22:18:47 新快照且正常释放锁。原 cycle 登记仍因 ESM 读取错误失败；另有已复现的 live 新锚点策略阻断。control / fence 与 Admin、Public、Projection PID 未变，公开 health=200。当前优先级为固定运行包接线、合法登记后继及逐周期异机证据，不能宣称全链或 RPO 达标。[证据、回退和未完成项](reviews/2026-09-06-备份事故诊断与受控恢复方案.md)。A17/A18 本地修复及六格浏览器验证已补齐，未部署。
+
+> **历史：2026-09-06 08:13–08:25 只读回扫**：生产备份当前故障，`backup-snapshot` 最近 exit=1，遗留锁 `STALE_LOCK` 持续阻断；最新本地快照为 9 月 5 日 14:37，最新已登记恢复点为 9 月 1 日 08:13（北京时间）。不能继续以“已上线 / fence=true”宣称当前 RPO 合格。公开 reader 可用、三源最近采集槽成功；cutoff 后待审核已增至 40 条。当前优先级为恢复备份与登记链，再收敛任务合同及新稿持续链。详见 [本轮审计与推进方案](reviews/2026-09-06-整体回扫与推进方案.md)。本地缺陷修复未部署，TASK 状态未升级。
+
 > 这是当前项目的唯一开发准绳，整合「产品意图 + 技术路线 + 验收标准」，兼具 PRD 与实施合同作用。
 > `overview.md`、`mvp.md`、`roadmap.md` 等是辅助文档;若冲突,以本文件为准,并及时同步修正。
 
 ## 状态
 
-> **2026-08-29 当前事实覆盖**：当前运行真值已进入 schema10 恢复与持续采集重建阶段，详见 [当前生产状态与执行待办](当前生产状态与执行待办.md)。固定 M1 的 Public Beta 与 Quick Tunnel 最近有 HTTP 200 和 `candidate-v10-20260829-220859` 部署证据，但 RSS collector/refiner 的旧 LaunchAgent 当前未加载，生产 DB 为 `user_version=10`，`phase=disabled / global_stop=stopped / recovery=fenced`，verified recovery point 为 0；因此不能把下方 2026-08-20 的“四源900秒采集、自动初审、自动发布正在运行”继续当作当前运行事实。当前 quick-launch 生产门固定 `automaticReview=false / automaticPublish=false`，先恢复 Motorsport 与 The Race 的 collection-only canary，再进入双语 refine 与人工审核/发布。X 已由用户把 59 条精简为 27 个账号，另以 Sky Sports 官方 RSS 替代 `SkySportsF1`；27/27 仅完成一次登录态页面只读验收，尚未写入生产 registry，也没有持续采集 worker。当前正式执行队列为 `TASK-20260829-FCC322 → TASK-20260829-BBFF2A → TASK-20260829-082F2C`，以及后继 `TASK-20260829-0ED611 / TASK-20260829-E59ACA`。
+> **2026-09-05 历史服务基线（备份状态已由顶部覆盖）**：运行真值见 [当前生产状态与执行待办](当前生产状态与执行待办.md)。SNAP 15 分钟整库快照、iCloud 密文镜像与 gateway 合法恢复点登记已在 M1 生产上线。Public 与 Quick Tunnel 正在运行；公开 pointer 为 generation **201**，首页 12 卡含 Motorsport / The Race / **Sky Sports F1** 中文稿。生产 control 现为 `phase=live / global_stop=clear / recovery=ready`，`writer_epoch=2`，control `version=22`。generation 141 仍 `succeeded`。Admin、公开 `:3000` 与投影 `:3102` 均已切 `candidate-v10-20260905-1408`。collector/refiner WorkingDirectory 仍 `0145`，schema opener 读 `1408`。生产 **0012 Sky Sports RSS 已 apply**，指纹 `36e6f60b…7849`。cutoff 后 allowlist 已 published（Sky 22 / Motorsport 23 / The Race 16）；snapshot 投递走 sidecar 进程内 `ProjectionReceiver.receive()`，不要 HTTP POST 到 `:3102`（10s idle timeout）。Autosport/RaceFans 仍隔离。签名 caps 仍 `automaticReview=false / automaticPublish=false`。`AC5CC2` JSON 仍 `claimed / user_confirmed`，勿标 complete。`TASK-20260831-ECADB7` 已完成。`0ED611 / E59ACA` 保持 blocked。旧 BB/082 及 R2 均已机械锁定。
 
-> 下方标注 2026-08-20 及更早的运行态段落保留作历史审计。凡与上述覆盖层冲突，以本覆盖层、accepted successor ADR 和当前任务 JSON 为准。
+> 下方标注 2026-08-20 及更早的运行态段落保留作历史审计。凡与上述覆盖层冲突，以本覆盖层和 [当前生产状态与执行待办](当前生产状态与执行待办.md) 为准；任务协议状态仍以 TASK JSON 为准，但过期的 `block_reason` 不得压过覆盖层运行事实。
 
-- 当前版本：Spec v1 初版运行基线；公开真实读模型、私有 Admin、人工审核/发布和真实 RSS 纵切已经形成一次端到端实机闭环。
-- 当前阶段：固定 M1 对四条独立 F1 RSS（Motorsport.com、Autosport、RaceFans、The Race）跑 `900s` 采集、DeepSeek 中文整理、确定性自动初审、v4 `system-auto-publish-v1` 自动发布、签名投影和公开 real-snapshot reader（含读时事件聚类）。The Race 的 canonical fetch URL 必须是 `https://www.the-race.com/category/formula-1/rss/`（`/feed/` 会 301，现有 transport 拒绝跳转）；RaceFans 只用 `https://www.racefans.net/category/formula-1/feed/`，不用全站 `/feed/`。用户 2026-08-20 授权这两家走与 Motorsport/Autosport 相同的 v4 热链：The Race 只开 `storage.ghost.io/.../content/images/`，RaceFans 只开 `www.racefans.net/wp-content/uploads/`（分类 RSS 无 enclosure 时从文章 `og:image` 取）。这不是 v5 media-policy，也不得热链 `pbs.twimg.com` / Instagram 或任意 Ghost 租户。唯一 review SQLite 为 `dev=16777233/ino=24570709`、`user_version=6`（这是独立 RSS 的 `0006_independent_rss_racefans_the_race.sql`；`user_version=5` 仍是 Autosport 的 `0005_second_rss_autosport.sql`，**都不是** v5 条件自动发布合同的 0005）。Passkey 人工修订/批准/发布仍可用，但 RSS 新闻主链不再等待人工点发布。iPhone 与 iPad 已由用户实机登录 Admin；公开 feed/detail、中文摘要和 HTTPS 来源图对外可读。
-- 当前入口：Admin 固定为 `https://[PRIVATE-ADMIN-HOST]`；公开入口暂用 Cloudflare Quick Tunnel，可能随隧道重启变化且无 SLA。
-- 最近更新：2026-08-20
+### 2026-08-20 历史运行基线（当前已失效）
 
-- 自动初审运行边界（2026-08-14，2026-08-19 运行时态覆盖，2026-08-20 最新窗口确认）：固定 M1 每 60 秒跑确定性安全初审。当前规则只拒绝不可见控制字符、双向文本控制符及既有严格 DTO/URL/媒体身份门无法通过的内容；缺少当前来源版本的中文稿只进入等待，不形成拒绝。安全门通过后写入不可变 revision、approved decision 与 `Publication=queued`。人工拒绝与自动拒绝继续留痕；拒绝项可在 Admin 生成新 revision 恢复。DeepSeek refiner 每 900 秒最多补齐 20 条缺失中文稿。自动初审只扫 Admin `list()` 的最新 100 条候选（按来源时间，含已发布）；更旧的 `pending_review` 不进入自动审核、不自动发布、不进公开聚类。用户 2026-08-20 确认这是对的：只处理最新内容，不要为清 RaceFans 旧稿（如 On This Day）扩大扫描窗口。
+- 当时版本：Spec v1 初版运行基线；公开真实读模型、私有 Admin、人工审核/发布和真实 RSS 纵切已经形成一次端到端实机闭环。
+- 当时阶段：固定 M1 对四条独立 F1 RSS（Motorsport.com、Autosport、RaceFans、The Race）跑 `900s` 采集、DeepSeek 中文整理、确定性自动初审、v4 `system-auto-publish-v1` 自动发布、签名投影和公开 real-snapshot reader（含读时事件聚类）。The Race 的 canonical fetch URL 必须是 `https://www.the-race.com/category/formula-1/rss/`（`/feed/` 会 301，现有 transport 拒绝跳转）；RaceFans 只用 `https://www.racefans.net/category/formula-1/feed/`，不用全站 `/feed/`。用户 2026-08-20 授权这两家走与 Motorsport/Autosport 相同的 v4 热链：The Race 只开 `storage.ghost.io/.../content/images/`，RaceFans 只开 `www.racefans.net/wp-content/uploads/`（分类 RSS 无 enclosure 时从文章 `og:image` 取）。这不是 v5 media-policy，也不得热链 `pbs.twimg.com` / Instagram 或任意 Ghost 租户。唯一 review SQLite 为 `dev=16777233/ino=24570709`、`user_version=6`（这是独立 RSS 的 `0006_independent_rss_racefans_the_race.sql`；`user_version=5` 仍是 Autosport 的 `0005_second_rss_autosport.sql`，**都不是** v5 条件自动发布合同的 0005）。Passkey 人工修订/批准/发布当时可用，RSS 新闻主链当时不等待人工点发布。iPhone 与 iPad 已由用户实机登录 Admin；公开 feed/detail、中文摘要和 HTTPS 来源图当时对外可读。
+- 当时入口：Admin 固定为 `https://[PRIVATE-ADMIN-HOST]`；公开入口暂用 Cloudflare Quick Tunnel，可能随隧道重启变化且无 SLA。
+- 最近更新：2026-09-07（备份 v2 生产验收、X 页面授权与本地导入边界；generation **201** / 公开+`:3102`=`1408`）；正文 2026-08-20 运行段保留作历史审计
 
-- v4 自动发布运行边界（2026-08-19，2026-08-20 四源覆盖，同日配图授权）：Admin 运行时每 60 秒调用 `automaticPublishBatch`（actor=`system-auto-publish-v1`，每批最多 20）。对当前来源版本已 approved 且 `Publication=queued` 的项走现有 `releaseNow` CAS，生成一份全量 snapshot/outbox；上一份 outbox 未终态时记 `PUBLICATION_RECONCILE_WAIT` 并等待，不并行开新 generation。这是 v4 运行切片，**不是** `ADR-M5-BACKLOG-AUTO-PUBLISH-003` 的 v5 phase/cutoff/media-policy。四条 live RSS 现行路径都会发布带允许名单 `source_image` 的新闻卡（热链来源 CDN：Motorsport/Autosport 数字 CDN、The Race 的 Ghost `/content/images/`、RaceFans 的 `/wp-content/uploads/`）。v5 合同里「非空 media → `MEDIA_POLICY_UNKNOWN` / 阻止系统发布」尚未实现，也不得用这次运行收据宣称媒体权利门已关闭，不得把社交图 silently 放进自动发布。人工按钮仍需 fresh WebAuthn。X / Instagram / Reddit / Formula1.com 仍未采集。
+- 自动初审运行边界（2026-08-14，2026-08-19 运行时态覆盖，2026-08-20 最新窗口确认）：固定 M1 每 60 秒跑确定性安全初审。当时规则只拒绝不可见控制字符、双向文本控制符及既有严格 DTO/URL/媒体身份门无法通过的内容；缺少当时来源版本的中文稿只进入等待，不形成拒绝。安全门通过后写入不可变 revision、approved decision 与 `Publication=queued`。人工拒绝与自动拒绝继续留痕；拒绝项可在 Admin 生成新 revision 恢复。DeepSeek refiner 每 900 秒最多补齐 20 条缺失中文稿。自动初审只扫 Admin `list()` 的最新 100 条候选（按来源时间，含已发布）；更旧的 `pending_review` 不进入自动审核、不自动发布、不进公开聚类。用户 2026-08-20 确认这是对的：只处理最新内容，不要为清 RaceFans 旧稿（如 On This Day）扩大扫描窗口。
+
+- v4 自动发布运行边界（2026-08-19，2026-08-20 四源覆盖，同日配图授权）：Admin 当时每 60 秒调用 `automaticPublishBatch`（actor=`system-auto-publish-v1`，每批最多 20）。对当时来源版本已 approved 且 `Publication=queued` 的项走现有 `releaseNow` CAS，生成一份全量 snapshot/outbox；上一份 outbox 未终态时记 `PUBLICATION_RECONCILE_WAIT` 并等待，不并行开新 generation。这是 v4 历史运行切片，**不是** `ADR-M5-BACKLOG-AUTO-PUBLISH-003` 的 v5 phase/cutoff/media-policy。当时四条 live RSS 路径都会发布带允许名单 `source_image` 的新闻卡（热链来源 CDN：Motorsport/Autosport 数字 CDN、The Race 的 Ghost `/content/images/`、RaceFans 的 `/wp-content/uploads/`）。v5 合同里「非空 media → `MEDIA_POLICY_UNKNOWN` / 阻止系统发布」尚未实现，也不得用这次历史运行收据宣称媒体权利门已关闭，不得把社交图 silently 放进自动发布。人工按钮当时仍需 fresh WebAuthn。X / Instagram / Reddit / Formula1.com 当时仍未采集。
 
 - 条件自动发布合同边界（2026-08-14，2026-08-19/20 覆盖）：用户已授权“先处理存量，后恢复新抓取”的窄 successor；现行入口为 [ADR-M5-BACKLOG-AUTO-PUBLISH-003](decisions/system/2026-08-14-F1+1-条件自动发布v5无环release-pair身份-successor-accepted.md) 与[实施合同 v0.3](spec/F1+1-存量优先确定性安全初审与条件自动发布实施合同-v0.3.md)，001/002与v0.1/v0.2保留历史。该 successor 的 v5 phase/cutoff/media-policy/full-fallback **仍未实现**。不得把现行 `user_version=5` 或 `user_version=6` 读成 v5 自动发布已迁移——5 来自 Autosport 第二 RSS，6 来自 RaceFans/The Race 独立 RSS。v4 运行切片见上方边界；v5 合同一旦实现，非空 media 仍应 fail closed 直到独立 media-policy successor，不得用当前 RSS 热链图（含 The Race Ghost `/content/images/` 与 RaceFans `wp-content/uploads`）外推到社交图或自动放宽权利门。
 

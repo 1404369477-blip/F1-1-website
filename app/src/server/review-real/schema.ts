@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { LIVE_RSS_ARTICLE_HOSTS, LIVE_RSS_DISPLAY_NAMES, LIVE_RSS_SOURCE_IDS, isLiveRssMediaUrl } from "../rss/sources.ts";
+import { X_PAGE_HANDLES } from "../x-page/normalize.ts";
 
 export const LiveRssSourceIdSchema = z.enum(LIVE_RSS_SOURCE_IDS);
 
@@ -126,7 +127,7 @@ export const ReviewEditableSchema = z.object({
   notes: normalizedText(2000)
 }).strict();
 
-export const ReviewBundlePublicPayloadSchema = z.object({
+export const RssReviewBundlePublicPayloadSchema = z.object({
   candidateId: IdentifierSchema,
   sourceId: LiveRssSourceIdSchema,
   sourceRevision: z.number().int().positive(),
@@ -142,7 +143,50 @@ export const ReviewBundlePublicPayloadSchema = z.object({
   sourceDisplayName: z.enum(LIVE_RSS_DISPLAY_NAMES)
 }).strict();
 
-export const PublicProjectionRecordCoreSchema = z.object({
+export const XPageCanonicalUrlSchema = z.string().regex(/^https:\/\/x\.com\/[a-z0-9_]{1,15}\/status\/[1-9][0-9]{14,19}$/).refine(value => {
+  const id = value.split("/").at(-1)!;
+  return /^[1-9][0-9]{14,19}$/.test(id) && BigInt(id) <= BigInt("18446744073709551615");
+});
+export const XPageSourceIdSchema = z.enum(X_PAGE_HANDLES.map(handle => `x_${handle}`) as [`x_${typeof X_PAGE_HANDLES[number]}`, ...`x_${typeof X_PAGE_HANDLES[number]}`[]]);
+const xPublicText = (maximum: number, minimum = 1) => normalizedText(maximum, minimum)
+  .refine(value => !/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f-\u009f\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]/u.test(value));
+const XPageRelationsSchema = z.object({
+  replyToStatusUrl: XPageCanonicalUrlSchema.nullable(),
+  quotedStatusUrl: XPageCanonicalUrlSchema.nullable(),
+  repostedByHandle: z.enum(X_PAGE_HANDLES).nullable(),
+}).strict();
+export const XPageReviewBundlePublicPayloadSchema = z.object({
+  candidateId: z.string().regex(/^xpage-[0-9a-f]{64}$/),
+  sourceId: XPageSourceIdSchema,
+  sourceRevision: z.number().int().positive(),
+  sourcePayloadHash: HashSchema,
+  canonicalUrl: XPageCanonicalUrlSchema,
+  sourceTitle: z.string().min(1).max(100_000),
+  sourceAuthor: xPublicText(400),
+  sourcePublishedAt: UtcTimestampSchema,
+  sourcePlatform: z.literal("x"),
+  contentType: z.literal("driver_social"),
+  titleZh: xPublicText(400),
+  summaryZh: xPublicText(1200),
+  media: z.tuple([]),
+  sourceDisplayName: xPublicText(200),
+  authorHandle: z.enum(X_PAGE_HANDLES),
+  relations: XPageRelationsSchema,
+  // Private bundle commitment. It is deliberately absent from the Public DTO.
+  xCaptureSha256: HashSchema,
+}).strict().superRefine((payload, context) => {
+  if (payload.sourceId !== `x_${payload.authorHandle}` || !payload.canonicalUrl.startsWith(`https://x.com/${payload.authorHandle}/status/`)
+    || payload.sourceAuthor !== `${payload.sourceDisplayName} (@${payload.authorHandle})`) {
+    context.addIssue({ code: "custom", message: "X author identity does not match its original status" });
+  }
+  const statusId = payload.canonicalUrl.split("/").at(-1)!;
+  if (/^[1-9][0-9]{14,19}$/.test(statusId) && Math.floor(Number((BigInt(statusId) >> BigInt(22)) + BigInt("1288834974657")) / 1000) !== Math.floor(Date.parse(payload.sourcePublishedAt) / 1000)) {
+    context.addIssue({ code: "custom", message: "X visible timestamp disagrees with status identity" });
+  }
+});
+export const ReviewBundlePublicPayloadSchema = z.union([RssReviewBundlePublicPayloadSchema, XPageReviewBundlePublicPayloadSchema]);
+
+export const RssPublicProjectionRecordCoreSchema = z.object({
   publicId: z.string().regex(/^public-rss-[0-9a-f]{64}$/),
   publishGeneration: z.literal(1),
   contentType: z.literal("race_news"),
@@ -182,9 +226,44 @@ export const PublicProjectionRecordCoreSchema = z.object({
   }
 });
 
-export const PublicProjectionRecordSchema = PublicProjectionRecordCoreSchema.extend({
+const RssPublicProjectionRecordSchema = RssPublicProjectionRecordCoreSchema.extend({
   projectionHash: HashSchema
 }).strict();
+
+export const XPagePublicProjectionRecordCoreSchema = z.object({
+  publicId: z.string().regex(/^public-x-[0-9a-f]{64}$/),
+  publishGeneration: z.literal(1),
+  contentType: z.literal("driver_social"),
+  state: z.literal("media_missing"),
+  titleZh: xPublicText(400),
+  summaryZh: xPublicText(1200),
+  publishedAt: UtcTimestampSchema,
+  sourcePublishedAt: UtcTimestampSchema,
+  sourceTimeStatus: z.literal("known"),
+  source: z.object({
+    sourceId: XPageSourceIdSchema,
+    platform: z.literal("x"),
+    displayName: xPublicText(200),
+    byline: xPublicText(400),
+    accessStatus: z.literal("available"),
+  }).strict(),
+  media: z.null(),
+  originalLink: z.object({ enabled: z.literal(true), url: XPageCanonicalUrlSchema, reason: z.null() }).strict(),
+  detail: z.object({
+    leadZh: xPublicText(1200),
+    bodyZh: z.array(xPublicText(1200)).min(1).max(2),
+    keyPointsZh: z.array(xPublicText(240)).max(3),
+  }).strict(),
+}).strict().superRefine((record, context) => {
+  const handle = record.source.sourceId.slice(2);
+  if (!record.originalLink.url.startsWith(`https://x.com/${handle}/status/`)
+    || record.source.byline !== `${record.source.displayName} (@${handle})`) {
+    context.addIssue({ code: "custom", message: "X Public original link and author identity disagree" });
+  }
+});
+const XPagePublicProjectionRecordSchema = XPagePublicProjectionRecordCoreSchema.extend({ projectionHash: HashSchema }).strict();
+export const PublicProjectionRecordCoreSchema = z.union([RssPublicProjectionRecordCoreSchema, XPagePublicProjectionRecordCoreSchema]);
+export const PublicProjectionRecordSchema = z.union([RssPublicProjectionRecordSchema, XPagePublicProjectionRecordSchema]);
 
 export const BundleSummarySchema = z.object({
   id: IdentifierSchema,

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "independent-isolated-icloud-byte-actual-review-v1",
+  "decision": "PASS_ACTUAL_ISOLATED_BYTE_ROUNDTRIP_ONLY",
+  "reviewer": "cloud_canary_review",
+  "reviewedAt": "2026-09-23T16:29:10.433457+00:00",
+  "evidencePath": "scratch/pro-analysis-20260923/cloud-complete-observation-r1",
+  "rawSha256": "807581782343a9549b81cb9c5ed02b68f01d84bcc687f0c2c766edf15754670f",
+  "readOnlyReaderSha256": "9f3adf17ff0c1b055562e5eca08ac396422d00c5e737515de4e08d4a4d1647ad",
+  "resumeEntrySha256": "776c04d4d262ce739db445fcf16d7cb7406f914eeab665a6dfef44c56e7cbfc9",
+  "resumeActualSha256": "dd33fcfd472dd8109de9da2ec1f59eb79832ef2f21f73dcede6f9e25e4d1b56c",
+  "filesRehashed": 46,
+  "uploadEventsVerified": 6,
+  "roundtripEventsVerified": 22,
+  "uploadJournalHeadSha256": "af0956177a63b9e317c2d2c702abd1da35238567765c53ca6475092802d945bc",
+  "roundtripJournalHeadSha256": "d589fa4f419e2431c26ed2344a69a902db3d0dfc5d84caa2340bdeed06a4e3e7",
+  "firstFailurePreserved": true,
+  "firstFailureAt": "2026-09-23T16:08:49.065274+00:00",
+  "firstFailureCode": "NSCocoaErrorDomain 4355 on both upload leaves",
+  "firstRejectSha256": "7ce86fedc865131dd23e374234e3db675251a9ea435885f3b06a84729de4ebc3",
+  "laterReadyAndRoundtripVerified": true,
+  "completedAt": "2026-09-23T16:24:36.243207+00:00",
+  "elapsedMs": 81939,
+  "packageId": "1790176881821_528531270a64230a",
+  "recoveryPointAt": "2026-09-23T15:21:21.821Z",
+  "historicalPointAgeSecondsAtCompletion": 3794.422207,
+  "readback": [
+    {
+      "bytes": 139443,
+      "sha256": "fa177cc80de26f10441ff954a6c46cca238299429b19edafc3a8f76bdb63f022"
+    },
+    {
+      "bytes": 2390005072,
+      "sha256": "45f967f66e5b4558c973fe094afc3738f00fce5840ca117df4c6ae4ba2d4e3a0"
+    }
+  ],
+  "bothMembersEvictedToDatalessAndDownloaded": true,
+  "supervisorPid": 8165,
+  "supervisorExited": true,
+  "registrationAllowed": false,
+  "applicationRestoreVerified": false,
+  "productionBackupActivated": false,
+  "limits": [
+    "Hashes of all exported evidence files and both event chains recomputed independently on M5. Ciphertext is not transferred to reviewer; its second complete SHA/identity read is from the inspected fixed read-only M1 sampler and matches original provider result exactly.",
+    "Both cloud leaves show actual native eviction acknowledgment, dataless/nonresident state, subsequent download and exact returned byte hashes. This is a single isolated historical package test.",
+    "The original failure remains failed. The later READY does not establish upload completion time between samples or a universal diagnosis for Apple error4355.",
+    "Historical point was already over900seconds and remains unregistered. No continuous RPO, application restore, production trust/scheduler activation, or M5 service retirement is implied.",
+    "Supervisor exit is confirmed; this review does not claim a separate native descendant process census.",
+    "New continuation fixture failures remain recorded; actual M1 continuation supplies this once-only normal-path result without revising those tests to PASS.",
+    "Reviewer performed no SSH, production/cloud mutation, live database access, private-key read or registration."
+  ]
+}

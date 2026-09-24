@@ -28,6 +28,8 @@ import {
   reviewRealSchemaFingerprint
 } from "../review-real/migration.ts";
 import type { XManualAuthorityPort } from "../internal-operation/mutation-port.ts";
+import { assertXPageAdmissionSchema, xPageSelectedIdentity } from "../x-page/admission-migration.ts";
+import { X_PAGE_HANDLES } from "../x-page/normalize.ts";
 
 type SqlRow = Record<string, unknown>;
 
@@ -174,6 +176,10 @@ function assertXManualInboxLegacySchema(database: DatabaseSync): void {
 }
 
 function assertXManualSchema10Bridge(database: DatabaseSync): void {
+  if (database.prepare("SELECT 1 FROM sqlite_schema WHERE type='table' AND name='x_page_admission_identity_v1'").get() !== undefined) {
+    assertXManualProductionSuccessorBridge(database);
+    return;
+  }
   // Schema 10 owns mutable governance state through its own checks and Admin
   // opener's full fingerprint assertion.  This runtime boundary pins only the
   // frozen 59-row X inventory so later enable/pause/retire/epoch transitions
@@ -228,6 +234,39 @@ function assertXManualSchema10Bridge(database: DatabaseSync): void {
   ) {
     throw new TweetInboxError("SQLITE_FAILURE");
   }
+}
+
+function assertXManualProductionSuccessorBridge(database: DatabaseSync): void {
+  assertXPageAdmissionSchema(database);
+  const selected = new Set<string>(X_PAGE_HANDLES.map((handle) => `x_${handle}`));
+  const rows = database.prepare(
+    `SELECT x.source_id, x.handle, x.canonical_url, x.inventory_sha256,
+            r.source_id AS mapped_id, r.source_kind, r.collection_mode,
+            r.display_name, r.site_url, r.canonical_feed_url, r.identity_sha256
+       FROM x_manual_source_registry x
+       LEFT JOIN source_registry_v1 r ON r.source_id=x.source_id
+      ORDER BY x.source_id`
+  ).all() as SqlRow[];
+  const total = database.prepare("SELECT count(*) AS count FROM source_registry_v1 WHERE source_kind IN ('x_manual','x_page')").get() as SqlRow;
+  const identity = database.prepare("SELECT x_inventory_set_sha256 FROM source_registry_migration_identity_v1 WHERE singleton_id=1").get() as SqlRow | undefined;
+  if (rows.length !== 59 || Number(total.count) !== 59 || identity?.x_inventory_set_sha256 !== X_MANUAL_SOURCE_REGISTRY_SET_SHA256) {
+    throw new TweetInboxError("SQLITE_FAILURE");
+  }
+  for (const row of rows) {
+    const sourceId = String(row.source_id);
+    const page = selected.has(sourceId);
+    const expectedIdentity = page ? xPageSelectedIdentity(sourceId) : sha256(canonicalJson({
+      sourceId, canonicalFeedUrl: null, siteUrl: String(row.canonical_url), sourceKind: "x_manual", collectionMode: "manual_url"
+    }));
+    if (row.mapped_id !== sourceId || row.display_name !== row.handle || row.site_url !== row.canonical_url ||
+        row.canonical_feed_url !== null || row.inventory_sha256 !== X_MANUAL_INVENTORY_SHA256 ||
+        row.source_kind !== (page ? "x_page" : "x_manual") ||
+        row.collection_mode !== (page ? "browser_visible_dom" : "manual_url") || row.identity_sha256 !== expectedIdentity) {
+      throw new TweetInboxError("SQLITE_FAILURE");
+    }
+  }
+  const mappedSet = rows.map((row) => `${String(row.mapped_id)}\n${String(row.display_name)}\n${String(row.site_url)}`).join("\n");
+  if (sha256(mappedSet) !== X_MANUAL_SOURCE_REGISTRY_SET_SHA256) throw new TweetInboxError("SQLITE_FAILURE");
 }
 
 /**
@@ -459,7 +498,7 @@ export type XManualCapabilityDisabled = Readonly<{
 }>;
 
 export type XManualInboxSnapshot = Readonly<{
-  sourceCount: 59;
+  sourceCount: 32 | 59;
   submissionCount: number;
   operationCount: number;
   externalCalls: 0;
@@ -555,11 +594,13 @@ export class XManualInboxRepository {
   private readonly database: DatabaseSync;
   private readonly authorityPort: XManualAuthorityPort | null;
   private readonly schemaVersion: 8 | 10;
+  private readonly hasXPageAdmission: boolean;
 
   constructor(database: DatabaseSync, authorityPort?: XManualAuthorityPort) {
     this.database = database;
     this.authorityPort = authorityPort ?? null;
     this.schemaVersion = assertXManualInboxRuntimeSchema(database);
+    this.hasXPageAdmission = this.schemaVersion === 10 && database.prepare("SELECT 1 FROM sqlite_schema WHERE type='table' AND name='x_page_admission_identity_v1'").get() !== undefined;
   }
 
   listSources(): XManualSourceRow[] {
@@ -644,6 +685,11 @@ export class XManualInboxRepository {
   submitManualStatusUrl(input: XManualSubmitInput): XManualSubmitResult {
     const nowIso = asIso(input.nowIso, "nowIso");
     const parsed = normalizeManualStatusUrl(input.submittedUrl);
+    if (this.hasXPageAdmission && this.database.prepare(
+      "SELECT 1 FROM source_registry_v1 WHERE source_kind='x_page' AND lower(display_name)=lower(?)"
+    ).get(parsed.handle) !== undefined) {
+      throw new TweetInboxError("X_MANUAL_URL_REJECTED", { nextAction: "manual_review" });
+    }
     const dedupeKey = sha256(`x-status-v1\n${parsed.statusId}`);
     const existing = this.database.prepare(
       `SELECT submission_id, revision, submitted_url, canonical_url, status_id, dedupe_key, state,
@@ -754,7 +800,7 @@ export class XManualInboxRepository {
     const submissions = this.database.prepare("SELECT count(*) AS count FROM x_manual_submission").get() as SqlRow;
     const operations = this.database.prepare("SELECT count(*) AS count FROM x_manual_operation").get() as SqlRow;
     return {
-      sourceCount: 59,
+      sourceCount: this.hasXPageAdmission ? 32 : 59,
       submissionCount: Number(submissions.count),
       operationCount: Number(operations.count),
       externalCalls: 0,

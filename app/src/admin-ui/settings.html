@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark light">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'self'">
+  <title>F1+1 · 模型与连接</title>
+  <link rel="stylesheet" href="/admin/assets/app.css">
+  <link rel="stylesheet" href="/admin/assets/settings.css">
+  <script src="/admin/assets/settings.js" defer></script>
+</head>
+<body class="model-settings-page">
+  <a class="skip-link" href="#main">跳到模型设置</a>
+  <header class="topbar">
+    <a class="brand" href="#main">F1<span>+</span>1 <small>私有后台</small></a>
+    <nav class="topbar-nav" aria-label="后台目录"><a href="/admin/ops">运行</a><a href="/admin/reviews">审核</a><a href="/admin/sources">信源</a><a href="/admin/x-submissions">投稿</a><a class="current" id="nav-settings" href="/admin/settings" aria-current="page">设置</a></nav>
+    <button class="theme-button" id="theme-toggle" aria-label="切换浅色主题">浅色</button>
+  </header>
+  <main id="main">
+    <section class="auth-shell" id="auth-view" aria-labelledby="auth-title">
+      <div class="auth-card">
+        <p class="eyebrow">Private operator access</p>
+        <h1 id="auth-title">进入后台设置</h1>
+        <p class="auth-intro">管理提炼模型与 API Key，请先使用当前设备的通行密钥登录。</p>
+        <div class="auth-status" id="auth-status" role="status">
+          <span class="spinner" aria-hidden="true"></span>
+          <div>
+            <strong>正在检查会话</strong>
+            <span>等待同源 Admin 服务响应。</span>
+          </div>
+        </div>
+        <div class="auth-actions" id="auth-actions" hidden>
+          <button class="primary-button" id="login-passkey" type="button">使用通行密钥登录</button>
+          <a class="secondary-button x-link-button" href="/admin/reviews">首次配置请前往审核台</a>
+        </div>
+      </div>
+    </section>
+
+
+    <section id="app-view" hidden>
+    <div class="page-heading"><div><p class="eyebrow">设置 / 内容处理</p><h1>模型与连接</h1><p>管理提炼模型、访问密钥与连接状态。</p></div><span class="private-label"><i></i><span id="connection-state">正在检查会话</span></span></div>
+    <section class="summary" aria-label="当前配置">
+      <div><p class="eyebrow">当前提炼模型</p><h2 id="current-model-name">正在读取</h2><p id="current-model-copy">新内容使用此模型生成中文草稿。</p></div>
+      <div class="summary-state"><span class="status neutral" id="summary-status">正在读取</span><p id="summary-hint">读取模型配置与最近验证结果。</p></div>
+    </section>
+    <div class="section-heading"><h2>模型连接</h2><p>点击卡片查看详情、验证连接或更换 Key。</p></div>
+    <section class="model-grid" aria-label="模型列表">
+      <button class="model-card" data-model="deepseek-chat" id="model-deepseek-chat" disabled aria-haspopup="dialog" aria-controls="model-dialog">
+        <div class="model-top"><span class="model-symbol blue">D</span><span class="pill" id="deepseek-role">待载入</span></div>
+        <h3>DeepSeek Chat <span aria-hidden="true">↗</span></h3><p class="model-id">deepseek-chat</p>
+        <dl><div><dt>API Key</dt><dd id="deepseek-key-state">正在读取</dd></div><div><dt>连接状态</dt><dd id="deepseek-connection">未验证</dd></div></dl>
+        <div class="card-footer"><span>api.deepseek.com</span><strong>管理连接 <span aria-hidden="true">→</span></strong></div>
+      </button>
+      <button class="model-card" data-model="glm-5.3-flash" id="model-glm-5.3-flash" disabled aria-haspopup="dialog" aria-controls="model-dialog">
+        <div class="model-top"><span class="model-symbol violet">G</span><span class="pill" id="glm-role">待载入</span></div>
+        <h3>GLM 5.3 Flash <span aria-hidden="true">↗</span></h3><p class="model-id">glm-5.3-flash</p>
+        <dl><div><dt>API Key</dt><dd id="glm-key-state">正在读取</dd></div><div><dt>连接状态</dt><dd id="glm-connection">未验证</dd></div></dl>
+        <div class="card-footer"><span>open.bigmodel.cn</span><strong>查看详情 <span aria-hidden="true">→</span></strong></div>
+      </button>
+    </section>
+    <div class="page-note"><span aria-hidden="true">i</span><p>切换模型只影响后续提炼。审核和发布的运行状态请在「运行」页查看。</p></div>
+    <p id="settings-error" class="field-error" role="alert"></p><button id="retry-settings" class="secondary-button" type="button" hidden>重新读取设置</button>
+    </section>
+  </main>
+  <dialog id="model-dialog" class="model-dialog" aria-labelledby="dialog-title" aria-describedby="dialog-description">
+    <div class="drawer-header"><div><p class="eyebrow">设置 / 模型连接</p><h2 id="dialog-title">DeepSeek Chat</h2></div><button class="close-button" id="dialog-close" aria-label="关闭模型详情">×</button></div>
+    <div class="drawer-content">
+      <p class="dialog-description" id="dialog-description">查看连接状态，或更换用于内容提炼的 API Key。</p>
+      <div class="details-summary"><span class="model-symbol blue" id="detail-symbol">D</span><div><strong id="detail-model-id">deepseek-chat</strong><small id="detail-purpose">中文标题、摘要与要点提炼</small></div><span class="pill active" id="detail-active">当前使用</span></div>
+      <section class="detail-section" aria-labelledby="connection-heading"><div class="detail-heading"><h3 id="connection-heading">连接信息</h3><span class="status neutral" id="detail-connection-state">未验证</span></div>
+        <dl class="connection-info"><div><dt>服务地址</dt><dd id="detail-endpoint">api.deepseek.com</dd></div><div><dt>最近验证</dt><dd id="detail-verified-at">尚未验证</dd></div><div><dt>Key 更新</dt><dd id="detail-key-updated">未记录</dd></div></dl>
+        <button class="text-button" id="test-current">验证当前连接 <span aria-hidden="true">↗</span></button><p class="helper">验证会向模型服务发送一次最小请求，可能消耗少量额度。</p>
+      </section>
+      <section class="detail-section" aria-labelledby="key-heading"><div class="detail-heading"><h3 id="key-heading">API Key</h3><span class="pill" id="key-badge">已配置</span></div>
+        <div class="stored-key" id="stored-key"><div><span class="masked-key" aria-label="密钥已保存，无法读取原值">•••• •••• •••• ••••</span><p>已保存的 Key 不会回传到浏览器。</p></div><button class="secondary-button" id="replace-key">更换 Key</button></div>
+        <div id="key-editor" hidden><label class="field-label" for="new-key">新的 API Key <span>仅用于本次更换</span></label><div class="input-wrap"><input id="new-key" type="password" placeholder="在此粘贴新的 API Key" autocomplete="off" spellcheck="false" autocapitalize="none" maxlength="512" aria-describedby="key-help"><button type="button" id="toggle-key" aria-label="显示本次输入的 Key">显示</button></div><p class="helper" id="key-help">保存前验证新 Key。失败时保留原配置，已有内容不受影响。</p><button class="text-button" id="cancel-replacement">取消更换</button></div>
+      </section>
+      <div class="inline-message" id="inline-message" role="status" aria-live="polite" hidden></div>
+      <div class="support-note" id="support-note" hidden><strong>此模型暂不能用于生产提炼</strong><p>可以先配置并验证 Key。完成模型接入后，才能切换使用。</p></div>
+      <section class="usage-note"><h3>生效范围</h3><p id="usage-copy">保存后，后续中文提炼会使用新 Key。不会重新生成已完成的草稿，也不会开启自动审批或发布。</p><button class="text-button" id="select-model" type="button" hidden>设为当前提炼模型</button></section>
+    </div>
+    <div class="discard-notice" id="discard-notice" role="alert" hidden><p>还有未保存的 Key，关闭会清空本次输入。</p><div><button class="secondary-button" id="keep-editing">继续编辑</button><button class="danger-button" id="discard-changes">放弃更改</button></div></div>
+    <footer class="drawer-footer"><p id="save-hint">更换 Key 时，需要通行密钥验证身份。</p><div><button class="secondary-button" id="footer-close">完成</button><button class="primary-button" id="save-key" disabled>验证并保存</button></div></footer>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

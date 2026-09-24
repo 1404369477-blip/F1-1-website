@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "backup-independent-read-observation-v1",
+  "observer": "M5",
+  "observedAt": "2026-09-06T08:02:50.898659+00:00",
+  "via": "M5 iCloud filesystem read; no SSH transfer of ciphertext",
+  "packageId": "1788590221077_ea43a60fdee3ef1c",
+  "recoveryPointAt": "2026-09-05T06:37:01.077Z",
+  "latestSha256": "e403b629d4f5070f38992c360e1569ea3f0ee5e2593b831a8b5e7b094c8f399c",
+  "manifestSha256": "7cdd0bd92ca13503dc66ed95f4b15027a79bb7748aba3be576c7602089c70190",
+  "objectName": "db-projection-snapshot.ea43a60fdee3ef1c43e6d0a1ae8b647f9ef14c584458da39910f9ade4fa9a3a8.e2f2c6fc36e07951",
+  "objectBytes": 214995030,
+  "objectSha256": "713bb3325c0ca05ec7028d285f3a4118b66bef1f0ee477e3da521839ffdf0d4a",
+  "decryptVerified": false,
+  "recurringVerifier": false
+}

@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 
-import { hasEditorialExtras, isDuplicateEditorialBody, isImageFirstCategory } from "./editorial";
+import { publicStoryHref } from "./public-site-config";
+import { editorialSectionLabel, hasEditorialExtras, isImageFirstCategory, originalArticleCta, originalArticleNote, uniqueEditorialParagraphs } from "./editorial";
 import {
   fetchPublicStory,
   isPublicStoryNotFound,
@@ -199,8 +200,11 @@ export function StoryDetailExperience({ publicId }: { publicId: string }) {
   const imageFirst = isImageFirstCategory(story.category);
   const selectedLanguage = story.localized[language] ? language : "zh-CN";
   const copy = story.localized[selectedLanguage] ?? story.localized["zh-CN"];
-  const originalLabel = selectedLanguage === "en" ? "View source" : imageFirst ? "查看原帖" : "查看原文";
-
+  const englishCopy = story.localized.en;
+  const showExtractPanel = copy !== null && (
+    hasEditorialExtras(copy.lead, copy.body, copy.keyPoints) ||
+    (selectedLanguage === "zh-CN" && englishCopy !== null)
+  );
   return (
     <DetailFrame>
       <p className="timeline-kicker">F1 中英提炼 · 公开详情</p>
@@ -262,10 +266,10 @@ export function StoryDetailExperience({ publicId }: { publicId: string }) {
               </button>
             ) : null}
 
-            {copy && hasEditorialExtras(copy.lead, copy.body, copy.keyPoints) ? (
+            {copy && showExtractPanel ? (
               <section className="tl-detail timeline-detail-body" aria-labelledby="detail-summary-title">
                 <div className="tl-zh-head">
-                  <h2 className="tl-zh-label" id="detail-summary-title">{selectedLanguage === "en" ? "English extract" : "中文提炼"}</h2>
+                  <h2 className="tl-zh-label" id="detail-summary-title">{editorialSectionLabel(selectedLanguage, copy)}</h2>
                   <div className="public-language-toggle lang-pill" role="group" aria-label="提炼语言">
                     <button
                       type="button"
@@ -278,18 +282,32 @@ export function StoryDetailExperience({ publicId }: { publicId: string }) {
                       type="button"
                       className={`lang-pill-btn${selectedLanguage === "en" ? " is-active" : ""}`}
                       aria-pressed={selectedLanguage === "en"}
-                      disabled={story.localized.en === null}
+                      disabled={englishCopy === null}
                       onClick={() => setLanguage("en")}
                     >EN</button>
                   </div>
                 </div>
-                {!isDuplicateEditorialBody(copy.lead, copy.body)
-                  ? copy.body.map((paragraph) => <p className="tl-zh" key={paragraph}>{paragraph}</p>)
-                  : null}
+                {uniqueEditorialParagraphs(copy.lead, copy.body)
+                  .map((paragraph) => <p className="tl-zh" key={paragraph}>{paragraph}</p>)}
                 {copy.keyPoints.length > 0 ? (
-                  <ul className="tl-keypoints">
+                  <ul className="tl-keypoints timeline-detail-keypoints">
                     {copy.keyPoints.map((point) => <li key={point}>{point}</li>)}
                   </ul>
+                ) : null}
+                {selectedLanguage === "zh-CN" && englishCopy ? (
+                  <div className="timeline-detail-english">
+                    <h3 className="tl-zh-label" id="detail-en-title">英文提炼</h3>
+                    <p className="timeline-detail-english-note">独立英文整理，不是信源原文或官方翻译。</p>
+                    <p className="timeline-detail-en-title">{englishCopy.title}</p>
+                    {englishCopy.lead.trim().length > 0 ? <p className="tl-zh">{englishCopy.lead}</p> : null}
+                    {uniqueEditorialParagraphs(englishCopy.lead, englishCopy.body)
+                      .map((paragraph) => <p className="tl-zh" key={paragraph}>{paragraph}</p>)}
+                    {englishCopy.keyPoints.length > 0 ? (
+                      <ul className="tl-keypoints">
+                        {englishCopy.keyPoints.map((point) => <li key={point}>{point}</li>)}
+                      </ul>
+                    ) : null}
+                  </div>
                 ) : null}
               </section>
             ) : null}
@@ -302,26 +320,31 @@ export function StoryDetailExperience({ publicId }: { publicId: string }) {
                 <span className="sep" aria-hidden="true">·</span>
                 <span><b>{date} {clock}</b></span>
               </span>
-              {hasOriginalUrl ? (
+            </div>
+            {hasOriginalUrl ? (
+              <p className="timeline-detail-original">
                 <a
-                  className="tl-original-link"
+                  className="timeline-detail-original-link"
                   href={story.originalUrl ?? ""}
                   rel="noopener noreferrer"
                   target="_blank"
-                >{originalLabel}</a>
-              ) : (
+                >{originalArticleCta(selectedLanguage, story.sourceName)}</a>
+                <span>{originalArticleNote(selectedLanguage)}</span>
+              </p>
+            ) : (
+              <p className="timeline-detail-original">
                 <span className="tl-original-disabled">原文暂不可用</span>
-              )}
-              {story.relatedSources.map((source) => source.originalUrl ? (
-                <a
-                  key={source.publicId}
-                  className="tl-original-link"
-                  href={source.originalUrl}
-                  rel="noopener noreferrer"
-                  target="_blank"
-                >{source.displayName} {selectedLanguage === "en" ? "source" : "原文"}</a>
-              ) : null)}
-            </div>
+              </p>
+            )}
+            {story.relatedSources.map((source) => source.originalUrl ? (
+              <a
+                key={source.publicId}
+                className="tl-original-link"
+                href={source.originalUrl}
+                rel="noopener noreferrer"
+                target="_blank"
+              >{source.displayName} {selectedLanguage === "en" ? "source" : "原文"}</a>
+            ) : null)}
             <p className="tl-source-notice">{story.sourceNotice}</p>
 
             {relatedStories.length > 0 ? (
@@ -330,7 +353,7 @@ export function StoryDetailExperience({ publicId }: { publicId: string }) {
                 <ul>
                   {relatedStories.map((related) => (
                     <li key={related.publicId}>
-                      <Link href={`/stories/${related.publicId}`}>
+                      <Link href={publicStoryHref(related.publicId)}>
                         <span>{related.category}</span>
                         <strong>{related.localized[selectedLanguage]?.title ?? related.localized["zh-CN"]?.title ?? related.title}</strong>
                       </Link>

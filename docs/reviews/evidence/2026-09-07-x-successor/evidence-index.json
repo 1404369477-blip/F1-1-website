@@ -1,0 +1,113 @@
+{
+  "schemaVersion": "x-local-successor-evidence-index-v1",
+  "observedAt": "2026-09-06T17:25:41.859277+00:00",
+  "scope": "local synthetic importer and release-closure integration; no real captures or deployment",
+  "implementationFileCount": 16,
+  "sourceIdentityVerified": true,
+  "files": [
+    {
+      "file": "HANDOFF.md",
+      "source": "scratch/x-successor-20260907/HANDOFF.md",
+      "sourceSha256": "2328117849da1eb59c16624a210856279219b38866e8ba10876bd2f498a12a06",
+      "evidenceSha256": "2328117849da1eb59c16624a210856279219b38866e8ba10876bd2f498a12a06",
+      "bytes": 11525,
+      "redacted": false
+    },
+    {
+      "file": "implementation-manifest.json",
+      "source": "scratch/x-successor-20260907/implementation-manifest.json",
+      "sourceSha256": "4b21537e7a259533efd70db131f8629a1f56f58b86511798ed50f5c9d7e87cd2",
+      "evidenceSha256": "4b21537e7a259533efd70db131f8629a1f56f58b86511798ed50f5c9d7e87cd2",
+      "bytes": 6365,
+      "redacted": false
+    },
+    {
+      "file": "incremental.patch",
+      "source": "scratch/x-successor-20260907/incremental.patch",
+      "sourceSha256": "9a270c1d28a2427172d3c7ad7090d55d87f2c66c1bc0b7b895835dd4acfd7de8",
+      "evidenceSha256": "9a270c1d28a2427172d3c7ad7090d55d87f2c66c1bc0b7b895835dd4acfd7de8",
+      "bytes": 27612,
+      "redacted": false
+    },
+    {
+      "file": "before-hashes.json",
+      "source": "scratch/x-successor-20260907/before-hashes.json",
+      "sourceSha256": "b88c0fd13dadde1267a3899861c9bf79da7c284ce83bfba14fcd57d2b2be79ad",
+      "evidenceSha256": "b88c0fd13dadde1267a3899861c9bf79da7c284ce83bfba14fcd57d2b2be79ad",
+      "bytes": 1184,
+      "redacted": false
+    },
+    {
+      "file": "test-toolchain-identity.json",
+      "source": "scratch/x-successor-20260907/test-toolchain-identity.json",
+      "sourceSha256": "f21c2587a6b6075330881d4ac9a61a2fe7f474517c8fdb56f045683e21eeff14",
+      "evidenceSha256": "cb756d32be0937dffeca8438dad3ec17496ea38c5d216497a4032a10bb9f3552",
+      "bytes": 1047,
+      "redacted": true
+    },
+    {
+      "file": "typecheck.log",
+      "source": "scratch/x-successor-20260907/typecheck.log",
+      "sourceSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidenceSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "redacted": false
+    },
+    {
+      "file": "lint.log",
+      "source": "scratch/x-successor-20260907/lint.log",
+      "sourceSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidenceSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "redacted": false
+    },
+    {
+      "file": "independent-review/independent-review.json",
+      "source": "scratch/x-successor-20260907/independent-review/independent-review.json",
+      "sourceSha256": "3bfedc6f364ff720106e790978fc2529b6f8d96367450e8ff6194457cc02efb1",
+      "evidenceSha256": "3bfedc6f364ff720106e790978fc2529b6f8d96367450e8ff6194457cc02efb1",
+      "bytes": 4090,
+      "redacted": false
+    },
+    {
+      "file": "independent-review/release-closure-review.json",
+      "source": "scratch/x-successor-20260907/independent-review/release-closure-review.json",
+      "sourceSha256": "72301126ba906aab2d7820a358f7b5389cc0028c99f163db84d1f341641b85ca",
+      "evidenceSha256": "72301126ba906aab2d7820a358f7b5389cc0028c99f163db84d1f341641b85ca",
+      "bytes": 5350,
+      "redacted": false
+    },
+    {
+      "file": "independent-review/release-closure-check.json",
+      "source": "scratch/x-successor-20260907/independent-review/release-closure-check.json",
+      "sourceSha256": "8c7c2f0c053cd04ce247772d6a1e5fbbe9c0e942c50d21d756c0949562b1c1b7",
+      "evidenceSha256": "8c7c2f0c053cd04ce247772d6a1e5fbbe9c0e942c50d21d756c0949562b1c1b7",
+      "bytes": 2888,
+      "redacted": false
+    },
+    {
+      "file": "independent-review/schema-check.json",
+      "source": "scratch/x-successor-20260907/independent-review/schema-check.json",
+      "sourceSha256": "c721e8089c6779ea6fc1723e5a727cf7c5d9401860b87a9343cf25f509be4be5",
+      "evidenceSha256": "c721e8089c6779ea6fc1723e5a727cf7c5d9401860b87a9343cf25f509be4be5",
+      "bytes": 59142,
+      "redacted": false
+    },
+    {
+      "file": "independent-review/release-manifest-final-test.log",
+      "source": "scratch/x-successor-20260907/independent-review/release-manifest-final-test.log",
+      "sourceSha256": "fa7bf1a5cd14dcc4f0b19e780d5ca292f8292b4f856d8769172b9d4c88eb3f1d",
+      "evidenceSha256": "329d7b8bbfaa21e5b6167410e29b50d7d665afdc5e5faa49755744c5c2c9fbb7",
+      "bytes": 225,
+      "redacted": true
+    },
+    {
+      "file": "independent-review/release-closure-tests.log",
+      "source": "scratch/x-successor-20260907/independent-review/release-closure-tests.log",
+      "sourceSha256": "35f0fd709c9a3201309b25a354b5407f42d7ade2e0f5430765d46921d77b2026",
+      "evidenceSha256": "3e8132a46dc3a1a7e22dda6c3ff78ce41d2d0beda14c355b9b97279fb1b82314",
+      "bytes": 1270,
+      "redacted": true
+    }
+  ]
+}

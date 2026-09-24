@@ -1,0 +1,47 @@
+{
+  "at": "2026-09-06T16:53:31.792Z",
+  "publicDeployment": {
+    "sha256": "de75668ee742ad22c04b494321387cef86d4ce95fa02391d053ca01d6b7ac2f0",
+    "targetNextBuildSha256": "1cfdad94cd16db2f086641d481e2c0dc1f7fdc5eaf70f30a03f562d337eeb656",
+    "targetReleaseAppRoot": "[M1-HOME]/F1-1-website/releases/candidate-v10-20260905-1408/app"
+  },
+  "probes": [
+    {
+      "url": "http://127.0.0.1:3000/api/health",
+      "status": 200,
+      "bodySha256": "38c1ca96dd1e7f3ed56b8501a33094e4aa2d58fb0357869c0fe7411d48c3756b",
+      "summary": {
+        "status": "ready",
+        "reasonCode": "ok",
+        "dataGate": "accepted-public-real-snapshot"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3000/api/public/feed",
+      "status": 200,
+      "bodySha256": "fc261f642be1c507ecbfb7531d74f6e9f57cff868ae354c7edcd6e80ef916151",
+      "summary": {
+        "schemaVersion": "public-read-v0.1"
+      },
+      "itemCount": 12
+    },
+    {
+      "url": "http://127.0.0.1:3101/admin/reviews",
+      "status": 404,
+      "bodySha256": "d92b293efb86913e0fb4006a8ed4b9888f43923856522be2227103cca465c29c",
+      "summary": {
+        "reasonCode": "ADMIN_REQUEST_INVALID",
+        "schemaVersion": "admin-service-error-v1"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3102/internal/projections",
+      "status": 404,
+      "bodySha256": "635d833e4c1758d6c218fcef30b3f592e9d01c7b53880691e001fcb4ae86150b",
+      "summary": {
+        "reasonCode": "PROJECTION_REQUEST_INVALID",
+        "schemaVersion": "projection-internal-error-v1"
+      }
+    }
+  ]
+}

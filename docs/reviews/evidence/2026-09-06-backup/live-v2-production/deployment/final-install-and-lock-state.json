@@ -1,0 +1,39 @@
+{
+  "at": "2026-09-06T17:07:33.251Z",
+  "oldHelper": {
+    "path": "[M1-HOME]/F1-1-website/.admin-backup/bin/m1-snapshot-helper.mjs",
+    "exists": false,
+    "code": "ENOENT"
+  },
+  "retiredHelper": {
+    "path": "[M1-HOME]/F1-1-website/.admin-backup/retired-20260907-v2/m1-snapshot-helper.mjs",
+    "exists": true,
+    "regular": true,
+    "symlink": false,
+    "mode": "600",
+    "size": 7105,
+    "sha256": "f44b8b907f343fac023c484a3394f378d751bfa858252bc534a66a3dd70d860b"
+  },
+  "snapshotLock": {
+    "path": "[M1-HOME]/F1-1-website/backups/snap/run.lock",
+    "exists": false,
+    "code": "ENOENT"
+  },
+  "cycleLock": {
+    "path": "[M1-HOME]/F1-1-website/backups/cycle.lock",
+    "exists": false,
+    "code": "ENOENT"
+  },
+  "backupPlist": {
+    "sha256": "7d0b55b54a0d286a85f4637c4048cb60603154d08f214f6ea567e483516a9d7c",
+    "processType": "Standard",
+    "interval": 300,
+    "programArguments": [
+      "/bin/bash",
+      "[M1-HOME]/F1-1-website/backup-runtime-releases/20260907-v2-05/tools/backup-snapshot-cycle.sh",
+      "[M1-HOME]/F1-1-website/backup-runtime-releases/20260907-v2-05/runtime",
+      "ad5749603246a2ea6b967ea0b205cceb7faa2da1b88d6894014254ed81306a17"
+    ]
+  },
+  "knownManualOrBackupProcesses": []
+}

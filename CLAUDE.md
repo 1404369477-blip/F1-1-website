@@ -10,7 +10,7 @@
 ## 先读
 
 1. `docs/agent-guide.md`
-2. 按 `docs/agent-guide.md` 指引读取 `docs/spec.md`、`docs/progress.md` 等必要文件。
+2. 按 `docs/agent-guide.md` 指引读取 `docs/spec.md`、`docs/当前生产状态与执行待办.md`、`docs/collaboration/当前工作分工与交接.md`、`docs/progress.md`。
 
 ## 冲突处理
 

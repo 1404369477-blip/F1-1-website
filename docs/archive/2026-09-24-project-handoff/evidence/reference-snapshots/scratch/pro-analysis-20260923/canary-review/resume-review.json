@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "independent-isolated-canary-continuation-review-v1",
+  "reviewedAt": "2026-09-23T16:23:40.407130+00:00",
+  "reviewer": "cloud_canary_review",
+  "decision": "PASS_ONE_BOUNDED_DIAGNOSTIC_CONTINUATION",
+  "findings": [],
+  "entry": {
+    "path": "scratch/backup-icloud-successor-20260922/installation/upload-r4/canary/run-resume-fixed.py",
+    "sha256": "776c04d4d262ce739db445fcf16d7cb7406f914eeab665a6dfef44c56e7cbfc9",
+    "bytes": 359972,
+    "resumeBodySha256": "8ac3f7a7988bfa7f6513840911e55b0e2dc65eecd59c42a526e0afa1c35f5b7e",
+    "actualInputSha256": "155cdf82de98cc01b287df55d842df748c7d6347223808d728da85f85181f7c3",
+    "childSha256": "2c16a3e7ddd152e57ae0b5e4f65f7717512220a61b989104dd02a50e676b4533",
+    "attemptRoot": "/Users/chanai/F1-1-website/backups/icloud-readiness-canary-20260923-r4/resume-001",
+    "providerSeconds": 600
+  },
+  "checks": [
+    "Embedded initial wrapper prefix equals previously reviewed fixed wrapper; original run_owned_child cleanup mechanism unchanged.",
+    "Actual first-failure export contains 14 byte/hash-verified files, source/context/child/start match and five upload-journal events form exact chain ending REJECT.",
+    "Fixed continuation revalidates original failed result, root identities, all originals, current absence of exact prior PIDs, captured Node/manifest and two invoked runtime tools.",
+    "Original source/capture/context/runtime remain exactly bound; package lock and unchanged five-event upload journal are checked before starting.",
+    "Both exact application cloud leaves must currently classify READY again; observation-only historic READY is insufficient.",
+    "Only a newly exclusive resume-001 records this attempt; preexisting attempt or byte result rejects replay. Original cloud-child.py and original provider implementation perform continuation.",
+    "Same 600-second original supervisor and original tested TERM/INT/HUP/timeout cleanup are reused. Original failure/context/source/child and five events are checked again after child exit.",
+    "The new result explicitly leaves applicationDrillVerified/productionCliVerified/registrationAllowed false and retains original recoveryPointAt."
+  ],
+  "newIndependentExecution": {
+    "record": "scratch/pro-analysis-20260923/canary-review/resume-actual-binding-check.json",
+    "recordSha256": "41e695bec4505c022f8951471641fdb66b1205047f66b595daf88178be80f97a",
+    "actualBindingsPositive": 14,
+    "changedFirstExitRejected": true,
+    "actualLivePidRejected": true,
+    "python": "3.9.6",
+    "fullNewResumeFixturePassed": false
+  },
+  "verificationLimits": [
+    "The proposed seven new full-flow fixture tests fail while constructing the initial failed state because fixture source ctime changes, before resume_once runs. They are not reported as passing and do not supply resume execution evidence.",
+    "The once-only diagnostic judgment uses reviewed actual input, directly executed new binding checks, static new boundary review, prior independent 12 tests and actual first invocation. Actual continuation outcome remains to be verified.",
+    "This review does not re-run the prior 800-file runtime audit. Fixed initial stage identity and prior independent runtime result are reused; continuation re-reads manifest, Node and two direct executable leaves.",
+    "Old failure and REJECT must remain; no retroactive success, no application restore or RPO claim, no production trust/REGISTER/scheduler/key action.",
+    "Reviewer did not SSH or write to production, cloud or implementation paths."
+  ]
+}

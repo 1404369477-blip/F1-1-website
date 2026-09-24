@@ -1,0 +1,4 @@
+{
+  "scripts/backup-lock-recover.ts": "b7592f4e7911fef080493b417e9a64d85dd0899d53ef37c0d409568dbe4a3c2c",
+  "src/server/backup-snapshot/lock-recovery.ts": "cc8a8d08b18c83ac45fcfd3df4baa4a7d6712d0703bc6e873935b5336dccd12e"
+}

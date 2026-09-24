@@ -1,16 +1,21 @@
 {
   "acceptance_exit": "形成真实 verified off-host encrypted restore-drilled recovery point，RPO<=900s；DB user_version=10、正式 schema/runtime verifier PASS；control 操作均有 fresh receipt；两源 RSS identity closure 为真实 hash；新 plist 精确绑定候选/DB/900s/log，installed-not-loaded 或按后继 canary 门执行；automatic review/publish/reconcile=0；report/receipt/manifest/hash 完整。",
   "artifacts": [],
-  "authorization_evidence": "2026-08-29当前主线程：用户要求完整同步工作文档，方便其他Agent接手；此前已明确要求持续推进至公开网站和管理后台完整上线。",
+  "authorization_evidence": "legacy合同禁止恢复且不接受新授权；只允许后继R2/R3任务按各自门禁推进。",
   "authorization_history": [
     {
       "at": "2026-08-29T23:49+08:00",
       "evidence": "2026-08-29当前主线程：用户要求完整同步工作文档，方便其他Agent接手；此前已明确要求持续推进至公开网站和管理后台完整上线。",
       "state": "user_confirmed"
+    },
+    {
+      "at": "2026-08-31T09:12+08:00",
+      "evidence": "legacy合同禁止恢复且不接受新授权；只允许后继R2/R3任务按各自门禁推进。",
+      "state": "user_required"
     }
   ],
-  "authorization_state": "user_confirmed",
-  "block_reason": "2026-08-30 勘探证实四缺口(G1 backup_recovery_point 无生产写入口;G2 recovery-fence.json 无合法置 true 入口;G3 source_registry_rss_config_v1 占位 hash 不可变无替换路径;G4 控制序列只有一推到 live 无 ready 停点,与 reconcile=0 冲突;附 G5 rss:install-macos 对 schema10 库失败)。证据 scratch/TASK-20260829-BBFF2A/control-path-gaps.md。等待开发部恢复门合法控制工具链补全任务交付后 resume。",
+  "authorization_state": "user_required",
+  "block_reason": "旧合同已由TASK-20260831-F7B06E R2替代，禁止授权或恢复执行：旧任务固定candidate且把reconcile误写为总量0，与生产既有1条reconcile_wait冲突。仅R2可在用户单独确认后推进；现有reconcile_wait必须同identity/status零消费零删除。",
   "claimed_by": "自动化部/01a00560-4fca-7221-9bbb-382a9c2f6195",
   "completion_class": "standard",
   "confirmation": "按当前线程用户持续推进目标执行；任何新增付费、凭证、权限、不可逆删除或扩大公网暴露仍需单独用户确认。",
@@ -34,11 +39,11 @@
   ],
   "report": "",
   "resolution": null,
-  "revision": 5,
+  "revision": 9,
   "schema_version": 1,
   "task_id": "TASK-20260829-BBFF2A",
   "title": "M1 Schema10恢复门与RSS身份闭包生产预备",
   "unverified": [],
-  "updated_at": "2026-08-30T23:52+08:00",
+  "updated_at": "2026-08-31T09:12+08:00",
   "verified": []
 }

@@ -1,0 +1,61 @@
+{
+  "acceptance_exit": "现场绑定release/manifest/DB/migration身份；0011只产生两源v2现势配置且v1历史不可变；终态disabled/stopped/ready；schema10 plist为900s且installed-not-loaded；既有reconcile_wait同identity/status不变；新增review/publish/reconcile delta=0；形成前后receipt/manifest/hash与回退步骤。",
+  "artifacts": [
+    "scratch/TASK-20260831-ECADB7/report.md",
+    "scratch/TASK-20260831-ECADB7/apply-receipt.json",
+    "scratch/TASK-20260831-ECADB7/until-ready-receipt.json",
+    "scratch/TASK-20260831-ECADB7/schema10-plist-receipt.json"
+  ],
+  "authorization_evidence": "2026-08-31 用户确认继续下一步并恢复采集和发布链路。确认 ECADB7 三项A类：0011 apply、生产 quick-launch --until ready、schema10 RSS plist installed-not-loaded。不进入 live、不清 global_stop、不 launchctl load collector、不启用自动审核/发布、不消费既有 reconcile_wait。",
+  "authorization_history": [
+    {
+      "at": "2026-08-31T09:13+08:00",
+      "evidence": "需要用户对0011 apply、生产--until ready、schema10 RSS plist installed-not-loaded三项A类动作作新的明确确认。",
+      "state": "user_required"
+    },
+    {
+      "at": "2026-08-31T23:40+08:00",
+      "evidence": "2026-08-31 用户确认继续下一步并恢复采集和发布链路。确认 ECADB7 三项A类：0011 apply、生产 quick-launch --until ready、schema10 RSS plist installed-not-loaded。不进入 live、不清 global_stop、不 launchctl load collector、不启用自动审核/发布、不消费既有 reconcile_wait。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "自动化部/01a00560-4fca-7221-9bbb-382a9c2f6195",
+  "completion_class": "standard",
+  "confirmation": "三项A类动作需用户新的明确确认；当前user_required。",
+  "created_at": "2026-08-31T09:13+08:00",
+  "department": "自动化部",
+  "details": "承接blocked legacy TASK-20260829-BBFF2A与受协议措辞缺陷影响的F7B06E R2；旧任务因历史替代链不能formal supersede，均禁止恢复，只使用本R3。前置SNAP恢复点、C917F4工具链和Admin fence true已满足。执行前现场复核Admin/RSS release、manifest、DB identity与0011 migration identity。用户单独确认后仅写Motorsport/The Race additive v2 identity，运行quick-launch --until ready，并安装schema10 RSS plist为installed-not-loaded。Autosport/RaceFans隔离。既有reconcile_wait 1条保持同identity/status且零消费零删除；本任务新增review/publish/reconcile operation/effect delta=0。",
+  "domain_stage": "M1生产预备/恢复门与RSS闭包R3",
+  "event_receipts": [],
+  "execution_state": "completed",
+  "external_artifacts": [],
+  "failure_paths": [
+    "身份任一Unknown或漂移时零生产写并等待输入；既有reconcile_wait被消费、删除或identity/status变化时立即停止；合法0011/control/plist路径失败时禁止raw UPDATE、drop trigger或加载旧plist。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "bootstrap首次失败曾短暂使3101空窗；已bootstrap+kickstart恢复PID80741。0011首次因authorizer拒绝TEMP表失败，库未改；去掉authorizer后apply成功。未把采集已恢复写成完成。",
+  "node": "QL3/m1/schema10-recovery-rss-closure-r3",
+  "pointers": [
+    "docs/当前生产状态与执行待办.md"
+  ],
+  "report": "scratch/TASK-20260831-ECADB7/report.md",
+  "resolution": null,
+  "revision": 6,
+  "schema_version": 1,
+  "task_id": "TASK-20260831-ECADB7",
+  "title": "M1 Schema10恢复门与RSS身份闭包生产预备R3",
+  "unverified": [
+    "私网HTTPS/Passkey本会话未走通",
+    "未load collector 未enter live 未清global_stop 人工发布仍被141拦住"
+  ],
+  "updated_at": "2026-09-01T02:37+08:00",
+  "verified": [
+    "control终态disabled/stopped/ready writerEpoch=2",
+    "生产0011 fingerprint=359aff36…defa user_version=10 v2仅Motorsport/The Race v1四源占位未改",
+    "generation141 reconcile_wait delivery/hash/updated_at未变 自动审核发布operation仍0",
+    "Admin candidate-v10-20260901-0145 PID80741 loopback3101 公开3000 PID34066 home200",
+    "schema10 plist 900s installed-not-loaded 未进LaunchAgents collector service-not-found"
+  ]
+}

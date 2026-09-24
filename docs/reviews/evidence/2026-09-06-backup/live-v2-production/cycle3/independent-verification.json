@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "independently-verified-production-backup-cycle-v1",
+  "verifiedAt": "2026-09-06T17:07:33.235Z",
+  "captureOrdinal": 3,
+  "packageId": "1788714207435_38f4e575edff42cf",
+  "expectedTrigger": "StartInterval_300_seconds",
+  "result": "PASS",
+  "nodeVersion": "v24.18.0",
+  "offhostSignatureVerified": true,
+  "applicationSignatureVerified": true,
+  "independentM5CacheCiphertextRead": {
+    "sha256": "67650564307ed09c82441b3ba44e72db6b779693364c82aa002c3de5eb11295b",
+    "bytes": 334824331,
+    "manifestMatchesM1": true,
+    "receiptBytesMatchM1": true
+  },
+  "applicationReceiptSha256": "0f4e13c861e6ff51398ec2d81719fba5d53c3ce9627858a933f5ec6b15fa2b61",
+  "offhostReceiptSha256": "72e885f4d07af164070a3c4f96e1da8372a8ace670d1e62ee190a44833fc2a3d",
+  "backupCount": 98,
+  "validBackupCount": 98,
+  "samePackageAndLegalOperationVerified": true,
+  "checkpointRecomputed": {
+    "algorithm": "f1plus1-backup-checkpoint-v2",
+    "hash": "e4836013f38faf295dbf3c61842686d9f46e3985109ead9c18a858a81b95728f"
+  },
+  "controlUnchanged": true,
+  "anchorUnchanged": true,
+  "fenceMonotonicAndReady": true,
+  "businessPidsUnchanged": true,
+  "ageAtCaptureSeconds": 202.227,
+  "ageAtRegistrationSeconds": 138.946,
+  "gapFromPreviousSeconds": 499.381,
+  "applicationElapsedMs": 35913,
+  "snapshotElapsedMs": 17789,
+  "archiveStatus": "failed",
+  "passkeyRestoreVerified": false,
+  "limits": [
+    "Original restoreRoot has been cleaned; its hash is authenticated by the producer signature and legal registration, without a second filesystem inspection after cleanup.",
+    "Natural trigger classification uses launchd run progression and interval timing; no trigger or scheduler mutation is issued by this verifier.",
+    "Per-cycle HTTP health is captured separately."
+  ]
+}

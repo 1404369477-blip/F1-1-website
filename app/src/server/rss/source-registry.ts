@@ -1,6 +1,9 @@
 import { createHash } from "node:crypto";
 import type { DatabaseSync } from "node:sqlite";
 
+import { X_PAGE_HANDLES, X_PAGE_SELECTION } from "../x-page/normalize.ts";
+import { rssConfigTable } from "./rss-config-read.ts";
+
 export const SOURCE_REGISTRY_SCHEMA = "source-registry-v1" as const;
 export const SOURCE_REGISTRY_AUTHORITY_SCHEMA = "quick-launch-authority-v2" as const;
 export const X_AUTOMATION_ZERO = Object.freeze({ poll: 0, search: 0, rules: 0, rssHub: 0, cookie: 0, oEmbed: 0, automaticBackfill: 0, externalCalls: 0 } as const);
@@ -20,8 +23,8 @@ export type AdapterStatus = "unchecked" | "ready" | "missing" | "unavailable";
 export type AdapterAuthorizationStatus = "unknown" | "valid" | "invalid" | "expired";
 export type PlatformAllowed = "unknown" | "allowed" | "blocked";
 export type SourceStopStatus = "clear" | "manual" | "compliance" | "authorization" | "platform";
-export type SourceKind = "rss" | "x_manual";
-export type CollectionMode = "rss" | "manual_url";
+export type SourceKind = "rss" | "x_manual" | "x_page";
+export type CollectionMode = "rss" | "manual_url" | "browser_visible_dom";
 export type SourceAction = "propose" | "validate" | "requeue" | "enable" | "disable" | "retire";
 export type AuthorityCapability = "bilingual_auto_refine" | "bilingual_manual_mutation" | "source_registry_management";
 
@@ -147,13 +150,20 @@ function safeHttpsUrl(value: string, kind: SourceKind): string {
   for (const key of parsed.searchParams.keys()) {
     if (/token|secret|key|auth|password|signature|cookie/iu.test(key)) throw new SourceRegistryError("IDENTITY_INVALID", "secret-bearing URL forbidden");
   }
-  if (kind === "x_manual" && (!/^https:\/\/x\.com\/[A-Za-z0-9_]{1,15}$/u.test(parsed.href) || parsed.search !== "")) throw new SourceRegistryError("IDENTITY_INVALID", "X source URL invalid");
+  if ((kind === "x_manual" || kind === "x_page") && (!/^https:\/\/x\.com\/[A-Za-z0-9_]{1,15}$/u.test(parsed.href) || parsed.search !== "")) throw new SourceRegistryError("IDENTITY_INVALID", "X source URL invalid");
   return parsed.href;
 }
 
 export function sourceIdentity(input: Readonly<{ sourceId: string; canonicalFeedUrl: string | null; siteUrl: string; sourceKind: SourceKind; collectionMode: CollectionMode }>): string {
   assertId(input.sourceId, "sourceId");
   if ((input.sourceKind === "rss") !== (input.collectionMode === "rss") || (input.sourceKind === "rss") !== (input.canonicalFeedUrl !== null)) throw new SourceRegistryError("IDENTITY_INVALID");
+  if (input.sourceKind === "x_page") {
+    const pageUrl = safeHttpsUrl(input.siteUrl, input.sourceKind).toLowerCase();
+    const handle = pageUrl.slice("https://x.com/".length);
+    if (input.collectionMode !== "browser_visible_dom" || !(X_PAGE_HANDLES as readonly string[]).includes(handle) || input.sourceId !== `x_${handle}`) throw new SourceRegistryError("IDENTITY_INVALID");
+    return sha256(canonicalJson({ sourceId: input.sourceId, canonicalPageUrl: pageUrl, sourceKind: input.sourceKind, collectionMode: input.collectionMode, selectionSha256: X_PAGE_SELECTION.sha256 }));
+  }
+  if (input.sourceKind === "x_manual" && input.collectionMode !== "manual_url") throw new SourceRegistryError("IDENTITY_INVALID");
   const siteUrl = safeHttpsUrl(input.siteUrl, input.sourceKind);
   const canonicalFeedUrl = input.canonicalFeedUrl === null ? null : safeHttpsUrl(input.canonicalFeedUrl, input.sourceKind);
   return sha256(canonicalJson({ sourceId: input.sourceId, canonicalFeedUrl, siteUrl, sourceKind: input.sourceKind, collectionMode: input.collectionMode }));
@@ -319,7 +329,7 @@ export function readSourceDetail(database: DatabaseSync, sourceId: string, asOf:
   const row = database.prepare("SELECT * FROM source_registry_v1 WHERE source_id=?").get(sourceId) as Record<string, unknown> | undefined;
   if (!row) throw new SourceRegistryError("SOURCE_NOT_FOUND");
   const source = rowSource(row);
-  const config = plain(database.prepare("SELECT * FROM source_registry_rss_config_v1 WHERE source_id=?").get(sourceId) as Record<string, unknown> | undefined);
+  const config = plain(database.prepare(`SELECT * FROM ${source.sourceKind === "x_page" ? "x_page_source_config_v1" : rssConfigTable(database)} WHERE source_id=?`).get(sourceId) as Record<string, unknown> | undefined);
   const health = plain(database.prepare("SELECT * FROM source_registry_health_v1 WHERE source_id=? ORDER BY observed_at DESC,health_id DESC LIMIT 1").get(sourceId) as Record<string, unknown> | undefined);
   const history = Object.freeze((database.prepare("SELECT * FROM source_registry_history_v1 WHERE source_id=? ORDER BY to_revision DESC,history_id DESC LIMIT 50").all(sourceId) as Array<Record<string, unknown>>).map((entry) => Object.freeze(Object.fromEntries(Object.entries(entry)))));
   return Object.freeze({ source, config, health, history, activationReadiness: deriveActivationReadiness(source, asOf), epochFences: deriveEpochFences(database, source.sourceId, null, asOf), xAutomation: source.sourceKind === "x_manual" ? X_AUTOMATION_ZERO : null });

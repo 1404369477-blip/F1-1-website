@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "<stdin>", line 29, in <module>
+  File "<stdin>", line 7, in small
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/pathlib.py", line 1360, in lstat
+    return self._accessor.lstat(self)
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/chanai/Library/Application Support/F1Plus1/Public/deployment.json'

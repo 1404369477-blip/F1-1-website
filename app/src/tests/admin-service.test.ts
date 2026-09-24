@@ -585,6 +585,13 @@ describe("independent admin service candidate", () => {
     expect(adminServiceOwnsPath("/admin/sources/x_ferrari")).toBe(true);
     expect(adminServiceOwnsPath("/admin/x-submissions/xsub_12345678")).toBe(true);
     expect(adminServiceOwnsPath("/admin/assets/x-management.js")).toBe(true);
+    expect(adminServiceOwnsPath("/admin/ops")).toBe(true);
+    expect(adminServiceOwnsPath("/admin/assets/ops.js")).toBe(true);
+    expect(adminServiceOwnsPath("/admin/assets/sources.js")).toBe(true);
+    expect(adminServiceOwnsPath("/admin/settings")).toBe(true);
+    expect(adminServiceOwnsPath("/admin/assets/settings.js")).toBe(true);
+    expect(adminServiceOwnsPath("/admin/x-accounts")).toBe(true);
+    expect(adminServiceOwnsPath("/admin/x-accounts/x_ferrari")).toBe(true);
     expect(adminServiceOwnsPath("/api/admin/reviews")).toBe(true);
     expect(adminServiceOwnsPath("/internal/projections")).toBe(false);
     expect(adminServiceOwnsPath("/")).toBe(false);

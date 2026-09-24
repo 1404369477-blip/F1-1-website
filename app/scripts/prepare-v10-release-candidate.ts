@@ -42,6 +42,7 @@ import {
   releaseIdForRole,
   releasePathRoot,
   releaseSourcePreimageSha256,
+  releaseSchemaForBuildOptions,
   type ReleaseCandidateManifest
 } from "../src/server/internal-operation/release.ts";
 import {
@@ -54,6 +55,7 @@ const appRoot = resolve(new URL("../", import.meta.url).pathname);
 const repoRoot = resolve(appRoot, "..");
 const targetNodePath = process.env.ADMIN_TARGET_NODE_PATH;
 const candidateRootInput = process.env.F1_V10_CANDIDATE_ROOT;
+const candidateSchemaSha256 = releaseSchemaForBuildOptions(process.argv.slice(2));
 
 if (targetNodePath !== "/Users/chanai/.local/node-v24.18.0-darwin-arm64/bin/node") {
   throw new Error("ADMIN_TARGET_NODE_PATH_MISMATCH");
@@ -170,11 +172,11 @@ if (
 assertAdminReleaseRuntimePathContract();
 assertPublicReleaseRuntimePathContract();
 if (
-  ADMIN_RELEASE_RUNTIME_FILE_COUNT !== 153 ||
-  ADMIN_RELEASE_RUNTIME_FILES.length !== 153 ||
+  ADMIN_RELEASE_RUNTIME_FILE_COUNT !== 207 ||
+  ADMIN_RELEASE_RUNTIME_FILES.length !== 207 ||
   adminReleaseRuntimePathSetSha256() !== ADMIN_RELEASE_RUNTIME_PATH_SET_SHA256 ||
-  PUBLIC_RELEASE_RUNTIME_FILE_COUNT !== 89 ||
-  PUBLIC_RELEASE_RUNTIME_FILES.length !== 89
+  PUBLIC_RELEASE_RUNTIME_FILE_COUNT !== 90 ||
+  PUBLIC_RELEASE_RUNTIME_FILES.length !== 90
 ) throw new Error("RELEASE_RUNTIME_CLOSURE_DRIFT");
 
 const candidateRoot = resolve(candidateRootInput);
@@ -274,12 +276,12 @@ try {
     schemaVersion: 10 as const,
     sourceCommitSha1,
     sourceTreeSha1,
-    schemaSha256: SOURCE_REGISTRY_SCHEMA10_SHA256,
+    schemaSha256: candidateSchemaSha256,
     migration0009RawSha256: SOURCE_REGISTRY_SOURCE_0009_RAW_SHA256,
     migration0010RawSha256: SOURCE_REGISTRY_MIGRATION_SHA256,
-    adminRuntimeFileCount: 153 as const,
+    adminRuntimeFileCount: ADMIN_RELEASE_RUNTIME_FILE_COUNT,
     adminRuntimePathSetSha256: ADMIN_RELEASE_RUNTIME_PATH_SET_SHA256,
-    publicRuntimeFileCount: 89 as const,
+    publicRuntimeFileCount: PUBLIC_RELEASE_RUNTIME_FILE_COUNT,
     publicRuntimePathSetSha256: PUBLIC_RELEASE_RUNTIME_PATH_SET_SHA256,
     packageLockSha256: files.find((file) => file.path === "package-lock.json")!.sha256,
     packageRootSha256,
@@ -291,7 +293,7 @@ try {
     ...base,
     role: "full_v10" as const,
     releaseId: releaseIdForRole("full_v10", sourcePreimageSha256),
-    capabilities: fullV10Capabilities()
+    capabilities: fullV10Capabilities({ schemaSha256: candidateSchemaSha256 })
   }) satisfies ReleaseCandidateManifest;
   const fallback = Object.freeze({
     ...base,
@@ -331,8 +333,8 @@ try {
       stageAppRoot: pathRoot(stageAppRoot)
     },
     closures: {
-      adminRuntimeFileCount: 153,
-      publicRuntimeFileCount: 89,
+      adminRuntimeFileCount: ADMIN_RELEASE_RUNTIME_FILE_COUNT,
+      publicRuntimeFileCount: PUBLIC_RELEASE_RUNTIME_FILE_COUNT,
       adminRuntimePathSet: ADMIN_RELEASE_RUNTIME_PATH_SET_SHA256,
       publicRuntimePathSet: PUBLIC_RELEASE_RUNTIME_PATH_SET_SHA256
     },

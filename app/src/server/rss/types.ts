@@ -1,3 +1,5 @@
+import { createHash } from "node:crypto";
+
 import {
   LIVE_RSS_SOURCES,
   MOTORSPORT_SOURCE_ID,
@@ -270,3 +272,16 @@ export type RssRunReceipt = Readonly<{
   updatedCount: number;
   duplicateCount: number;
 }>;
+
+export function rssItemPayloadHash(item: Omit<RssItem, "sourcePayloadHash">): string {
+  const payload = JSON.stringify([
+    item.externalId,
+    item.canonicalUrl,
+    item.title,
+    item.excerpt,
+    item.author,
+    item.publishedAt,
+    item.media
+  ]);
+  return createHash("sha256").update(payload, "utf8").digest("hex");
+}

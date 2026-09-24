@@ -24,6 +24,18 @@ import { readSourceDetail, readSourceList, X_AUTOMATION_ZERO } from "../rss/sour
 import type { QuickLaunchAuthorityPort, SourceRegistryAuthorityPort } from "../internal-operation/mutation-port.ts";
 import { bilingualSafetyResourceHash, type BilingualApprovalReceipt, type BilingualSafetyAuthorization, type BilingualSafetyDecisionInput, type BilingualSafetyDecisionReceipt } from "../internal-operation/gateway.ts";
 import type { BilingualPublicationReceipt } from "./bilingual-projection-writer.ts";
+import {
+  prepareRefinementModelMutation,
+  readRefinementModelSettings,
+  refinementModelKeyPresent,
+  refinementModelPersistSupported,
+  RefinementModelMutationSchema,
+  writeRefinementModelSettings,
+  ADMIN_REFINEMENT_MODEL_SCHEMA
+} from "./refinement-model-settings.ts";
+
+import { ModelCredentialMutationSchema, ModelCredentialRoutes, MODEL_CREDENTIALS_PATH, MODEL_CREDENTIALS_SCHEMA, prepareModelCredentialMutation } from "./model-credentials.ts";
+import type { ModelProviderProbe } from "./model-provider-probe.ts";
 
 export const ADMIN_BILINGUAL_SCHEMA = "admin-bilingual-v1" as const;
 export const BILINGUAL_AUTHORITY_REASON = "AUTHORITY_EXTENSION_REQUIRED" as const;
@@ -84,7 +96,13 @@ export const MutationSchema = z.object({
 
 const CsrfSchema = z.object({
   schemaVersion: z.literal(ADMIN_BILINGUAL_SCHEMA),
-  mutation: z.union([MutationSchema, z.lazy(() => AuthorityMutationSchema), z.lazy(() => SourceRegistryMutationSchema)])
+  mutation: z.union([
+    MutationSchema,
+    z.lazy(() => AuthorityMutationSchema),
+    z.lazy(() => SourceRegistryMutationSchema),
+    z.lazy(() => RefinementModelMutationSchema),
+    z.lazy(() => ModelCredentialMutationSchema)
+  ])
 }).strict();
 
 export type BilingualMutation = z.infer<typeof MutationSchema>;
@@ -554,7 +572,69 @@ export class BilingualAdminRepository {
         costTelemetry: { status: "unavailable", reasonCode: "PRODUCER_NOT_CONFIGURED" },
         backups: { status: "unavailable", reasonCode: "PRODUCER_NOT_CONFIGURED" },
         releaseHistory: { status: "unavailable", reasonCode: "PRODUCER_NOT_CONFIGURED" }
-      }
+      },
+      pipeline: this.pipelineSnapshot(control)
+    });
+  }
+
+  private pipelineSnapshot(control: unknown): Readonly<{
+    lastPublishedAt: string | null;
+    pendingReviewCount: number;
+    waitingPublishCount: number;
+    publishBlocked: boolean;
+    collectionLive: boolean;
+    automaticReview: 0;
+    automaticPublish: 0;
+  }> {
+    const row = control as Record<string, unknown> | undefined;
+    const collectionLive = row?.phase === "live"
+      && row?.global_stop_state === "clear"
+      && row?.recovery_state === "ready";
+    let lastPublishedAt: string | null = null;
+    let pendingReviewCount = 0;
+    let waitingPublishCount = 0;
+    let publishBlocked = false;
+    try {
+      const published = this.database.prepare(
+        "SELECT MAX(published_at) AS last_published_at FROM publication WHERE publication_status = 'published'"
+      ).get() as { last_published_at?: unknown } | undefined;
+      lastPublishedAt = typeof published?.last_published_at === "string" ? published.last_published_at : null;
+    } catch {
+      lastPublishedAt = null;
+    }
+    try {
+      const counted = Number((this.database.prepare(
+        "SELECT count(*) AS count FROM pending_review_candidate WHERE review_status = 'pending_review'"
+      ).get() as { count?: unknown } | undefined)?.count ?? 0);
+      pendingReviewCount = Number.isFinite(counted) && counted > 0 ? Math.trunc(counted) : 0;
+    } catch {
+      pendingReviewCount = 0;
+    }
+    try {
+      const queued = Number((this.database.prepare(
+        "SELECT count(*) AS count FROM publication WHERE publication_status = 'queued'"
+      ).get() as { count?: unknown } | undefined)?.count ?? 0);
+      waitingPublishCount = Number.isFinite(queued) && queued > 0 ? Math.trunc(queued) : 0;
+    } catch {
+      waitingPublishCount = 0;
+    }
+    try {
+      const latest = this.database.prepare(
+        "SELECT status FROM projection_outbox ORDER BY snapshot_generation DESC LIMIT 1"
+      ).get() as { status?: unknown } | undefined;
+      const status = typeof latest?.status === "string" ? latest.status : "succeeded";
+      publishBlocked = status !== "succeeded" && status !== "terminal_failed" && status !== "cancelled";
+    } catch {
+      publishBlocked = false;
+    }
+    return Object.freeze({
+      lastPublishedAt,
+      pendingReviewCount,
+      waitingPublishCount,
+      publishBlocked,
+      collectionLive,
+      automaticReview: 0,
+      automaticPublish: 0
     });
   }
 
@@ -567,14 +647,22 @@ export class BilingualAdminRepository {
 }
 
 export class BilingualAdminRoutes {
+  private readonly credentials: ModelCredentialRoutes | null;
   constructor(
     private readonly repository: BilingualAdminRepository,
     private readonly security: ReviewAdminSecurity,
     private readonly authorityPort?: QuickLaunchAuthorityPort & SourceRegistryAuthorityPort,
     private readonly manualPort?: BilingualManualMutationPort,
-  ) {}
+    private readonly privateDir?: string,
+    credentialProbe?: ModelProviderProbe,
+    allowModelNetwork: () => boolean = () => false,
+  ) { this.credentials = privateDir === undefined ? null : new ModelCredentialRoutes(privateDir, security, credentialProbe, undefined, allowModelNetwork); }
 
   async tryHandleAsync(context: RawAdminContext, value?: unknown): Promise<ReviewAdminRouteResult | null> {
+    if (context.method === "POST" && context.path === MODEL_CREDENTIALS_PATH) {
+      if (this.credentials === null) { this.security.authorizeMutation(context, prepareModelCredentialMutation(value).binding); return { status: 503, body: { schemaVersion: MODEL_CREDENTIALS_SCHEMA, reasonCode: "ADMIN_SETTINGS_UNAVAILABLE" } }; }
+      return this.credentials.mutate(context, value);
+    }
     if (context.method !== "POST" || !/^\/api\/admin\/bilingual\/reviews\/[^/]+\/(retry|rerun)$/u.test(context.path)) return null;
     const mutation = parseMutation(value);
     if (mutation.action !== "retry" && mutation.action !== "rerun") return null;
@@ -587,6 +675,10 @@ export class BilingualAdminRoutes {
   }
 
   tryHandle(context: RawAdminContext, value?: unknown): ReviewAdminRouteResult | null {
+    if (context.method === "GET" && context.path === MODEL_CREDENTIALS_PATH) {
+      this.security.authorizeRead(context);
+      return this.credentials === null ? { status: 503, body: { schemaVersion: MODEL_CREDENTIALS_SCHEMA, reasonCode: "ADMIN_SETTINGS_UNAVAILABLE" } } : { status: 200, body: this.credentials.read(context) };
+    }
     if (context.method === "GET" && context.path === "/api/admin/bilingual/reviews") {
       return { status: 200, body: this.repository.list() };
     }
@@ -595,6 +687,12 @@ export class BilingualAdminRoutes {
     }
     if (context.method === "GET" && context.path === "/api/admin/sources") return { status: 200, body: this.repository.sources() };
     if (context.method === "GET" && context.path === "/api/admin/operations/overview") return { status: 200, body: this.repository.operationsOverview() };
+    if (context.method === "GET" && context.path === "/api/admin/settings/refinement-model") {
+      if (this.privateDir === undefined) {
+        return { status: 503, body: { schemaVersion: ADMIN_REFINEMENT_MODEL_SCHEMA, reasonCode: "ADMIN_SETTINGS_UNAVAILABLE" } };
+      }
+      return { status: 200, body: readRefinementModelSettings(this.privateDir) };
+    }
     const sourceDetail = /^\/api\/admin\/sources\/([^/]+)$/u.exec(context.path);
     if (context.method === "GET" && sourceDetail) return { status: 200, body: this.repository.sourceDetail(decodeURIComponent(sourceDetail[1])) };
     const detail = /^\/api\/admin\/bilingual\/reviews\/([^/]+)$/.exec(context.path);
@@ -602,13 +700,21 @@ export class BilingualAdminRoutes {
     if (context.method === "POST" && context.path === "/api/admin/csrf") {
       const parsed = CsrfSchema.safeParse(value);
       if (!parsed.success) return null;
+      const preparedCredential = ModelCredentialMutationSchema.safeParse(parsed.data.mutation);
+      if (preparedCredential.success) {
+        const prepared = prepareModelCredentialMutation(preparedCredential.data);
+        return { status: 200, body: { schemaVersion: ADMIN_BILINGUAL_SCHEMA, csrfToken: this.security.issueCsrf(context, prepared.binding), expiresInSeconds: 300 } };
+      }
       const preparedAuthority = AuthorityMutationSchema.safeParse(parsed.data.mutation);
       const preparedSource = SourceRegistryMutationSchema.safeParse(parsed.data.mutation);
+      const preparedSettings = RefinementModelMutationSchema.safeParse(parsed.data.mutation);
       const prepared = preparedAuthority.success
         ? prepareAuthorityMutation(preparedAuthority.data)
         : preparedSource.success
           ? prepareSourceRegistryMutation(preparedSource.data)
-          : { mutation: parseMutation(parsed.data.mutation), binding: binding(parseMutation(parsed.data.mutation)) };
+          : preparedSettings.success
+            ? prepareRefinementModelMutation(preparedSettings.data)
+            : { mutation: parseMutation(parsed.data.mutation), binding: binding(parseMutation(parsed.data.mutation)) };
       const token = this.security.issueCsrf(context, prepared.binding);
       return { status: 200, body: { schemaVersion: ADMIN_BILINGUAL_SCHEMA, csrfToken: token, expiresInSeconds: 300 } };
     }
@@ -648,6 +754,28 @@ export class BilingualAdminRoutes {
       const changes = this.authorityPort.mutateSourceRegistry({ operationId: authorization.operationId, action: prepared.mutation.action, sourceId: prepared.mutation.sourceId, expectedRevision: prepared.mutation.expectedRevision, reasonCode: prepared.mutation.reasonCode });
       this.security.commitMutation(authorization);
       return { status: 200, body: { schemaVersion: "admin-source-registry-v1", status: "succeeded", operationId: authorization.operationId, changes, externalCalls: 0, automaticReviewRegistrations: 0, automaticPublishRegistrations: 0 } };
+    }
+    if (context.method === "POST" && context.path === "/api/admin/settings/refinement-model") {
+      const prepared = prepareRefinementModelMutation(value);
+      if (prepared.binding.path !== context.path || singleRawHeader(context, "idempotency-key") !== prepared.mutation.idempotencyKey) {
+        throw new ReviewRealError("ADMIN_REQUEST_INVALID", 400);
+      }
+      const authorization = this.security.authorizeMutation(context, prepared.binding);
+      if (this.privateDir === undefined) {
+        this.security.commitMutation(authorization);
+        return { status: 503, body: { schemaVersion: ADMIN_REFINEMENT_MODEL_SCHEMA, reasonCode: "ADMIN_SETTINGS_UNAVAILABLE" } };
+      }
+      if (!refinementModelPersistSupported(prepared.mutation.modelId)) {
+        this.security.commitMutation(authorization);
+        return { status: 409, body: { schemaVersion: ADMIN_REFINEMENT_MODEL_SCHEMA, status: "failed", reasonCode: "REFINEMENT_MODEL_UNSUPPORTED", modelId: prepared.mutation.modelId } };
+      }
+      if (!refinementModelKeyPresent(this.privateDir, prepared.mutation.modelId)) {
+        this.security.commitMutation(authorization);
+        return { status: 409, body: { schemaVersion: ADMIN_REFINEMENT_MODEL_SCHEMA, status: "failed", reasonCode: "REFINEMENT_KEY_MISSING", modelId: prepared.mutation.modelId } };
+      }
+      const snapshot = writeRefinementModelSettings(this.privateDir, prepared.mutation.modelId, new Date().toISOString());
+      this.security.commitMutation(authorization);
+      return { status: 200, body: { ...snapshot, status: "succeeded", operationId: authorization.operationId } };
     }
     if (context.method !== "POST" || !context.path.startsWith("/api/admin/bilingual/")) return null;
     const mutation = parseMutation(value);

@@ -3,9 +3,11 @@ import { Buffer } from "node:buffer";
 import { canonicalJson } from "../db/profile.ts";
 import { PublicReadError } from "./error.ts";
 import { PUBLIC_CONTENT_TYPES, type PublicContentType, type PublicCursorPayloadV2 } from "./types.ts";
+import { X_PAGE_HANDLES } from "../x-page/normalize.ts";
 
 const PUBLIC_ID_PATTERN = /^public-[a-z0-9-]{1,120}$/;
 const SOURCE_ID_PATTERN = /^[a-z][a-z0-9-]{0,127}$/;
+const X_PAGE_SOURCE_IDS = new Set<string>(X_PAGE_HANDLES.map(handle => `x_${handle}`));
 const RFC3339_UTC_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z$/;
 
 export function isPublicId(value: string): boolean {
@@ -13,7 +15,7 @@ export function isPublicId(value: string): boolean {
 }
 
 export function isSourceId(value: string): boolean {
-  return Buffer.byteLength(value, "utf8") <= 128 && SOURCE_ID_PATTERN.test(value);
+  return Buffer.byteLength(value, "utf8") <= 128 && (SOURCE_ID_PATTERN.test(value) || X_PAGE_SOURCE_IDS.has(value));
 }
 
 export function isCanonicalUtc(value: string): boolean {

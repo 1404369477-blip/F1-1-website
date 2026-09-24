@@ -1,0 +1,300 @@
+# F1+1 当前生产状态与执行待办
+
+## 2026-09-24 08:58 临时副本清理与备份调度恢复
+
+用户要求每次任务清理 M1 临时产物。已独审并实际删除旧 iCloud 演练 sealed/readback 密文、已完成恢复目录、新 canary 的多余 sealed 密文及已结束性能测试 DB，共600文件、逻辑9,864,108,380字节；实际可用空间由14,835,806,208增至24,719,601,664字节。109项保留文件前后hash一致，其中r4 readback约2.39GB仍为下一步应用恢复必需。原日志/签名/失败证据和正式snap保留集不变，未操作iCloud、生产DB或服务。证据：`scratch/m1-space-cleanup-20260924/cleanup-actual/`，独审见其`review/cleanup-review.json`。
+
+清理时发现旧备份07:08:55 PID41530退出后遗留run.lock，08:50仍持续STALE_LOCK，最后已登记RP为06:58:54.446。08:57:24–32在独审固定入口完成：自然idle后停backup调度、内核确认写入者缺席、清理10个废弃staging目录/18文件（逻辑5,842,548,711字节），用原官方CLI隔离旧锁至`backups/snap/lock-incident-ww8oNv`（原inode48190212及hash保持），finally恢复原plist和argv、0 kickstart。两批可用空间实测增量合计约15.77GB，08:58 df可用29GiB；正式24 packages/22 objects保留，原staging当时为空。原始回件：`recover-and-clean-actual/`、`after-actual/`。08:58原调度自然运行PID54069；09:00核实新快照`1790211537118_44d4e0fc5a8ccdb7`已SNAPSHOT_OK（原RP08:58:57.118、115673ms），并正常执行CLEANUP/RELEASE_LOCK。原始`natural-snapshot-after.json`已保存；完整异机读取/应用恢复/REGISTER仍待，不把快照成功当成新合法恢复点或自动发布已验。
+
+r4云端正式切换、应用恢复、连续RPO及X正式入库仍未完成。隔离验证入口缺少bulk收尾已定位；统一收尾规则已补到agent-guide，r4入口文档明确仅保留readback供下一步应用恢复并在验收后释放。本次精确清理不等于后台自动回收实现已部署。已执行cleanup/recover-and-clean以及旧byte/resume入口均不可重放；下一次应用恢复不得重建已清理sealed副本。
+
+
+## 2026-09-24 本轮推进范围（吸收外部分析后的判断）
+
+已完整读取用户提供的 [GPT 分析](https://chatgpt.com/s/t_6ab3f54e947c81918624efa9641e465f)，正文留于 `scratch/pro-analysis-20260923/shared-analysis.txt`。该分析自述只核到 2026-08-10 的 `ee45063`；其环境阻断、未上线及未授权清单不能覆盖当前代码、用户授权或生产实证。采纳其缩短交付路径、聚焦端到端、区分产品/环境/测试工具故障和减少重复复验的建议。
+
+**00:29 实际推进**：M1同一历史包的云端字节往返已实机完成。00:23:13–00:24:36接续耗时81.939秒，supervisor退出0；139,443字节manifest与2,390,005,072字节密文经真实驱逐/下载后hash一致。00:26再次完整流式读取readback核对同hash，supervisor8165已不在进程样本中。第一次00:08的Apple4355上传失败及原REJECT事件保留；00:11/00:13系统错误自然消失后才沿原包接续，没有新建备份或覆盖失败。原件：`scratch/pro-analysis-20260923/cloud-canary-resume-actual-r1/`、`cloud-complete-observation-r1/`；独核见同目录`canary-review/`。初次入口12项本地测试及独立复验通过；新增接续7项组合测试仍在模拟首次失败的fixture阶段因源ctime漂移未整体通过，不把该组报PASS。接续经过真实输入绑定/变更/旧进程检查及独审，仅按有界诊断执行。此结果仅证明历史包云端可取回，不代表本包应用恢复、正式provider/trust切换、新鲜恢复点或连续RPO达标。旧服务和production trust未变，X生产导入仍0。00:29 M1可用磁盘约11GiB，后续应用恢复前须重新评估空间并核定可清理的临时大副本，保留失败和有效备份。
+
+- **已有成果**：公开站已经提供真实 RSS 中文内容；本轮浏览器确认列表与搜索可用。9月23日23:57只读实机回件确认旧备份仍运行，最新已登记恢复点为23:48:21.568；这不代表连续 RPO 或 M5 离线运行已经达标。
+- **当前主交付线**：M1 独立日常运行并让真实 X 内容进入网站。眼前的单一执行切片是 r4 隔离云往返：沿用已暂存运行包及已捕获历史密文，真实上传、驱逐缓存、下载、比对，再验证恢复。历史 canary 不登记为新鲜恢复点。它通过后才切定时备份并继续 X 正式安装、维护认证、0017、三源准入与自然发布；各步骤是否通过必须分别记录。
+- **本轮不扩展的工作**：不重做已有真实阅读站、不增加 SSR/数据库更换/全站样式重构，不将全部功能矩阵重新作为当前切片的前置条件。GitHub 过时任务显示失败的体验优化保留后续处理，不挤占当前云端与 X 实机出口。
+- **执行和核验**：开发检查在现有授权边界内迭代并保留失败；集成完成后冻结同一候选供独立审查。已执行的生产一次性动作、历史失败、密钥权限、恢复门及正式验收限制保持原语义。复用 `TASK-20260913-D1BAB4`，按实际结果更新现有证据，任务未完成。
+
+下方为各次有时间戳的运行观察，不能把较早的“当前”字样当作最新状态。
+
+> **2026-09-23 23:43 中断后状态核查**：RSS23:30自然槽三源成功，新增2条/更新10条；此前新TheRace完整审核发布至Pages已验，但这2条未另验完整发布。旧备份仍运行，最新合法RP23:30:28.878于23:38:31登记SUCCESS，当前新鲜；连续15分钟RPO仍有超龄缺口，M5服务尚未退出。iCloud r4仅实机暂存和源捕获通过，2.39GB隔离云往返尚未执行；canary收尾信号测试与固定入口最终独审待核，production trust仍r3，不能重放既有stage/启用/回退。X r4安装机制26例及材料接口9例已独审本地通过，正式安装、维护认证、0017、X生产导入仍未完成（0条）。GitHub本轮3错已归因：2次过时head检查、1次Pages HTTP500；后续部署与公网匹配已验。D1BAB4保持claimed，严禁称整链完成。
+
+> **2026-09-23 23:09 当前实证**：原备份调度已于23:03:45正规回退恢复，old7facc/新inode47473265，23:04:45新快照已生成，合法登记仍待。iCloud新包23:07只读元数据已显示两云文件上传完成、无Apple错误，但22:52–23:03失败时没有保存原字段，不能追认当时原因；该包已超15分钟，不能补作新鲜恢复点。RSS此前新稿自动闭环保持，持续运行仍受备份新鲜度约束；X r4安装阶段修复已形成并独审中，正式安装/0017/生产导入仍未完成。GitHub截图中的push已成功，两次部署因旧任务落后分支最新提交而主动退出；后续23:02部署成功，23:06公网marker与该成功commit逐字一致。D1BAB4保持claimed，M5备份服务继续运行；下方保留历史。
+
+> **2026-09-23 23:01 当前实证**：RSS新TheRace650→Pages651完整自动链及21:45三源新增24条/更新3条已有实证，尚不能证明持续无中断。修正版iCloud r3调度22:50:14实际启用，22:51:17快照成功；自22:52:34起上传阶段连续PROVIDER_UPLOAD_ERROR，未形成新云端恢复点。最后旧合法RP22:42:15.387已超过15分钟；正在按原helper正规回退调度并只读诊断云上传，M5备份服务保留。X新维护APP未安装、0017未应用、生产导入0；已查明原安装恢复步骤与正常自动发布竞争，r4正修正验收顺序，未降低恢复门。D1BAB4保持claimed；下方保留历史，准确回件见本轮状态和云端执行记录。
+
+> **2026-09-23 22:25 当前实证**：RSS三源21:45自然槽新增24条/更新3条，此前新TheRace650审核到Pages651完整链已验。旧X r2未实施安装已安全撤销并独审，X生产导入仍0。新iCloud调度22:07:54已实际启用，但首轮暴露macOS Bash空数组错误，未产生新云恢复点且错误输出CYCLE_OK；本轮功能验收失败，不能称M1独立备份已完成。22:16:42已通过正规五步回退恢复原4参数备份调度，原工具和所有备份保留；M5 observer继续运行。r3仅修改一个shell叶，真实系统Bash3.2的8例及800叶完整包已独审，22:24:40已暂存M1；新trust与调度尚未切换。旧调度新RP22:17:31.561已于22:23:19登记成功，当前恢复新鲜；22:15:15至22:23:19超龄缺口保留。D1BAB4保持claimed；当前原件与接续见[本轮状态](../scratch/rss-resume-20260921/STATUS.md)及云端REPORT，下方为历史。
+
+> **2026-09-23 22:07 当前实证**：21:45自然采集槽三RSS源全部成功，新增24条、更新3条（本次22:06只读核实）；此前TheRace新候选650已完成自动审核、一次投递和Pages651列表/详情。旧X未实施安装已于21:59:27通过明确cancel-before出口撤销，八配置前像和原服务保持，旧owner/shared归档并留墓碑；独审通过，不能解释为X升级成功。旧备份新增21:52:03.569合法RP，22:00周期运行中；旧iCloud归档失败已定位rsync清理11个旧目录时报Directory not empty/exit23，未擅自删除。新iCloud启用顺序程序正在等待自然备份idle，仅明确未变更WAIT才重试；首个新云RP、M5服务退场、X正式安装/0017/生产导入仍待验。D1BAB4保持claimed；证据与接续见[本轮状态](../scratch/rss-resume-20260921/STATUS.md)，下方为对应时间历史。
+
+> **2026-09-23 21:46 当前实证**：RSS一条新稿已自然完整闭环：TheRace首见昨日23:26的revision1经自动精炼、审核、发布650进入Pages651默认列表和详情，Public652完整签名链通过（差1代，未声称跨端原子同代）。新RP21:29:39.576、21:36:53.776连续两轮REGISTER成功；此前超龄/120秒演练超时保留，旧脚本iCloud归档仍失败，原因核查中。今日21:30采集槽三源外调0失败发生在上次恢复点超龄期间，下一自然采集待验。iCloud启用程序已实机准备并独审，尚未启用；旧X安装始终8配置before，原服务已恢复，成功核收多次与自然业务竞争，现实现明确撤销未实施安装的独立出口，不能当升级通过。X正式新安装/0017/生产导入均未完成。D1BAB4保持claimed；最新证据、失败和接续唯一入口见[本轮状态](../scratch/rss-resume-20260921/STATUS.md)，下方保留历史。
+
+> **2026-09-23 00:08 M1+iCloud / X 接续**：RSS 自动审核、发布及 Pages 公网详情已有本轮真实成功与独审：目标616已进入Pages628，随后Public629完整签名链通过，滞后一代且默认feed不含目标，不宣称同步同代。三RSS源23:26自然采集成功新增2条/更新2条；00:06新两稿仍待审核，队列已由49条推进到11条，未把既有内容revision审核算作新稿闭环。原备份路径已连续重新产出合法点，最近实读RP23:55:14.790、00:01:55周期COMPLETE；此前启动超时/遗锁/RPO超龄保留。iCloud历史包云端重新下载和隔离应用恢复已独核，新的799叶运行包及专用公钥/信任实际暂存初始化完成，定时服务尚未切换，日常仍依赖旧M5证明。X维护新APP实际构建与配置加载通过；installation-r2已独审、实际stage-only与preflight通过，00:08新owner已建立，首次pause因备份仍运行而WAIT_NATURAL_IDLE，未停止服务、未切八配置。后续按固定journal完成安装/历史GET归类/新身份备份/恢复，再做真实passkey、当前完整库0017及正式X入库；X生产导入仍0。D1BAB4保持claimed，root独占生产；当前证据见[本轮状态](../scratch/rss-resume-20260921/STATUS.md)与[云端执行记录](../scratch/backup-icloud-audit-20260922/REPORT.md)，范围见[实施合同](reviews/2026-09-22-M1-iCloud备份与X正式接入实施合同.md)。下方保留各时间历史。
+
+> **2026-09-22 23:25 M1+iCloud / X 接续**：用户已授权M1独立日常运行、现有iCloud备份和maintenance-design-r2正式实现。23:06已通过官方入口精确隔离死PID90032遗锁并恢复原备份调度，原件独核；随后23:07:51与23:14:40两新恢复点均自然登记SUCCESS，23:13/23:21周期COMPLETE。此前22:30应用启动超时、后续快照遗锁及RPO超龄历史保留，不宣称根因或连续稳定性已收口。23:15–23:19的RSS 614–616自动审核、发布、各一次投递及预算/审计独核通过；是既有Motorsport内容的revision7/8/9，不能算三条新采集。23:24采集器运行中，上一15:00 UTC槽因SQLITE_FAILURE失败；最近数据库成功采集仍14:15 UTC，TheRace超时及14:00缺档保留。iCloud历史c022包约2.076GB的真实云端重新下载/hash、隔离数据库/应用恢复及Ed25519原件独核通过，旧RP超龄未REGISTER；新云端定时后继仍在最终独审，未部署。X双schema正式M1构建及真实Admin/Public配置加载已通过；新维护版本未安装，历史GET正式归类、真实passkey/0017/生产导入仍未完成，X生产入库0。当前实证见[本轮状态](../scratch/rss-resume-20260921/STATUS.md)与[云端盘点](../scratch/backup-icloud-audit-20260922/REPORT.md)，范围见[实施合同](reviews/2026-09-22-M1-iCloud备份与X正式接入实施合同.md)。D1BAB4保持claimed，root独占生产；下方仅对应历史。
+
+> **2026-09-22 06:49 当前事实**：RSS三源采集、普通自动发布与Pages同步已恢复。Public481签名链、Pages480公网列表及目标466详情验收通过（滞后1代，不代表目标在默认列表）。Standard首轮采集约4分18秒，仅是单轮改善；累计新增41条的新稿完整审核链仍待验，调度缺档历史保留。X三指定账号共9条native捕获记录，其中3条满足完整正文归一化条件；生产导入仍0；维护入口已有静态预览与本地交互证据，等待用户视觉确认及正式认证、迁移准入。D1BAB4为waiting_input/user_confirmed/rev9，整链未标完成。实际证据、失败历史和禁止重放边界统一见[本轮状态](../scratch/rss-resume-20260921/STATUS.md)；下方保留历史。
+
+> **2026-09-22 05:23 当前事实**：RSS普通自动发布/投递已持续到444，442–444均成功且各有1次POST；05:16–05:17 Pages441完整签名链及公网列表、详情HTTPS验收通过。两轮自然采集累计新增40条，最新Motorsport/The Race/Sky均HTTP200；这40条新稿的自动审核闭环尚未证实，442–444复用了历史批准。采集启动延迟及21:00 UTC槽的SCHEDULER_GAP仍保留，RSS ProcessType Background→Standard单字段修复准备中。X生产导入仍0，维护UI视觉确认及正式认证接线待完成；D1BAB4继续claimed。准确证据与接续见[本轮状态](../scratch/rss-resume-20260921/STATUS.md)，下方保留历史。
+
+> **2026-09-22 04:45 当前事实**：RSS服务已恢复，普通自动发布/投递已持续到426；本轮自然采集新增29条、更新1条（Motorsport/Sky成功，The Race连接超时），新自动review尚待验。Public417完整签名链已核；Pages仍408，实际导出因重复全量聚类耗时约3.65分钟、期间版本更新而失败，最小性能修复正在独审准备。合法异机备份持续登记。X生产导入仍0，维护界面视觉确认及正式认证接线待完成。准确证据与接续统一见[本轮状态](../scratch/rss-resume-20260921/STATUS.md)，D1BAB4继续claimed。下方保留历史。
+
+
+> **2026-09-22 03:36 当前事实**：408受控恢复与Pages自动同步已完成；Worker两配置raw/semantic pin错误已于03:31实际纠正、备份调度恢复，常规Admin/RSS仍按维护交接保持停止。已实测23.517秒的启动缓存修复正做M1独立正式构建，计划在同维护期接续，避免业务反复启停；须新版本备份及自然审批/发布验收后才能称恢复。X真实三源9帖已验、生产导入仍0，维护UI确认与正式认证接线待完成。唯一现场事实/命令/失败接续见[本轮执行状态](../scratch/rss-resume-20260921/STATUS.md)，D1BAB4仍未完成。下方为对应时间历史。
+
+> **2026-09-22 03:01 当前事实**：RSS generation408恢复和Pages自动同步已通过，禁止重放POST。Worker八配置已实际切换，但after部署清单的两项字节摘要配置错误阻断resume，Admin/RSS仍未启动；正做保留旧审计的精确纠正。M1缓存候选保留六SQL检查实测23.5秒并独审通过，正式RSS性能后继在准备。X真实只读采集通过、生产导入仍0，维护UI确认与正式认证接线待完成。准确证据/命令/边界统一见[本轮状态](../scratch/rss-resume-20260921/STATUS.md)，D1BAB4继续claimed。
+
+> **2026-09-22 01:51 当前事实**：RSS 408旧未知投递已凭完整链证据唯一negative结算，额外发送槽仍未消费；本次恢复因60秒lease跨秒计算缺陷及旧receiver迟到就绪而失败，原记录/锁保留，v3修复及精确归档正在独验。backup流式runtime已有连续几轮合法点，启动稳定性仍待实测。X真实只读采集已通过，正式producer的ctime兼容缺陷已本地修复并独审；生产导入仍0。真实回执与剩余接续统一见[本轮状态](../scratch/rss-resume-20260921/STATUS.md)，D1BAB4保持claimed。下方为历史记录。
+
+> **2026-09-22 01:22 当前事实**：backup流式runtime已实际安装，首轮与第三轮合法点通过，第二轮Admin启动超时仍在修复；不能宣称连续RPO通过。旧408 v1失败ROOT/锁已完整归档，新v2于01:18安装、01:19实际inspect通过，额外POST仍0，正等新鲜合法点启动唯一恢复。X r7真实读取通过且正式本地候选已独审，生产导入仍0。准确回执、稳定单次槽与接续顺序统一见[本轮状态](../scratch/rss-resume-20260921/STATUS.md)；下方保留各时间历史，D1BAB4继续claimed。
+
+> **2026-09-22 00:50 接续事实**：M1/M5同网及Chrome已恢复。X r7三指定账号9帖的真实读取、15帧、退出和运行时一致性已独验；仍0生产导入，正式签名/0017/发布待验。RSS 408首个recover-once于00:32启动、00:39:48失败退出：备份超龄在发送前阻断，新POST0，原POST及既有行未变；原服务bootstrap成功，收尾材料变化仍待修复，旧shared锁和全部证据保留。新流式backup runtime已stage、尚未提交plist；正在等自然idle切换。准确实际回执、接续和禁止重放边界统一见[本轮状态](../scratch/rss-resume-20260921/STATUS.md)。D1BAB4继续claimed。下方为历史记录。
+
+> **2026-09-21 实机接续进行中**：两机网络、屏幕共享和 Chrome 已可用。samewire408 源包及唯一 grant 已实际安装，真实 inspect 通过，新 POST 仍为0；等待备份恢复演练重新形成新鲜合法点，正隔离诊断 Admin 启动重复完整性检查耗时。X r3 已真实读取三账号9条，范围独审通过，退出收尾失败需新后继；0生产导入。当前执行证据与剩余顺序统一见[本轮状态](../scratch/rss-resume-20260921/STATUS.md)，下方为各自历史记录。
+
+> **2026-09-20 22:30 本地收口**：samewire408候选的TypeScript检查、Node 68/68、Vitest 8/8通过；固定候选及65文件双入口源码包已通过独立审查和8项针对性复验，源stage命令仅本地生成，3项准备器拒绝路径通过。详见[本轮状态与准确边界](../scratch/rss-resume-20260920/STATUS.md)。遵循用户“先完善代码”的选择，本轮没有M1 stage、新grant、恢复POST或业务切换；RSS及X整链仍待现场条件恢复后的实机验收。
+
+> **2026-09-20 22:23 接续覆盖**：用户要求完善未完成事项，并明确“两机暂时无法同网、解锁，先完善代码”。本轮完成 generation408 恢复 factory 的本地接线，修正实际服务 argv、原生采样自身进程、warm EPIPE、两张有限票据的同事务准入、旧 GET 未决预算与崩溃后重复完成路径；本地整合验证、独审和准备材料见[本轮唯一状态](../scratch/rss-resume-20260920/STATUS.md)。**RSS 自动运行和 X 生产准入仍未完成**，本轮未生成新 grant、执行 M1 stage、补发 POST 或切换服务。21:52 实际回读原408五条 target 行未变；21:55查到的最新有效备份仍为北京时间9月17日07:40:59，22:12异机密文传输仍超时。M1屏幕共享暂不可操作；此前浏览器授权、M1/GLM/API key方案保持。后续须新鲜合法备份与桌面条件恢复，再继续408结算→已审Worker安装→自然RSS发布/Pages验证及X新捕获准入。下方记录保留各自历史时间。
+
+> **2026-09-17 22:34 中断接续**：4件capture后验工具已实际暂存M1（0 gate/服务/DB），Worker仍未安装；samewire锁6/6通过，完整runtime/warm/唯一POST继续实现。M1屏幕共享已重连并确认锁屏，X r2待解锁。备份最新实核335合法历史点但当前RP超龄，持续异机读取失败；约201秒81MB/1.5GB，已询问稳定同网与M5唤醒。不得沿用9月16日fresh状态执行恢复。root独占M1，当前证据见 `scratch/rss-resume-20260917/STATUS.md`；以下为历史。
+
+> **2026-09-16 23:28 中断接续实核**：M1 SSH在线且boot未变；原v6 Admin/receiver/Public原PID仍运行，RSS job已载入。408原attempt/operation/budget/outbox/publication与9月15日回件逐字段完全相同，仍unknown/reconcile_wait、attempt_count1，schema定义未变。备份23:24观察251个合法点，最新RP23:17:29于23:22登记，采样时新鲜。Worker正式候选未部署；samewire完整factory/预热/P2/唯一POST入口尚未接完，恢复未完成。当前samewire_resume独占恢复candidate，installer_resume复核安装及准备X r2，recovery_review独审，root独占M1。屏幕共享黑屏且UI操作超时，已请用户唤醒M1；X r1失败历史保留、0生产导入。实际证据在 `scratch/rss-resume-20260916/`，407已用额度与旧材料禁止重放。以下保留各时间历史。
+
+> **2026-09-15 03:20 当前接续**：普通 RSS HTTP Worker 已通过 M1 最终3场景实测与独审，正式新候选 `candidate-v10-20260915-rss-worker-v1` 也已完成111.904秒完整构建及发行验证；未切换生产。现役仍v6，gen408仍待原身份单次同包恢复收口；恢复工具与正式8文件后继installer并行准备，407恢复额度禁止重放。备份03:13观察80个合法点、最新RP03:05:29，原调度正常。X直接MCP实机r1初始化成功、首navigate等120秒无响应而受控退出，0帖/0导入；11件失败证据保留，禁止重复r1。当前本机锁屏挡住屏幕共享，已请用户解锁，不能推断M1实际提示内容。真实canary9帖仍仅历史只读验收。root独占生产，D1BAB4继续claimed。证据：[Worker正式候选](../scratch/rss-http-worker-20260915/formal-release/STATUS.md)、[408恢复方案](../scratch/rss-http-worker-20260915/SAMEWIRE-408-PLAN.md)、[X当前入口](../scratch/x-playwright-fresh-producer-20260915/README.md)。下方均为对应时间历史。
+
+> **2026-09-15 02:42 当前接续**：gen407业务/服务/Pages默认V1已收口，唯一恢复POST已消耗，禁止重放；备份自然运行已到73个合法点（02:37快照），当前阻点为gen408投递unknown。M1隔离8场景复验已通过并完成全部进程/端口清理：连接回调中阻塞40秒会导致请求未送达，普通Background即时传输成功；因此正验证独立HTTP Worker窄修，尚未部署。408后继按用户当前修复授权准备精确同包、停写验签后最多一次技术grant，不启用所有未来unknown自动重投，也不改407历史。X固定直接MCP采集器和source-admit候选继续独审，真实canary9帖仍0生产导入。D1BAB4继续claimed，root独占生产；[投递诊断与实机证据](../scratch/rss-recovery-claim-20260914/natural408-diagnosis/ROOT-FINDINGS.md)、[恢复执行记录](../scratch/rss-recovery-claim-20260914/STATUS.md)。下方均为对应时间历史。
+
+> **2026-09-15 02:15 当前事实覆盖**：RSS gen407唯一恢复POST已成功，本地结算与r2业务后验全部通过，原v6服务已通过既有service-restore-only恢复，Pages默认V1已部署407且详情核验通过；禁止重放恢复POST。备份死锁已由正式CLI隔离，原调度恢复后的自然周期于02:04登记第67个合法备份。02:05自动发布实际生成408，但其投递再次进入reconcile_wait/EXTERNAL_UNKNOWN；02:14接收端active仍407且408文件不存在，持续自动运行尚未验收，正查常规发送路径。X真实三源9帖已验，source-admit隔离CLI25新增+32回归及独审通过，固定MCP生产采集器仍在整合，0生产导入。任务D1BAB4保持claimed，root独占生产。当前证据见[执行记录](../scratch/rss-recovery-claim-20260914/STATUS.md)，以下均为历史时间。
+
+> **2026-09-15 01:37 当前事实覆盖**：RSS v4已在M1完成独立构建、三件准备、完整校验、seq6正式安装和8hash inspect，全部exit0；唯一recover-once现PID/PGID36614运行，尚未完成，不得重复启动。seq6 `ba2fff87…7f9a0d`，新有限技术窗POST至03:31:47.863、本地至04:31:47.863（UTC+8），旧v3及之前记录完整保留。恢复前业务核验allChecksPass=true、新POST0/旧POST1；65个备份合法，原生旧进程/owner排他通过。root独占生产，运行证据及下一步以[当前执行记录](../scratch/rss-recovery-claim-20260914/STATUS.md)为准。X三源9帖真实采集已验，修后纯解析器21项与独审通过，但9帖均需补采、0生产导入；隔离fresh producer接线在继续。D1BAB4仍claimed，下方旧状态均保留历史时间。
+
+> **2026-09-15 00:50 当前事实覆盖**：X在M1沿用GLM/API key的真实三源9帖已核验，尚未生产导入/发布。RSS v3已完成实际构建、完整预检、seq5安装及inspect；唯一recover在claim因自身installer历史目录追加不被接受而exit1，正式后验新POST0/旧POST1、无本次lock或warm。修复未完成，不重跑v3/不删改seq5。现隔离v4/seq6修正式install→release→claim整段兼容，沿原业务授权生成新有限技术窗，旧记录保留；pipeline执行Darwin、x执行后继安装、q独审、root独占生产。D1BAB4继续claimed。具体版本、失败原件、边界及接续以[当前执行记录](../scratch/rss-recovery-warm-20260914/STATUS.md)为准，下方均为历史。
+
+> **2026-09-14 23:53 当前接续**：用户已明确允许 Playwright 浏览器连接。M1 保留 GLM/custom/API key，真实三源 canary 完成：F1、McLarenF1、ChrisMedlandF1 各3帖，共9帖；14次实际MCP调用全部成功，root对9帖正文、绝对时间、原帖链接和媒体地址逐项核对原生DOM返回。证据见[X核验收据](../scratch/x-playwright-m1-20260914/canary5-evidence/root-verification.json)。此为真实只读采集验收，尚未完成生产producer准入、签名捕获和自动发布，不把canary追认成生产导入。RSS仍未恢复：已定位v6冷启动超时与Admin同模式chmod导致备份ctime误拦；独立v3候选采用先预热同一receiver进程再做新P2，保留≤60秒、新增最多1次POST、同RID/物理键及原窗口。保持原v2 index和三文件，候选仅追加严格seq5后继；崩溃收尾、原生父子关系及独审正在验证，未部署v3、未新增POST。D1BAB4继续claimed，root独占生产，pipeline负责warm协议/服务，x负责seq5/安装，q负责独审。
+
+> **2026-09-14 23:23 当前实施**：RSS v2 已通过独审并完成M1构建/完整预检/唯一index安装；实际恢复在receiver冷启动就绪校验失败，随后备份资源时间校验阻断正式恢复收据。后验确认新增POST0、旧POST1、未新增未知投递。23:20原生回读Admin与receiver已重新监听3101/3102；自动发布仍未恢复，继续修启动耗时和备份分类。X已通过屏幕共享看到Playwright待授权页面，当前真实采集0帖；用户对实际浏览器权限范围的确认待答。最新事实及禁止重放边界见[执行状态](../scratch/rss-recovery-fix-20260914/STATUS.md)。
+
+> **2026-09-14 已开始正式修复**：用户明确“修复吧，赶紧恢复正常信息运行”，D1BAB4已正式resume，原授权保持。RSS独立resumption-v2正在实现固定当前审计后缀、同事务前驱及旧v1入口排他；原冻结材料保持。root独占生产，pipeline实现、x固定构建部署工具、q独审。新版本未部署/未新增POST，执行真值见[修复接续](../scratch/rss-recovery-fix-20260914/STATUS.md)。X的M1独立Playwright MCP0.0.80已安装并保留lockfile，实际浏览器采集待验证；用户仅需安装独立扩展，RSS不依赖此步骤。
+
+> **2026-09-14 22:20 GitHub研究与当前阻点覆盖**：X已研究六个官方GitHub项目，优先M1 Playwright MCP+独立扩展，保留GLM API key，尚未安装/采得真实帖子。RSS备份已出现三个独验合法点，22:15正式observer累计32合法、最新RP22:09:28.857；21:45三源采集成功，Admin当前为PUBLICATION_RECONCILE_WAIT。原冻结prepare已生成新plan，但实际full verifier拒绝AUDIT_SET_CHANGED：原95审计全保留，21:52追加了一条原终态保持的reconcile_observation。当前是恢复检查兼容缺陷，不能换摘要绕过，也不再等待Chrome重连/网络信息。无新index/POST/服务变更；原R7/seq4及已完成归档禁止重放。准确新窗口、失败证据和修复范围见[本轮报告](../scratch/rss-cause-fix-20260914/REPORT.md)，下方均保留历史时态。
+
+> **2026-09-14 晚间重新验证**：用户要求“再试一下”。M1 当前默认仍为 GLM/custom，CLI 登录仍为 apikey；本轮 Chrome 绑定成功，但新的实际 `nameSession/tabs.list` 返回 `unsupported Codex auth method: apikey`，三源尚无真实帖子。21:49 正式 reporter 的14件文件校验后运行通过：RSS仍111条已批准待发布、未决投递1，合法恢复点仍05:23:53.838；公开站/Pages200，Admin本轮loopback超时。M5虽在21:47完整读取并归档一包，但M1该周期在异机读取确认阶段失败，未进入应用演练/登记，不能据此恢复RSS。旧安装后验收包装器另有 `HERMES_CONFIG_CHANGED`，未修改或绕过该安装验收；本次采用独立只读reporter，不宣称Hermes保持原配置。早间过期未安装plan已完成归档及独审，旧R7/seq4禁止重放；本次无登录/配置/服务变更、无新增POST。当前证据及待办见[本轮记录](../scratch/rss-retry-20260914-evening-r1/REPORT.md)，下方早间“等待Chrome连接/归档尚未执行”已被本段覆盖。
+
+> **2026-09-14 08:47 当前接续**：用户确认M1/M5当前同网，D1BAB4正式resume至claimed/rev4，授权保持。08:35正式巡检公开站/Pages200、Admin loopback404，RSS111条已批准待发布、未决投递1；合法备份仍05:23:53且已超龄3小时11分。当前M1局域网IP已变，重新钉受信host key的单次直连返回Host is down；同网段/网关IP但网关MAC不同，精确peer ARP未互认，继续定向网络核查，未改网络/权限/备份工具。RSS未提交三文档的POST技术窗08:44:54到期，完整旧材料保留；本地准备已独审的整目录归档wrapper，网络恢复后再用原冻结helper生成新窗，0新index/POST。X仍待M1 Chrome连接，GLM工具能力沿用原生实证。[本版本交接](../scratch/rss-gen407-recovery-20260913/installation/resumption-v1/STATUS.md)记录当前依赖和不得重放边界。
+
+> **2026-09-14 07:13 当前接续**：`TASK-20260913-D1BAB4`已通过正式工具转waiting_input/rev3，用户授权仍user_confirmed；索引和492项全历史doctor通过。RSS恢复包已在M1构建并完成23.351秒正式完整预检，无index/新增POST，材料与技术窗见[执行交接](../scratch/rss-gen407-recovery-20260913/installation/resumption-v1/STATUS.md)。07:02正式巡检M1公开站/Pages200、111条已批准待发、最后合法备份05:23:53超龄；Admin本次loopback超时，旧404不代表当前通过。M5备份独占整包未完成，真实BG/非BG对照无改善；唯一LAN测试8秒TCP超时，M5目标ARP incomplete而M1双栈22通配监听，不能区分不同网络同号网段和本地隔离。已询问两机是否同一实体路由器，现役网络/SSH/工具/预算未改。X的GLM原生工具已通过，但M1 Chrome仍待连接、三源0帖。等待这两项环境信息后按对应依赖接续，不重放旧恢复入口；[备份诊断](../scratch/backup-m5-metadata-budget-20260914-r1/DIAGNOSIS.md)。
+
+> **2026-09-14 06:47 接续**：RSS独立 resumption 已冻结205件源码并在M1完成暂存、构建与新文档准备；正式完整预检实际23.351秒通过，44件历史文件/10目录，0运行权限、0锁/index、0服务动作、0新增POST。新plan SHA `5e14a394bb02093342b0bba42732aa45d61a4d4077c3ee2fdd9b3ba604abd6c5`；技术POST窗至北京时间08:44:54、local至09:44:54，不改旧R7/seq4。独审及220项逻辑+21项原生测试证据已整理，剩余发布依赖是新鲜合法备份：06:40独占unsigned演练210秒仅取得93,480,960/1,272,790,718字节，无新有效回执；原M5 observer由watchdog恢复，普通finally因记录ctime变化失败的事实保留，原因未定。备份时限与900秒RPO未放宽，metadata30/tail80未部署。X仍待M1 Chrome，默认GLM原生工具已通过、三源0帖；D1BAB4未完成。[本版本唯一执行交接](../scratch/rss-gen407-recovery-20260913/installation/resumption-v1/STATUS.md)、[实机完整预检](../scratch/rss-gen407-recovery-20260913/installation/resumption-v1/verify-actual-r1.stdout)、[独占整包结果](../scratch/backup-m5-metadata-budget-20260914-r1/isolated-full-read-r3/result.json)。
+
+> **2026-09-14 06:30 接续**：独立 `candidate-resumption-v1` 继续整合，尚未冻结、安装或新增 POST。真实终态已导出：95条原 operation 审计、4条 settlement 审计及263502–263506跨 operation 连续链；原 known_failed / budget released / 新键全空再次核实，terminal binding SHA `f3697daac6183343e37e54261e438d1d46f6e6e4a29db2d7a8a11c6b4b4b8939`。已补完整同内容投递选择范围、request JSON内新键占用拒绝，定向审查仍在收尾。205件源码集合精确保留R4/R5/R6/R7路径历史；Darwin测试14/14、原生锁5/5、六外SHA父子链1/1通过，但独审发现历史owner启动会话必须与当前boot绑定，正在修复该具体边界，未宣称全量PASS。M5备份大小相比末次合法点仅增0.062%；慢读时存在其他下载，受控无并发验证的原子guard及独立watchdog仍在审查，尚未停用现役observer。备份仍无新合法点；M1服务/HTTP最后事实沿06:00段，X实际Chrome连接未补齐，D1BAB4未完成。[终态实际读取](../scratch/rss-gen407-recovery-20260913/installation/resumption-v1/terminal-history-actual-r1.json)、[完整原审计补件](../scratch/rss-gen407-recovery-20260913/installation/resumption-v1/original-audits-actual-r2.json)。
+
+> **2026-09-14 06:00 接续**：05:41 的 `service-restore-only` 已于 05:42:59 exit1，74.467 秒；原始回执证明 receiver 与 Admin 的 bootstrap / 无 `-k` kickstart 均 status0。05:48:29 原生回读确认 receiver PID47083、Admin PID47109、固定 argv、独占3102 LISTEN，operator.lock 不存在；不得重复 restore 或运行启动 adapter。具体失败仍在启动后 adoption / compatibleServices / 最终收据范围，内层错误未记录，不能补造旧 `services-restored` 收据。05:55 正式 reporter 确认 M1 公开站 HTTP200、Admin loopback 正确404；Pages 从 M1 访问超时，私网登录未验。备份最新合法点仍05:23:53，已超15分钟；M5 metadata30/tail80无签名整包演练未在240秒总预算内完成，候选不得部署，继续优化连接与传输。RSS 的同包一次后继在独立 `candidate-resumption-v1` 实现及审查，原 R7/seq4 永久 local-only、新 POST额度未用；X仍待M1 Chrome，D1BAB4未完成。[服务原生事实](../scratch/rss-gen407-recovery-20260913/installation/r7/service-adapter-scene-readback-r1.json)、[正式HTTP报告](../scratch/rss-gen407-recovery-20260913/installation/r7/service-http-readback-r1.json)、[R7终态独审](../scratch/rss-gen407-recovery-20260913/installation/r7/qos-r7-terminal-review-r1.md)。
+
+> **2026-09-14 05:43 接续**：R7 唯一 recover 已于 05:27:31 自然退出 1（253.689 秒，`SERVICE_RESTORE_REQUIRED`）。实际后验确认 P1 负向结算成功，原 attempt 为 terminal_failed/known_failed、原预算 released、旧 POST1；新 attempt/mapping/POST 均为 0，RSS 发布尚未恢复。Admin/receiver 均停止，原生日志只能定位到 receiver-bootstrap-intent 之后、bootstrap 回执之前，内层 Aggregate 原因未落盘，不能推断具体根因。05:40 已经原正式入口单次追加 `000004` local_only 维护记录，SHA `1e50197fef2f6e6ca1e3415b77007e13e230d2aaa0fee3185dd9ab5ab0f2ca32`，有效期 05:32–06:32，旧链永久禁止新增 POST；05:41:44.653 已启动一次 `service-restore-only`，PID/PGID47013，结果待核。原 05:29 是主控设置的技术 plan 到期，不等于用户总体任务授权失效；新的受控后继必须独立审查，并绑定同 delivery、真实 negative 和仍未使用的最多一次新增 POST 额度，不得修改旧 plan/维护记录。备份 05:35:59 在 OFFHOST_INDEPENDENT_READ 失败，M5 小文件 SFTP 15 秒超时与 SSH 12 秒延迟已复现，最新合法点待刷新，不能沿用旧 fresh PASS。X 仍待 M1 Chrome，D1BAB4 未完成。[实际失败收据](../scratch/rss-gen407-recovery-20260913/installation/r7/actual-failure-summary-r1.json)、[当前服务恢复](../scratch/rss-gen407-recovery-20260913/installation/r7/service-restore-only-r1.stdout)。
+
+> **2026-09-14 05:24 接续**：R7 已在 M1 完成正式安装与加载验证。第一次预提交实测发现官方 buildInputs 被错误拼成 `app/app/...`，在提交前安全停止；原 inactive 源包和 repair 目录已于 05:16 原子保留到 `*-failed-precommit-r1`。同代 R7 仅修两类路径根目录后重新冻结，source path root `a2613f5c2a4f31347ff97c2674574f45bc23f16ced7ec7d7559bdbef21a2689a`，45 项定向测试通过，完整 capture/四代语义/最终字节预提交实测 17.354 秒通过。`000003.json` 已于 05:19 单提交，SHA `6621a2feb5b5ec1d3fbc2b31f3c3598463c175bac7bacc81e60cca1dcf09a561`；正式 load 16.931 秒、三次 guard 4.310/3.958/2.803 秒及四 SHA inspect 均通过。05:21 新业务基线仍为原 POST1/unknown，新 attempt/mapping/negative/POST 均为 0。05:22 备份合法点 26，最新恢复点 05:18:15.133、登记完成 05:22:06，原历史超龄保留。经独审，唯一 R7 `recover-once` 已于 **05:23:17.604** 启动，PID/PGID **45157**，运行结果待核；不得重复启动，原新增 POST 截止仍为 **05:29（21:29 UTC）**。X 仍等 M1 Chrome 实际连接，默认 GLM 工具能力已通过但三源 0 帖；D1BAB4 未完成。[R7 实际运行证据](../scratch/rss-gen407-recovery-20260913/installation/r7/recover-once-actual-r2.stdout)、[独立审查](../scratch/rss-gen407-recovery-20260913/installation/r7/qos-r7-review-r1.md)。
+
+> **2026-09-14 04:53 接续**：R6技术record已于04:43:24–54提交，`000002.json` SHA `b7f52991c4cf108f7bbb6c2eb8d2b7b656318db4d22fadee5beae334af4ef050`；随后真实production-load在新capture层拒绝官方普通JSON格式，`JSON_NOT_CANONICAL`，未进入operator/服务动作。此前prepare只覆盖semantic verify，漏掉新capture路径，不能继续称其等价完整production-load。04:49只读业务后验全部检查通过、completed=false，原unknown/POST1保持，新attempt/mapping/negative/POST为0。R6禁止recover，冻结材料与record保留；R7隔离后继只修官方清单解析兼容，并新增提交前同一capture→三代semantic→final snapshot实际路径，固定000003技术记录、四外SHA、原21:29 UTC窗口与最多一次新增POST不变。备份04:40已17个合法点，04:30→04:38登记间隔460.632秒，早前超龄保留；恢复前仍须刷新。X保持M1采集，Chrome连接未补齐、0真实帖，D1BAB4未完成。[R6实际加载失败](../scratch/rss-gen407-recovery-20260913/installation/r6/load-failure-stack-r1.stdout)、[R6业务后验](../scratch/rss-gen407-recovery-20260913/installation/r6/readonly-helper-review/actual-failure-postverify-r1.stdout)。
+
+> **2026-09-14 04:33 接续**：R5服务恢复已于04:02:10通过原生`service-restore-only`收口（exit0，171.331秒）；Admin与receiver均恢复，04:04 M1/Pages公开检查通过，私有登录仍未验。R5实际失败保留且无新增POST，原unknown未解除。备份后续失败已定位为PID31228退出后遗留run.lock；04:30:05–06经独审的固定包装调用现役v6正式恢复入口，将原inode42803232保留于`backups/snap/lock-incident-S9W4q0`并恢复原30秒调度，0 kickstart、0业务DB写入，新合法点仍待自然周期。已发生的900秒RPO缺口不得覆盖。R6隔离候选正在最终独审/准备M1时序验证：合并handoff批次、同进程逐字节材料复验、显式启动idle服务及P2尾60秒门；原R4/R5文件、原窗口17:29–21:29 UTC、同包同键与最多一次新增POST保持。尚未提交R6 record或执行R6 recover；[R6方案](../scratch/rss-gen407-recovery-20260913/installation/r6/installed-successor-design-r1.md)、[实际锁恢复](../scratch/backup-drill-recurrence-20260913/lock-recovery-20260914-r1/production-completion-r1.json)。X仍等待M1 Chrome连接，模型工具能力已实证但三源0真实帖；D1BAB4未完成。
+
+> **2026-09-14 03:50 实际失败后接续**：R5 `recover-once` 已于 03:36:23–03:42:29 实际执行并退出 1，PID/PGID 31187，最终错误 `PROJECTION_RECOVERY_SERVICE_RESTORE_REQUIRED`；禁止据旧“运行中”记录重复启动。03:46:27 只读业务后验 SHA `007f20eb0b76f969b86585b02ffea7026ecf1f0bdbf4b33cfa8886018d858820` 全部检查通过但 completed=false：原 unknown/预算及旧 1 次 POST 保留，新 attempt/mapping/negative 均不存在，GET 1653 单列。Admin 已停止；receiver 已 bootstrap 但 loaded/not-running。两个原固定 plist 均 RunAtLoad=false、KeepAlive=false，现役恢复代码缺显式启动，正准备固定身份、无 -k 的启动适配并独审，再由原 service-restore-only 收口；不修改冻结源码/pins/record/预算。首 native fence 的真实父子及 58.463 秒剩余 TTL 已验证；只读 parent observer 遇进程退出竞态 ARGV_READ_UNCERTAIN 后停止，后续不能补称已观察。原始前置失败与最新备份时效仍在只读核查。X 等待 M1 Chrome 接通，D1BAB4 未完成。
+
+
+> **2026-09-14 03:37 接续**：R5单record技术修复已于03:28正式提交，record SHA `da0d45fa236649bf27f7abfdc29e6e993e32f881908065c3edfc49c7706231e8`；原R4 pins/plan/deployment字节+身份保持，原R4 loader已只读实证拒绝新record。03:29双hashinspect与新业务后验通过：原POST1/unknown、GET1650、新attempt/mapping0。03:36:23唯一R5 `recover-once` 已启动，PID/PGID31187，native observer从03:30:44就绪；尚无完成结果，不可重复启动。03:24备份REGISTER再次60秒超时，但后继03:25恢复点已合法登记，前点到新登记789.920秒<900，独审准许按当前fresh门继续；失败另留档，不宣称无故障。R5只按原窗口/同RID/最多一次新增POST推进，参见[固定入口与实际状态](../scratch/rss-gen407-recovery-20260913/installation/r5/COMMANDS.md)。X仍待M1 Chrome接通，D1BAB4保持claimed。
+
+> **2026-09-14 03:06 接续**：已放弃暂停备份方案；严格计入下一恢复点的超时预算后，无法保证暂停仍满足900秒RPO。备份保持自然运行，恢复改为隔离R5技术修复：精确验证REGISTER60备份进程身份，保留原始内核观测，旧服务PID/PGID及未知进程仍阻断。原R4源码、pins/plan/deployment与原窗口完全保留，通过固定单次repair record关闭旧入口并绑定新源码，业务core/RID/原包/逻辑键及最多一次新增POST均不变。当前R5仍在实现和独立验证，尚未安装或再次执行恢复；[R5协议](../scratch/rss-gen407-recovery-20260913/installation/r5/pin-successor-design.md)。02:29首次R4失败后零新增POST结论保持，X仍待M1 Chrome连接，统筹D1BAB4未完成。
+
+> **2026-09-14 02:39 接续**：REGISTER60安装后连续三个自然完整合法点已通过独审，严格前点到新登记间隔592.679/563.040/501.373秒，现又有第四点成功；[最终独审](../scratch/backup-drill-recurrence-20260913/review/register60-postinstall-three-cycle-review.md)。02:29:05首次R4 `recover-once`真实启动，02:30:08退出1，CLI仅返回`CLI_INTERNAL_ERROR`。02:32:08真实业务后验全部检查通过：原attempt/预算仍unknown、原POST总数1，新attempt/mapping不存在；原Admin59484与receiver42591未停止，owner已释放，service cycle仅有cycle.json，无prepared/stop/handoff。02:35:07只读复现确认：正常backup bounded wrapper及application-drill因argv含同一Admin配置，被R4服务probe计为额外进程，触发prepared前的`UNEXPECTED_SERVICE_PROCESS`条件。原失败没有保存该具体错误码，结论依据同条件复现与当时drill时间重叠。继续准备受时间约束的backup自然idle维护/原样恢复方案，先核严格RPO预算，不盲重跑R4或改其冻结pins/plan。X仍待M1 Chrome连接，D1BAB4 claimed；此时自动发布尚未恢复。
+
+> **2026-09-14 02:13 接续**：REGISTER45秒超时已定位到登记独立外层时限，三次真实TIMEOUT保留；只将该上限改60秒，候选与安装协议16/16独审通过。02:11:41自然idle后精确卸载backup，02:12:02.770切换plist、02:12:03.152恢复原30秒调度，安装独审PASS；新tools为`20260914-register-budget-r1`，runtime f008、Admin120秒/应用drill300秒及严格900秒RPO保持，未操作RSS/Admin/receiver。实际bootstrap收据`ac678fd7d6ee7c02f6943e547871dad21df98daa878de6b1a3bc9c1253bf4708`，固定安装/回退入口见[REGISTER60命令](../scratch/backup-drill-recurrence-20260913/install-register-r1/COMMANDS.md)。须核三个安装后自然合法点及连续间隙，尚未进入RSS服务维护。RSS新版只读验收器独审及02:12:44实际基线全部检查通过：原gen407仍unknown、1次POST，新attempt不存在，1601次GET独立统计；旧验收器把GET计作POST的假阳性与原回件保留。R4正式pins及执行窗口保持，0恢复POST，完成状态仍false。X仍待M1 Chrome连接，D1BAB4继续claimed。
+
+> **2026-09-14 01:53 接续**：RSS恢复R4已完成M1真实构建/隔离反例及独审，01:48正式发布plan/deployment并安装首次pins，01:49固定CLI `inspect`通过：原gen407仍unknown/newattempt=null、0POST。生产pins SHA为`3bc7f30208075e5b19c6de2f1c0832da1d8c59765d692dc3a9b62647e15750c0`，只使用[ R4固定入口](../scratch/rss-gen407-recovery-20260913/installation/r4/COMMANDS.md)及带该SHA的launcher，禁止重跑初装或旧R1–R3。最后备份复验01:49发现01:46:32 REGISTER失败（快照/应用drill已成功），最新合法点仍01:36:59.098、第25轮自然运行；主控尚未停止服务或执行recover，正核登记错误及新恢复点。历史三周期PASS不覆盖这次新失败。只读验收器对同publication历史尝试的范围也在核查，不能把该验收失败直接当作第三次投递。X仍需M1 Chrome连接，GLM原生工具已通过但0真实帖。任务D1BAB4继续claimed，完整阶段收据位于`installation/r4/`，不宣称自动发布已恢复。
+
+> **2026-09-14 00:45 当前接续**：备份工具修复已完成生产安装和三轮自然周期独立验收，结论 `PASS_INSTALLED_AND_POSTINSTALL_RECURRENCE_ACCEPTED`；前点到后点登记的两个严格间隙为447.025/479.069秒，均小于900秒，此前超龄区间保留。完整签名、合法登记与归档核验见[独立报告](../scratch/backup-drill-recurrence-20260913/review/postinstall-three-cycle-review.md)。RSS恢复仍在隔离候选审查，真实SQLite/HTTP测试已证明单次POST、响应丢失后仅GET及事务回滚；正在补服务崩溃恢复、原子安装和独立supervisor连接，尚未安装或改gen407账本。X在M1的GLM原生工具成功，Chrome实际不可用，仍等用户完成连接；0真实帖。统筹D1BAB4保持claimed，下方23:56备份待验结论为历史。
+
+> **2026-09-13 23:56执行钉**：`TASK-20260913-D1BAB4` claimed。M1原GLM真实模型/工具调用通过，Chrome selector不可用/列表空，用户连接问题待答，三源0帖。RSS gen407原包/账本已固定，受控恢复正在v6隔离候选实现，生产投递/预算未改。备份120秒Admin ready/300秒完整drill候选真实演练118.092秒通过，独立Ed25519验签通过；23:54:16正式apply、23:54:17 bootstrap成功，**backup调度已恢复**，30秒周期/runtime f008保持，新tools为`20260913-admin-drill-budget-r1`。23:55:13首自然周期运行中，尚无新合法点，不得把隔离演练当生产恢复点；需连续三周期/900秒RPO验收。Admin/RSS/Public/receiver未停。[固定回退入口](../scratch/backup-drill-recurrence-20260913/install-r1/COMMANDS.md)、[本次合同](reviews/2026-09-13-X采集与RSS受控恢复实施合同.md)。
+
+> **2026-09-13 M1 X接续与RSS核查**：用户已明确保留M1采集；新统筹`TASK-20260913-D620C2`接替旧`0ED611`。默认GLM5.3Flash与CLI/Chrome配置已核实，真实M1工具调用和三源采集尚未通过。RSS自动链已运行，22:45有95条已批准待发布，原gen407结果未知仍阻断下一代；不能归因为RSS不支持自动审核。业务授权与真实入口/恢复验收分别记录，见[本轮记录](reviews/2026-09-13-X真实采集接续与RSS自动链核查.md)。
+
+
+> **2026-09-12 22:41 Pages本轮验收完成**：固定公开入口 [F1+1](https://1404369477-blip.github.io/f1plus1/) 已上线；42/42产品文件、真实Safari首页/详情/刷新、M1至少两个自然无变化周期及独审通过。`/f1`R3已于22:39安装，两次正式reporter 3.16/3.98秒Pages200/12条，旧14/13备份完整、Gateway未改。生产generation406/562条保持，下一新代自动发布尚未自然发生，隔离反例已通过；gen407/RSS旧问题保持。C9F7C8已completed/acknowledged（22:44），按本轮部署范围核收，[完整证据与边界](reviews/2026-09-12-GitHub-Pages部署与验收记录.md)。下方较早“未上线/修复中”均为历史记录。
+
+
+> **2026-09-12 20:54 Pages实施进度**：新静态仓库 `1404369477-blip/f1plus1` 已创建，M1仅该仓库的deploy key已登记、严格SSH443空仓库鉴权和权限独审通过；未push/未上线。公开UI与现役M1十文件SHA一致，前端静态适配和固定generation406导出正在隔离实现；/f1需新静态语义probe后继。当前原网站与业务配置保持，任务 `C9F7C8` claimed。入口及证据见[实施合同](reviews/2026-09-12-GitHub-Pages公开新闻站实施合同.md)。
+
+> **2026-09-12 20:30 GitHub Pages 已授权并开工**：用户选择完整只读新闻站与M1更新后同步，任务`TASK-20260912-C9F7C8` claimed；前端/导出同步分别调查，独立审查并行。现有公开隧道及M1业务保持，Pages尚未部署；方案、写入边界与验收见[实施合同](reviews/2026-09-12-GitHub-Pages公开新闻站实施合同.md)。旧3B83D5的gen407问题保持待答。
+
+> **2026-09-12 14:44 公网专项核查**：现役仍为Quick Tunnel，PID79006 running；当前公开URL保持，M1 ready/本机health/公网health及M5公网首页均200，本次未复现公开故障。尚未配置固定自定义域名，具体域名待用户提供；接入步骤见[域名核查记录](reviews/2026-09-12-公网域名核查与自定义域名接入.md)。未重启或修改生产配置；下方11:08其他业务结论仅属于原采样时刻。
+
+> **2026-09-12 11:08 当前核收**：M1 iKuuu Redir-Host与公网恢复；原QUIC09:49:47至11:00无新断线，M1/M5最后health200。流式备份10:34安装，3连续自然周期+第4新鲜点全链独审通过，10:59已有6条合法完成记录。RSS10:51恢复，首轮Motorsport/Sky成功、The Race CONNECT_TIMEOUT，unknown38/未决投递1；严格RSS时效和自动发布未核收。3B83D5为waiting_input，gen407新合同仍待答。[本轮完整结果](reviews/2026-09-11-Admin备份修复与生产恢复.md)。
+
+> **2026-09-12 10:34：流式备份校验版本已安装，实际周期待核收。** 已绑定55件清单主控与独审通过，单次stage/preflight/apply完成，runtime root `f0083250b0500805f3f8a4b817877edf8fc913b1a853afb08cf4b86baf29435b`。backup按原StartInterval30自然调度恢复，0 kickstart；RSS继续卸载，guard释放。Admin59484/Public55817/projection42591保持，安装未写业务DB。实际安装收据SHA `9d3acf8513e3433d23703e1b4cecf9ac1c1ab3a0c2d460edf90ab9d00b627e17`；下一步核验全部24保留对象和三个连续完整自然周期，再按新恢复点恢复RSS。此前备份超龄缺口继续保留。[安装收据](../scratch/backup-stream-install-20260912-r1/production-install-result.json)。
+
+> **2026-09-12 10:14：备份维护进行中。** 已按12件冻结包的独立增量审查与fresh preflight，安全隔离dead run.lock（PID77609、原inode41550594/SHA42d9c637…保留于snap/lock-incident-4RYROR）。backup/RSS空闲卸载，guard释放，无DB写入、无业务服务动作，Admin/Public/projection保持。实际维护收据SHA641fd6165dc30c782dc234e45e6734207c43f0e620de08dd80fc7dc391773389；未恢复调度，等待streaming verification候选及真实新恢复点。当前24独立密文约21.827GB，每轮全认证前三轮78–102秒，09:39轮在VERIFY_RETAINED超180秒，09:42起失效锁重试，早于VPN改动；流式候选只降低内存峰值，不改保留策略/期限/完整认证要求。 [证据](../scratch/backup-lock-recurrence-20260912-r1/production-maintenance-result.json)。
+
+> **2026-09-12 09:58 覆盖更新**：按用户授权将M1 iKuuu DNS从Fake-IP改为Redir-Host后，真实edge及TCP/UDP恢复；QUIC79006持续超过7分钟无断线，公网首页/详情与真实浏览器交互通过。新公网 [thick-canal-patrick-media](https://thick-canal-patrick-media.trycloudflare.com) 已同步/f1，新旧13件与Gateway保持核验通过。同期巡检发现备份恢复点停09:34:19.880且锁反复失败，正在诊断，整体恢复任务继续claimed；gen407新合同待答。[当前证据](../scratch/public-access-recurrence-20260912-0919/report.md)。
+
+> **2026-09-12 09:33 更正：公网仍故障**。用户反馈后复现530/1016；日志确认上轮隧道06:57已掉线，07:00的恢复结论未覆盖交付时状态。09:24原配置单次重启后短暂HTTP恢复，09:28:56再次失联，09:32 ready503/0。源站本机200、业务三进程保持；不重复重启。/f1同步在ready门停止，正式配置未改。网络出口问题仍未解决，gen407新合同继续待答。当前不得宣称生产恢复完成；[本轮证据与限制](../scratch/public-access-recurrence-20260912-0919/report.md)。
+
+
+> **2026-09-12 07:00 本轮恢复核收**：备份修复与v6部署、三自然备份周期、Public/Admin Standard、原QUIC公网及/f1同步已核收。Admin审核页0.943秒200、未登录API0.910秒401；外网三轮18/18通过，管理路由404。最新完整状态采样06:49；21unknown/1未决投递保持，gen407限定恢复新合同待用户答复。RSS自然采集已恢复，严格15分钟时效与真实Passkey仍未验。正式任务3B83D5为waiting_input，未整体complete；[最终证据与边界](reviews/2026-09-11-Admin备份修复与生产恢复.md)。
+
+
+> **2026-09-12 06:42 公网与/f1恢复**：旧隧道已按原QUIC配置恢复为58078，实际新公网 [document-car-signed-merely](https://document-car-signed-merely.trycloudflare.com) 首页/health200、Admin404；HTTP2试切在配置替换前失败，未启用。06:40:49已原子同步/f1，13文件与回退副本核验、Gateway保持，06:41实际巡检公网200。Admin慢请求仍待切换独审；21unknown与gen407新合同待答保持。完整失败链及当前证据见[恢复报告](reviews/2026-09-11-Admin备份修复与生产恢复.md)。
+
+> **2026-09-12 06:18 Public本机HTTP已恢复**：Public单服务已改为Standard，06:15–16核实新Public55817/Next55842和受保护配置，health 3000/3001分别200 ready/ok、0.918/0.489秒，公开Admin边界404；保留该配置。v6应用及三个新自然备份周期既有核收保持，Admin延迟、公网H2及/f1仍待完成。H2准备按本次新Public固定身份更新，Admin-only后继在隔离实现；其他业务服务尚未切换。gen407有效404保持待对账，限定恢复新合同等待用户确认。真实Passkey及过渡RPO超龄22.717秒缺口保留。[统一证据](reviews/2026-09-11-Admin备份修复与生产恢复.md)。
+
+> **2026-09-12 04:41 v6服务恢复已核验**：04:27八文件切换，04:40:24按新身份的全部服务与端口检查通过；Admin43822/Public42594/receiver42591，RSS首轮已退出，第三备份自然周期运行中。前两新备份全链独审通过；切换中旧点超过900秒约22.717秒的缺口保留。私网HTTP正在实测，公网仍待HTTP2试切，/f1尚未同步新址。真实Passkey缺口保持。[统一恢复记录](reviews/2026-09-11-Admin备份修复与生产恢复.md)。
+
+> **2026-09-12 03:10 原版本恢复后等待空闲窗口**：原v5已于03:06:55完成带新合法点的服务恢复，gen370于03:06:33.971自然投递成功；03:08:26.818又产生gen371普通pending，未再次停写。03:07从M5访问私网审核页/API各20秒超时，正在区分链路与后台忙碌；不能仅凭监听宣称HTTP恢复。8个配置仍为原版本，v6尚未apply。[本轮恢复证据](reviews/2026-09-11-Admin备份修复与生产恢复.md)。
+
+> **2026-09-12 02:58 v6切换等待旧任务收尾**：固定安装器独审已通过并stage；首次停写后发现gen370为pending/attempt0，备用GET入口正确拒绝，未apply或发送请求。正在按原配置恢复：receiver/Public保持运行，backup已重启等待新点，再启动原Admin/RSS自然完成旧投递。新版本尚未部署。[实际阶段与收据](reviews/2026-09-11-Admin备份修复与生产恢复.md)。
+
+> **2026-09-12 02:33 业务维护与恢复已执行**：generation361于02:27:33完成固定只读GET对账和正式本地结算，outbox=succeeded；GET1/POST0，原3行、19条历史unknown及预算摘要保持，公开指针保持。新点02:29:28.529于02:31:47.037登记后，02:32:09已启动Admin/RSS，02:33:34进程复验通过，启动耗时后02:37真实私网审核页200/无会话API401；永久v6换包helper仍在独审，尚未部署。[实际收据](../scratch/admin-recovery-20260911/maintenance/rss-verification/operator-production-actions/execute-20260911T182711725761Z.stdout)。
+
+> **2026-09-12 01:59 当前恢复范围**：新传输组合三轮自然周期已全链独审通过，上一恢复点至下一登记分别569.584、335.956、336.346秒，严格小于900秒。永久修复源码与M1新v6构建已通过，r2部署候选经实际官方加载器验证；generation361原v5维护入口仍在封版独审，尚未执行GET补全或新业务部署。RSS采集、公网V1及/f1地址已恢复，自动处理仍待闭环。[统一证据](reviews/2026-09-11-Admin备份修复与生产恢复.md)。
+
+> **2026-09-12 01:33 当前恢复范围**：传输后继已于01:26–27安装两机固定tools，runtime保持；首个新自然周期01:30:32登记并完成全密文/双签/应用独验，另两轮继续观察。RSS三源采集恢复，严格15分钟成功间隔仍有缺口；公网V1及/f1地址保持。generation361成功POST后的本地确认缺口仍阻断自动发布，原v5正式API补全程序和永久修复分开独审，尚未执行业务维护。[统一证据](reviews/2026-09-11-Admin备份修复与生产恢复.md)。
+
+> **2026-09-12 00:20 继续恢复**：第四轮00:13:09全链成功，合法点00:09:22.744、登记00:12:54.811，独审确认完整735479969字节密文、双签名、应用与共同checkpoint；该轮仅算第三轮失败后的连续第1轮。此前超龄区间00:05:06.659–00:12:54.811共468.152秒保留。第五轮00:18:09已自然启动，RSS仍卸载。公网00:12:28按原plist单次重启为PID11201，随后先530再自行ready200，持续可用性尚在独验，/f1地址未同步。
+
+> **2026-09-12 00:07 备份后继周期失败**：前两轮全链通过，第三轮快照81.383秒成功且锁正常释放，但00:03:21在异机读证明等待阶段失败；M5随后00:03:56完整验证734742689字节密文并签发回执，已晚于M1等待截止，该包没有应用演练或合法登记。最后合法点仍为9月11日23:50:06.659，00:06:25采样年龄978.732秒，恢复门再次超龄。RSS保持卸载，公网与/f1接续未执行；正在只读核查传输链路与deadline，不能将迟到异机回执计作恢复成功。三周期验收未通过。[故障证据](../scratch/admin-recovery-20260911/recovery-review/third-cycle-offhost-failure-evidence.json)。
+
+> **2026-09-11 23:45 首个生产恢复周期通过**：23:39 精确隔离当前死锁并保留原件，23:40 安装已独审的独立备份运行包，23:41:44 单次启动备份。首点23:42:08.401、23:44:28.898合法登记、23:44:39周期完成；M1快照36.171秒，实际应用演练43.636秒，M5全部732965025字节密文与两份签名已独立核验。实际fence更新且23:45采样年龄188.87秒；backup正常退出、两锁均释放，Admin/Public/receiver原进程及control v30保持。RSS仍卸载，等待首轮加两个自然备份周期验收；公网和/f1地址接续尚未执行，真实登录审核待用户刷新核验。[恢复合同与收据](reviews/2026-09-11-Admin备份修复与生产恢复.md)。
+
+> **2026-09-11 23:29 生产恢复进行中**：用户已授权修复并按步骤执行生产恢复，正式任务 TASK-20260911-3B83D5 已 claimed。维护 helper 的 16 项独立反例通过，安装 helper 算法预审通过、最终候选尚未绑定。备份候选在 25 包/10 对象的量级对照中显著减少重复解密，但锁释放身份校验仍需修正和复验，当前整体未通过、尚未部署；生产调度与业务进程未因本任务停止。具体范围、步骤、证据与回退统一见[本轮恢复合同](reviews/2026-09-11-Admin备份修复与生产恢复.md)。
+
+> **2026-09-11 22:46 Admin 故障诊断**：用户两次模型设置截图均为 `ADMIN_BACKUP_STALE`。22:41 实际 Admin fence 的 clockTrusted/writerReady 都为 true，恢复点仍 9 月 10 日 10:08:43.925；已超过 36 小时。22:38 核实新遗留 `snap/run.lock` 指向已退出 PID45832，9月10日10:20首失败后连续435次SNAPSHOT失败，最新2ms返回STALE_LOCK。首失败周期已生成本地包但未合法登记；180秒外层失败后遗锁得到时序支持，具体内部慢步骤仍未直接测得。私网静态页200、无会话API正常401，已登录审核网络错误尚未复现归因；GLM可存测Key但不能生产提炼。只读诊断，尚未恢复或修改生产。[诊断、证据与恢复顺序](reviews/2026-09-11-Admin模型配置与备份故障诊断.md)。
+
+> **22:48补验**：生产v5仓储在固定身份/readOnly/query_only下实际读取100项成功，列表3946ms/exit0；此为底层读取，不代替已登录HTTP验收。15个模型相关M1实际文件hash全匹配v5。用户新增截图仍为模型BACKUP_STALE，未展示审核队列。备份独审核实11件证据，收紧恢复年龄为严格<900秒；只读诊断已形成，业务恢复仍未实施。
+
+> **2026-09-11 22:12 微信 `/f1` 已完成实收验收**：固定候选已安装，Gateway21:58重启为5281；21:59:10入站后约3.027秒准备发送1050字符，用户已回传完整正文。采样21:59:11、60秒有效期、四个年龄及重要unknown均通过主控与独立核验；配置/源码保持，交叉证据支持本次原生入口与手机实收。原安装26件和新增12件清单逐项复算一致，95D001/3B70C6均completed/acknowledged。报告仍发现公网M1失败、RSS和合法备份点超龄，业务故障未恢复。旧自然问句FAIL、21:55未捕获记录及旧审查全部保留。[合同、证据与使用前提](reviews/2026-09-10-Hermes微信只读巡检.md)。
+
+> **2026-09-11 00:54 微信巡检待选入口**：r4真实微信回复仍准确性FAIL，00:00报告的“无采集/任务卡住”缺少观测支持。新增 `/f1` 候选、M1 inactive真实CLI、安装dry-run与独立技术审查通过，41件证据由主控逐件复算一致；00:35样本保留Admin登录/增长率未知及任务未采样限定。原生直出只适用于空闲、无更新待答且前置hook未接管的会话。用户正式入口选择待答，未apply/重启；开发95D001 waiting_input，审查FAB9DA按技术准备范围completed/ACK，真实新微信出口未验。[合同、报告样例与接续](reviews/2026-09-10-Hermes微信只读巡检.md)。
+
+> **2026-09-10 23:47 微信巡检 r4 已安装，待新版真实回复**：北京时间、控制状态与无依据原因外推问题已修；独审放行后只将 Hermes 两个巡检路径从 r3 切换到 r4，原配置和两个 release 全部保留。23:44:27 安装后实际 MCP 调用通过，仍观测到本机公开200、公网探测失败、RSS最近成功10:20、合法恢复点10:08超龄；备份清单与双签核真。已请用户热加载并普通查询，候选/安装PASS不等于新版微信验收。具体身份、故障、验证与回退见[本轮合同](reviews/2026-09-10-Hermes微信只读巡检.md)。r3真实回复失败证据保留，未整体complete。
+
+> **2026-09-10 22:05–22:14只读新故障观测**：Hermes巡检接入预检发现三源最近成功仍为10:20，当前身份匹配的最新已登记恢复点为10:08:43.925，RPO与采集时效均已失败；backup最近周期`ok=false`、lastExit=1。M1本机公开health仍200/真实投影，公网同一临时域名在M1为ECONNRESET、M5为530，不能继续沿用11:38的公网恢复结论。Admin进程运行，loopback无私网身份请求按预期404，只证明边界拒绝；本次未验证日常登录。没有执行业务恢复。当前推进用户确认的微信固定只读巡检，开发`95D001`/独审`E37D5D`，[合同与本轮证据](reviews/2026-09-10-Hermes微信只读巡检.md)。
+
+> **2026-09-10 11:38公网恢复与结论更正**：用户反馈公网打不开后，现场确认Public本机HTTP正常、旧quick-tunnel持续连接失效代理虚拟地址超时。11:35仅重启原隧道，配置未改，获得新临时公网地址；M5经该真实HTTPS域名的首页/health/feed/文章详情/详情API/JS均200，Admin路径404，11:38隧道readyConnections=1。当前网址及完整收据见[公网恢复记录](../scratch/public-access-recovery-20260910/recovery-report.md)。此前“公开站可访问”只有loopback与私网Admin证据，未证明当时公网可达，现明确撤回该范围结论。
+
+> **2026-09-10 09:30现场更新**：08:53的SSH/HTTPS超时已恢复；08:58重试SSH约0.8秒、后台HTTPS200/0.25秒、ICMP66ms，09:29 SSH仍成功。恢复后首轮及两轮自然备份均通过独审，替换旧点时最大年龄709.370秒。09:08恢复原三源collector；首轮新增40条/更新1条，09:28首个自然槽三源HTTP200、正常退出0（0新增/MS更新19）。09:28:18业务快照已有16份新稿和自动审核、10次成功投递，原两条未知请求保留。完整队列消化、15分钟采集时效、X真实浏览器producer和最终发布仍有缺口。连接故障具体根因尚未确定。
+
+> 更新时间：2026-09-12 22:41（Asia/Shanghai）。本文件是当前运行状态与接续顺序的唯一入口；产品合同以 `docs/spec.md` 与 accepted ADR 为准，任务协议以 `docs/collaboration/tasks/TASK-*.json` 为准。旧报告仅代表对应时间和环境。
+
+## 当前结论
+
+**固定公开站、M1自动同步与`/f1`接续均已核收；整体业务仍有RSS与未决投递缺口。** 当前公开入口为 [F1+1](https://1404369477-blip.github.io/f1plus1/)，首个Pages版本包含M1当前合法generation406的562条公开记录。首页、详情与42件产品静态资源真实HTTPS及浏览器验收通过。M1专用30秒同步器于22:20启用，至少两个自然无变化周期与远端/线上身份对账独审通过，无重复push。尚未出现下一合法active，故生产406→新代自动push路径未实观测；隔离generation变化/断网恢复/撤回/空站反例已通过，按合同核收并保留补证项。
+
+`/f1`R3于22:39:28安装，gzip有界读取/双栈尝试/16秒总限已真实通过，两次固定reporter分别3.1555/3.9754秒Pages200/12条。固定入口、Hermes配置及Gateway保持；新14、前R2的14和原13完整保留。报告仍分别表述Pages可读与同步新鲜度未知；本轮未重新验证手机消息实收。22:40:28最新业务采样为degraded：41unknown（19历史+22新增）、82未决操作、1未决投递，RSS成功间隔/草稿/发布等待超限；合法备份点22:33:49.609、年龄398秒、清单与异机/应用回执通过，仅代表采样时刻。Admin只验证loopback边界404，真实私网登录仍未知。
+
+旧Quick Tunnel保留运行，六业务plist与四常驻身份未因Pages部署改变；M1采集、审核、Admin、备份、gen407限定恢复合同、严格RSS时效、真实Passkey及X生产缺口保持原归属。旧任务3B83D5仍waiting_input，本轮C9F7C8按完整部署范围核收。精确候选、可持久停用同步器/回退巡检的固定命令和所有证据统一见[Pages部署与验收记录](reviews/2026-09-12-GitHub-Pages部署与验收记录.md)。
+
+**历史：9月11日21:59:11微信巡检观测：本机公开reader可用，公网M1探测失败，RSS最近成功为9月10日10:20、有效备份点为9月10日10:08，均已超过35小时；X尚未进入真实生产。** 清单与异机/应用演练签名本次仍通过；本次未验证Admin私网登录、存储增长率或采集/备份任务存活。报告仅对应其采样时刻。9月10日11:35公网曾恢复并通过M5验证，该结论只属于当时。9月9日处理遗留快照锁和重启后的数据库dev身份不符，随后暴露异机传输过慢。9月10日08:58基本连接恢复，09:00/09:08/09:17三个新点登记并完成独审；两次替换旧点的边界年龄709.370/668.618秒均小于900秒。此前未验公网，不能用这三轮或私网Admin成功推导当时公网正常；历史故障区间仍保留。
+
+原状态文件中的“R4当前、R5-r3待安装”已过时。R5-r3在9月7日16:14实际安装，至9月11日23:40已由上面的备份修复版本替换；旧版代码/安装独审通过，三实际周期仍有一次应用演练超时，连续RPO验收失败；之后快照120秒失败并遗锁。原文件逐字备份位于 `scratch/resumption-20260909/docs-before/`。
+
+## 1. 已确认范围
+
+- 解决RSS积压、X无采集，并实现用户已确认的[模型详情视觉](../design/ui/F1+1-admin-model-details-v0.1/design-notes.md)。既有自动抓取、自动审核、网站发布及必要后继部署授权继续有效；不重复询问业务授权。
+- RSS保持Motorsport / The Race / Sky Sports三源，cutoff `2026-09-05T02:30:00.000Z`。保留人工决定、来源历史和未知外部请求；唯一sender负责投递。
+- X按M1已登录页面读取；`data/x-source-selection-v1.csv`为keep27、Sky替换RSS1、drop31。不恢复59源，不采购X API，不对外发帖、回复或私信。
+- 模型详情UI已经随RSS v5部署；真实Passkey换Key、iPhone键盘及完整双语/X人工审核界面尚未验收。20:52已恢复M5真实私网入口，换Key真实操作验收仍有缺口。21:20对照确认本机代理导致私网HTTPS关闭、直连200；21:23仅给Wi-Fi原代理例外追加精确后台域名，原列表保留可回退，实际浏览器页面仍未完成验证。
+
+## 2. 当前生产身份及故障
+
+| 项目 | 最近已核实事实与证据时间 |
+|---|---|
+| 业务候选 | `releases/candidate-v10-20260912-rss-v6/app`；04:27固定八文件安装，04:40服务恢复核验；本地X后继未部署 |
+| schema / user_version | `ae757027a0d6ce2ed4437989dc98634b0e320ff70cd76b852fe5e753dcb2383e` / 10；v6未做schema迁移 |
+| control | 06:49:41固定巡检：live、global/emergency/deletion/publication clear、recovery ready；本轮配置调整未改控制状态 |
+| 数据库身份 | v6部署固定dev16777230、ino30338295、uid501、nlink1、0600；跨重启设备编号变更已在先前恢复核对，不跳身份门 |
+| Admin deployment SHA | `eab30dad3a4dbd4be42510d32ed4aa52d38559eb788906c54b784375e92edc42`；旧部署与八文件原件保留 |
+| 服务 | 06:49实际Admin59484（06:46:17）、Public55817/Next55842（06:15）、receiver42591保持；当前身份只适用于本次证据窗口 |
+| HTTP | 06:47:52 canonical Admin审核页200/0.943秒、未登录API401/0.910秒，正文与原样本相同；06:51公网Admin404。真实Passkey登录及已登录审核未验 |
+| 服务调度 | Public与Admin plist已仅ProcessType改为Standard并实测HTTP改善；receiver/RSS保持原Background，RSS900秒配置未改。两处安装模板默认值已精确同步至共享源码，未重建/部署release |
+| 公网隧道 | 原QUIC配置新58078、start06:35:50；当前 https://document-car-signed-merely.trycloudflare.com 。06:40–43三轮18请求通过、ready1；H2未安装，旧11201已退出；/f1同步并实际公网200 |
+| RSS collector | 06:49采样三源最新成功06:45:36–42；相邻成功间隔仍>15分钟、待稿/待发布年龄超限，当前只读分析启动与调度耗时。unknown不盲重发 |
+| 备份运行包 | 两机tools为20260912-transfer-budget-r1；v6运行身份及三个新自然周期已核收；完整包/配置身份见统一恢复报告 |
+| 已核收新备份 | 04:32、04:36、04:41三个新点及其完整密文、双签和实际应用演练通过；旧点至首新登记有22.717秒过渡超龄，历史缺口保留 |
+| 最新登记恢复点 | 06:49:41巡检读到06:44:29.083合法点，年龄约5分12秒，清单与双签有效；本次巡检未重读完整密文或重做演练 |
+| 公开投影/投递 | 06:48 before/after Admin维护全部21 unknown完整元数据保持（旧19+gen407 sender+新模型未知）；gen407 attempt1/reconcile_wait仍阻断唯一outbox。未执行新POST，受控恢复新合同待用户确认 |
+
+
+当前安装、备份和HTTP证据统一见[恢复报告](reviews/2026-09-11-Admin备份修复与生产恢复.md)及其指向的 `scratch/admin-recovery-20260911/permanent-build-20260912/`。9月9日旧证据保留在 `scratch/resumption-20260909/` 与 `scratch/production-backup-audit-20260909/`，只说明当时状态。不能将任何快照PID作为永久身份。
+
+## 3. RSS已完成与当前剩余
+
+**06:49当前采样**：Motorsport缺稿11/待发布21，The Race缺稿0/待发布8，Sky缺稿1/待发布8，三源待审核均0。未决操作62、未决投递1、历史失败投递6。06:44与06:48固定只读比较确认21 unknown的完整operation/attempt/审计元数据对象完全不变；含原19、gen407 sender和05:55 DeepSeek refiner新增项。当前版本refiner未知统计2是不同口径，不能与全部unknown混同。gen407已准备有限受控恢复新合同，用户未答复前继续保持reconcile_wait。真实成功间隔及等待年龄超限继续保留，当前只读分析RSS启动/调度耗时。
+
+**9月12日00:57实读**：恢复窗口内0新稿/审核/发布/投递，backlog74：当前稿缺40（含原两条unknown）、已审待发布34。generation361成功POST与本地outbox状态不一致，实际只读方法复现PROJECTION_RECONCILE_ORIGINAL_STATE_INVALID；原unknown未重发，本次新增unknown为0。84件[只读证据](../scratch/admin-recovery-20260911/maintenance/rss-verification/readonly-report.md)由主控复算一致；collector两轮成功不等于自动链或15分钟时效通过。
+
+**9月11日21:59:11巡检观测**：三源最近成功仍为9月10日10:20，时效失败；当前版本缺草稿15、待发布21、待人工审核0，当前版本未知refiner操作2。历史结果未知19，自9月10日22:19:59基线新增0；未决操作59、未决投递1、历史失败投递6各自保留口径。仅按需采样，没有恢复任务或重发未知请求。下方09:xx记录为历史成功与演进证据。
+
+**9月9日停采期间的历史基线**：自v5恢复至当时只读快照，Motorsport成功投递97次、The Race24次、Sky2次；新草稿/当前版本草稿分别MS74/58、Race23/22、Sky2/2。精确待处理当时仅2条：MS ref62bae27af3eaaa62 rev9、Sky refa3c3f456f0ce18a0 rev1，均为 `EXTERNAL_UNKNOWN`。这不包含9月10日恢复后的新采集，不能再作为当前队列总数。
+
+不恢复0145/1408旧collector/refiner/sidecar，不raw UPDATE来源历史使epoch相等，不对未知模型或未知投递POST盲目重试。既有同一delivery只读对账规则保留。
+
+**9月10日09:10新增采集事实**：slot1987780三源成功，MS新增18/更新1、Race新增12、Sky新增10，合计40条新候选及1条已有内容更新。原collector正常退出0，仍加载等待自然槽。这里的新增候选数不等于已生成中文稿或已发布；自动处理与原未知请求保护另验。恢复动作收据：`scratch/resumption-20260909/restore-collector-20260910.stdout`；业务快照：`rss-after-restore-20260910-0911.json`（实际采样09:10:39.944）。
+
+**09:15自动链核对**：MS当前版本新草稿3、自动审核3、自动发布操作3；公开投影generation345、510条记录，已发生实际激活。该DB事务时outbox成功2/在途1，与随后读取的公开pointer时刻不同，不能混为原子快照。精确剩余队列40含原MS/Sky未知2，Race/Sky新稿当时尚未处理；没有新增unknown。Sky旧操作六表hash仍与保留基线相同、同版本新POST为0，MS旧未知当前revision9和旧更新时间保持。证据 `scratch/resumption-20260909/rss-business-after-restore-20260910-0915.json`。
+
+**09:28:18自动链快照**：MS新增当前版本草稿16、自动审核16、发布记录published11/queued5、outbox succeeded10/leased1；公开generation352含517条记录。精确剩余队列32，其中原未知2、MS已审5/待审3、Race待审12、Sky新待审10；当时无新增unknown，Sky旧六表hash保持且同版本新POST为0，MS旧未知仍rev9/旧更新时间。证据 `scratch/resumption-20260909/rss-business-after-restore-20260910-0930.json`。这次快照早于下述自然槽更新，不能把32作为更新后的实时队列数。
+
+**09:28:38–09:28:52首个自然采集槽**：slot1987781三源均成功/HTTP200；MS更新19/重复1，Race重复15，Sky重复20，新增0。09:29:25读取collector已正常退出0、runs2；没有再次kickstart。首轮到本轮MS采集开始相隔1107.148秒（18分27.148秒），仍需检查启动耗时与持续采集时效；只确认自然调度恢复，未完成两个后续自然槽及15分钟时效验收。证据 `scratch/resumption-20260909/rss-natural-after-restore-20260910-0931.json`（文件名与实际采样时刻不同，以JSON时间为准）。
+
+**09:17三周期验收**：完整报告 `scratch/production-backup-audit-20260910/report.md`，总证据manifest SHA `4a043047a2af9a30d5de1e84501c7a9203c3124ac0831d3c51478fec22525699`。三包677469221/677551141/684284572B均经M5实际全读、两份签名和checkpoint独核；三次实际应用演练均完成200/401/200/200、子进程退出与清理。只读观察器达到完成条件退出，原生产调度器继续运行。跨package缓存候选继续暂停、未部署。
+
+## 4. X候选与未闭合项
+
+| 切片 | 已验证范围 / 下一步 |
+|---|---|
+| A 0017 | 增量迁移/准入/原子导入/历史receipt候选；r2修复BEGIN失败后的pragma泄漏，真实busy、重复调用及DDL回滚保留68表1188行独审通过。schema固定 `4aa8876e5e197232a7e1ff2b04a21c7a66789734c2f58c619a29f4ed33c3ff72` |
+| B 文件与模型传输 | r2拒绝BOM原始字节hash归一化缺陷，独立BOM/文件/传输反例通过；仍不代表真实浏览器producer已建成 |
+| C 自动链 | 原版本可经真实gateway到签名Public；独审发现7类当前scoped block仍可调用模型/排队发布，sender虽拒绝不补足前置门。9月9日修复共用denial与事务边界，root35项独立复核通过；完整生产尚未核收 |
+| E1–E3 | 9月9日完成独审：33项正式检查、58项独立探针、1项真实official→pair→factory映射通过；56文件身份匹配。闭包补丁206项/实际可达199项无缺失。结论见 `scratch/x-e123-independent-review-20260909/review.md`，不代表最终构建或生产放行 |
+| E4–E6 | r3单协调器、公平RSS/X游标、全局outbox唯一sender分流及stop/drain通过32项独立验证；结论仅覆盖该scope |
+| RSS collector兼容0017 | 9月9日复现真实factory拒绝X schema；精确0017 OR修复及5项新增/29项组合本地通过，并通过独立scope审查。没有放宽全局RSS schema谓词 |
+| E7 真实捕获 | 真实M1 DOM连接、producer与27源自然轮询尚未闭合；SSH恢复不等于浏览器工具已连接。四文件受控import operator本地75项/tsc/lint通过，9月10日独审26个不同测试通过、AST199/206无遗漏；独审manifest45c6abfd5ec8478b8b2987613b0edee845d4d9db1a99406dcf33b00ed527fdcf，见 `scratch/x-page-import-operator-independent-review-20260909/report.md`。成功receipt纯读重放不新增grant，首次写仍过当前备份门；CAS失败可留既有60秒grant且过期后实际拒绝。安装态完整正向CLI、真实producer与最终构建尚未完成 |
+| E8 备份 | 外层13文件候选覆盖加密artifact、REGISTER图校验、RSS+X恢复读路径，115项本地通过；目录竞态缺陷已修并独立复核零私有字节外泄。4MiB序列化P2已修并通过真实writer/解密/restore/off-host签发验签独审，+1byte拒绝且旧包/latest不变；真实同版本Mac Admin/Public完整恢复启动尚未做 |
+
+固定产物分别在 `scratch/x-production-admission-20260907/`、`scratch/x-runtime-boundaries-20260907/`、`scratch/x-automatic-public-20260907/`、`scratch/x-artifact-backup-20260907/outer-r1/`；本次增量在 `scratch/x-integration-audit-20260909/`、`scratch/x-scoped-block-fix-20260909/`。最终A/B/C/E合并后须重算完整闭包并同版本演练，不能将不同固定候选的局部PASS相加为生产PASS。
+
+**09:33最终构建准备已冻结，尚未构建**：`scratch/x-integrated-build-preparation-20260910/report.md` 与 `commands.json` 给出443个app文件、1个项目graph和7个独立运维工具；451输入的SHA/长度/权限及15个交付证据文件由主控再次复算，零不一致。总 `preparation-manifest.json` SHA `9a1919e75f1f4e995b9b73aac62f5e1889a5d0a9e6fb961f8c4dddf419e9b13c`，输入manifest SHA `bea673417b64758523b29d4a638d5f7a0259bbc4db0d0a9de73f099da0118e16`。保留已部署RSS v5 refinement版本，16个非输入路径显式排除；外层编排source需要锁定依赖，内层stage必须零node_modules后自行离线安装。Admin199/声明206、Public87/声明90无遗漏属于源码闭包检查；尚无同次真实build/official/full/fallback/pair或新backup root，先补真实E7 producer后再执行完整候选。
+
+## 5. 执行顺序与正式任务
+
+**本轮TASK-20260911-3B83D5接续顺序（06:55）**：
+
+1. 公网09:58已恢复并同步/f1；保持Redir-Host与原QUIC79006。优先诊断09:58备份ACQUIRE_LOCK复发及超龄，不用公网PASS代替整体生产恢复。
+2. gen407仍是一次投递响应未知，保持正式GET对账；完整负向凭据与一次受控重试的新合同已形成[具体提案](../scratch/admin-recovery-20260911/permanent-build-20260912/gen407-controlled-recovery-analysis/proposal-for-user.md)，等待用户确认。旧sender43822已在Admin维护时自然退出，但receiver42591仍在，不能据此认定原POST未提交或重发。
+3. 用户确认限定合同后，才定义正式负向凭据、预算/幂等key及一次恢复入口，完成实现/反例/独审，再按固定现场身份执行。当前提案不能直接运行，禁止raw UPDATE、删attempt、改逻辑key或把404等同于未提交。
+4. RSS已自然采集，但严格时效与待稿/待发布年龄缺口保留；[只读诊断](../scratch/admin-recovery-20260911/permanent-build-20260912/rss-cadence-analysis/report.md)确认最近完成间隔约18分15秒，status按最近两次成功运行started_at间隔重算；完整启动分段证据仍缺。下一最小验证是旁观原定自然周期，不擅改已确认900秒频率。真实Passkey换Key、已登录审核及iPhone操作按原正常入口验收。
+5. 旧Public转换helper有失败摘要循环引用，旧H2 helper对launchd异步状态会过早失败；将来计划性复用前必须修复并独审，当前没有待执行的重试/清锁动作。Admin同run控制记录与所有回退材料保留。
+
+v6身份与备份无需因这些待办重复部署。本轮doctor489项全历史通过，正式任务3B83D5已转waiting_input，未complete。以下9月9日和9月10日序列为历史背景，不能当作下一步操作指令。
+
+Hermes只读巡检已完成：开发 `TASK-20260910-95D001` 与后继独审 `TASK-20260911-3B70C6` 于22:12正式completed/acknowledged；用户已确认 `/f1` 正式入口并回传21:59实际报告，安装、精确固定命令、新Gateway、同次报告准确性及手机实收已交叉闭合。E37D5D的r4技术层与FAB9DA的固定候选技术准备ACK保留，旧自然问句准确性失败保留。后续使用空闲且无更新待答、hook未接管的 `/f1`；无需重复安装或验证。本次发现的RSS/备份/公网故障继续由对应生产恢复任务处理。
+
+公网恢复补充：本次仅重启现有隧道，未修改网站程序、系统DNS或代理配置。后续每次公网恢复必须经当次真实公网域名核验首页、内容API、详情/资源和Admin不暴露，并检查隧道ready；不得以本机200或进程running代替。固定域名及跨代理重启自动恢复尚未纳入本次实施。
+
+1. 已于20:27隔离精确死锁，原inode/hash、fresh停机证据和收据保留在M1 `.resumption-20260909/` 与 `backups/snap/lock-incident-jtAQAX/`；backup/collector确认idle后卸载，原plist不变。执行记录 `scratch/resumption-20260909/lock-recovery-execution.stdout`。现有已审锁恢复模块复用，原sealed runtime未补写脚本。
+2. 已实施最小CAS dev重绑并恢复Admin。原postcheck因sealed validator chmod造成ctime变化而失败，原收据保留且已附独立reconciliation；不宣称保护文件前后内容hash已比对。新deployment SHA仍须由新包、M5实读、应用演练和合法REGISTER闭合。不要重跑会初始化状态的Admin安装器。
+3. 新tools（snapshot180/adminready45）保持9月9日安装身份，761文件runtime不变；9月9日三周期失败记录保留。9月10日首个恢复点和随后两自然点已全部独核通过，53份证据及总manifest见 `scratch/production-backup-audit-20260910/`。跨package缓存候选暂停、未纳入源码或部署。原collector恢复helper经独审执行，动作前再次检查同一已审新点年龄、deployment与control，原plist未改；首轮及首个自然槽已成功。后续核对RSS启动耗时、15分钟时效、持续队列消化和未知请求保护，不重复已完成的三轮备份验收。
+4. X C/collector/E8局部修复、E1–E3和一次性import operator的范围内独审已通过；最终构建的精确输入来源及命令已冻结。先闭合E7真实M1浏览器连接与producer，再生成同版本完整候选，完成非空迁移保留、artifact与应用恢复、M5证据、三源灰度→27源自然轮询。合成capture不进入生产准入。
+
+`TASK-20260831-AC5CC2`保持claimed/user_confirmed；`TASK-20260829-0ED611`旧blocked/user_required不等于业务未授权，但真实生产缺口尚未完成；`TASK-20260829-E59ACA`保留完整产品和双端缺口。ECADB7/370AD2/C917F4已完成前置不重复领取；BBFF2A/082F2C/F7B06E/C5189A历史机械锁不恢复，FCC322已superseded。任务仅经正式工具流转，不手改JSON，不虚报complete/ACK。
+
+## 6. 回退、保留与交接
+
+RSS回退材料保留M1 `.rss-automatic-install-rollback-20260907-v5/` 和 `.rss-source-epoch-preflight-20260907-v5/production-pre0016.sqlite`。生产0016之后，旧schema候选不能直接重启；不以旧库覆盖运行库。备份R5-r3原配置和工具在 `.backup-projection-boundary-20260907/installation-r5-r3/` 及本地同名证据目录；R4/R5早期候选有已知缺陷，不安装。
+
+9月9日存储快照（非实时）：M1可用198GiB、managed backups约14.935GiB，25包/25对象超过retain24，与当时未完成轮换相符；M5两完整包约1.282GiB、可用192GiB。旧有效点密文674447692字节与更晚未登记包677469221字节已实际核验并保留。不因日期旧删除仍有恢复价值的材料；9月10日三轮均有iCloud归档成功记录，但完整iCloud恢复与Passkey恢复未验收。
+
+接班顺序：`docs/agent-guide.md` → `docs/spec.md` → 本文件 → [当前工作分工](collaboration/当前工作分工与交接.md) → 当前TASK。共享脏树不覆盖、不混合commit/push。规则不复制维护；历史业务与备份报告见 `docs/reviews/2026-09-07-RSS持续处理与模型详情实施记录.md`、`docs/reviews/2026-09-07-备份投影边界修复与周期复验.md`；9月10日对应时间的现场证据优先于更早运行态。

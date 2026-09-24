@@ -4,6 +4,7 @@ import {
   mkdtempSync,
   readFileSync,
   rmSync,
+  renameSync,
   symlinkSync,
   writeFileSync,
   realpathSync
@@ -32,6 +33,7 @@ import { ProjectionHttpTransport } from "../server/review-real/sender.ts";
 import { PublicRealSnapshotReader } from "../server/public/snapshot-adapter.ts";
 import { handlePublicFeed, handlePublicStory } from "../server/public/http.ts";
 import { loadAppConfig } from "../server/config/env.ts";
+import { canonicalJson } from "../server/db/profile.ts";
 import { getHealthDto } from "../server/health.ts";
 import type { PublicFeedResponseV1, PublicProblemV1, PublicStoryDetailResponseV1 } from "../server/public/types.ts";
 
@@ -92,6 +94,57 @@ function signedGeneration(root: string) {
 }
 
 describe("ADR-M5-REAL-PROJECTION-RUNTIME-002 public B", () => {
+  it("rechecks all ancestor bytes and file boundaries after verification is cached", () => {
+    const root = mkdtempSync(join(realpathSync(tmpdir()), "f1-public-chain-cache-"));
+    chmodSync(root, 0o700);
+    const fixture = signedGeneration(join(root, "projection"));
+    const packages = [fixture.packageValue];
+    try {
+      for (let generation = 2; generation <= 4; generation++) {
+        const snapshot = buildProjectionSnapshot({ snapshotGeneration: generation,
+          previousSnapshotManifestHash: packages.at(-1)!.taskEnvelope.snapshot.snapshotManifestHash,
+          records: [fixture.record] });
+        const task = buildProjectionTaskEnvelope({ deliveryId: `op-snapshot-${snapshot.snapshotManifestHash}`,
+          idempotencyKey: `snapshot-sync:0:${snapshot.snapshotManifestHash}`,
+          reconcileKey: `reconcile:snapshot:${snapshot.snapshotManifestHash}`, snapshot, attempt: 0,
+          createdAt: "2026-08-12T03:00:00.000Z", deadlineAt: "2026-08-12T03:15:00.000Z" });
+        packages.push(signProjectionTaskEnvelope({ envelopeJson: task.envelopeJson, envelopeHash: task.envelopeHash,
+          signingKeyId: "projection-key-v1", privateKey: fixture.privateKey }));
+      }
+      for (const value of packages.slice(0, 3)) fixture.receiver.receive(value);
+      fixture.receiver.verifyActiveChain();
+      const activeId = packages[2].taskEnvelope.deliveryId;
+      const ancestorPath = join(root, "projection/generations", `${packages[0].taskEnvelope.snapshot.snapshotManifestHash}.json`);
+      const ancestor = readFileSync(ancestorPath);
+      const corrupted = JSON.parse(ancestor.toString());
+      corrupted.package.signature = (corrupted.package.signature[0] === "A" ? "B" : "A") + corrupted.package.signature.slice(1);
+      writeFileSync(ancestorPath, canonicalJson(corrupted), { mode: 0o600 });
+      expect(() => fixture.receiver.getReceipt(activeId)).toThrow("PROJECTION_SIGNATURE_INVALID");
+      expect(() => fixture.receiver.receive(packages[3])).toThrow("PROJECTION_SIGNATURE_INVALID");
+      expect(() => fixture.receiver.getReceipt(`op-snapshot-${"0".repeat(64)}`)).toThrow("PROJECTION_SIGNATURE_INVALID");
+      writeFileSync(ancestorPath, ancestor, { mode: 0o600 });
+      expect(fixture.receiver.getReceipt(activeId).snapshotGeneration).toBe(3);
+      chmodSync(ancestorPath, 0o644);
+      expect(() => fixture.receiver.getReceipt(activeId)).toThrow("PUBLIC_SNAPSHOT_INTEGRITY_FAILED");
+      chmodSync(ancestorPath, 0o600);
+      renameSync(ancestorPath, `${ancestorPath}.saved`);
+      symlinkSync(`${ancestorPath}.saved`, ancestorPath);
+      expect(() => fixture.receiver.getReceipt(activeId)).toThrow("PUBLIC_SNAPSHOT_INTEGRITY_FAILED");
+      rmSync(ancestorPath);
+      expect(() => fixture.receiver.getReceipt(activeId)).toThrow("PUBLIC_SNAPSHOT_INTEGRITY_FAILED");
+      renameSync(`${ancestorPath}.saved`, ancestorPath);
+      const activePath = join(root, "projection/active.json");
+      const pointer = readFileSync(activePath);
+      writeFileSync(activePath, canonicalJson({ ...JSON.parse(pointer.toString()), activatedAt: "2026-08-12T05:00:00.000Z" }));
+      expect(() => fixture.receiver.getReceipt(activeId)).toThrow("PUBLIC_SNAPSHOT_INTEGRITY_FAILED");
+      writeFileSync(activePath, pointer);
+      const wrongKeyReceiver = new ProjectionReceiver({ root: join(root, "projection"), signingKeyId: "projection-key-v1",
+        publicKey: generateKeyPairSync("ed25519").publicKey });
+      expect(() => wrongKeyReceiver.verifyActiveChain()).toThrow("PROJECTION_SIGNATURE_INVALID");
+      expect(fixture.receiver.receive(packages[3]).snapshotGeneration).toBe(4);
+    } finally { rmSync(root, { recursive: true, force: true }); }
+  });
+
   it("closes loopback POST/receipt GET and reads one verified generation without fallback", async () => {
     const root = mkdtempSync(join(realpathSync(tmpdir()), "f1-public-real-http-"));
     chmodSync(root, 0o700);

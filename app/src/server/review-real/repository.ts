@@ -1,3 +1,4 @@
+import { AutomaticMutationResultSchema, AutomaticTargetSchema, hasCurrentManualReview,hasCompleteRssAutomaticPayload, type AutomaticMutationResult, type AutomaticTarget } from "../rss-automatic/contract.ts";
 import { createHash, randomUUID } from "node:crypto";
 import type { DatabaseSync } from "node:sqlite";
 
@@ -16,15 +17,18 @@ import type {
   GatewayMutationPort,
   GatewayMutationTransactionInput,
 } from "../internal-operation/mutation-port.ts";
-import { liveRssDisplayName } from "../rss/sources.ts";
+import { LIVE_RSS_SOURCE_IDS, liveRssDisplayName } from "../rss/sources.ts";
+import {readXPageAutomaticContent,readXPageCaptureCommitment,xPageAutomaticContentBindings,type XPageAutomaticTarget} from "../x-page/content-authority.ts";
 import {
   buildAuditEventMaterial,
   buildProjectionSnapshot,
   buildProjectionTaskEnvelope,
   buildPublicProjectionRecord,
   buildReviewBundleMaterial,
+  buildXPageReviewBundleMaterial,
   normalizeProjectionKeyPoints,
   derivePublicId,
+  deriveXPagePublicId,
   verifyStoredAuditEvent,
   verifyStoredProjectionTaskEnvelope,
   verifyStoredPublicProjection,
@@ -112,6 +116,10 @@ export type AutomaticPublishBatchReceipt = Readonly<{
 
 type OperationType = OperationReceipt["operationType"];
 type StoredBundle = Readonly<{ row: SqlRow; material: ReviewBundleMaterial }>;
+type PreparedPublication = Readonly<{
+  candidate: Readonly<{candidateId:string;sourceId:string;sourceRevision:number;sourcePayloadHash:string}>;
+  bundle:ReviewBundleMaterial;bundleId:string;publicationId:string;publicId:string;keyPointsZh?:readonly string[];
+}>;
 
 export type ProjectionDeliveryWork = Readonly<{
   deliveryId: string;
@@ -314,8 +322,13 @@ export class ReviewRealRepository {
           throw new ReviewRealError("ADMIN_INTERNAL_FAILURE", 500);
         }
         const previousMutate = this.activeGatewayMutate;
-        return this.mutationPort.runTransaction(gatewayContext(), (mutate) => {
-          this.activeGatewayMutate = mutate;
+        const context = gatewayContext();
+        return this.mutationPort.runTransaction(context, (mutate) => {
+          this.activeGatewayMutate = (write) => {
+            const binding = context.entitySet.find(item => item.entityKind === write.entityKind && item.entityId === write.entityId);
+            if (!binding) throw new Error("REPOSITORY_ENTITY_UNBOUND");
+            return mutate({...write,expectedVersion:binding.expectedVersion,expectedHash:binding.expectedHash});
+          };
           try {
             return callback();
           } finally {
@@ -325,7 +338,7 @@ export class ReviewRealRepository {
       }
       return withImmediateTransaction(this.database, callback);
     } catch (error) {
-      if (error instanceof ReviewRealError) throw error;
+      if (error instanceof ReviewRealError || ownerProcess === "automatic_reviewer" || ownerProcess === "automatic_publisher") throw error;
       throw asReviewRealError(error);
     } finally {
       this.mutationOwner = previousOwner;
@@ -521,6 +534,21 @@ export class ReviewRealRepository {
     if (phase !== "backlog" && phase !== "live")
       throw new ReviewRealError("ADMIN_INTERNAL_FAILURE", 500);
     const entitySet = [...bindings];
+    const xPage=identity.sourceId?.startsWith("x_")===true;
+    let xPageSourceStopEpoch:number|null=null;
+    if(xPage){
+      const bundle=this.database.prepare("SELECT b.candidate_id,b.source_revision,b.source_payload_hash FROM publication p JOIN review_bundle b ON b.bundle_id=p.bundle_id WHERE p.publication_id=?").get(identity.publicationId);
+      if(!bundle)throw new Error("X_PAGE_DELIVERY_PUBLICATION_MISSING");
+      const target={candidateId:String(bundle.candidate_id),sourceRevision:Number(bundle.source_revision),inputContentHash:String(bundle.source_payload_hash)};
+      const proof=readXPageCaptureCommitment(this.database,target,new Date(this.now()),{allowHistoricalRevision:true});
+      xPageSourceStopEpoch=Number(proof.source.stop_epoch);
+      for(const binding of xPageAutomaticContentBindings(proof,target))if(!entitySet.some(existing=>existing.entityKind===binding.entityKind&&existing.entityId===binding.entityId))entitySet.push(binding);
+      for(let index=0;index<entitySet.length;index++)if(entitySet[index].entityKind==="projection_outbox"){
+        const outbox=this.database.prepare("SELECT snapshot_generation,task_envelope_hash FROM projection_outbox WHERE delivery_id=? AND publication_id=?").get(entitySet[index].entityId,identity.publicationId);
+        if(!outbox)throw new Error("X_PAGE_DELIVERY_OUTBOX_MISSING");
+        entitySet[index]={...entitySet[index],expectedVersion:Number(outbox.snapshot_generation),expectedHash:String(outbox.task_envelope_hash)};
+      }
+    }
     if (!entitySet.some((binding) => binding.identitySelector === "publication_id" && binding.entityId === identity.publicationId)) {
       entitySet.push(this.gatewayBinding("publication", identity.publicationId, "publication_id"));
     }
@@ -533,10 +561,11 @@ export class ReviewRealRepository {
       ownerProcess: "projection_sender",
       entitySet,
       identity,
-      policyId: `p-projection-${phase}`,
+      policyId: xPage ? "p-x-page-projection-live" : `p-projection-${phase}`,
       capabilityClass: "external_attempt",
       egressClass: "projection_private",
       budgetAccountId: "acct-projection",
+      ...(xPage?{sourceStopEpoch:xPageSourceStopEpoch}:{}),
     };
   }
 
@@ -611,11 +640,11 @@ export class ReviewRealRepository {
         publicId: null,
       };
     const publication = this.database
-      .prepare("SELECT public_id FROM publication WHERE publication_id=?")
+      .prepare("SELECT p.public_id,b.candidate_id,c.source_id FROM publication p JOIN review_bundle b ON b.bundle_id=p.bundle_id JOIN pending_review_candidate c ON c.candidate_id=b.candidate_id WHERE p.publication_id=?")
       .get(publicationId) as SqlRow | undefined;
     return {
-      sourceId: null,
-      candidateId: null,
+      sourceId: typeof publication?.source_id==="string"&&publication.source_id.startsWith("x_") ? publication.source_id : null,
+      candidateId: typeof publication?.source_id==="string"&&publication.source_id.startsWith("x_") ? String(publication.candidate_id) : null,
       publicationId,
       publicId:
         publication?.public_id === undefined
@@ -848,6 +877,13 @@ export class ReviewRealRepository {
             publishedAt: nullableText(publication, "published_at"),
             updatedAt: requiredText(publication, "updated_at"),
           };
+    const deliveryAttention = delivery?.status === "reconcile_wait" && this.database.prepare("SELECT 1 FROM sqlite_schema WHERE name='internal_operation_audit'").get()
+      ? this.database.prepare(`SELECT json_extract(a.event_json,'$.projectionAttention.reasonCode') AS reason_code,a.created_at
+          FROM internal_operation_audit a JOIN internal_operation op ON op.operation_id=a.operation_id AND op.owner_process='projection_sender' AND op.operation_kind='projection'
+          JOIN operation_entity_binding binding ON binding.operation_id=op.operation_id AND binding.entity_kind='projection_outbox' AND binding.entity_id=?
+          WHERE a.event_type='operation_blocked' AND json_extract(a.event_json,'$.action')='reconcile_observation'
+            AND json_extract(a.event_json,'$.projectionAttention.deliveryId')=? ORDER BY a.audit_seq DESC LIMIT 1`).get(requiredText(delivery, "delivery_id"),requiredText(delivery, "delivery_id")) as SqlRow | undefined
+      : undefined;
     const deliverySummary =
       delivery === null
         ? null
@@ -859,8 +895,8 @@ export class ReviewRealRepository {
               "snapshot_generation",
             ),
             attemptCount: requiredInteger(delivery, "attempt_count"),
-            reasonCode: nullableText(delivery, "last_reason_code") ?? "NONE",
-            updatedAt: requiredText(delivery, "updated_at"),
+            reasonCode: deliveryAttention ? requiredText(deliveryAttention, "reason_code") : nullableText(delivery, "last_reason_code") ?? "NONE",
+            updatedAt: latestTimestamp([requiredText(delivery, "updated_at"), deliveryAttention ? requiredText(deliveryAttention, "created_at") : null]),
           };
     const updatedAt = latestTimestamp([
       candidate.lastSeenAt,
@@ -868,6 +904,7 @@ export class ReviewRealRepository {
       decision === null ? null : requiredText(decision, "decided_at"),
       publication === null ? null : requiredText(publication, "updated_at"),
       delivery === null ? null : requiredText(delivery, "updated_at"),
+      deliveryAttention ? requiredText(deliveryAttention, "created_at") : null,
     ]);
     const common = {
       candidateId: candidate.candidateId,
@@ -911,6 +948,7 @@ export class ReviewRealRepository {
     item: ReleaseNowRequest["expected"]["items"][number],
     request: ReleaseNowRequest,
     createdAt: string,
+    completeReviewInOneWrite = false,
   ): Readonly<{
     candidate: CandidateSourceSnapshot;
     bundle: ReviewBundleMaterial;
@@ -969,12 +1007,13 @@ export class ReviewRealRepository {
         entityId: candidate.candidateId,
         mutationKind: "update",
         statement:
-          "UPDATE pending_review_candidate SET editor_title=?, editor_excerpt=?, editor_notes=?, editor_based_on_source_revision=?, review_status='pending_review' WHERE candidate_id=? AND source_revision=? AND source_payload_hash=?",
+          "UPDATE pending_review_candidate SET editor_title=?, editor_excerpt=?, editor_notes=?, editor_based_on_source_revision=?, review_status=? WHERE candidate_id=? AND source_revision=? AND source_payload_hash=?",
         parameters: [
           editable.titleZh,
           editable.summaryZh,
           editable.notes,
           candidate.sourceRevision,
+          completeReviewInOneWrite ? "approved" : "pending_review",
           candidate.candidateId,
           candidate.sourceRevision,
           candidate.sourcePayloadHash,
@@ -987,9 +1026,7 @@ export class ReviewRealRepository {
         },
       });
       if (changed !== 1) throw new ReviewRealError("REVIEW_SOURCE_STALE", 409);
-      const updatedCandidate = toCandidateSnapshot(
-        this.candidate(candidate.candidateId),
-      );
+      const updatedCandidate = toCandidateSnapshot(this.candidate(candidate.candidateId));
       const bundle = buildReviewBundleMaterial({
         bundleId,
         bundleRevision,
@@ -1040,9 +1077,7 @@ export class ReviewRealRepository {
 
     if (latest === null) throw new ReviewRealError("REVIEW_BUNDLE_STALE", 409);
     const bundleId = requiredText(latest.row, "bundle_id");
-    const refreshed = toCandidateSnapshot(
-      this.candidate(candidate.candidateId),
-    );
+    const refreshed = toCandidateSnapshot(this.candidate(candidate.candidateId));
     if (
       requiredInteger(latest.row, "source_revision") !==
         refreshed.sourceRevision ||
@@ -1120,18 +1155,13 @@ export class ReviewRealRepository {
       });
       if (publicationInserted !== 1)
         throw new ReviewRealError("ADMIN_INTERNAL_FAILURE", 500);
-      const approved = this.write({
+      const approved = completeReviewInOneWrite && editable ? 1 : this.write({
         operationKind: "review",
         entityKind: "candidate",
         entityId: candidate.candidateId,
         mutationKind: "update",
-        statement:
-          "UPDATE pending_review_candidate SET review_status='approved' WHERE candidate_id=? AND source_revision=? AND source_payload_hash=? AND review_status='pending_review'",
-        parameters: [
-          candidate.candidateId,
-          candidate.sourceRevision,
-          candidate.sourcePayloadHash,
-        ],
+        statement: "UPDATE pending_review_candidate SET review_status='approved' WHERE candidate_id=? AND source_revision=? AND source_payload_hash=? AND review_status='pending_review'",
+        parameters: [candidate.candidateId,candidate.sourceRevision,candidate.sourcePayloadHash],
         identity: {
           sourceId: candidate.sourceId,
           candidateId: candidate.candidateId,
@@ -1190,14 +1220,14 @@ export class ReviewRealRepository {
     return { titleZh, summaryZh, notes: candidate.editorNotes ?? "" };
   }
 
-  private currentProjectionRecords() {
+  private currentProjectionRecords(excludedCandidateIds:readonly string[] = []) {
     const rows = this.database
       .prepare(
         `
       SELECT projection.projection_json, projection.projection_hash
       FROM published_projection AS projection
       JOIN review_bundle AS bundle ON bundle.bundle_id = projection.bundle_id
-      WHERE NOT EXISTS (
+      WHERE ${excludedCandidateIds.length ? `bundle.candidate_id NOT IN (${excludedCandidateIds.map(()=>"?").join(",")}) AND ` : ""} NOT EXISTS (
         SELECT 1
         FROM published_projection AS newer_projection
         JOIN review_bundle AS newer_bundle ON newer_bundle.bundle_id = newer_projection.bundle_id
@@ -1210,7 +1240,7 @@ export class ReviewRealRepository {
       ORDER BY projection.public_id
     `,
       )
-      .all() as SqlRow[];
+      .all(...excludedCandidateIds) as SqlRow[];
     return rows.map((row) =>
       verifyStoredPublicProjection(
         requiredText(row, "projection_json"),
@@ -1222,9 +1252,9 @@ export class ReviewRealRepository {
   list(): ReviewList {
     const rows = this.database
       .prepare(
-        "SELECT * FROM pending_review_candidate ORDER BY published_at DESC, candidate_id LIMIT 100",
+        `SELECT * FROM pending_review_candidate WHERE source_id IN (${LIVE_RSS_SOURCE_IDS.map(()=>"?").join(",")}) ORDER BY published_at DESC, candidate_id LIMIT 100`,
       )
-      .all() as SqlRow[];
+      .all(...LIVE_RSS_SOURCE_IDS) as SqlRow[];
     return parseStored(ReviewListSchema, {
       schemaVersion: "admin-review-v0.2",
       items: rows.map((row) => this.view(row, false)),
@@ -1941,6 +1971,189 @@ export class ReviewRealRepository {
     );
   }
 
+  private automaticReplay(operationId: string, requestHash: string, kind: "review" | "publish"): AutomaticMutationResult | null {
+    const stored = this.database.prepare(`SELECT op.owner_process,op.request_hash,op.state,op.result_hash,a.event_json
+      FROM internal_operation op LEFT JOIN internal_operation_audit a ON a.operation_id=op.operation_id AND a.event_type='operation_succeeded'
+      WHERE op.operation_id=?`).get(operationId) as SqlRow | undefined;
+    if (stored === undefined) return null;
+    if (stored.owner_process !== (kind === "review" ? "automatic_reviewer" : "automatic_publisher") || stored.request_hash !== requestHash || stored.state !== "succeeded") {
+      throw new Error("AUTOMATIC_OPERATION_RECONCILE_REQUIRED");
+    }
+    const audit = JSON.parse(requiredText(stored, "event_json"));
+    const result = AutomaticMutationResultSchema.parse(audit.automaticResult);
+    if (sha256(`f1plus1-automatic-result-v1\n${canonicalJson(result)}`) !== stored.result_hash || result.kind !== kind || result.operationId !== operationId) throw new Error("AUTOMATIC_RESULT_INVALID");
+    return result;
+  }
+
+  reviewXPageAutomaticCandidate(target:XPageAutomaticTarget):AutomaticMutationResult {
+    const createdAt=this.now(),proof=readXPageAutomaticContent(this.database,target,new Date(createdAt));
+    const requestHash=sha256(canonicalJson({kind:"x-page-review",target})),operationId=`x-page-auto-review-${requestHash}`;
+    const replay=this.automaticReplay(operationId,requestHash,"review");if(replay)return replay;
+    if(!proof.draft||!["pending_review","published"].includes(String(proof.candidate.review_status)))throw new Error("X_PAGE_AUTO_REVIEW_NOT_READY");
+    const latest=this.latestBundle(target.candidateId);
+    if(latest&&latest.row.source_revision===target.sourceRevision&&latest.row.source_payload_hash===target.inputContentHash)throw new Error("X_PAGE_AUTO_REVIEW_BUNDLE_EXISTS");
+    const seed=`${operationId}:${target.candidateId}`,bundleId=derivedId("bundle",seed),decisionId=derivedId("decision",seed),publicationId=derivedId("publication",seed);
+    const editable={titleZh:proof.draft.titleZh,summaryZh:proof.draft.summaryZh,notes:""};
+    const bundleRevision=latest?requiredInteger(latest.row,"bundle_revision")+1:1;
+    const bundle=buildXPageReviewBundleMaterial({bundleId,bundleRevision,
+      createdAt,target,capture:proof.verified,editable});
+    const publicId=deriveXPagePublicId(target.candidateId,bundle.bundleHash),identity={sourceId:String(proof.source.source_id),candidateId:target.candidateId,publicationId,publicId};
+    const entitySet=[...xPageAutomaticContentBindings(proof,target),this.gatewayBinding("review_bundle",bundleId),this.gatewayBinding("review_decision",decisionId),
+      this.gatewayBinding("publication",publicationId,"publication_id"),this.gatewayBinding("published_projection",publicId,"public_id")];
+    return this.transaction(()=>{
+      const current=readXPageAutomaticContent(this.database,target,new Date(createdAt)),currentLatest=this.latestBundle(target.candidateId);
+      if(current.draft?.draftId!==proof.draft?.draftId||current.draft?.responseSha256!==proof.draft?.responseSha256
+        ||currentLatest?.material.bundleHash!==latest?.material.bundleHash)throw new Error("X_PAGE_AUTO_REVIEW_PLAN_STALE");
+      const write=(entityKind:EntityKind,entityId:string,mutationKind:MutationKind,statement:string,parameters:readonly unknown[])=>{
+        if(this.write({operationKind:"review",entityKind,entityId,mutationKind,statement,parameters,identity})!==1)throw new Error("X_PAGE_AUTO_REVIEW_WRITE_FAILED");
+      };
+      write("candidate",target.candidateId,"update","UPDATE pending_review_candidate SET editor_title=?,editor_excerpt=?,editor_notes=?,editor_based_on_source_revision=?,review_status='approved' WHERE candidate_id=? AND source_revision=? AND source_payload_hash=? AND review_status IN ('pending_review','published')",
+        [editable.titleZh,editable.summaryZh,editable.notes,target.sourceRevision,target.candidateId,target.sourceRevision,target.inputContentHash]);
+      write("review_bundle",bundleId,"insert","INSERT INTO review_bundle (bundle_id,candidate_id,bundle_revision,source_revision,source_payload_hash,public_payload_json,public_payload_hash,editor_notes,bundle_hash,created_at) VALUES (?,?,?,?,?,?,?,?,?,?)",
+        [bundleId,target.candidateId,bundleRevision,target.sourceRevision,target.inputContentHash,bundle.publicPayloadJson,bundle.publicPayloadHash,bundle.editorNotes,bundle.bundleHash,createdAt]);
+      write("review_decision",decisionId,"insert","INSERT INTO review_decision (decision_id,bundle_id,decision,approved_bundle_hash,rejection_reason,decided_at) VALUES (?,?,'approved',?,NULL,?)",
+        [decisionId,bundleId,bundle.bundleHash,createdAt]);
+      write("publication",publicationId,"insert","INSERT INTO publication (publication_id,decision_id,bundle_id,public_id,approved_bundle_hash,publish_generation,publication_status,published_at,created_at,updated_at) VALUES (?,?,?,?,?,1,'queued',NULL,?,?)",
+        [publicationId,decisionId,bundleId,publicId,bundle.bundleHash,createdAt,createdAt]);
+      readXPageCaptureCommitment(this.database,target,new Date(createdAt));
+      return AutomaticMutationResultSchema.parse({schemaVersion:"automatic-mutation-result-v1",kind:"review",status:"approved",operationId,...target,publicationId,publicId,bundleId,bundleHash:bundle.bundleHash});
+    },"automatic_reviewer",()=>({operationId,operationKind:"review",ownerProcess:"automatic_reviewer",policyId:"p-x-page-auto-review-live",capabilityClass:"db_mutation",egressClass:"none",
+      requestHash,identity,entitySet,sourceStopEpoch:Number(proof.source.stop_epoch)}));
+  }
+
+  publishXPageAutomaticCandidate(target:XPageAutomaticTarget):AutomaticMutationResult {
+    const createdAt=this.now(),proof=readXPageAutomaticContent(this.database,target,new Date(createdAt));
+    const requestHash=sha256(canonicalJson({kind:"x-page-publish",target})),operationId=`x-page-auto-publish-${requestHash}`;
+    const replay=this.automaticReplay(operationId,requestHash,"publish");if(replay)return replay;
+    if(!proof.draft||proof.candidate.review_status!=="approved")throw new Error("X_PAGE_AUTO_PUBLISH_NOT_READY");
+    const latest=this.latestBundle(target.candidateId);
+    if(!latest||latest.row.source_revision!==target.sourceRevision||latest.row.source_payload_hash!==target.inputContentHash
+      ||latest.material.publicPayload.contentType!=="driver_social"||latest.material.publicPayload.xCaptureSha256!==proof.verified.captureSha256)throw new Error("X_PAGE_AUTO_PUBLICATION_STALE");
+    const publication=this.database.prepare(`SELECT p.* FROM publication p JOIN review_decision d ON d.decision_id=p.decision_id WHERE p.bundle_id=?
+      AND p.publication_status='queued' AND p.published_at IS NULL AND p.approved_bundle_hash=? AND d.decision='approved' AND d.approved_bundle_hash=?`)
+      .get(String(latest.row.bundle_id),latest.material.bundleHash,latest.material.bundleHash) as SqlRow|undefined;
+    if(!publication)throw new Error("X_PAGE_AUTO_PUBLICATION_STALE");
+    const item:PreparedPublication={candidate:{candidateId:target.candidateId,sourceId:String(proof.source.source_id),sourceRevision:target.sourceRevision,sourcePayloadHash:target.inputContentHash},
+      bundle:latest.material,bundleId:String(latest.row.bundle_id),publicationId:String(publication.publication_id),publicId:String(publication.public_id),keyPointsZh:proof.draft.keyPointsZh};
+    const projectionId=derivedId("projection",`${operationId}:${target.candidateId}`),projection=buildPublicProjectionRecord({publicId:item.publicId,bundleHash:item.bundle.bundleHash,
+      publishedAt:createdAt,publicPayload:item.bundle.publicPayload,keyPointsZh:normalizeProjectionKeyPoints(item.keyPointsZh)});
+    const previous=this.database.prepare("SELECT status FROM projection_outbox ORDER BY snapshot_generation DESC LIMIT 1").get() as SqlRow|undefined;
+    if(previousOutboxBlocksNewGeneration(previous?String(previous.status):undefined))throw new Error("PUBLICATION_RECONCILE_WAIT");
+    const successful=this.database.prepare("SELECT * FROM projection_outbox WHERE status='succeeded' ORDER BY snapshot_generation DESC LIMIT 1").get() as SqlRow|undefined;
+    const generation=successful?Number(successful.snapshot_generation)+1:1;
+    const snapshot=buildProjectionSnapshot({snapshotGeneration:generation,previousSnapshotManifestHash:successful?String(successful.snapshot_manifest_hash):null,
+      records:[...this.currentProjectionRecords([target.candidateId]),projection]});
+    const deliveryId=`op-snapshot-${snapshot.snapshotManifestHash}`;
+    const identity={sourceId:item.candidate.sourceId,candidateId:target.candidateId,publicationId:item.publicationId,publicId:projectionId};
+    const entitySet=[...xPageAutomaticContentBindings(proof,target),this.gatewayBinding("publication",item.publicationId,"publication_id"),
+      this.gatewayBinding("published_projection",projectionId,"public_id"),this.gatewayBinding("projection_outbox",deliveryId)];
+    return this.transaction(()=>{
+      const current=readXPageAutomaticContent(this.database,target,new Date(createdAt));
+      if(current.draft?.responseSha256!==proof.draft?.responseSha256||this.latestBundle(target.candidateId)?.material.bundleHash!==item.bundle.bundleHash)throw new Error("X_PAGE_AUTO_PUBLICATION_STALE");
+      const last=this.database.prepare("SELECT status FROM projection_outbox ORDER BY snapshot_generation DESC LIMIT 1").get() as SqlRow|undefined;
+      if(previousOutboxBlocksNewGeneration(last?String(last.status):undefined))throw new Error("PUBLICATION_RECONCILE_WAIT");
+      const committed=this.commitPreparedPublications({operationId},[item],createdAt);
+      if(committed.deliveryId!==deliveryId)throw new Error("X_PAGE_AUTO_PUBLICATION_PLAN_STALE");
+      readXPageCaptureCommitment(this.database,target,new Date(createdAt));
+      return AutomaticMutationResultSchema.parse({schemaVersion:"automatic-mutation-result-v1",kind:"publish",status:"delivery_pending",operationId,...target,
+        publicationId:item.publicationId,publicId:item.publicId,deliveryId,generation});
+    },"automatic_publisher",()=>({operationId,operationKind:"publish",ownerProcess:"automatic_publisher",policyId:"p-x-page-auto-publish-live",capabilityClass:"db_mutation",egressClass:"none",
+      requestHash,identity,entitySet,sourceStopEpoch:Number(proof.source.stop_epoch)}));
+  }
+
+  private assertAutomaticTarget(target: AutomaticTarget): CandidateSourceSnapshot {
+    AutomaticTargetSchema.parse(target);
+    const candidate = toCandidateSnapshot(this.candidate(target.candidateId));
+    if (candidate.sourceRevision !== target.sourceRevision || candidate.sourcePayloadHash !== target.inputContentHash) throw new Error("AUTOMATIC_SOURCE_STALE");
+    if (!hasCompleteRssAutomaticPayload(this.database,target)) throw new Error("RSS_AUTO_PAYLOAD_INCOMPLETE");
+    if (hasCurrentManualReview(this.database,target)) throw new Error("AUTO_REVIEW_MANUAL_OVERRIDE");
+    return candidate;
+  }
+
+  reviewAutomaticCandidate(target: AutomaticTarget): AutomaticMutationResult {
+    const requestHash = sha256(canonicalJson({ kind: "review", target }));
+    const operationId = `rss-auto-review-${requestHash}`;
+    const replay = this.automaticReplay(operationId, requestHash, "review");
+    if (replay) return replay;
+    const candidate = this.assertAutomaticTarget(target);
+    const detail = this.detail(target.candidateId);
+    const reason = automaticReviewSecurityReason(detail);
+    if (reason !== null) throw new Error(reason);
+    if (this.database.prepare(`SELECT 1 FROM review_decision d JOIN review_bundle b ON b.bundle_id=d.bundle_id
+      WHERE b.candidate_id=? AND b.source_revision=? AND b.source_payload_hash=? AND d.decision='rejected' LIMIT 1`).get(target.candidateId,target.sourceRevision,target.inputContentHash)) throw new Error("AUTO_REVIEW_MANUAL_OVERRIDE");
+    if (!["pending_review", "source_updated"].includes(detail.reviewState)) throw new Error("AUTO_REVIEW_NOT_READY");
+    const createdAt = this.now();
+    const draft = detail.machineDraft;
+    if (!draft) throw new Error("AUTO_REVIEW_WAITING_FOR_CHINESE");
+    const editable = { titleZh: draft.titleZh, summaryZh: draft.summaryZh, notes: detail.editorNotes ?? "" };
+    const bundleId = derivedId("bundle", `${operationId}:${target.candidateId}`);
+    const decisionId = derivedId("decision", `${operationId}:${target.candidateId}`);
+    const publicationId = derivedId("publication", `${operationId}:${target.candidateId}`);
+    const latest = this.latestBundle(target.candidateId);
+    const bundle = buildReviewBundleMaterial({ bundleId, bundleRevision: latest === null ? 1 : requiredInteger(latest.row,"bundle_revision")+1,
+      createdAt, candidate, editable, media: this.sourceMedia(target.candidateId,target.sourceRevision,target.inputContentHash) });
+    const publicId = derivePublicId(target.candidateId,bundle.bundleHash);
+    const request: ReleaseNowRequest = { schemaVersion: "admin-review-v0.2", operationId, expected: { items: [{
+      candidateId: target.candidateId, sourceRevision: target.sourceRevision, sourceVersionTag: target.inputContentHash.slice(0,12),
+      latestBundleId: detail.latestBundle?.id ?? null, latestBundleVersionTag: detail.latestBundle?.versionTag ?? null,
+    }] }, editable };
+    const identity = { sourceId: candidate.sourceId, candidateId: target.candidateId, publicationId, publicId };
+    const candidateBinding: EntityBinding = { ...this.gatewayBinding("candidate",target.candidateId,"candidate_id"), expectedVersion: target.sourceRevision, expectedHash: target.inputContentHash };
+    const context = this.gatewayReviewContext(operationId,identity,[candidateBinding,this.gatewayBinding("review_bundle",bundleId),
+      this.gatewayBinding("review_decision",decisionId),this.gatewayBinding("publication",publicationId,"publication_id")]);
+    return this.transaction(() => {
+      this.assertAutomaticTarget(target);
+      const currentReason = automaticReviewSecurityReason(this.detail(target.candidateId));
+      if (currentReason !== null) throw new Error(currentReason);
+      const item = this.prepareReleaseItem(request.expected.items[0],request,createdAt,true);
+      if (item.bundle.bundleHash !== bundle.bundleHash || item.publicationId !== publicationId) throw new Error("AUTO_REVIEW_PLAN_STALE");
+      return AutomaticMutationResultSchema.parse({ schemaVersion:"automatic-mutation-result-v1",kind:"review",status:"approved",operationId,
+        ...target,publicationId,publicId,bundleId:item.bundleId,bundleHash:item.bundle.bundleHash });
+    },"automatic_reviewer",() => ({ ...context, ownerProcess:"automatic_reviewer",requestHash,
+      entitySet:[candidateBinding,...context.entitySet.filter(binding=>binding.entityKind!=="candidate")] }));
+  }
+
+  publishAutomaticCandidate(target: AutomaticTarget): AutomaticMutationResult {
+    const requestHash = sha256(canonicalJson({ kind: "publish", target }));
+    const operationId = `rss-auto-publish-${requestHash}`;
+    const replay = this.automaticReplay(operationId, requestHash, "publish");
+    if (replay) return replay;
+    const candidate = this.assertAutomaticTarget(target);
+    const detail = this.detail(target.candidateId);
+    if (detail.reviewState !== "approved_waiting_publish" || !detail.allowedActions.includes("publish") || !detail.latestBundle) throw new Error("AUTO_PUBLISH_NOT_READY");
+    const createdAt = this.now();
+    const request: ReleaseNowRequest = { schemaVersion:"admin-review-v0.2",operationId,editable:null,expected:{items:[{
+      candidateId:target.candidateId,sourceRevision:target.sourceRevision,sourceVersionTag:target.inputContentHash.slice(0,12),
+      latestBundleId:detail.latestBundle.id,latestBundleVersionTag:detail.latestBundle.versionTag,
+    }]}};
+    // An approved current bundle causes no writes in this shared domain helper.
+    const item = this.prepareReleaseItem(request.expected.items[0],request,createdAt);
+    const projectionId = derivedId("projection",`${operationId}:${target.candidateId}`);
+    const projection = buildPublicProjectionRecord({ publicId:item.publicId,bundleHash:item.bundle.bundleHash,publishedAt:createdAt,publicPayload:item.bundle.publicPayload,
+      keyPointsZh:normalizeProjectionKeyPoints(this.machineDraft(target.candidateId,target.sourceRevision,target.inputContentHash)?.keyPointsZh) });
+    const previous = this.database.prepare("SELECT * FROM projection_outbox ORDER BY snapshot_generation DESC LIMIT 1").get() as SqlRow | undefined;
+    if (previousOutboxBlocksNewGeneration(previous ? requiredText(previous,"status") : undefined)) throw new Error("PUBLICATION_RECONCILE_WAIT");
+    const successful = this.database.prepare("SELECT * FROM projection_outbox WHERE status='succeeded' ORDER BY snapshot_generation DESC LIMIT 1").get() as SqlRow | undefined;
+    const generation = successful ? requiredInteger(successful,"snapshot_generation")+1 : 1;
+    const snapshot = buildProjectionSnapshot({ snapshotGeneration:generation,previousSnapshotManifestHash:successful ? requiredText(successful,"snapshot_manifest_hash") : null,
+      records:[...this.currentProjectionRecords([target.candidateId]),projection] });
+    const deliveryId = `op-snapshot-${snapshot.snapshotManifestHash}`;
+    const candidateBinding: EntityBinding = { ...this.gatewayBinding("candidate",target.candidateId,"candidate_id"), expectedVersion:target.sourceRevision,expectedHash:target.inputContentHash };
+    const context = this.gatewayPublishContext(operationId,{sourceId:candidate.sourceId,candidateId:target.candidateId,publicationId:item.publicationId,publicId:projectionId},[
+      candidateBinding,this.gatewayBinding("publication",item.publicationId,"publication_id"),this.gatewayBinding("published_projection",projectionId,"public_id"),this.gatewayBinding("projection_outbox",deliveryId)]);
+    return this.transaction(() => {
+      this.assertAutomaticTarget(target);
+      const current = this.database.prepare("SELECT status FROM projection_outbox ORDER BY snapshot_generation DESC LIMIT 1").get() as SqlRow | undefined;
+      if (previousOutboxBlocksNewGeneration(current ? requiredText(current,"status") : undefined)) throw new Error("PUBLICATION_RECONCILE_WAIT");
+      const prepared = this.prepareReleaseItem(request.expected.items[0],request,createdAt);
+      const committed = this.commitPreparedPublications(request,[prepared],createdAt);
+      if (committed.deliveryId !== deliveryId) throw new Error("AUTOMATIC_PUBLICATION_PLAN_STALE");
+      return AutomaticMutationResultSchema.parse({schemaVersion:"automatic-mutation-result-v1",kind:"publish",status:"delivery_pending",operationId,...target,
+        publicationId:item.publicationId,publicId:item.publicId,deliveryId,generation});
+    },"automatic_publisher",() => ({...context,ownerProcess:"automatic_publisher",requestHash,
+      entitySet:[candidateBinding,...context.entitySet.filter(binding=>binding.entityKind!=="candidate")]}));
+  }
+
   automaticReviewBatch(
     limit = 100,
     actorRef = "system-auto-review-v1",
@@ -2601,7 +2814,7 @@ export class ReviewRealRepository {
         const snapshot = buildProjectionSnapshot({
           snapshotGeneration: generation,
           previousSnapshotManifestHash: previousManifest,
-          records: [...this.currentProjectionRecords(), projected],
+          records: [...this.currentProjectionRecords([requiredText(candidate,"candidate_id")]), projected],
         });
         const deliveryId = `op-snapshot-${snapshot.snapshotManifestHash}`;
         const identity = {
@@ -2642,44 +2855,11 @@ export class ReviewRealRepository {
     );
   }
 
-  releaseNow(
-    request: ReleaseNowRequest,
-    path: string,
-    actorRef: string,
-  ): PublishSuccess {
-    const requestHash = sha256(canonicalJson(request));
-    const operationCreatedAt = this.now();
-    return this.transaction(
-      () => {
-        const replay = this.storedOperation({
-          operationId: request.operationId,
-          operationType: "publish",
-          path,
-          requestHash,
-          schema: PublishSuccessSchema,
-        });
-        if (replay !== null) return replay;
-        const previousOutbox = this.database
-          .prepare(
-            "SELECT * FROM projection_outbox ORDER BY snapshot_generation DESC LIMIT 1",
-          )
-          .get() as SqlRow | undefined;
-        if (
-          previousOutboxBlocksNewGeneration(
-            previousOutbox === undefined
-              ? undefined
-              : requiredText(previousOutbox, "status"),
-          )
-        ) {
-          throw new ReviewRealError("PUBLICATION_RECONCILE_WAIT", 409);
-        }
-        const createdAt = operationCreatedAt;
-        const prepared = request.expected.items
-          .slice()
-          .sort((left, right) =>
-            left.candidateId.localeCompare(right.candidateId),
-          )
-          .map((item) => this.prepareReleaseItem(item, request, createdAt));
+  private commitPreparedPublications(
+    request: Pick<ReleaseNowRequest, "operationId">,
+    prepared: readonly PreparedPublication[],
+    createdAt: string,
+  ) {
         let firstPublicationId: string | null = null;
         for (const item of prepared) {
           const changedPublication = this.write({
@@ -2699,18 +2879,18 @@ export class ReviewRealRepository {
           });
           if (changedPublication !== 1)
             throw new ReviewRealError("REVIEW_BUNDLE_STALE", 409);
-          const machineDraft = this.machineDraft(
+          const machineDraft = item.keyPointsZh===undefined ? this.machineDraft(
             item.candidate.candidateId,
             item.candidate.sourceRevision,
             item.candidate.sourcePayloadHash,
-          );
+          ) : null;
           const projection = buildPublicProjectionRecord({
             publicId: item.publicId,
             bundleHash: item.bundle.bundleHash,
             publishedAt: createdAt,
             publicPayload: item.bundle.publicPayload,
             keyPointsZh: normalizeProjectionKeyPoints(
-              machineDraft?.keyPointsZh,
+              item.keyPointsZh ?? machineDraft?.keyPointsZh,
             ),
           });
           const projectionId = derivedId(
@@ -2832,6 +3012,48 @@ export class ReviewRealRepository {
         });
         if (outboxInserted !== 1)
           throw new ReviewRealError("ADMIN_INTERNAL_FAILURE", 500);
+    return { deliveryId, snapshot };
+  }
+
+  releaseNow(
+    request: ReleaseNowRequest,
+    path: string,
+    actorRef: string,
+  ): PublishSuccess {
+    const requestHash = sha256(canonicalJson(request));
+    const operationCreatedAt = this.now();
+    return this.transaction(
+      () => {
+        const replay = this.storedOperation({
+          operationId: request.operationId,
+          operationType: "publish",
+          path,
+          requestHash,
+          schema: PublishSuccessSchema,
+        });
+        if (replay !== null) return replay;
+        const previousOutbox = this.database
+          .prepare(
+            "SELECT * FROM projection_outbox ORDER BY snapshot_generation DESC LIMIT 1",
+          )
+          .get() as SqlRow | undefined;
+        if (
+          previousOutboxBlocksNewGeneration(
+            previousOutbox === undefined
+              ? undefined
+              : requiredText(previousOutbox, "status"),
+          )
+        ) {
+          throw new ReviewRealError("PUBLICATION_RECONCILE_WAIT", 409);
+        }
+        const createdAt = operationCreatedAt;
+        const prepared = request.expected.items
+          .slice()
+          .sort((left, right) =>
+            left.candidateId.localeCompare(right.candidateId),
+          )
+          .map((item) => this.prepareReleaseItem(item, request, createdAt));
+        const { deliveryId } = this.commitPreparedPublications(request, prepared, createdAt);
         const first = prepared[0];
         const candidateView = this.view(
           this.candidate(first.candidate.candidateId),
@@ -2916,7 +3138,7 @@ export class ReviewRealRepository {
         const snapshot = buildProjectionSnapshot({
           snapshotGeneration: generation,
           previousSnapshotManifestHash: previousManifest,
-          records: [...this.currentProjectionRecords(), projection],
+          records: [...this.currentProjectionRecords([first.candidate.candidateId]), projection],
         });
         const deliveryId = `op-snapshot-${snapshot.snapshotManifestHash}`;
         const identity = {
@@ -3003,7 +3225,14 @@ export class ReviewRealRepository {
         "SELECT operation_id FROM admin_operation WHERE operation_type='publish' AND json_extract(response_json, '$.operation.deliveryId') = ?",
       )
       .get(deliveryId) as SqlRow | undefined;
-    if (!operation) throw new ReviewRealError("ADMIN_INTERNAL_FAILURE", 500);
+    if (!operation) {
+      const automatic = this.database.prepare(`SELECT 1 FROM internal_operation op
+        JOIN internal_operation_audit a ON a.operation_id=op.operation_id AND a.event_type='operation_succeeded'
+        WHERE op.owner_process='automatic_publisher' AND op.state='succeeded'
+        AND json_extract(a.event_json,'$.automaticResult.deliveryId')=? LIMIT 1`).get(deliveryId);
+      if (automatic !== undefined) return;
+      throw new ReviewRealError("ADMIN_INTERNAL_FAILURE", 500);
+    }
     const operationId = requiredText(operation, "operation_id");
     const previous = this.database
       .prepare(
@@ -3034,7 +3263,8 @@ export class ReviewRealRepository {
       previousEventHash: previousHash,
       eventPayload: payload,
     });
-    const eventId = `audit-delivery-${sha256(`${deliveryId}\n${eventType}\n${requiredInteger(row, "attempt_count")}\n${occurredAt}`)}`;
+    const attentionIdentity = reasonCode?.startsWith("PROJECTION_RECONCILE_") ? `\n${reasonCode}` : "";
+    const eventId = `audit-delivery-${sha256(`${deliveryId}\n${eventType}\n${requiredInteger(row, "attempt_count")}\n${occurredAt}${attentionIdentity}`)}`;
     const inserted = this.write({
       operationKind: "projection",
       entityKind: "legacy_audit",
@@ -3068,10 +3298,11 @@ export class ReviewRealRepository {
     const operationCreatedAt = this.now();
     const expiredLease = this.database
       .prepare(
-        "SELECT 1 FROM projection_outbox WHERE status='leased' AND lease_expires_at <= ? LIMIT 1",
+        "SELECT delivery_id FROM projection_outbox WHERE status='leased' AND lease_expires_at <= ? ORDER BY lease_expires_at, delivery_id LIMIT 1",
       )
       .get(operationCreatedAt);
     if (expiredLease === undefined) return null;
+    const retryUnstarted = this.mutationPort?.prepareUnstartedProjectionLeaseRetry?.(String(expiredLease.delivery_id)) === true;
     const operationId = `projection-recover-${sha256(`${actorRef}\n${operationCreatedAt}`).slice(0, 48)}`;
     return this.transaction(
       () => {
@@ -3082,14 +3313,17 @@ export class ReviewRealRepository {
           )
           .get(now) as SqlRow | undefined;
         if (!row) return null;
+        if (retryUnstarted && this.database.prepare("SELECT 1 FROM internal_external_attempt WHERE external_idempotency_key=? OR reconcile_key=?").get(requiredText(row, "idempotency_key"), requiredText(row, "reconcile_key"))) throw new ReviewRealError("DELIVERY_RECONCILE_WAIT", 409);
         const changed = this.write({
           operationKind: "projection",
           entityKind: "projection_outbox",
           entityId: requiredText(row, "delivery_id"),
           mutationKind: "update",
           statement:
-            "UPDATE projection_outbox SET status='reconcile_wait', lease_token=NULL, lease_expires_at=NULL, last_reason_code='DELIVERY_LEASE_EXPIRED', updated_at=? WHERE delivery_id=? AND status='leased' AND lease_token=?",
+            "UPDATE projection_outbox SET status=?, lease_token=NULL, lease_expires_at=NULL, last_reason_code=?, updated_at=? WHERE delivery_id=? AND status='leased' AND lease_token=?",
           parameters: [
+            retryUnstarted ? "retryable_failed" : "reconcile_wait",
+            retryUnstarted ? "DELIVERY_LEASE_EXPIRED_BEFORE_ATTEMPT" : "DELIVERY_LEASE_EXPIRED",
             now,
             requiredText(row, "delivery_id"),
             requiredText(row, "lease_token"),
@@ -3143,6 +3377,10 @@ export class ReviewRealRepository {
   }
 
   leaseNext(actorRef: string): ProjectionDeliveryWork | null {
+    const eligible = this.database.prepare(
+      "SELECT 1 FROM projection_outbox WHERE status IN ('pending','retryable_failed') AND attempt_count < max_attempts AND NOT EXISTS (SELECT 1 FROM projection_outbox WHERE status IN ('leased','reconcile_wait')) LIMIT 1",
+    ).get();
+    if (eligible === undefined) return null;
     const operationCreatedAt = this.now();
     const operationId = `projection-lease-${sha256(`${actorRef}\n${operationCreatedAt}`).slice(0, 48)}`;
     return this.transaction(
@@ -3214,6 +3452,12 @@ export class ReviewRealRepository {
     reasonCode: string,
     actorRef: string,
   ): void {
+    const current = this.database.prepare("SELECT status,last_reason_code FROM projection_outbox WHERE delivery_id=?").get(work.deliveryId) as SqlRow | undefined;
+    if (current?.status === "reconcile_wait" && current.last_reason_code === reasonCode) return;
+    if (current?.status === "reconcile_wait" && reasonCode.startsWith("PROJECTION_RECONCILE_") && this.mutationPort?.recordProjectionReconcileAttention) {
+      this.mutationPort.recordProjectionReconcileAttention(work.deliveryId, reasonCode);
+      return;
+    }
     this.transitionDelivery(work, "reconcile_wait", reasonCode, actorRef);
   }
 
@@ -3247,7 +3491,7 @@ export class ReviewRealRepository {
     actorRef: string,
   ): void {
     const operationCreatedAt = this.now();
-    const operationId = `projection-transition-${sha256(`${work.deliveryId}\n${target}\n${operationCreatedAt}`).slice(0, 48)}`;
+    const operationId = `projection-transition-${sha256(`${work.deliveryId}\n${target}\n${reasonCode}\n${operationCreatedAt}`).slice(0, 48)}`;
     this.transaction(
       () => {
         const now = operationCreatedAt;
@@ -3348,7 +3592,8 @@ export class ReviewRealRepository {
             : target === "reconcile_wait"
               ? "projection_delivery_reconcile_wait"
               : "projection_delivery_terminal_failed";
-        const auditId = `audit-delivery-${sha256(`${work.deliveryId}\n${auditEvent}\n${requiredInteger(row, "attempt_count")}\n${operationCreatedAt}`)}`;
+        const attentionIdentity = reasonCode.startsWith("PROJECTION_RECONCILE_") ? `\n${reasonCode}` : "";
+        const auditId = `audit-delivery-${sha256(`${work.deliveryId}\n${auditEvent}\n${requiredInteger(row, "attempt_count")}\n${operationCreatedAt}${attentionIdentity}`)}`;
         return this.gatewayProjectionContext(
           operationId,
           this.projectionIdentity(row),

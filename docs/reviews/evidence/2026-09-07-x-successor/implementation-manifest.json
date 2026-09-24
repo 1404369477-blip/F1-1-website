@@ -1,0 +1,155 @@
+{
+  "schemaVersion": "x-page-implementation-manifest-v1",
+  "scope": "local-synthetic-clone-only",
+  "productionReady": false,
+  "realCaptures": 0,
+  "modelCalls": 0,
+  "productionChanges": 0,
+  "schemaSha256": "56cae0d03f60303061c568de278f0f51b468b85759f4afc99e35dc5e48a07d3d",
+  "migrationSha256": "9c57f97e45dd24413e5ef6a043bb727da86083dbb53273c8151079b96d88130a",
+  "files": [
+    {
+      "path": "app/migrations/rss-real/0013_x_page_import.sql",
+      "kind": "new",
+      "beforeSha256": null,
+      "sha256": "9c57f97e45dd24413e5ef6a043bb727da86083dbb53273c8151079b96d88130a"
+    },
+    {
+      "path": "app/scripts/prepare-v10-release-candidate.ts",
+      "kind": "modified",
+      "beforeSha256": "04fb9090c974841689c28ed2ffd1fcfc9be2643fedb2128f436f938388994f26",
+      "sha256": "a0499a0ac579e5031212bb37714f26f94bfc48188dbd832c6f60c6b7149b87d9"
+    },
+    {
+      "path": "app/scripts/ql3-deployment-v10-evidence.ts",
+      "kind": "modified",
+      "beforeSha256": "44f5eff8c3e72e2efd77ba12b91e8a5ceb127d4c30796d3781087a1805d4c97a",
+      "sha256": "ea837eacb1e4ed5a5511477e00ff73c3bacf7b120d9a3aa504dfcadd0d064fd5"
+    },
+    {
+      "path": "app/src/server/admin-service/release-manifest.ts",
+      "kind": "modified",
+      "beforeSha256": "9655fc67f260d59c23c8df65a26abadfe2d24c571455d6911dcb74e0b4326492",
+      "sha256": "4a3dc7fd082d26c65ab90bfb47f7930c34be287bb98556f57ca883d8f670241b"
+    },
+    {
+      "path": "app/src/server/internal-operation/authorizer.ts",
+      "kind": "modified",
+      "beforeSha256": "fce98fb415fc2f89c7c8ed33096222e91510605cae5aa762f509fb3feb732b3f",
+      "sha256": "0aa48e6be3897de7e1d5392b380492f5d61e33c316acf6f4b565e1e3a950a066"
+    },
+    {
+      "path": "app/src/server/internal-operation/gateway.ts",
+      "kind": "modified",
+      "beforeSha256": "771ffeeeda07504457d8002ee67b42fe4aeea7904b61ee3b5790734d4715f140",
+      "sha256": "2b8b7a0cee5f8bf75276e7f7bb370888e8f35b4901285e3d2c0cda95fe9ffce8"
+    },
+    {
+      "path": "app/src/server/internal-operation/mutation-port.ts",
+      "kind": "modified",
+      "beforeSha256": "81a3c6a1f5bc34dce2b4410fcfb6c545afbf1166f7e036c4f7f8b6a0e415ee3d",
+      "sha256": "f8b80a0f2ceaaf90a2582731c882fab3823d517aa9d10df8bcc32fc4c58944d9"
+    },
+    {
+      "path": "app/src/server/internal-operation/owner-supervisor.ts",
+      "kind": "modified",
+      "beforeSha256": "e05fde88c0807348621993a875dcd59fa43089c6ade1813711faa832cc974b11",
+      "sha256": "75c1c49cd5feb29a0c7b701b164cb947ff00bf5042f0355371faf480187fa47f"
+    },
+    {
+      "path": "app/src/server/rss/refinement.ts",
+      "kind": "modified",
+      "beforeSha256": "e7f5aaa907efdc4f06fd956c159f559c800b255ee088e350bef5f2bcbab38e1b",
+      "sha256": "848d1420662e0713f0ab27e017f19928f9a22f39a1a664b5ae648e19c08030d8"
+    },
+    {
+      "path": "app/src/server/rss/source-registry.ts",
+      "kind": "modified",
+      "beforeSha256": "b07e060a263087456c247b35cbb807b9ca20a4fc761264211c392fe55c1f401c",
+      "sha256": "f65e22e686bc7afb88eb5d481706e357932b2745eba845e8275d26e239b1e16b"
+    },
+    {
+      "path": "app/src/server/x-page/bridge.ts",
+      "kind": "new",
+      "beforeSha256": null,
+      "sha256": "ca62bda8b4c1f8d7c74cbe96739df918de1c7b81e8c07d860f909277bfde5311"
+    },
+    {
+      "path": "app/src/server/x-page/migration.ts",
+      "kind": "new",
+      "beforeSha256": null,
+      "sha256": "fc6376b1688bab37615269242ddf9126f14a26ffe5fab07c09484c06e0b0423e"
+    },
+    {
+      "path": "app/src/server/x-page/schema-identity.ts",
+      "kind": "new",
+      "beforeSha256": null,
+      "sha256": "44a9e3e3abd5cdc8ec2ff6cc0b81d10bd458431694bfec3dc3e13fda019cf40c"
+    },
+    {
+      "path": "app/src/tests/admin-release-manifest.test.ts",
+      "kind": "modified",
+      "beforeSha256": "e7903c54d9ecc802e57db99e4719010ce5352d3f40f5892ccad1960acca6e0f6",
+      "sha256": "ca5b683baecd371c52606be76378a9f31b3cb3c710e099c0091a8ffdb528fc47"
+    },
+    {
+      "path": "app/src/tests/helpers/x-page-database.ts",
+      "kind": "new",
+      "beforeSha256": null,
+      "sha256": "0045387b119a2bc518740f83c1006b05e415ebd4b73d89a8fa28768534df6901"
+    },
+    {
+      "path": "app/src/tests/x-page-import.test.ts",
+      "kind": "new",
+      "beforeSha256": null,
+      "sha256": "407ea7e4628f8ddc35adc2ff5f280f3929806f9812d9a292f1ee275e286e0ade"
+    }
+  ],
+  "verification": {
+    "developerTests": 104,
+    "typecheck": "passed",
+    "lint": "passed",
+    "independentReport": "independent-review/independent-review.json"
+  },
+  "runtimeClosureIntegration": {
+    "adminDeclaredFiles": 165,
+    "adminPathSetSha256": "ea75ad37f82ba55e34281c9a9f84569fdaaa85ba020949e43ddc3280bb92f810",
+    "pureReferencedDependencies": [
+      "app/src/server/x-page/normalize.ts",
+      "app/src/server/x-page/schema-identity.ts"
+    ],
+    "existingNormalizeSha256": "45d729fe5d4ab03d05ddccba07f072a56ae2f242834ce86d622a20aaf75c2bc5",
+    "publicDeclaredFiles": 89,
+    "astClosureCheck": "passed",
+    "backupRuntimePreparation": "passed",
+    "backupRuntimeVerification": "passed",
+    "backupRuntimeFiles": 762,
+    "backupRuntimeRootSha256": "e98bb1576f080c13845d791c3e143febef43185857caba8ee090903bf1225f42",
+    "newBackupRuntimePath": "runtime-closure-candidate-new",
+    "excludedActivationPaths": [
+      "src/server/x-page/bridge.ts",
+      "src/server/x-page/migration.ts",
+      "migrations/rss-real/0013_x_page_import.sql"
+    ],
+    "tests": {
+      "passedUnique": 13,
+      "unresolvedFailures": 0,
+      "initialLog": "runtime-closure-tests.log",
+      "initialEnvironmentFailure": "Original fixed Node-only toolchain lacked adjacent bin/npm (ENOENT).",
+      "resolution": "New isolated toolchain retains identical Node24.18.0 bytes and official npm11.16.0 package verified against registry SHA512 integrity.",
+      "rerunLog": "runtime-closure-build-rerun.log",
+      "rerunPassed": 1,
+      "toolchainIdentity": "test-toolchain-identity.json"
+    },
+    "typecheck": "passed",
+    "lint": "passed",
+    "proof": "release-closure-proof.json",
+    "independentReview": {
+      "report": "independent-review/release-closure-review.json",
+      "sha256": "72301126ba906aab2d7820a358f7b5389cc0028c99f163db84d1f341641b85ca",
+      "status": "PASS_X_DEPENDENCY_RELEASE_CLOSURE_INTEGRATION",
+      "uniqueIntegrationTestsPassed": 13,
+      "backupLocalModulesActuallyImported": 31
+    }
+  }
+}

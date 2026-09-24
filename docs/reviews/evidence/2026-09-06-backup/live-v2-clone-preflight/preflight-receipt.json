@@ -1,0 +1,28 @@
+{
+  "registerExitCode": 0,
+  "controlUnchanged": true,
+  "anchorUnchanged": true,
+  "backupDelta": 1,
+  "operationDelta": 1,
+  "fence": {
+    "clockTrusted": true,
+    "lastSuccessfulRecoveryPointAt": 1788710928635,
+    "schemaVersion": "admin-recovery-fence-v1",
+    "writerReady": true
+  },
+  "publicProbe": {
+    "ok": true,
+    "code": "APPLICATION_DRILL_OK",
+    "packageId": "1788710928635_726300d58f464af2",
+    "adminHttp": 200,
+    "unauthorizedAdminHttp": 401,
+    "publicHealth": 200,
+    "publicFeed": 200,
+    "publicItems": 12,
+    "elapsedMs": 28772,
+    "childrenExited": true,
+    "bootRootCleaned": true,
+    "passkeyRestoreVerified": false
+  },
+  "productionBusinessWrites": false
+}

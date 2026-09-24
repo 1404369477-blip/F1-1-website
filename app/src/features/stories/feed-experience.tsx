@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import {
   useCallback,
   useEffect,
@@ -31,13 +32,17 @@ import {
 import {
   formatCardKicker,
   formatTimelineKicker,
+  editorialSectionLabel,
   hasEditorialExtras,
-  isDuplicateEditorialBody,
   isImageFirstCategory,
-  shouldShowEndOfFeed
+  shouldShowEndOfFeed,
+  shouldShowExpandedLead,
+  uniqueEditorialParagraphs
 } from "./editorial";
 import { readHashParam, setHashParams } from "./hash-params";
 import { getTimelineSearchQuery, setTimelineSearchQuery, subscribeTimelineSearch } from "./timeline-search";
+import { IS_PUBLIC_STATIC_SITE, publicStoryHref } from "./public-site-config";
+import { PublicStaticGenerationChangedError } from "./public-static-transport";
 
 export type FeedRequestState =
   | { status: "loading" }
@@ -120,6 +125,7 @@ export function appendPublicFeedPage(
   current: PublicFeedViewModel,
   next: PublicFeedViewModel
 ): PublicFeedViewModel | null {
+  if (current.staticBundleId !== next.staticBundleId) return null;
   const currentIds = new Set(current.stories.map((story) => story.publicId));
   const nextIds = new Set(next.stories.map((story) => story.publicId));
   if (currentIds.size !== current.stories.length || nextIds.size !== next.stories.length) return null;
@@ -129,7 +135,7 @@ export function appendPublicFeedPage(
     next.page.nextCursor.cursorAt === current.page.nextCursor.cursorAt &&
     next.page.nextCursor.cursorId === current.page.nextCursor.cursorId
   ) return null;
-  return { stories: [...current.stories, ...next.stories], page: next.page };
+  return { ...next, stories: [...current.stories, ...next.stories] };
 }
 
 export function retainLoadedFeed(
@@ -345,36 +351,6 @@ function CardDeck({ stories, onOpenLightbox, onLoadMore }: CardDeckProps): React
   );
 }
 
-function getEnglishFallback(story: PublicStoryCardViewModel): { title: string; summary: string; lead: string; body: string[]; keyPoints: string[] } {
-  if (story.localized.en) return story.localized.en;
-  let derivedTitle = "";
-  if (story.originalUrl) {
-    try {
-      const url = new URL(story.originalUrl);
-      const segments = url.pathname.split("/").filter(Boolean);
-      const slug = segments.find((s) => s.includes("-") && s.length > 8);
-      if (slug) {
-        derivedTitle = slug
-          .replace(/-/g, " ")
-          .replace(/\b\w/g, (c) => c.toUpperCase());
-      }
-    } catch {}
-  }
-  const title = derivedTitle || `Original coverage: ${story.title}`;
-  const authorText = story.author && story.author.trim() !== story.sourceName.trim() ? ` by ${story.author}` : "";
-  const lead = `Original English reporting published by ${story.sourceName}${authorText}. Full quotes, technical insights, and paddock statements are available at the official publication.`;
-  const body = [
-    `This report is syndicated from ${story.sourceName}. You can read the original English coverage directly at the publisher's official link below.`,
-    `Published: ${story.publishedAt}`
-  ];
-  const keyPoints = [
-    `Publisher: ${story.sourceName}`,
-    `Byline: ${story.author || "Editorial Team"}`,
-    `Direct link: Read full English article on official site`
-  ];
-  return { title, summary: lead, lead, body, keyPoints };
-}
-
 export function FeedExperience() {
   const [feedState, setFeedState] = useState<FeedRequestState>({ status: "loading" });
   const [activeCategory, setActiveCategory] = useState<StoryCategory | "全部">("全部");
@@ -448,6 +424,30 @@ export function FeedExperience() {
   const mediaLockUntilRef = useRef<Map<string, number>>(new Map());
   const mediaWheelRef = useRef<Map<string, WheelState>>(new Map());
   const mediaSuppressClickUntilRef = useRef<Map<string, number>>(new Map());
+  const staticBundleIdRef = useRef<string | undefined>(undefined);
+
+  const clearStaticReadingState = useCallback((): void => {
+    loadMoreControllerRef.current?.abort();
+    detailRequestedRef.current.clear();
+    pendingAppendFocusIndexRef.current = null;
+    pendingDetailRecoveryFocusRef.current = null;
+    setDetailStates({});
+    setOpenId(null);
+    setLightbox(null);
+    setMediaIndex({});
+    setMediaHover({});
+    setLanguageByPublicId({});
+    setLoadingMore(false);
+    setLoadMoreFailed(false);
+    setHashParams({ open: undefined });
+  }, []);
+
+  const reloadChangedStaticGeneration = useCallback((): void => {
+    clearStaticReadingState();
+    staticBundleIdRef.current = undefined;
+    setFeedState({ status: "loading" });
+    setRequestVersion((version) => version + 1);
+  }, [clearStaticReadingState]);
 
   useEffect(() => {
     openIdRef.current = openId;
@@ -501,6 +501,8 @@ export function FeedExperience() {
     void fetchPublicFeed({ contentType, signal: controller.signal })
       .then((data) => {
         if (controller.signal.aborted) return;
+        if (staticBundleIdRef.current && data.staticBundleId !== staticBundleIdRef.current) clearStaticReadingState();
+        staticBundleIdRef.current = data.staticBundleId;
         setFeedState({ status: "ready", data });
         const openParam = readHashParam("open");
         if (openParam && data.stories.some((story) => story.publicId === openParam)) {
@@ -516,7 +518,7 @@ export function FeedExperience() {
         }
       });
     return () => controller.abort();
-  }, [activeCategory, requestVersion]);
+  }, [activeCategory, requestVersion, clearStaticReadingState]);
 
   useEffect(() => {
     const searchParam = readHashParam("search");
@@ -530,7 +532,7 @@ export function FeedExperience() {
     detailRequestedRef.current.add(openId);
     const controller = new AbortController();
     setDetailStates((current) => ({ ...current, [openId]: { status: "loading" } }));
-    void fetchPublicStory({ publicId: openId, signal: controller.signal })
+    void fetchPublicStory({ publicId: openId, signal: controller.signal, staticBundleId: feedState.data.staticBundleId })
       .then((data) => {
         if (controller.signal.aborted) return;
         setDetailStates((current) => ({ ...current, [openId]: { status: "ready", data: data.story } }));
@@ -544,6 +546,10 @@ export function FeedExperience() {
           detailRequestedRef.current.delete(openId);
           return;
         }
+        if (error instanceof PublicStaticGenerationChangedError) {
+          reloadChangedStaticGeneration();
+          return;
+        }
         if (isPublicStoryNotFound(error)) {
           setDetailStates((current) => ({ ...current, [openId]: { status: "not-found" } }));
           return;
@@ -552,7 +558,7 @@ export function FeedExperience() {
         setDetailStates((current) => ({ ...current, [openId]: { status: "error" } }));
       });
     return () => controller.abort();
-  }, [detailRequestVersion, feedState, openId]);
+  }, [detailRequestVersion, feedState, openId, reloadChangedStaticGeneration]);
 
   useEffect(() => {
     if (!openId) return;
@@ -802,7 +808,8 @@ export function FeedExperience() {
       const next = await fetchPublicFeed({
         contentType: contentTypeForCategory(activeCategory),
         cursor: page.nextCursor,
-        signal: controller.signal
+        signal: controller.signal,
+        staticBundleId: feedState.data.staticBundleId
       });
       if (controller.signal.aborted) return;
       const appended = appendPublicFeedPage(feedState.data, next);
@@ -815,11 +822,15 @@ export function FeedExperience() {
         : current);
     } catch (error) {
       if (error instanceof Error && error.name === "AbortError") return;
+      if (error instanceof PublicStaticGenerationChangedError && !controller.signal.aborted) {
+        reloadChangedStaticGeneration();
+        return;
+      }
       if (!controller.signal.aborted) setLoadMoreFailed(true);
     } finally {
       if (!controller.signal.aborted) setLoadingMore(false);
     }
-  }, [activeCategory, feedState, loadingMore]);
+  }, [activeCategory, feedState, loadingMore, reloadChangedStaticGeneration]);
 
   const openLightbox = useCallback((images: ImageItem[], index: number, trigger: HTMLElement, publicId: string): void => {
     lightboxClosingRef.current = false;
@@ -1051,15 +1062,16 @@ export function FeedExperience() {
     const author = hasAuthor(story.author) && story.author.trim() !== story.sourceName.trim() ? story.author : null;
     const hasOriginalUrl = story.originalUrl !== null && story.originalUrl !== "";
     const imageFirst = isImageFirstCategory(story.category);
+    const hasEnglishExtract = story.localized.en !== null;
     const requestedLanguage = languageByPublicId[story.publicId] ?? story.defaultLanguage;
-    const selectedLanguage = requestedLanguage;
-    const enFallback = getEnglishFallback(story);
-    const storyCopy = selectedLanguage === "en"
-      ? (story.localized.en ?? enFallback)
+    const selectedLanguage = requestedLanguage === "en" && hasEnglishExtract ? "en" : "zh-CN";
+    const englishCopy = story.localized.en;
+    const storyCopy = selectedLanguage === "en" && englishCopy
+      ? englishCopy
       : (story.localized["zh-CN"] ?? { title: story.title, summary: story.summary, lead: story.summary, body: [], keyPoints: [] });
     const detailCopy = detail?.status === "ready"
       ? (selectedLanguage === "en"
-          ? (detail.data.localized?.en ?? enFallback)
+          ? (detail.data.localized?.en ?? null)
           : (detail.data.localized?.["zh-CN"] ?? {
               title: detail.data.title,
               summary: detail.data.summary,
@@ -1134,7 +1146,11 @@ export function FeedExperience() {
           <div className={`tl-collapse${open ? " is-open" : ""}`}>
             <div className="tl-detail" id={`det-${story.publicId}`}>
               <div className="tl-zh-head">
-                <span className="tl-zh-label">{selectedLanguage === "en" ? "English extract" : "中文提炼"}</span>
+                <span className="tl-zh-label">{editorialSectionLabel(selectedLanguage, {
+                  lead: detailCopy?.lead ?? storyCopy?.summary ?? story.summary,
+                  body: detailCopy?.body ?? [],
+                  keyPoints: detailCopy?.keyPoints ?? []
+                })}</span>
                 <div className="public-language-toggle lang-pill" role="group" aria-label="提炼语言">
                   <button
                     type="button"
@@ -1146,22 +1162,20 @@ export function FeedExperience() {
                     }}
                   >中</button>
                   <span className="lang-pill-sep" aria-hidden="true">/</span>
-                  <button
-                    type="button"
-                    className={`lang-pill-btn${selectedLanguage === "en" ? " is-active" : ""}`}
-                    aria-pressed={selectedLanguage === "en"}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setLanguageByPublicId((current) => ({ ...current, [story.publicId]: "en" }));
-                    }}
-                  >EN</button>
+                    <button
+                      type="button"
+                      className={`lang-pill-btn${selectedLanguage === "en" ? " is-active" : ""}`}
+                      aria-pressed={selectedLanguage === "en"}
+                      disabled={!hasEnglishExtract}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setLanguageByPublicId((current) => ({ ...current, [story.publicId]: "en" }));
+                      }}
+                    >EN</button>
                 </div>
               </div>
                   {detail?.status === "loading" ? (
-                    <>
-                      {storyCopy?.summary ? <p className="tl-zh tl-detail-lead">{storyCopy.summary}</p> : null}
-                      <p className="tl-zh tl-zh-pending" aria-live="polite">正在读取深度要点…</p>
-                    </>
+                    <p className="tl-zh tl-zh-pending" aria-live="polite">正在读取深度要点…</p>
                   ) : detail?.status === "error" ? (
                     <p className="tl-zh tl-zh-error" role="alert">
                       提炼内容暂不可用。
@@ -1183,10 +1197,11 @@ export function FeedExperience() {
                   ) : detail?.status === "ready" ? (
                     detailCopy && hasEditorialExtras(detailCopy.lead, detailCopy.body, detailCopy.keyPoints) ? (
                       <>
-                        <p className="tl-zh tl-detail-lead">{detailCopy.lead}</p>
-                        {!isDuplicateEditorialBody(detailCopy.lead, detailCopy.body)
-                          ? detailCopy.body.map((paragraph) => <p className="tl-zh" key={paragraph}>{paragraph}</p>)
+                        {shouldShowExpandedLead(storyCopy?.summary ?? story.summary, detailCopy.lead)
+                          ? <p className="tl-zh tl-detail-lead">{detailCopy.lead}</p>
                           : null}
+                        {uniqueEditorialParagraphs(detailCopy.lead, detailCopy.body)
+                          .map((paragraph) => <p className="tl-zh" key={paragraph}>{paragraph}</p>)}
                         {detailCopy.keyPoints.length > 0 ? (
                           <ul className="tl-keypoints">
                             {detailCopy.keyPoints.map((point) => <li key={point}>{point}</li>)}
@@ -1197,6 +1212,11 @@ export function FeedExperience() {
                       <p className="tl-zh tl-zh-pending">展开后可核对应中文摘要与原文。当前没有额外提炼。</p>
                     )
                   ) : null}
+                  <p className="tl-detail-actions">
+                    <Link className="tl-detail-page-link" href={publicStoryHref(story.publicId)}>
+                      {selectedLanguage === "en" ? "Open full extract page" : "打开站内详情"}
+                    </Link>
+                  </p>
             </div>
           </div>
 
@@ -1395,7 +1415,7 @@ export function FeedExperience() {
         <div className="fs">
           <span>F1+1 · F1 中文资讯时间线</span>
         </div>
-        <p>内容通过公开 API 提供；聚合内容版权归原作者与来源所有。</p>
+        <p>{IS_PUBLIC_STATIC_SITE ? "内容来自最近一次成功同步的公开资讯；聚合内容版权归原作者与来源所有。" : "内容通过公开 API 提供；聚合内容版权归原作者与来源所有。"}</p>
       </footer>
 
       {renderLightbox()}

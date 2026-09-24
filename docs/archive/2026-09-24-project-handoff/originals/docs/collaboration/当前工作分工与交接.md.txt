@@ -1,0 +1,148 @@
+# 当前工作分工与交接
+
+> **2026-09-24 接续范围**：复用D1BAB4，root独占生产。GPT分享分析基于8月10日旧快照，已按当前RSS/公开站成果调整推进顺序；本轮r4同包隔离云端取回实际通过，正式部署/恢复/RPO/X仍未完成。以[当前生产状态与执行待办](../当前生产状态与执行待办.md)顶部为唯一新状态及证据入口，下方保留对应时间历史。首次canary及resume-001均已执行，禁止重放；新增接续组合测试夹具未整体通过的缺口保留。
+
+> **2026-09-23 23:43 中断后状态核查**：RSS23:30自然槽三源成功，新增2条/更新10条；此前新TheRace完整审核发布至Pages已验，但这2条未另验完整发布。旧备份仍运行，最新合法RP23:30:28.878于23:38:31登记SUCCESS，当前新鲜；连续15分钟RPO仍有超龄缺口，M5服务尚未退出。iCloud r4仅实机暂存和源捕获通过，2.39GB隔离云往返尚未执行；canary收尾信号测试与固定入口最终独审待核，production trust仍r3，不能重放既有stage/启用/回退。X r4安装机制26例及材料接口9例已独审本地通过，正式安装、维护认证、0017、X生产导入仍未完成（0条）。GitHub本轮3错已归因：2次过时head检查、1次Pages HTTP500；后续部署与公网匹配已验。D1BAB4保持claimed，严禁称整链完成。
+
+> **2026-09-23 23:09 当前实证**：原备份调度已于23:03:45正规回退恢复，old7facc/新inode47473265，23:04:45新快照已生成，合法登记仍待。iCloud新包23:07只读元数据已显示两云文件上传完成、无Apple错误，但22:52–23:03失败时没有保存原字段，不能追认当时原因；该包已超15分钟，不能补作新鲜恢复点。RSS此前新稿自动闭环保持，持续运行仍受备份新鲜度约束；X r4安装阶段修复已形成并独审中，正式安装/0017/生产导入仍未完成。GitHub截图中的push已成功，两次部署因旧任务落后分支最新提交而主动退出；后续23:02部署成功，23:06公网marker与该成功commit逐字一致。D1BAB4保持claimed，M5备份服务继续运行；下方保留历史。
+
+> **2026-09-23 23:01 当前实证**：RSS新TheRace650→Pages651完整自动链及21:45三源新增24条/更新3条已有实证，尚不能证明持续无中断。修正版iCloud r3调度22:50:14实际启用，22:51:17快照成功；自22:52:34起上传阶段连续PROVIDER_UPLOAD_ERROR，未形成新云端恢复点。最后旧合法RP22:42:15.387已超过15分钟；正在按原helper正规回退调度并只读诊断云上传，M5备份服务保留。X新维护APP未安装、0017未应用、生产导入0；已查明原安装恢复步骤与正常自动发布竞争，r4正修正验收顺序，未降低恢复门。D1BAB4保持claimed；下方保留历史，准确回件见本轮状态和云端执行记录。
+
+> **2026-09-23 22:25 当前实证**：RSS三源21:45自然槽新增24条/更新3条，此前新TheRace650审核到Pages651完整链已验。旧X r2未实施安装已安全撤销并独审，X生产导入仍0。新iCloud调度22:07:54已实际启用，但首轮暴露macOS Bash空数组错误，未产生新云恢复点且错误输出CYCLE_OK；本轮功能验收失败，不能称M1独立备份已完成。22:16:42已通过正规五步回退恢复原4参数备份调度，原工具和所有备份保留；M5 observer继续运行。r3仅修改一个shell叶，真实系统Bash3.2的8例及800叶完整包已独审，22:24:40已暂存M1；新trust与调度尚未切换。旧调度新RP22:17:31.561已于22:23:19登记成功，当前恢复新鲜；22:15:15至22:23:19超龄缺口保留。D1BAB4保持claimed；当前原件与接续见[本轮状态](../../scratch/rss-resume-20260921/STATUS.md)及云端REPORT，下方为历史。
+
+> **2026-09-23 22:07 当前实证**：21:45自然采集槽三RSS源全部成功，新增24条、更新3条（本次22:06只读核实）；此前TheRace新候选650已完成自动审核、一次投递和Pages651列表/详情。旧X未实施安装已于21:59:27通过明确cancel-before出口撤销，八配置前像和原服务保持，旧owner/shared归档并留墓碑；独审通过，不能解释为X升级成功。旧备份新增21:52:03.569合法RP，22:00周期运行中；旧iCloud归档失败已定位rsync清理11个旧目录时报Directory not empty/exit23，未擅自删除。新iCloud启用顺序程序正在等待自然备份idle，仅明确未变更WAIT才重试；首个新云RP、M5服务退场、X正式安装/0017/生产导入仍待验。D1BAB4保持claimed；证据与接续见[本轮状态](../../scratch/rss-resume-20260921/STATUS.md)，下方为对应时间历史。
+
+> **2026-09-23 21:46 当前实证**：RSS一条新稿已自然完整闭环：TheRace首见昨日23:26的revision1经自动精炼、审核、发布650进入Pages651默认列表和详情，Public652完整签名链通过（差1代，未声称跨端原子同代）。新RP21:29:39.576、21:36:53.776连续两轮REGISTER成功；此前超龄/120秒演练超时保留，旧脚本iCloud归档仍失败，原因核查中。今日21:30采集槽三源外调0失败发生在上次恢复点超龄期间，下一自然采集待验。iCloud启用程序已实机准备并独审，尚未启用；旧X安装始终8配置before，原服务已恢复，成功核收多次与自然业务竞争，现实现明确撤销未实施安装的独立出口，不能当升级通过。X正式新安装/0017/生产导入均未完成。D1BAB4保持claimed；最新证据、失败和接续唯一入口见[本轮状态](../../scratch/rss-resume-20260921/STATUS.md)，下方保留历史。
+
+> **2026-09-23 00:08 M1+iCloud / X 接续**：RSS 自动审核、发布及 Pages 公网详情已有本轮真实成功与独审：目标616已进入Pages628，随后Public629完整签名链通过，滞后一代且默认feed不含目标，不宣称同步同代。三RSS源23:26自然采集成功新增2条/更新2条；00:06新两稿仍待审核，队列已由49条推进到11条，未把既有内容revision审核算作新稿闭环。原备份路径已连续重新产出合法点，最近实读RP23:55:14.790、00:01:55周期COMPLETE；此前启动超时/遗锁/RPO超龄保留。iCloud历史包云端重新下载和隔离应用恢复已独核，新的799叶运行包及专用公钥/信任实际暂存初始化完成，定时服务尚未切换，日常仍依赖旧M5证明。X维护新APP实际构建与配置加载通过；installation-r2已独审、实际stage-only与preflight通过，00:08新owner已建立，首次pause因备份仍运行而WAIT_NATURAL_IDLE，未停止服务、未切八配置。后续按固定journal完成安装/历史GET归类/新身份备份/恢复，再做真实passkey、当前完整库0017及正式X入库；X生产导入仍0。D1BAB4保持claimed，root独占生产；当前证据见[本轮状态](../../scratch/rss-resume-20260921/STATUS.md)与[云端执行记录](../../scratch/backup-icloud-audit-20260922/REPORT.md)，范围见[实施合同](../reviews/2026-09-22-M1-iCloud备份与X正式接入实施合同.md)。下方保留各时间历史。
+
+> **2026-09-22 23:25 M1+iCloud / X 接续**：用户已授权M1独立日常运行、现有iCloud备份和maintenance-design-r2正式实现。23:06已通过官方入口精确隔离死PID90032遗锁并恢复原备份调度，原件独核；随后23:07:51与23:14:40两新恢复点均自然登记SUCCESS，23:13/23:21周期COMPLETE。此前22:30应用启动超时、后续快照遗锁及RPO超龄历史保留，不宣称根因或连续稳定性已收口。23:15–23:19的RSS 614–616自动审核、发布、各一次投递及预算/审计独核通过；是既有Motorsport内容的revision7/8/9，不能算三条新采集。23:24采集器运行中，上一15:00 UTC槽因SQLITE_FAILURE失败；最近数据库成功采集仍14:15 UTC，TheRace超时及14:00缺档保留。iCloud历史c022包约2.076GB的真实云端重新下载/hash、隔离数据库/应用恢复及Ed25519原件独核通过，旧RP超龄未REGISTER；新云端定时后继仍在最终独审，未部署。X双schema正式M1构建及真实Admin/Public配置加载已通过；新维护版本未安装，历史GET正式归类、真实passkey/0017/生产导入仍未完成，X生产入库0。当前实证见[本轮状态](../../scratch/rss-resume-20260921/STATUS.md)与[云端盘点](../../scratch/backup-icloud-audit-20260922/REPORT.md)，范围见[实施合同](../reviews/2026-09-22-M1-iCloud备份与X正式接入实施合同.md)。D1BAB4保持claimed，root独占生产；下方仅对应历史。
+
+> **2026-09-22 06:49 当前事实**：RSS三源采集、普通自动发布与Pages同步已恢复。Public481签名链、Pages480公网列表及目标466详情验收通过（滞后1代，不代表目标在默认列表）。Standard首轮采集约4分18秒，仅是单轮改善；累计新增41条的新稿完整审核链仍待验，调度缺档历史保留。X三指定账号共9条native捕获记录，其中3条满足完整正文归一化条件；生产导入仍0；维护入口已有静态预览与本地交互证据，等待用户视觉确认及正式认证、迁移准入。D1BAB4为waiting_input/user_confirmed/rev9，整链未标完成。实际证据、失败历史和禁止重放边界统一见[本轮状态](../../scratch/rss-resume-20260921/STATUS.md)；下方保留历史。
+
+> **2026-09-22 05:23 当前事实**：RSS普通自动发布/投递已持续到444，442–444均成功且各有1次POST；05:16–05:17 Pages441完整签名链及公网列表、详情HTTPS验收通过。两轮自然采集累计新增40条，最新Motorsport/The Race/Sky均HTTP200；这40条新稿的自动审核闭环尚未证实，442–444复用了历史批准。采集启动延迟及21:00 UTC槽的SCHEDULER_GAP仍保留，RSS ProcessType Background→Standard单字段修复准备中。X生产导入仍0，维护UI视觉确认及正式认证接线待完成；D1BAB4继续claimed。准确证据与接续见[本轮状态](../../scratch/rss-resume-20260921/STATUS.md)，下方保留历史。
+
+> **2026-09-22 04:45 当前事实**：RSS服务已恢复，普通自动发布/投递已持续到426；本轮自然采集新增29条、更新1条（Motorsport/Sky成功，The Race连接超时），新自动review尚待验。Public417完整签名链已核；Pages仍408，实际导出因重复全量聚类耗时约3.65分钟、期间版本更新而失败，最小性能修复正在独审准备。合法异机备份持续登记。X生产导入仍0，维护界面视觉确认及正式认证接线待完成。准确证据与接续统一见[本轮状态](../../scratch/rss-resume-20260921/STATUS.md)，D1BAB4继续claimed。下方保留历史。
+
+
+> **2026-09-22 03:36 接续入口**：Worker两配置已纠正，备份已恢复调度；Admin/RSS仍在维护期等待cache正式后继与新自然备份，尚未验收自动发布。实际成功/失败回执和下一步统一见[本轮状态](../../scratch/rss-resume-20260921/STATUS.md)最新记录；root独占M1，s准备cache安装，w核发行输入与安装审查，q核纠正后验及自然发布验收。D1BAB4继续claimed。
+
+> **2026-09-22 02:17 当前事实**：RSS generation408唯一受控恢复已实际成功并完成独立业务/收尾审查，新增POST恰1、原历史记录保持，接收服务已就绪，controller正常退出且旧锁完整归档。常规RSS自动链路仍待Worker安装与自然发布验证。X真实只读采集已通过、生产导入仍0；正式升级所缺维护认证入口已形成预览，等待新增界面确认，后端可行性继续。准确证据/命令/边界统一见[本轮状态](../../scratch/rss-resume-20260921/STATUS.md)，D1BAB4继续claimed。
+
+> **2026-09-22 01:51 当前事实**：RSS 408旧未知投递已凭完整链证据唯一negative结算，额外发送槽仍未消费；本次恢复因60秒lease跨秒计算缺陷及旧receiver迟到就绪而失败，原记录/锁保留，v3修复及精确归档正在独验。backup流式runtime已有连续几轮合法点，启动稳定性仍待实测。X真实只读采集已通过，正式producer的ctime兼容缺陷已本地修复并独审；生产导入仍0。真实回执与剩余接续统一见[本轮状态](../../scratch/rss-resume-20260921/STATUS.md)，D1BAB4保持claimed。下方为历史记录。
+
+> **2026-09-22 01:22 当前事实**：backup流式runtime已实际安装，首轮与第三轮合法点通过，第二轮Admin启动超时仍在修复；不能宣称连续RPO通过。旧408 v1失败ROOT/锁已完整归档，新v2于01:18安装、01:19实际inspect通过，额外POST仍0，正等新鲜合法点启动唯一恢复。X r7真实读取通过且正式本地候选已独审，生产导入仍0。准确回执、稳定单次槽与接续顺序统一见[本轮状态](../../scratch/rss-resume-20260921/STATUS.md)；下方保留各时间历史，D1BAB4继续claimed。
+
+> **2026-09-22 00:50 接续**：root独占M1，执行backup自然idle切换和实际RSS/X后验；samewire_finish_0920修408失败接续及Worker后继；warm_0920整合X签名producer/0017/流式backup；review_0920独审。408首轮因备份超龄失败、新POST0，X r7真实只读闭环通过但0生产导入，D1BAB4未完成。唯一运行入口为[本轮状态](../../scratch/rss-resume-20260921/STATUS.md)。
+
+> **2026-09-21 接续**：用户已恢复同网条件并要求继续收尾。root 独占 M1 实操；samewire_finish_0920 修安装准备器，warm_0920 修 X 后继，review_0920 独立审查。当前事实、失败证据和依赖统一见[本轮状态](../../scratch/rss-resume-20260921/STATUS.md)，D1BAB4 未完成。
+
+> **2026-09-20 当前接续**：用户明确暂时先完善代码。root负责实际材料回读、服务身份与成功交接控制器、本地准备器和统一文档；samewire_finish_0920负责恢复gateway/runtime及真实SQLite整合；warm_0920负责接收端/断管与完成重放反例；review_0920独立审查。实际M1动作仅root执行，本轮无新grant、stage、POST或服务切换。完成范围及未验收项统一见[本轮状态](../../scratch/rss-resume-20260920/STATUS.md)，D1BAB4保持未完成；下方分工均保留历史时态。
+
+> 2026-09-16 23:28 中断接续：已刷新M1原生/408数据库/备份事实，仍未恢复RSS持续运行；当前分工与事实统一见 `docs/当前生产状态与执行待办.md` 首段，历史记录保留。
+
+> 2026-09-15 03:20 接续：Worker正式候选已构建未部署；408受控恢复与后继安装准备中；X实机新连接失败且本机解锁待答。当前执行真值统一见 `docs/当前生产状态与执行待办.md` 首段，历史记录保留。
+
+> **2026-09-15 02:42 接续入口**：最新生产事实及未完成项统一见[当前生产状态与执行待办](../当前生产状态与执行待办.md)的02:42段。D1BAB4保持claimed，root独占生产；以下保留历史时间记录。
+
+> **2026-09-15 02:15 当前事实覆盖**：RSS gen407唯一恢复POST已成功，本地结算与r2业务后验全部通过，原v6服务已通过既有service-restore-only恢复，Pages默认V1已部署407且详情核验通过；禁止重放恢复POST。备份死锁已由正式CLI隔离，原调度恢复后的自然周期于02:04登记第67个合法备份。02:05自动发布实际生成408，但其投递再次进入reconcile_wait/EXTERNAL_UNKNOWN；02:14接收端active仍407且408文件不存在，持续自动运行尚未验收，正查常规发送路径。X真实三源9帖已验，source-admit隔离CLI25新增+32回归及独审通过，固定MCP生产采集器仍在整合，0生产导入。任务D1BAB4保持claimed，root独占生产。当前证据见[执行记录](../../scratch/rss-recovery-claim-20260914/STATUS.md)，以下均为历史时间。
+
+> **2026-09-15 01:37 当前事实覆盖**：RSS v4已在M1完成独立构建、三件准备、完整校验、seq6正式安装和8hash inspect，全部exit0；唯一recover-once现PID/PGID36614运行，尚未完成，不得重复启动。seq6 `ba2fff87…7f9a0d`，新有限技术窗POST至03:31:47.863、本地至04:31:47.863（UTC+8），旧v3及之前记录完整保留。恢复前业务核验allChecksPass=true、新POST0/旧POST1；65个备份合法，原生旧进程/owner排他通过。root独占生产，运行证据及下一步以[当前执行记录](../../scratch/rss-recovery-claim-20260914/STATUS.md)为准。X三源9帖真实采集已验，修后纯解析器21项与独审通过，但9帖均需补采、0生产导入；隔离fresh producer接线在继续。D1BAB4仍claimed，下方旧状态均保留历史时间。
+
+> **2026-09-15 00:50 当前事实覆盖**：X在M1沿用GLM/API key的真实三源9帖已核验，尚未生产导入/发布。RSS v3已完成实际构建、完整预检、seq5安装及inspect；唯一recover在claim因自身installer历史目录追加不被接受而exit1，正式后验新POST0/旧POST1、无本次lock或warm。修复未完成，不重跑v3/不删改seq5。现隔离v4/seq6修正式install→release→claim整段兼容，沿原业务授权生成新有限技术窗，旧记录保留；pipeline执行Darwin、x执行后继安装、q独审、root独占生产。D1BAB4继续claimed。具体版本、失败原件、边界及接续以[当前执行记录](../../scratch/rss-recovery-warm-20260914/STATUS.md)为准，下方均为历史。
+
+> **2026-09-14 23:53 当前接续**：用户已明确允许 Playwright 浏览器连接。M1 保留 GLM/custom/API key，真实三源 canary 完成：F1、McLarenF1、ChrisMedlandF1 各3帖，共9帖；14次实际MCP调用全部成功，root对9帖正文、绝对时间、原帖链接和媒体地址逐项核对原生DOM返回。证据见[X核验收据](../../scratch/x-playwright-m1-20260914/canary5-evidence/root-verification.json)。此为真实只读采集验收，尚未完成生产producer准入、签名捕获和自动发布，不把canary追认成生产导入。RSS仍未恢复：已定位v6冷启动超时与Admin同模式chmod导致备份ctime误拦；独立v3候选采用先预热同一receiver进程再做新P2，保留≤60秒、新增最多1次POST、同RID/物理键及原窗口。保持原v2 index和三文件，候选仅追加严格seq5后继；崩溃收尾、原生父子关系及独审正在验证，未部署v3、未新增POST。D1BAB4继续claimed，root独占生产，pipeline负责warm协议/服务，x负责seq5/安装，q负责独审。
+
+> **2026-09-14 23:23 当前实施**：RSS v2 已通过独审并完成M1构建/完整预检/唯一index安装；实际恢复在receiver冷启动就绪校验失败，随后备份资源时间校验阻断正式恢复收据。后验确认新增POST0、旧POST1、未新增未知投递。23:20原生回读Admin与receiver已重新监听3101/3102；自动发布仍未恢复，继续修启动耗时和备份分类。X已通过屏幕共享看到Playwright待授权页面，当前真实采集0帖；用户对实际浏览器权限范围的确认待答。最新事实及禁止重放边界见[执行状态](../../scratch/rss-recovery-fix-20260914/STATUS.md)。
+
+> **2026-09-14 修复执行覆盖**：D1BAB4已按用户新指令resume，当前claimed（覆盖下方blocked/rev7）。pipeline独占scratch/rss-recovery-fix-20260914/candidate/app；x独占installation工具；q独立审查；root独占M1生产/中央记录/X新MCP接线。既有未安装v1三件保持，新v2仍走唯一共享index、同RID/物理键/最多1新POST。[固定执行入口](../../scratch/rss-recovery-fix-20260914/STATUS.md)。
+
+> **本轮正式状态**：D1BAB4为blocked/revision7，原授权user_confirmed保持；492项全历史doctor通过。当前等待的是恢复代码兼容修订与X新接入实测，未向用户重复索取网络/登录说明。无后台恢复动作在运行。
+
+> **2026-09-14 22:20 当前接续**：root核收GitHub六方案研究、备份三个合法点独审及现役32合法采样；已按原授权调用原prepare，仅新三文档。原full verifier实际拒绝AUDIT_SET_CHANGED，pipeline负责精确追加attention兼容缺陷/最小修复范围，qos独验原95前缀/新增事件/新旧文档差异，root独占生产及中央记录。当前无index/新增POST，无待执行恢复进程；X新MCP未安装，原GLM/API key保持。当前原因不再是备份陈旧或Chrome扩展未连。唯一[本轮接续报告](../../scratch/rss-cause-fix-20260914/REPORT.md)覆盖下方历史waiting_input与旧阻点。
+
+> **本轮收口**：D1BAB4已正式 `waiting_input/revision5`，原授权保持 `user_confirmed`；索引与492项全历史doctor通过。M1新采集主进程与残留通知进程均自然退出、进程组为空，无待执行的采集或恢复动作。等待桌面/CLI登录状态说明及备份完整恢复条件，证据在下段本轮记录。
+
+> **2026-09-14 晚间重试交接**：D1BAB4沿既有授权重新验证。pipeline执行一轮M1原生Chrome canary，新的实际操作仍报apikey认证方式不支持，三源未采集；root核对现役reporter完整性并只读采样；qos独立复核M1最新备份周期。M5完整传输已出现，但M1对应周期未通过异机确认、未进入应用演练/登记，RSS111条待发布保持。当前证据、范围与缺口见[本轮记录](../../scratch/rss-retry-20260914-evening-r1/REPORT.md)及[生产状态入口](../当前生产状态与执行待办.md)。旧归档已完成，不重跑；原生Chrome认证失败不等于扩展未连接，不重复要求用户重装扩展。
+
+> **2026-09-14 08:47 当前接续**：用户确认两台同网后，统筹D1BAB4正式resume至claimed/rev4，业务授权保持。root独占生产与中央记录，并完成08:35正式巡检/本机网络权限UI只读核查；x_integration负责两机定向网络证据与当前IP强hostkey直连；pipeline只在独立scratch实现已审未安装三文档的整目录归档wrapper，qos独审。RSS旧prepared POST窗已到期且从未提交index，新POST0；网络恢复前不生成新技术窗。X仍缺M1 Chrome连接。本轮当前材料与依赖见[唯一执行交接](../../scratch/rss-gen407-recovery-20260913/installation/resumption-v1/STATUS.md)，旧R7/seq4禁止重放。
+
+> **2026-09-14 07:13 当前接续**：统筹D1BAB4已正式waiting_input/rev3，业务授权保持，索引/doctor492全历史通过。root已核收pipeline的M1预提交材料和qos独审，x_integration的受限网络诊断已结束并交接；无待运行恢复或采集子进程。当前等用户接通M1 Chrome、说明M1/M5是否同一实体路由器。RSS无index/新增POST、无新合法备份；旧R7/seq4不得重放。后续从[固定执行交接](../../scratch/rss-gen407-recovery-20260913/installation/resumption-v1/STATUS.md)及[网络诊断](../../scratch/backup-m5-metadata-budget-20260914-r1/DIAGNOSIS.md)恢复相应工作，既有授权不重复询问。
+
+> **2026-09-14 06:47 接续**：统筹D1BAB4继续claimed。RSS发行源已停止修改；主控完成M1暂存/构建/文档准备/完整预检，尚无index或新增POST。pipeline只读复核实机回件，qos核收冻结与实际证据，x_integration继续M5备份吞吐只读诊断；所有生产写仍由主控执行。M5独占unsigned整包失败，watchdog已恢复原observer，当前无新合法备份；X仍需用户连接M1 Chrome。固定材料、技术窗口与禁止重放边界见[本版本交接](../../scratch/rss-gen407-recovery-20260913/installation/resumption-v1/STATUS.md)。
+
+> **2026-09-14 06:30 接续**：root已交Darwin诊断与原生锁/六SHA父子/cycle历史测试，现独占source release/build和resumption四个准备helper、生产动作与中央记录；pipeline独占后继 installed/terminal/gateway/operator/CLI/installer及Darwin共享历史/owner实现；x独占M5备份无并发验证guard/watchdog，q独审两条链。后继未冻结或安装，M5现役observer未停用，原once新POST仍0；源审与实际验收分开。06:00及以下观察均保留具体采样时间，当前事实见[唯一入口](../当前生产状态与执行待办.md)。
+
+> **2026-09-14 06:00 接续**：两服务已恢复，原 service-only 启动后 exit1 保留，禁止重复启动；正式 reporter 已完成，M1公开200、Pages本轮超时。主控独占生产动作、中央记录及新候选 Darwin 诊断；pipeline 实现隔离 resumption、terminal historical reader、共享锁与安装/业务门；x 实现并无签名验证 M5 metadata传输后继；q 独审两候选与实际证据。旧R7/seq4不改、最多一次新POST额度未用，fresh合法备份未恢复前不激活RSS后继。X仍需M1 Chrome连接，任务继续claimed。运行事实与证据见[唯一入口](../当前生产状态与执行待办.md)。
+
+> **2026-09-14 05:43 接续**：R7 recover 失败但 P1 已真实结算、新 POST0；seq4 local_only 已提交，主控正运行一次原生 service-restore-only（PID47013），继续独占生产写入。pipeline 只准备同 delivery/unused 新 POST 额度的最小后继设计，旧链和记录不改；q 独审实际恢复与后继范围；x 只读诊断新 offhost 取回超时。R7 原 parent/business helper 在 seq4 后停用。当前身份与未完成项见[唯一入口](../当前生产状态与执行待办.md)，不得据自设技术窗口到期重复请求既有业务授权。
+
+> **2026-09-14 05:24 接续**：R7 固定 `000003` 已提交、正式 load/guard/inspect 与新业务基线通过，唯一 recover 于 05:23:17.604 启动，PID45157，原截止 05:29 保持。主控独占生产动作与结果核收，x 只读 native parent/child 观察已于 05:22:21 READY，q 负责实际恢复证据独审，pipeline 源包已冻结。禁止重复 recover 或覆写任何失败候选/历史；完整身份与当前状态见[唯一入口](../当前生产状态与执行待办.md)。X 等 M1 Chrome，D1BAB4 仍 claimed；本地测试或旧网站 200 不构成整链完成。
+
+> **2026-09-14 04:53 接续**：R6实际record已提交但production-load拒绝，0operator/服务/新增POST；主状态见[当前生产状态](../当前生产状态与执行待办.md)。分工沿用到独立R7：主控Darwin/launcher与生产核收，pipeline installed/material/release/CLI及构建准备，x只读观察/业务验收helper，q独审。R4/R5/R6原件不改；R7需在record前实际运行同一capture路径，原窗口不延长。X继续等M1 Chrome；D1BAB4仍claimed。
+
+> **2026-09-14 04:33 接续**：主状态见[当前生产状态](../当前生产状态与执行待办.md)。统筹D1BAB4继续claimed；主控独占R6 Darwin服务/历史校验、launcher、生产写入与核收，pipeline_audit独占R6 installed/material/release及freeze/stage准备，x_integration_audit_0909完成batch并独审实际锁恢复、承接R6只读观察/业务后验helper，qos_diag_review_0912独立审查R6整合。R5服务已恢复，04:30备份死锁已隔离并恢复自然调度，新点未验；R6未安装/未POST。原21:29 UTC截止保持。X采集仍保留M1，等待Chrome接通；未经真实采集或gen407及自然下一代闭环不得complete。
+
+> **2026-09-14 03:50 实际失败后接续**：R5 `recover-once` 已于 03:36:23–03:42:29 实际执行并退出 1，PID/PGID 31187，最终错误 `PROJECTION_RECOVERY_SERVICE_RESTORE_REQUIRED`；禁止据旧“运行中”记录重复启动。03:46:27 只读业务后验 SHA `007f20eb0b76f969b86585b02ffea7026ecf1f0bdbf4b33cfa8886018d858820` 全部检查通过但 completed=false：原 unknown/预算及旧 1 次 POST 保留，新 attempt/mapping/negative 均不存在，GET 1653 单列。Admin 已停止；receiver 已 bootstrap 但 loaded/not-running。两个原固定 plist 均 RunAtLoad=false、KeepAlive=false，现役恢复代码缺显式启动，正准备固定身份、无 -k 的启动适配并独审，再由原 service-restore-only 收口；不修改冻结源码/pins/record/预算。首 native fence 的真实父子及 58.463 秒剩余 TTL 已验证；只读 parent observer 遇进程退出竞态 ARGV_READ_UNCERTAIN 后停止，后续不能补称已观察。原始前置失败与最新备份时效仍在只读核查。X 等待 M1 Chrome 接通，D1BAB4 未完成。
+
+
+> **2026-09-14 03:37 接续**：R5单record技术修复已于03:28正式提交，record SHA `da0d45fa236649bf27f7abfdc29e6e993e32f881908065c3edfc49c7706231e8`；原R4 pins/plan/deployment字节+身份保持，原R4 loader已只读实证拒绝新record。03:29双hashinspect与新业务后验通过：原POST1/unknown、GET1650、新attempt/mapping0。03:36:23唯一R5 `recover-once` 已启动，PID/PGID31187，native observer从03:30:44就绪；尚无完成结果，不可重复启动。03:24备份REGISTER再次60秒超时，但后继03:25恢复点已合法登记，前点到新登记789.920秒<900，独审准许按当前fresh门继续；失败另留档，不宣称无故障。R5只按原窗口/同RID/最多一次新增POST推进，参见[固定入口与实际状态](../../scratch/rss-gen407-recovery-20260913/installation/r5/COMMANDS.md)。X仍待M1 Chrome接通，D1BAB4保持claimed。
+
+> **2026-09-14 03:06 接续**：已放弃暂停备份方案；严格计入下一恢复点的超时预算后，无法保证暂停仍满足900秒RPO。备份保持自然运行，恢复改为隔离R5技术修复：精确验证REGISTER60备份进程身份，保留原始内核观测，旧服务PID/PGID及未知进程仍阻断。原R4源码、pins/plan/deployment与原窗口完全保留，通过固定单次repair record关闭旧入口并绑定新源码，业务core/RID/原包/逻辑键及最多一次新增POST均不变。当前R5仍在实现和独立验证，尚未安装或再次执行恢复；[R5协议](../../scratch/rss-gen407-recovery-20260913/installation/r5/pin-successor-design.md)。02:29首次R4失败后零新增POST结论保持，X仍待M1 Chrome连接，统筹D1BAB4未完成。
+
+> **2026-09-14 02:39 接续**：备份三自然周期独审已核收；首次R4 recover在prepared前拒绝并已自然收口，0新POST/预算变化、原服务未停止。x用原export只读复现合法backup进程造成服务相关集合4件，继续一次安装加载计时；pipeline准备独立backup有界维护/原样bootstrap候选，q独审，root核严格RPO后才决定执行。不修改已安装R4 frozen/pins/plan，不重复请求业务授权。准确证据及边界见[当前生产状态](../当前生产状态与执行待办.md)。D1BAB4仍claimed，X等待M1 Chrome。
+
+> **2026-09-14 02:13 接续**：REGISTER60已按真实idle安装并恢复backup原调度，安装独审PASS；x维护独立只读新周期observer并绑定实际bootstrap，q核三新合法点/严格RPO，root仍独占生产与中央记录。pipeline的修正只读业务验收器已独审通过，真实基线所有检查通过，原gen407为1POST+1601GET、新attempt=null。R4 frozen恢复源码与pins保持，0stop/recover/新POST。执行钉见[当前生产状态](../当前生产状态与执行待办.md)，X仍待M1 Chrome，D1BAB4继续claimed。
+
+> **2026-09-14 01:53 接续**：R4恢复入口已正式安装，带外部pins SHA的真实CLI inspect通过，尚未stop/recover/POST；准确身份及执行钉统一见[当前生产状态](../当前生产状态与执行待办.md)。fresh backup出现新的REGISTER失败，q只读诊断实际回执，x限定分析登记源码，pipeline修核只读验收器的历史delivery范围；三方不得改已冻结R4业务源码或自行操作生产。root继续独占实际运行与中央记录，等待新合法恢复点及登记故障核查。D1BAB4保持claimed，Chrome问题仍待M1连接，不切M5。
+
+> **2026-09-14 00:45 接续**：备份修复生产安装及连续三轮自然周期独审已核收，严格RPO间隙447.025/479.069秒；[最终独审](../../scratch/backup-drill-recurrence-20260913/review/postinstall-three-cycle-review.md)。当前D1BAB4继续执行RSS恢复：root独占Darwin服务/锁及其测试、生产与中央文档，pipeline独占业务事务/编排/固定handoff子进程，x独占安装/构建/固定闭包，q独审。候选为scratch/rss-gen407-recovery-20260913/candidate/app，现役v6原件保持，尚无RSS生产动作。M1 X真实Chrome连接待用户完成，GLM工具链已通过；不可切换M5或将0帖写成采集成功。
+
+> **2026-09-13 23:56接续钉**：统筹`D1BAB4`执行两事项；pipeline独占RSS gateway/evidence/operator，x_integration负责RSS installed reader/构建安装/release固定集合5文件，qos独审，root独占生产及中央文档。M1 GLM真实工具通过，Chrome为空待用户连接，三源0帖。备份新tools隔离演练118.092秒、现役公钥验签及安装独审通过，23:54:17已bootstrap恢复原30秒自然调度；正在核首轮加两轮完整恢复点及RPO，生产RSS投递/预算未动。回退见[固定入口](../../scratch/backup-drill-recurrence-20260913/install-r1/COMMANDS.md)。旧D620C2保留0ED611正式替代链，旧3B83D5的gen407等待由[新合同](../reviews/2026-09-13-X采集与RSS受控恢复实施合同.md)授权覆盖，Passkey缺口保留。
+
+> **2026-09-13 M1 X接续与RSS核查**：用户已明确保留M1采集；新统筹`TASK-20260913-D620C2`接替旧`0ED611`。默认GLM5.3Flash与CLI/Chrome配置已核实，真实M1工具调用和三源采集尚未通过。RSS自动链已运行，22:45有95条已批准待发布，原gen407结果未知仍阻断下一代；不能归因为RSS不支持自动审核。业务授权与真实入口/恢复验收分别记录，见[本轮记录](../reviews/2026-09-13-X真实采集接续与RSS自动链核查.md)。
+
+
+> **2026-09-12 22:41 GitHub Pages本轮核收**：`TASK-20260912-C9F7C8`已completed/acknowledged（22:44），部署范围验收完成。主控完成实际部署/定时启用及巡检R3安装，两个执行Agent完成静态UI/导出同步/真实周期/巡检传输后继，qos独立核验同一冻结候选及实际收据PASS。固定站、两自然无变化周期、两真实`/f1`均通过；下一新代自动上线补证及旧业务缺口明确保留。准确当前身份与接续统一见[当前生产状态](../当前生产状态与执行待办.md)和[验收记录](../reviews/2026-09-12-GitHub-Pages部署与验收记录.md)。
+
+> **2026-09-12 11:08 接续真值**：网络与流式备份修复已核收，RSS恢复首轮部分失败（The Race CONNECT_TIMEOUT）。3B83D5 waiting_input；gen407新合同待答，unknown38/未决投递1保持。x_integration完成源码与184回归，x_scoped完成安装/RSS helper增量，qos完成实际周期及RSS终态独审，主控已核验证据；无待执行安装/重启动作。准确当前身份、证据与禁止重放边界见[当前生产状态](../当前生产状态与执行待办.md)。以下为历史，不重跑旧helper。
+
+> **2026-09-12 09:58 覆盖更新**：公网VPN修复与/f1新地址已核验，3B83D5自09:43 resumed/claimed；同期发现备份超龄与ACQUIRE_LOCK复发，由x_integration_audit_0909只读诊断，qos_diag_review_0912负责网络终态独审。运行真值见[当前状态](../当前生产状态与执行待办.md)，以下09:33和07:00为历史。
+
+> **2026-09-12 09:33 覆盖更新**：公网再次故障，一次原配置重启仅短暂恢复，09:28:56再次断开。/f1候选只stage、健康门失败未apply；业务保持。当前先解决网络出口，禁止沿下方历史成功记录重复部署或宣称恢复。[当前真值](../当前生产状态与执行待办.md)。
+
+
+> 更新：2026-09-12 07:00。运行事实统一读取 [当前生产状态与执行待办](../当前生产状态与执行待办.md)；任务JSON是协议真值。
+
+TASK-20260911-3B83D5已转waiting_input，索引和doctor489项全历史通过。主控已核收v6/三自然备份周期、Public/Admin Standard、原QUIC公网及/f1同步。qos_diag_review_0912完成Admin实际独审28/28，主控复算79件证据一致；x_scoped_block_fix_0909完成公网三轮18/18与RSS有界只读分析；x_integration_audit_0909的默认plist补丁已核收并增量采用。所有本轮子任务已收口，无待运行生产动作。21 unknown保留，gen407新合同问题待用户答复；真实Passkey、严格RSS15分钟及未部署X缺口见主状态文件。下表旧交付为历史。
+
+## 当前分工
+
+| 负责方 | 当前范围 | 验收与边界 |
+|---|---|---|
+| 主控 / 已核收 | `TASK-20260910-95D001`：completed/acknowledged；/f1安装、新Gateway、21:59真实报告与手机实收闭合 | 使用前提及旧自然回复FAIL保留；发现的业务故障另按生产待办恢复 |
+| agent_options_research / 主控 | `TASK-20260911-3B70C6`：completed/acknowledged；安装/加载及实际微信附录独审PASS | 原26件和新增12件清单主控逐项复算；未直捕父链/stdout/API跟踪/精确手机时间的边界明确 |
+| agent_options_research / 主控 | `TASK-20260911-FAB9DA`：技术准备审查completed/acknowledged，41件证据已核收 | 审查未参与实现；自然回复FAIL及新入口未验边界保留，后续证据另加附录 |
+| 主Agent / 统筹 | 当前生产恢复、正式状态、边界协调和最终核收 | 保留脏树；锁恢复脚本由独立Agent审查；不混合局部PASS |
+| production_backup_audit_0909 | 9月10日首轮恢复与两自然备份独审已完成，53份证据冻结；collector恢复helper独审完成 | 只读观察器已结束，主控已核验全部证据hash；历史失败仍保留 |
+| x_integration_audit_0909 | X四文件import operator独审与最终构建准备均完成，交付已冻结 | `scratch/x-integrated-build-preparation-20260910/` 仅为准备产物，451输入和15证据文件已由主控复算；未构建/签包/部署，真实producer和安装态CLI仍缺 |
+| x_scoped_block_fix_0909 | 已交import operator与构建命令只读核查；跨package缓存候选暂停 | 网络恢复后实际新密文传输已通过，未实施或部署缓存改动 |
+
+## 正式任务
+
+| 任务 | 当前协议与工作 |
+|---|---|
+| TASK-20260911-3B83D5 | waiting_input；修复部署及运行恢复已核收，gen407限定恢复合同与真实用户入口待输入，严格RSS时效仍未验；未complete |
+| `TASK-20260910-95D001` | completed/acknowledged；用户确认/f1正式入口，已完成安装、新Gateway、真实准确报告与手机收件验收；原自然回复FAIL保留 |
+| `TASK-20260911-3B70C6` | completed/acknowledged；安装、加载与21:59实际微信出口独审通过，26件及新增12件证据已核收 |
+| `TASK-20260911-FAB9DA` | completed/acknowledged；独审仅覆盖r4准确性核验和/f1技术准备，不代表新微信出口通过 |
+| `TASK-20260910-E37D5D` | completed/acknowledged；仅r4代码、升级及M1工具层PASS，真实微信与手机收件未验 |
+| `TASK-20260831-AC5CC2` | claimed/user_confirmed；RSS v5已部署，三源持续处理与当前RPO仍核验，勿complete |
+| `TASK-20260829-0ED611` | JSON仍旧blocked/user_required；业务已授权，真实M1浏览器与X生产全链缺口未完成，须经正式工具承接 |
+| `TASK-20260829-E59ACA` | blocked；保留完整双语、人工审核/Public/Admin和Mac/iPhone出口，不以局部UI或自动链代替 |
+| `ECADB7`、`370AD2`、`C917F4` | 已completed/acknowledged前置，不重复领取 |
+| `BBFF2A`、`082F2C`、`F7B06E`、`C5189A` | 历史机械锁，禁止恢复；`FCC322`已superseded |
+
+下一步以主状态文件为准：已恢复的生产链继续核对RSS时效与队列；X先闭合真实M1页面/producer，再做最终合并candidate及同版本恢复验收。不得执行合成生产准入。分工记录只描述承担范围，完成声明须由独立证据核收。
+
+接班顺序：`docs/agent-guide.md` → `docs/spec.md` → [主状态文件](../当前生产状态与执行待办.md) → 本文件 → 当前TASK → 本部门交接班文档与收件箱索引。08-07旧分工与9/5 sidecar指令只作历史。本次同步前原字节保留在 `scratch/backup-projection-boundary-20260907/r4/docs-before/`。

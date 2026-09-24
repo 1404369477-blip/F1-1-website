@@ -5,8 +5,8 @@
   const ID_PATTERN = /^[a-z0-9][a-z0-9_-]{7,63}$/;
   const DETAIL_ID_PATTERN = /^(?:x_[a-z0-9_]{1,63}|xsub_[a-z0-9]{8,64})$/;
   const endpoints = Object.freeze({
-    sources: "/api/admin/sources",
-    source: (id) => `/api/admin/sources/${encodeURIComponent(id)}`,
+    sources: "/api/admin/x-sources",
+    source: (id) => `/api/admin/x-sources/${encodeURIComponent(id)}`,
     submissions: "/api/admin/x-submissions",
     submission: (id) => `/api/admin/x-submissions/${encodeURIComponent(id)}`,
     retire: (id) => `/api/admin/x-submissions/${encodeURIComponent(id)}/retire`,
@@ -342,10 +342,10 @@
 
   function parseRoute() {
     const segments = window.location.pathname.split("/").filter(Boolean);
-    if (segments[0] !== "admin" || !["sources", "x-submissions"].includes(segments[1]) || segments.length > 3) {
+    if (segments[0] !== "admin" || !["sources", "x-accounts", "x-submissions"].includes(segments[1]) || segments.length > 3) {
       return { mode: "sources", detailId: null, invalid: true };
     }
-    const mode = segments[1] === "sources" ? "sources" : "submissions";
+    const mode = segments[1] === "x-submissions" ? "submissions" : "sources";
     const detailId = segments[2] ?? null;
     return { mode, detailId, invalid: detailId !== null && !DETAIL_ID_PATTERN.test(detailId) };
   }
@@ -357,10 +357,14 @@
     elements.navSubmissions.toggleAttribute("aria-current", !sources);
     elements.navSources.classList.toggle("is-current", sources);
     elements.navSubmissions.classList.toggle("is-current", !sources);
+    document.querySelector("#nav-ops")?.classList.remove("is-current");
+    document.querySelector("#nav-reviews")?.classList.remove("is-current");
+    document.querySelector("#nav-ops")?.removeAttribute("aria-current");
+    document.querySelector("#nav-reviews")?.removeAttribute("aria-current");
     elements.submitForm.hidden = sources;
     elements.workspaceKicker.textContent = sources ? "Pinned X inventory" : "Manual URL inbox";
     elements.workspaceTitle.textContent = sources ? "X 信源" : "人工投稿";
-    elements.routeLabel.textContent = sources ? "私有 Admin · /admin/sources" : "私有 Admin · /admin/x-submissions";
+    elements.routeLabel.textContent = sources ? "私有 Admin · /admin/x-accounts" : "私有 Admin · /admin/x-submissions";
     elements.listSearch.placeholder = sources ? "搜索 handle 或 source ID" : "搜索 URL、投稿 ID 或状态";
     document.title = sources ? "F1+1 · X 信源" : "F1+1 · X 人工投稿";
   }
@@ -564,7 +568,7 @@
   }
 
   function navigateDetail(id) {
-    const base = state.mode === "sources" ? "/admin/sources" : "/admin/x-submissions";
+    const base = state.mode === "sources" ? "/admin/x-accounts" : "/admin/x-submissions";
     window.history.pushState({}, "", `${base}/${id}`);
     elements.root.dataset.mobileView = "detail";
     void loadDetail(id);
@@ -702,7 +706,7 @@
   elements.listSearch.addEventListener("input", renderList);
   elements.submitForm.addEventListener("submit", submitManualUrl);
   elements.mobileBack.addEventListener("click", () => {
-    const base = state.mode === "sources" ? "/admin/sources" : "/admin/x-submissions";
+    const base = state.mode === "sources" ? "/admin/x-accounts" : "/admin/x-submissions";
     window.history.pushState({}, "", base);
     elements.root.dataset.mobileView = "list";
     state.selectedId = null;

@@ -17,6 +17,13 @@
       <span class="brand-mark">F1+1</span>
       <span class="route" id="route-label">私有 Admin</span>
     </div>
+    <nav class="topbar-nav" aria-label="后台目录">
+      <a class="topbar-link" href="/admin/ops" id="nav-ops">运行</a>
+      <a class="topbar-link" href="/admin/reviews" id="nav-reviews">审核</a>
+      <a class="topbar-link" href="/admin/sources" id="nav-sources">信源</a>
+      <a class="topbar-link" href="/admin/x-submissions" id="nav-submissions">投稿</a>
+      <a class="topbar-link" href="/admin/settings" id="nav-settings">设置</a>
+    </nav>
     <div class="top-actions">
       <span class="connection-state" id="connection-state" aria-live="polite">正在检查会话</span>
       <button class="icon-button" id="theme-toggle" type="button" aria-label="当前深色主题，切换主题">深</button>
@@ -44,12 +51,6 @@
     </section>
 
     <section class="x-admin-app" id="app-view" hidden aria-label="X 人工管理工作区">
-      <nav class="x-admin-nav" aria-label="Admin 主要区域">
-        <a href="/admin/reviews">审核</a>
-        <a href="/admin/sources" id="nav-sources">X 信源</a>
-        <a href="/admin/x-submissions" id="nav-submissions">人工投稿</a>
-      </nav>
-
       <section class="x-admin-list-panel" aria-labelledby="workspace-title">
         <div class="x-admin-heading">
           <div>

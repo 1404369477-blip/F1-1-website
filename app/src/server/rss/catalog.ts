@@ -45,6 +45,14 @@ export const RSS_SOURCE_CATALOG: readonly RssCatalogEntry[] = Object.freeze([
     nextAction: "保持 15 分钟调度；描述接近 16KiB 上限，超限条目整条拒绝。"
   }),
   Object.freeze({
+    sourceId: "skysports-f1-news",
+    displayName: "Sky Sports F1",
+    feedUrl: "https://www.skysports.com/rss/12433",
+    status: "live",
+    reason: "生产已 apply 0012；collector allowlist 已装；官方 F1 RSS（/rss/12433）pubDate 带 BST，runtime Date.parse shim 已入库。配图只热链 e*.365dm.com。",
+    nextAction: "sidecar 围栏/提炼/审核发布；不要把 X 账号 x_skysportsf1 当成这条 RSS。"
+  }),
+  Object.freeze({
     sourceId: "formula1-latest-news",
     displayName: "Formula1.com",
     feedUrl: "https://www.formula1.com/en/latest/all.xml",

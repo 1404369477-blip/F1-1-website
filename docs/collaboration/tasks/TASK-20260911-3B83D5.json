@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "同一固定候选的单次验证复用、损坏/替换/锁/超时反例通过并独审；维护helper fresh身份/CAS/回退通过；生产完整新快照、异机全读与双签/恢复演练、合法登记与fence严格<900秒，首轮及两自然周期通过；原未知外部请求不盲重发；RSS与公网及Admin可用范围有真实证据和明确未验项；文档交接与回退材料完整。真实Key验证由用户正常Passkey入口完成。",
+  "artifacts": [],
+  "authorization_evidence": "用户2026-09-13明确把X和RSS两事项推进下去，gen407限定恢复由TASK-20260913-D1BAB4及新Spec/实施合同承接，不再等待旧确认；其他旧任务未验项保留。",
+  "authorization_history": [
+    {
+      "at": "2026-09-11T22:59+08:00",
+      "evidence": "用户2026-09-11：修复吧，然后按步骤进行，最后执行生产回复；结合上下文按生产恢复执行。此前诊断已呈现最小备份修复、独审与完整合法恢复顺序。",
+      "state": "user_confirmed"
+    },
+    {
+      "at": "2026-09-13T23:11+08:00",
+      "evidence": "用户2026-09-13明确把X和RSS两事项推进下去，gen407限定恢复由TASK-20260913-D1BAB4及新Spec/实施合同承接，不再等待旧确认；其他旧任务未验项保留。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "M1 iKuuu Redir-Host公网恢复、流式备份修复及3连续自然周期与第4新鲜点独审已通过，RSS原调度已恢复但首轮The Race CONNECT_TIMEOUT。gen407限定恢复新合同仍待用户答复；未知外部请求未重放，真实Passkey与严格RSS时效未核收。当前证据见docs/当前生产状态与执行待办.md及docs/reviews/2026-09-11-Admin备份修复与生产恢复.md。",
+  "claimed_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "completion_class": "standard",
+  "confirmation": "无需额外确认",
+  "created_at": "2026-09-11T22:59+08:00",
+  "department": "统筹部",
+  "details": "用户2026-09-11明确授权按诊断修复、按步骤验证、最后执行生产恢复。实际主执行为本会话01a0740d-18f6-75c3-a9b3-9d7d5b5a917c，借既有统筹actor记录，不改变部门路由。范围为现役R5-r3备份性能与锁异常处理、固定候选独审、同身份生产部署、精确遗锁隔离、新合法备份登记与自然周期、Admin/RSS/公网实际恢复。保持业务v5/schema10及当前权限、Key、模型选择和未知外部请求，禁止混入未部署X或绕过备份门。具体边界见本轮恢复计划。",
+  "domain_stage": "故障修复/候选验证后生产恢复",
+  "event_receipts": [],
+  "execution_state": "waiting_input",
+  "external_artifacts": [],
+  "failure_paths": [
+    "候选身份变化、损坏/替换对象被放过、活锁误清或必要独审未通过时禁止部署。",
+    "维护前deployment/DB/锁身份漂移、writer无法排除或子进程未退出时停止动作；保留旧包与现场，不手动改fence/历史业务记录。",
+    "生产备份任阶段失败或新点超龄保持失败状态并记录具体原因；未知模型/投递不盲重发，网络失败不伪报健康，缺浏览器或用户Passkey证据须保留未验。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "production/admin-backup-recovery-20260911",
+  "pointers": [
+    "docs/reviews/2026-09-11-Admin备份修复与生产恢复.md"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 8,
+  "schema_version": 1,
+  "task_id": "TASK-20260911-3B83D5",
+  "title": "Admin备份超龄故障修复与生产恢复",
+  "unverified": [],
+  "updated_at": "2026-09-13T23:11+08:00",
+  "verified": []
+}

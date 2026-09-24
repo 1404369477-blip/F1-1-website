@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="F1+1 私有运行流水线（只读）。">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; font-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
+  <title>F1+1 · 运行流水线</title>
+  <link rel="stylesheet" href="/admin/assets/app.css">
+  <script defer src="/admin/assets/ops.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#ops-main">跳到运行流水线</a>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">F1+1</span>
+      <span class="route" id="route-label">私有 Admin · /admin/ops</span>
+    </div>
+    <nav class="topbar-nav" aria-label="后台目录">
+      <a class="topbar-link is-current" href="/admin/ops" id="nav-ops" aria-current="page">运行</a>
+      <a class="topbar-link" href="/admin/reviews" id="nav-reviews">审核</a>
+      <a class="topbar-link" href="/admin/sources" id="nav-sources">信源</a>
+      <a class="topbar-link" href="/admin/x-submissions" id="nav-submissions">投稿</a>
+      <a class="topbar-link" href="/admin/settings" id="nav-settings">设置</a>
+    </nav>
+    <div class="top-actions">
+      <span class="connection-state" id="connection-state" aria-live="polite">正在检查会话</span>
+      <button class="icon-button" id="theme-toggle" type="button" aria-label="当前深色主题，切换主题">深</button>
+    </div>
+  </header>
+
+  <main id="ops-main">
+    <section class="auth-shell" id="auth-view" aria-labelledby="auth-title">
+      <div class="auth-card">
+        <p class="eyebrow">Private operator access</p>
+        <h1 id="auth-title">进入运行流水线</h1>
+        <p class="auth-intro">此入口只读查看新闻怎么上站。不会改抓取、审核或发布。</p>
+        <div class="auth-status" id="auth-status" role="status">
+          <span class="spinner" aria-hidden="true"></span>
+          <div>
+            <strong>正在检查会话</strong>
+            <span>等待同源 Admin 服务响应。</span>
+          </div>
+        </div>
+        <div class="auth-actions" id="auth-actions" hidden>
+          <button class="primary-button" id="login-passkey" type="button">使用通行密钥登录</button>
+          <a class="secondary-button x-link-button" href="/admin/reviews">首次配置请前往审核台</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="ops-app" id="app-view" hidden aria-label="运行流水线">
+      <div class="ops-wrap" id="ops-wrap">
+        <header class="ops-header">
+          <div>
+            <p class="ops-eyebrow">私有后台 · 运行流水线</p>
+            <h1 id="ops-title">正在读取</h1>
+          </div>
+          <p class="ops-as-of" id="ops-as-of">—</p>
+        </header>
+
+        <section class="ops-hero">
+          <article class="ops-hero-main">
+            <div class="ops-flag" id="ops-flag"><span class="ops-flag-dot" aria-hidden="true"></span><span id="ops-flag-text">正在读取</span></div>
+            <h2 id="ops-hero-title">正在读取流水线</h2>
+            <p id="ops-hero-copy">登录后只读查看新闻怎么上站。</p>
+          </article>
+          <article class="ops-side">
+            <div class="ops-metric"><span id="ops-metric-value">—</span><small id="ops-metric-hint">距离上次新稿已经过了这么久</small></div>
+          </article>
+        </section>
+
+        <section class="ops-lane">
+          <div class="ops-lane-title">
+            <h2>新闻怎么上网站</h2>
+            <span>从左到右，红灯处就是现在卡住的地方</span>
+          </div>
+          <div class="ops-track" id="ops-track" data-halt="2" aria-label="内容流水线">
+            <article class="ops-station is-ok" id="ops-station-1">
+              <div class="ops-node">1</div>
+              <h3>信源</h3>
+              <p id="ops-station-1-copy">正在读取</p>
+            </article>
+            <article class="ops-station is-stop" id="ops-station-2">
+              <div class="ops-pin" id="ops-pin">停在这里</div>
+              <div class="ops-node">2</div>
+              <h3>抓取</h3>
+              <p id="ops-station-2-copy">正在读取</p>
+            </article>
+            <article class="ops-station is-idle" id="ops-station-3">
+              <div class="ops-node">3</div>
+              <h3>中文整理</h3>
+              <p id="ops-station-3-copy">正在读取</p>
+            </article>
+            <article class="ops-station is-wait" id="ops-station-4">
+              <div class="ops-node">4</div>
+              <h3>人工审核</h3>
+              <p id="ops-station-4-copy">正在读取</p>
+            </article>
+            <article class="ops-station is-ok" id="ops-station-5">
+              <div class="ops-node">5</div>
+              <h3>公开站</h3>
+              <p id="ops-station-5-copy">正在读取</p>
+            </article>
+          </div>
+          <div class="ops-packet">
+            <div class="ops-mini-card" id="ops-mini-card" data-date="" aria-hidden="true"></div>
+            <div>
+              <strong id="ops-packet-title">正在读取公开站上的新闻卡片</strong>
+              <span id="ops-packet-copy">新卡片必须先通过第 2 站，才会出现下一张。</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="ops-split">
+          <article class="ops-card">
+            <h2>最近 8 天有没有新稿上站</h2>
+            <div class="ops-days" id="ops-days" aria-label="按日是否有新内容"></div>
+            <p class="ops-legend">
+              <span><b class="ops-okb"></b>正常</span>
+              <span><b class="ops-stopb"></b>卡住</span>
+              <span><b class="ops-waitb"></b>能进但没活</span>
+              <span><b class="ops-idleb"></b>未开通 / 没在跑</span>
+            </p>
+            <p class="ops-days-note">绿柱只标记最近发布当天；灰柱表示逐日发布状态未确认，不代表当天没有稿件。</p>
+          </article>
+          <div class="ops-side-stack">
+            <article class="ops-card" id="ops-traffic">
+              <h2>访问旁路</h2>
+              <div class="ops-backup-row">
+                <div class="ops-ring is-unwired" id="ops-traffic-ring"><span id="ops-traffic-ring-text">未接</span></div>
+                <div>
+                  <strong id="ops-traffic-title">本页暂未接线</strong>
+                  <p id="ops-traffic-copy">公开站计数器还没接线。这里不会显示 0 次访问。</p>
+                </div>
+              </div>
+            </article>
+            <article class="ops-card" id="ops-backup">
+              <h2>备份旁路</h2>
+              <div class="ops-backup-row">
+                <div class="ops-ring is-unwired" id="ops-backup-ring"><span id="ops-backup-ring-text">未接</span></div>
+                <div>
+                  <strong id="ops-backup-title">本页暂未接线</strong>
+                  <p id="ops-backup-copy">备份在机器上跑，这里还没接上数据。</p>
+                </div>
+              </div>
+              <p class="ops-x-note" id="ops-x-note">车手 X 还没接入这条流水线。</p>
+              <p class="ops-safety" id="ops-safety">自动审核和自动发布按设定关闭，不是故障。</p>
+            </article>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

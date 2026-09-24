@@ -102,7 +102,7 @@ function disabledPlist(input: Readonly<{
   <key>WorkingDirectory</key><string>${xml(input.appRoot)}</string>
   <key>RunAtLoad</key><false/>
   <key>KeepAlive</key><false/>
-  <key>ProcessType</key><string>Background</string>
+  <key>ProcessType</key><string>${input.label === PUBLIC_APP_LABEL ? "Standard" : "Background"}</string>
   <key>StandardOutPath</key><string>${xml(input.stdout)}</string>
   <key>StandardErrorPath</key><string>${xml(input.stderr)}</string>
   <key>Umask</key><integer>63</integer>

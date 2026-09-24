@@ -1,0 +1,147 @@
+{
+  "schemaVersion": "f1-live-v2-precise-cleanup-inventory-v1",
+  "machine": "m5",
+  "observedAt": "2026-09-06T16:44:15.982287+00:00",
+  "scope": "read-only metadata and lsof; no DB, ciphertext, private-key or AES contents read",
+  "roots": [
+    {
+      "root": "[M5-HOME]/Library/Application Support/F1Plus1/BackupObserver/manual-preflight-02",
+      "rootIdentity": {
+        "relativePath": ".",
+        "dev": 16777231,
+        "ino": 24570710,
+        "mode": 16832,
+        "uid": 501,
+        "gid": 20,
+        "nlink": 6,
+        "size": 192,
+        "allocatedBytes": 0,
+        "mtimeNs": 1788711327398877453,
+        "type": "directory"
+      },
+      "entries": [
+        {
+          "relativePath": "latest.json",
+          "dev": 16777231,
+          "ino": 24570711,
+          "mode": 33188,
+          "uid": 501,
+          "gid": 20,
+          "nlink": 1,
+          "size": 278,
+          "allocatedBytes": 4096,
+          "mtimeNs": 1788711175094518599,
+          "type": "file",
+          "cleanupCandidate": false
+        },
+        {
+          "relativePath": "objects",
+          "dev": 16777231,
+          "ino": 24570715,
+          "mode": 16832,
+          "uid": 501,
+          "gid": 20,
+          "nlink": 3,
+          "size": 96,
+          "allocatedBytes": 0,
+          "mtimeNs": 1788711176205731450,
+          "type": "directory",
+          "cleanupCandidate": false
+        },
+        {
+          "relativePath": "objects/db-projection-snapshot.726300d58f464af2c690ff1a0853a2ce4da01dc6c8d9850a5b58c7d349435530.e2f2c6fc36e07951",
+          "dev": 16777231,
+          "ino": 24570737,
+          "mode": 33152,
+          "uid": 501,
+          "gid": 20,
+          "nlink": 1,
+          "size": 333484939,
+          "allocatedBytes": 335802368,
+          "mtimeNs": 1788711286478726174,
+          "type": "file",
+          "cleanupCandidate": true
+        },
+        {
+          "relativePath": "packages",
+          "dev": 16777231,
+          "ino": 24570712,
+          "mode": 16832,
+          "uid": 501,
+          "gid": 20,
+          "nlink": 3,
+          "size": 96,
+          "allocatedBytes": 0,
+          "mtimeNs": 1788711175094644807,
+          "type": "directory",
+          "cleanupCandidate": false
+        },
+        {
+          "relativePath": "packages/1788710928635_726300d58f464af2",
+          "dev": 16777231,
+          "ino": 24570713,
+          "mode": 16832,
+          "uid": 501,
+          "gid": 20,
+          "nlink": 3,
+          "size": 96,
+          "allocatedBytes": 0,
+          "mtimeNs": 1788711175094727766,
+          "type": "directory",
+          "cleanupCandidate": false
+        },
+        {
+          "relativePath": "packages/1788710928635_726300d58f464af2/manifest.json",
+          "dev": 16777231,
+          "ino": 24570714,
+          "mode": 33188,
+          "uid": 501,
+          "gid": 20,
+          "nlink": 1,
+          "size": 41404,
+          "allocatedBytes": 45056,
+          "mtimeNs": 1788711175094961640,
+          "type": "file",
+          "cleanupCandidate": false
+        },
+        {
+          "relativePath": "receipt.json",
+          "dev": 16777231,
+          "ino": 24571251,
+          "mode": 33152,
+          "uid": 501,
+          "gid": 20,
+          "nlink": 1,
+          "size": 680,
+          "allocatedBytes": 4096,
+          "mtimeNs": 1788711327398920953,
+          "type": "file",
+          "cleanupCandidate": false
+        }
+      ],
+      "lsof": {
+        "exitCode": 1,
+        "stdout": "",
+        "stderr": "",
+        "noOpenHandles": true
+      },
+      "fileCount": 4,
+      "directoryCount": 3,
+      "logicalBytes": 333527301,
+      "allocatedBytes": 335855616,
+      "candidateFileCount": 1,
+      "candidateLogicalBytes": 333484939,
+      "candidateAllocatedBytes": 335802368
+    }
+  ],
+  "candidateCount": 1,
+  "candidateAllocatedBytes": 335802368,
+  "candidateLogicalBytes": 333484939,
+  "allRootsUnused": true,
+  "gates": [
+    "Three distinct production v2 cycles independently verified successful by coordinator",
+    "This exact inventory SHA256 and selected paths explicitly approved by coordinator",
+    "Evidence copied or retained; all JSON, projection, logs and keys remain",
+    "Fresh complete metadata equality and fresh lsof no handles before any unlink"
+  ]
+}

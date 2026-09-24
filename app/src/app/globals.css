@@ -1717,6 +1717,26 @@ h4 {
   line-height: 1.6;
 }
 
+.tl-detail-actions {
+  margin: 12px 0 0;
+}
+
+.tl-detail-page-link {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.tl-detail-page-link:hover,
+.tl-detail-page-link:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 /* ---------- 证据行（信源 · [作者] · 时间）+ 前往原文 ---------- */
 .tl-ev {
   display: flex;
@@ -2423,6 +2443,61 @@ body:not(.lb-open) .app {
 
 .timeline-detail-body {
   margin-top: var(--s1);
+}
+
+.timeline-detail-keypoints {
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 15px;
+}
+
+.timeline-detail-english {
+  margin-top: var(--s3);
+  padding-top: var(--s2);
+  border-top: 1px solid var(--border);
+}
+
+.timeline-detail-english-note {
+  margin: 0 0 8px;
+  color: var(--faint);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.timeline-detail-en-title {
+  margin: 0 0 8px;
+  color: var(--fg);
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+.timeline-detail-original {
+  display: grid;
+  gap: 6px;
+  margin-top: var(--s2);
+}
+
+.timeline-detail-original-link {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  color: var(--accent);
+  font-weight: 650;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.timeline-detail-original-link:hover,
+.timeline-detail-original-link:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.timeline-detail-original span {
+  color: var(--faint);
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 .timeline-detail-related {

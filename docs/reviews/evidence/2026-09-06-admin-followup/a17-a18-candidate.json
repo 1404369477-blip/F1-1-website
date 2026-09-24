@@ -1,0 +1,22 @@
+{
+  "scope": "A17 request deadline and A18 responsive description column",
+  "runtime": "Node v24.18.0",
+  "tests": "admin-ops-ui 10/10 PASS; targeted ESLint PASS",
+  "files": {
+    "app/src/admin-ui/ops.js": "9155ec1725d2ae70d5822098d1e87db6be9e3bb0ea20f57eaea4fb354918de8e",
+    "app/src/admin-ui/app.css": "b0768a48ac78cd3963650df1d40a506e276356ffcd28d36e401a76c6d36af386",
+    "app/src/tests/admin-ops-ui.test.ts": "2ee9bd3f02362f79b59f65ade81303b02cbf981ac27fed61f4e52d5b9fff0b6d",
+    "app/src/admin-ui/ops.html": "354b9807a5b42cf3315a596a0e75687d4532149d0aa53e743108e85f6de06628"
+  },
+  "visualStatus": "PASS: 6 actual in-app browser viewports; 390px paragraph width 240px in column 2; no horizontal overflow; synthetic DTO only; no real iPhone",
+  "production": "NOT_CHANGED",
+  "screenshots": {
+    "ops-1024-dark.png": "55e7cbf94ac826541178b77ec9c8ca29489618ecd75f5d014891785f62ff860a",
+    "ops-1440-dark.png": "c05bc93e708fd59db49ed3c5dbe34ebbe393e928b0a353cb9320d404fcb41e02",
+    "ops-390-dark.png": "57ba7771a76c61e8862a440e835cb125bb93b09dc264191fefc1791b38e6a4ea",
+    "ops-1024-light.png": "38af52574b956e4cc2ef664e70e05402e5a8cd39c794f38829dc3f2aac8d690f",
+    "ops-1440-light.png": "f175d62febfd851b056f5f16b8d42e82b42acf77f357251d088a357c226af017",
+    "ops-390-light.png": "3b7a2d88cdd3347b7a182a05ba46248e04585b691588c3220ee48bb153f8f321"
+  },
+  "domEvidence": "visual-dom.json"
+}

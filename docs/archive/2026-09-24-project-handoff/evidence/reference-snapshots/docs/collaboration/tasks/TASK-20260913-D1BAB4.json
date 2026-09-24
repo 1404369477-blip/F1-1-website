@@ -1,0 +1,49 @@
+{
+  "acceptance_exit": "M1真实工具调用及三源完整native证据；X完整候选/恢复/灰度未过不完成整链。RSS限定恢复设计/必要反例/独审/固定输入与部署通过，gen407真实终态、原新预算各一次结算、崩溃重放不盲POST，后一自然周期及新代公開投影/Pages首页详情可读。真实不可达或未验证出口留未完成，不用历史PASS替代。",
+  "artifacts": [],
+  "authorization_evidence": "2026-09-22用户明确M5随身携带，要求继续推进M1直接iCloud备份并同步落实X；随后明确采用maintenance-design-r2当前预览继续实现。范围见docs/reviews/2026-09-22-M1-iCloud备份与X正式接入实施合同.md，旧恢复不重放，新生产证据仍须验证。",
+  "authorization_history": [
+    {
+      "at": "2026-09-13T23:08+08:00",
+      "evidence": "用户2026-09-13在获知两项具体阻点后明确把这两个事项都推进下去；限定实施合同已写入Spec。",
+      "state": "user_confirmed"
+    },
+    {
+      "at": "2026-09-22T21:38+08:00",
+      "evidence": "2026-09-22用户明确M5随身携带，要求继续推进M1直接iCloud备份并同步落实X；随后明确采用maintenance-design-r2当前预览继续实现。范围见docs/reviews/2026-09-22-M1-iCloud备份与X正式接入实施合同.md，旧恢复不重放，新生产证据仍须验证。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "completion_class": "standard",
+  "confirmation": "无需额外确认",
+  "created_at": "2026-09-13T23:08+08:00",
+  "department": "统筹部",
+  "details": "用户2026-09-13明确把两个事项都推进下去，按docs/reviews/2026-09-13-X采集与RSS受控恢复实施合同.md执行。M1默认GLM的受支持Chrome真实三源验证；RSS现役v6基础上正式operator，原sender/receiver退出及完整链absence证明后同delivery最多一次恢复，保留逻辑key/预算/历史及当前门。x_integration执行M1临时CLI，pipeline隔离RSS实现，qos独审，主控核收/生产。绑定AUTO-PUBLISH-005第122行、ADMIN-PUBLISH-007第106行、RECOVER-ADMIN-004第132行、RECOVER-EXTERNAL-005第133行；不改UI，若新UI则先补精确冻结设计六格及Mac/iPhone等价门。",
+  "domain_stage": "通用执行",
+  "event_receipts": [],
+  "execution_state": "claimed",
+  "external_artifacts": [],
+  "failure_paths": [
+    "M1工具/连接失败或挑战限流/正文不全：保留原生失败，不换主机、不用浏览器旁路，继续RSS独立工作。",
+    "旧进程或继任未排除、链/包/证据/预算/key不符、候选独审失败：禁止负向结算和外发，保持原状态。",
+    "恢复新尝试未知或任何当前门失败：不第三次POST、不清历史；按固定兼容包恢复服务，保留审计与上一合法公开版本。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "",
+  "node": "production/x-m1-rss-gen407-resumption",
+  "pointers": [
+    "docs/reviews/2026-09-13-X采集与RSS受控恢复实施合同.md"
+  ],
+  "report": "",
+  "resolution": null,
+  "revision": 13,
+  "schema_version": 1,
+  "task_id": "TASK-20260913-D1BAB4",
+  "title": "M1 X采集验证与RSS generation407受控恢复",
+  "unverified": [],
+  "updated_at": "2026-09-22T21:38+08:00",
+  "verified": []
+}

@@ -1,0 +1,52 @@
+{
+  "acceptance_exit": "提交绑定同一候选与特定微信turn的正式独立报告；只有实际Gateway、工具结果和准确最终回复闭合且用户收件确认后方可给真实出口pass。若只能通过代码/工具层必须明确scope及未验证，开发任务不得整体complete。",
+  "acknowledged_by": "统筹部/019fb368-828c-7461-bc1e-debc14d1cd1c",
+  "artifacts": [
+    "docs/collaboration/部门/测试部/报告/2026-09-11-TASK-20260911-FAB9DA-Hermes微信回复r4准确性附录.md",
+    "docs/collaboration/部门/测试部/报告/2026-09-11-TASK-20260911-FAB9DA-Hermes固定f1直出候选独立审查.md",
+    "scratch/hermes-site-status-review-20260910/evidence-manifest-direct-r1.json",
+    "scratch/hermes-site-status-direct-20260911/root-verification-direct-r1.json"
+  ],
+  "authorization_evidence": "用户此前明确推进微信只读巡检，本次提供2026-09-11 00:00:44实际微信报告作为验收反馈，继续原范围修正和独立审查。",
+  "authorization_history": [
+    {
+      "at": "2026-09-11T00:06+08:00",
+      "evidence": "用户此前明确推进微信只读巡检，本次提供2026-09-11 00:00:44实际微信报告作为验收反馈，继续原范围修正和独立审查。",
+      "state": "user_confirmed"
+    }
+  ],
+  "authorization_state": "user_confirmed",
+  "block_reason": "",
+  "claimed_by": "测试部/agent_options_research",
+  "completion_class": "audit",
+  "confirmation": "无需额外确认",
+  "created_at": "2026-09-11T00:06+08:00",
+  "department": "测试部",
+  "details": "承接开发TASK-20260910-95D001与已ACK技术审查E37D5D。用户已回传2026-09-11 00:00:44新报告，时间正确但模型摘要对采集/任务状态及历史比较存在待核表述，并省略Admin登录未知。独立只读核查该Weixin turn的Gateway候选、工具结果与最终回复；审核任何必要后继候选，重点确定性正文、时间/未知边界、同一真实查询出口、回退与权限边界。测试Agent未参与实现。无新UI，设计身份/六格/Admin双端Function ID不适用；不提升任何既有Function ID。旧r3/r4已冻结报告及manifest不得覆盖。",
+  "domain_stage": "通用执行",
+  "event_receipts": [],
+  "execution_state": "acknowledged",
+  "external_artifacts": [],
+  "failure_paths": [
+    "时间或无依据因果/任务状态外推、未知重要项隐藏或不实历史比较→fail退开发；后继越权/写业务/改变其他配置→拒绝部署；缺手机或Gateway证据→明确待验，保存旧证据不替代。"
+  ],
+  "from_department": "统筹部",
+  "mistake_check": "未将旧MCP技术PASS、暂存CLI或dry-run等同微信实收；未把首轮TMPDIR模块语义问题归为生产缺陷；正式fixture改为mts后两项原环境清理测试已复验。只在空闲且无pending update和前置hook接管时保证native直出；未更改旧冻结报告或正式生产配置。",
+  "node": "Hermes微信真实出口",
+  "pointers": [
+    "docs/reviews/2026-09-10-Hermes微信只读巡检.md"
+  ],
+  "report": "docs/collaboration/部门/测试部/报告/2026-09-11-TASK-20260911-FAB9DA-Hermes固定f1直出候选独立审查.md",
+  "resolution": null,
+  "revision": 4,
+  "schema_version": 1,
+  "task_id": "TASK-20260911-FAB9DA",
+  "title": "Hermes 微信真实回复准确性后继审查",
+  "unverified": [
+    "用户对正式/f1入口及适用前提的选择、新候选生产apply、Gateway重启激活、实际/f1查询的准确报告及手机收件均未验证。原自然语言r4准确性FAIL继续有效，开发95D001 waiting_input，不能整体complete。"
+  ],
+  "updated_at": "2026-09-11T00:54+08:00",
+  "verified": [
+    "完成r4特定微信turn的准确性FAIL核验，并完成固定direct-r1候选的独立技术准备审查：CLI14项分次同函数复验、helper18项及独立2项反例、原生路径与前置分流、M1暂存文件和只读dry-run；主控已读最终报告并逐件复算41件冻结证据，零不一致。"
+  ]
+}

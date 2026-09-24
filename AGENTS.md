@@ -3,10 +3,14 @@
 > 通用 AI Agent 工作入口。Codex、Copilot 等 Agent 先读这里。
 > 本文件只负责指路,详细规则统一看 `docs/agent-guide.md`。
 
+## 沟通语言
+
+始终用中文回复用户。
+
 ## 先读
 
 1. `docs/agent-guide.md`
-2. 按 `docs/agent-guide.md` 指引读取 `docs/spec.md`、`docs/progress.md` 等必要文件。
+2. 按 `docs/agent-guide.md` 指引读取 `docs/spec.md`、`docs/当前生产状态与执行待办.md`、`docs/collaboration/当前工作分工与交接.md`、`docs/progress.md`。
 
 ## 冲突处理
 

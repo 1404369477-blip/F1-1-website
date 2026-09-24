@@ -1,0 +1,12 @@
+{
+  "observedAt": "2026-09-06T16:42:10.051747+00:00",
+  "serviceUnloaded": true,
+  "writers": [],
+  "locks": [
+    {
+      "path": "[M1-HOME]/F1-1-website/backups/snap/run.lock",
+      "isFile": true,
+      "body": "{\"pid\":82601,\"startedAt\":\"2026-09-06T16:38:31.243Z\"}\n"
+    }
+  ]
+}

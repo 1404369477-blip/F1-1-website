@@ -12,6 +12,7 @@
   "scripts": {
     "dev": "node --experimental-strip-types scripts/serve.ts dev",
     "build": "next build",
+    "build:public-static": "node --experimental-strip-types scripts/build-public-static.ts",
     "start": "node --experimental-strip-types scripts/serve.ts start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
@@ -51,7 +52,8 @@
     "release:prepare-v10-candidate": "node --experimental-strip-types scripts/prepare-v10-release-candidate.ts",
     "release:refresh-receipts": "node --experimental-strip-types scripts/public-release-refresh.ts",
     "release:install-macos-agents": "node --experimental-strip-types scripts/install-macos-public-beta.ts",
-    "check": "npm run verify:env && npm run db:migrate && npm run seed:fixtures && npm run runtime:assert-ready && npm run test && npm run test:contract && npm run lint && npm run typecheck && npm run build && npm run test:p1"
+    "check": "npm run verify:env && npm run db:migrate && npm run seed:fixtures && npm run runtime:assert-ready && npm run test && npm run test:contract && npm run lint && npm run typecheck && npm run build && npm run test:p1",
+    "test:projection-worker": "node --experimental-transform-types --test src/tests/projection-http-worker.node-test.ts"
   },
   "dependencies": {
     "@simplewebauthn/server": "13.3.2",

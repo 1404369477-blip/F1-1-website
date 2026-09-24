@@ -1,0 +1,32 @@
+{
+  "status": "PASS_ACTUAL_CLEANUP_AND_LOCK_RECOVERY",
+  "reviewer": "/root/temp_lifecycle_audit",
+  "afterObservationSha256": "8fd512a838f56ffd588b5e4e95e8998d37d4e262de3f916afdcd3632c1464bfa",
+  "at": "2026-09-24T00:58:21.236806+00:00",
+  "bothReviewedCommandsExitedZero": true,
+  "canonicalReceiptValuesRecomputed": 26,
+  "stagingIntentCanonicalSha256": "811668cb55d0bc22d1315242abb360524385323ddd776d1c42f82b8d0af89157",
+  "stagingIntentMatchesOriginalInventory": true,
+  "totalFilesRemoved": 618,
+  "totalLogicalBytesRemoved": 15706657091,
+  "totalAllocatedBytesListed": 15767990272,
+  "firstObservedSpaceDelta": 9883795456,
+  "secondObservedSpaceDelta": 5886496768,
+  "availableAfterBytes": 30603010048,
+  "preservedFilesVerified": 109,
+  "originalLockInode": 48190212,
+  "originalLockSha256": "cfdd75cbce6ead2d0b6882c4c5359220ad151fdd33cf571260e40e43d621e196",
+  "incidentDirectory": "lock-incident-ww8oNv",
+  "schedulerOriginalArgvVerified": true,
+  "naturalCyclePid": 54069,
+  "kickstarts": 0,
+  "retainedPackages": 24,
+  "retainedObjects": 22,
+  "lastRegisteredRecoveryPointAt": "2026-09-23T22:58:54.446Z",
+  "newRecoveryPointAfterRepairVerified": false,
+  "limitations": [
+    "Natural cycle was running, so cleanup does not prove a new registered recovery point or continuous RPO.",
+    "Observed disk deltas may include concurrent filesystem activity.",
+    "Automatic cleanup producer changes were not deployed."
+  ]
+}
