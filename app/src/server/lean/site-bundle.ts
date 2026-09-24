@@ -1,11 +1,11 @@
 import { createHash } from "node:crypto";
 
 import { normalizePublicStaticRequestKey } from "../../features/stories/public-static-schema.ts";
-import type { LeanContentType } from "./config.ts";
+import { LEAN_CONTENT_TYPES, type LeanContentType } from "./config.ts";
 import type { StoredItem } from "./store.ts";
 
 const PAGE_SIZE = 12;
-const CONTENT_TYPES: readonly LeanContentType[] = ["race_news", "driver_social", "legends_history", "paddock_fun"];
+const CONTENT_TYPES: readonly LeanContentType[] = LEAN_CONTENT_TYPES;
 const JSON_TYPE = "application/json; charset=utf-8";
 const PROBLEM_TYPE = "application/problem+json; charset=utf-8";
 

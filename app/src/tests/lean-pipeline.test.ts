@@ -1,4 +1,4 @@
-import { mkdtempSync, readdirSync, rmSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -7,6 +7,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { PublicStaticIndexSchema, PublicStaticPointerSchema } from "../features/stories/public-static-schema.ts";
 import { backupStoreIfDue } from "../server/lean/backup.ts";
 import type { LeanSource } from "../server/lean/config.ts";
+import { importEditorInbox, markInboxPublished, type InboxEntry } from "../server/lean/editor-inbox.ts";
 import { parseFeed } from "../server/lean/feed.ts";
 import { parseRefineOutput } from "../server/lean/refine.ts";
 import { buildSiteBundle } from "../server/lean/site-bundle.ts";
@@ -103,6 +104,78 @@ describe("lean model output", () => {
     const raw = JSON.stringify({ relevant: false, titleZh: "新车评测", summaryZh: "一辆公路车的评测。", keyPointsZh: [] });
     expect(parseRefineOutput(raw, true)).toEqual({ kind: "irrelevant" });
     expect(parseRefineOutput(raw, false).kind).toBe("ready");
+  });
+});
+
+describe("lean editor inbox", () => {
+  const DOMAINS = ["www.formula1.com"];
+  const submission = (overrides: Record<string, unknown> = {}) => JSON.stringify({
+    schemaVersion: "editor-submission-v1",
+    idempotencyKey: "20260924-f1com-fp2-russell",
+    originalUrl: "https://www.formula1.com/en/latest/article/fp2-russell-leads.37CqNf2uaAyxvDPmvbt3Iw",
+    sourceName: "Formula1.com",
+    sourceDomain: "www.formula1.com",
+    originalTitle: "FP2: Russell leads Antonelli and Verstappen",
+    sourcePublishedAt: "2026-09-24T13:05:00.000Z",
+    contentType: "race_news",
+    credibility: "official",
+    titleZh: "阿塞拜疆二练：拉塞尔再夺头名",
+    summaryZh: "乔治·拉塞尔在巴库二练以 1:43.347 最快。",
+    keyPointsZh: ["拉塞尔包揽 FP1/FP2 头名", "梅赛德斯 1–2", "红旗", "第四条被截掉"],
+    ...overrides
+  });
+
+  function setup() {
+    directory = mkdtempSync(join(tmpdir(), "lean-inbox-"));
+    const inbox = join(directory, "editor-inbox");
+    mkdirSync(inbox);
+    return { store: new LeanStore(join(directory, "store.sqlite")), inbox };
+  }
+  const status = (inbox: string) => JSON.parse(readFileSync(join(inbox, "status.json"), "utf8")) as { entries: InboxEntry[] };
+
+  it("imports a valid submission as ready without the model and rejects bad or duplicate ones", () => {
+    const { store, inbox } = setup();
+    writeFileSync(join(inbox, "a-good.json"), submission());
+    writeFileSync(join(inbox, "b-domain.json"), submission({ idempotencyKey: "k2", sourceDomain: "www.getty.com", originalUrl: "https://www.getty.com/x" }));
+    writeFileSync(join(inbox, "c-missing.json"), submission({ idempotencyKey: "k3", titleZh: undefined }));
+    writeFileSync(join(inbox, "d-dup.json"), submission({ idempotencyKey: "k4", originalUrl: "https://www.formula1.com/en/latest/article/fp2-russell-leads.37CqNf2uaAyxvDPmvbt3Iw?utm=x" }));
+
+    const report = importEditorInbox(store, inbox, { enabled: true, publishMode: "auto" }, DOMAINS, "2026-09-24T15:00:00.000Z");
+    expect(report).toMatchObject({ imported: 1, held: 0, rejected: 3 });
+    const [item] = store.ready(10, "2026-01-01T00:00:00.000Z");
+    expect(item).toMatchObject({ sourceId: "editor-www-formula1-com", displayName: "Formula1.com", titleZh: "阿塞拜疆二练：拉塞尔再夺头名", attempts: 0 });
+    expect(item.keyPointsZh).toHaveLength(3);
+    expect(readdirSync(join(inbox, "done")).sort()).toEqual(["a-good.json", "a-good.receipt.json"]);
+    expect(readFileSync(join(inbox, "rejected", "b-domain.reason.txt"), "utf8").trim()).toBe("DOMAIN_NOT_ALLOWED");
+    expect(readFileSync(join(inbox, "rejected", "c-missing.reason.txt"), "utf8")).toContain("INVALID_FIELD: titleZh");
+    expect(readFileSync(join(inbox, "rejected", "d-dup.reason.txt"), "utf8").trim()).toBe("DUPLICATE");
+    expect(status(inbox).entries.find((entry) => entry.file === "a-good.json")).toMatchObject({ state: "done", publicId: item.publicId, publishedHint: "awaiting_publish" });
+
+    markInboxPublished(inbox, "abc123", "2026-09-24T15:10:00.000Z");
+    expect(status(inbox).entries.find((entry) => entry.file === "a-good.json")).toMatchObject({ publishedHint: "published", commit: "abc123" });
+    store.close();
+  });
+
+  it("holds submissions out of the public set until the mode is switched back to auto", () => {
+    const { store, inbox } = setup();
+    writeFileSync(join(inbox, "held.json"), submission());
+    expect(importEditorInbox(store, inbox, { enabled: true, publishMode: "hold" }, DOMAINS, "2026-09-24T15:00:00.000Z")).toMatchObject({ held: 1 });
+    expect(store.ready(10, "2026-01-01T00:00:00.000Z")).toHaveLength(0);
+    expect(store.held()).toHaveLength(1);
+    expect(status(inbox).entries[0]).toMatchObject({ state: "held", publishedHint: "held_preview_only" });
+
+    expect(importEditorInbox(store, inbox, { enabled: true, publishMode: "auto" }, DOMAINS, "2026-09-24T15:10:00.000Z")).toMatchObject({ released: 1 });
+    expect(store.ready(10, "2026-01-01T00:00:00.000Z")).toHaveLength(1);
+    expect(status(inbox).entries[0]).toMatchObject({ state: "done", publishedHint: "awaiting_publish" });
+    store.close();
+  });
+
+  it("leaves the inbox untouched when disabled", () => {
+    const { store, inbox } = setup();
+    writeFileSync(join(inbox, "a.json"), submission());
+    expect(importEditorInbox(store, inbox, { enabled: false, publishMode: "auto" }, DOMAINS, "2026-09-24T15:00:00.000Z")).toMatchObject({ enabled: false, imported: 0 });
+    expect(readdirSync(inbox)).toEqual(["a.json"]);
+    store.close();
   });
 });
 

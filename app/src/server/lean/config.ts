@@ -1,7 +1,8 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-export type LeanContentType = "race_news" | "driver_social" | "legends_history" | "paddock_fun";
+export const LEAN_CONTENT_TYPES = ["race_news", "driver_social", "legends_history", "paddock_fun"] as const;
+export type LeanContentType = typeof LEAN_CONTENT_TYPES[number];
 
 export type LeanSource = Readonly<{
   sourceId: string;
@@ -17,6 +18,11 @@ export const LEAN_DATA_ROOT = "/Users/chanai/F1-1-website/lean-data";
 export const LEAN_BACKUP_DIR = "/Users/chanai/F1-1-website/lean-backups";
 /** iCloud Drive keeps one copy per day off this machine; the store holds only already-public stories. */
 export const LEAN_OFFSITE_BACKUP_DIR = "/Users/chanai/Library/Mobile Documents/com~apple~CloudDocs/F1Plus1-Backups";
+/** Hostnames an editor submission may link to unless `settings.json` lists its own `editorialDomains`. */
+export const DEFAULT_EDITORIAL_DOMAINS: readonly string[] = [
+  "www.formula1.com", "www.crash.net", "racingnews365.com", "www.racingnews365.com", "www.motorsport.com",
+  "www.the-race.com", "www.skysports.com", "www.youtube.com", "youtu.be"
+];
 export const PAGES_URL = "https://1404369477-blip.github.io/f1plus1/";
 export const PAGES_REMOTE = "ssh://git@ssh.github.com:443/1404369477-blip/f1plus1.git";
 export const PAGES_HTTPS_REMOTE = "https://github.com/1404369477-blip/f1plus1.git";

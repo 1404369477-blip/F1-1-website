@@ -1,6 +1,7 @@
 import { closeSync, existsSync, mkdirSync, openSync, readFileSync, renameSync, unlinkSync, writeFileSync } from "node:fs";
 
-import { leanPath, leanSources, REFINE_BATCH_LIMIT, SITE_MAX_AGE_DAYS, SITE_MAX_ITEMS, type LeanSource } from "./config.ts";
+import { DEFAULT_EDITORIAL_DOMAINS, leanPath, leanSources, REFINE_BATCH_LIMIT, SITE_MAX_AGE_DAYS, SITE_MAX_ITEMS, type LeanSource } from "./config.ts";
+import { importEditorInbox, markInboxPublished, type EditorInboxSettings, type InboxReport } from "./editor-inbox.ts";
 import { backupStoreIfDue, type BackupReport } from "./backup.ts";
 import { fetchFeed } from "./feed.ts";
 import { publishBundle, stageSite } from "./pages-publish.ts";
@@ -14,11 +15,17 @@ const FETCH_CONCURRENCY = 6;
 const REFINE_CONCURRENCY = 4;
 
 type LeanState = { lastPublishedFingerprint: string | null; lastPublishedAt: string | null; lastCommit: string | null };
-type LeanSettings = { xHandles: string[] | "all"; publish: boolean };
+type LeanSettings = {
+  xHandles: string[] | "all";
+  publish: boolean;
+  editorialDomains?: string[];
+  editorInbox?: Partial<EditorInboxSettings>;
+};
 
 export type CycleReport = {
   startedAt: string;
   finishedAt: string;
+  inbox: InboxReport & { error: string | null };
   sources: { ok: number; failed: { sourceId: string; error: string }[] };
   newEntries: number;
   refined: { ready: number; skipped: number; failed: number };
@@ -113,6 +120,16 @@ async function refinePending(store: LeanStore): Promise<CycleReport["refined"]> 
   return refined;
 }
 
+/** An inbox fault (for example a full disk) is reported; it must not stop RSS collection or publishing. */
+function importInbox(store: LeanStore, root: string, settings: LeanSettings, now: Date): CycleReport["inbox"] {
+  const inboxSettings: EditorInboxSettings = { enabled: true, publishMode: "auto", ...settings.editorInbox };
+  try {
+    return { ...importEditorInbox(store, root, inboxSettings, settings.editorialDomains ?? DEFAULT_EDITORIAL_DOMAINS, now.toISOString()), error: null };
+  } catch (error) {
+    return { enabled: inboxSettings.enabled, imported: 0, held: 0, rejected: 0, released: 0, error: error instanceof Error ? error.message.slice(0, 200) : "UNKNOWN" };
+  }
+}
+
 export async function runCycle(now: Date = new Date()): Promise<CycleReport | null> {
   mkdirSync(leanPath(), { recursive: true, mode: 0o700 });
   const release = acquireLock(leanPath("cycle.lock"));
@@ -121,15 +138,21 @@ export async function runCycle(now: Date = new Date()): Promise<CycleReport | nu
   try {
     const settings = readJson<LeanSettings>(leanPath("settings.json"), { xHandles: [], publish: false });
     const state = readJson<LeanState>(leanPath("state.json"), { lastPublishedFingerprint: null, lastPublishedAt: null, lastCommit: null });
+    const inboxRoot = leanPath("editor-inbox");
+    const inbox = importInbox(store, inboxRoot, settings, now);
     const collected = await collect(store, leanSources(settings.xHandles), now);
     const refined = await refinePending(store);
     const backup = backupStoreIfDue(store, now);
 
     const minTimelineAt = new Date(now.getTime() - SITE_MAX_AGE_DAYS * 24 * 3600 * 1000).toISOString();
-    const bundle = buildSiteBundle(store.ready(SITE_MAX_ITEMS, minTimelineAt), now.toISOString());
+    const readyItems = store.ready(SITE_MAX_ITEMS, minTimelineAt);
+    const heldItems = store.held();
+    const bundle = buildSiteBundle(readyItems, now.toISOString());
+    if (!settings.publish || heldItems.length > 0) {
+      stageSite(leanPath("preview"), heldItems.length > 0 ? buildSiteBundle([...heldItems, ...readyItems], now.toISOString()) : bundle);
+    }
     let site: CycleReport["site"] = { items: bundle.itemCount, published: false, commit: null, reason: "UNCHANGED" };
     if (!settings.publish) {
-      stageSite(leanPath("preview"), bundle);
       site = { ...site, reason: "PUBLISH_DISABLED" };
     } else if (bundle.contentFingerprint !== state.lastPublishedFingerprint) {
       try {
@@ -140,7 +163,9 @@ export async function runCycle(now: Date = new Date()): Promise<CycleReport | nu
         site = { ...site, reason: `PUBLISH_FAILED: ${error instanceof Error ? error.message.slice(0, 200) : "UNKNOWN"}` };
       }
     }
-    const report: CycleReport = { startedAt: now.toISOString(), finishedAt: new Date().toISOString(), ...collected, refined, backup, site, counts: store.counts() };
+    const liveCommit = site.published ? site.commit : site.reason === "UNCHANGED" ? state.lastCommit : null;
+    if (liveCommit !== null && inbox.enabled) markInboxPublished(inboxRoot, liveCommit, now.toISOString());
+    const report: CycleReport = { startedAt: now.toISOString(), finishedAt: new Date().toISOString(), inbox, ...collected, refined, backup, site, counts: store.counts() };
     writeJsonAtomic(leanPath("last-cycle.json"), report);
     return report;
   } finally {
