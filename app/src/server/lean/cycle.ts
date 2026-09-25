@@ -11,7 +11,10 @@ import { LeanStore } from "./store.ts";
 
 /** Entries older than this on first sight are history, not news; they are not summarized. */
 const MAX_NEW_ENTRY_AGE_MS = 3 * 24 * 3600 * 1000;
-const FETCH_CONCURRENCY = 6;
+/** Six parallel X fetches through the local RSSHub exceeded the 20s fetch timeout. */
+const FETCH_CONCURRENCY = 3;
+/** One burner account serves every X source; polling each handle at most this often keeps it under X's rate limits. */
+const X_MIN_INTERVAL_MS = 28 * 60 * 1000;
 const REFINE_CONCURRENCY = 4;
 
 type LeanState = { lastPublishedFingerprint: string | null; lastPublishedAt: string | null; lastCommit: string | null };
@@ -140,7 +143,12 @@ export async function runCycle(now: Date = new Date()): Promise<CycleReport | nu
     const state = readJson<LeanState>(leanPath("state.json"), { lastPublishedFingerprint: null, lastPublishedAt: null, lastCommit: null });
     const inboxRoot = leanPath("editor-inbox");
     const inbox = importInbox(store, inboxRoot, settings, now);
-    const collected = await collect(store, leanSources(settings.xHandles), now);
+    const dueSources = leanSources(settings.xHandles).filter((source) => {
+      if (source.platform !== "x") return true;
+      const last = store.lastAttemptAt(source.sourceId);
+      return last === null || now.getTime() - Date.parse(last) >= X_MIN_INTERVAL_MS;
+    });
+    const collected = await collect(store, dueSources, now);
     const refined = await refinePending(store);
     const backup = backupStoreIfDue(store, now);
 

@@ -52,7 +52,7 @@ type XAccount = readonly [handle: string, contentType: LeanContentType, requireR
 const X_ACCOUNTS: readonly XAccount[] = [
   ["F1", "race_news", false], ["fia", "race_news", false],
   ["McLarenF1", "race_news", false], ["ScuderiaFerrari", "race_news", false], ["MercedesAMGF1", "race_news", false],
-  ["redbullracing", "race_news", false], ["WilliamsF1", "race_news", false], ["AlpineF1Team", "race_news", false],
+  ["redbullracing", "race_news", false], ["WilliamsRacing", "race_news", false], ["AlpineF1Team", "race_news", false],
   ["AstonMartinF1", "race_news", false], ["HaasF1Team", "race_news", false], ["audif1_", "race_news", false],
   ["visacashapprb", "race_news", false],
   ["LewisHamilton", "driver_social", false], ["Charles_Leclerc", "driver_social", false], ["LandoNorris", "driver_social", false],

@@ -210,6 +210,11 @@ export class LeanStore {
       ORDER BY COALESCE(source_published_at, published_at) DESC, public_id DESC LIMIT ?`).all(minTimelineAt, maxItems) as Row[]).map(toItem);
   }
 
+  lastAttemptAt(sourceId: string): string | null {
+    const row = this.db.prepare("SELECT last_attempt_at FROM source_runs WHERE source_id = ?").get(sourceId) as Row | undefined;
+    return row ? String(row.last_attempt_at) : null;
+  }
+
   recordSourceRun(sourceId: string, now: string, error: string | null): void {
     this.db.prepare(`INSERT INTO source_runs (source_id, last_attempt_at, last_success_at, last_error) VALUES (?, ?, ?, ?)
       ON CONFLICT (source_id) DO UPDATE SET last_attempt_at = excluded.last_attempt_at,
