@@ -80,13 +80,24 @@ function httpsUrl(value: string): string | null {
   }
 }
 
+/**
+ * Photo-agency pictures (Getty, XPB, AFP, …) are licensed to the publisher, not to us; they are never shown.
+ * Feeds rarely carry a credit, so the file name or URL is usually the only signal.
+ */
+const AGENCY_PATTERN = /getty|\bgi-\d|xpb[_-]|\bafp\b|reuters|shutterstock|imago|alamy|\bepa[_-]|pa[_-]?images|actionplus|sutton[_-]?images/i;
+
+export function isAgencyImage(url: string, credit = ""): boolean {
+  return AGENCY_PATTERN.test(decodeURIComponent(new URL(url).pathname)) || AGENCY_PATTERN.test(credit);
+}
+
 function pickImage(item: Node): FeedImage | null {
   const candidates = [...asArray(item.enclosure), ...asArray(item["media:content"]), ...asArray(item["media:thumbnail"])];
+  const itemCredit = text(item["media:credit"]);
   for (const candidate of candidates) {
     if (!candidate || typeof candidate !== "object") continue;
     const node = candidate as Node;
     const url = httpsUrl(text(node["@_url"]));
-    if (!url) continue;
+    if (!url || isAgencyImage(url, `${itemCredit} ${text(node["media:credit"])}`)) continue;
     const mimeType = imageMime(url, text(node["@_type"]));
     if (!mimeType) continue;
     const bytes = Number(text(node["@_length"]) || text(node["@_fileSize"]));

@@ -8,7 +8,7 @@ import { PublicStaticIndexSchema, PublicStaticPointerSchema } from "../features/
 import { backupStoreIfDue } from "../server/lean/backup.ts";
 import { DEFAULT_EDITORIAL_DOMAINS, type LeanSource } from "../server/lean/config.ts";
 import { importEditorInbox, markInboxPublished, parseSubmission, type InboxEntry } from "../server/lean/editor-inbox.ts";
-import { parseFeed } from "../server/lean/feed.ts";
+import { isAgencyImage, parseFeed } from "../server/lean/feed.ts";
 import { parseRefineOutput } from "../server/lean/refine.ts";
 import { buildSiteBundle } from "../server/lean/site-bundle.ts";
 import { LeanStore, linkKey, type StoredItem } from "../server/lean/store.ts";
@@ -51,6 +51,14 @@ describe("lean feed parsing", () => {
     expect(entry.text).toBe("Max won the race.");
     expect(entry.sourcePublishedAt).toBe("2026-09-24T12:23:20.000Z");
     expect(entry.image).toEqual({ url: "https://cdn.motorsport.com/a.jpg", mimeType: "image/jpeg", declaredBytes: 1234 });
+  });
+
+  it("recognizes photo-agency pictures by file name or credit", () => {
+    expect(isAgencyImage("https://storage.ghost.io/c/content/images/2026/09/XPB_1438331_HiRes.jpg")).toBe(true);
+    expect(isAgencyImage("https://cdn.example.com/GettyImages-2231.jpg")).toBe(true);
+    expect(isAgencyImage("https://e1.365dm.com/26/09/1920x1080/skysports-f1-lando-norris_7360408.jpg", "Getty Images")).toBe(true);
+    expect(isAgencyImage("https://cdn-8.motorsport.com/images/amp/2wlKQEbY/s6/carlos-sainz-williams.jpg")).toBe(false);
+    expect(isAgencyImage("https://e1.365dm.com/26/09/1920x1080/skysports-f1-lando-norris_7360408.jpg")).toBe(false);
   });
 
   it("parses Atom entries and never attaches images to X posts", () => {

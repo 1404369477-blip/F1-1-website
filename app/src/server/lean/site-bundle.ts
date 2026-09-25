@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 
 import { normalizePublicStaticRequestKey } from "../../features/stories/public-static-schema.ts";
 import { LEAN_CONTENT_TYPES, type LeanContentType } from "./config.ts";
+import { isAgencyImage } from "./feed.ts";
 import type { StoredItem } from "./store.ts";
 
 const PAGE_SIZE = 12;
@@ -37,7 +38,7 @@ function feedItem(item: StoredItem): Record<string, unknown> {
     sourcePublishedAt: item.sourcePublishedAt,
     sourceTimeStatus: item.sourcePublishedAt === null ? "unknown" : "known",
     source: { sourceId: item.sourceId, platform: item.platform, displayName: item.displayName, byline: item.displayName, accessStatus: "available" },
-    media: item.image === null ? null : {
+    media: item.image === null || isAgencyImage(item.image.url) ? null : {
       kind: "source_image",
       assetRef: item.image.url,
       mimeType: item.image.mimeType,
