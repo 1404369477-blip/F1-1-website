@@ -119,20 +119,23 @@ export class LeanStore {
     this.db.prepare("VACUUM INTO ?").run(path);
   }
 
-  /** Inserts unseen entries as pending; returns how many were new. Existing rows are never overwritten. */
+  /** Inserts unseen entries as pending; returns how many were new. Existing rows only gain a picture they lacked. */
   addEntries(source: LeanSource, entries: readonly FeedEntry[], now: string): number {
     const insert = this.db.prepare(`INSERT OR IGNORE INTO items
       (public_id, source_id, link_key, platform, display_name, content_type, require_relevance, link, title, text, source_published_at, first_seen_at, image_json, status)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`);
+    const fillImage = this.db.prepare("UPDATE items SET image_json = ? WHERE link_key = ? AND image_json IS NULL");
     let added = 0;
     this.db.exec("BEGIN IMMEDIATE");
     try {
       for (const entry of entries) {
         const key = linkKey(entry.link);
+        const imageJson = entry.image === null ? null : JSON.stringify(entry.image);
         const result = insert.run(publicIdFor(source.platform, key), source.sourceId, key, source.platform,
           source.displayName, source.contentType, source.requireRelevance ? 1 : 0, entry.link, entry.title, entry.text,
-          entry.sourcePublishedAt, now, entry.image === null ? null : JSON.stringify(entry.image));
+          entry.sourcePublishedAt, now, imageJson);
         added += Number(result.changes);
+        if (Number(result.changes) === 0 && imageJson !== null) fillImage.run(imageJson, key);
       }
       this.db.exec("COMMIT");
     } catch (error) {
@@ -163,9 +166,9 @@ export class LeanStore {
       const known = this.db.prepare("SELECT 1 FROM editor_submissions WHERE idempotency_key = ?").get(idempotencyKey);
       const inserted = known ? 0 : Number(this.db.prepare(`INSERT OR IGNORE INTO items
         (public_id, source_id, link_key, platform, display_name, content_type, require_relevance, link, title, text, source_published_at, first_seen_at, image_json, status, title_zh, summary_zh, key_points_json, published_at)
-        VALUES (?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, NULL, ?, ?, ?, ?, ?)`)
+        VALUES (?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
         .run(item.publicId, item.sourceId, key, item.platform, item.displayName, item.contentType, item.link, item.title, item.text,
-          item.sourcePublishedAt, item.firstSeenAt, item.status, item.titleZh, item.summaryZh, JSON.stringify(item.keyPointsZh), item.publishedAt).changes);
+          item.sourcePublishedAt, item.firstSeenAt, item.image === null ? null : JSON.stringify(item.image), item.status, item.titleZh, item.summaryZh, JSON.stringify(item.keyPointsZh), item.publishedAt).changes);
       if (inserted === 1) {
         this.db.prepare("INSERT INTO editor_submissions (idempotency_key, public_id, imported_at) VALUES (?, ?, ?)").run(idempotencyKey, item.publicId, item.firstSeenAt);
       }
@@ -198,6 +201,16 @@ export class LeanStore {
 
   markSkipped(publicId: string): void {
     this.db.prepare("UPDATE items SET status = 'skipped', attempts = attempts + 1 WHERE public_id = ? AND status = 'pending'").run(publicId);
+  }
+
+  /** X posts that are waiting for the model or already public. */
+  activeXPosts(): StoredItem[] {
+    return (this.db.prepare("SELECT * FROM items WHERE platform = 'x' AND status IN ('pending', 'ready')").all() as Row[]).map(toItem);
+  }
+
+  /** Takes a pending or public story out of the site for good; the row stays so it is never collected again. */
+  retire(publicId: string): void {
+    this.db.prepare("UPDATE items SET status = 'skipped' WHERE public_id = ? AND status IN ('pending', 'ready')").run(publicId);
   }
 
   markAttemptFailed(publicId: string): void {

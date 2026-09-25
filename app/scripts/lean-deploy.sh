@@ -19,12 +19,13 @@ cat > "$RUNTIME_APP/package.json" <<'JSON'
   "type": "module",
   "dependencies": {
     "fast-xml-parser": "5.10.1",
+    "sharp": "0.34.5",
     "zod": "4.4.3"
   }
 }
 JSON
 
-if [[ ! -d "$RUNTIME_APP/node_modules/fast-xml-parser" || ! -d "$RUNTIME_APP/node_modules/zod" ]]; then
+if [[ ! -d "$RUNTIME_APP/node_modules/fast-xml-parser" || ! -d "$RUNTIME_APP/node_modules/zod" || ! -d "$RUNTIME_APP/node_modules/sharp" ]]; then
   (cd "$RUNTIME_APP" && PATH="$NODE_BIN:$PATH" npm install --omit=dev --no-audit --no-fund)
 fi
 

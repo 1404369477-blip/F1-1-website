@@ -48,18 +48,25 @@ function createGit(cwd: string): { git: Git; remote: string } {
 
 const sha256File = (path: string): string => createHash("sha256").update(readFileSync(path)).digest("hex");
 
-/** Replaces the gh-pages tree with the UI shell plus `bundle`, then pushes one commit. */
+/**
+ * Replaces gh-pages with a single parentless commit of the UI shell plus `bundle`.
+ * Without history, pictures that left the site are garbage-collected instead of growing the repository forever.
+ */
 export function publishBundle(checkout: string, bundle: SiteBundle): string {
   mkdirSync(checkout, { recursive: true, mode: 0o700 });
   const { git, remote } = createGit(checkout);
   if (!existsSync(join(checkout, ".git"))) git(["init", `--initial-branch=${PAGES_BRANCH}`]);
+  // The fetched tip lets the push skip every blob GitHub already has.
   git(["fetch", "--no-tags", "--depth=1", remote, PAGES_BRANCH]);
   git(["reset", "--hard", "FETCH_HEAD"]);
   stageSite(checkout, bundle);
   git(["add", "--all"]);
-  git(["-c", "user.name=F1+1 Lean Publisher", "-c", "user.email=pages@users.noreply.github.com", "commit", "-q", "-m", `Publish ${bundle.itemCount} stories (${bundle.bundleId.slice(0, 12)})`]);
-  git(["push", "--porcelain", remote, `HEAD:refs/heads/${PAGES_BRANCH}`]);
-  return git(["rev-parse", "HEAD"]).stdout;
+  const tree = git(["write-tree"]).stdout;
+  const commit = git(["-c", "user.name=F1+1 Lean Publisher", "-c", "user.email=pages@users.noreply.github.com",
+    "commit-tree", tree, "-m", `Publish ${bundle.itemCount} stories (${bundle.bundleId.slice(0, 12)})`]).stdout;
+  git(["push", "--force", "--porcelain", remote, `${commit}:refs/heads/${PAGES_BRANCH}`]);
+  git(["reset", "-q", "--soft", commit]);
+  return commit;
 }
 
 /** Writes the complete gh-pages tree (UI shell, bundle, workflow) into `root`, replacing everything but `.git`. */
@@ -73,6 +80,8 @@ export function stageSite(root: string, bundle: SiteBundle): void {
     mkdirSync(dirname(join(site, path)), { recursive: true });
     writeFileSync(join(site, path), bytes);
   }
+  if (bundle.mediaFiles.size > 0) mkdirSync(join(site, "media"));
+  for (const [path, file] of bundle.mediaFiles) cpSync(file, join(site, path));
   writeFileSync(join(site, ".nojekyll"), "");
   writeFileSync(join(site, "_deployment.json"), JSON.stringify({
     schemaVersion: "public-static-deployment-v1",

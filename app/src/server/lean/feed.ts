@@ -106,6 +106,39 @@ function pickImage(item: Node): FeedImage | null {
   return null;
 }
 
+const TWIMG_FORMATS: Record<string, FeedImage["mimeType"]> = { jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", webp: "image/webp" };
+
+/** Normalizes a pbs.twimg.com picture URL to its `name=large` rendition; other hosts and avatars yield null. */
+export function largeTwimgUrl(value: string): { url: string; mimeType: FeedImage["mimeType"] } | null {
+  let url: URL;
+  try {
+    url = new URL(value.replace(/&amp;/g, "&"));
+  } catch {
+    return null;
+  }
+  if (url.protocol !== "https:" || url.hostname !== "pbs.twimg.com" || url.pathname.startsWith("/profile_")) return null;
+  const extension = /\.(jpe?g|png|webp)$/i.exec(url.pathname)?.[1];
+  if (extension) {
+    url.pathname = url.pathname.slice(0, -extension.length - 1);
+    url.searchParams.set("format", extension.toLowerCase() === "jpeg" ? "jpg" : extension.toLowerCase());
+  }
+  const mimeType = TWIMG_FORMATS[(url.searchParams.get("format") ?? "jpg").toLowerCase()];
+  if (!mimeType) return null;
+  url.searchParams.set("name", "large");
+  return { url: url.toString(), mimeType };
+}
+
+/** RSSHub renders tweet media as `<img src>` for photos and `<video poster>` for videos; the first one wins. */
+function pickTweetImage(html: string): FeedImage | null {
+  for (const [tag, name] of html.matchAll(/<(img|video)\b[^>]*>/gi)) {
+    const attribute = name.toLowerCase() === "img" ? "src" : "poster";
+    const value = new RegExp(`\\s${attribute}="([^"]+)"`, "i").exec(tag)?.[1];
+    const image = value ? largeTwimgUrl(value) : null;
+    if (image) return { ...image, declaredBytes: 1 };
+  }
+  return null;
+}
+
 function atomLink(value: unknown): string {
   for (const link of asArray(value)) {
     if (typeof link === "string") return link;
@@ -136,7 +169,7 @@ export function parseFeed(source: LeanSource, xml: string): FeedEntry[] {
       title,
       text: htmlToText(body),
       sourcePublishedAt: published ? isoOrNull(published) : null,
-      image: source.platform === "rss" ? pickImage(item) : null
+      image: source.platform === "rss" ? pickImage(item) : pickTweetImage(body)
     });
   }
   return entries.filter((entry) => entry.title.length > 0 || entry.text.length > 0);

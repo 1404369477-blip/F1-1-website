@@ -3,7 +3,8 @@ import { join } from "node:path";
 
 import { z } from "zod";
 
-import { LEAN_CONTENT_TYPES } from "./config.ts";
+import { EDITORIAL_IMAGE_HOSTS, LEAN_CONTENT_TYPES } from "./config.ts";
+import { isAgencyImage, largeTwimgUrl, type FeedImage } from "./feed.ts";
 import { linkKey, publicIdFor, type LeanStore, type StoredItem } from "./store.ts";
 
 export const EDITOR_SUBMISSION_MAX_BYTES = 64 * 1024;
@@ -39,8 +40,24 @@ const SubmissionSchema = z.object({
   credibility: z.string().trim().min(1).max(40),
   titleZh: chinese(120),
   summaryZh: chinese(600),
-  keyPointsZh: z.array(z.string()).optional()
+  keyPointsZh: z.array(z.string()).optional(),
+  imageUrl: z.string().url().refine((value) => value.startsWith("https://"), "NOT_HTTPS").optional()
 });
+
+function submissionImage(imageUrl: string | undefined): FeedImage | null {
+  if (imageUrl === undefined) return null;
+  const url = new URL(imageUrl);
+  if (!EDITORIAL_IMAGE_HOSTS.includes(url.hostname.toLowerCase())) throw new Rejection("IMAGE_DOMAIN_NOT_ALLOWED");
+  if (isAgencyImage(imageUrl)) throw new Rejection("IMAGE_AGENCY_NOT_ALLOWED");
+  if (url.hostname === "pbs.twimg.com") {
+    const tweetImage = largeTwimgUrl(imageUrl);
+    if (tweetImage === null) throw new Rejection("IMAGE_DOMAIN_NOT_ALLOWED");
+    return { ...tweetImage, declaredBytes: 1 };
+  }
+  const extension = /\.(jpe?g|png|webp|avif)$/i.exec(url.pathname)?.[1]?.toLowerCase();
+  const mimeType: FeedImage["mimeType"] = extension === "png" || extension === "webp" || extension === "avif" ? `image/${extension}` : "image/jpeg";
+  return { url: url.toString(), mimeType, declaredBytes: 1 };
+}
 
 class Rejection extends Error {}
 
@@ -68,6 +85,7 @@ export function parseSubmission(raw: string, allowedDomains: readonly string[], 
   const host = new URL(submission.originalUrl).hostname.toLowerCase();
   if (!allowedDomains.includes(submission.sourceDomain)) throw new Rejection("DOMAIN_NOT_ALLOWED");
   if (host !== submission.sourceDomain) throw new Rejection("URL_DOMAIN_MISMATCH");
+  const image = submissionImage(submission.imageUrl);
 
   const keyPointsZh = (submission.keyPointsZh ?? []).map((point) => point.trim()).filter((point) => point !== "").slice(0, MAX_KEY_POINTS);
   const item: StoredItem = {
@@ -82,7 +100,7 @@ export function parseSubmission(raw: string, allowedDomains: readonly string[], 
     text: submission.summaryZh,
     sourcePublishedAt: new Date(submission.sourcePublishedAt).toISOString(),
     firstSeenAt: now,
-    image: null,
+    image,
     status,
     attempts: 0,
     titleZh: submission.titleZh,

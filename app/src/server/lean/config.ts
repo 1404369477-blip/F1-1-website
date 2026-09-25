@@ -23,6 +23,8 @@ export const DEFAULT_EDITORIAL_DOMAINS: readonly string[] = [
   "www.formula1.com", "www.crash.net", "racingnews365.com", "www.racingnews365.com", "www.motorsport.com",
   "www.the-race.com", "www.skysports.com", "www.youtube.com", "youtu.be", "x.com", "twitter.com"
 ];
+/** Picture hosts an editor submission's `imageUrl` may use: F1 official media, YouTube covers, tweet photos. */
+export const EDITORIAL_IMAGE_HOSTS: readonly string[] = ["media.formula1.com", "www.formula1.com", "i.ytimg.com", "pbs.twimg.com"];
 export const PAGES_URL = "https://1404369477-blip.github.io/f1plus1/";
 export const PAGES_REMOTE = "ssh://git@ssh.github.com:443/1404369477-blip/f1plus1.git";
 export const PAGES_HTTPS_REMOTE = "https://github.com/1404369477-blip/f1plus1.git";

@@ -11,7 +11,7 @@ async function main(): Promise<void> {
     return;
   }
   process.stdout.write(`${JSON.stringify(report)}\n`);
-  if (report.sources.ok === 0 || report.site.reason.startsWith("PUBLISH_FAILED") || report.backup.error !== null) process.exitCode = 1;
+  if (report.sources.ok === 0 || report.site.reason.startsWith("PUBLISH_FAILED") || report.backup.error !== null || report.media.error !== null) process.exitCode = 1;
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {

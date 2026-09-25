@@ -1,8 +1,9 @@
 import { createHash } from "node:crypto";
 
 import { normalizePublicStaticRequestKey } from "../../features/stories/public-static-schema.ts";
-import { LEAN_CONTENT_TYPES, type LeanContentType } from "./config.ts";
+import { LEAN_CONTENT_TYPES, PAGES_URL, type LeanContentType } from "./config.ts";
 import { isAgencyImage } from "./feed.ts";
+import type { LocalImage, LocalMedia } from "./media.ts";
 import type { StoredItem } from "./store.ts";
 
 const PAGE_SIZE = 12;
@@ -18,6 +19,8 @@ export type SiteBundle = Readonly<{
   contentFingerprint: string;
   /** Site-relative path → file bytes, including `_public/current.json`. */
   files: ReadonlyMap<string, Buffer>;
+  /** Site-relative path → cached picture file to copy there. */
+  mediaFiles: ReadonlyMap<string, string>;
   itemCount: number;
 }>;
 
@@ -27,24 +30,32 @@ function timelineAt(item: StoredItem): string {
   return item.sourcePublishedAt ?? item.publishedAt ?? item.firstSeenAt;
 }
 
-function feedItem(item: StoredItem): Record<string, unknown> {
+/** Only site-hosted copies are referenced; a picture without one is left out rather than hot-linked. */
+function localImage(item: StoredItem, localMedia: LocalMedia): LocalImage | undefined {
+  return item.image === null || isAgencyImage(item.image.url) ? undefined : localMedia.get(item.image.url);
+}
+
+/** `media_missing` makes the UI omit the picture area; `ready` without media would draw a synthetic placeholder. */
+function feedItemWith(item: StoredItem, localMedia: LocalMedia): Record<string, unknown> {
+  const local = localImage(item, localMedia);
+  const media = local === undefined ? null : {
+    kind: "source_image",
+    assetRef: new URL(local.sitePath, PAGES_URL).toString(),
+    mimeType: "image/webp",
+    declaredBytes: local.bytes,
+    altZh: item.titleZh
+  };
   return {
     publicId: item.publicId,
     contentType: item.contentType,
-    state: "ready",
+    state: media === null ? "media_missing" : "ready",
     titleZh: item.titleZh,
     summaryZh: item.summaryZh,
     publishedAt: item.publishedAt,
     sourcePublishedAt: item.sourcePublishedAt,
     sourceTimeStatus: item.sourcePublishedAt === null ? "unknown" : "known",
     source: { sourceId: item.sourceId, platform: item.platform, displayName: item.displayName, byline: item.displayName, accessStatus: "available" },
-    media: item.image === null || isAgencyImage(item.image.url) ? null : {
-      kind: "source_image",
-      assetRef: item.image.url,
-      mimeType: item.image.mimeType,
-      declaredBytes: item.image.declaredBytes,
-      altZh: item.titleZh
-    },
+    media,
     originalLink: { enabled: true, url: item.link, reason: null }
   };
 }
@@ -78,8 +89,14 @@ function relatedFor(item: StoredItem, items: readonly StoredItem[]): StoredItem[
 }
 
 /** Builds the static `/api/public/*` responses the published UI reads. `items` must be ready items. */
-export function buildSiteBundle(readyItems: readonly StoredItem[], generatedAt: string): SiteBundle {
+export function buildSiteBundle(readyItems: readonly StoredItem[], generatedAt: string, localMedia: LocalMedia = new Map()): SiteBundle {
   const items = [...readyItems].sort((a, b) => timelineAt(b).localeCompare(timelineAt(a)) || b.publicId.localeCompare(a.publicId));
+  const feedItem = (item: StoredItem) => feedItemWith(item, localMedia);
+  const mediaFiles = new Map<string, string>();
+  for (const item of items) {
+    const local = localImage(item, localMedia);
+    if (local !== undefined) mediaFiles.set(local.sitePath, local.file);
+  }
   const responses: Record<string, ResponseRef> = {};
   const bodies = new Map<string, Buffer>();
 
@@ -148,5 +165,5 @@ export function buildSiteBundle(readyItems: readonly StoredItem[], generatedAt: 
     indexPath: `${generation}/index.json`,
     indexSha256: bundleId
   })));
-  return { bundleId, contentFingerprint, files, itemCount: items.length };
+  return { bundleId, contentFingerprint, files, mediaFiles, itemCount: items.length };
 }

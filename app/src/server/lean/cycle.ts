@@ -4,10 +4,12 @@ import { DEFAULT_EDITORIAL_DOMAINS, leanPath, leanSources, REFINE_BATCH_LIMIT, S
 import { importEditorInbox, markInboxPublished, type EditorInboxSettings, type InboxReport } from "./editor-inbox.ts";
 import { backupStoreIfDue, type BackupReport } from "./backup.ts";
 import { fetchFeed } from "./feed.ts";
+import { localizeImages, type LocalMedia, type MediaReport } from "./media.ts";
 import { publishBundle, stageSite } from "./pages-publish.ts";
 import { refineItem, resolveModel } from "./refine.ts";
 import { buildSiteBundle } from "./site-bundle.ts";
-import { LeanStore } from "./store.ts";
+import { LeanStore, type StoredItem } from "./store.ts";
+import { tweetSkipReason, type TweetSkipReason } from "./x-filter.ts";
 
 /** Entries older than this on first sight are history, not news; they are not summarized. */
 const MAX_NEW_ENTRY_AGE_MS = 3 * 24 * 3600 * 1000;
@@ -31,8 +33,11 @@ export type CycleReport = {
   inbox: InboxReport & { error: string | null };
   sources: { ok: number; failed: { sourceId: string; error: string }[] };
   newEntries: number;
+  /** X posts taken out this cycle (new ones before the model sees them, public ones on the next publish). */
+  xFiltered: Record<TweetSkipReason, number>;
   refined: { ready: number; skipped: number; failed: number };
   backup: BackupReport;
+  media: MediaReport & { error: string | null };
   site: { items: number; published: boolean; commit: string | null; reason: string };
   counts: Record<string, number>;
 };
@@ -100,6 +105,18 @@ async function collect(store: LeanStore, sources: readonly LeanSource[], now: Da
   return { sources: { ok: sources.length - failed.length, failed }, newEntries };
 }
 
+/** Re-checked every cycle, so a tightened rule also removes posts that are already public. */
+function retireFilteredPosts(store: LeanStore): CycleReport["xFiltered"] {
+  const counts: CycleReport["xFiltered"] = { retweet: 0, promotion: 0, too_short: 0 };
+  for (const post of store.activeXPosts()) {
+    const reason = tweetSkipReason(post);
+    if (reason === null) continue;
+    store.retire(post.publicId);
+    counts[reason]++;
+  }
+  return counts;
+}
+
 async function refinePending(store: LeanStore): Promise<CycleReport["refined"]> {
   const pending = store.pending(REFINE_BATCH_LIMIT);
   const refined = { ready: 0, skipped: 0, failed: 0 };
@@ -133,6 +150,15 @@ function importInbox(store: LeanStore, root: string, settings: LeanSettings, now
   }
 }
 
+async function localizeMedia(items: readonly StoredItem[], now: Date): Promise<{ media: LocalMedia; report: CycleReport["media"] }> {
+  try {
+    const { media, report } = await localizeImages(items, leanPath("media"), now);
+    return { media, report: { ...report, error: null } };
+  } catch (error) {
+    return { media: new Map(), report: { cached: 0, downloaded: 0, failed: 0, deferred: 0, error: error instanceof Error ? error.message.slice(0, 200) : "UNKNOWN" } };
+  }
+}
+
 export async function runCycle(now: Date = new Date()): Promise<CycleReport | null> {
   mkdirSync(leanPath(), { recursive: true, mode: 0o700 });
   const release = acquireLock(leanPath("cycle.lock"));
@@ -149,18 +175,23 @@ export async function runCycle(now: Date = new Date()): Promise<CycleReport | nu
       return last === null || now.getTime() - Date.parse(last) >= X_MIN_INTERVAL_MS;
     });
     const collected = await collect(store, dueSources, now);
+    const xFiltered = retireFilteredPosts(store);
     const refined = await refinePending(store);
     const backup = backupStoreIfDue(store, now);
 
     const minTimelineAt = new Date(now.getTime() - SITE_MAX_AGE_DAYS * 24 * 3600 * 1000).toISOString();
     const readyItems = store.ready(SITE_MAX_ITEMS, minTimelineAt);
     const heldItems = store.held();
-    const bundle = buildSiteBundle(readyItems, now.toISOString());
+    const localized = await localizeMedia([...heldItems, ...readyItems], now);
+    const bundle = buildSiteBundle(readyItems, now.toISOString(), localized.media);
     if (!settings.publish || heldItems.length > 0) {
-      stageSite(leanPath("preview"), heldItems.length > 0 ? buildSiteBundle([...heldItems, ...readyItems], now.toISOString()) : bundle);
+      stageSite(leanPath("preview"), heldItems.length > 0 ? buildSiteBundle([...heldItems, ...readyItems], now.toISOString(), localized.media) : bundle);
     }
     let site: CycleReport["site"] = { items: bundle.itemCount, published: false, commit: null, reason: "UNCHANGED" };
-    if (!settings.publish) {
+    if (localized.report.error !== null) {
+      // Publishing now would strip every picture from the live site.
+      site = { ...site, reason: "MEDIA_FAILED" };
+    } else if (!settings.publish) {
       site = { ...site, reason: "PUBLISH_DISABLED" };
     } else if (bundle.contentFingerprint !== state.lastPublishedFingerprint) {
       try {
@@ -173,7 +204,7 @@ export async function runCycle(now: Date = new Date()): Promise<CycleReport | nu
     }
     const liveCommit = site.published ? site.commit : site.reason === "UNCHANGED" ? state.lastCommit : null;
     if (liveCommit !== null && inbox.enabled) markInboxPublished(inboxRoot, liveCommit, now.toISOString());
-    const report: CycleReport = { startedAt: now.toISOString(), finishedAt: new Date().toISOString(), inbox, ...collected, refined, backup, site, counts: store.counts() };
+    const report: CycleReport = { startedAt: now.toISOString(), finishedAt: new Date().toISOString(), inbox, ...collected, xFiltered, refined, backup, media: localized.report, site, counts: store.counts() };
     writeJsonAtomic(leanPath("last-cycle.json"), report);
     return report;
   } finally {
