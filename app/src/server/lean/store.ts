@@ -208,9 +208,18 @@ export class LeanStore {
     return (this.db.prepare("SELECT * FROM items WHERE platform = 'x' AND status IN ('pending', 'ready')").all() as Row[]).map(toItem);
   }
 
-  /** Takes a pending or public story out of the site for good; the row stays so it is never collected again. */
+  /** Summarized X posts later taken off the site; the model's own skips never have a Chinese title. */
+  retiredXPosts(): StoredItem[] {
+    return (this.db.prepare("SELECT * FROM items WHERE platform = 'x' AND status = 'skipped' AND title_zh IS NOT NULL").all() as Row[]).map(toItem);
+  }
+
+  /** Takes a pending or public story out of the site; the row stays so it is never collected again. */
   retire(publicId: string): void {
     this.db.prepare("UPDATE items SET status = 'skipped' WHERE public_id = ? AND status IN ('pending', 'ready')").run(publicId);
+  }
+
+  reinstate(publicId: string): void {
+    this.db.prepare("UPDATE items SET status = 'ready' WHERE public_id = ? AND status = 'skipped' AND title_zh IS NOT NULL").run(publicId);
   }
 
   markAttemptFailed(publicId: string): void {

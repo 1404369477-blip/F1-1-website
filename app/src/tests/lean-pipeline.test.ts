@@ -315,6 +315,7 @@ describe("lean X post filter", () => {
     expect(reason("Can Leclerc win in Baku? The Ferrari driver was fastest in FP2 on Friday")).toBeNull();
     expect(reason("Kimi knows how to make a fans day 🥹")).toBeNull();
     expect(reason("Drivers 44 and 16 ready for racing 🏎️🇦🇿")).toBeNull();
+    expect(reason("Second practice of the day coming up now 👊  Tap here to follow live: https://bit.ly/4rvNkCo")).toBeNull();
   });
 
   it("takes filtered posts off the site, including ones already public", () => {
@@ -325,6 +326,11 @@ describe("lean X post filter", () => {
     for (const post of store.activeXPosts()) if (tweetSkipReason(post)) store.retire(post.publicId);
     expect(store.ready(10, "2026-01-01T00:00:00.000Z").map((item) => item.link)).toEqual(["https://x.com/F1/status/2"]);
     expect(store.counts()).toMatchObject({ ready: 1, skipped: 1 });
+
+    const [retired] = store.retiredXPosts();
+    expect(retired.link).toBe("https://x.com/F1/status/1");
+    store.reinstate(retired.publicId);
+    expect(store.counts()).toMatchObject({ ready: 2, skipped: 0 });
     store.close();
   });
 });

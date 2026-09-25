@@ -34,7 +34,7 @@ export type CycleReport = {
   sources: { ok: number; failed: { sourceId: string; error: string }[] };
   newEntries: number;
   /** X posts taken out this cycle (new ones before the model sees them, public ones on the next publish). */
-  xFiltered: Record<TweetSkipReason, number>;
+  xFiltered: Record<TweetSkipReason | "reinstated", number>;
   refined: { ready: number; skipped: number; failed: number };
   backup: BackupReport;
   media: MediaReport & { error: string | null };
@@ -105,14 +105,19 @@ async function collect(store: LeanStore, sources: readonly LeanSource[], now: Da
   return { sources: { ok: sources.length - failed.length, failed }, newEntries };
 }
 
-/** Re-checked every cycle, so a tightened rule also removes posts that are already public. */
+/** Re-checked every cycle: a tightened rule removes public posts, a loosened one brings them back. */
 function retireFilteredPosts(store: LeanStore): CycleReport["xFiltered"] {
-  const counts: CycleReport["xFiltered"] = { retweet: 0, promotion: 0, too_short: 0 };
+  const counts: CycleReport["xFiltered"] = { retweet: 0, promotion: 0, too_short: 0, reinstated: 0 };
   for (const post of store.activeXPosts()) {
     const reason = tweetSkipReason(post);
     if (reason === null) continue;
     store.retire(post.publicId);
     counts[reason]++;
+  }
+  for (const post of store.retiredXPosts()) {
+    if (tweetSkipReason(post) !== null) continue;
+    store.reinstate(post.publicId);
+    counts.reinstated++;
   }
   return counts;
 }
