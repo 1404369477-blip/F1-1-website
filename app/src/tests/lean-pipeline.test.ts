@@ -300,6 +300,7 @@ describe("lean X post filter", () => {
   it("skips promotions, retweets and captions without substance", () => {
     expect(reason("Haven't entered yet? Last chance to enter our ultimate Las Vegas competition - enter via the link 👉 https://t.co/x")).toBe("promotion");
     expect(reason("WIN a signed cap! Follow and retweet for your chance #Giveaway")).toBe("promotion");
+    expect(reason("A once-in-a-lifetime trip awaits 🇺🇸 Tap here for your chance to be our VIP in Las Vegas: https://bit.ly/4xYLmN9")).toBe("promotion");
     expect(reason("Tickets for the 2027 season are on sale now, grab yours today")).toBe("promotion");
     expect(reason("The new team collection has landed, shop now at the store today")).toBe("promotion");
     expect(reason("转发抽奖：送出三顶车队签名帽，快来参与我们的活动吧")).toBe("promotion");

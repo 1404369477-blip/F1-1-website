@@ -8,6 +8,7 @@ const PROMOTION = new RegExp([
   String.raw`\b(giveaways?|competitions?|sweepstakes?|raffles?|merch|merchandise|tickets?|prizes?)\b`,
   String.raw`\bwin (a|an|one|two|the chance|tickets?|signed|your|this|our)\b`, String.raw`\bchance to win\b`, String.raw`#win\b`,
   String.raw`\b(enter (now|here|via|today)|to enter|how to enter)\b`,
+  String.raw`\b(your chance to|for (a|your) chance|tap here|click here|don't miss out)\b`,
   String.raw`\b(shop now|shop the|pre-?order|use code|promo code|discount|limited edition|link in bio)\b`,
   String.raw`#(ad|sponsored|partner)\b`, String.raw`\b(sponsored|brought to you by|in partnership with|presented by)\b`,
   "抽奖", "门票", "购票", "周边", "赠送", "优惠码"
