@@ -6,8 +6,8 @@ import { afterEach, describe, expect, it } from "vitest";
 
 import { PublicStaticIndexSchema, PublicStaticPointerSchema } from "../features/stories/public-static-schema.ts";
 import { backupStoreIfDue } from "../server/lean/backup.ts";
-import type { LeanSource } from "../server/lean/config.ts";
-import { importEditorInbox, markInboxPublished, type InboxEntry } from "../server/lean/editor-inbox.ts";
+import { DEFAULT_EDITORIAL_DOMAINS, type LeanSource } from "../server/lean/config.ts";
+import { importEditorInbox, markInboxPublished, parseSubmission, type InboxEntry } from "../server/lean/editor-inbox.ts";
 import { parseFeed } from "../server/lean/feed.ts";
 import { parseRefineOutput } from "../server/lean/refine.ts";
 import { buildSiteBundle } from "../server/lean/site-bundle.ts";
@@ -168,6 +168,13 @@ describe("lean editor inbox", () => {
     expect(store.ready(10, "2026-01-01T00:00:00.000Z")).toHaveLength(1);
     expect(status(inbox).entries[0]).toMatchObject({ state: "done", publishedHint: "awaiting_publish" });
     store.close();
+  });
+
+  it("accepts tweets from the default allow-list", () => {
+    const tweet = submission({ originalUrl: "https://x.com/F1/status/2103211618280604081", sourceDomain: "x.com", sourceName: "@F1" });
+    expect(parseSubmission(tweet, DEFAULT_EDITORIAL_DOMAINS, "ready", "2026-09-24T15:00:00.000Z").item.sourceId).toBe("editor-x-com");
+    const legacy = submission({ originalUrl: "https://twitter.com/F1/status/1", sourceDomain: "twitter.com" });
+    expect(parseSubmission(legacy, DEFAULT_EDITORIAL_DOMAINS, "ready", "2026-09-24T15:00:00.000Z").item.sourceId).toBe("editor-twitter-com");
   });
 
   it("leaves the inbox untouched when disabled", () => {
