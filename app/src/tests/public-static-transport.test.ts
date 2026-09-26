@@ -147,7 +147,7 @@ describe("public static transport", () => {
       if (failure === "hash") data.files.set(path, JSON.stringify({ ...emptyFeed, items: [detail.story] }));
       if (failure === "missing") data.files.delete(path);
       if (failure === "html") data.files.set(`/${data.pointer.indexPath}`, "<html>404</html>");
-      await expect(fetchPublicFeed({ fetchImpl: createPublicStaticFetch({ fetchImpl: server(data.files).fetch }).fetch })).rejects.toBeInstanceOf(PublicApiClientError);
+      await expect(fetchPublicFeed({ fetchImpl: createPublicStaticFetch({ fetchImpl: server(data.files).fetch, retryDelaysMs: [] }).fetch })).rejects.toBeInstanceOf(PublicApiClientError);
     }
   });
 
@@ -158,6 +158,31 @@ describe("public static transport", () => {
     const transport = createPublicStaticFetch({ fetchImpl: origin.fetch, expectedBundleId: before.bundleId });
     await expect(transport.fetch("/api/public/feed?cursorAt=2026-09-12T06%3A00%3A00.000Z&cursorId=YWJj", { headers: { Accept: "application/json" } })).rejects.toBeInstanceOf(PublicStaticGenerationChangedError);
     expect(origin.calls.some((path) => path.includes("/responses/"))).toBe(false);
+  });
+
+  it("loads a second page from the cached index and keeps the same bundle id", async () => {
+    const item = (id: string) => ({
+      publicId: id, contentType: "race_news", state: "ready", titleZh: `标题 ${id}`, summaryZh: "摘要",
+      publishedAt: generatedAt, sourcePublishedAt: generatedAt, sourceTimeStatus: "known",
+      source: { sourceId: "src-news", platform: "rss", displayName: "来源", byline: "来源", accessStatus: "available" },
+      media: null, originalLink: { enabled: false, url: null, reason: "source_restricted" }
+    });
+    const firstItems = Array.from({ length: 12 }, (_, index) => item(`public-page-1-${index}`));
+    const secondItems = Array.from({ length: 12 }, (_, index) => item(`public-page-2-${index}`));
+    const cursor = { cursorAt: generatedAt, cursorId: "cursor_page_2" };
+    const data = artifact([
+      { key: "/api/public/feed?v=2&limit=12", body: readFailure, status: 503 },
+      { key: "/api/public/feed", body: { schemaVersion: "public-read-v0.1", items: firstItems, page: { pageSize: 12, hasMore: true, nextCursor: cursor } } },
+      { key: "/api/public/feed?cursorAt=2026-09-12T06%3A00%3A00.000Z&cursorId=cursor_page_2", body: { schemaVersion: "public-read-v0.1", items: secondItems, page: { pageSize: 12, hasMore: false, nextCursor: null } } }
+    ]);
+    const origin = server(data.files);
+    const firstTransport = createPublicStaticFetch({ fetchImpl: origin.fetch });
+    const first = { ...(await fetchPublicFeed({ fetchImpl: firstTransport.fetch })), staticBundleId: firstTransport.getBundleId() };
+    const secondTransport = createPublicStaticFetch({ fetchImpl: origin.fetch, expectedBundleId: first.staticBundleId });
+    const second = { ...(await fetchPublicFeed({ fetchImpl: secondTransport.fetch, cursor: first.page.nextCursor })), staticBundleId: secondTransport.getBundleId() };
+    expect(second.staticBundleId).toBe(first.staticBundleId);
+    expect(appendPublicFeedPage(first, second)?.stories).toHaveLength(24);
+    expect(origin.calls.filter((path) => path.includes("index.json"))).toHaveLength(1);
   });
 
   it("cannot append pages across bundles and retains the bundle identity through successive pages", () => {
@@ -184,6 +209,28 @@ describe("public static transport", () => {
     await expect(createPublicStaticFetch({ fetchImpl: origin.fetch }).fetch("/api/public/feed", { headers: { Accept: "application/json" }, signal: controller.signal })).rejects.toMatchObject({ name: "AbortError" });
     expect(origin.calls).toEqual([]);
     const offline = async (): Promise<Response> => { throw new TypeError("Network failed"); };
-    await expect(fetchPublicFeed({ fetchImpl: createPublicStaticFetch({ fetchImpl: offline }).fetch })).rejects.toMatchObject({ status: 0 });
+    await expect(fetchPublicFeed({ fetchImpl: createPublicStaticFetch({ fetchImpl: offline, retryDelaysMs: [] }).fetch })).rejects.toMatchObject({ status: 0 });
+  });
+
+  it("recovers when the cached pointer names a deleted generation, and refetches after a bad hash", async () => {
+    const good = artifact([{ key: "/api/public/feed", body: emptyFeed }]);
+    const staleId = "ab".repeat(32);
+    const files = new Map(good.files);
+    files.set("/_public/current.json", JSON.stringify({
+      schemaVersion: "public-static-pointer-v1",
+      bundleId: staleId,
+      generatedAt,
+      indexPath: `_public/generations/${staleId}/index.json`,
+      indexSha256: staleId
+    }));
+    files.set(`/_public/generations/${staleId}/index.json`, JSON.stringify(good.index));
+    files.set("/_public/generations/manifest.json", JSON.stringify({
+      generations: [{ id: good.bundleId, publishedAt: generatedAt, generatedAt }]
+    }));
+    const origin = server(files);
+    const transport = createPublicStaticFetch({ fetchImpl: origin.fetch, retryDelaysMs: [0] });
+    const response = await transport.fetch("/api/public/feed", { headers: { Accept: "application/json" } });
+    expect(response.status).toBe(200);
+    expect(origin.calls.some((path) => path.includes("manifest.json"))).toBe(true);
   });
 });

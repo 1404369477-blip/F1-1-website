@@ -115,12 +115,18 @@ function dayIndex(value: Clock): number {
 
 export function countdownText(ms: number, style: "desktop" | "compact"): string {
   const total = Math.max(0, Math.floor(ms / 60000));
+  if (total < 1) return "即将开始";
   const days = Math.floor(total / 1440);
   const hours = Math.floor((total % 1440) / 60);
   const minutes = total % 60;
   if (days >= 1) return style === "desktop" ? `${days}天${hours}小时` : `${days}天${hours}时`;
   if (hours >= 1) return style === "desktop" ? `${hours}小时${minutes}分` : `${hours}时${minutes}分`;
   return style === "desktop" ? `${minutes}分钟` : `${minutes}分`;
+}
+
+function countdownPhrase(ms: number, style: "desktop" | "compact", lead: string): string {
+  const text = countdownText(ms, style);
+  return text === "即将开始" ? "即将开始" : `${lead}${text}`;
 }
 
 function whenLabel(target: Date, now: Date): string {
@@ -287,9 +293,9 @@ export function describeStrip(calendar: F1Calendar, now: Date): StripView | null
     const name = SESSION_META[nextSession.session.key].full;
     return {
       marker: "weekend",
-      headline: `${focus.nameZh} · ${name} ${when} ${time} · 还有 ${countdownText(nextSession.start - at, "desktop")}`,
+      headline: `${focus.nameZh} · ${name} ${when} ${time} · ${countdownPhrase(nextSession.start - at, "desktop", "还有 ")}`,
       mobileHeadline: `${focus.nameZh} · ${name} ${when} ${time}`,
-      mobileAside: `还有 ${countdownText(nextSession.start - at, "compact")}`,
+      mobileAside: countdownPhrase(nextSession.start - at, "compact", "还有 "),
       showTimeline: true,
       meta,
       sessions,
@@ -302,9 +308,9 @@ export function describeStrip(calendar: F1Calendar, now: Date): StripView | null
   const when = `${clock(new Date(nextRaceSession.start)).m}/${clock(new Date(nextRaceSession.start)).d} ${clock(new Date(nextRaceSession.start)).weekday} ${clockLabel(new Date(nextRaceSession.start))}`;
   return {
     marker: "between",
-    headline: `下一站 ${focus.nameZh} · ${raceRange(focus)} · 正赛 ${when} · 还有 ${countdownText(nextRaceSession.start - at, "desktop")}`,
+    headline: `下一站 ${focus.nameZh} · ${raceRange(focus)} · 正赛 ${when} · ${countdownPhrase(nextRaceSession.start - at, "desktop", "还有 ")}`,
     mobileHeadline: `下一站 ${focus.nameZh} · ${raceRange(focus)}`,
-    mobileAside: `正赛 还有 ${countdownText(nextRaceSession.start - at, "compact")}`,
+    mobileAside: countdownPhrase(nextRaceSession.start - at, "compact", "正赛 还有 "),
     showTimeline: false,
     meta: metaPrevious,
     sessions: [],
@@ -347,6 +353,7 @@ function sessionRows(race: CalendarRace, now: Date): StripSession[] {
     const start = Date.parse(session.start);
     const cancelled = session.status === "cancelled";
     const phase: SessionPhase = cancelled ? "cancelled"
+      : session.key === "race" && race.winner && start <= at ? "done"
       : live?.session.key === session.key ? "live"
       : next?.session.key === session.key ? "next"
       : start + durationMs(session.key) <= at ? "done"
@@ -356,7 +363,7 @@ function sessionRows(race: CalendarRace, now: Date): StripSession[] {
     const statusLabel = cancelled ? "已取消"
       : phase === "done" ? "已结束"
       : phase === "live" ? "进行中"
-      : `还有 ${countdownText(start - at, "compact")}`;
+      : countdownPhrase(start - at, "compact", "还有 ");
     return {
       key: session.key,
       short: meta.short,

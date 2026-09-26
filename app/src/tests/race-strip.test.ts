@@ -70,6 +70,7 @@ describe("race strip clock", () => {
       races: calendar.races.map((race) => race.round === 15 ? { ...race, winner } : race)
     };
     expect(describeStrip(withWinner, new Date("2026-09-26T19:40:00+08:00"))?.headline).toContain("正赛已结束");
+    expect(describeStrip(withWinner, new Date("2026-09-26T19:40:00+08:00"))?.sessions.find((session) => session.key === "race")?.phase).toBe("done");
 
     const between = describeStrip(calendar, new Date("2026-09-17T20:00:00+08:00"));
     expect(between?.headline).toBe("下一站 阿塞拜疆站 · 9/24–26 · 正赛 9/26 周六 19:00 · 还有 8天23小时");
@@ -99,5 +100,7 @@ describe("race strip clock", () => {
     expect(isDenseWindow(calendar, new Date("2026-09-17T12:00:00Z"))).toBe(false);
     expect(needsWinnerRefresh(calendar, new Date("2026-09-26T16:00:00Z"))).toBe(true);
     expect(countdownText(6 * 3600000 + 32 * 60000, "desktop")).toBe("6小时32分");
+    expect(countdownText(30_000, "compact")).toBe("即将开始");
+    expect(describeStrip(calendar, new Date("2026-09-26T10:59:30Z"))?.mobileAside).toBe("即将开始");
   });
 });

@@ -22,10 +22,15 @@ function needsReclean(item: StoredItem): boolean {
 /** Refreshes RSS full text without taking the publish lock. Newest stories first. */
 async function main(): Promise<void> {
   const store = new LeanStore(leanPath("store.sqlite"));
+  const gapsOnly = process.argv.includes("--gaps");
   const byId = new Map<string, StoredItem>();
-  for (const item of store.rssToRepair()) byId.set(item.publicId, item);
+  if (!gapsOnly) {
+    for (const item of store.rssToRepair()) byId.set(item.publicId, item);
+  }
   for (const item of store.allReadyRss()) {
-    if (item.platform === "rss" && item.detailZh && needsReclean(item)) byId.set(item.publicId, item);
+    if (item.platform !== "rss" || !item.detailZh) continue;
+    const missingEnglishPoints = item.keyPointsEn.length === 0;
+    if (needsReclean(item) || (gapsOnly && missingEnglishPoints)) byId.set(item.publicId, item);
   }
   const items = [...byId.values()].sort((a, b) => repairRank(a) - repairRank(b) || (b.sourcePublishedAt ?? "").localeCompare(a.sourcePublishedAt ?? ""));
   const model = resolveModel();
@@ -44,12 +49,13 @@ async function main(): Promise<void> {
         if (result.kind === "irrelevant") {
           failed += 1;
         } else {
+          const keepPoints = result.keyPointsZh.length === 0 && item.keyPointsZh.length > 0 && !item.keyPointsZh.some(hasStrayEnglish);
           store.rewriteReady(item.publicId, {
             titleZh: result.titleZh,
             summaryZh: result.summaryZh,
             summaryEn: result.summaryEn,
-            keyPointsZh: paragraphs ? result.keyPointsZh : [],
-            keyPointsEn: paragraphs ? result.keyPointsEn : [],
+            keyPointsZh: paragraphs ? (keepPoints ? item.keyPointsZh : result.keyPointsZh) : [],
+            keyPointsEn: paragraphs ? (keepPoints ? item.keyPointsEn : result.keyPointsEn) : [],
             detailEn: paragraphs,
             detailZh: result.detailZh
           });

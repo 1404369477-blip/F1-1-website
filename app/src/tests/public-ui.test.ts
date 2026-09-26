@@ -775,7 +775,7 @@ describe("small-publication editorial presentation", () => {
     expect(feedSource).toContain("disabled={!hasEnglishExtract}");
     expect(feedSource).not.toContain("getEnglishFallback");
     expect(feedSource).toContain("shouldShowEndOfFeed(stories.length, page?.hasMore === true)");
-    expect(feedSource).toContain("formatTimelineKicker(stories.length)");
+    expect(feedSource).not.toContain("formatTimelineKicker(stories.length)");
     expect(detailSource).toContain("hasEditorialExtras(copy.lead, copy.body, copy.keyPoints)");
     expect(detailSource).toContain("editorialSectionLabel(selectedLanguage, copy)");
     expect(detailSource).toContain("originalArticleCta(selectedLanguage, story.sourceName)");

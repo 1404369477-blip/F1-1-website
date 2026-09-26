@@ -34,3 +34,19 @@ export function tweetSkipReason(post: { title: string; text: string }): TweetSki
   if (words < MIN_WORDS || letters < MIN_LETTERS) return "too_short";
   return null;
 }
+
+/** Same account, same pitch. Hashtags and short words do not count, so race updates stay separate. */
+export function isNearDuplicateTweet(left: string, right: string): boolean {
+  const words = (value: string) => new Set(value.toLowerCase()
+    .replace(/https?:\/\/\S+/g, " ")
+    .replace(/[#@][\p{L}\p{N}_]+/gu, " ")
+    .replace(/[^\p{L}\p{N}]+/gu, " ")
+    .split(/\s+/)
+    .filter((word) => word.length > 3));
+  const a = words(left);
+  const b = words(right);
+  if (a.size < 6 || b.size < 6) return false;
+  let shared = 0;
+  for (const word of a) if (b.has(word)) shared += 1;
+  return shared / Math.max(a.size, b.size) >= 0.85;
+}

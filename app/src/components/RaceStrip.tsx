@@ -74,6 +74,7 @@ export function RaceStrip() {
         aria-expanded={open}
         aria-controls={panelId}
         aria-label="F1 赛程，北京时间，点击展开"
+        onMouseDown={(event) => event.preventDefault()}
         onClick={(event) => {
           const scroller = event.currentTarget.closest("main");
           const top = scroller instanceof HTMLElement ? scroller.scrollTop : 0;
@@ -143,7 +144,7 @@ function Panel({ id, view }: { id: string; view: StripView }) {
           <>
             <p className="timeline-kicker rs-label">上一站</p>
             <p className="rs-side-row"><span>{view.previous.nameZh}</span><span>{view.previous.dates}</span></p>
-            <p className="rs-winner">冠军 {view.previous.winner}</p>
+            <p className="rs-winner">{view.previous.winner === "成绩待更新" ? "成绩待更新" : `冠军 ${view.previous.winner}`}</p>
           </>
         ) : null}
         {view.upcoming.length > 0 ? (

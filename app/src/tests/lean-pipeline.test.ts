@@ -1,4 +1,4 @@
-import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -12,12 +12,15 @@ import { importEditorInbox, markInboxPublished, parseSubmission, type InboxEntry
 import { isAgencyImage, largeTwimgUrl, parseFeed } from "../server/lean/feed.ts";
 import { localizeImages, mediaKey } from "../server/lean/media.ts";
 import { extractArticleParagraphs } from "../server/lean/article.ts";
+import { applyChineseNames } from "../server/lean/chinese-names.ts";
 import { dropRepeatedPoints, leanRefineModelOrder, parseRefineOutput, refineRequestBody } from "../server/lean/refine.ts";
 import { REFINE_MODEL_CATALOG } from "../server/rss/refine-model.ts";
 import { buildSiteBundle } from "../server/lean/site-bundle.ts";
 import { LeanStore, linkKey, type StoredItem } from "../server/lean/store.ts";
 import { contentTypeForTeamPost } from "../server/lean/x-category.ts";
-import { xAccountDecision, xBackoffAfterAttempt } from "../server/lean/cycle.ts";
+import { isNearDuplicateTweet, tweetSkipReason } from "../server/lean/x-filter.ts";
+import { resolvePublishSetting, xAccountDecision, xBackoffAfterAttempt } from "../server/lean/cycle.ts";
+import { retainedGenerationIds, stageSite } from "../server/lean/pages-publish.ts";
 
 const rssSource: LeanSource = { sourceId: "motorsport-f1-news", platform: "rss", displayName: "Motorsport.com", feedUrl: "https://example.test/rss", contentType: "race_news", requireRelevance: false };
 const xSource: LeanSource = { sourceId: "x-f1", platform: "x", displayName: "@F1", feedUrl: "http://127.0.0.1:1200/twitter/user/F1", contentType: "race_news", requireRelevance: false };
@@ -152,6 +155,80 @@ describe("lean article text", () => {
   });
 });
 
+describe("published generations", () => {
+  it("keeps the larger of the six newest publishes and the last hour", () => {
+    const now = new Date("2026-09-26T12:00:00.000Z");
+    const hourly = Array.from({ length: 8 }, (_, index) => ({
+      id: index.toString(16).padStart(64, "a"),
+      publishedAt: new Date(now.getTime() - (index + 2) * 60 * 60 * 1000).toISOString()
+    }));
+    expect(retainedGenerationIds(hourly, now)).toHaveLength(6);
+    const burst = Array.from({ length: 8 }, (_, index) => ({
+      id: index.toString(16).padStart(64, "b"),
+      publishedAt: new Date(now.getTime() - index * 60 * 1000).toISOString()
+    }));
+    expect(retainedGenerationIds(burst, now)).toHaveLength(8);
+  });
+
+  it("keeps recent generations and their pictures, and drops older ones", () => {
+    const parent = mkdtempSync(join(tmpdir(), "lean-ui-"));
+    const ui = join(parent, "ui");
+    mkdirSync(ui);
+    writeFileSync(join(ui, "index.html"), "<html></html>");
+    writeFileSync(join(parent, "ui.build-receipt.json"), "{}");
+    const root = mkdtempSync(join(tmpdir(), "lean-pages-"));
+    const generations = join(root, "site/_public/generations");
+    const now = new Date("2026-09-26T12:00:00.000Z");
+    const ids = Array.from({ length: 7 }, (_, index) => `${index + 1}${"abcdef0123456789".repeat(4)}`.slice(0, 64));
+    const records = ids.map((id, index) => ({ id, publishedAt: new Date(now.getTime() - (7 - index) * 60 * 60 * 1000).toISOString() }));
+    mkdirSync(join(root, "site/media"), { recursive: true });
+    for (const record of records) {
+      mkdirSync(join(generations, record.id), { recursive: true });
+      const media = `media/${record.id.slice(0, 20)}.webp`;
+      writeFileSync(join(generations, record.id, "index.json"), JSON.stringify({ generatedAt: record.publishedAt, ref: media }));
+      writeFileSync(join(root, "site", media), "img");
+    }
+    writeFileSync(join(generations, "manifest.json"), JSON.stringify({ generations: records }));
+    const currentId = "d".repeat(64);
+    const generatedAt = now.toISOString();
+    const index = Buffer.from(JSON.stringify({ schemaVersion: "public-static-index-v1", generatedAt, responses: {} }));
+    stageSite(root, {
+      bundleId: currentId,
+      contentFingerprint: "e".repeat(64),
+      itemCount: 0,
+      mediaFiles: new Map(),
+      files: new Map([
+        [`_public/generations/${currentId}/index.json`, index],
+        ["_public/current.json", Buffer.from(JSON.stringify({
+          schemaVersion: "public-static-pointer-v1",
+          bundleId: currentId,
+          generatedAt,
+          indexPath: `_public/generations/${currentId}/index.json`,
+          indexSha256: currentId
+        }))]
+      ])
+    }, { now, uiDirectory: ui });
+    const kept = readdirSync(join(root, "site/_public/generations")).filter((name) => name !== "manifest.json");
+    expect(kept).toContain(currentId);
+    expect(kept).not.toContain(ids[0]);
+    expect(kept.length).toBe(6);
+    expect(existsSync(join(root, "site", `media/${ids[0]!.slice(0, 20)}.webp`))).toBe(false);
+    expect(existsSync(join(root, "site", `media/${ids[6]!.slice(0, 20)}.webp`))).toBe(true);
+    expect(readFileSync(join(root, "CNAME"), "utf8")).toBe("f1plus1.com\n");
+    rmSync(root, { recursive: true, force: true });
+    rmSync(parent, { recursive: true, force: true });
+  });
+});
+
+describe("lean publish setting", () => {
+  it("warns when publish is missing and does not treat that as an off switch", () => {
+    expect(resolvePublishSetting({ xHandles: "all" })).toEqual({ publish: true, warning: "PUBLISH_SETTING_MISSING" });
+    expect(resolvePublishSetting({ publish: false })).toEqual({ publish: false, warning: null });
+    expect(resolvePublishSetting({ publish: true })).toEqual({ publish: true, warning: null });
+    expect(resolvePublishSetting(null)).toEqual({ publish: false, warning: null });
+  });
+});
+
 describe("lean X fetch schedule", () => {
   const now = Date.parse("2026-09-26T12:00:00Z");
   it("fetches inside a race window and waits 30 minutes outside it", () => {
@@ -167,6 +244,11 @@ describe("lean X fetch schedule", () => {
     expect(Date.parse(paused.pausedUntil ?? "") - now).toBe(2 * 60 * 60 * 1000);
     expect(xAccountDecision({ now, lastAttemptAt: null, dense: true, pausedUntil: now + 60_000 })).toBe("paused");
     expect(xBackoffAfterAttempt(2, false, now)).toEqual({ consecutiveTimeouts: 0, pausedUntil: null, justPaused: false });
+    expect(isNearDuplicateTweet(
+      "Make your Tyre or Lower guesses ahead of the Baku GP",
+      "Make your Tyre or Lower guesses ahead of the Azerbaijan GP"
+    )).toBe(true);
+    expect(isNearDuplicateTweet("Russell takes pole in Baku", "Hamilton wins the race in Monaco")).toBe(false);
   });
 });
 
@@ -174,6 +256,19 @@ describe("lean model output", () => {
   it("accepts Chinese output and rejects missing Chinese text", () => {
     expect(parseRefineOutput(JSON.stringify({ relevant: true, titleZh: "维斯塔潘夺冠", summaryZh: "维斯塔潘赢得比赛。", keyPointsZh: ["发车时轮胎温度为90度", "维斯塔潘赢得比赛"] }), false))
       .toEqual({ kind: "ready", titleZh: "维斯塔潘夺冠", summaryZh: "维斯塔潘赢得比赛。", summaryEn: null, keyPointsZh: ["发车时轮胎温度为90度"], keyPointsEn: [], detailZh: null });
+    expect(parseRefineOutput(JSON.stringify({
+      relevant: true,
+      titleZh: "Kimi Antonelli 领跑 Racing Bulls",
+      summaryZh: "Sky Sports 称 Lance Stroll 与 Aston Martin 继续合作。",
+      summaryEn: "Sky Sports says Lance Stroll stays at Aston Martin.",
+      keyPointsZh: ["George Russell finished behind Max Verstappen"]
+    }), false)).toMatchObject({
+      titleZh: "安东内利 领跑 小红牛",
+      summaryZh: "天空体育 称 斯特罗尔 与 阿斯顿·马丁 继续合作。",
+      summaryEn: "Sky Sports says Lance Stroll stays at Aston Martin.",
+      keyPointsZh: ["拉塞尔 finished behind 维斯塔潘"]
+    });
+    expect(applyChineseNames("Cadillac and Charles Leclerc")).toBe("凯迪拉克 and 勒克莱尔");
     expect(() => parseRefineOutput(JSON.stringify({ titleZh: "Win", summaryZh: "Max won." }), false)).toThrow("MODEL_OUTPUT_INVALID");
   });
 

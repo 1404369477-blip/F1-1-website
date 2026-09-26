@@ -2869,19 +2869,48 @@ body:not(.lb-open) .app {
   width: 100%;
 }
 
+@media (max-width: 700px) {
+  .f1-shell:has(.card-deck) {
+    display: flex;
+    flex-direction: column;
+    height: calc(100dvh - 48px);
+    min-height: 0;
+    padding-bottom: 0;
+    overflow: hidden;
+  }
+  .f1-shell:has(.card-deck) .site-footer { display: none; }
+  .f1-shell:has(.card-deck) > main.app,
+  .f1-shell:has(.card-deck) .shell,
+  .f1-shell:has(.card-deck) .timeline {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .f1-shell:has(.card-deck) .shell { padding-bottom: 0; }
+  .f1-shell:has(.card-deck) .card-deck {
+    flex: 1;
+    height: auto;
+    min-height: 0;
+  }
+  .f1-shell:has(.card-deck) .card-snap {
+    height: 100%;
+  }
+}
+
 /* ---------- 单张沉浸卡片（最大化内容呈现） ---------- */
 .card-snap {
-  height: auto;
-  min-height: calc(100dvh - 64px);
+  height: calc(100dvh - 64px);
+  min-height: 0;
   scroll-snap-align: start;
   scroll-snap-stop: always;
-  display: grid;
-  grid-template-rows: auto auto auto;
-  align-content: start;
+  display: flex;
+  flex-direction: column;
   gap: 0;
-  padding: 8px 0 calc(72px + env(safe-area-inset-bottom, 0px));
+  padding: 8px 0 12px;
   border-bottom: 1px solid var(--border);
-  overflow: visible;
+  overflow: hidden;
   position: relative;
 }
 
@@ -2978,12 +3007,60 @@ body:not(.lb-open) .app {
 
 /* ---------- 卡片内容区域 ---------- */
 .card-snap-body {
-  display: grid;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   gap: 6px;
   align-content: start;
   padding-top: 8px;
-  overflow: visible;
+  overflow: hidden;
   min-height: 0;
+}
+
+.card-fill {
+  flex: 0 1 auto;
+  min-height: 0;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.card-fill-text {
+  flex: 0 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.card-fill-text.is-open {
+  overflow: auto;
+}
+
+.card-snap-body:has(.card-snap-expand) .card-fill {
+  flex: 1 1 auto;
+}
+
+.card-snap-body:has(.card-snap-expand) .card-fill-text {
+  flex: 1 1 auto;
+}
+
+.card-fill-text.is-faded::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2.6em;
+  pointer-events: none;
+  background: linear-gradient(to bottom, transparent, var(--bg));
+}
+
+.card-fill-p {
+  margin: 0 0 8px;
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: var(--fg);
 }
 
 .card-snap-summary.is-open {
@@ -3029,7 +3106,7 @@ body:not(.lb-open) .app {
 }
 
 .card-snap-summary {
-  margin: 0;
+  margin: 0 0 8px;
   font-size: 14px;
   line-height: 1.65;
   color: var(--muted);
@@ -3037,6 +3114,12 @@ body:not(.lb-open) .app {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.card-snap-summary.is-inline {
+  display: block;
+  -webkit-line-clamp: unset;
+  overflow: visible;
 }
 
 .card-snap-keypoints {
@@ -3068,6 +3151,7 @@ body:not(.lb-open) .app {
 
 /* ---------- 卡片底部信源 ---------- */
 .card-snap-source {
+  flex: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -3135,7 +3219,7 @@ body:not(.lb-open) .app {
 .shell:has(.rs) { padding-top: 0; }
 
 .rs {
-  margin: 0 0 8px;
+  margin: 0;
   color: var(--fg);
   font-family: var(--font-body);
   font-size: 12.5px;
@@ -3260,10 +3344,12 @@ body:not(.lb-open) .app {
   to { box-shadow: 0 0 0 6px transparent; }
 }
 @media (max-width: 640px) {
+  .shell:has(.rs) { padding-top: 0; }
   .rs-bar { height: 38px; }
   .rs-timeline, .rs-meta { display: none; }
   .rs-aside { display: inline-flex; }
-  .rs-panel { grid-template-columns: 1fr; padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
+  .rs-panel { grid-template-columns: 1fr; margin-top: 0; padding-top: 0; padding-bottom: 8px; }
+  .rs-panel .timeline-kicker { margin-top: 0; }
   .rs-row, .rs-side-row { min-height: 30px; }
   .rs-range { display: none; }
 }

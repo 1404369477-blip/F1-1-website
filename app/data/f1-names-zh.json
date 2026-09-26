@@ -47,7 +47,11 @@
     "Gabriel Bortoleto": "博托莱托",
     "Liam Lawson": "劳森",
     "Nico Hulkenberg": "霍肯伯格",
-    "Kimi Antonelli": "安东内利"
+    "Kimi Antonelli": "安东内利",
+    "Lance Stroll": "斯特罗尔"
+  },
+  "sources": {
+    "Sky Sports": "天空体育"
   },
   "teams": {
     "Mercedes": "梅赛德斯",
@@ -58,8 +62,8 @@
     "Aston Martin": "阿斯顿·马丁",
     "Alpine": "阿尔派",
     "Haas": "哈斯",
-    "Racing Bulls": "赛车牛",
-    "RB": "赛车牛",
+    "Racing Bulls": "小红牛",
+    "RB": "小红牛",
     "Audi": "奥迪",
     "Cadillac": "凯迪拉克",
     "Kick Sauber": "索伯",

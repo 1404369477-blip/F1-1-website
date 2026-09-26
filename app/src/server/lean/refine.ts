@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { REFINE_MODEL_CATALOG, REFINE_MODEL_IDS, isRefineModelId, type RefineModelId } from "../rss/refine-model.ts";
+import { applyChineseNameList, applyChineseNames } from "./chinese-names.ts";
 import { MODEL_PRIVATE_DIR } from "./config.ts";
 import type { StoredItem } from "./store.ts";
 
@@ -16,15 +17,23 @@ const REQUEST_TIMEOUT_MS = 60_000;
 export const DEFAULT_LEAN_REFINE_MODEL: RefineModelId = "glm-5.3-flash";
 const HAN = /\p{Script=Han}/u;
 
+const NAME_GUIDE = [
+  "常见人名和车队一律用中文：安东内利、拉塞尔、阿隆索、斯特罗尔、阿斯顿·马丁、凯迪拉克。Racing Bulls 写成 RB 或小红牛。Sky Sports 写成天空体育。",
+  "中文句子里不要留下小写英文单词，例如 stint、pit、focus、grid、shootout、somehow、sensation、tifosi。译不出来的术语写成中文，并在括号里注明英文。",
+  "driver 指车手，不要译成车号。"
+].join("");
+
 const SYSTEM_PROMPT = [
   "你是F1中文资讯编辑。只根据用户提供的材料整理，不补充未提供的事实，不推测，不虚构引语。",
   "保留车手、车队、人名和赛事专有名词的通行译法；无法确定时保留英文专名。",
   "输出严格JSON对象，字段只有 relevant、titleZh、summaryZh、summaryEn、keyPointsZh、keyPointsEn、detailZh。",
   "relevant为布尔值：内容与F1、赛车运动或相关车手车队有关时为true；纯广告、与赛车无关的生活或娱乐内容为false。",
   "titleZh不超过40字。summaryZh只用1到2句讲核心事件。summaryEn是同样意思的1到2句完整英文，写完整个句子，不要在词中间停。",
-  "keyPointsZh只写中文摘要里没有的新信息，最多3条；没有新信息时用空数组。keyPointsEn是这些要点的英文，条数与keyPointsZh相同；没有要点时用空数组。",
+  "keyPointsZh只写中文摘要里没有的新信息，最多3条。提供了 paragraphs 时至少写1条正文里的具体事实，并给出条数相同的 keyPointsEn；没有 paragraphs 且没有新信息时两个数组都为空。",
+  "不要把英文单词从中间截断后接中文。gurney flap 译成格尼襟翼。",
   "如果提供了 paragraphs，detailZh必须是等长数组：按原段落顺序完整翻译，保留全部引述并加引号、注明说话人，不删减、不改写观点。没有 paragraphs 时 detailZh 为 null。",
-  "来源为X帖子时，titleZh概括帖子，summaryZh用1到2句转述，summaryEn留空字符串。"
+  "来源为X帖子时，titleZh概括帖子，summaryZh用1到2句转述，summaryEn留空字符串。",
+  NAME_GUIDE
 ].join("\n");
 
 function readKey(fileName: string): string | null {
@@ -117,7 +126,15 @@ export function parseRefineOutput(raw: string, requireRelevance: boolean, paragr
     const untranslated = detailZh.findIndex((paragraph, index) => !HAN.test(paragraph) && expectsChinese(sources[index] ?? "the team said this sentence"));
     if (untranslated >= 0) throw new Error(`MODEL_OUTPUT_INVALID_DETAIL_LANGUAGE_${untranslated}`);
   }
-  return { kind: "ready", titleZh, summaryZh, summaryEn, keyPointsZh, keyPointsEn, detailZh };
+  return {
+    kind: "ready",
+    titleZh: applyChineseNames(titleZh),
+    summaryZh: applyChineseNames(summaryZh),
+    summaryEn,
+    keyPointsZh: applyChineseNameList(keyPointsZh) ?? [],
+    keyPointsEn,
+    detailZh: applyChineseNameList(detailZh)
+  };
 }
 
 async function requestRefine(item: StoredItem, model: ModelEndpoint, fetcher: typeof fetch, paragraphs: readonly string[] | null): Promise<RefineResult> {
@@ -142,7 +159,8 @@ const TRANSLATE_PROMPT = [
   "把 paragraphs 逐段译成中文。",
   "只输出 JSON 对象 {\"detailZh\": string[]}。",
   "detailZh 长度必须与 paragraphs 相同，一段对应一段，禁止合并、省略或概括。",
-  "车号和人名可以保留英文；只要原文是完整句子，译文里就必须有中文。"
+  "车号和人名可以保留英文；只要原文是完整句子，译文里就必须有中文。",
+  NAME_GUIDE
 ].join("\n");
 
 async function translateSlice(model: ModelEndpoint, fetcher: typeof fetch, slice: readonly string[]): Promise<string[]> {

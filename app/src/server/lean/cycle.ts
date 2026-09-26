@@ -14,7 +14,7 @@ import { publishBundle, stageSite } from "./pages-publish.ts";
 import { refineItem, resolveModel } from "./refine.ts";
 import { buildSiteBundle } from "./site-bundle.ts";
 import { LeanStore, type StoredItem } from "./store.ts";
-import { tweetSkipReason, type TweetSkipReason } from "./x-filter.ts";
+import { isNearDuplicateTweet, tweetSkipReason, type TweetSkipReason } from "./x-filter.ts";
 import { contentTypeForTeamPost } from "./x-category.ts";
 
 /** Entries older than this on first sight are history, not news; they are not summarized. */
@@ -46,11 +46,12 @@ export type CycleReport = {
   sources: { ok: number; failed: { sourceId: string; error: string }[] };
   newEntries: number;
   /** X posts taken out this cycle (new ones before the model sees them, public ones on the next publish). */
-  xFiltered: Record<TweetSkipReason | "reinstated", number>;
+  xFiltered: Record<TweetSkipReason | "reinstated" | "duplicate", number>;
   refined: { ready: number; skipped: number; failed: number; errors: { publicId: string; error: string }[] };
   backup: BackupReport;
   media: MediaReport & { error: string | null };
   site: { items: number; published: boolean; commit: string | null; reason: string };
+  warnings: string[];
   calendar: { action: "拉取" | "跳过" | "失败回退"; reason: string | null };
   xFetch: { dense: boolean; skipped: number; paused: string[] };
   counts: Record<string, number>;
@@ -225,7 +226,7 @@ async function collect(store: LeanStore, sources: readonly LeanSource[], now: Da
 
 /** Re-checked every cycle: a tightened rule removes public posts, a loosened one brings them back. */
 function retireFilteredPosts(store: LeanStore): CycleReport["xFiltered"] {
-  const counts: CycleReport["xFiltered"] = { retweet: 0, promotion: 0, too_short: 0, reinstated: 0 };
+  const counts: CycleReport["xFiltered"] = { retweet: 0, promotion: 0, too_short: 0, reinstated: 0, duplicate: 0 };
   for (const post of store.activeXPosts()) {
     const reason = tweetSkipReason(post);
     if (reason === null) continue;
@@ -236,6 +237,28 @@ function retireFilteredPosts(store: LeanStore): CycleReport["xFiltered"] {
     if (tweetSkipReason(post) !== null) continue;
     store.reinstate(post.publicId);
     counts.reinstated++;
+  }
+  const ready = store.activeXPosts().filter((post) => post.status === "ready");
+  const groups = new Map<string, typeof ready>();
+  for (const post of ready) {
+    const list = groups.get(post.sourceId) ?? [];
+    list.push(post);
+    groups.set(post.sourceId, list);
+  }
+  for (const list of groups.values()) {
+    const ordered = [...list].sort((a, b) => (a.sourcePublishedAt ?? a.firstSeenAt).localeCompare(b.sourcePublishedAt ?? b.firstSeenAt));
+    const kept: typeof ordered = [];
+    for (const post of ordered) {
+      const text = `${post.title}\n${post.text}`;
+      const earlier = kept.find((prev) => {
+        const gap = Math.abs(Date.parse(post.sourcePublishedAt ?? post.firstSeenAt) - Date.parse(prev.sourcePublishedAt ?? prev.firstSeenAt));
+        return Number.isFinite(gap) && gap <= 6 * 3600 * 1000 && isNearDuplicateTweet(text, `${prev.title}\n${prev.text}`);
+      });
+      if (earlier) {
+        store.retire(post.publicId);
+        counts.duplicate++;
+      } else kept.push(post);
+    }
   }
   return counts;
 }
@@ -308,13 +331,27 @@ async function localizeMedia(items: readonly StoredItem[], now: Date): Promise<{
   }
 }
 
+/** A missing `publish` key must not be treated as an intentional off switch. */
+export function resolvePublishSetting(raw: object | null): { publish: boolean; warning: string | null } {
+  if (raw === null || !("publish" in raw)) return { publish: raw === null ? false : true, warning: raw === null ? null : "PUBLISH_SETTING_MISSING" };
+  return { publish: (raw as { publish?: unknown }).publish === true, warning: null };
+}
+
 export async function runCycle(now: Date = new Date()): Promise<CycleReport | null> {
   mkdirSync(leanPath(), { recursive: true, mode: 0o700 });
   const release = acquireLock(leanPath("cycle.lock"));
   if (release === null) return null;
   const store = new LeanStore(leanPath("store.sqlite"));
   try {
-    const settings = readJson<LeanSettings>(leanPath("settings.json"), { xHandles: [], publish: false });
+    const settingsPath = leanPath("settings.json");
+    const rawSettings = existsSync(settingsPath) ? readJson<Partial<LeanSettings> & object>(settingsPath, {}) : null;
+    const publishSetting = resolvePublishSetting(rawSettings);
+    const settings: LeanSettings = {
+      xHandles: [],
+      ...(rawSettings ?? {}),
+      publish: publishSetting.publish
+    };
+    const warnings = publishSetting.warning ? [publishSetting.warning] : [];
     const state = readJson<LeanState>(leanPath("state.json"), { lastPublishedFingerprint: null, lastPublishedAt: null, lastCommit: null });
     const inboxRoot = leanPath("editor-inbox");
     const inbox = importInbox(store, inboxRoot, settings, now);
@@ -355,7 +392,7 @@ export async function runCycle(now: Date = new Date()): Promise<CycleReport | nu
     }
     const liveCommit = site.published ? site.commit : site.reason === "UNCHANGED" ? state.lastCommit : null;
     if (liveCommit !== null && inbox.enabled) markInboxPublished(inboxRoot, liveCommit, now.toISOString());
-    const report: CycleReport = { startedAt: now.toISOString(), finishedAt: new Date().toISOString(), inbox, ...collectedReport, xFiltered, refined, backup, media: localized.report, site, calendar, xFetch: { dense, skipped: xPlan.skipped, paused: [...xPlan.paused, ...pausedNow] }, counts: store.counts() };
+    const report: CycleReport = { startedAt: now.toISOString(), finishedAt: new Date().toISOString(), inbox, ...collectedReport, xFiltered, refined, backup, media: localized.report, site, calendar, xFetch: { dense, skipped: xPlan.skipped, paused: [...xPlan.paused, ...pausedNow] }, warnings, counts: store.counts() };
     writeJsonAtomic(leanPath("last-cycle.json"), report);
     return report;
   } finally {

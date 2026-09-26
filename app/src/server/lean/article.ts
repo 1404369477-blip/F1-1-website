@@ -16,9 +16,10 @@ export function isBoilerplateParagraph(text: string): boolean {
   return BOILERPLATE.test(text);
 }
 
-/** A Chinese sentence that still contains a lowercase English word. Names stay capitalized and are kept. */
+/** A Chinese sentence that still contains a lowercase English word. Names stay capitalized. English inside a gloss in parentheses is allowed. */
 export function hasStrayEnglish(text: string): boolean {
-  return /[\u4e00-\u9fff][^。！？\n]{0,80}\b[a-z]{3,}\b/.test(text);
+  const withoutGloss = text.replace(/[（(][^）)]{0,40}[）)]/g, "");
+  return /[\u4e00-\u9fff][^。！？\n]{0,80}(?<![A-Za-z.])[a-z]{3,}\b/.test(withoutGloss);
 }
 
 export function articleHostAllowed(hostname: string): boolean {
