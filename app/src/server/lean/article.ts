@@ -7,7 +7,9 @@ const MAX_HTML_CHARS = 1_500_000;
 const MAX_PARAGRAPHS = 40;
 const MAX_PARAGRAPH_CHARS = 800;
 
-const BOILERPLATE = /subscribe|newsletter|sign up|related (?:article|stor|news)|read more|advertisement|sponsored|photo:|photo by|getty images|^advert\b|become a .{0,40}supporter|browse all \d|covering industry news|set up racefans|image:|cookie|all rights reserved|share this|follow us|leave a comment|no comments|what do you want to see|what would you like to see|let us know what you|we want your opinion|more from|recommended|you may also|take our .{0,30}survey|下载应用|订阅|相关阅读|相关新闻|相关文章|广告|图片说明|摄影：|转载请|版权所有|关注我们|你想在|目前没有评论|写一条|你可能喜欢|评论区/i;
+const BOILERPLATE = /subscribe|newsletter|sign up|related (?:article|stor|news)|read more|advertisement|sponsored|photo:|photo by|getty images|^advert\b|become a .{0,40}supporter|browse all \d|covering industry news|set up racefans|image:|cookie|all rights reserved|share this|follow us|leave a comment|no comments|what do you want to see|what would you like to see|let us know what you|we want your opinion|more from|recommended|you may also|take our .{0,30}survey|please use chrome|accessible video player|请使用\s*chrome|更便捷的视频播放|下载应用|订阅|相关阅读|相关新闻|相关文章|广告|图片说明|摄影：|转载请|版权所有|关注我们|你想在|目前没有评论|写一条|你可能喜欢|评论区/i;
+
+const STRAY_ALLOW = new Set(["f1", "fia", "drs", "gp"]);
 
 /** Visible page chrome that starts the comments, survey, or related-story block. */
 const ARTICLE_END = /there are no comments|what would you like to see|let us know what you would like|we want your opinion|class="lcp_catlist"|class="[^"]*more-from/i;
@@ -16,10 +18,28 @@ export function isBoilerplateParagraph(text: string): boolean {
   return BOILERPLATE.test(text);
 }
 
-/** A Chinese sentence that still contains a lowercase English word. Names stay capitalized. English inside a gloss in parentheses is allowed. */
+/** A Chinese sentence that still contains a lowercase English word. Names stay capitalized. English inside a gloss in parentheses is allowed. URLs and @handles are ignored. DRS, FIA, F1 and GP are allowed. */
 export function hasStrayEnglish(text: string): boolean {
-  const withoutGloss = text.replace(/[（(][^）)]{0,40}[）)]/g, "");
-  return /[\u4e00-\u9fff][^。！？\n]{0,80}(?<![A-Za-z.])[a-z]{3,}\b/.test(withoutGloss);
+  if (!text) return false;
+  return strayEnglishWords(text).length > 0;
+}
+
+export function strayEnglishWords(text: string): string[] {
+  const without = text
+    .replace(/https?:\/\/\S+/gi, " ")
+    .replace(/pic\.twitter\.com\/\S+/gi, " ")
+    .replace(/@\w+/g, " ")
+    .replace(/[（(][^）)]{0,80}[）)]/g, " ");
+  const words: string[] = [];
+  for (const match of without.matchAll(/(?<![A-Za-z.])([a-z]{3,})(?![A-Za-z])/g)) {
+    const word = match[1] ?? "";
+    if (STRAY_ALLOW.has(word)) continue;
+    const start = match.index ?? 0;
+    const before = without.slice(Math.max(0, start - 4), start);
+    const after = without.slice(start + word.length, start + word.length + 4);
+    if (/[\u4e00-\u9fff]/.test(before) || /[\u4e00-\u9fff]/.test(after)) words.push(word);
+  }
+  return words;
 }
 
 export function articleHostAllowed(hostname: string): boolean {

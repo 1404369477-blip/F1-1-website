@@ -178,6 +178,17 @@ function generatedAtFrom(directory: string, fallback: string): string {
   }
 }
 
+function realPublishedAt(directory: string, publishedAt: string | undefined): string {
+  if (publishedAt && !publishedAt.startsWith("1970-01-01")) return publishedAt;
+  const generated = generatedAtFrom(directory, "");
+  if (generated !== "" && !generated.startsWith("1970-01-01")) return generated;
+  if (existsSync(directory)) {
+    const mtime = statSync(directory).mtime.toISOString();
+    if (!mtime.startsWith("1970-01-01")) return mtime;
+  }
+  return publishedAt ?? new Date(0).toISOString();
+}
+
 function restoreGenerations(site: string, scratch: string, currentId: string, now: Date): void {
   const scratchGenerations = join(scratch, "generations");
   const known = readGenerationManifest(scratchGenerations);
@@ -185,15 +196,17 @@ function restoreGenerations(site: string, scratch: string, currentId: string, no
   if (existsSync(scratchGenerations)) {
     for (const name of readdirSync(scratchGenerations)) {
       if (!GENERATION_ID.test(name) || seen.has(name)) continue;
-      known.push({ id: name, publishedAt: new Date(0).toISOString(), generatedAt: generatedAtFrom(join(scratchGenerations, name), new Date(0).toISOString()) });
+      const directory = join(scratchGenerations, name);
+      known.push({ id: name, publishedAt: realPublishedAt(directory, undefined), generatedAt: generatedAtFrom(directory, new Date(0).toISOString()) });
     }
   }
   const currentDir = join(site, `_public/generations/${currentId}`);
   const records = [
-    ...known.filter((entry) => entry.id !== currentId).map((entry) => ({
-      ...entry,
-      generatedAt: entry.generatedAt ?? generatedAtFrom(join(scratchGenerations, entry.id), entry.publishedAt)
-    })),
+    ...known.filter((entry) => entry.id !== currentId).map((entry) => {
+      const directory = join(scratchGenerations, entry.id);
+      const publishedAt = realPublishedAt(directory, entry.publishedAt);
+      return { ...entry, publishedAt, generatedAt: entry.generatedAt ?? generatedAtFrom(directory, publishedAt) };
+    }),
     { id: currentId, publishedAt: now.toISOString(), generatedAt: generatedAtFrom(currentDir, now.toISOString()) }
   ];
   const keep = new Set(retainedGenerationIds(records, now));

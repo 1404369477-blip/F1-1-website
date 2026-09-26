@@ -14,23 +14,34 @@ function repairRank(item: StoredItem): number {
   return 2;
 }
 
+function chineseStray(item: StoredItem): boolean {
+  return [item.titleZh ?? "", item.summaryZh ?? "", ...item.keyPointsZh, ...(item.detailZh ?? [])].some((part) => hasStrayEnglish(part));
+}
+
 function needsReclean(item: StoredItem): boolean {
   const text = [...(item.detailZh ?? []), ...(item.detailEn ?? [])].join("\n");
-  return (item.detailZh ?? []).some(hasStrayEnglish) || isBoilerplateParagraph(text);
+  return chineseStray(item) || isBoilerplateParagraph(text);
 }
 
 /** Refreshes RSS full text without taking the publish lock. Newest stories first. */
 async function main(): Promise<void> {
   const store = new LeanStore(leanPath("store.sqlite"));
   const gapsOnly = process.argv.includes("--gaps");
+  const chineseOnly = process.argv.includes("--zh");
+  const pointsOnly = process.argv.includes("--points-en");
   const byId = new Map<string, StoredItem>();
-  if (!gapsOnly) {
+  if (!gapsOnly && !chineseOnly && !pointsOnly) {
     for (const item of store.rssToRepair()) byId.set(item.publicId, item);
   }
-  for (const item of store.allReadyRss()) {
-    if (item.platform !== "rss" || !item.detailZh) continue;
+  const pool = chineseOnly || pointsOnly ? store.readyItems() : store.allReadyRss();
+  for (const item of pool) {
+    if (!chineseOnly && !pointsOnly && (item.platform !== "rss" || !item.detailZh)) continue;
     const missingEnglishPoints = item.keyPointsEn.length === 0;
-    if (needsReclean(item) || (gapsOnly && missingEnglishPoints)) byId.set(item.publicId, item);
+    const chineseText = [item.titleZh ?? "", item.summaryZh ?? "", ...item.keyPointsZh, ...(item.detailZh ?? [])].join("\n");
+    const spliced = /进站，进站|比赛 当天|噗噗噗|have 开心|skibidi/.test(chineseText);
+    if (chineseOnly && (chineseStray(item) || spliced)) byId.set(item.publicId, item);
+    else if (pointsOnly && item.platform === "rss" && missingEnglishPoints) byId.set(item.publicId, item);
+    else if (!chineseOnly && !pointsOnly && (needsReclean(item) || (gapsOnly && missingEnglishPoints))) byId.set(item.publicId, item);
   }
   const items = [...byId.values()].sort((a, b) => repairRank(a) - repairRank(b) || (b.sourcePublishedAt ?? "").localeCompare(a.sourcePublishedAt ?? ""));
   const model = resolveModel();
@@ -50,15 +61,38 @@ async function main(): Promise<void> {
           failed += 1;
         } else {
           const keepPoints = result.keyPointsZh.length === 0 && item.keyPointsZh.length > 0 && !item.keyPointsZh.some(hasStrayEnglish);
-          store.rewriteReady(item.publicId, {
-            titleZh: result.titleZh,
-            summaryZh: result.summaryZh,
-            summaryEn: result.summaryEn,
-            keyPointsZh: paragraphs ? (keepPoints ? item.keyPointsZh : result.keyPointsZh) : [],
-            keyPointsEn: paragraphs ? (keepPoints ? item.keyPointsEn : result.keyPointsEn) : [],
-            detailEn: paragraphs,
-            detailZh: result.detailZh
-          });
+          if (pointsOnly) {
+            if (result.keyPointsEn.length === 0) throw new Error("MODEL_OUTPUT_EMPTY_POINTS_EN");
+            store.rewriteReady(item.publicId, {
+              titleZh: item.titleZh ?? result.titleZh,
+              summaryZh: item.summaryZh ?? result.summaryZh,
+              summaryEn: item.summaryEn,
+              keyPointsZh: item.keyPointsZh.length > 0 ? item.keyPointsZh : result.keyPointsZh,
+              keyPointsEn: result.keyPointsEn,
+              detailEn: item.detailEn,
+              detailZh: item.detailZh
+            });
+          } else if (chineseOnly) {
+            store.rewriteReady(item.publicId, {
+              titleZh: result.titleZh,
+              summaryZh: result.summaryZh,
+              summaryEn: item.summaryEn,
+              keyPointsZh: result.keyPointsZh.length > 0 ? result.keyPointsZh : item.keyPointsZh,
+              keyPointsEn: item.keyPointsEn.length > 0 ? item.keyPointsEn : result.keyPointsEn,
+              detailEn: item.detailEn,
+              detailZh: result.detailZh ?? item.detailZh
+            });
+          } else {
+            store.rewriteReady(item.publicId, {
+              titleZh: result.titleZh,
+              summaryZh: result.summaryZh,
+              summaryEn: result.summaryEn,
+              keyPointsZh: paragraphs ? (keepPoints ? item.keyPointsZh : result.keyPointsZh) : [],
+              keyPointsEn: paragraphs ? (keepPoints ? item.keyPointsEn : result.keyPointsEn) : [],
+              detailEn: paragraphs,
+              detailZh: result.detailZh
+            });
+          }
           if (paragraphs && result.detailZh) filled += 1;
           else summaryOnly += 1;
         }

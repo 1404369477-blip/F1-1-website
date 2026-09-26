@@ -19,7 +19,8 @@ const HAN = /\p{Script=Han}/u;
 
 const NAME_GUIDE = [
   "常见人名和车队一律用中文：安东内利、拉塞尔、阿隆索、斯特罗尔、阿斯顿·马丁、凯迪拉克。Racing Bulls 写成 RB 或小红牛。Sky Sports 写成天空体育。",
-  "中文句子里不要留下小写英文单词，例如 stint、pit、focus、grid、shootout、somehow、sensation、tifosi。译不出来的术语写成中文，并在括号里注明英文。",
+  "中文句子里不要留下小写英文单词，例如 stint、pit、focus、grid、shootout、somehow、sensation、tifosi、definitely、latest。译不出来的术语写成中文，并在括号里注明英文。",
+  "undercut 写成提前进站，pits 写成维修区，sessions 写成各节练习与排位，bargeboard 写成导流板，junior 车队写成青训车队，Madring 写成马德里赛道。",
   "driver 指车手，不要译成车号。"
 ].join("");
 

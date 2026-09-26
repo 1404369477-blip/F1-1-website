@@ -2305,10 +2305,11 @@ body:not(.lb-open) .app {
 
 .tl-ev {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   gap: var(--s2);
   min-width: 0;
+  margin-top: 2px;
 }
 
 .tl-ev .evs {
@@ -2325,9 +2326,14 @@ body:not(.lb-open) .app {
   flex: 0 0 auto;
 }
 
+.tl-ev a.tl-original-link,
+.tl-ev .tl-original-disabled {
+  min-height: 28px;
+}
+
 .tl-original-link,
 .tl-original-disabled {
-  min-height: 44px;
+  min-height: 28px;
   display: inline-flex;
   align-items: center;
   color: var(--accent);

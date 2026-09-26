@@ -239,6 +239,10 @@ export class LeanStore {
   allReadyRss(): StoredItem[] {
     return (this.db.prepare("SELECT * FROM items WHERE status = 'ready' AND platform = 'rss'").all() as Row[]).map(toItem);
   }
+
+  readyItems(): StoredItem[] {
+    return (this.db.prepare("SELECT * FROM items WHERE status = 'ready'").all() as Row[]).map(toItem);
+  }
   rssToRepair(): StoredItem[] {
     return (this.db.prepare(`SELECT * FROM items WHERE status = 'ready' AND platform = 'rss' AND (
         detail_zh_json IS NULL

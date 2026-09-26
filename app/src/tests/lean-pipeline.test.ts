@@ -11,7 +11,7 @@ import { DEFAULT_EDITORIAL_DOMAINS, type LeanSource } from "../server/lean/confi
 import { importEditorInbox, markInboxPublished, parseSubmission, type InboxEntry } from "../server/lean/editor-inbox.ts";
 import { isAgencyImage, largeTwimgUrl, parseFeed } from "../server/lean/feed.ts";
 import { localizeImages, mediaKey } from "../server/lean/media.ts";
-import { extractArticleParagraphs } from "../server/lean/article.ts";
+import { extractArticleParagraphs, hasStrayEnglish } from "../server/lean/article.ts";
 import { applyChineseNames } from "../server/lean/chinese-names.ts";
 import { dropRepeatedPoints, leanRefineModelOrder, parseRefineOutput, refineRequestBody } from "../server/lean/refine.ts";
 import { REFINE_MODEL_CATALOG } from "../server/rss/refine-model.ts";
@@ -151,6 +151,14 @@ describe("lean article text", () => {
     expect(extractArticleParagraphs(noisy)).toEqual([
       "George Russell said the car felt good through the castle section of Baku."
     ]);
+    const player = `<article><p>${"George Russell said the car felt good through the castle section of Baku."}</p><p>Please use Chrome browser for a more accessible video player</p><p>请使用Chrome浏览器以获得更便捷的视频播放体验</p></article>`;
+    expect(extractArticleParagraphs(player)).toEqual([
+      "George Russell said the car felt good through the castle section of Baku."
+    ]);
+    expect(hasStrayEnglish("这 latest 的难堪")).toBe(true);
+    expect(hasStrayEnglish("马德里ring赛道")).toBe(true);
+    expect(hasStrayEnglish("红牛使用 DRS 和 FIA 规则")).toBe(false);
+    expect(applyChineseNames("马德里ring赛道的 undercut 与出 pits")).toBe("马德里赛道的 提前进站 与出 维修区");
     expect(dropRepeatedPoints("维斯塔潘赢得比赛。", ["维斯塔潘赢得比赛", "发车时轮胎温度为90度"])).toEqual(["发车时轮胎温度为90度"]);
   });
 });
@@ -215,6 +223,38 @@ describe("published generations", () => {
     expect(existsSync(join(root, "site", `media/${ids[0]!.slice(0, 20)}.webp`))).toBe(false);
     expect(existsSync(join(root, "site", `media/${ids[6]!.slice(0, 20)}.webp`))).toBe(true);
     expect(readFileSync(join(root, "CNAME"), "utf8")).toBe("f1plus1.com\n");
+    rmSync(root, { recursive: true, force: true });
+    rmSync(parent, { recursive: true, force: true });
+  });
+
+  it("fills a missing publish time from the generation itself", () => {
+    const parent = mkdtempSync(join(tmpdir(), "lean-ui-"));
+    const ui = join(parent, "ui");
+    mkdirSync(ui);
+    writeFileSync(join(ui, "index.html"), "<html></html>");
+    writeFileSync(join(parent, "ui.build-receipt.json"), "{}");
+    const root = mkdtempSync(join(tmpdir(), "lean-pages-"));
+    const oldId = `9${"a".repeat(63)}`;
+    const publishedAt = "2026-09-26T08:00:00.000Z";
+    mkdirSync(join(root, "site/_public/generations", oldId), { recursive: true });
+    writeFileSync(join(root, "site/_public/generations", oldId, "index.json"), JSON.stringify({ generatedAt: publishedAt }));
+    writeFileSync(join(root, "site/_public/generations/manifest.json"), JSON.stringify({
+      generations: [{ id: oldId, publishedAt: "1970-01-01T00:00:00.000Z", generatedAt: publishedAt }]
+    }));
+    const currentId = "b".repeat(64);
+    const now = new Date("2026-09-26T12:00:00.000Z");
+    stageSite(root, {
+      bundleId: currentId,
+      contentFingerprint: "c".repeat(64),
+      itemCount: 0,
+      mediaFiles: new Map(),
+      files: new Map([
+        [`_public/generations/${currentId}/index.json`, Buffer.from(JSON.stringify({ generatedAt: now.toISOString() }))],
+        ["_public/current.json", Buffer.from("{}")]
+      ])
+    }, { now, uiDirectory: ui });
+    const manifest = JSON.parse(readFileSync(join(root, "site/_public/generations/manifest.json"), "utf8")) as { generations: { id: string; publishedAt: string }[] };
+    expect(manifest.generations.find((entry) => entry.id === oldId)?.publishedAt).toBe(publishedAt);
     rmSync(root, { recursive: true, force: true });
     rmSync(parent, { recursive: true, force: true });
   });
