@@ -5,8 +5,13 @@ import { F1_DEFAULT_THEME } from "../../../src/components/f1/theme-preference";
 import "../../../src/app/globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://f1plus1.com"),
   title: "F1+1 · F1 中文资讯",
-  description: "聚合已发布的 F1 中文资讯、来源与原文入口"
+  description: "聚合已发布的 F1 中文资讯、来源与原文入口",
+  openGraph: {
+    title: "F1+1 · F1 中文资讯",
+    description: "聚合已发布的 F1 中文资讯、来源与原文入口"
+  }
 };
 
 export const viewport: Viewport = {

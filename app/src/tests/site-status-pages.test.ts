@@ -10,7 +10,7 @@ vi.mock("node:https", async () => {
   const http = await import("node:http");
   return { request: (url: string, options: Parameters<typeof http.request>[1], callback: Parameters<typeof http.request>[2]) => {
     bridge.calls.push({ url, options });
-    expect(url.startsWith("https://1404369477-blip.github.io/f1plus1/_public/")).toBe(true);
+    expect(url.startsWith("https://f1plus1.com/_public/")).toBe(true);
     const target = new URL(url);
     return http.request(`http://127.0.0.1:${bridge.port}${target.pathname}${target.search}`, options, callback);
   } };
@@ -34,8 +34,8 @@ function fixture(value: unknown = v2, status = 200, fallback: unknown = v1) {
   const index = { schemaVersion: "public-static-index-v1", generatedAt, responses: { "/api/public/feed?limit=12&v=2": reference(value, status), "/api/public/feed": reference(fallback, 200) } };
   const indexBytes = encode(index), bundleId = sha(indexBytes), indexPath = `_public/generations/${bundleId}/index.json`;
   const pointer = { schemaVersion: "public-static-pointer-v1", bundleId, generatedAt, indexPath, indexSha256: bundleId };
-  const files = new Map<string, Buffer>([["/f1plus1/_public/current.json", encode(pointer)], [`/f1plus1/${indexPath}`, indexBytes]]);
-  for (const [path, body] of bodies) files.set(`/f1plus1/_public/generations/${bundleId}/${path}`, body);
+  const files = new Map<string, Buffer>([["/_public/current.json", encode(pointer)], [`/${indexPath}`, indexBytes]]);
+  for (const [path, body] of bodies) files.set(`/_public/generations/${bundleId}/${path}`, body);
   return { files, pointer, index };
 }
 
@@ -78,7 +78,7 @@ describe("Pages semantic probe", () => {
     expect(JSON.stringify(result)).not.toContain("blocked");
   });
   it("rejects altered index and response bytes before interpreting their content", async () => {
-    const path = `/f1plus1/${current.pointer.indexPath}`;
+    const path = `/${current.pointer.indexPath}`;
     current.files.set(path, Buffer.concat([current.files.get(path)!, Buffer.from(" ")]));
     expect(await probe()).toMatchObject({ reasons: ["HTTP_STATIC_INVALID"] });
     current = fixture();
@@ -87,11 +87,11 @@ describe("Pages semantic probe", () => {
     expect(await probe()).toMatchObject({ reasons: ["HTTP_STATIC_INVALID"] });
   });
   it("rejects pointer traversal and never follows paths outside the closed generation", async () => {
-    current.files.set("/f1plus1/_public/current.json", encode({ ...current.pointer, indexPath: "../private" }));
+    current.files.set("/_public/current.json", encode({ ...current.pointer, indexPath: "../private" }));
     expect(await probe()).toMatchObject({ reasons: ["HTTP_STATIC_INVALID"] }); expect(bridge.calls).toHaveLength(1);
   });
   it("rejects missing bodies, HTTP redirects and HTML without following or displaying them", async () => {
-    current.files.delete(`/f1plus1/${current.pointer.indexPath}`);
+    current.files.delete(`/${current.pointer.indexPath}`);
     expect(await probe()).toMatchObject({ reasons: ["HTTP_STATUS_UNEXPECTED"], statusCode: 404 });
     custom = (_, response) => { response.writeHead(302, { location: "https://private.invalid/" }); response.end(); };
     const before = bridge.calls.length;

@@ -41,7 +41,9 @@ const SubmissionSchema = z.object({
   titleZh: chinese(120),
   summaryZh: chinese(600),
   keyPointsZh: z.array(z.string()).optional(),
-  imageUrl: z.string().url().refine((value) => value.startsWith("https://"), "NOT_HTTPS").optional()
+  imageUrl: z.string().url().refine((value) => value.startsWith("https://"), "NOT_HTTPS").optional(),
+  detailZh: z.string().max(5000).optional(),
+  detailEn: z.string().max(8000).optional()
 });
 
 function submissionImage(imageUrl: string | undefined): FeedImage | null {
@@ -86,6 +88,10 @@ export function parseSubmission(raw: string, allowedDomains: readonly string[], 
   if (!allowedDomains.includes(submission.sourceDomain)) throw new Rejection("DOMAIN_NOT_ALLOWED");
   if (host !== submission.sourceDomain) throw new Rejection("URL_DOMAIN_MISMATCH");
   const image = submissionImage(submission.imageUrl);
+  const detailZh = submission.detailZh?.trim() ? submission.detailZh.trim().split(/\n+/).map((paragraph) => paragraph.trim()).filter(Boolean) : null;
+  const detailEn = submission.detailEn?.trim() ? submission.detailEn.trim().split(/\n+/).map((paragraph) => paragraph.trim()).filter(Boolean) : null;
+  if ((detailZh === null) !== (detailEn === null)) throw new Rejection("INVALID_FIELD: detailZh detailEn must both be present or both be absent");
+  if (detailZh && detailEn && detailZh.length !== detailEn.length) throw new Rejection("PARAGRAPH_COUNT_MISMATCH");
 
   const keyPointsZh = (submission.keyPointsZh ?? []).map((point) => point.trim()).filter((point) => point !== "").slice(0, MAX_KEY_POINTS);
   const item: StoredItem = {
@@ -105,7 +111,11 @@ export function parseSubmission(raw: string, allowedDomains: readonly string[], 
     attempts: 0,
     titleZh: submission.titleZh,
     summaryZh: submission.summaryZh,
+    summaryEn: null,
     keyPointsZh,
+    keyPointsEn: [],
+    detailEn,
+    detailZh,
     publishedAt: now
   };
   return { item, idempotencyKey: submission.idempotencyKey };

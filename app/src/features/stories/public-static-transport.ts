@@ -85,6 +85,8 @@ function problem(reasonCode: PublicStaticQueryReason | "PUBLIC_STORY_NOT_FOUND",
   }), { status, headers: { "Content-Type": "application/problem+json; charset=utf-8", "Cache-Control": "no-store" } });
 }
 
+const sessionBundles = new Map<string, Promise<LoadedBundle>>();
+
 /** One context per logical public request keeps V2 negotiation and V1 fallback on one bundle. */
 export function createPublicStaticFetch({
   fetchImpl = globalThis.fetch,
@@ -95,11 +97,11 @@ export function createPublicStaticFetch({
   expectedBundleId?: string;
   basePath?: string;
 } = {}): { fetch: StaticFetch; getBundleId(): string | undefined } {
-  if (!/^\/[a-zA-Z0-9_-]+$/u.test(basePath)) throw unavailable();
-  let loaded: Promise<LoadedBundle> | undefined;
+  if (basePath !== "" && !/^\/[a-zA-Z0-9_-]+$/u.test(basePath)) throw unavailable();
   let bundleId: string | undefined;
+  let loaded: Promise<LoadedBundle> | undefined;
 
-  const loadBundle = async (signal: AbortSignal | null | undefined): Promise<LoadedBundle> => {
+  const loadBundleOnce = async (signal: AbortSignal | null | undefined): Promise<LoadedBundle> => {
     throwIfAborted(signal);
     // Pages controls response headers. A unique pointer URL also avoids serving a stale CDN entry.
     const readId = `${Date.now()}-${++pointerReadSequence}`;
@@ -114,6 +116,17 @@ export function createPublicStaticFetch({
     if (expectedBundleId !== undefined && pointer.bundleId !== expectedBundleId) throw new PublicStaticGenerationChangedError();
     bundleId = pointer.bundleId;
     return { pointer, index };
+  };
+
+  const loadBundle = (signal: AbortSignal | null | undefined): Promise<LoadedBundle> => {
+    const cacheKey = expectedBundleId ? `${basePath}:${expectedBundleId}` : "";
+    if (cacheKey && sessionBundles.has(cacheKey)) return sessionBundles.get(cacheKey)!;
+    const loading = loadBundleOnce(signal).then((bundle) => {
+      sessionBundles.set(`${basePath}:${bundle.pointer.bundleId}`, Promise.resolve(bundle));
+      return bundle;
+    });
+    if (cacheKey) sessionBundles.set(cacheKey, loading);
+    return loading;
   };
 
   const staticFetch: StaticFetch = async (input, init) => {

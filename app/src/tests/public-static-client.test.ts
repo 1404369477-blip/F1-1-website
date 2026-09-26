@@ -18,9 +18,9 @@ function installGeneration(generatedAt: string): string {
   const indexPath = `_public/generations/${bundleId}/index.json`;
   const pointer = JSON.stringify({ schemaVersion: "public-static-pointer-v1", generatedAt, bundleId, indexPath, indexSha256: bundleId });
   const files = new Map([
-    ["/f1plus1/_public/current.json", pointer],
-    [`/f1plus1/${indexPath}`, index],
-    [`/f1plus1/_public/generations/${bundleId}/responses/${bodyHash}.json`, body]
+    ["/_public/current.json", pointer],
+    [`/${indexPath}`, index],
+    [`/_public/generations/${bundleId}/responses/${bodyHash}.json`, body]
   ]);
   vi.stubGlobal("fetch", async (input: string) => {
     const text = files.get(new URL(input, "https://public.invalid").pathname);

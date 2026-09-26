@@ -79,6 +79,12 @@ const publicFeedItemSchema = z.object({
     }).strict()
   ]).nullable(),
   originalLink: originalLinkSchema,
+  originalTitle: z.string().min(1).optional(),
+  summaryEn: z.string().min(1).nullable().optional(),
+  detailZh: z.array(z.string().min(1)).max(80).optional(),
+  detailEn: z.array(z.string().min(1)).max(80).optional(),
+  keyPointsZh: z.array(z.string().min(1)).max(3).optional(),
+  keyPointsEn: z.array(z.string().min(1)).max(3).optional(),
   relatedSources: z.array(z.object({
     publicId: z.string().min(1),
     sourceId: z.string().min(1),
@@ -143,9 +149,9 @@ const publicProblemSchema = z.object({
 
 export const STORY_CATEGORY_OPTIONS = [
   { label: "赛事新闻", contentType: "race_news" },
-  { label: "车手社交", contentType: "driver_social" },
+  { label: "车手近况", contentType: "driver_social" },
   { label: "名宿历史", contentType: "legends_history" },
-  { label: "赛场趣事", contentType: "paddock_fun" }
+  { label: "围场趣闻", contentType: "paddock_fun" }
 ] as const satisfies ReadonlyArray<{ label: string; contentType: PublicContentType }>;
 
 export type StoryCategory = (typeof STORY_CATEGORY_OPTIONS)[number]["label"];
@@ -154,41 +160,6 @@ export type StoryMediaTone = "night" | "blue" | "amber" | "violet" | "slate";
 
 /** 前端展示用图片(全部为本地 data-URI 合成占位,M4 media display-only,零外联)。 */
 export type PublicStoryImage = { src: string; alt: string };
-
-const TONE_GRADIENTS: Record<StoryMediaTone, readonly [string, string]> = {
-  night: ["#101a33", "#2f6fe4"],
-  blue: ["#0f2737", "#78bde1"],
-  amber: ["#3b2a16", "#f5c451"],
-  violet: ["#291739", "#d8bbff"],
-  slate: ["#20262b", "#b8c0cc"]
-};
-
-function escapeXml(value: string): string {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&apos;");
-}
-
-function storyPlaceholderImages(tone: StoryMediaTone, label: string, altZh: string): PublicStoryImage[] {
-  const [from, to] = TONE_GRADIENTS[tone] ?? TONE_GRADIENTS.slate;
-  const safeLabel = escapeXml(label || "公开合成示意");
-  const width = 1600;
-  const height = 900;
-  const svg =
-    `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">` +
-    `<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">` +
-    `<stop offset="0" stop-color="${from}"/><stop offset="1" stop-color="${to}"/>` +
-    `</linearGradient></defs>` +
-    `<rect width="100%" height="100%" fill="url(#g)"/>` +
-    `<rect x="${Math.round(width * 0.06)}" y="${Math.round(height * 0.08)}" width="${Math.round(width * 0.88)}" height="${Math.round(height * 0.16)}" rx="${Math.round(height * 0.03)}" fill="rgba(0,0,0,0.28)"/>` +
-    `<text x="${Math.round(width * 0.06)}" y="${Math.round(height * 0.2)}" fill="rgba(255,255,255,0.92)" font-family="sans-serif" font-size="${Math.round(height * 0.09)}" font-weight="600">${safeLabel}</text>` +
-    `<text x="${Math.round(width * 0.06)}" y="${Math.round(height * 0.9)}" fill="rgba(255,255,255,0.55)" font-family="sans-serif" font-size="${Math.round(height * 0.05)}">synthetic · display only</text>` +
-    `</svg>`;
-  return [{ src: `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`, alt: altZh }];
-}
 
 export type PublicStoryCardViewModel = {
   publicId: string;
@@ -251,9 +222,9 @@ export class PublicApiClientError extends Error {
 
 const categoryByContentType: Record<PublicContentType, StoryCategory> = {
   race_news: "赛事新闻",
-  driver_social: "车手社交",
+  driver_social: "车手近况",
   legends_history: "名宿历史",
-  paddock_fun: "赛场趣事"
+  paddock_fun: "围场趣闻"
 };
 
 const timestampFormatter = new Intl.DateTimeFormat("zh-CN", {
@@ -352,11 +323,9 @@ function mapFeedItem(item: PublicFeedItemV1): PublicStoryCardViewModel {
     mediaTone,
     mediaDescription,
     mediaLabel,
-    images: item.state === "media_missing"
-      ? []
-      : item.media?.kind === "source_image"
-        ? [{ src: item.media.assetRef, alt: item.media.altZh }]
-        : storyPlaceholderImages(mediaTone, mediaLabel, mediaDescription),
+    images: item.media?.kind === "source_image"
+      ? [{ src: item.media.assetRef, alt: item.media.altZh }]
+      : [],
     title: item.titleZh,
     summary: item.summaryZh,
     sourceName: formatSourceName(item),
@@ -372,8 +341,19 @@ function mapFeedItem(item: PublicFeedItemV1): PublicStoryCardViewModel {
       originalUrl: source.originalUrl
     })),
     defaultLanguage: "zh-CN",
-    availableLanguages: ["zh-CN"],
-    localized: { "zh-CN": { title: item.titleZh, summary: item.summaryZh, lead: item.summaryZh, body: [], keyPoints: [] }, en: null },
+    availableLanguages: item.summaryEn || item.detailEn?.length ? ["zh-CN", "en"] : ["zh-CN"],
+    localized: {
+      "zh-CN": { title: item.titleZh, summary: item.summaryZh, lead: item.summaryZh, body: item.detailZh ?? [], keyPoints: item.keyPointsZh ?? [] },
+      en: item.summaryEn || item.detailEn?.length
+        ? {
+            title: item.source.platform === "x" ? (item.detailEn?.[0] || item.originalTitle || item.titleZh) : (item.originalTitle || item.titleZh),
+            summary: item.source.platform === "x" ? "" : (item.summaryEn || ""),
+            lead: item.source.platform === "x" ? "" : (item.summaryEn || ""),
+            body: item.detailEn ?? [],
+            keyPoints: item.keyPointsEn ?? []
+          }
+        : null
+    },
     sourceNotice: item.originalLink.enabled ? "本站仅展示原创提炼；完整原文请前往来源网站。" : "来源链接当前不可公开；本站保留已验证的中文提炼。"
   };
 }
@@ -453,6 +433,16 @@ export async function fetchPublicFeed({
 } = {}): Promise<PublicFeedViewModel> {
   const staticRequest = !fetchImpl && IS_PUBLIC_STATIC_SITE ? createPublicStaticFetch({ expectedBundleId: staticBundleId }) : null;
   const requestFetch = fetchImpl ?? staticRequest?.fetch ?? globalThis.fetch;
+  if (IS_PUBLIC_STATIC_SITE) {
+    const response = await requestClosedJson<PublicFeedResponseV1>({
+      path: buildSyntheticFallbackFeedPath({ contentType, cursor }),
+      schema: publicFeedResponseSchema,
+      fetchImpl: requestFetch,
+      signal
+    });
+    const bundle = staticRequest?.getBundleId();
+    return { stories: response.items.map(mapFeedItem), page: response.page, ...(bundle ? { staticBundleId: bundle } : {}) };
+  }
   let response: PublicFeedResponseV1 | PublicBilingualFeedResponseV2;
   try {
     response = await requestClosedJson<PublicFeedResponseV1 | PublicBilingualFeedResponseV2>({
@@ -492,6 +482,14 @@ export async function fetchPublicStory({
   const staticRequest = !fetchImpl && IS_PUBLIC_STATIC_SITE ? createPublicStaticFetch({ expectedBundleId: staticBundleId }) : null;
   const requestFetch = fetchImpl ?? staticRequest?.fetch ?? globalThis.fetch;
   let response: PublicStoryDetailResponseV1 | PublicBilingualStoryDetailResponseV2;
+  if (IS_PUBLIC_STATIC_SITE) {
+    response = await requestClosedJson<PublicStoryDetailResponseV1>({
+      path: `/api/public/stories/${encodeURIComponent(publicId)}`,
+      schema: publicStoryDetailResponseSchema,
+      fetchImpl: requestFetch,
+      signal
+    });
+  } else {
   try {
     response = await requestClosedJson<PublicStoryDetailResponseV1 | PublicBilingualStoryDetailResponseV2>({
       path: `/api/public/stories/${encodeURIComponent(publicId)}?v=2`,
@@ -507,6 +505,7 @@ export async function fetchPublicStory({
       fetchImpl: requestFetch,
       signal
     });
+  }
   }
   if (response.schemaVersion === "public-read-bilingual-v2") {
     const story = mapBilingualItem(response.story);
@@ -528,7 +527,9 @@ export async function fetchPublicStory({
           body: response.story.bodyZh,
           keyPoints: response.story.keyPointsZh
         },
-        en: null
+        en: base.localized.en
+          ? { ...base.localized.en, body: [], keyPoints: base.localized.en.keyPoints }
+          : null
       }
     },
     relatedStories: response.relatedItems.map(mapFeedItem)

@@ -3,6 +3,7 @@ import { DatabaseSync } from "node:sqlite";
 
 import type { LeanContentType, LeanSource } from "./config.ts";
 import type { FeedEntry, FeedImage } from "./feed.ts";
+import { contentTypeForTeamPost } from "./x-category.ts";
 
 /** `held`: an editor submission waiting for release; it never reaches the public site, only the local preview. */
 export type ItemStatus = "pending" | "ready" | "held" | "skipped" | "failed";
@@ -24,7 +25,11 @@ export type StoredItem = Readonly<{
   attempts: number;
   titleZh: string | null;
   summaryZh: string | null;
+  summaryEn: string | null;
   keyPointsZh: string[];
+  keyPointsEn: string[];
+  detailEn: string[] | null;
+  detailZh: string[] | null;
   publishedAt: string | null;
 }>;
 
@@ -96,7 +101,11 @@ function toItem(row: Row): StoredItem {
     attempts: Number(row.attempts),
     titleZh: row.title_zh === null ? null : String(row.title_zh),
     summaryZh: row.summary_zh === null ? null : String(row.summary_zh),
+    summaryEn: row.summary_en == null || row.summary_en === "" ? null : String(row.summary_en),
     keyPointsZh: JSON.parse(String(row.key_points_json)) as string[],
+    keyPointsEn: row.key_points_en_json == null ? [] : JSON.parse(String(row.key_points_en_json)) as string[],
+    detailEn: row.detail_en_json == null ? null : JSON.parse(String(row.detail_en_json)) as string[],
+    detailZh: row.detail_zh_json == null ? null : JSON.parse(String(row.detail_zh_json)) as string[],
     publishedAt: row.published_at === null ? null : String(row.published_at)
   };
 }
@@ -108,6 +117,14 @@ export class LeanStore {
     this.db = new DatabaseSync(path);
     this.db.exec("PRAGMA journal_mode = WAL; PRAGMA synchronous = NORMAL; PRAGMA busy_timeout = 5000;");
     this.db.exec(SCHEMA);
+    for (const statement of [
+      "ALTER TABLE items ADD COLUMN summary_en TEXT",
+      "ALTER TABLE items ADD COLUMN detail_en_json TEXT",
+      "ALTER TABLE items ADD COLUMN detail_zh_json TEXT",
+      "ALTER TABLE items ADD COLUMN key_points_en_json TEXT"
+    ]) {
+      try { this.db.exec(statement); } catch { /* column already exists */ }
+    }
   }
 
   close(): void {
@@ -131,8 +148,11 @@ export class LeanStore {
       for (const entry of entries) {
         const key = linkKey(entry.link);
         const imageJson = entry.image === null ? null : JSON.stringify(entry.image);
+        const contentType = source.platform === "x"
+          ? contentTypeForTeamPost(source.sourceId, source.contentType, entry.title, entry.text)
+          : source.contentType;
         const result = insert.run(publicIdFor(source.platform, key), source.sourceId, key, source.platform,
-          source.displayName, source.contentType, source.requireRelevance ? 1 : 0, entry.link, entry.title, entry.text,
+          source.displayName, contentType, source.requireRelevance ? 1 : 0, entry.link, entry.title, entry.text,
           entry.sourcePublishedAt, now, imageJson);
         added += Number(result.changes);
         if (Number(result.changes) === 0 && imageJson !== null) fillImage.run(imageJson, key);
@@ -165,10 +185,11 @@ export class LeanStore {
     try {
       const known = this.db.prepare("SELECT 1 FROM editor_submissions WHERE idempotency_key = ?").get(idempotencyKey);
       const inserted = known ? 0 : Number(this.db.prepare(`INSERT OR IGNORE INTO items
-        (public_id, source_id, link_key, platform, display_name, content_type, require_relevance, link, title, text, source_published_at, first_seen_at, image_json, status, title_zh, summary_zh, key_points_json, published_at)
-        VALUES (?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+        (public_id, source_id, link_key, platform, display_name, content_type, require_relevance, link, title, text, source_published_at, first_seen_at, image_json, status, title_zh, summary_zh, key_points_json, published_at, detail_en_json, detail_zh_json)
+        VALUES (?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
         .run(item.publicId, item.sourceId, key, item.platform, item.displayName, item.contentType, item.link, item.title, item.text,
-          item.sourcePublishedAt, item.firstSeenAt, item.image === null ? null : JSON.stringify(item.image), item.status, item.titleZh, item.summaryZh, JSON.stringify(item.keyPointsZh), item.publishedAt).changes);
+          item.sourcePublishedAt, item.firstSeenAt, item.image === null ? null : JSON.stringify(item.image), item.status, item.titleZh, item.summaryZh, JSON.stringify(item.keyPointsZh), item.publishedAt,
+          item.detailEn == null ? null : JSON.stringify(item.detailEn), item.detailZh == null ? null : JSON.stringify(item.detailZh)).changes);
       if (inserted === 1) {
         this.db.prepare("INSERT INTO editor_submissions (idempotency_key, public_id, imported_at) VALUES (?, ?, ?)").run(idempotencyKey, item.publicId, item.firstSeenAt);
       }
@@ -194,9 +215,43 @@ export class LeanStore {
       ORDER BY COALESCE(source_published_at, first_seen_at) DESC LIMIT ?`).all(MAX_REFINE_ATTEMPTS, limit) as Row[]).map(toItem);
   }
 
-  markReady(publicId: string, titleZh: string, summaryZh: string, keyPointsZh: readonly string[], now: string): void {
-    this.db.prepare(`UPDATE items SET status = 'ready', title_zh = ?, summary_zh = ?, key_points_json = ?, published_at = ?, attempts = attempts + 1
-      WHERE public_id = ? AND status = 'pending'`).run(titleZh, summaryZh, JSON.stringify(keyPointsZh), now, publicId);
+  markReady(publicId: string, titleZh: string, summaryZh: string, keyPointsZh: readonly string[], now: string,
+    extras: { summaryEn?: string | null; keyPointsEn?: readonly string[]; detailEn?: string[] | null; detailZh?: string[] | null } = {}): void {
+    this.db.prepare(`UPDATE items SET status = 'ready', title_zh = ?, summary_zh = ?, summary_en = ?, key_points_json = ?, key_points_en_json = ?,
+      detail_en_json = ?, detail_zh_json = ?, published_at = ?, attempts = attempts + 1
+      WHERE public_id = ? AND status = 'pending'`).run(
+      titleZh, summaryZh, extras.summaryEn ?? null, JSON.stringify(keyPointsZh), JSON.stringify(extras.keyPointsEn ?? []),
+      extras.detailEn == null ? null : JSON.stringify(extras.detailEn),
+      extras.detailZh == null ? null : JSON.stringify(extras.detailZh),
+      now, publicId);
+  }
+
+  /** Rewrites the Chinese and English copy of an already published story. */
+  rewriteReady(publicId: string, copy: { titleZh: string; summaryZh: string; summaryEn: string | null; keyPointsZh: readonly string[]; keyPointsEn: readonly string[]; detailEn: string[] | null; detailZh: string[] | null }): void {
+    this.db.prepare(`UPDATE items SET title_zh = ?, summary_zh = ?, summary_en = ?, key_points_json = ?, key_points_en_json = ?, detail_en_json = ?, detail_zh_json = ?
+      WHERE public_id = ? AND status = 'ready'`).run(
+      copy.titleZh, copy.summaryZh, copy.summaryEn, JSON.stringify(copy.keyPointsZh), JSON.stringify(copy.keyPointsEn),
+      copy.detailEn == null ? null : JSON.stringify(copy.detailEn),
+      copy.detailZh == null ? null : JSON.stringify(copy.detailZh),
+      publicId);
+  }
+
+  allReadyRss(): StoredItem[] {
+    return (this.db.prepare("SELECT * FROM items WHERE status = 'ready' AND platform = 'rss'").all() as Row[]).map(toItem);
+  }
+  rssToRepair(): StoredItem[] {
+    return (this.db.prepare(`SELECT * FROM items WHERE status = 'ready' AND platform = 'rss' AND (
+        detail_zh_json IS NULL
+        OR (key_points_json != '[]' AND (key_points_en_json IS NULL OR key_points_en_json = '[]'))
+        OR (summary_en IS NOT NULL AND length(summary_en) >= 230 AND substr(rtrim(summary_en), -1) NOT IN ('.', '!', '?', '"'))
+      ) ORDER BY COALESCE(source_published_at, published_at) DESC`).all() as Row[]).map(toItem);
+  }
+
+  /** Ready stories from the last `days` that still have no full text. */
+  readyWithoutDetail(days: number, now: Date): StoredItem[] {
+    const since = new Date(now.getTime() - days * 24 * 3600 * 1000).toISOString();
+    return (this.db.prepare(`SELECT * FROM items WHERE status = 'ready' AND detail_zh_json IS NULL
+      AND COALESCE(source_published_at, published_at) >= ? ORDER BY COALESCE(source_published_at, published_at) DESC`).all(since) as Row[]).map(toItem);
   }
 
   markSkipped(publicId: string): void {
@@ -216,6 +271,10 @@ export class LeanStore {
   /** Takes a pending or public story out of the site; the row stays so it is never collected again. */
   retire(publicId: string): void {
     this.db.prepare("UPDATE items SET status = 'skipped' WHERE public_id = ? AND status IN ('pending', 'ready')").run(publicId);
+  }
+
+  setContentType(publicId: string, contentType: LeanContentType): void {
+    this.db.prepare("UPDATE items SET content_type = ? WHERE public_id = ? AND status IN ('pending', 'ready')").run(contentType, publicId);
   }
 
   reinstate(publicId: string): void {

@@ -55,7 +55,7 @@ cpSync(sourceRoot, outputRoot, { recursive: true, errorOnExist: true, force: fal
 writeFileSync(join(outputRoot, ".nojekyll"), "", { flag: "wx" });
 hashes[".nojekyll"] = createHash("sha256").update("").digest("hex");
 const files = Object.entries(hashes).sort(([left], [right]) => left.localeCompare(right)).map(([path, sha256]) => ({ path, sha256, bytes: lstatSync(join(outputRoot, path)).size }));
-const receipt = PublicStaticShellBuildSchema.parse({ schemaVersion: "public-static-shell-build-v1", basePath: "/f1plus1", nodeVersion: process.version, files });
+const receipt = PublicStaticShellBuildSchema.parse({ schemaVersion: "public-static-shell-build-v1", basePath: "/", nodeVersion: process.version, files });
 const receiptPath = `${outputRoot}.build-receipt.json`;
 writeFileSync(receiptPath, `${JSON.stringify(receipt, null, 2)}\n`, { flag: "wx" });
 process.stdout.write(`${JSON.stringify({ event: "PUBLIC_STATIC_BUILD_READY", outputRoot, receiptPath, fileCount: Object.keys(hashes).length })}\n`);

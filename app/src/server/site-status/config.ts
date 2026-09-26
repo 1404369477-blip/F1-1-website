@@ -4,7 +4,7 @@ import { isAbsolute, normalize } from "node:path";
 import type { BackupSampleConfig, DatabaseSampleConfig } from "./types.ts";
 
 export const PUBLIC_HEALTH_URL = "https://thick-canal-patrick-media.trycloudflare.com/api/health";
-export const PUBLIC_PAGES_HOME_URL = "https://1404369477-blip.github.io/f1plus1/";
+export const PUBLIC_PAGES_HOME_URL = "https://f1plus1.com/";
 export const PUBLIC_PAGES_CURRENT_URL = `${PUBLIC_PAGES_HOME_URL}_public/current.json`;
 export const PAGES_TIMEOUT_MS = 16_000;
 export const HTTP_TIMEOUT_MS = 4_000;

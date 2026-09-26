@@ -239,7 +239,7 @@ export function F1PageShell({
                 <input
                   type="search"
                   id="search-input"
-                  placeholder="搜索时间线"
+                  placeholder="搜索"
                   aria-label="搜索当前已加载的时间线"
                   autoComplete="off"
                   spellCheck={false}

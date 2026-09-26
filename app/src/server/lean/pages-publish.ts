@@ -3,7 +3,7 @@ import { createHash } from "node:crypto";
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 
-import { PAGES_BRANCH, PAGES_DEPLOY_KEY, PAGES_HTTPS_REMOTE, PAGES_KNOWN_HOSTS, PAGES_REMOTE, PAGES_TOKEN_PATH, PAGES_UI_DIRECTORY, PAGES_WORKFLOW } from "./config.ts";
+import { PAGES_BRANCH, PAGES_CNAME, PAGES_DEPLOY_KEY, PAGES_HTTPS_REMOTE, PAGES_KNOWN_HOSTS, PAGES_REMOTE, PAGES_TOKEN_PATH, PAGES_UI_DIRECTORY, PAGES_WORKFLOW, leanPath } from "./config.ts";
 import type { SiteBundle } from "./site-bundle.ts";
 
 const GIT_TIMEOUT_MS = 120_000;
@@ -40,7 +40,7 @@ function createGit(cwd: string): { git: Git; remote: string } {
     const result = spawnSync("/usr/bin/git", ["-c", "core.hooksPath=/dev/null", "-c", "commit.gpgsign=false", ...args],
       { cwd, env, encoding: "utf8", timeout: GIT_TIMEOUT_MS, maxBuffer: 16 * 1024 * 1024 });
     const status = result.status ?? -1;
-    if (!allowFailure && (result.error || status !== 0)) throw new Error(`GIT_${args[0]?.toUpperCase()}_FAILED: ${(result.stderr ?? "").slice(0, 300)}`);
+    if (!allowFailure && (result.error || status !== 0)) throw new Error(`GIT_${args[0]?.toUpperCase()}_FAILED: ${(result.stderr ?? result.error?.message ?? "").slice(0, 800)}`);
     return { status, stdout: (result.stdout ?? "").trim() };
   };
   return { git, remote: token === null ? PAGES_REMOTE : PAGES_HTTPS_REMOTE };
@@ -83,6 +83,14 @@ export function stageSite(root: string, bundle: SiteBundle): void {
   if (bundle.mediaFiles.size > 0) mkdirSync(join(site, "media"));
   for (const [path, file] of bundle.mediaFiles) cpSync(file, join(site, path));
   writeFileSync(join(site, ".nojekyll"), "");
+  // The Pages workflow reads CNAME from the branch root. The published site root is `site/`, so both copies are required.
+  writeFileSync(join(root, "CNAME"), `${PAGES_CNAME}\n`);
+  writeFileSync(join(site, "CNAME"), `${PAGES_CNAME}\n`);
+  const calendarFile = leanPath("f1-calendar.json");
+  if (existsSync(calendarFile)) {
+    mkdirSync(join(site, "data"), { recursive: true });
+    cpSync(calendarFile, join(site, "data/f1-calendar.json"));
+  }
   writeFileSync(join(site, "_deployment.json"), JSON.stringify({
     schemaVersion: "public-static-deployment-v1",
     bundleId: bundle.bundleId,

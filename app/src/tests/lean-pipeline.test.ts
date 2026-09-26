@@ -11,10 +11,13 @@ import { DEFAULT_EDITORIAL_DOMAINS, type LeanSource } from "../server/lean/confi
 import { importEditorInbox, markInboxPublished, parseSubmission, type InboxEntry } from "../server/lean/editor-inbox.ts";
 import { isAgencyImage, largeTwimgUrl, parseFeed } from "../server/lean/feed.ts";
 import { localizeImages, mediaKey } from "../server/lean/media.ts";
-import { parseRefineOutput } from "../server/lean/refine.ts";
+import { extractArticleParagraphs } from "../server/lean/article.ts";
+import { dropRepeatedPoints, leanRefineModelOrder, parseRefineOutput, refineRequestBody } from "../server/lean/refine.ts";
+import { REFINE_MODEL_CATALOG } from "../server/rss/refine-model.ts";
 import { buildSiteBundle } from "../server/lean/site-bundle.ts";
 import { LeanStore, linkKey, type StoredItem } from "../server/lean/store.ts";
-import { tweetSkipReason } from "../server/lean/x-filter.ts";
+import { contentTypeForTeamPost } from "../server/lean/x-category.ts";
+import { xAccountDecision, xBackoffAfterAttempt } from "../server/lean/cycle.ts";
 
 const rssSource: LeanSource = { sourceId: "motorsport-f1-news", platform: "rss", displayName: "Motorsport.com", feedUrl: "https://example.test/rss", contentType: "race_news", requireRelevance: false };
 const xSource: LeanSource = { sourceId: "x-f1", platform: "x", displayName: "@F1", feedUrl: "http://127.0.0.1:1200/twitter/user/F1", contentType: "race_news", requireRelevance: false };
@@ -40,7 +43,8 @@ function readyItem(index: number, overrides: Partial<StoredItem> = {}): StoredIt
     sourceId: "motorsport-f1-news", platform: "rss", displayName: "Motorsport.com", contentType: "race_news", requireRelevance: false,
     link: `https://www.motorsport.com/f1/news/${index}/`, title: `t${index}`, text: `x${index}`,
     sourcePublishedAt: new Date(Date.UTC(2026, 8, 24, 0, index)).toISOString(), firstSeenAt: "2026-09-24T00:00:00.000Z",
-    image: null, status: "ready", attempts: 1, titleZh: `标题${index}`, summaryZh: `摘要${index}`, keyPointsZh: [`要点${index}`],
+    image: null, status: "ready", attempts: 1, titleZh: `标题${index}`, summaryZh: `摘要${index}`, summaryEn: null, keyPointsZh: [`要点${index}`],
+    detailEn: null, detailZh: null, keyPointsEn: [],
     publishedAt: "2026-09-24T01:00:00.000Z", ...overrides
   };
 }
@@ -133,11 +137,56 @@ describe("lean store", () => {
   });
 });
 
+describe("lean article text", () => {
+  it("keeps article paragraphs and drops subscription prompts", () => {
+    const html = `<html><body><nav>Menu</nav><article><p>${"George Russell said the car felt good through the castle section of Baku."}</p><p>Subscribe to our newsletter for more stories every week.</p><p>${"The team will review the long-run data before qualifying on Friday afternoon."}</p></article></body></html>`;
+    expect(extractArticleParagraphs(html)).toEqual([
+      "George Russell said the car felt good through the castle section of Baku.",
+      "The team will review the long-run data before qualifying on Friday afternoon."
+    ]);
+    const noisy = `<article><p>${"George Russell said the car felt good through the castle section of Baku."}</p><p>Photo by: Sam Bagnall / Sutton Images via Getty Images</p><p>What would you like to see on Motorsport.com?</p><ul class="lcp_catlist"><li>How Alonso scored ninth at Zandvoort and how Albon lost a similar payday</li></ul></article>`;
+    expect(extractArticleParagraphs(noisy)).toEqual([
+      "George Russell said the car felt good through the castle section of Baku."
+    ]);
+    expect(dropRepeatedPoints("维斯塔潘赢得比赛。", ["维斯塔潘赢得比赛", "发车时轮胎温度为90度"])).toEqual(["发车时轮胎温度为90度"]);
+  });
+});
+
+describe("lean X fetch schedule", () => {
+  const now = Date.parse("2026-09-26T12:00:00Z");
+  it("fetches inside a race window and waits 30 minutes outside it", () => {
+    expect(xAccountDecision({ now, lastAttemptAt: now - 5 * 60 * 1000, dense: true, pausedUntil: null })).toBe("fetch");
+    expect(xAccountDecision({ now, lastAttemptAt: now - 10 * 60 * 1000, dense: false, pausedUntil: null })).toBe("quiet");
+    expect(xAccountDecision({ now, lastAttemptAt: now - 31 * 60 * 1000, dense: false, pausedUntil: null })).toBe("fetch");
+  });
+  it("pauses an account after three timeouts and keeps it paused", () => {
+    expect(xBackoffAfterAttempt(0, true, now).consecutiveTimeouts).toBe(1);
+    expect(xBackoffAfterAttempt(1, true, now).consecutiveTimeouts).toBe(2);
+    const paused = xBackoffAfterAttempt(2, true, now);
+    expect(paused.justPaused).toBe(true);
+    expect(Date.parse(paused.pausedUntil ?? "") - now).toBe(2 * 60 * 60 * 1000);
+    expect(xAccountDecision({ now, lastAttemptAt: null, dense: true, pausedUntil: now + 60_000 })).toBe("paused");
+    expect(xBackoffAfterAttempt(2, false, now)).toEqual({ consecutiveTimeouts: 0, pausedUntil: null, justPaused: false });
+  });
+});
+
 describe("lean model output", () => {
   it("accepts Chinese output and rejects missing Chinese text", () => {
-    expect(parseRefineOutput(JSON.stringify({ relevant: true, titleZh: "维斯塔潘夺冠", summaryZh: "维斯塔潘赢得比赛。", keyPointsZh: ["夺冠", ""] }), false))
-      .toEqual({ kind: "ready", titleZh: "维斯塔潘夺冠", summaryZh: "维斯塔潘赢得比赛。", keyPointsZh: ["夺冠"] });
+    expect(parseRefineOutput(JSON.stringify({ relevant: true, titleZh: "维斯塔潘夺冠", summaryZh: "维斯塔潘赢得比赛。", keyPointsZh: ["发车时轮胎温度为90度", "维斯塔潘赢得比赛"] }), false))
+      .toEqual({ kind: "ready", titleZh: "维斯塔潘夺冠", summaryZh: "维斯塔潘赢得比赛。", summaryEn: null, keyPointsZh: ["发车时轮胎温度为90度"], keyPointsEn: [], detailZh: null });
     expect(() => parseRefineOutput(JSON.stringify({ titleZh: "Win", summaryZh: "Max won." }), false)).toThrow("MODEL_OUTPUT_INVALID");
+  });
+
+  it("prefers GLM and keeps DeepSeek as the fallback", () => {
+    expect(leanRefineModelOrder(undefined)).toEqual(["glm-5.3-flash", "deepseek-chat"]);
+    expect(leanRefineModelOrder("deepseek-chat")).toEqual(["deepseek-chat", "glm-5.3-flash"]);
+    expect(REFINE_MODEL_CATALOG["glm-5.3-flash"].endpoint).toBe("https://open.bigmodel.cn/api/paas/v4/chat/completions");
+    expect(refineRequestBody("glm-5.3-flash", [])).toMatchObject({
+      model: "glm-5.3-flash",
+      reasoning_effort: "low",
+      response_format: { type: "json_object" }
+    });
+    expect(refineRequestBody("deepseek-chat", [])).not.toHaveProperty("reasoning_effort");
   });
 
   it("skips irrelevant posts only for sources that require relevance", () => {
@@ -267,7 +316,12 @@ describe("lean site bundle", () => {
     expect(new Set(seen).size).toBe(31);
     expect(body("/api/public/feed?contentType=driver_social").items.map((item) => item.publicId)).toEqual([`public-x-${"f".repeat(64)}`]);
     expect(index.responses[`/api/public/stories/${items[0].publicId}`].status).toBe(200);
-    expect(index.responses["/api/public/feed?limit=12&v=2"].status).toBe(503);
+    expect(index.responses["/api/public/feed?limit=12&v=2"]).toBeUndefined();
+    expect(bundle.files.get("robots.txt")?.toString()).toContain("Sitemap: https://f1plus1.com/sitemap.xml");
+    expect(bundle.files.get("rss.xml")?.toString()).toMatch(/<pubDate>[A-Z][a-z]{2}, /);
+    expect(bundle.files.get("sitemap.xml")?.toString()).toContain("https://f1plus1.com/stories/?publicId=");
+    expect(bundle.files.get("rss.xml")?.toString()).toContain("<link>https://f1plus1.com/</link>");
+    expect(bundle.files.get("sitemap.xml")?.toString()).not.toContain("github.io");
     expect(buildSiteBundle(items, "2026-09-24T15:00:00.000Z").contentFingerprint).toBe(bundle.contentFingerprint);
   });
 
@@ -288,10 +342,19 @@ describe("lean site bundle", () => {
     const byId = new Map(feed.items.map((item) => [item.publicId, item]));
     expect(byId.get(items[0].publicId)).toMatchObject({ state: "media_missing", media: null });
     expect(byId.get(items[1].publicId)).toMatchObject({ state: "ready", media: {
-      kind: "source_image", assetRef: "https://1404369477-blip.github.io/f1plus1/media/aaa.webp", mimeType: "image/webp", declaredBytes: 4321 } });
+      kind: "source_image", assetRef: "https://f1plus1.com/media/aaa.webp", mimeType: "image/webp", declaredBytes: 4321 } });
     expect(byId.get(items[2].publicId)).toMatchObject({ state: "media_missing", media: null });
     expect(byId.get(items[3].publicId)).toMatchObject({ state: "media_missing", media: null });
     expect([...bundle.mediaFiles]).toEqual([["media/aaa.webp", "/cache/aaa.webp"]]);
+  });
+});
+
+describe("lean team post categories", () => {
+  it("keeps race reporting as news and sends everyday team posts to paddock features", () => {
+    expect(contentTypeForTeamPost("x-mclarenf1", "race_news", "Qualifying starts soon", "FP2 is next")).toBe("race_news");
+    expect(contentTypeForTeamPost("x-mclarenf1", "race_news", "Shortest commute", "The shortest commute of the season")).toBe("paddock_fun");
+    expect(contentTypeForTeamPost("x-mclarenf1", "race_news", "迈凯伦：本赛季最短通勤", "车队发了一段通勤花絮")).toBe("paddock_fun");
+    expect(contentTypeForTeamPost("x-lando-norris", "driver_social", "Dinner", "Pasta night")).toBe("driver_social");
   });
 });
 

@@ -42,7 +42,7 @@ async function defaultEncoder(input: Buffer): Promise<Buffer> {
 async function download(url: string, fetcher: typeof fetch): Promise<Buffer> {
   const response = await fetcher(url, {
     signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
-    headers: { "user-agent": "F1Plus1-Reader/1.0 (+https://1404369477-blip.github.io/f1plus1/)", accept: "image/avif,image/webp,image/jpeg,image/png,image/*" },
+    headers: { "user-agent": "F1Plus1-Reader/1.0 (+https://f1plus1.com/)", accept: "image/avif,image/webp,image/jpeg,image/png,image/*" },
     redirect: "follow"
   });
   if (!response.ok) throw new Error(`IMAGE_HTTP_${response.status}`);

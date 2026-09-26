@@ -1,7 +1,7 @@
 import type { StoryCategory } from "./public-api";
 
 export function isImageFirstCategory(category: StoryCategory): boolean {
-  return category === "车手社交" || category === "名宿历史" || category === "赛场趣事";
+  return category === "车手近况" || category === "名宿历史" || category === "围场趣闻";
 }
 
 export function isSameEditorialText(left: string, right: string): boolean {

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 
+import { RaceStrip } from "../../components/RaceStrip";
 import { publicStoryHref } from "./public-site-config";
 import { editorialSectionLabel, hasEditorialExtras, isImageFirstCategory, originalArticleCta, originalArticleNote, uniqueEditorialParagraphs } from "./editorial";
 import {
@@ -50,6 +51,7 @@ function DetailFrame({ children }: { children: ReactNode }) {
   return (
     <main className="app timeline-detail-page" id="main-content" tabIndex={-1}>
       <div className="shell">
+        <RaceStrip />
         <section className="timeline" aria-label="F1+1 公开内容详情">
           <Link className="detail-back-link" href="/">← 返回资讯流</Link>
           {children}
@@ -107,6 +109,19 @@ export function StoryDetailExperience({ publicId }: { publicId: string }) {
     setFetchKey({ publicId, requestVersion });
     setDetailState({ status: "loading" });
   }
+
+  useEffect(() => {
+    if (detailState.status !== "ready") return;
+    const title = detailState.data.story.title;
+    const url = new URL(publicStoryHref(publicId), "https://f1plus1.com").toString();
+    document.title = `${title} · F1+1`;
+    const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]') ?? document.head.appendChild(document.createElement("link"));
+    canonical.rel = "canonical";
+    canonical.href = url;
+    const og = document.querySelector<HTMLMetaElement>('meta[property="og:url"]') ?? document.head.appendChild(document.createElement("meta"));
+    og.setAttribute("property", "og:url");
+    og.content = url;
+  }, [detailState, publicId]);
 
   useEffect(() => {
     const controller = new AbortController();

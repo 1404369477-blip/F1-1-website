@@ -48,8 +48,8 @@ function artifact(rows: Array<{ key: string; body: unknown; status?: 200 | 400 |
   const bundleId = hash(indexText);
   const directory = `_public/generations/${bundleId}/`;
   const pointer = PublicStaticPointerSchema.parse({ schemaVersion: "public-static-pointer-v1", bundleId, generatedAt: at, indexPath: `${directory}index.json`, indexSha256: bundleId });
-  const files = new Map<string, string>([["/f1plus1/_public/current.json", JSON.stringify(pointer)], [`/f1plus1/${pointer.indexPath}`, indexText]]);
-  for (const [sha256, text] of bodies) files.set(`/f1plus1/${directory}responses/${sha256}.json`, text);
+  const files = new Map<string, string>([["/_public/current.json", JSON.stringify(pointer)], [`/${pointer.indexPath}`, indexText]]);
+  for (const [sha256, text] of bodies) files.set(`/${directory}responses/${sha256}.json`, text);
   return { files, pointer, index, bundleId };
 }
 
@@ -67,10 +67,10 @@ function server(files: Map<string, string>) {
 
 describe("public static transport", () => {
   it("allows only public shell artifacts and rejects private routes, code, traversal, and source maps", () => {
-    for (const path of ["index.html", "stories/index.html", "404/index.html", "_not-found/__next._full.txt", "_next/static/chunks/app-123.js", ".nojekyll"]) expect(isPublicStaticShellPath(path)).toBe(true);
+    for (const path of ["index.html", "stories/index.html", "404/index.html", "_not-found/__next._full.txt", "_next/static/chunks/app-123.js", ".nojekyll", "data/f1-calendar.json"]) expect(isPublicStaticShellPath(path)).toBe(true);
     for (const path of ["admin/index.html", "api/public/feed.json", ".env", "src/app/page.tsx", "_next/static/app.js.map", "stories/../../private.txt", "/index.html"]) expect(isPublicStaticShellPath(path)).toBe(false);
     const files = ["index.html", "stories/index.html", "404.html", ".nojekyll"].map((path) => ({ path, sha256: "0".repeat(64), bytes: 0 }));
-    expect(() => PublicStaticShellBuildSchema.parse({ schemaVersion: "public-static-shell-build-v1", basePath: "/f1plus1", nodeVersion: "v24.18.0", files: [...files, files[0]] })).toThrow();
+    expect(() => PublicStaticShellBuildSchema.parse({ schemaVersion: "public-static-shell-build-v1", basePath: "/", nodeVersion: "v24.18.0", files: [...files, files[0]] })).toThrow();
   });
 
   it("uses canonical keys and rejects duplicate, foreign, private, and ambiguous requests", () => {
@@ -100,7 +100,7 @@ describe("public static transport", () => {
     expect(feed.page).toEqual(emptyFeed.page);
     expect(transport.getBundleId()).toBe(data.bundleId);
     expect(origin.calls.filter((path) => path.includes("current.json"))).toHaveLength(1);
-    expect(origin.calls.every((path) => path.startsWith("/f1plus1/_public/"))).toBe(true);
+    expect(origin.calls.every((path) => path.startsWith("/_public/"))).toBe(true);
   });
 
   it("keeps a V2 empty result empty and never fills it with V1 content", async () => {
@@ -143,10 +143,10 @@ describe("public static transport", () => {
     for (const failure of ["hash", "missing", "html", "schema"] as const) {
       const data = artifact([{ key: "/api/public/feed?v=2&limit=12", body: failure === "schema" ? { ...emptyFeed, privateReview: true } : emptyFeed }]);
       const ref = Object.values(data.index.responses)[0];
-      const path = `/f1plus1/_public/generations/${data.bundleId}/${ref.path}`;
+      const path = `/_public/generations/${data.bundleId}/${ref.path}`;
       if (failure === "hash") data.files.set(path, JSON.stringify({ ...emptyFeed, items: [detail.story] }));
       if (failure === "missing") data.files.delete(path);
-      if (failure === "html") data.files.set(`/f1plus1/${data.pointer.indexPath}`, "<html>404</html>");
+      if (failure === "html") data.files.set(`/${data.pointer.indexPath}`, "<html>404</html>");
       await expect(fetchPublicFeed({ fetchImpl: createPublicStaticFetch({ fetchImpl: server(data.files).fetch }).fetch })).rejects.toBeInstanceOf(PublicApiClientError);
     }
   });

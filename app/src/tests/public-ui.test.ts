@@ -759,9 +759,9 @@ describe("small-publication editorial presentation", () => {
     expect(shouldShowEndOfFeed(1, false)).toBe(false);
     expect(shouldShowEndOfFeed(12, false)).toBe(true);
     expect(isImageFirstCategory("赛事新闻")).toBe(false);
-    expect(isImageFirstCategory("车手社交")).toBe(true);
+    expect(isImageFirstCategory("车手近况")).toBe(true);
     expect(isImageFirstCategory("名宿历史")).toBe(true);
-    expect(isImageFirstCategory("赛场趣事")).toBe(true);
+    expect(isImageFirstCategory("围场趣闻")).toBe(true);
     expect(feedSource).toContain("isImageFirstCategory(story.category)");
     expect(feedSource).toContain("imageFirst ? null : media");
     expect(feedSource).toContain('data-kind={imageFirst ? "image-first" : "event"}');

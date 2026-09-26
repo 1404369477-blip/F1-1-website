@@ -25,7 +25,8 @@ export const DEFAULT_EDITORIAL_DOMAINS: readonly string[] = [
 ];
 /** Picture hosts an editor submission's `imageUrl` may use: F1 official media, YouTube covers, tweet photos. */
 export const EDITORIAL_IMAGE_HOSTS: readonly string[] = ["media.formula1.com", "www.formula1.com", "i.ytimg.com", "pbs.twimg.com"];
-export const PAGES_URL = "https://1404369477-blip.github.io/f1plus1/";
+export const PAGES_CNAME = "f1plus1.com";
+export const PAGES_URL = "https://f1plus1.com/";
 export const PAGES_REMOTE = "ssh://git@ssh.github.com:443/1404369477-blip/f1plus1.git";
 export const PAGES_HTTPS_REMOTE = "https://github.com/1404369477-blip/f1plus1.git";
 /** Fine-grained token limited to Contents read/write on f1plus1; when present, publishing uses HTTPS instead of SSH. */
@@ -33,7 +34,7 @@ export const PAGES_TOKEN_PATH = "/Users/chanai/F1-1-website/.pages-publisher/cre
 export const PAGES_BRANCH = "gh-pages";
 export const PAGES_DEPLOY_KEY = "/Users/chanai/F1-1-website/.pages-publisher/credentials-20260912/id_ed25519";
 export const PAGES_KNOWN_HOSTS = "/Users/chanai/F1-1-website/.pages-publisher/credentials-20260912/known_hosts";
-export const PAGES_UI_DIRECTORY = "/Users/chanai/F1-1-website/.pages-publisher/runtime-20260912-r2/ui";
+export const PAGES_UI_DIRECTORY = "/Users/chanai/F1-1-website/.pages-publisher/runtime-20260926-strip/ui";
 export const PAGES_WORKFLOW = "/Users/chanai/F1-1-website/.pages-publisher/runtime-20260912-r2/pages.yml";
 export const MODEL_PRIVATE_DIR = "/Users/chanai/Library/Application Support/F1Plus1/Admin/private";
 export const RSSHUB_ORIGIN = "http://127.0.0.1:1200";

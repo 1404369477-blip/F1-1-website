@@ -1,13 +1,14 @@
 import { z } from "zod";
 
 export function isPublicStaticShellDirectory(path: string): boolean {
-  return !path.includes("..") && ["stories", "404", "_not-found", "_next"].some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
+  return !path.includes("..") && ["stories", "404", "_not-found", "_next", "data"].some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
 }
 
 /** Shared by the shell builder and publisher; it permits no application source or private routes. */
 export function isPublicStaticShellPath(path: string): boolean {
   if (path.includes("..") || path.length > 1024) return false;
   return path === ".nojekyll"
+    || path === "data/f1-calendar.json"
     || /^(?:index|404)\.(?:html|txt)$/u.test(path)
     || /^(?:stories|_not-found)\/(?:index\.html|[^/]+\.txt)$/u.test(path)
     || path === "404/index.html"
@@ -17,7 +18,7 @@ export function isPublicStaticShellPath(path: string): boolean {
 
 export const PublicStaticShellBuildSchema = z.object({
   schemaVersion: z.literal("public-static-shell-build-v1"),
-  basePath: z.literal("/f1plus1"),
+  basePath: z.literal("/"),
   nodeVersion: z.literal("v24.18.0"),
   files: z.array(z.object({
     path: z.string().refine(isPublicStaticShellPath),

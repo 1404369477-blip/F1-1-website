@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 
 import { normalizePublicStaticRequestKey } from "../../features/stories/public-static-schema.ts";
 import { LEAN_CONTENT_TYPES, PAGES_URL, type LeanContentType } from "./config.ts";
+import { isBoilerplateParagraph } from "./article.ts";
 import { isAgencyImage } from "./feed.ts";
 import type { LocalImage, LocalMedia } from "./media.ts";
 import type { StoredItem } from "./store.ts";
@@ -36,7 +37,7 @@ function localImage(item: StoredItem, localMedia: LocalMedia): LocalImage | unde
 }
 
 /** `media_missing` makes the UI omit the picture area; `ready` without media would draw a synthetic placeholder. */
-function feedItemWith(item: StoredItem, localMedia: LocalMedia): Record<string, unknown> {
+function feedItemWith(item: StoredItem, localMedia: LocalMedia, fullTextDenied: ReadonlySet<string>): Record<string, unknown> {
   const local = localImage(item, localMedia);
   const media = local === undefined ? null : {
     kind: "source_image",
@@ -45,6 +46,7 @@ function feedItemWith(item: StoredItem, localMedia: LocalMedia): Record<string, 
     declaredBytes: local.bytes,
     altZh: item.titleZh
   };
+  const showFull = fullTextAllowed(item.link, fullTextDenied);
   return {
     publicId: item.publicId,
     contentType: item.contentType,
@@ -56,7 +58,13 @@ function feedItemWith(item: StoredItem, localMedia: LocalMedia): Record<string, 
     sourceTimeStatus: item.sourcePublishedAt === null ? "unknown" : "known",
     source: { sourceId: item.sourceId, platform: item.platform, displayName: item.displayName, byline: item.displayName, accessStatus: "available" },
     media,
-    originalLink: { enabled: true, url: item.link, reason: null }
+    originalLink: { enabled: true, url: item.link, reason: null },
+    originalTitle: item.title,
+    summaryEn: item.summaryEn,
+    detailZh: showFull ? cleanParagraphs(item.detailZh) : undefined,
+    detailEn: showFull ? cleanParagraphs(item.detailEn) : undefined,
+    keyPointsZh: item.keyPointsZh.length > 0 ? item.keyPointsZh : undefined,
+    keyPointsEn: item.keyPointsEn.length > 0 ? item.keyPointsEn : undefined
   };
 }
 
@@ -70,28 +78,35 @@ function feedPath(params: Record<string, string | null>): string {
   return `/api/public/feed${text ? `?${text}` : ""}`;
 }
 
-function problem(instance: string, key: string): Record<string, unknown> {
-  return {
-    type: "urn:f1plus1:problem:PUBLIC_READ_INTEGRITY_FAILED",
-    title: "Public read unavailable",
-    status: 503,
-    detail: "The signed public snapshot integrity check failed.",
-    instance,
-    reasonCode: "PUBLIC_READ_INTEGRITY_FAILED",
-    traceId: `trace-${sha256(key).slice(0, 32)}`
-  };
-}
-
 function relatedFor(item: StoredItem, items: readonly StoredItem[]): StoredItem[] {
   const others = items.filter((other) => other.publicId !== item.publicId);
   const sameSource = others.filter((other) => other.sourceId === item.sourceId);
   return [...sameSource, ...others.filter((other) => other.sourceId !== item.sourceId)].slice(0, 3);
 }
 
+function cleanParagraphs(paragraphs: string[] | null): string[] | undefined {
+  if (!paragraphs) return undefined;
+  const kept = paragraphs.map((paragraph) => paragraph.trim()).filter((paragraph) => paragraph.length > 0 && !isBoilerplateParagraph(paragraph));
+  return kept.length > 0 ? kept : undefined;
+}
+
+function fullTextAllowed(link: string, denied: ReadonlySet<string>): boolean {
+  try {
+    const host = new URL(link).hostname.replace(/^www\./, "").toLowerCase();
+    for (const domain of denied) {
+      const normalized = domain.replace(/^www\./, "").toLowerCase();
+      if (host === normalized || host.endsWith(`.${normalized}`)) return false;
+    }
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 /** Builds the static `/api/public/*` responses the published UI reads. `items` must be ready items. */
-export function buildSiteBundle(readyItems: readonly StoredItem[], generatedAt: string, localMedia: LocalMedia = new Map()): SiteBundle {
+export function buildSiteBundle(readyItems: readonly StoredItem[], generatedAt: string, localMedia: LocalMedia = new Map(), fullTextDenied: ReadonlySet<string> = new Set()): SiteBundle {
   const items = [...readyItems].sort((a, b) => timelineAt(b).localeCompare(timelineAt(a)) || b.publicId.localeCompare(a.publicId));
-  const feedItem = (item: StoredItem) => feedItemWith(item, localMedia);
+  const feedItem = (item: StoredItem) => feedItemWith(item, localMedia, fullTextDenied);
   const mediaFiles = new Map<string, string>();
   for (const item of items) {
     const local = localImage(item, localMedia);
@@ -113,26 +128,23 @@ export function buildSiteBundle(readyItems: readonly StoredItem[], generatedAt: 
     }
   };
 
-  const sources = [...new Set(items.map((item) => item.sourceId))].sort();
   for (const contentType of [null, ...CONTENT_TYPES]) {
-    for (const source of [null, ...sources]) {
-      const scoped = items.filter((item) => (contentType === null || item.contentType === contentType) && (source === null || item.sourceId === source));
-      let cursor: { cursorAt: string; cursorId: string } | null = null;
-      let offset = 0;
-      do {
-        const page = scoped.slice(offset, offset + PAGE_SIZE);
-        const hasMore = offset + PAGE_SIZE < scoped.length;
-        const last = page.at(-1);
-        const nextCursor = hasMore && last ? { cursorAt: timelineAt(last), cursorId: cursorId(last, contentType, source) } : null;
-        add(feedPath({ v: "1", contentType, source, ...(cursor ?? {}) }), 200, {
-          schemaVersion: "public-read-v0.1",
-          items: page.map(feedItem),
-          page: { pageSize: PAGE_SIZE, hasMore, nextCursor }
-        }, true);
-        cursor = nextCursor;
-        offset += PAGE_SIZE;
-      } while (cursor !== null);
-    }
+    const scoped = items.filter((item) => contentType === null || item.contentType === contentType);
+    let cursor: { cursorAt: string; cursorId: string } | null = null;
+    let offset = 0;
+    do {
+      const page = scoped.slice(offset, offset + PAGE_SIZE);
+      const hasMore = offset + PAGE_SIZE < scoped.length;
+      const last = page.at(-1);
+      const nextCursor = hasMore && last ? { cursorAt: timelineAt(last), cursorId: cursorId(last, contentType, null) } : null;
+      add(feedPath({ v: "1", contentType, source: null, ...(cursor ?? {}) }), 200, {
+        schemaVersion: "public-read-v0.1",
+        items: page.map(feedItem),
+        page: { pageSize: PAGE_SIZE, hasMore, nextCursor }
+      }, true);
+      cursor = nextCursor;
+      offset += PAGE_SIZE;
+    } while (cursor !== null);
   }
 
   for (const item of items) {
@@ -142,16 +154,18 @@ export function buildSiteBundle(readyItems: readonly StoredItem[], generatedAt: 
       story: { ...feedItem(item), leadZh: summary, bodyZh: [summary], keyPointsZh: item.keyPointsZh },
       relatedItems: relatedFor(item, items).map(feedItem)
     }, true);
-    const v2Detail = `/api/public/stories/${item.publicId}?v=2`;
-    add(v2Detail, 503, problem("/api/public/stories", v2Detail), false);
-  }
-  for (const category of [null, ...CONTENT_TYPES]) {
-    const v2Feed = feedPath({ v: "2", limit: "12", category });
-    add(v2Feed, 503, problem("/api/public/feed", v2Feed), false);
   }
 
   const sortedResponses = Object.fromEntries(Object.entries(responses).sort(([a], [b]) => a.localeCompare(b)));
-  const contentFingerprint = sha256(JSON.stringify(Object.entries(sortedResponses).map(([key, ref]) => [key, ref.sha256])));
+  const sitemap = sitemapXml(items);
+  const rss = rssXml(items);
+  const robots = Buffer.from("User-agent: *\nAllow: /\nSitemap: https://f1plus1.com/sitemap.xml\n");
+  const contentFingerprint = sha256(JSON.stringify([
+    Object.entries(sortedResponses).map(([key, ref]) => [key, ref.sha256]),
+    sha256(sitemap),
+    sha256(rss),
+    sha256(robots)
+  ]));
   const indexBytes = Buffer.from(JSON.stringify({ schemaVersion: "public-static-index-v1", generatedAt, responses: sortedResponses }));
   const bundleId = sha256(indexBytes);
   const generation = `_public/generations/${bundleId}`;
@@ -165,5 +179,49 @@ export function buildSiteBundle(readyItems: readonly StoredItem[], generatedAt: 
     indexPath: `${generation}/index.json`,
     indexSha256: bundleId
   })));
+  files.set("sitemap.xml", sitemap);
+  files.set("rss.xml", rss);
+  files.set("robots.txt", robots);
   return { bundleId, contentFingerprint, files, mediaFiles, itemCount: items.length };
+}
+
+function xmlEscape(value: string): string {
+  return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+function storyUrl(publicId: string): string {
+  return new URL(`/stories/?${new URLSearchParams({ publicId }).toString()}`, PAGES_URL).toString();
+}
+
+function sitemapXml(items: readonly StoredItem[]): Buffer {
+  const urls = [PAGES_URL, ...items.map((item) => storyUrl(item.publicId))];
+  const body = urls.map((url) => `  <url><loc>${xmlEscape(url)}</loc></url>`).join("\n");
+  return Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>\n`);
+}
+
+function rssDate(iso: string): string {
+  const date = new Date(iso);
+  return Number.isNaN(date.getTime()) ? "" : date.toUTCString();
+}
+
+function rssXml(items: readonly StoredItem[]): Buffer {
+  const newest = items[0] ? rssDate(timelineAt(items[0])) : "";
+  const entries = items.slice(0, 50).map((item) => `    <item>
+      <title>${xmlEscape(item.titleZh ?? item.title)}</title>
+      <link>${xmlEscape(storyUrl(item.publicId))}</link>
+      <guid>${xmlEscape(storyUrl(item.publicId))}</guid>
+      <pubDate>${xmlEscape(rssDate(timelineAt(item)))}</pubDate>
+      <description>${xmlEscape(item.summaryZh ?? "")}</description>
+    </item>`).join("\n");
+  return Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>F1+1</title>
+    <link>${xmlEscape(PAGES_URL)}</link>
+    <description>F1 中文资讯</description>
+    <lastBuildDate>${xmlEscape(newest)}</lastBuildDate>
+${entries}
+  </channel>
+</rss>
+`);
 }

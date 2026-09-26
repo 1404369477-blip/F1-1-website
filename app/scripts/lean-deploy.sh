@@ -6,11 +6,15 @@ SOURCE_APP="$(cd "$(dirname "$0")/.." && pwd)"
 RUNTIME_APP="${LEAN_RUNTIME_APP:-/Users/chanai/F1-1-website/lean-runtime/app}"
 NODE_BIN="/Users/chanai/.local/node-v24.18.0-darwin-arm64/bin"
 
-mkdir -p "$RUNTIME_APP/src/server" "$RUNTIME_APP/src/features/stories" "$RUNTIME_APP/scripts"
+mkdir -p "$RUNTIME_APP/src/server" "$RUNTIME_APP/src/server/rss" "$RUNTIME_APP/src/features/stories" "$RUNTIME_APP/src/features/calendar" "$RUNTIME_APP/scripts"
 rm -rf "$RUNTIME_APP/src/server/lean"
 cp -R "$SOURCE_APP/src/server/lean" "$RUNTIME_APP/src/server/lean"
+cp "$SOURCE_APP/src/server/rss/refine-model.ts" "$SOURCE_APP/src/server/rss/private-credential-file.ts" "$RUNTIME_APP/src/server/rss/"
 cp "$SOURCE_APP/src/features/stories/public-static-schema.ts" "$RUNTIME_APP/src/features/stories/"
-cp "$SOURCE_APP"/scripts/lean-cycle.ts "$SOURCE_APP"/scripts/lean-seed.ts "$RUNTIME_APP/scripts/"
+cp "$SOURCE_APP/src/features/calendar/race-strip-model.ts" "$RUNTIME_APP/src/features/calendar/"
+mkdir -p "$RUNTIME_APP/data"
+cp "$SOURCE_APP"/data/f1-names-zh.json "$SOURCE_APP"/data/f1-calendar-overrides.json "$SOURCE_APP"/data/f1-calendar-2026.json "$RUNTIME_APP/data/"
+cp "$SOURCE_APP"/scripts/lean-cycle.ts "$SOURCE_APP"/scripts/lean-seed.ts "$SOURCE_APP"/scripts/lean-backfill-details.ts "$SOURCE_APP"/scripts/fetch-f1-calendar.mjs "$RUNTIME_APP/scripts/"
 
 cat > "$RUNTIME_APP/package.json" <<'JSON'
 {

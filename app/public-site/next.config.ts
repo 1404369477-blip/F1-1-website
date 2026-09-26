@@ -6,7 +6,6 @@ const appRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
 const nextConfig: NextConfig = {
   output: "export",
-  basePath: "/f1plus1",
   trailingSlash: true,
   reactStrictMode: true,
   productionBrowserSourceMaps: false,

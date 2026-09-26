@@ -178,7 +178,7 @@ export function parseFeed(source: LeanSource, xml: string): FeedEntry[] {
 export async function fetchFeed(source: LeanSource, fetcher: typeof fetch = fetch): Promise<FeedEntry[]> {
   const response = await fetcher(source.feedUrl, {
     signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
-    headers: { "user-agent": "F1Plus1-Reader/1.0 (+https://1404369477-blip.github.io/f1plus1/)", accept: "application/rss+xml, application/atom+xml, application/xml, text/xml" },
+    headers: { "user-agent": "F1Plus1-Reader/1.0 (+https://f1plus1.com/)", accept: "application/rss+xml, application/atom+xml, application/xml, text/xml" },
     redirect: "follow"
   });
   if (!response.ok) throw new Error(`FEED_HTTP_${response.status}`);

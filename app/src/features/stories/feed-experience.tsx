@@ -41,6 +41,7 @@ import {
 } from "./editorial";
 import { readHashParam, setHashParams } from "./hash-params";
 import { getTimelineSearchQuery, setTimelineSearchQuery, subscribeTimelineSearch } from "./timeline-search";
+import { RaceStrip } from "../../components/RaceStrip";
 import { IS_PUBLIC_STATIC_SITE, publicStoryHref } from "./public-site-config";
 import { PublicStaticGenerationChangedError } from "./public-static-transport";
 
@@ -167,6 +168,14 @@ const dateFormatter = new Intl.DateTimeFormat("en-CA", {
   timeZone: "Asia/Shanghai"
 });
 
+function categoryLabelEn(category: string): string {
+  if (category === "赛事新闻") return "Race news";
+  if (category === "车手近况") return "Driver news";
+  if (category === "名宿历史") return "Legends";
+  if (category === "围场趣闻") return "Paddock";
+  return category;
+}
+
 function formatClock(value: string): string {
   const time = new Date(value);
   if (Number.isNaN(time.getTime())) return "--:--";
@@ -230,9 +239,39 @@ type CardDeckProps = {
   onLoadMore: (() => void) | null;
 };
 
+function SummaryBlock({ text, open, onToggle, expandLabel, collapseLabel }: {
+  text: string;
+  open: boolean;
+  onToggle: () => void;
+  expandLabel: string;
+  collapseLabel: string;
+}): ReactNode {
+  const ref = useRef<HTMLParagraphElement | null>(null);
+  const [overflows, setOverflows] = useState(false);
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+    setOverflows(element.scrollHeight > element.clientHeight + 1);
+  }, [text, open]);
+  if (!text) return null;
+  return (
+    <>
+      <p ref={ref} className={`card-snap-summary${open ? " is-open" : ""}`}>{text}</p>
+      {overflows || open ? (
+        <button type="button" className="card-snap-expand" aria-expanded={open} onClick={onToggle}>
+          {open ? collapseLabel : expandLabel}
+        </button>
+      ) : null}
+    </>
+  );
+}
+
 function CardDeck({ stories, onOpenLightbox, onLoadMore }: CardDeckProps): ReactNode {
   const deckRef = useRef<HTMLDivElement | null>(null);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const [fullText, setFullText] = useState<Record<string, boolean>>({});
+  const [language, setLanguage] = useState<Record<string, "zh-CN" | "en">>({});
 
   useEffect(() => {
     if (!onLoadMore || !sentinelRef.current) return;
@@ -254,6 +293,10 @@ function CardDeck({ stories, onOpenLightbox, onLoadMore }: CardDeckProps): React
     [onOpenLightbox]
   );
 
+  const toggleExpanded = useCallback((publicId: string): void => {
+    setExpanded((current) => ({ ...current, [publicId]: !current[publicId] }));
+  }, []);
+
   if (stories.length === 0) {
     return (
       <div className="card-deck-empty" role="status">
@@ -271,6 +314,18 @@ function CardDeck({ stories, onOpenLightbox, onLoadMore }: CardDeckProps): React
         const hasImage = mainImage !== null;
         const clock = formatClock(story.publishedAtIso);
         const date = formatDate(story.publishedAtIso);
+        const open = expanded[story.publicId] === true;
+        const showFull = fullText[story.publicId] === true;
+        const english = story.localized.en;
+        const selected = language[story.publicId] === "en" && english ? "en" : "zh-CN";
+        const copy = story.localized[selected] ?? storyCopy;
+        const paragraphs = showFull ? copy.body : [];
+        const when = new Intl.DateTimeFormat(selected === "en" ? "en-GB" : "zh-CN", {
+          dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Shanghai"
+        }).format(new Date(story.publishedAtIso));
+        const sourceLine = selected === "en"
+          ? `Source: ${story.sourceName}${story.originalUrl ? `, ${story.originalUrl}` : ""}`
+          : `（来源：${story.sourceName}${story.originalUrl ? `，${story.originalUrl}` : ""}）`;
 
         return (
           <article
@@ -279,8 +334,8 @@ function CardDeck({ stories, onOpenLightbox, onLoadMore }: CardDeckProps): React
             data-tone={story.mediaTone}
           >
             <div className="card-snap-header">
-              <span className="card-snap-cat">{story.category}</span>
-              <span className="card-snap-counter" aria-label="卡片位置">
+              <span className="card-snap-cat">{selected === "en" ? categoryLabelEn(story.category) : story.category}</span>
+              <span className="card-snap-counter" aria-label={selected === "en" ? "Card position" : "卡片位置"}>
                 {formatCardKicker(stories.length, storyIndex)}
               </span>
               <time className="card-snap-time" dateTime={story.publishedAtIso}>
@@ -305,24 +360,39 @@ function CardDeck({ stories, onOpenLightbox, onLoadMore }: CardDeckProps): React
                   </span>
                 ) : null}
               </div>
-            ) : (
-              <div className={`card-snap-visual card-snap-gradient card-snap-gradient--${story.mediaTone}`}>
-                <span className="card-snap-gradient-label" aria-hidden="true">
-                  {imageFirst ? "暂无配图" : story.mediaLabel}
-                </span>
-              </div>
-            )}
+            ) : null}
 
             <div className="card-snap-body">
-              <h2 className="card-snap-title">{storyCopy.title}</h2>
-              <p className="card-snap-summary">{storyCopy.summary}</p>
+              <h2 className="card-snap-title">{copy.title}</h2>
+              <SummaryBlock
+                text={copy.summary}
+                open={open}
+                onToggle={() => toggleExpanded(story.publicId)}
+                expandLabel={selected === "en" ? "Expand" : "展开"}
+                collapseLabel={selected === "en" ? "Collapse" : "收起"}
+              />
+              {copy.body.length > 0 ? (
+                <button
+                  type="button"
+                  className="card-snap-expand"
+                  aria-expanded={showFull}
+                  onClick={() => setFullText((current) => ({ ...current, [story.publicId]: !current[story.publicId] }))}
+                >{showFull ? (selected === "en" ? "Hide full text" : "收起全文") : (selected === "en" ? "Full text" : "展开全文")}</button>
+              ) : null}
 
-              {storyCopy.keyPoints.length > 0 ? (
+              {copy.keyPoints.length > 0 ? (
                 <ul className="card-snap-keypoints">
-                  {storyCopy.keyPoints.map((point) => (
+                  {copy.keyPoints.map((point) => (
                     <li key={point}>{point}</li>
                   ))}
                 </ul>
+              ) : null}
+              {showFull ? (
+                <div className="story-full">
+                  {paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+                  <p className="story-full-source">{sourceLine}</p>
+                  <p className="story-full-time">{when}</p>
+                </div>
               ) : null}
 
               <footer className="card-snap-source">
@@ -337,8 +407,15 @@ function CardDeck({ stories, onOpenLightbox, onLoadMore }: CardDeckProps): React
                     rel="noopener noreferrer"
                     target="_blank"
                   >
-                    {imageFirst ? "查看原帖 →" : "查看原文 →"}
+                    {selected === "en" ? (imageFirst ? "View post →" : "View article →") : (imageFirst ? "查看原帖 →" : "查看原文 →")}
                   </a>
+                ) : null}
+                {english ? (
+                  <span className="lang-pill" role="group" aria-label={selected === "en" ? "Language" : "提炼语言"}>
+                    <button type="button" className={`lang-pill-btn${selected === "zh-CN" ? " is-active" : ""}`} aria-pressed={selected === "zh-CN"} onClick={() => setLanguage((current) => ({ ...current, [story.publicId]: "zh-CN" }))}>中</button>
+                    <span className="lang-pill-sep" aria-hidden="true">/</span>
+                    <button type="button" className={`lang-pill-btn${selected === "en" ? " is-active" : ""}`} aria-pressed={selected === "en"} onClick={() => setLanguage((current) => ({ ...current, [story.publicId]: "en" }))}>EN</button>
+                  </span>
                 ) : null}
               </footer>
             </div>
@@ -368,6 +445,7 @@ export function FeedExperience() {
   /** 每条内容临时悬停预览的索引;null 表示无悬停。 */
   const [mediaHover, setMediaHover] = useState<Record<string, number | null>>({});
   const [languageByPublicId, setLanguageByPublicId] = useState<Record<string, "zh-CN" | "en">>({});
+  const [fullTextByPublicId, setFullTextByPublicId] = useState<Record<string, boolean>>({});
   const isMobile = useSyncExternalStore(subscribeMobileQuery, getMobileQuerySnapshot, getMobileQueryServerSnapshot);
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
     if (typeof window === "undefined") return "timeline";
@@ -1080,7 +1158,7 @@ export function FeedExperience() {
               keyPoints: detail.data.keyPoints
             }))
       : null;
-    const originalLabel = selectedLanguage === "en" ? "View source" : imageFirst ? "查看原帖" : "查看原文";
+    const originalLabel = selectedLanguage === "en" ? (imageFirst ? "View post →" : "View article →") : imageFirst ? "查看原帖 →" : "查看原文 →";
 
     const media = mainImage ? (
             <span
@@ -1135,7 +1213,7 @@ export function FeedExperience() {
             onClick={() => toggleItem(story.publicId)}
           >
             <span className="tl-head">
-              <span className="tl-cat">{story.category}</span>
+              <span className="tl-cat">{selectedLanguage === "en" ? categoryLabelEn(story.category) : story.category}</span>
               <span className="tl-caret" aria-hidden="true" />
             </span>
             <span className="tl-title">{storyCopy?.title ?? story.title}</span>
@@ -1151,7 +1229,7 @@ export function FeedExperience() {
                   body: detailCopy?.body ?? [],
                   keyPoints: detailCopy?.keyPoints ?? []
                 })}</span>
-                <div className="public-language-toggle lang-pill" role="group" aria-label="提炼语言">
+                <div className="public-language-toggle lang-pill" role="group" aria-label={selectedLanguage === "en" ? "Language" : "提炼语言"}>
                   <button
                     type="button"
                     className={`lang-pill-btn${selectedLanguage === "zh-CN" ? " is-active" : ""}`}
@@ -1208,9 +1286,7 @@ export function FeedExperience() {
                           </ul>
                         ) : null}
                       </>
-                    ) : (
-                      <p className="tl-zh tl-zh-pending">展开后可核对应中文摘要与原文。当前没有额外提炼。</p>
-                    )
+                    ) : null
                   ) : null}
                   <p className="tl-detail-actions">
                     <Link className="tl-detail-page-link" href={publicStoryHref(story.publicId)}>
@@ -1275,7 +1351,30 @@ export function FeedExperience() {
               ) : null}
             </span>
           </div>
-          <p className="tl-source-notice">{story.sourceNotice}</p>
+          {storyCopy.body.length > 0 ? (
+            <div className="story-full">
+              <button
+                type="button"
+                className="card-snap-expand"
+                aria-expanded={fullTextByPublicId[story.publicId] === true}
+                onClick={() => setFullTextByPublicId((current) => ({ ...current, [story.publicId]: !current[story.publicId] }))}
+              >{fullTextByPublicId[story.publicId]
+                ? (selectedLanguage === "en" ? "Hide full text" : "收起全文")
+                : (selectedLanguage === "en" ? "Full text" : "展开全文")}</button>
+              {fullTextByPublicId[story.publicId] ? (
+                <>
+                  {storyCopy.body.map((paragraph) => <p className="story-full-p" key={paragraph}>{paragraph}</p>)}
+                  <p className="story-full-source">{selectedLanguage === "en"
+                    ? `Source: ${story.sourceName}${story.originalUrl ? `, ${story.originalUrl}` : ""}`
+                    : `（来源：${story.sourceName}${story.originalUrl ? `，${story.originalUrl}` : ""}）`}</p>
+                  <p className="story-full-time">{new Intl.DateTimeFormat(selectedLanguage === "en" ? "en-GB" : "zh-CN", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Shanghai" }).format(new Date(story.publishedAtIso))}</p>
+                </>
+              ) : null}
+            </div>
+          ) : null}
+          <p className="tl-source-notice">{selectedLanguage === "en"
+            ? "This site shows an original summary. The full piece is on the source site."
+            : story.sourceNotice}</p>
         </div>
       </li>
     );
@@ -1319,6 +1418,7 @@ export function FeedExperience() {
   return (
     <main className={`app${openId ? " is-focusing" : ""}`} id="main-content" tabIndex={-1}>
       <div className="shell">
+        <RaceStrip />
         <section className="timeline" aria-label="F1+1 信息时间线">
           <p className="timeline-kicker">{formatTimelineKicker(stories.length)}</p>
 

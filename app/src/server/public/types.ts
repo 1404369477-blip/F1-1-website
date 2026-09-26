@@ -59,6 +59,12 @@ export type PublicFeedItemV1 = {
   };
   originalLink: PublicOriginalLink;
   relatedSources?: PublicRelatedSource[];
+  originalTitle?: string;
+  summaryEn?: string | null;
+  detailZh?: string[];
+  detailEn?: string[];
+  keyPointsZh?: string[];
+  keyPointsEn?: string[];
 };
 
 export type PublicFeedResponseV1 = {
