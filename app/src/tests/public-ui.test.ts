@@ -590,7 +590,7 @@ describe("public frontend API single-source integration", () => {
     expect(feedSource).toContain("pendingAppendFocusIndexRef.current ??= feedState.data.stories.length");
     expect(feedSource).toContain('nextItem?.querySelector<HTMLElement>(".tl-summary-btn")?.focus({ preventScroll: true })');
     expect(feedSource).toContain('aria-live="polite"');
-    expect(feedSource).toContain("aria-busy={loadingMore}");
+    expect(feedSource).toContain("aria-busy={visibleLoadingMore}");
     expect(feedSource).toContain('status: error instanceof PublicApiClientError && error.status === 404 ? "not-found" : "error"');
     expect(feedSource).not.toContain("DEV_STATES");
     expect(feedSource).not.toContain("forcedState");

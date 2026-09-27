@@ -12,8 +12,14 @@ function escapeRegExp(value: string): string {
 }
 
 function pairsFrom(file: NameFile): [string, string][] {
+  const surnames = new Map<string, string>();
+  for (const [english, chinese] of Object.entries(file.drivers ?? {})) {
+    const surname = english.split(/\s+/).at(-1);
+    if (surname && surname.length >= 4) surnames.set(surname, chinese);
+  }
   const pairs = [
     ...Object.entries(file.drivers ?? {}),
+    ...surnames.entries(),
     ...Object.entries(file.teams ?? {}),
     ...Object.entries(file.races ?? {}),
     ...Object.entries(file.sources ?? {})
@@ -44,7 +50,8 @@ const TERM_REPLACEMENTS: ReadonlyArray<readonly [RegExp, string]> = [
   [/junior\s*车队/gi, "青训车队"],
   [/\bjunior\b/gi, "青训"],
   [/阿尔pine/g, "阿尔派"],
-  [/Bott-ass/gi, "博塔斯"]
+  [/Bott-ass/gi, "博塔斯"],
+  [/\bgurney\s+flap\b/gi, "格尼襟翼"]
 ];
 
 function preferChineseGloss(text: string): string {
@@ -61,9 +68,7 @@ export function applyChineseNames(text: string): string {
   next = next.replace(/(?<![A-Za-z])box(?![A-Za-z])/gi, "进站");
   next = next.replaceAll(BOX_TO_BOX, "Box to Box Films");
   for (const [english, chinese] of pairs) {
-    const pattern = english.length < 4
-      ? new RegExp(`(?<![A-Za-z])${escapeRegExp(english)}(?![A-Za-z])`, "g")
-      : new RegExp(escapeRegExp(english), "g");
+    const pattern = new RegExp(`(?<![A-Za-z])${escapeRegExp(english)}(?![A-Za-z])`, "gi");
     next = next.replace(pattern, chinese);
   }
   for (const [pattern, chinese] of TERM_REPLACEMENTS) next = next.replace(pattern, chinese);

@@ -40,10 +40,15 @@ function main(): void {
         sourcePublishedAt: (story.sourcePublishedAt as string | null) ?? null,
         firstSeenAt: String(story.publishedAt),
         image,
+        images: image ? [image] : [],
+        detailZh: null,
+        detailEn: null,
         status: "ready",
         attempts: 0,
         titleZh: String(story.titleZh),
         summaryZh: String(story.summaryZh),
+        summaryEn: typeof story.summaryEn == "string" ? story.summaryEn : null,
+        keyPointsEn: Array.isArray(story.keyPointsEn) ? story.keyPointsEn.map(String) : [],
         keyPointsZh: (story.keyPointsZh as string[] | undefined) ?? [],
         publishedAt: String(story.publishedAt)
       };

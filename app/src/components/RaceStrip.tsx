@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useState } from "react";
 
+import { watchCalendar } from "../features/calendar/calendar-client";
 import { describeStrip, isDenseWindow, type F1Calendar, type StripView } from "../features/calendar/race-strip-model";
 import { PUBLIC_STATIC_BASE_PATH } from "../features/stories/public-site-config";
 
@@ -23,15 +24,7 @@ export function RaceStrip() {
   const [mobile, setMobile] = useState(false);
 
   useEffect(() => {
-    const controller = new AbortController();
-    const path = `${PUBLIC_STATIC_BASE_PATH}/data/f1-calendar.json`;
-    fetch(path, { signal: controller.signal, cache: "no-cache" })
-      .then((response) => response.ok ? response.json() as Promise<F1Calendar> : null)
-      .then((body) => {
-        if (body && Array.isArray(body.races)) setCalendar(body);
-      })
-      .catch(() => { /* a missing file leaves the strip unrendered */ });
-    return () => controller.abort();
+    return watchCalendar(`${PUBLIC_STATIC_BASE_PATH}/data/f1-calendar.json`, setCalendar);
   }, []);
 
   useEffect(() => {
@@ -168,7 +161,7 @@ function Panel({ id, view }: { id: string; view: StripView }) {
           </>
         ) : null}
       </div>
-      <p className="rs-foot">时间均为北京时间 (UTC+8) · 数据：Jolpica F1 API</p>
+      <p className="rs-foot">北京时间 (UTC+8) · 状态按赛程推算，成绩以更新结果为准 · 数据：Jolpica F1 API</p>
     </div>
   );
 }

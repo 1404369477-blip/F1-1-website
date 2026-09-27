@@ -275,8 +275,8 @@ export function describeStrip(calendar: F1Calendar, now: Date): StripView | null
         : "";
     return {
       marker: "live",
-      headline: `${focus.nameZh} · ${SESSION_META[live.session.key].full} 进行中`,
-      mobileHeadline: `${focus.nameZh} · ${SESSION_META[live.session.key].full} 进行中`,
+      headline: `${focus.nameZh} · ${SESSION_META[live.session.key].full} 预计进行中`,
+      mobileHeadline: `${focus.nameZh} · ${SESSION_META[live.session.key].full} 预计进行中`,
       mobileAside: aside,
       showTimeline: true,
       meta,
@@ -290,8 +290,8 @@ export function describeStrip(calendar: F1Calendar, now: Date): StripView | null
     const champion = winnerName(focus);
     return {
       marker: "weekend",
-      headline: champion === "成绩待更新" ? `${focus.nameZh} · 正赛已结束 · 成绩待更新` : `${focus.nameZh} · 正赛已结束 · ${champion} 夺冠`,
-      mobileHeadline: `${focus.nameZh} · 正赛已结束`,
+      headline: champion === "成绩待更新" ? `${focus.nameZh} · 正赛预计结束 · 成绩待更新` : `${focus.nameZh} · 正赛已结束 · ${champion} 夺冠`,
+      mobileHeadline: `${focus.nameZh} · ${focus.winner ? "正赛已结束" : "正赛预计结束"}`,
       mobileAside: winnerName(focus) === "成绩待更新" ? "成绩待更新" : `${winnerName(focus)} 夺冠`,
       showTimeline: true,
       meta,
@@ -376,8 +376,8 @@ function sessionRows(race: CalendarRace, now: Date): StripSession[] {
     const meta = SESSION_META[session.key];
     const shown = new Date(start);
     const statusLabel = cancelled ? "已取消"
-      : phase === "done" ? "已结束"
-      : phase === "live" ? "进行中"
+      : phase === "done" ? (race.winner ? "已结束" : "预计结束")
+      : phase === "live" ? "预计进行中"
       : countdownPhrase(start - at, "compact", "还有 ");
     return {
       key: session.key,

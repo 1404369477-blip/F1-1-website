@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { REFINE_MODEL_CATALOG, REFINE_MODEL_IDS, isRefineModelId, type RefineModelId } from "../rss/refine-model.ts";
-import { hasStrayEnglish, isChromeVideoPlayerLine, stripChromeVideoPlayerSentences } from "./article.ts";
+import { hasStrayEnglish, hasUntranslatedEnglishSentence, isChromeVideoPlayerLine, strayEnglishWords, stripChromeVideoPlayerSentences } from "./article.ts";
 import { applyChineseNameList, applyChineseNames } from "./chinese-names.ts";
 import { MODEL_PRIVATE_DIR } from "./config.ts";
 import type { StoredItem } from "./store.ts";
@@ -11,7 +11,8 @@ export type RefineResult =
   | Readonly<{ kind: "ready"; titleZh: string; summaryZh: string; summaryEn: string | null; keyPointsZh: string[]; keyPointsEn: string[]; detailZh: string[] | null }>
   | Readonly<{ kind: "irrelevant" }>;
 
-type ModelEndpoint = Readonly<{ model: RefineModelId; endpoint: string; key: string }>;
+export type ModelEndpoint = Readonly<{ model: RefineModelId; endpoint: string; key: string }>;
+export type ModelErrorKind = "temporary" | "permanent" | "quality";
 
 const REQUEST_TIMEOUT_MS = 60_000;
 /** Lean publishing prefers the faster flash model. DeepSeek remains the fallback. */
@@ -39,10 +40,14 @@ const SYSTEM_PROMPT = [
 ].join("\n");
 
 function readKey(fileName: string): string | null {
-  const path = join(MODEL_PRIVATE_DIR, fileName);
-  if (!existsSync(path)) return null;
-  const key = readFileSync(path, "utf8").trim();
-  return key.length > 0 ? key : null;
+  try {
+    const path = join(MODEL_PRIVATE_DIR, fileName);
+    if (!existsSync(path)) return null;
+    const key = readFileSync(path, "utf8").trim();
+    return key.length > 0 ? key : null;
+  } catch {
+    return null;
+  }
 }
 
 export function leanRefineModelOrder(preferred?: string): RefineModelId[] {
@@ -50,13 +55,40 @@ export function leanRefineModelOrder(preferred?: string): RefineModelId[] {
   return [first, ...REFINE_MODEL_IDS.filter((id) => id !== first)];
 }
 
-export function resolveModel(preferred: string = DEFAULT_LEAN_REFINE_MODEL): ModelEndpoint {
+export function resolveModels(preferred: string = DEFAULT_LEAN_REFINE_MODEL): ModelEndpoint[] {
+  const models: ModelEndpoint[] = [];
   for (const modelId of leanRefineModelOrder(preferred)) {
     const entry = REFINE_MODEL_CATALOG[modelId];
     const key = readKey(entry.keyFileName);
-    if (key) return { model: entry.modelId, endpoint: entry.endpoint, key };
+    if (key) models.push({ model: entry.modelId, endpoint: entry.endpoint, key });
   }
-  throw new Error("MODEL_KEY_MISSING");
+  if (models.length === 0) throw new Error("MODEL_KEY_MISSING");
+  return models;
+}
+
+export function resolveModel(preferred: string = DEFAULT_LEAN_REFINE_MODEL): ModelEndpoint {
+  return resolveModels(preferred)[0];
+}
+
+/** Only safe codes cross the model boundary; provider response bodies are never included. */
+export function classifyModelError(error: unknown): ModelErrorKind {
+  const code = error instanceof Error ? error.message : typeof error === "string" ? error : "";
+  if (code.startsWith("MODEL_OUTPUT_") || code === "MODEL_FALLBACK_QUALITY") return "quality";
+  if (code === "MODEL_NETWORK_TEMPORARY" || code === "MODEL_FALLBACK_TEMPORARY") return "temporary";
+  const http = /^MODEL_HTTP_(\d{3})$/.exec(code);
+  if (http) return [408, 425, 429].includes(Number(http[1])) || Number(http[1]) >= 500 ? "temporary" : "permanent";
+  return "permanent";
+}
+
+function parseObject(raw: string): Record<string, unknown> {
+  let value: unknown;
+  try {
+    value = JSON.parse(raw.replace(/^```(?:json)?\s*|\s*```$/g, "")) as unknown;
+  } catch {
+    throw new Error("MODEL_OUTPUT_INVALID_JSON");
+  }
+  if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("MODEL_OUTPUT_INVALID_OBJECT");
+  return value as Record<string, unknown>;
 }
 
 /** GLM spends reasoning tokens unless this is set; DeepSeek ignores the field. */
@@ -71,7 +103,8 @@ export function refineRequestBody(modelId: RefineModelId, messages: readonly { r
 }
 
 function expectsChinese(source: string): boolean {
-  return (source.match(/\b[a-z]{3,}\b/g) ?? []).length >= 4;
+  const words = (source.match(/[A-Za-z]+/g) ?? []).length;
+  return words >= 3 || (words > 0 && /[.!?]["”']?$/.test(source.trim()));
 }
 
 function fold(value: string): string {
@@ -106,17 +139,20 @@ function userPrompt(item: StoredItem, paragraphs: readonly string[] | null): str
 }
 
 export function parseRefineOutput(raw: string, requireRelevance: boolean, paragraphCount = 0, sources: readonly string[] = []): RefineResult {
-  const value = JSON.parse(raw.replace(/^```(?:json)?\s*|\s*```$/g, "")) as Record<string, unknown>;
+  const value = parseObject(raw);
   if (requireRelevance && value.relevant === false) return { kind: "irrelevant" };
   const titleZh = typeof value.titleZh === "string" ? value.titleZh.trim() : "";
   const summaryZh = typeof value.summaryZh === "string" ? value.summaryZh.trim() : "";
   const summaryEn = typeof value.summaryEn === "string" && value.summaryEn.trim().length > 0 ? value.summaryEn.trim() : null;
-  const keyPointsZh = dropRepeatedPoints(summaryZh, Array.isArray(value.keyPointsZh)
-    ? value.keyPointsZh.filter((point): point is string => typeof point === "string" && point.trim().length > 0).map((point) => point.trim()).slice(0, 3)
-    : []);
-  const keyPointsEn = dropRepeatedPoints(summaryEn ?? "", Array.isArray(value.keyPointsEn)
-    ? value.keyPointsEn.filter((point): point is string => typeof point === "string" && point.trim().length > 0).map((point) => point.trim()).slice(0, keyPointsZh.length)
-    : []).slice(0, keyPointsZh.length);
+  // Keep each translation attached to its original index when a repeated point is removed.
+  const englishPoints: unknown[] = Array.isArray(value.keyPointsEn) ? value.keyPointsEn : [];
+  const points = (Array.isArray(value.keyPointsZh) ? value.keyPointsZh : [])
+    .map((point: unknown, index: number) => ({
+      zh: typeof point === "string" ? point.trim() : "",
+      en: typeof englishPoints[index] === "string" ? (englishPoints[index] as string).trim() : ""
+    }))
+    .filter((point) => dropRepeatedPoints(summaryZh, [point.zh]).length > 0)
+    .slice(0, 3);
   if (!HAN.test(titleZh)) throw new Error("MODEL_OUTPUT_INVALID_TITLE");
   if (!HAN.test(summaryZh) || titleZh.length > 120 || summaryZh.length > 600) throw new Error("MODEL_OUTPUT_INVALID_SUMMARY");
   let detailZh: string[] | null = null;
@@ -129,15 +165,15 @@ export function parseRefineOutput(raw: string, requireRelevance: boolean, paragr
     if (untranslated >= 0) throw new Error(`MODEL_OUTPUT_INVALID_DETAIL_LANGUAGE_${untranslated}`);
   }
   const namedSummaryZh = stripChromeVideoPlayerSentences(applyChineseNames(summaryZh));
+  if (!HAN.test(namedSummaryZh)) throw new Error("MODEL_OUTPUT_INVALID_SUMMARY");
   const namedSummaryEn = summaryEn === null ? null : stripChromeVideoPlayerSentences(summaryEn);
-  const namedPointsZh = applyChineseNameList(keyPointsZh) ?? [];
   const keptZh: string[] = [];
   const keptEn: string[] = [];
-  namedPointsZh.forEach((point, index) => {
-    const english = keyPointsEn[index] ?? "";
+  points.forEach(({ zh, en: english }) => {
+    const point = applyChineseNames(zh);
     if (isChromeVideoPlayerLine(point) || (english !== "" && isChromeVideoPlayerLine(english))) return;
     keptZh.push(point);
-    if (english !== "") keptEn.push(english);
+    keptEn.push(english);
   });
   return {
     kind: "ready",
@@ -145,25 +181,44 @@ export function parseRefineOutput(raw: string, requireRelevance: boolean, paragr
     summaryZh: namedSummaryZh,
     summaryEn: namedSummaryEn && namedSummaryEn.length > 0 ? namedSummaryEn : null,
     keyPointsZh: keptZh,
-    keyPointsEn: keptEn,
+    keyPointsEn: keptEn.every((point) => point.length > 0) ? keptEn : [],
     detailZh: applyChineseNameList(detailZh)
   };
 }
 
-async function requestRefine(item: StoredItem, model: ModelEndpoint, fetcher: typeof fetch, paragraphs: readonly string[] | null): Promise<RefineResult> {
-  const response = await fetcher(model.endpoint, {
-    method: "POST",
-    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-    headers: { authorization: `Bearer ${model.key}`, "content-type": "application/json" },
-    body: JSON.stringify(refineRequestBody(model.model, [
-      { role: "system", content: SYSTEM_PROMPT },
-      { role: "user", content: userPrompt(item, paragraphs) }
-    ]))
-  });
+async function requestContent(model: ModelEndpoint, fetcher: typeof fetch, system: string, user: string): Promise<string> {
+  let response: Response;
+  try {
+    response = await fetcher(model.endpoint, {
+      method: "POST",
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+      headers: { authorization: `Bearer ${model.key}`, "content-type": "application/json" },
+      body: JSON.stringify(refineRequestBody(model.model, [
+        { role: "system", content: system },
+        { role: "user", content: user }
+      ]))
+    });
+  } catch {
+    throw new Error("MODEL_NETWORK_TEMPORARY");
+  }
   if (!response.ok) throw new Error(`MODEL_HTTP_${response.status}`);
-  const body = await response.json() as { choices?: { message?: { content?: string } }[] };
-  const content = body.choices?.[0]?.message?.content;
+  let raw: string;
+  try {
+    raw = await response.text();
+  } catch {
+    throw new Error("MODEL_NETWORK_TEMPORARY");
+  }
+  if (raw.length > 128 * 1024) throw new Error("MODEL_OUTPUT_RESPONSE_LIMIT");
+  const body = parseObject(raw);
+  const choice = Array.isArray(body.choices) ? body.choices[0] as { message?: { content?: unknown } } | null : null;
+  const content = choice?.message?.content;
   if (typeof content !== "string") throw new Error("MODEL_OUTPUT_MISSING");
+  return content;
+}
+
+async function requestRefine(item: StoredItem, model: ModelEndpoint, fetcher: typeof fetch, paragraphs: readonly string[] | null, correction = false): Promise<RefineResult> {
+  const system = correction ? `${SYSTEM_PROMPT}\n本次为中文质量纠正：完整翻译所有英文句子和普通英文词汇，保留原材料的全部事实与段落顺序。` : SYSTEM_PROMPT;
+  const content = await requestContent(model, fetcher, system, userPrompt(item, paragraphs));
   return parseRefineOutput(content, item.requireRelevance, paragraphs?.length ?? 0, paragraphs ?? []);
 }
 
@@ -177,19 +232,7 @@ const TRANSLATE_PROMPT = [
 ].join("\n");
 
 async function translateSlice(model: ModelEndpoint, fetcher: typeof fetch, slice: readonly string[]): Promise<string[]> {
-  const response = await fetcher(model.endpoint, {
-    method: "POST",
-    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-    headers: { authorization: `Bearer ${model.key}`, "content-type": "application/json" },
-    body: JSON.stringify(refineRequestBody(model.model, [
-      { role: "system", content: TRANSLATE_PROMPT },
-      { role: "user", content: JSON.stringify({ paragraphs: slice }) }
-    ]))
-  });
-  if (!response.ok) throw new Error(`MODEL_HTTP_${response.status}`);
-  const body = await response.json() as { choices?: { message?: { content?: string } }[] };
-  const content = body.choices?.[0]?.message?.content;
-  if (typeof content !== "string") throw new Error("MODEL_OUTPUT_MISSING");
+  const content = await requestContent(model, fetcher, TRANSLATE_PROMPT, JSON.stringify({ paragraphs: slice }));
   const parsed = parseRefineOutput(JSON.stringify({
     relevant: true,
     titleZh: "补译",
@@ -197,7 +240,7 @@ async function translateSlice(model: ModelEndpoint, fetcher: typeof fetch, slice
     summaryEn: "Filled.",
     keyPointsZh: [],
     keyPointsEn: [],
-    detailZh: JSON.parse(content.replace(/^```(?:json)?\s*|\s*```$/g, "")).detailZh
+    detailZh: parseObject(content).detailZh
   }), false, slice.length, slice);
   if (parsed.kind !== "ready" || !parsed.detailZh) throw new Error("MODEL_OUTPUT_INVALID_DETAIL");
   return [...parsed.detailZh];
@@ -207,18 +250,26 @@ async function translateParagraphs(model: ModelEndpoint, fetcher: typeof fetch, 
   const translated: string[] = [];
   for (let index = 0; index < paragraphs.length; index += TRANSLATION_CHUNK) {
     const slice = paragraphs.slice(index, index + TRANSLATION_CHUNK);
-    try {
-      translated.push(...await translateSlice(model, fetcher, slice));
-    } catch {
-      for (const paragraph of slice) translated.push(...await translateSlice(model, fetcher, [paragraph]));
-    }
+    translated.push(...await translateSlice(model, fetcher, slice));
   }
   return translated;
 }
 
 function chineseCopyHasStray(result: RefineResult): boolean {
   if (result.kind !== "ready") return false;
-  return [result.titleZh, result.summaryZh, ...result.keyPointsZh, ...(result.detailZh ?? [])].some((part) => hasStrayEnglish(part));
+  return chineseParts(result).some((part) => hasStrayEnglish(part) || (!HAN.test(part) && expectsChinese(part)));
+}
+
+function chineseParts(result: Extract<RefineResult, { kind: "ready" }>): string[] {
+  return [result.titleZh, result.summaryZh, ...result.keyPointsZh, ...(result.detailZh ?? [])];
+}
+
+/** An isolated term is repairable soft copy; untranslated sentences must not be published. */
+function hasUntranslatedCopy(result: RefineResult): boolean {
+  return result.kind === "ready" && chineseParts(result).some((part) =>
+    (!HAN.test(part) && expectsChinese(part)) || strayEnglishWords(part).length >= 3
+    || hasUntranslatedEnglishSentence(part)
+  );
 }
 
 export async function refineItem(item: StoredItem, model: ModelEndpoint, fetcher: typeof fetch = fetch, paragraphs: readonly string[] | null = null): Promise<RefineResult> {
@@ -226,23 +277,43 @@ export async function refineItem(item: StoredItem, model: ModelEndpoint, fetcher
   const finish = async (overview: RefineResult): Promise<RefineResult> => {
     if (overview.kind !== "ready" || !paragraphs || paragraphs.length === 0) return overview;
     if (overview.detailZh?.length === paragraphs.length) return overview;
-    return { ...overview, detailZh: await translateParagraphs(model, fetcher, paragraphs) };
+    const initial = overview.detailZh ?? [];
+    return { ...overview, detailZh: [...initial, ...await translateParagraphs(model, fetcher, paragraphs.slice(initial.length))] };
   };
-  let overview: RefineResult;
-  try {
-    overview = await requestRefine(item, model, fetcher, overviewParagraphs);
-  } catch {
-    overview = await requestRefine(item, model, fetcher, null);
-  }
+  const overview = await requestRefine(item, model, fetcher, overviewParagraphs);
   let result = await finish(overview);
-  if (chineseCopyHasStray(result)) {
+  let correctionFailure: unknown;
+  if (chineseCopyHasStray(result) || hasUntranslatedCopy(result)) {
     try {
-      const again = await finish(await requestRefine(item, model, fetcher, overviewParagraphs));
-      if (!chineseCopyHasStray(again)) result = again;
-    } catch {
+      const again = await finish(await requestRefine(item, model, fetcher, overviewParagraphs, true));
+      if (again.kind === "ready" && !chineseCopyHasStray(again) && !hasUntranslatedCopy(again)) result = again;
+    } catch (error) {
+      correctionFailure = error;
       // Keep the first Chinese copy when the second pass fails.
     }
   }
+  if (hasUntranslatedCopy(result)) {
+    if (classifyModelError(correctionFailure) === "temporary") throw correctionFailure;
+    throw new Error("MODEL_OUTPUT_UNTRANSLATED_COPY");
+  }
   if (item.platform === "x" && result.kind === "ready") return { ...result, keyPointsZh: [], keyPointsEn: [] };
   return result;
+}
+
+/** Try each configured model once. Per-model correction is bounded inside refineItem. */
+export async function refineWithFallback(item: StoredItem, models: readonly ModelEndpoint[], fetcher: typeof fetch = fetch, paragraphs: readonly string[] | null = null): Promise<RefineResult> {
+  if (models.length === 0) throw new Error("MODEL_KEY_MISSING");
+  const failures: ModelErrorKind[] = [];
+  const tried = new Set<RefineModelId>();
+  for (const model of models) {
+    if (tried.has(model.model)) continue;
+    tried.add(model.model);
+    try {
+      return await refineItem(item, model, fetcher, paragraphs);
+    } catch (error) {
+      failures.push(classifyModelError(error));
+    }
+  }
+  const kind = failures.includes("temporary") ? "TEMPORARY" : failures.includes("quality") ? "QUALITY" : "PERMANENT";
+  throw new Error(`MODEL_FALLBACK_${kind}`);
 }

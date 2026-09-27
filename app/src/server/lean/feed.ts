@@ -1,4 +1,4 @@
-import { XMLParser } from "fast-xml-parser";
+import { XMLParser, XMLValidator } from "fast-xml-parser";
 
 import type { LeanSource } from "./config.ts";
 
@@ -186,14 +186,24 @@ function atomLink(value: unknown): string {
 
 /** Parses RSS 2.0 and Atom documents into normalized entries; invalid items are dropped. */
 export function parseFeed(source: LeanSource, xml: string): FeedEntry[] {
+  if (XMLValidator.validate(xml) !== true) throw new Error("FEED_FORMAT_INVALID_XML");
   const document = parser.parse(xml) as Node;
-  const channel = (document.rss as Node | undefined)?.channel as Node | undefined;
-  const rawItems = channel ? asArray(channel.item) : asArray((document.feed as Node | undefined)?.entry);
+  const rss = document.rss;
+  const isRss = rss !== null && typeof rss === "object" && "channel" in rss;
+  const isAtom = Object.hasOwn(document, "feed");
+  if (!isRss && !isAtom) throw new Error("FEED_FORMAT_UNSUPPORTED");
+  // Empty channel/feed elements may parse as an empty string; those are healthy empty feeds.
+  const channel = isRss ? (rss as Node).channel : undefined;
+  const feed = document.feed;
+  const root = isRss ? channel : feed;
+  if ((typeof root !== "object" && root !== "") || root === null || Array.isArray(root)) throw new Error("FEED_FORMAT_INVALID_ROOT");
+  const rawItems = isRss ? asArray(channel && typeof channel === "object" ? (channel as Node).item : undefined)
+    : asArray(feed && typeof feed === "object" ? (feed as Node).entry : undefined);
   const entries: FeedEntry[] = [];
   for (const raw of rawItems) {
     if (!raw || typeof raw !== "object") continue;
     const item = raw as Node;
-    const link = httpsUrl(channel ? text(item.link) : atomLink(item.link));
+    const link = httpsUrl(isRss ? text(item.link) : atomLink(item.link));
     if (!link) continue;
     const title = htmlToText(text(item.title));
     const body = text(item["content:encoded"]) || text(item.description) || text(item.content) || text(item.summary);
@@ -221,6 +231,6 @@ export async function fetchFeed(source: LeanSource, fetcher: typeof fetch = fetc
   });
   if (!response.ok) throw new Error(`FEED_HTTP_${response.status}`);
   const body = await response.text();
-  if (body.length > MAX_FEED_BYTES) throw new Error("FEED_TOO_LARGE");
+  if (Buffer.byteLength(body, "utf8") > MAX_FEED_BYTES) throw new Error("FEED_TOO_LARGE");
   return parseFeed(source, body);
 }

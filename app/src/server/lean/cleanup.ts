@@ -5,6 +5,7 @@ import { join } from "node:path";
 import { isRaceWindow, type F1Calendar } from "../../features/calendar/race-strip-model.ts";
 import { leanPath } from "./config.ts";
 import { mediaKey } from "./media.ts";
+import { publicationState } from "./publication.ts";
 import type { LeanStore, StoredItem } from "./store.ts";
 
 export const MEDIA_UNREFERENCED_TTL_MS = 7 * 24 * 3600 * 1000;
@@ -74,7 +75,8 @@ export function readCleanupSettings(raw: object | null): { dryRun: boolean } {
 }
 
 export function publishFailed(report: { site?: { reason?: string } } | null): boolean {
-  return (report?.site?.reason ?? "").startsWith("PUBLISH_FAILED");
+  const reason = report?.site?.reason ?? "";
+  return reason.startsWith("PUBLISH_FAILED") || ["PUBLISH_UNCONFIRMED", "AWAITING_CONFIRMATION", "CONFIRMATION_RETRY_EXHAUSTED"].includes(reason);
 }
 
 export function listAgedFiles(directory: string): AgedFile[] {
@@ -126,7 +128,17 @@ export function runCleanup(options: {
   const dryRun = options.dryRun ?? settings.dryRun;
   const calendar = readJson<F1Calendar | null>(join(dataRoot, "f1-calendar.json"), null);
   const raceWindow = options.raceWindow ?? (calendar ? isRaceWindow(calendar, now) : false);
-  const failed = options.publishFailed ?? publishFailed(readJson<{ site?: { reason?: string } } | null>(join(dataRoot, "last-cycle.json"), null));
+  const statePath = join(dataRoot, "state.json");
+  const state = readJson<unknown>(statePath, null);
+  // A crash can leave last-cycle stale while the durable publication record already has a pending candidate.
+  let unsafeState = false;
+  if (existsSync(statePath)) {
+    try {
+      if (state === null || typeof state !== "object" || Array.isArray(state)) throw new Error("PUBLISH_STATE_INVALID");
+      unsafeState = publicationState(state).pending !== null || ("pending" in state && state.pending != null);
+    } catch { unsafeState = true; }
+  }
+  const failed = unsafeState || (options.publishFailed ?? publishFailed(readJson<{ site?: { reason?: string } } | null>(join(dataRoot, "last-cycle.json"), null)));
   const skipped = cleanupSkip({ lockHeld: options.lockHeld === true, raceWindow, publishFailed: failed });
   const empty: CleanupReport = {
     at: now.toISOString(), dryRun, skipped, mediaFiles: 0, mediaBytes: 0, previewFiles: 0, previewBytes: 0, sourceRuns: 0, vacuum: false, gitGc: false

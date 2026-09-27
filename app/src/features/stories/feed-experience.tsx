@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import {
   useCallback,
   useEffect,
@@ -22,6 +21,7 @@ import {
   contentTypeForCategory,
   fetchPublicFeed,
   fetchPublicStory,
+  publicSearchCard,
   isPublicStoryNotFound,
   type PublicFeedViewModel,
   type PublicStoryCardViewModel,
@@ -43,6 +43,7 @@ import { getTimelineSearchQuery, setTimelineSearchQuery, subscribeTimelineSearch
 import { RaceStrip } from "../../components/RaceStrip";
 import { IS_PUBLIC_STATIC_SITE, publicStoryHref } from "./public-site-config";
 import { PublicStaticGenerationChangedError } from "./public-static-transport";
+import { usePublicSearch } from "./use-public-search";
 
 export type FeedRequestState =
   | { status: "loading" }
@@ -498,7 +499,7 @@ function CardDeck({ stories, onOpenLightbox, onLoadMore }: CardDeckProps): React
                   >
                     {sourceLinkLabel(selected, story.platform)}
                   </a>
-                ) : null}
+                ) : <a className="card-snap-original" href={publicStoryHref(story.publicId)}>查看详情 →</a>}
                 {english ? (
                   <span className="lang-pill" role="group" aria-label={selected === "en" ? "Language" : "提炼语言"}>
                     <button type="button" className={`lang-pill-btn${selected === "zh-CN" ? " is-active" : ""}`} aria-pressed={selected === "zh-CN"} onClick={() => setLanguage((current) => ({ ...current, [story.publicId]: "zh-CN" }))}>中</button>
@@ -616,6 +617,15 @@ export function FeedExperience() {
     setRequestVersion((version) => version + 1);
   }, [clearStaticReadingState]);
 
+  const publicSearch = usePublicSearch({
+    enabled: IS_PUBLIC_STATIC_SITE,
+    query,
+    contentType: contentTypeForCategory(activeCategory),
+    bundleId: feedState.status === "ready" ? feedState.data.staticBundleId : undefined,
+    onGenerationChange: reloadChangedStaticGeneration
+  });
+  const readingBundleId = publicSearch.active ? publicSearch.bundleId : feedState.status === "ready" ? feedState.data.staticBundleId : undefined;
+
   useEffect(() => {
     openIdRef.current = openId;
   }, [openId]);
@@ -698,12 +708,11 @@ export function FeedExperience() {
 
   useEffect(() => {
     if (!openId) return;
-    if (feedState.status !== "ready") return;
     if (detailRequestedRef.current.has(openId)) return;
     detailRequestedRef.current.add(openId);
     const controller = new AbortController();
     setDetailStates((current) => ({ ...current, [openId]: { status: "loading" } }));
-    void fetchPublicStory({ publicId: openId, signal: controller.signal, staticBundleId: feedState.data.staticBundleId })
+    void fetchPublicStory({ publicId: openId, signal: controller.signal, staticBundleId: readingBundleId })
       .then((data) => {
         if (controller.signal.aborted) return;
         setDetailStates((current) => ({ ...current, [openId]: { status: "ready", data: data.story } }));
@@ -729,7 +738,7 @@ export function FeedExperience() {
         setDetailStates((current) => ({ ...current, [openId]: { status: "error" } }));
       });
     return () => controller.abort();
-  }, [detailRequestVersion, feedState, openId, reloadChangedStaticGeneration]);
+  }, [detailRequestVersion, readingBundleId, openId, reloadChangedStaticGeneration]);
 
   useEffect(() => {
     if (!openId) return;
@@ -1183,6 +1192,10 @@ export function FeedExperience() {
   };
 
   const handleStateAction = (state: DisplayState): void => {
+    if (publicSearch.active && (state === "error" || state === "offline" || state === "empty")) {
+      publicSearch.retry();
+      return;
+    }
     switch (state) {
       case "empty":
       case "offline":
@@ -1207,6 +1220,11 @@ export function FeedExperience() {
 
   const trimmedQuery = query.trim().toLowerCase();
   const filteredStories = useMemo(() => {
+    if (publicSearch.active) {
+      const loaded = new Map(stories.map((story) => [story.publicId, story]));
+      return publicSearch.items.map((item) => readingBundleId === (feedState.status === "ready" ? feedState.data.staticBundleId : undefined)
+        ? loaded.get(item.publicId) ?? publicSearchCard(item) : publicSearchCard(item));
+    }
     if (!trimmedQuery) return stories;
     return stories.filter((story) => {
       const localized = Object.values(story.localized).filter((value) => value !== null);
@@ -1214,10 +1232,16 @@ export function FeedExperience() {
         .toLowerCase()
         .includes(trimmedQuery);
     });
-  }, [stories, trimmedQuery]);
+  }, [stories, trimmedQuery, publicSearch.active, publicSearch.items, readingBundleId, feedState]);
+
+  const canLoadMore = publicSearch.active ? publicSearch.hasMore : page?.hasMore === true && page.nextCursor !== null;
+  const loadVisibleMore = (): void => { if (publicSearch.active) publicSearch.loadMore(); else void loadMore(); };
+  const visibleLoadingMore = !publicSearch.active && loadingMore;
 
   let displayState: DisplayState;
-  if (feedState.status === "loading") {
+  if (publicSearch.active) {
+    displayState = publicSearch.status === "ready" ? "timeline" : publicSearch.status === "error" ? "error" : "loading";
+  } else if (feedState.status === "loading") {
     displayState = "loading";
   } else if (!isOnline) {
     displayState = feedState.status === "ready" && stories.length > 0 ? "timeline" : "offline";
@@ -1411,9 +1435,9 @@ export function FeedExperience() {
                     ) : null
                   ) : null}
                   <p className="tl-detail-actions">
-                    <Link className="tl-detail-page-link" href={publicStoryHref(story.publicId)}>
+                    <a className="tl-detail-page-link" href={publicStoryHref(story.publicId)}>
                       {selectedLanguage === "en" ? "Open full extract page" : "打开站内详情"}
-                    </Link>
+                    </a>
                   </p>
             </div>
           </div>
@@ -1439,9 +1463,9 @@ export function FeedExperience() {
                 <span className="tl-original-disabled">原文暂不可用</span>
               )}
               {isX ? (
-                <Link className="tl-original-link" href={publicStoryHref(story.publicId)}>
+                <a className="tl-original-link" href={publicStoryHref(story.publicId)}>
                   {selectedLanguage === "en" ? "Details" : "站内详情"}
-                </Link>
+                </a>
               ) : null}
               {story.relatedSources.map((source) => source.originalUrl ? (
                 <a
@@ -1557,8 +1581,11 @@ export function FeedExperience() {
                 />
               ) : null}
 
+              {publicSearch.active && publicSearch.status === "ready" && filteredStories.length > 0 ? (
+                <p className="timeline-kicker" role="status">找到 {publicSearch.total} 条公开资讯（含归档）</p>
+              ) : null}
               {trimmedQuery && filteredStories.length === 0 ? (
-                <p id="search-empty" className="search-empty" role="status">没有匹配的条目</p>
+                <p id="search-empty" className="search-empty" role="status">{publicSearch.active ? "全部公开资讯与归档中没有匹配的条目" : "没有匹配的条目"}</p>
               ) : null}
 
               {/* Card deck mode (mobile only) */}
@@ -1566,7 +1593,7 @@ export function FeedExperience() {
                 <CardDeck
                   stories={filteredStories}
                   onOpenLightbox={openLightbox}
-                  onLoadMore={page?.hasMore && page.nextCursor && !loadingMore ? () => void loadMore() : null}
+                  onLoadMore={canLoadMore && !visibleLoadingMore ? loadVisibleMore : null}
                 />
               ) : null}
 
@@ -1578,14 +1605,14 @@ export function FeedExperience() {
                     id="tl"
                     aria-label="公开资讯时间线"
                     aria-live="polite"
-                    aria-busy={loadingMore}
+                    aria-busy={visibleLoadingMore}
                   >
                     {filteredStories.map((story) => renderItem(story))}
                   </ol>
 
                   {!(trimmedQuery && filteredStories.length === 0) ? (
                     <>
-                      {loadMoreFailed ? (
+                      {!publicSearch.active && loadMoreFailed ? (
                         <StateBox
                           id="partial-box"
                           code={STATE_COPY.partial.code}
@@ -1594,13 +1621,13 @@ export function FeedExperience() {
                           actionLabel={STATE_COPY.partial.action}
                           onAction={() => handleStateAction("partial")}
                         />
-                      ) : page?.hasMore && page.nextCursor ? (
+                      ) : canLoadMore ? (
                         <div className="load-more-wrap">
-                          <button className="load-more" type="button" disabled={loadingMore} onClick={() => void loadMore()}>
-                            {loadingMore ? "正在加载" : "加载更多"}
+                          <button className="load-more" type="button" disabled={visibleLoadingMore} onClick={loadVisibleMore}>
+                            {visibleLoadingMore ? "正在加载" : "加载更多"}
                           </button>
                         </div>
-                      ) : shouldShowEndOfFeed(stories.length, page?.hasMore === true) ? (
+                      ) : !publicSearch.active && shouldShowEndOfFeed(stories.length, page?.hasMore === true) ? (
                         <StateBox
                           id="nomore-box"
                           code={STATE_COPY.nomore.code}

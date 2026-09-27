@@ -1,5 +1,7 @@
 # Spec
 
+> **2026-09-28 常规优化已授权，聚簇暂停**：用户最新要求先完成其他优化。以[本轮范围与验收](reviews/2026-09-28-lean常规优化实施与验收.md)修复现役 lean 的内容质量、全站搜索、稳定链接、重试、发布回读、URL去重、赛程刷新与备份验证，沿用现有视觉。聚簇/多样性精选设计 deferred_by_user，不进入生产。下方旧架构合同保留历史；本轮不重启旧系统。
+
 > **2026-09-22 M1 iCloud 与 X 后继已授权**：用户明确 M5 为随身笔记本，要求继续推进 M1 直接 iCloud 备份及 X 链路，并确认 maintenance-design-r2“采用当前预览，继续实现”。日常运行不再以 M5 在线为新方案前提；复用现有 iCloud，保留一致性、真实云端取回/恢复、RPO≤15分钟及权限保护。X 正式维护认证/UI、同版本迁移、真实准入与自然发布按[本轮实施合同](reviews/2026-09-22-M1-iCloud备份与X正式接入实施合同.md)接续；授权不等于已部署或验收。旧异机证明和成功/失败历史保留，不冒签、不重放407/408。
 
 > **2026-09-15 原授权内claim兼容后继约束**：v3正式安装后新增自身installer历史导致claim确定性拒绝，原v3及seq5全部原位保留，不删除/覆盖/重放。新不可变v4可由typed seq6显式绑定v3前驱、当前历史和自身installer tail，统一完整load与实际claim规则；只接受确切归属且完整验证的tail，未知追加或活旧进程均失败。新successor的正式prepare可生成有限notBefore/POST/local技术窗，旧v3窗口原样保留；原RID/core/delivery/body/所有逻辑及物理键/最多1新增POST不变。必须验证正式install→commit→release→actual claim正向及崩溃、目录/owner/argv/身份变化反例，不能用单层inspect代替整段验收。

@@ -11,8 +11,9 @@ import { backupStoreIfDue, type BackupReport } from "./backup.ts";
 import { fetchArticleParagraphs } from "./article.ts";
 import { fetchFeed } from "./feed.ts";
 import { localizeImages, type LocalMedia, type MediaReport } from "./media.ts";
-import { publishBundle, stageSite } from "./pages-publish.ts";
-import { refineItem, resolveModel } from "./refine.ts";
+import { publicationArtifacts, publishBundle, prunePublicationRefs, retryPublishedBundle, siteShellFingerprint, stageSite } from "./pages-publish.ts";
+import { classifyModelError, refineWithFallback, resolveModels } from "./refine.ts";
+import { advancePublication, confirmPublication, publicationState, type PublicationArtifacts } from "./publication.ts";
 import { buildSiteBundle } from "./site-bundle.ts";
 import { LeanStore, type StoredItem } from "./store.ts";
 import { isNearDuplicateTweet, tweetSkipReason, type TweetSkipReason } from "./x-filter.ts";
@@ -28,7 +29,6 @@ const X_PAUSE_MS = 2 * 60 * 60 * 1000;
 const CALENDAR_QUIET_MS = 6 * 60 * 60 * 1000;
 const REFINE_CONCURRENCY = 4;
 
-type LeanState = { lastPublishedFingerprint: string | null; lastPublishedAt: string | null; lastCommit: string | null };
 type LeanSettings = {
   xHandles: string[] | "all";
   publish: boolean;
@@ -272,16 +272,20 @@ function retagTeamDaily(store: LeanStore): void {
   }
 }
 
-async function refinePending(store: LeanStore, preferredModel?: string): Promise<CycleReport["refined"]> {
-  const pending = store.pending(REFINE_BATCH_LIMIT);
+async function refinePending(store: LeanStore, preferredModel?: string, now: Date = new Date()): Promise<CycleReport["refined"]> {
+  const pending = store.pending(REFINE_BATCH_LIMIT, now);
   const refined: CycleReport["refined"] = { ready: 0, skipped: 0, failed: 0, errors: [] };
   if (pending.length === 0) return refined;
-  let model;
+  let models;
   try {
-    model = resolveModel(preferredModel);
+    models = resolveModels(preferredModel);
   } catch (error) {
-    const message = error instanceof Error ? error.message.slice(0, 200) : "UNKNOWN";
-    for (const item of pending) refined.errors.push({ publicId: item.publicId, error: message });
+    const message = error instanceof Error && /^[A-Z][A-Z0-9_]{0,79}$/.test(error.message) ? error.message : "MODEL_CONFIGURATION_UNAVAILABLE";
+    for (const item of pending) {
+      // Missing configuration is recoverable after an operator fixes it; retain the queue with backoff.
+      store.deferForConfiguration(item.publicId, new Date());
+      refined.errors.push({ publicId: item.publicId, error: message });
+    }
     refined.failed = pending.length;
     return refined;
   }
@@ -290,7 +294,7 @@ async function refinePending(store: LeanStore, preferredModel?: string): Promise
       const paragraphs = item.platform === "x"
         ? (item.text.trim() ? [item.text.trim().slice(0, 4000)] : null)
         : await fetchArticleParagraphs(item.link);
-      const result = await refineItem(item, model, fetch, paragraphs);
+      const result = await refineWithFallback(item, models, fetch, paragraphs);
       if (result.kind === "irrelevant") {
         store.markSkipped(item.publicId);
         refined.skipped++;
@@ -305,9 +309,10 @@ async function refinePending(store: LeanStore, preferredModel?: string): Promise
         refined.ready++;
       }
     } catch (error) {
-      store.markAttemptFailed(item.publicId);
+      const message = error instanceof Error && /^[A-Z][A-Z0-9_]{0,79}$/.test(error.message) ? error.message : "REFINE_FAILED";
+      store.markAttemptFailed(item.publicId, { kind: classifyModelError(error), code: message, now: new Date() });
       refined.failed++;
-      refined.errors.push({ publicId: item.publicId, error: error instanceof Error ? error.message.slice(0, 200) : "UNKNOWN" });
+      refined.errors.push({ publicId: item.publicId, error: message });
     }
   });
   return refined;
@@ -359,7 +364,7 @@ export async function runCycle(now: Date = new Date()): Promise<CycleReport | nu
       publish: publishSetting.publish
     };
     const warnings = publishSetting.warning ? [publishSetting.warning] : [];
-    const state = readJson<LeanState>(leanPath("state.json"), { lastPublishedFingerprint: null, lastPublishedAt: null, lastCommit: null });
+    const state = publicationState(readJson<unknown>(leanPath("state.json"), null));
     const inboxRoot = leanPath("editor-inbox");
     const inbox = importInbox(store, inboxRoot, settings, now);
     try {
@@ -375,37 +380,49 @@ export async function runCycle(now: Date = new Date()): Promise<CycleReport | nu
     const { pausedNow, ...collectedReport } = collected;
     const xFiltered = retireFilteredPosts(store);
     retagTeamDaily(store);
-    const refined = await refinePending(store, settings.LEAN_REFINE_MODEL);
+    const refined = await refinePending(store, settings.LEAN_REFINE_MODEL, new Date());
     const backup = backupStoreIfDue(store, now);
 
     const minTimelineAt = new Date(now.getTime() - SITE_MAX_AGE_DAYS * 24 * 3600 * 1000).toISOString();
     const readyItems = store.ready(SITE_MAX_ITEMS, minTimelineAt);
-    const archivedItems = store.archived(minTimelineAt);
+    const archivedItems = store.archivedOutside(readyItems);
     const heldItems = store.held();
     const denied = new Set(Object.entries(settings.fullTextAllowed ?? {}).filter(([, allowed]) => allowed === false).map(([domain]) => domain));
     const localized = await localizeMedia([...heldItems, ...readyItems, ...archivedItems], now);
     const bundle = buildSiteBundle(readyItems, now.toISOString(), localized.media, denied, archivedItems);
     if (!settings.publish || heldItems.length > 0) {
-      stageSite(leanPath("preview"), heldItems.length > 0 ? buildSiteBundle([...heldItems, ...readyItems], now.toISOString(), localized.media, denied, archivedItems) : bundle);
-    }
-    let site: CycleReport["site"] = { items: bundle.itemCount, published: false, commit: null, reason: "UNCHANGED" };
-    if (localized.report.error !== null) {
-      // Publishing now would strip every picture from the live site.
-      site = { ...site, reason: "MEDIA_FAILED" };
-    } else if (!settings.publish) {
-      site = { ...site, reason: "PUBLISH_DISABLED" };
-    } else if (`${bundle.contentFingerprint}:${calendarToken()}` !== state.lastPublishedFingerprint) {
       try {
-        const commit = publishBundle(leanPath("pages-checkout"), bundle);
-        if (!gcPagesCheckout(leanPath("pages-checkout"))) warnings.push("GIT_GC_FAILED");
-        writeJsonAtomic(leanPath("state.json"), { lastPublishedFingerprint: `${bundle.contentFingerprint}:${calendarToken()}`, lastPublishedAt: now.toISOString(), lastCommit: commit });
-        site = { items: bundle.itemCount, published: true, commit, reason: "PUBLISHED" };
-      } catch (error) {
-        site = { ...site, reason: `PUBLISH_FAILED: ${error instanceof Error ? error.message.slice(0, 200) : "UNKNOWN"}` };
+        stageSite(leanPath("preview"), heldItems.length > 0 ? buildSiteBundle([...heldItems, ...readyItems], now.toISOString(), localized.media, denied, archivedItems, { preview: true }) : bundle);
+      } catch {
+        warnings.push("PREVIEW_STAGE_FAILED");
       }
     }
-    const liveCommit = site.published ? site.commit : site.reason === "UNCHANGED" ? state.lastCommit : null;
-    if (liveCommit !== null && inbox.enabled) markInboxPublished(inboxRoot, liveCommit, now.toISOString());
+    let shellFingerprint: string | null = null;
+    let artifacts: PublicationArtifacts | undefined;
+    try {
+      artifacts = publicationArtifacts(bundle);
+      shellFingerprint = siteShellFingerprint();
+    } catch { warnings.push("SITE_ASSETS_UNAVAILABLE"); }
+    const fingerprint = `${bundle.contentFingerprint}:${calendarToken()}:${shellFingerprint ?? "unavailable"}`;
+    const previouslyConfirmed = state.confirmed?.bundleId;
+    const site = await advancePublication(state, {
+      bundle, fingerprint, artifacts, publicIds: [...readyItems, ...archivedItems].map((item) => item.publicId), now: new Date(),
+      allowPush: settings.publish && localized.report.error === null && shellFingerprint !== null
+    }, {
+      clock: () => new Date(),
+      save: (next) => writeJsonAtomic(leanPath("state.json"), next),
+      confirm: (target) => confirmPublication(target),
+      push: (beforePush) => publishBundle(leanPath("pages-checkout"), bundle, beforePush),
+      retry: (pending, beforePush) => retryPublishedBundle(leanPath("pages-checkout"), pending.target.bundleId, pending.pushAttempts, pending.commit!, beforePush)
+    });
+    if (localized.report.error !== null) warnings.push("MEDIA_FAILED");
+    if (state.pending?.lastError) warnings.push(state.pending.lastError);
+    try {
+      prunePublicationRefs(leanPath("pages-checkout"), [state.pending?.commit, state.confirmed?.commit].filter((commit): commit is string => Boolean(commit)));
+    } catch { warnings.push("PUBLICATION_REF_CLEANUP_FAILED"); }
+    if (!state.pending && state.confirmed && state.confirmed.bundleId !== previouslyConfirmed && !gcPagesCheckout(leanPath("pages-checkout"))) warnings.push("GIT_GC_FAILED");
+    // A previous generation can be confirmed while newer submissions already exist. Only its saved IDs are eligible.
+    if (state.confirmed && inbox.enabled) markInboxPublished(inboxRoot, state.confirmed.commit, now.toISOString(), state.confirmed.publicIds);
     const report: CycleReport = { startedAt: now.toISOString(), finishedAt: new Date().toISOString(), inbox, ...collectedReport, xFiltered, refined, backup, media: localized.report, site, calendar, xFetch: { dense, skipped: xPlan.skipped, paused: [...xPlan.paused, ...pausedNow] }, warnings, counts: store.counts() };
     writeJsonAtomic(leanPath("last-cycle.json"), report);
     return report;

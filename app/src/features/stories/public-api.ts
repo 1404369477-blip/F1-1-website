@@ -2,6 +2,7 @@ import { z } from "zod";
 
 import { IS_PUBLIC_STATIC_SITE } from "./public-site-config";
 import { createPublicStaticFetch, PublicStaticGenerationChangedError } from "./public-static-transport";
+import type { PublicSearchItem } from "./public-search-schema";
 
 import type {
   PublicBilingualFeedResponseV2,
@@ -385,6 +386,21 @@ function mapFeedItem(item: PublicFeedItemV1): PublicStoryCardViewModel {
     },
     sourceNotice: item.originalLink.enabled ? "本站仅展示原创提炼；完整原文请前往来源网站。" : "来源链接当前不可公开；本站保留已验证的中文提炼。"
   };
+}
+
+/** Search rows deliberately contain no images or full text; opening a result loads its existing detail DTO. */
+export function publicSearchCard(item: PublicSearchItem): PublicStoryCardViewModel {
+  const card = mapFeedItem({
+    publicId: item.publicId, contentType: item.contentType, state: "media_missing",
+    titleZh: item.titleZh, summaryZh: item.summaryZh, publishedAt: item.publishedAt,
+    sourcePublishedAt: item.publishedAt, sourceTimeStatus: "known",
+    source: { sourceId: "search-result", platform: item.platform, displayName: item.sourceName, byline: item.sourceName, accessStatus: "available" },
+    media: null, originalLink: item.originalUrl
+      ? { enabled: true, url: item.originalUrl, reason: null }
+      : { enabled: false, url: null, reason: "synthetic_only" },
+    ...(item.titleEn ? { originalTitle: item.titleEn } : {}), summaryEn: item.summaryEn
+  });
+  return { ...card, originalReason: null, sourceNotice: "搜索包含全部公开资讯和已归档内容；展开或进入详情可查看正文与来源。" };
 }
 
 function mapBilingualItem(item: PublicBilingualStoryCardV2): PublicStoryCardViewModel {

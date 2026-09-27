@@ -5,11 +5,38 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 
 import { PAGES_BRANCH, PAGES_CNAME, PAGES_DEPLOY_KEY, PAGES_HTTPS_REMOTE, PAGES_KNOWN_HOSTS, PAGES_REMOTE, PAGES_TOKEN_PATH, PAGES_UI_DIRECTORY, PAGES_WORKFLOW, leanPath } from "./config.ts";
-import type { SiteBundle } from "./site-bundle.ts";
+import { renderPermanentStoryPage, type SiteBundle } from "./site-bundle.ts";
+import type { PublicationArtifacts } from "./publication.ts";
 
 const GIT_TIMEOUT_MS = 120_000;
 
 type Git = (args: string[], allowFailure?: boolean) => { status: number; stdout: string };
+
+function localRefGit(checkout: string, args: string[]): string {
+  const result = spawnSync("/usr/bin/git", ["-c", "core.hooksPath=/dev/null", ...args], {
+    cwd: checkout, encoding: "utf8", timeout: 10_000,
+    env: { NODE_ENV: "production", PATH: "/usr/bin:/bin", HOME: checkout, GIT_CONFIG_NOSYSTEM: "1", GIT_CONFIG_GLOBAL: "/dev/null" }
+  });
+  if (result.status !== 0 || result.error) throw new Error("PUBLISH_LOCAL_REF_FAILED");
+  return result.stdout.trim();
+}
+
+/** Parentless candidates need a durable local ref before a push whose response may be lost. */
+export function protectPublicationCommit(checkout: string, commit: string): void {
+  if (!/^[a-f0-9]{40,64}$/.test(commit)) throw new Error("PUBLISH_COMMIT_INVALID");
+  localRefGit(checkout, ["update-ref", `refs/lean-publications/${commit}`, commit]);
+}
+
+/** Call only after the publication state has been saved; preserve both current pending and confirmed commits. */
+export function prunePublicationRefs(checkout: string, keep: readonly string[]): void {
+  if (!existsSync(join(checkout, ".git"))) return;
+  const retained = new Set(keep);
+  const refs = localRefGit(checkout, ["for-each-ref", "--format=%(refname)", "refs/lean-publications/"]);
+  for (const ref of refs.split("\n").filter(Boolean)) {
+    const match = /^refs\/lean-publications\/([a-f0-9]{40,64})$/.exec(ref);
+    if (match && !retained.has(match[1])) localRefGit(checkout, ["update-ref", "-d", ref]);
+  }
+}
 
 function readToken(): string | null {
   if (!existsSync(PAGES_TOKEN_PATH)) return null;
@@ -21,7 +48,8 @@ function readToken(): string | null {
 
 /** HTTPS with the repo-scoped token when configured; otherwise the SSH deploy key. */
 function createGit(cwd: string): { git: Git; remote: string } {
-  const env: Record<string, string> = {
+  const env: NodeJS.ProcessEnv = {
+    NODE_ENV: "production",
     HOME: cwd,
     PATH: "/usr/bin:/bin:/usr/sbin:/sbin",
     LANG: "C",
@@ -41,13 +69,38 @@ function createGit(cwd: string): { git: Git; remote: string } {
     const result = spawnSync("/usr/bin/git", ["-c", "core.hooksPath=/dev/null", "-c", "commit.gpgsign=false", ...args],
       { cwd, env, encoding: "utf8", timeout: GIT_TIMEOUT_MS, maxBuffer: 16 * 1024 * 1024 });
     const status = result.status ?? -1;
-    if (!allowFailure && (result.error || status !== 0)) throw new Error(`GIT_${args[0]?.toUpperCase()}_FAILED: ${(result.stderr ?? result.error?.message ?? "").slice(0, 800)}`);
+    if (!allowFailure && (result.error || status !== 0)) throw new Error(`GIT_${args[0]?.toUpperCase()}_FAILED`);
     return { status, stdout: (result.stdout ?? "").trim() };
   };
   return { git, remote: token === null ? PAGES_REMOTE : PAGES_HTTPS_REMOTE };
 }
 
 const sha256File = (path: string): string => createHash("sha256").update(readFileSync(path)).digest("hex");
+/** Changes to shell, detail template or workflow must trigger publication even if stories are unchanged. */
+export function siteShellFingerprint(options?: { uiDirectory?: string; workflowPath?: string }): string {
+  const ui = options?.uiDirectory ?? PAGES_UI_DIRECTORY;
+  const workflow = options?.workflowPath ?? PAGES_WORKFLOW;
+  const detail = join(ui, "stories/index.html");
+  return createHash("sha256").update(JSON.stringify([
+    sha256File(join(dirname(ui), "ui.build-receipt.json")), sha256File(workflow),
+    existsSync(detail) ? sha256File(detail) : null
+  ])).digest("hex");
+}
+
+/** Binds the shell/workflow receipt and one fully rendered, publicly reachable story document. */
+export function publicationArtifacts(bundle: SiteBundle, options?: { uiDirectory?: string; workflowPath?: string }): PublicationArtifacts {
+  const ui = options?.uiDirectory ?? PAGES_UI_DIRECTORY;
+  const workflow = options?.workflowPath ?? PAGES_WORKFLOW;
+  const detail = join(ui, "stories/index.html");
+  const first = bundle.storyPages?.entries().next().value;
+  return {
+    uiManifestSha256: sha256File(join(dirname(ui), "ui.build-receipt.json")),
+    workflowSha256: sha256File(workflow),
+    storyTemplateSha256: existsSync(detail) ? sha256File(detail) : null,
+    story: first ? { path: first[0].replace(/index\.html$/, ""), sha256: createHash("sha256").update(renderPermanentStoryPage(readFileSync(detail, "utf8"), first[1])).digest("hex") } : null
+  };
+}
+
 const GENERATION_KEEP_COUNT = 6;
 const GENERATION_KEEP_MS = 60 * 60 * 1000;
 const GENERATION_ID = /^[0-9a-f]{64}$/;
@@ -100,7 +153,7 @@ function mediaRefsUnder(directory: string): string[] {
  * Replaces gh-pages with a single parentless commit of the UI shell plus `bundle`.
  * Without history, pictures that left the site are garbage-collected instead of growing the repository forever.
  */
-export function publishBundle(checkout: string, bundle: SiteBundle): string {
+export function publishBundle(checkout: string, bundle: SiteBundle, beforePush?: (commit: string) => void): string {
   mkdirSync(checkout, { recursive: true, mode: 0o700 });
   const { git, remote } = createGit(checkout);
   if (!existsSync(join(checkout, ".git"))) git(["init", `--initial-branch=${PAGES_BRANCH}`]);
@@ -112,15 +165,36 @@ export function publishBundle(checkout: string, bundle: SiteBundle): string {
   const tree = git(["write-tree"]).stdout;
   const commit = git(["-c", "user.name=F1+1 Lean Publisher", "-c", "user.email=pages@users.noreply.github.com",
     "commit-tree", tree, "-m", `Publish ${bundle.itemCount} stories (${bundle.bundleId.slice(0, 12)})`]).stdout;
+  protectPublicationCommit(checkout, commit);
+  beforePush?.(commit);
+  git(["push", "--force", "--porcelain", remote, `${commit}:refs/heads/${PAGES_BRANCH}`]);
+  git(["reset", "-q", "--soft", commit]);
+  return commit;
+}
+
+/** Re-triggers deployment of the exact staged generation. Never substitutes the current cycle's content. */
+export function retryPublishedBundle(checkout: string, bundleId: string, attempt: number, previousCommit: string, beforePush: (commit: string) => void): string {
+  if (!/^[a-f0-9]{40,64}$/.test(previousCommit)) throw new Error("PUBLISH_COMMIT_INVALID");
+  const { git, remote } = createGit(checkout);
+  const publication = JSON.parse(git(["show", `${previousCommit}:.sync/publication.json`]).stdout) as { bundleId?: string };
+  const pointer = JSON.parse(git(["show", `${previousCommit}:site/_public/current.json`]).stdout) as { bundleId?: string };
+  if (publication.bundleId !== bundleId || pointer.bundleId !== bundleId) throw new Error("PUBLISH_STAGED_BUNDLE_CHANGED");
+  // Retry the immutable candidate commit, independent of changes to the working tree or index.
+  const tree = git(["rev-parse", `${previousCommit}^{tree}`]).stdout;
+  const commit = git(["-c", "user.name=F1+1 Lean Publisher", "-c", "user.email=pages@users.noreply.github.com",
+    "commit-tree", tree, "-m", `Retry deployment ${bundleId} attempt ${attempt}`]).stdout;
+  protectPublicationCommit(checkout, commit);
+  beforePush(commit);
   git(["push", "--force", "--porcelain", remote, `${commit}:refs/heads/${PAGES_BRANCH}`]);
   git(["reset", "-q", "--soft", commit]);
   return commit;
 }
 
 /** Writes the complete gh-pages tree (UI shell, bundle, workflow) into `root`, replacing everything but `.git`. */
-export function stageSite(root: string, bundle: SiteBundle, options?: { now?: Date; uiDirectory?: string }): void {
+export function stageSite(root: string, bundle: SiteBundle, options?: { now?: Date; uiDirectory?: string; workflowPath?: string }): void {
   const now = options?.now ?? new Date();
   const uiDirectory = options?.uiDirectory ?? PAGES_UI_DIRECTORY;
+  const workflowPath = options?.workflowPath ?? PAGES_WORKFLOW;
   mkdirSync(root, { recursive: true, mode: 0o700 });
   const previousSite = join(root, "site");
   const scratch = mkdtempSync(join(tmpdir(), "f1-generations-"));
@@ -136,7 +210,15 @@ export function stageSite(root: string, bundle: SiteBundle, options?: { now?: Da
       mkdirSync(dirname(join(site, path)), { recursive: true });
       writeFileSync(join(site, path), bytes);
     }
-    if (bundle.mediaFiles.size > 0) mkdirSync(join(site, "media"));
+    if (bundle.storyPages && bundle.storyPages.size > 0) {
+      const template = readFileSync(join(site, "stories/index.html"), "utf8");
+      for (const [path, story] of bundle.storyPages) {
+        if (!/^stories\/public-[a-z0-9-]{1,120}\/index\.html$/.test(path)) throw new Error("STORY_PAGE_PATH_INVALID");
+        mkdirSync(dirname(join(site, path)), { recursive: true });
+        writeFileSync(join(site, path), renderPermanentStoryPage(template, story));
+      }
+    }
+    if (bundle.mediaFiles.size > 0) mkdirSync(join(site, "media"), { recursive: true });
     for (const [path, file] of bundle.mediaFiles) cpSync(file, join(site, path));
     restoreGenerations(site, scratch, bundle.bundleId, now);
     writeFileSync(join(site, ".nojekyll"), "");
@@ -152,10 +234,11 @@ export function stageSite(root: string, bundle: SiteBundle, options?: { now?: Da
       schemaVersion: "public-static-deployment-v1",
       bundleId: bundle.bundleId,
       uiManifestSha256: sha256File(join(dirname(uiDirectory), "ui.build-receipt.json")),
-      workflowSha256: sha256File(PAGES_WORKFLOW)
+      workflowSha256: sha256File(workflowPath),
+      storyTemplateSha256: existsSync(join(uiDirectory, "stories/index.html")) ? sha256File(join(uiDirectory, "stories/index.html")) : null
     }));
     mkdirSync(join(root, ".github/workflows"), { recursive: true });
-    cpSync(PAGES_WORKFLOW, join(root, ".github/workflows/pages.yml"));
+    cpSync(workflowPath, join(root, ".github/workflows/pages.yml"));
     mkdirSync(join(root, ".sync"));
     writeFileSync(join(root, ".sync/publication.json"), JSON.stringify({
       schemaVersion: "lean-publication-v1",

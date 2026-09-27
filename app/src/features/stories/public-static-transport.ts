@@ -203,7 +203,7 @@ export function createPublicStaticFetch({
       bundleId = bundle.pointer.bundleId;
       return bundle;
     });
-    if (cacheKey) bundles.set(cacheKey, loading);
+    // Only cache a settled bundle: one reader's AbortSignal must not poison later requests.
     return loading.then((bundle) => {
       bundleId = bundle.pointer.bundleId;
       return bundle;
@@ -223,7 +223,8 @@ export function createPublicStaticFetch({
     const directory = pointer.indexPath.slice(0, -"index.json".length);
     const bodyResponse = await fetchImpl(`${basePath}/${directory}${reference.path}`, { method: "GET", headers: { Accept: "application/json" }, cache: "no-store", signal: init?.signal });
     if (bodyResponse.status === 404) throw new StaleStaticBundleError();
-    const bytes = await readBoundedBytes(bodyResponse, 2 * 1024 * 1024);
+    const isSearch = key === "/api/public/search?v=1";
+    const bytes = await readBoundedBytes(bodyResponse, (isSearch ? 16 : 2) * 1024 * 1024);
     try {
       await assertHash(bytes, reference.sha256);
     } catch {
@@ -232,10 +233,11 @@ export function createPublicStaticFetch({
     throwIfAborted(init?.signal);
     if (reference.status === 200) {
       const payload = parseJson(bytes);
-      const expectedVersion = new URL(key, "https://public.invalid").searchParams.get("v") === "2"
+      const expectedVersion = isSearch ? "public-search-v1" : new URL(key, "https://public.invalid").searchParams.get("v") === "2"
         ? "public-read-bilingual-v2" : "public-read-v0.1";
       if (payload === null || typeof payload !== "object" || Array.isArray(payload)
         || (payload as Record<string, unknown>).schemaVersion !== expectedVersion) throw unavailable();
+      if (isSearch && (payload as Record<string, unknown>).generatedAt !== pointer.generatedAt) throw unavailable();
     }
     return new Response(bytes, { status: reference.status, headers: { "Content-Type": reference.contentType, "Cache-Control": "no-store" } });
   };

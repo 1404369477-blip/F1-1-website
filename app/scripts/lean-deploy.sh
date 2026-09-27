@@ -10,7 +10,7 @@ mkdir -p "$RUNTIME_APP/src/server" "$RUNTIME_APP/src/server/rss" "$RUNTIME_APP/s
 rm -rf "$RUNTIME_APP/src/server/lean"
 cp -R "$SOURCE_APP/src/server/lean" "$RUNTIME_APP/src/server/lean"
 cp "$SOURCE_APP/src/server/rss/refine-model.ts" "$SOURCE_APP/src/server/rss/private-credential-file.ts" "$RUNTIME_APP/src/server/rss/"
-cp "$SOURCE_APP/src/features/stories/public-static-schema.ts" "$RUNTIME_APP/src/features/stories/"
+cp "$SOURCE_APP/src/features/stories/public-static-schema.ts" "$SOURCE_APP/src/features/stories/public-search-schema.ts" "$RUNTIME_APP/src/features/stories/"
 cp "$SOURCE_APP/src/features/calendar/race-strip-model.ts" "$RUNTIME_APP/src/features/calendar/"
 mkdir -p "$RUNTIME_APP/data"
 cp "$SOURCE_APP"/data/f1-names-zh.json "$SOURCE_APP"/data/f1-calendar-overrides.json "$SOURCE_APP"/data/f1-calendar-2026.json "$RUNTIME_APP/data/"

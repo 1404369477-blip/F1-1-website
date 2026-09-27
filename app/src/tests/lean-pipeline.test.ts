@@ -210,6 +210,8 @@ describe("published generations", () => {
     mkdirSync(ui);
     writeFileSync(join(ui, "index.html"), "<html></html>");
     writeFileSync(join(parent, "ui.build-receipt.json"), "{}");
+    const workflowPath = join(parent, "pages.yml");
+    writeFileSync(workflowPath, "name: fixture-pages\n");
     const root = mkdtempSync(join(tmpdir(), "lean-pages-"));
     const generations = join(root, "site/_public/generations");
     const now = new Date("2026-09-26T12:00:00.000Z");
@@ -241,7 +243,7 @@ describe("published generations", () => {
           indexSha256: currentId
         }))]
       ])
-    }, { now, uiDirectory: ui });
+    }, { now, uiDirectory: ui, workflowPath });
     const kept = readdirSync(join(root, "site/_public/generations")).filter((name) => name !== "manifest.json");
     expect(kept).toContain(currentId);
     expect(kept).not.toContain(ids[0]);
@@ -259,6 +261,8 @@ describe("published generations", () => {
     mkdirSync(ui);
     writeFileSync(join(ui, "index.html"), "<html></html>");
     writeFileSync(join(parent, "ui.build-receipt.json"), "{}");
+    const workflowPath = join(parent, "pages.yml");
+    writeFileSync(workflowPath, "name: fixture-pages\n");
     const root = mkdtempSync(join(tmpdir(), "lean-pages-"));
     const oldId = `9${"a".repeat(63)}`;
     const publishedAt = "2026-09-26T08:00:00.000Z";
@@ -278,7 +282,7 @@ describe("published generations", () => {
         [`_public/generations/${currentId}/index.json`, Buffer.from(JSON.stringify({ generatedAt: now.toISOString() }))],
         ["_public/current.json", Buffer.from("{}")]
       ])
-    }, { now, uiDirectory: ui });
+    }, { now, uiDirectory: ui, workflowPath });
     const manifest = JSON.parse(readFileSync(join(root, "site/_public/generations/manifest.json"), "utf8")) as { generations: { id: string; publishedAt: string }[] };
     expect(manifest.generations.find((entry) => entry.id === oldId)?.publishedAt).toBe(publishedAt);
     rmSync(root, { recursive: true, force: true });
@@ -484,7 +488,7 @@ describe("lean site bundle", () => {
     expect(index.responses["/api/public/feed?limit=12&v=2"]).toBeUndefined();
     expect(bundle.files.get("robots.txt")?.toString()).toContain("Sitemap: https://f1plus1.com/sitemap.xml");
     expect(bundle.files.get("rss.xml")?.toString()).toMatch(/<pubDate>[A-Z][a-z]{2}, /);
-    expect(bundle.files.get("sitemap.xml")?.toString()).toContain("https://f1plus1.com/stories/?publicId=");
+    expect(bundle.files.get("sitemap.xml")?.toString()).toContain("https://f1plus1.com/stories/public-");
     expect(bundle.files.get("rss.xml")?.toString()).toContain("<link>https://f1plus1.com/</link>");
     expect(bundle.files.get("sitemap.xml")?.toString()).not.toContain("github.io");
     expect(buildSiteBundle(items, "2026-09-24T15:00:00.000Z").contentFingerprint).toBe(bundle.contentFingerprint);
@@ -572,7 +576,7 @@ describe("lean media localization", () => {
     const calls: string[] = [];
     const fetcher = (async (url: string) => {
       calls.push(url);
-      return url === good ? new Response(png, { headers: { "content-type": "image/png" } }) : new Response("no", { status: 404 });
+      return url === good ? new Response(new Uint8Array(png), { headers: { "content-type": "image/png" } }) : new Response("no", { status: 404 });
     }) as unknown as typeof fetch;
     const image = (url: string) => ({ url, mimeType: "image/jpeg" as const, declaredBytes: 1 });
     const items = [readyItem(1, { image: image(good) }), readyItem(2, { image: image(missing) }), readyItem(3, { image: image("https://x.test/GettyImages-9.jpg") }), readyItem(4)];

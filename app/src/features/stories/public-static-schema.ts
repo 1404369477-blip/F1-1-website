@@ -27,12 +27,14 @@ export function normalizePublicStaticRequestKey(input: string): string {
   if (!input.startsWith("/api/public/") || input.includes("#") || input.includes("\\")) throw new PublicStaticQueryError();
   const url = new URL(input, "https://public.invalid");
   const isFeed = url.pathname === "/api/public/feed";
-  if (!isFeed) {
+  const isSearch = url.pathname === "/api/public/search";
+  if (!isFeed && !isSearch) {
     const match = /^\/api\/public\/stories\/([^/]+)$/u.exec(url.pathname);
     if (!match || !isPublicStaticId(match[1])) throw new PublicStaticQueryError("PUBLIC_ID_INVALID");
   }
   const version = url.searchParams.get("v");
   if (version !== null && version !== "1" && version !== "2") throw new PublicStaticQueryError();
+  if (isSearch && version !== "1") throw new PublicStaticQueryError();
   const allowed = !isFeed ? new Set(["v"]) : version === "2"
     ? new Set(["v", "limit", "cursor", "category"])
     : new Set(["v", "cursorAt", "cursorId", "source", "contentType"]);

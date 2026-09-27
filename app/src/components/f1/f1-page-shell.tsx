@@ -240,7 +240,8 @@ export function F1PageShell({
                   type="search"
                   id="search-input"
                   placeholder="搜索"
-                  aria-label="搜索当前已加载的时间线"
+                  aria-label="搜索全部公开资讯与归档"
+                  maxLength={200}
                   autoComplete="off"
                   spellCheck={false}
                   value={searchValue}

@@ -182,11 +182,12 @@ export function importEditorInbox(store: LeanStore, root: string, settings: Edit
     try {
       if (stat.size > EDITOR_SUBMISSION_MAX_BYTES) throw new Rejection("FILE_TOO_LARGE");
       const { item, idempotencyKey } = parseSubmission(readFileSync(source, "utf8"), allowedDomains, status, now);
-      if (store.addEditorial(item, idempotencyKey) === "duplicate") throw new Rejection("DUPLICATE");
+      const added = store.addEditorial(item, idempotencyKey);
+      if (added.kind === "duplicate") throw new Rejection("DUPLICATE");
       const target = moveInto(source, paths.done, file, now);
       writeFileSync(`${target.replace(/\.json$/, "")}.receipt.json`,
-        `${JSON.stringify({ publicId: item.publicId, contentType: item.contentType, link: item.link, status, importedAt: now }, null, 2)}\n`);
-      entries.push({ file, state: status === "ready" ? "done" : "held", at: now, publicId: item.publicId,
+        `${JSON.stringify({ publicId: added.publicId, contentType: item.contentType, link: item.link, status, importedAt: now }, null, 2)}\n`);
+      entries.push({ file, state: status === "ready" ? "done" : "held", at: now, publicId: added.publicId,
         publishedHint: status === "ready" ? "awaiting_publish" : "held_preview_only" });
       if (status === "ready") report.imported++;
       else report.held++;
@@ -265,10 +266,12 @@ async function fetchStatusImages(handle: string, id: string, fetcher: typeof fet
   }
 }
 
-/** Marks every accepted submission still awaiting publication as live in `commit`. */
-export function markInboxPublished(root: string, commit: string, now: string): void {
+/** Marks only submissions included in the confirmed generation as live in `commit`. */
+export function markInboxPublished(root: string, commit: string, now: string, publicIds?: readonly string[]): void {
   const path = inboxPaths(root).status;
   const entries = readStatus(path);
-  if (!entries.some((entry) => entry.publishedHint === "awaiting_publish")) return;
-  writeStatus(path, entries.map((entry) => entry.publishedHint === "awaiting_publish" ? { ...entry, publishedHint: "published" as const, commit } : entry), now);
+  const included = publicIds ? new Set(publicIds) : null;
+  const canMark = (entry: InboxEntry): boolean => entry.publishedHint === "awaiting_publish" && (included === null || (entry.publicId !== undefined && included.has(entry.publicId)));
+  if (!entries.some(canMark)) return;
+  writeStatus(path, entries.map((entry) => canMark(entry) ? { ...entry, publishedHint: "published" as const, commit } : entry), now);
 }

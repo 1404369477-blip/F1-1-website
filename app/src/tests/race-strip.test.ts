@@ -57,12 +57,12 @@ describe("race strip clock", () => {
     expect(countdown?.showTimeline).toBe(true);
 
     const live = describeStrip(calendar, new Date("2026-09-26T19:40:00+08:00"));
-    expect(live?.headline).toBe("阿塞拜疆站 · 正赛 进行中");
+    expect(live?.headline).toBe("阿塞拜疆站 · 正赛 预计进行中");
     expect(live?.mobileAside).toBe("19:00 开赛");
     expect(live?.sessions.find((session) => session.key === "race")?.phase).toBe("live");
 
     const after = describeStrip(calendar, new Date("2026-09-26T21:40:00+08:00"));
-    expect(after?.headline).toContain("正赛已结束");
+    expect(after?.headline).toContain("正赛预计结束");
     expect(after?.meta.startsWith("上站 西班牙 · 安东内利")).toBe(true);
     expect(after?.meta).toContain("下站 巴林（马来西亚·雪邦）10/2–4");
 
@@ -79,7 +79,7 @@ describe("race strip clock", () => {
     expect(between?.showTimeline).toBe(false);
 
     const sprint = describeStrip(calendar, new Date("2026-10-10T17:20:00+08:00"));
-    expect(sprint?.headline).toBe("新加坡站 · 冲刺赛 进行中");
+    expect(sprint?.headline).toBe("新加坡站 · 冲刺赛 预计进行中");
     expect(sprint?.panelSprint).toBe(true);
   });
 

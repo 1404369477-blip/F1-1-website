@@ -93,7 +93,7 @@ function DetailStateScreen({
   );
 }
 
-export function StoryDetailExperience({ publicId }: { publicId: string }) {
+export function StoryDetailExperience({ publicId, onStateChange }: { publicId: string; onStateChange?: (status: DetailRequestState["status"]) => void }) {
   const [requestVersion, setRequestVersion] = useState(0);
   const [language, setLanguage] = useState<"zh-CN" | "en">("zh-CN");
   const [detailState, setDetailState] = useState<DetailRequestState>({ status: "loading" });
@@ -110,6 +110,8 @@ export function StoryDetailExperience({ publicId }: { publicId: string }) {
     setDetailState({ status: "loading" });
   }
 
+  useEffect(() => { onStateChange?.(detailState.status); }, [detailState.status, onStateChange]);
+
   useEffect(() => {
     if (detailState.status !== "ready") return;
     const title = detailState.data.story.title;
@@ -121,6 +123,15 @@ export function StoryDetailExperience({ publicId }: { publicId: string }) {
     const og = document.querySelector<HTMLMetaElement>('meta[property="og:url"]') ?? document.head.appendChild(document.createElement("meta"));
     og.setAttribute("property", "og:url");
     og.content = url;
+    for (const [name, value, attribute] of [
+      ["description", detailState.data.story.summary, "name"],
+      ["og:title", title, "property"],
+      ["og:description", detailState.data.story.summary, "property"]
+    ]) {
+      const meta = document.querySelector<HTMLMetaElement>(`meta[${attribute}="${name}"]`) ?? document.head.appendChild(document.createElement("meta"));
+      meta.setAttribute(attribute, name);
+      meta.content = value;
+    }
   }, [detailState, publicId]);
 
   useEffect(() => {
@@ -368,10 +379,10 @@ export function StoryDetailExperience({ publicId }: { publicId: string }) {
                 <ul>
                   {relatedStories.map((related) => (
                     <li key={related.publicId}>
-                      <Link href={publicStoryHref(related.publicId)}>
+                      <a href={publicStoryHref(related.publicId)}>
                         <span>{related.category}</span>
                         <strong>{related.localized[selectedLanguage]?.title ?? related.localized["zh-CN"]?.title ?? related.title}</strong>
-                      </Link>
+                      </a>
                     </li>
                   ))}
                 </ul>

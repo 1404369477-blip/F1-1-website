@@ -11,9 +11,9 @@ afterAll(() => vi.unstubAllEnvs());
 const sha256 = (text: string): string => createHash("sha256").update(text).digest("hex");
 
 function installGeneration(generatedAt: string): string {
-  const body = JSON.stringify({ schemaVersion: "public-read-bilingual-v2", items: [], page: { limit: 12, nextCursor: null, asOf: generatedAt }, generationId: "public-empty", generationHash: "1".repeat(64) });
+  const body = JSON.stringify({ schemaVersion: "public-read-v0.1", items: [], page: { pageSize: 12, hasMore: false, nextCursor: null } });
   const bodyHash = sha256(body);
-  const index = JSON.stringify({ schemaVersion: "public-static-index-v1", generatedAt, responses: { "/api/public/feed?limit=12&v=2": { status: 200, contentType: "application/json; charset=utf-8", path: `responses/${bodyHash}.json`, sha256: bodyHash } } });
+  const index = JSON.stringify({ schemaVersion: "public-static-index-v1", generatedAt, responses: { "/api/public/feed": { status: 200, contentType: "application/json; charset=utf-8", path: `responses/${bodyHash}.json`, sha256: bodyHash } } });
   const bundleId = sha256(index);
   const indexPath = `_public/generations/${bundleId}/index.json`;
   const pointer = JSON.stringify({ schemaVersion: "public-static-pointer-v1", generatedAt, bundleId, indexPath, indexSha256: bundleId });
@@ -47,7 +47,7 @@ describe("default static public client", () => {
 
   it("uses a refreshable fixed detail route and reports withdrawn content as not found", async () => {
     installGeneration("2026-09-12T07:00:00.000Z");
-    expect(publicStoryHref("public-static-story")).toBe("/stories/?publicId=public-static-story");
+    expect(publicStoryHref("public-static-story")).toBe("/stories/public-static-story/");
     await expect(fetchPublicStory({ publicId: "public-withdrawn" })).rejects.toSatisfy(isPublicStoryNotFound);
   });
 });
