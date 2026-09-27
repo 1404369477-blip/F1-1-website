@@ -66,7 +66,7 @@ function readFailures(path: string): Record<string, Failure> {
  * A picture that cannot be fetched is left out (the story shows no picture) and retried a few times.
  */
 export async function localizeImages(items: readonly StoredItem[], cacheDir: string, now: Date,
-  options: { fetcher?: typeof fetch; encode?: Encoder } = {}): Promise<{ media: LocalMedia; report: MediaReport }> {
+  options: { fetcher?: typeof fetch; encode?: Encoder; retainKeys?: readonly string[] } = {}): Promise<{ media: LocalMedia; report: MediaReport }> {
   const fetcher = options.fetcher ?? fetch;
   const encode = options.encode ?? defaultEncoder;
   mkdirSync(cacheDir, { recursive: true, mode: 0o700 });
@@ -75,7 +75,8 @@ export async function localizeImages(items: readonly StoredItem[], cacheDir: str
   const media = new Map<string, LocalImage>();
   const report: MediaReport = { cached: 0, downloaded: 0, failed: 0, deferred: 0 };
 
-  const urls = [...new Set(items.flatMap((item) => item.image !== null && !isAgencyImage(item.image.url) ? [item.image.url] : []))];
+  const urls = [...new Set(items.flatMap((item) => (item.images.length > 0 ? item.images : (item.image ? [item.image] : []))
+    .filter((image) => !isAgencyImage(image.url)).map((image) => image.url)))];
   const missing: string[] = [];
   for (const url of urls) {
     const key = mediaKey(url);
@@ -114,7 +115,7 @@ export async function localizeImages(items: readonly StoredItem[], cacheDir: str
     }
   }));
 
-  const wanted = new Set(urls.map(mediaKey));
+  const wanted = new Set([...urls.map(mediaKey), ...(options.retainKeys ?? [])]);
   for (const key of Object.keys(failures)) if (!wanted.has(key)) delete failures[key];
   const temp = `${failuresPath}.${process.pid}.tmp`;
   writeFileSync(temp, `${JSON.stringify(failures, null, 2)}\n`, { mode: 0o600 });

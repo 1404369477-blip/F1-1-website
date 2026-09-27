@@ -32,20 +32,27 @@ function timelineAt(item: StoredItem): string {
 }
 
 /** Only site-hosted copies are referenced; a picture without one is left out rather than hot-linked. */
-function localImage(item: StoredItem, localMedia: LocalMedia): LocalImage | undefined {
-  return item.image === null || isAgencyImage(item.image.url) ? undefined : localMedia.get(item.image.url);
+function localImages(item: StoredItem, localMedia: LocalMedia): LocalImage[] {
+  const sources = item.images.length > 0 ? item.images : (item.image ? [item.image] : []);
+  return sources.filter((image) => !isAgencyImage(image.url)).flatMap((image) => {
+    const local = localMedia.get(image.url);
+    return local ? [{ image, local }] : [];
+  }).slice(0, 4);
 }
 
 /** `media_missing` makes the UI omit the picture area; `ready` without media would draw a synthetic placeholder. */
 function feedItemWith(item: StoredItem, localMedia: LocalMedia, fullTextDenied: ReadonlySet<string>): Record<string, unknown> {
-  const local = localImage(item, localMedia);
-  const media = local === undefined ? null : {
-    kind: "source_image",
+  const pictures = localImages(item, localMedia);
+  const title = item.titleZh ?? item.title;
+  const media = pictures.length === 0 ? null : pictures.map(({ image, local }, index) => ({
+    kind: image.kind === "video_poster" ? "video_poster" : "source_image",
     assetRef: new URL(local.sitePath, PAGES_URL).toString(),
     mimeType: "image/webp",
     declaredBytes: local.bytes,
-    altZh: item.titleZh
-  };
+    ...(image.width ? { width: image.width } : {}),
+    ...(image.height ? { height: image.height } : {}),
+    altZh: `${title} · 第 ${index + 1} 张`
+  }));
   const showFull = fullTextAllowed(item.link, fullTextDenied);
   return {
     publicId: item.publicId,
@@ -63,8 +70,8 @@ function feedItemWith(item: StoredItem, localMedia: LocalMedia, fullTextDenied: 
     summaryEn: item.summaryEn,
     detailZh: showFull ? cleanParagraphs(item.detailZh) : undefined,
     detailEn: showFull ? cleanParagraphs(item.detailEn) : undefined,
-    keyPointsZh: item.keyPointsZh.length > 0 ? item.keyPointsZh : undefined,
-    keyPointsEn: item.keyPointsEn.length > 0 ? item.keyPointsEn : undefined
+    keyPointsZh: item.platform === "x" || item.keyPointsZh.length === 0 ? undefined : item.keyPointsZh,
+    keyPointsEn: item.platform === "x" || item.keyPointsEn.length === 0 ? undefined : item.keyPointsEn,
   };
 }
 
@@ -109,8 +116,7 @@ export function buildSiteBundle(readyItems: readonly StoredItem[], generatedAt: 
   const feedItem = (item: StoredItem) => feedItemWith(item, localMedia, fullTextDenied);
   const mediaFiles = new Map<string, string>();
   for (const item of items) {
-    const local = localImage(item, localMedia);
-    if (local !== undefined) mediaFiles.set(local.sitePath, local.file);
+    for (const picture of localImages(item, localMedia)) mediaFiles.set(picture.local.sitePath, picture.local.file);
   }
   const responses: Record<string, ResponseRef> = {};
   const bodies = new Map<string, Buffer>();

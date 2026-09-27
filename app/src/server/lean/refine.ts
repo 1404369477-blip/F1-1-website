@@ -34,7 +34,7 @@ const SYSTEM_PROMPT = [
   "keyPointsZh只写中文摘要里没有的新信息，最多3条。提供了 paragraphs 时至少写1条正文里的具体事实，并给出条数相同的 keyPointsEn；没有 paragraphs 且没有新信息时两个数组都为空。",
   "不要把英文单词从中间截断后接中文。gurney flap 译成格尼襟翼。",
   "如果提供了 paragraphs，detailZh必须是等长数组：按原段落顺序完整翻译，保留全部引述并加引号、注明说话人，不删减、不改写观点。没有 paragraphs 时 detailZh 为 null。",
-  "来源为X帖子时，titleZh概括帖子，summaryZh用1到2句转述，summaryEn留空字符串。",
+  "来源为X帖子时，titleZh概括帖子，summaryZh用1到2句转述，summaryEn留空字符串，keyPointsZh和keyPointsEn必须是空数组。",
   NAME_GUIDE
 ].join("\n");
 
@@ -232,5 +232,6 @@ export async function refineItem(item: StoredItem, model: ModelEndpoint, fetcher
       // Keep the first Chinese copy when the second pass fails.
     }
   }
+  if (item.platform === "x" && result.kind === "ready") return { ...result, keyPointsZh: [], keyPointsEn: [] };
   return result;
 }

@@ -304,11 +304,11 @@ export function StoryDetailExperience({ publicId }: { publicId: string }) {
                 </div>
                 {uniqueEditorialParagraphs(copy.lead, copy.body)
                   .map((paragraph) => <p className="tl-zh" key={paragraph}>{paragraph}</p>)}
-                {copy.keyPoints.length > 0 ? (
+                {story.platform === "x" || copy.keyPoints.length === 0 ? null : (
                   <ul className="tl-keypoints timeline-detail-keypoints">
                     {copy.keyPoints.map((point) => <li key={point}>{point}</li>)}
                   </ul>
-                ) : null}
+                )}
                 {selectedLanguage === "zh-CN" && englishCopy ? (
                   <div className="timeline-detail-english">
                     <h3 className="tl-zh-label" id="detail-en-title">英文提炼</h3>
@@ -317,11 +317,11 @@ export function StoryDetailExperience({ publicId }: { publicId: string }) {
                     {englishCopy.lead.trim().length > 0 ? <p className="tl-zh">{englishCopy.lead}</p> : null}
                     {uniqueEditorialParagraphs(englishCopy.lead, englishCopy.body)
                       .map((paragraph) => <p className="tl-zh" key={paragraph}>{paragraph}</p>)}
-                    {englishCopy.keyPoints.length > 0 ? (
+                    {story.platform === "x" || englishCopy.keyPoints.length === 0 ? null : (
                       <ul className="tl-keypoints">
                         {englishCopy.keyPoints.map((point) => <li key={point}>{point}</li>)}
                       </ul>
-                    ) : null}
+                    )}
                   </div>
                 ) : null}
               </section>

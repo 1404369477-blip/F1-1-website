@@ -1,6 +1,6 @@
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { closeSync, existsSync, mkdirSync, openSync, readFileSync, renameSync, unlinkSync, writeFileSync } from "node:fs";
+import { closeSync, existsSync, mkdirSync, openSync, readdirSync, readFileSync, renameSync, unlinkSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 import { DEFAULT_EDITORIAL_DOMAINS, leanPath, leanSources, REFINE_BATCH_LIMIT, SITE_MAX_AGE_DAYS, SITE_MAX_ITEMS, type LeanSource } from "./config.ts";
@@ -322,9 +322,15 @@ function importInbox(store: LeanStore, root: string, settings: LeanSettings, now
   }
 }
 
+function publishedMediaKeys(): string[] {
+  const directory = leanPath("pages-checkout/site/media");
+  if (!existsSync(directory)) return [];
+  return readdirSync(directory).filter((name) => name.endsWith(".webp")).map((name) => name.slice(0, -".webp".length));
+}
+
 async function localizeMedia(items: readonly StoredItem[], now: Date): Promise<{ media: LocalMedia; report: CycleReport["media"] }> {
   try {
-    const { media, report } = await localizeImages(items, leanPath("media"), now);
+    const { media, report } = await localizeImages(items, leanPath("media"), now, { retainKeys: publishedMediaKeys() });
     return { media, report: { ...report, error: null } };
   } catch (error) {
     return { media: new Map(), report: { cached: 0, downloaded: 0, failed: 0, deferred: 0, error: error instanceof Error ? error.message.slice(0, 200) : "UNKNOWN" } };

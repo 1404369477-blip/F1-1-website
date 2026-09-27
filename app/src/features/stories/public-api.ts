@@ -45,6 +45,24 @@ const originalLinkSchema = z.discriminatedUnion("enabled", [
   }).strict()
 ]);
 
+const hostedImageSchema = z.object({
+  kind: z.enum(["source_image", "video_poster"]),
+  assetRef: z.string().url(),
+  mimeType: z.enum(["image/jpeg", "image/png", "image/webp", "image/avif"]),
+  declaredBytes: z.number().int().positive(),
+  width: z.number().int().positive().optional(),
+  height: z.number().int().positive().optional(),
+  altZh: z.string().min(1)
+}).strict();
+const syntheticMediaSchema = z.object({
+  kind: z.literal("synthetic_placeholder"),
+  assetRef: z.string().min(1),
+  altZh: z.string().min(1),
+  captionZh: z.string().nullable(),
+  creditDisplay: z.string().nullable(),
+  tone: z.enum(["night", "blue", "amber", "violet", "slate"])
+}).strict();
+
 const publicFeedItemSchema = z.object({
   publicId: z.string().min(1),
   contentType: contentTypeSchema,
@@ -61,23 +79,10 @@ const publicFeedItemSchema = z.object({
     byline: z.string().min(1),
     accessStatus: z.enum(["available", "restricted"])
   }).strict(),
-  media: z.discriminatedUnion("kind", [
-    z.object({
-      kind: z.literal("synthetic_placeholder"),
-      assetRef: z.string().min(1),
-      altZh: z.string().min(1),
-      captionZh: z.string().nullable(),
-      creditDisplay: z.string().nullable(),
-      tone: z.enum(["night", "blue", "amber", "violet", "slate"])
-    }).strict(),
-    z.object({
-      kind: z.literal("source_image"),
-      assetRef: z.string().url(),
-      mimeType: z.enum(["image/jpeg", "image/png", "image/webp", "image/avif"]),
-      declaredBytes: z.number().int().positive(),
-      altZh: z.string().min(1)
-    }).strict()
-  ]).nullable(),
+  media: z.preprocess((value) => {
+    if (value && typeof value === "object" && !Array.isArray(value) && (value as { kind?: string }).kind === "source_image") return [value];
+    return value;
+  }, z.union([syntheticMediaSchema, z.array(hostedImageSchema).max(4), z.null()])),
   originalLink: originalLinkSchema,
   originalTitle: z.string().min(1).optional(),
   summaryEn: z.string().min(1).nullable().optional(),
@@ -159,7 +164,13 @@ export type StoryState = "available" | "restricted" | "media-missing";
 export type StoryMediaTone = "night" | "blue" | "amber" | "violet" | "slate";
 
 /** 前端展示用图片(全部为本地 data-URI 合成占位,M4 media display-only,零外联)。 */
-export type PublicStoryImage = { src: string; alt: string };
+export type PublicStoryImage = {
+  src: string;
+  alt: string;
+  width?: number;
+  height?: number;
+  kind?: "source_image" | "video_poster";
+};
 
 export type PublicStoryCardViewModel = {
   publicId: string;
@@ -309,13 +320,33 @@ function formatSourceName(item: PublicFeedItemV1): string {
   return [...new Set(names)].join(" · ");
 }
 
+function hostedPictures(media: unknown): PublicStoryImage[] {
+  const list = Array.isArray(media)
+    ? media
+    : (media && typeof media === "object" && (media as { kind?: string }).kind === "source_image" ? [media] : []);
+  return list.flatMap((picture) => {
+    if (!picture || typeof picture !== "object" || !("assetRef" in picture)) return [];
+    const image = picture as { assetRef?: string; altZh?: string; width?: number; height?: number; kind?: "source_image" | "video_poster" };
+    if (!image.assetRef || !image.altZh) return [];
+    return [{
+      src: image.assetRef,
+      alt: image.altZh,
+      ...(image.width ? { width: image.width } : {}),
+      ...(image.height ? { height: image.height } : {}),
+      ...(image.kind ? { kind: image.kind } : {})
+    }];
+  });
+}
+
 function mapFeedItem(item: PublicFeedItemV1): PublicStoryCardViewModel {
   const sourceTimestamp = item.sourceTimeStatus === "known" && item.sourcePublishedAt
     ? item.sourcePublishedAt
     : item.publishedAt;
-  const mediaTone = item.media?.kind === "synthetic_placeholder" ? item.media.tone : "slate";
-  const mediaDescription = item.media?.altZh ?? "当前公开内容没有可展示的媒体。";
-  const mediaLabel = item.media?.kind === "synthetic_placeholder" ? item.media.captionZh ?? "公开合成示意" : "来源配图";
+  const placeholder = item.media && !Array.isArray(item.media) && item.media.kind === "synthetic_placeholder" ? item.media : null;
+  const pictures = hostedPictures(item.media);
+  const mediaTone = placeholder?.tone ?? "slate";
+  const mediaDescription = pictures[0]?.alt ?? placeholder?.altZh ?? "当前公开内容没有可展示的媒体。";
+  const mediaLabel = placeholder ? placeholder.captionZh ?? "公开合成示意" : "来源配图";
   return {
     publicId: item.publicId,
     category: categoryByContentType[item.contentType],
@@ -323,9 +354,7 @@ function mapFeedItem(item: PublicFeedItemV1): PublicStoryCardViewModel {
     mediaTone,
     mediaDescription,
     mediaLabel,
-    images: item.media?.kind === "source_image"
-      ? [{ src: item.media.assetRef, alt: item.media.altZh }]
-      : [],
+    images: pictures,
     title: item.titleZh,
     summary: item.summaryZh,
     sourceName: formatSourceName(item),
@@ -436,7 +465,7 @@ export async function fetchPublicFeed({
   if (IS_PUBLIC_STATIC_SITE) {
     const response = await requestClosedJson<PublicFeedResponseV1>({
       path: buildSyntheticFallbackFeedPath({ contentType, cursor }),
-      schema: publicFeedResponseSchema,
+      schema: publicFeedResponseSchema as z.ZodType<PublicFeedResponseV1>,
       fetchImpl: requestFetch,
       signal
     });
@@ -447,7 +476,7 @@ export async function fetchPublicFeed({
   try {
     response = await requestClosedJson<PublicFeedResponseV1 | PublicBilingualFeedResponseV2>({
       path: buildPublicFeedPath({ contentType, cursor }),
-      schema: publicFeedAnySchema,
+      schema: publicFeedAnySchema as z.ZodType<PublicFeedResponseV1 | PublicBilingualFeedResponseV2>,
       fetchImpl: requestFetch,
       signal
     });
@@ -455,7 +484,7 @@ export async function fetchPublicFeed({
     if (!isSyntheticVersionUnavailable(error) && !isBilingualIntegrityUnavailable(error)) throw error;
     response = await requestClosedJson<PublicFeedResponseV1>({
       path: buildSyntheticFallbackFeedPath({ contentType, cursor }),
-      schema: publicFeedResponseSchema,
+      schema: publicFeedResponseSchema as z.ZodType<PublicFeedResponseV1>,
       fetchImpl: requestFetch,
       signal
     });
@@ -485,7 +514,7 @@ export async function fetchPublicStory({
   if (IS_PUBLIC_STATIC_SITE) {
     response = await requestClosedJson<PublicStoryDetailResponseV1>({
       path: `/api/public/stories/${encodeURIComponent(publicId)}`,
-      schema: publicStoryDetailResponseSchema,
+      schema: publicStoryDetailResponseSchema as z.ZodType<PublicStoryDetailResponseV1>,
       fetchImpl: requestFetch,
       signal
     });
@@ -493,7 +522,7 @@ export async function fetchPublicStory({
   try {
     response = await requestClosedJson<PublicStoryDetailResponseV1 | PublicBilingualStoryDetailResponseV2>({
       path: `/api/public/stories/${encodeURIComponent(publicId)}?v=2`,
-      schema: publicDetailAnySchema,
+      schema: publicDetailAnySchema as z.ZodType<PublicStoryDetailResponseV1 | PublicBilingualStoryDetailResponseV2>,
       fetchImpl: requestFetch,
       signal
     });
@@ -501,7 +530,7 @@ export async function fetchPublicStory({
     if (!isSyntheticVersionUnavailable(error) && !isBilingualIntegrityUnavailable(error)) throw error;
     response = await requestClosedJson<PublicStoryDetailResponseV1>({
       path: `/api/public/stories/${encodeURIComponent(publicId)}`,
-      schema: publicStoryDetailResponseSchema,
+      schema: publicStoryDetailResponseSchema as z.ZodType<PublicStoryDetailResponseV1>,
       fetchImpl: requestFetch,
       signal
     });

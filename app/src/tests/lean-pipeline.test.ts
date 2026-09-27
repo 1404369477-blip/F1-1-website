@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, utimesSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -41,14 +41,18 @@ let directory: string | null = null;
 afterEach(() => { if (directory) rmSync(directory, { recursive: true, force: true }); directory = null; });
 
 function readyItem(index: number, overrides: Partial<StoredItem> = {}): StoredItem {
+  const image = overrides.image === undefined ? null : overrides.image;
+  const images = overrides.images ?? (image ? [image] : []);
   return {
     publicId: `public-rss-${String(index).padStart(64, "0")}`,
     sourceId: "motorsport-f1-news", platform: "rss", displayName: "Motorsport.com", contentType: "race_news", requireRelevance: false,
     link: `https://www.motorsport.com/f1/news/${index}/`, title: `t${index}`, text: `x${index}`,
     sourcePublishedAt: new Date(Date.UTC(2026, 8, 24, 0, index)).toISOString(), firstSeenAt: "2026-09-24T00:00:00.000Z",
-    image: null, status: "ready", attempts: 1, titleZh: `标题${index}`, summaryZh: `摘要${index}`, summaryEn: null, keyPointsZh: [`要点${index}`],
+    status: "ready", attempts: 1, titleZh: `标题${index}`, summaryZh: `摘要${index}`, summaryEn: null, keyPointsZh: [`要点${index}`],
     detailEn: null, detailZh: null, keyPointsEn: [],
-    publishedAt: "2026-09-24T01:00:00.000Z", ...overrides
+    publishedAt: "2026-09-24T01:00:00.000Z", ...overrides,
+    image: images[0] ?? null,
+    images
   };
 }
 
@@ -80,10 +84,24 @@ describe("lean feed parsing", () => {
 
   it("takes the first tweet photo, or the video poster, in its large rendition", () => {
     const [photo, video, legacy] = parseFeed(xSource, X_RSS_XML);
-    expect(photo.image).toEqual({ url: "https://pbs.twimg.com/media/HS_v3nJXcAAb1pH?format=jpg&name=large", mimeType: "image/jpeg", declaredBytes: 1 });
-    expect(photo.text).toContain("qualifying start times");
+    expect(photo.images).toHaveLength(2);
+    expect(photo.images[0]).toMatchObject({ url: "https://pbs.twimg.com/media/HS_v3nJXcAAb1pH?format=jpg&name=large", width: 960, height: 1200, kind: "photo" });
+    expect(photo.images[1]?.url).toContain("/media/SECOND");
+    expect(photo.image).toEqual(photo.images[0]);
+    expect(video.images[0]).toMatchObject({ kind: "video_poster" });
     expect(video.image?.url).toBe("https://pbs.twimg.com/amplify_video_thumb/2103152891858968581/img/VlIidEDQVmuq59JJ?format=jpg&name=large");
     expect(legacy.image?.url).toBe("https://pbs.twimg.com/media/ABC?format=png&name=large");
+    const quoted = `<rss version="2.0"><channel><item><title>Quote</title><link>https://x.com/F1/status/9</link>
+<description>Own photo&lt;img src="https://pbs.twimg.com/media/OWN.jpg" width="800" height="600"&gt;&lt;blockquote&gt;&lt;img src="https://pbs.twimg.com/media/QUOTED.jpg"&gt;&lt;/blockquote&gt;&lt;img src="https://pbs.twimg.com/ext_tw_video_thumb/1/img/a.jpg"&gt;&lt;img src="https://pbs.twimg.com/card_img/NO.jpg"&gt;&lt;img src="https://pbs.twimg.com/media/A.jpg"&gt;&lt;img src="https://pbs.twimg.com/media/B.jpg"&gt;&lt;img src="https://pbs.twimg.com/media/C.jpg"&gt;</description></item></channel></rss>`;
+    const [many] = parseFeed(xSource, quoted);
+    expect(many.images.map((image) => image.url)).toEqual([
+      "https://pbs.twimg.com/media/OWN?format=jpg&name=large",
+      "https://pbs.twimg.com/ext_tw_video_thumb/1/img/a?format=jpg&name=large",
+      "https://pbs.twimg.com/media/A?format=jpg&name=large",
+      "https://pbs.twimg.com/media/B?format=jpg&name=large"
+    ]);
+    expect(many.images).toHaveLength(4);
+    expect(many.images.some((image) => image.url.includes("QUOTED") || image.url.includes("card_img"))).toBe(false);
     expect(largeTwimgUrl("https://pbs.twimg.com/profile_images/1/a.jpg")).toBeNull();
     expect(largeTwimgUrl("https://example.com/media/a.jpg")).toBeNull();
   });
@@ -116,10 +134,10 @@ describe("lean store", () => {
     directory = mkdtempSync(join(tmpdir(), "lean-store-"));
     const store = new LeanStore(join(directory, "store.sqlite"));
     const [photo] = parseFeed(xSource, X_RSS_XML);
-    store.addEntries(xSource, [{ ...photo, image: null }], "2026-09-25T01:00:00.000Z");
+    store.addEntries(xSource, [{ ...photo, image: null, images: [] }], "2026-09-25T01:00:00.000Z");
     expect(store.addEntries(xSource, [{ ...photo, title: "changed" }], "2026-09-25T01:30:00.000Z")).toBe(0);
     const [item] = store.pending(10);
-    expect(item).toMatchObject({ title: photo.title, image: photo.image, firstSeenAt: "2026-09-25T01:00:00.000Z" });
+    expect(item).toMatchObject({ title: photo.title, image: photo.image, images: photo.images, firstSeenAt: "2026-09-25T01:00:00.000Z" });
     store.close();
   });
 
@@ -476,8 +494,8 @@ describe("lean site bundle", () => {
     const feed = read(`_public/generations/${pointer.bundleId}/${index.responses["/api/public/feed"].path}`) as { items: { publicId: string; state: string; media: unknown }[] };
     const byId = new Map(feed.items.map((item) => [item.publicId, item]));
     expect(byId.get(items[0].publicId)).toMatchObject({ state: "media_missing", media: null });
-    expect(byId.get(items[1].publicId)).toMatchObject({ state: "ready", media: {
-      kind: "source_image", assetRef: "https://f1plus1.com/media/aaa.webp", mimeType: "image/webp", declaredBytes: 4321 } });
+    expect(byId.get(items[1].publicId)).toMatchObject({ state: "ready", media: [{
+      kind: "source_image", assetRef: "https://f1plus1.com/media/aaa.webp", mimeType: "image/webp", declaredBytes: 4321, altZh: "标题2 · 第 1 张" }] });
     expect(byId.get(items[2].publicId)).toMatchObject({ state: "media_missing", media: null });
     expect(byId.get(items[3].publicId)).toMatchObject({ state: "media_missing", media: null });
     expect([...bundle.mediaFiles]).toEqual([["media/aaa.webp", "/cache/aaa.webp"]]);
@@ -561,5 +579,19 @@ describe("lean media localization", () => {
     const third = await localizeImages(items, directory, new Date("2026-09-25T03:10:00Z"), { fetcher });
     expect(third.report.failed).toBe(1);
     expect(JSON.parse(readFileSync(join(directory, "failures.json"), "utf8"))[mediaKey(missing)]).toMatchObject({ attempts: 2, error: "IMAGE_HTTP_404" });
+  });
+
+  it("keeps a picture an older published generation still uses", async () => {
+    directory = mkdtempSync(join(tmpdir(), "lean-media-keep-"));
+    const kept = "a".repeat(32);
+    const file = join(directory, `${kept}.webp`);
+    writeFileSync(file, "old");
+    const old = new Date("2026-09-20T00:00:00.000Z");
+    utimesSync(file, old, old);
+    const later = new Date(old.getTime() + 4 * 24 * 3600 * 1000);
+    await localizeImages([], directory, later, { retainKeys: [kept] });
+    expect(existsSync(file)).toBe(true);
+    await localizeImages([], directory, later);
+    expect(existsSync(file)).toBe(false);
   });
 });

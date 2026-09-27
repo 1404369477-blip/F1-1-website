@@ -264,18 +264,53 @@ function contentHeight(element: HTMLElement): number {
   return height;
 }
 
-function CardFill({ summary, body, keyPoints, language }: {
+function ClampedPost({ paragraphs, expanded, language, onToggle }: {
+  paragraphs: readonly string[];
+  expanded: boolean;
+  language: "zh-CN" | "en";
+  onToggle: () => void;
+}): ReactNode {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [overflows, setOverflows] = useState(false);
+  useLayoutEffect(() => {
+    const element = ref.current;
+    if (!element || expanded) return;
+    const measure = (): void => setOverflows(element.scrollHeight > element.clientHeight + 2);
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [paragraphs.join("\n"), expanded]);
+  if (paragraphs.length === 0) return null;
+  return (
+    <>
+      <div ref={ref} className={`x-post-text${expanded ? " is-open" : ""}`}>
+        {paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+      </div>
+      {overflows || expanded ? (
+        <button type="button" className="card-snap-expand" aria-expanded={expanded} onClick={onToggle}>
+          {expanded ? (language === "en" ? "Hide" : "收起") : (language === "en" ? "Expand" : "展开全文")}
+        </button>
+      ) : null}
+    </>
+  );
+}
+
+function CardFill({ summary, body, keyPoints, language, variant = "article" }: {
   summary: string;
   body: readonly string[];
   keyPoints: readonly string[];
   language: "zh-CN" | "en";
+  variant?: "article" | "x";
 }): ReactNode {
   const frameRef = useRef<HTMLDivElement | null>(null);
   const textRef = useRef<HTMLDivElement | null>(null);
   const [expanded, setExpanded] = useState(false);
   const [overflows, setOverflows] = useState(false);
-  const article = uniqueCopy(summary, body);
-  const points = uniqueCopy([summary, ...article].join("\n"), keyPoints);
+  const article = variant === "x"
+    ? (body.length > 0 ? uniqueCopy("", body) : (summary ? [summary] : []))
+    : uniqueCopy(summary, body);
+  const points = variant === "x" ? [] : uniqueCopy([summary, ...article].join("\n"), keyPoints);
   const signature = `${language}\n${summary}\n${article.join("\n")}\n${points.join("\n")}`;
 
   useLayoutEffect(() => {
@@ -307,8 +342,8 @@ function CardFill({ summary, body, keyPoints, language }: {
   const showToggle = expanded || overflows;
   return (
     <div className="card-fill" ref={frameRef}>
-      <div ref={textRef} className={`card-fill-text${expanded ? " is-open" : ""}${overflows && !expanded ? " is-faded" : ""}`}>
-        {summary ? <p className="card-snap-summary is-inline">{summary}</p> : null}
+      <div ref={textRef} className={`card-fill-text${variant === "x" ? " is-x" : ""}${expanded ? " is-open" : ""}${overflows && !expanded ? " is-faded" : ""}`}>
+        {variant === "x" || !summary ? null : <p className="card-snap-summary is-inline">{summary}</p>}
         {article.map((paragraph) => <p className="card-fill-p" key={paragraph}>{paragraph}</p>)}
         {points.length > 0 ? (
           <ul className="card-snap-keypoints">
@@ -318,7 +353,7 @@ function CardFill({ summary, body, keyPoints, language }: {
       </div>
       {showToggle ? (
         <button type="button" className="card-snap-expand" aria-expanded={expanded} onClick={() => setExpanded((current) => !current)}>
-          {expanded ? (language === "en" ? "Hide full text" : "收起") : (language === "en" ? "Full text" : "展开全文")}
+          {expanded ? (language === "en" ? "Hide" : "收起") : (language === "en" ? "Expand" : "展开全文")}
         </button>
       ) : null}
     </div>
@@ -329,6 +364,8 @@ function CardDeck({ stories, onOpenLightbox, onLoadMore }: CardDeckProps): React
   const deckRef = useRef<HTMLDivElement | null>(null);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   const [language, setLanguage] = useState<Record<string, "zh-CN" | "en">>({});
+  const [cardMedia, setCardMedia] = useState<Record<string, number>>({});
+  const cardPointer = useRef<{ id: string; x: number; y: number; horizontal: boolean } | null>(null);
 
   useEffect(() => {
     if (!onLoadMore || !sentinelRef.current) return;
@@ -362,7 +399,8 @@ function CardDeck({ stories, onOpenLightbox, onLoadMore }: CardDeckProps): React
     <div className="card-deck" ref={deckRef} aria-label="沉浸卡片流">
       {stories.map((story, storyIndex) => {
         const storyCopy = story.localized["zh-CN"] ?? { title: story.title, summary: story.summary, lead: story.summary, body: [], keyPoints: [] };
-        const mainImage = story.images[0] ?? null;
+        const imageIndex = Math.min(cardMedia[story.publicId] ?? 0, Math.max(0, story.images.length - 1));
+        const mainImage = story.images[imageIndex] ?? null;
         const hasImage = mainImage !== null;
         const clock = formatClock(story.publishedAtIso);
         const date = formatDate(story.publishedAtIso);
@@ -386,17 +424,54 @@ function CardDeck({ stories, onOpenLightbox, onLoadMore }: CardDeckProps): React
               </time>
             </div>
 
-            {hasImage ? (
-              <div className="card-snap-visual">
+            {hasImage && mainImage ? (
+              <div
+                className="card-snap-visual"
+                style={mainImage.width && mainImage.height ? { aspectRatio: `${mainImage.width} / ${mainImage.height}` } : undefined}
+                onPointerDown={(event) => {
+                  cardPointer.current = { id: story.publicId, x: event.clientX, y: event.clientY, horizontal: false };
+                }}
+                onPointerMove={(event) => {
+                  const start = cardPointer.current;
+                  if (!start || start.id !== story.publicId) return;
+                  const dx = event.clientX - start.x;
+                  const dy = event.clientY - start.y;
+                  if (!start.horizontal && Math.abs(dx) > 12 && Math.abs(dx) > Math.abs(dy)) {
+                    start.horizontal = true;
+                    event.currentTarget.setPointerCapture(event.pointerId);
+                  }
+                }}
+                onPointerUp={(event) => {
+                  const start = cardPointer.current;
+                  cardPointer.current = null;
+                  if (!start || !start.horizontal || story.images.length < 2) return;
+                  const dx = event.clientX - start.x;
+                  if (Math.abs(dx) < 36) return;
+                  setCardMedia((current) => {
+                    const next = (current[story.publicId] ?? 0) + (dx < 0 ? 1 : -1);
+                    return { ...current, [story.publicId]: (next + story.images.length) % story.images.length };
+                  });
+                }}
+                onPointerCancel={() => { cardPointer.current = null; }}
+              >
                 <img
                   className="card-snap-img"
                   src={mainImage.src}
                   alt={mainImage.alt}
+                  width={mainImage.width}
+                  height={mainImage.height}
                   loading={storyIndex <= 2 ? "eager" : "lazy"}
                   decoding="async"
                   referrerPolicy="no-referrer"
-                  onClick={(event) => handleImageClick(event, story, 0)}
+                  onClick={(event) => {
+                    if (mainImage.kind === "video_poster" && story.originalUrl) {
+                      window.open(story.originalUrl, "_blank", "noopener,noreferrer");
+                      return;
+                    }
+                    handleImageClick(event, story, imageIndex);
+                  }}
                 />
+                {mainImage.kind === "video_poster" ? <span className="media-play" aria-hidden="true">▶</span> : null}
                 {story.images.length > 1 ? (
                   <span className="card-snap-img-count" aria-label={`${story.images.length} 张图片`}>
                     {story.images.length} 图
@@ -407,7 +482,7 @@ function CardDeck({ stories, onOpenLightbox, onLoadMore }: CardDeckProps): React
 
             <div className="card-snap-body">
               <h2 className="card-snap-title">{copy.title}</h2>
-              <CardFill summary={copy.summary} body={copy.body} keyPoints={copy.keyPoints} language={selected} />
+              <CardFill summary={copy.summary} body={copy.body} keyPoints={copy.keyPoints} language={selected} variant={story.platform === "x" ? "x" : "article"} />
 
               <footer className="card-snap-source">
                 <span className="card-snap-source-name">
@@ -1181,6 +1256,10 @@ export function FeedExperience() {
             }))
       : null;
     const originalLabel = sourceLinkLabel(selectedLanguage, story.platform);
+    const isX = story.platform === "x";
+    const xParagraphs = isX
+      ? (storyCopy.body.length > 0 ? [...storyCopy.body] : (storyCopy.summary ? [storyCopy.summary] : []))
+      : [];
 
     const media = mainImage ? (
             <span
@@ -1197,6 +1276,8 @@ export function FeedExperience() {
                 className="ph-main"
                 src={mainImage.src}
                 alt={mainImage.alt}
+                width={mainImage.width}
+                height={mainImage.height}
                 loading="lazy"
                 decoding="async"
                 referrerPolicy="no-referrer"
@@ -1207,10 +1288,15 @@ export function FeedExperience() {
                 data-index={activeIndex}
                 onClick={(event) => {
                   if (event.timeStamp < (mediaSuppressClickUntilRef.current.get(story.publicId) ?? 0)) return;
+                  if (mainImage.kind === "video_poster" && story.originalUrl) {
+                    window.open(story.originalUrl, "_blank", "noopener,noreferrer");
+                    return;
+                  }
                   openLightbox(images, activeIndex, event.currentTarget, story.publicId);
                 }}
                 onKeyDown={(event) => handleMainImageKeyDown(event, images, activeIndex, event.currentTarget, story.publicId)}
               />
+              {mainImage.kind === "video_poster" ? <span className="media-play" aria-hidden="true">▶</span> : null}
             </span>
           ) : null;
 
@@ -1227,22 +1313,28 @@ export function FeedExperience() {
         </div>
         <div className="tl-entry">
           {imageFirst ? media : null}
-          <button
-            type="button"
-            className={`tl-summary-btn${open ? " is-open" : ""}`}
-            aria-expanded={open}
-            aria-controls={`det-${story.publicId}`}
-            onClick={() => toggleItem(story.publicId)}
-          >
+          <div className="tl-summary-btn">
             <span className="tl-head">
               <span className="tl-cat">{selectedLanguage === "en" ? categoryLabelEn(story.category) : story.category}</span>
-              <span className="tl-caret" aria-hidden="true" />
             </span>
             <span className="tl-title">{storyCopy?.title ?? story.title}</span>
-            <span className="tl-lead">{storyCopy?.summary ?? story.summary}</span>
-          </button>
+            {isX ? null : <span className="tl-lead">{storyCopy?.summary ?? story.summary}</span>}
+          </div>
+          {isX ? (
+            <ClampedPost
+              paragraphs={xParagraphs}
+              expanded={fullTextByPublicId[story.publicId] === true}
+              language={selectedLanguage}
+              onToggle={() => setFullTextByPublicId((current) => ({ ...current, [story.publicId]: !current[story.publicId] }))}
+            />
+          ) : (
+            <button type="button" className="card-snap-expand" aria-expanded={open} aria-controls={`det-${story.publicId}`} onClick={() => toggleItem(story.publicId)}>
+              {open ? (selectedLanguage === "en" ? "Hide" : "收起") : (selectedLanguage === "en" ? "Expand" : "展开")}
+            </button>
+          )}
           {imageFirst ? null : media}
 
+          {isX ? null : (
           <div className={`tl-collapse${open ? " is-open" : ""}`}>
             <div className="tl-detail" id={`det-${story.publicId}`}>
               <div className="tl-zh-head">
@@ -1307,6 +1399,7 @@ export function FeedExperience() {
                             {detailCopy.keyPoints.map((point) => <li key={point}>{point}</li>)}
                           </ul>
                         ) : null}
+                        {(storyCopy?.body ?? []).map((paragraph) => <p className="tl-zh" key={paragraph}>{paragraph}</p>)}
                       </>
                     ) : null
                   ) : null}
@@ -1317,6 +1410,7 @@ export function FeedExperience() {
                   </p>
             </div>
           </div>
+          )}
 
           <div className="tl-ev">
             <span className="evs">
@@ -1337,6 +1431,11 @@ export function FeedExperience() {
               ) : (
                 <span className="tl-original-disabled">原文暂不可用</span>
               )}
+              {isX ? (
+                <Link className="tl-original-link" href={publicStoryHref(story.publicId)}>
+                  {selectedLanguage === "en" ? "Details" : "站内详情"}
+                </Link>
+              ) : null}
               {story.relatedSources.map((source) => source.originalUrl ? (
                 <a
                   key={source.publicId}
@@ -1373,27 +1472,6 @@ export function FeedExperience() {
               ) : null}
             </span>
           </div>
-          {storyCopy.body.length > 0 ? (
-            <div className="story-full">
-              <button
-                type="button"
-                className="card-snap-expand"
-                aria-expanded={fullTextByPublicId[story.publicId] === true}
-                onClick={() => setFullTextByPublicId((current) => ({ ...current, [story.publicId]: !current[story.publicId] }))}
-              >{fullTextByPublicId[story.publicId]
-                ? (selectedLanguage === "en" ? "Hide full text" : "收起全文")
-                : (selectedLanguage === "en" ? "Full text" : "展开全文")}</button>
-              {fullTextByPublicId[story.publicId] ? (
-                <>
-                  {storyCopy.body.map((paragraph) => <p className="story-full-p" key={paragraph}>{paragraph}</p>)}
-                  <p className="story-full-source">{selectedLanguage === "en"
-                    ? `Source: ${story.sourceName}${story.originalUrl ? `, ${story.originalUrl}` : ""}`
-                    : `（来源：${story.sourceName}${story.originalUrl ? `，${story.originalUrl}` : ""}）`}</p>
-                  <p className="story-full-time">{new Intl.DateTimeFormat(selectedLanguage === "en" ? "en-GB" : "zh-CN", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Shanghai" }).format(new Date(story.publishedAtIso))}</p>
-                </>
-              ) : null}
-            </div>
-          ) : null}
           <p className="tl-source-notice">{selectedLanguage === "en"
             ? "This site shows an original summary. The full piece is on the source site."
             : story.sourceNotice}</p>
@@ -1421,7 +1499,10 @@ export function FeedExperience() {
         onPointerCancel={handleLightboxPointerCancel}
         onWheel={handleLightboxWheel}
       >
-        <button type="button" className="lb-close" aria-label="关闭图片预览" onClick={closeLightbox}>×</button>
+        <div className="lb-top">
+          {hasMultiple ? <span className="lb-count" aria-live="polite">{index + 1} / {images.length}</span> : <span />}
+          <button type="button" className="lb-close" aria-label="关闭图片预览" onClick={closeLightbox}>×</button>
+        </div>
         {hasMultiple ? (
           <button type="button" className="lb-nav lb-prev" aria-label="上一张" onClick={() => navigateLightbox(-1)}>‹</button>
         ) : null}
@@ -1430,7 +1511,7 @@ export function FeedExperience() {
         ) : null}
         <img ref={lightboxImgRef} src={images[index]?.src ?? ""} alt={images[index]?.alt ?? ""} />
         {hasMultiple ? (
-          <span className="lb-count" aria-live="polite">{index + 1} / {images.length}</span>
+          <span className="lb-count lb-count-desktop" aria-live="polite">{index + 1} / {images.length}</span>
         ) : null}
       </div>,
       document.body

@@ -2,7 +2,14 @@ import { XMLParser } from "fast-xml-parser";
 
 import type { LeanSource } from "./config.ts";
 
-export type FeedImage = Readonly<{ url: string; mimeType: "image/jpeg" | "image/png" | "image/webp" | "image/avif"; declaredBytes: number }>;
+export type FeedImage = Readonly<{
+  url: string;
+  mimeType: "image/jpeg" | "image/png" | "image/webp" | "image/avif";
+  declaredBytes: number;
+  width?: number;
+  height?: number;
+  kind?: "photo" | "video_poster";
+}>;
 
 export type FeedEntry = Readonly<{
   sourceId: string;
@@ -11,6 +18,7 @@ export type FeedEntry = Readonly<{
   text: string;
   sourcePublishedAt: string | null;
   image: FeedImage | null;
+  images: readonly FeedImage[];
 }>;
 
 const FETCH_TIMEOUT_MS = 20_000;
@@ -108,7 +116,7 @@ function pickImage(item: Node): FeedImage | null {
 
 const TWIMG_FORMATS: Record<string, FeedImage["mimeType"]> = { jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", webp: "image/webp" };
 
-/** Normalizes a pbs.twimg.com picture URL to its `name=large` rendition; other hosts and avatars yield null. */
+/** Normalizes a hosted tweet picture to its `name=large` rendition. Avatars, cards and other hosts are ignored. */
 export function largeTwimgUrl(value: string): { url: string; mimeType: FeedImage["mimeType"] } | null {
   let url: URL;
   try {
@@ -116,7 +124,8 @@ export function largeTwimgUrl(value: string): { url: string; mimeType: FeedImage
   } catch {
     return null;
   }
-  if (url.protocol !== "https:" || url.hostname !== "pbs.twimg.com" || url.pathname.startsWith("/profile_")) return null;
+  const allowed = url.pathname.startsWith("/media/") || url.pathname.startsWith("/amplify_video_thumb/") || url.pathname.startsWith("/ext_tw_video_thumb/");
+  if (url.protocol !== "https:" || url.hostname !== "pbs.twimg.com" || !allowed) return null;
   const extension = /\.(jpe?g|png|webp)$/i.exec(url.pathname)?.[1];
   if (extension) {
     url.pathname = url.pathname.slice(0, -extension.length - 1);
@@ -128,15 +137,41 @@ export function largeTwimgUrl(value: string): { url: string; mimeType: FeedImage
   return { url: url.toString(), mimeType };
 }
 
-/** RSSHub renders tweet media as `<img src>` for photos and `<video poster>` for videos; the first one wins. */
-function pickTweetImage(html: string): FeedImage | null {
-  for (const [tag, name] of html.matchAll(/<(img|video)\b[^>]*>/gi)) {
-    const attribute = name.toLowerCase() === "img" ? "src" : "poster";
-    const value = new RegExp(`\\s${attribute}="([^"]+)"`, "i").exec(tag)?.[1];
-    const image = value ? largeTwimgUrl(value) : null;
-    if (image) return { ...image, declaredBytes: 1 };
+const TWEET_IMAGE_LIMIT = 4;
+
+function positiveInt(value: string | undefined): number | undefined {
+  const parsed = Number(value);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : undefined;
+}
+
+function tagAttribute(tag: string, name: string): string | undefined {
+  return new RegExp(`\\s${name}="([^"]*)"`, "i").exec(tag)?.[1];
+}
+
+/** Photos and video posters from the post itself, in order, at most four. Quoted posts and avatars are left out. */
+export function pickTweetImages(html: string): FeedImage[] {
+  const ownPost = html.replace(/<blockquote\b[\s\S]*?<\/blockquote>/gi, " ");
+  const images: FeedImage[] = [];
+  const seen = new Set<string>();
+  for (const match of ownPost.matchAll(/<(img|video)\b[^>]*>/gi)) {
+    const tag = match[0];
+    const video = match[1]?.toLowerCase() === "video";
+    const value = tagAttribute(tag, video ? "poster" : "src");
+    const hosted = value ? largeTwimgUrl(value) : null;
+    if (!hosted || seen.has(hosted.url) || isAgencyImage(hosted.url)) continue;
+    seen.add(hosted.url);
+    const width = positiveInt(tagAttribute(tag, "width"));
+    const height = positiveInt(tagAttribute(tag, "height"));
+    images.push({
+      ...hosted,
+      declaredBytes: 1,
+      ...(width ? { width } : {}),
+      ...(height ? { height } : {}),
+      kind: video ? "video_poster" : "photo"
+    });
+    if (images.length >= TWEET_IMAGE_LIMIT) break;
   }
-  return null;
+  return images;
 }
 
 function atomLink(value: unknown): string {
@@ -163,13 +198,16 @@ export function parseFeed(source: LeanSource, xml: string): FeedEntry[] {
     const title = htmlToText(text(item.title));
     const body = text(item["content:encoded"]) || text(item.description) || text(item.content) || text(item.summary);
     const published = text(item.pubDate) || text(item["dc:date"]) || text(item.published) || text(item.updated);
+    const rssImage = source.platform === "rss" ? pickImage(item) : null;
+    const images = source.platform === "rss" ? (rssImage ? [rssImage] : []) : pickTweetImages(body);
     entries.push({
       sourceId: source.sourceId,
       link,
       title,
       text: htmlToText(body),
       sourcePublishedAt: published ? isoOrNull(published) : null,
-      image: source.platform === "rss" ? pickImage(item) : pickTweetImage(body)
+      image: images[0] ?? null,
+      images
     });
   }
   return entries.filter((entry) => entry.title.length > 0 || entry.text.length > 0);

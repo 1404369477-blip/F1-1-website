@@ -21,6 +21,7 @@ export type StoredItem = Readonly<{
   sourcePublishedAt: string | null;
   firstSeenAt: string;
   image: FeedImage | null;
+  images: FeedImage[];
   status: ItemStatus;
   attempts: number;
   titleZh: string | null;
@@ -83,7 +84,16 @@ export function publicIdFor(platform: "rss" | "x", key: string): string {
   return `public-${platform}-${createHash("sha256").update(key).digest("hex")}`;
 }
 
+function imagesFrom(row: Row): FeedImage[] {
+  if (row.images_json != null && row.images_json !== "") {
+    const parsed = JSON.parse(String(row.images_json)) as unknown;
+    if (Array.isArray(parsed)) return parsed as FeedImage[];
+  }
+  return row.image_json === null ? [] : [JSON.parse(String(row.image_json)) as FeedImage];
+}
+
 function toItem(row: Row): StoredItem {
+  const images = imagesFrom(row);
   return {
     publicId: String(row.public_id),
     sourceId: String(row.source_id),
@@ -96,7 +106,8 @@ function toItem(row: Row): StoredItem {
     text: String(row.text),
     sourcePublishedAt: row.source_published_at === null ? null : String(row.source_published_at),
     firstSeenAt: String(row.first_seen_at),
-    image: row.image_json === null ? null : JSON.parse(String(row.image_json)) as FeedImage,
+    image: images[0] ?? null,
+    images,
     status: String(row.status) as ItemStatus,
     attempts: Number(row.attempts),
     titleZh: row.title_zh === null ? null : String(row.title_zh),
@@ -121,10 +132,12 @@ export class LeanStore {
       "ALTER TABLE items ADD COLUMN summary_en TEXT",
       "ALTER TABLE items ADD COLUMN detail_en_json TEXT",
       "ALTER TABLE items ADD COLUMN detail_zh_json TEXT",
-      "ALTER TABLE items ADD COLUMN key_points_en_json TEXT"
+      "ALTER TABLE items ADD COLUMN key_points_en_json TEXT",
+      "ALTER TABLE items ADD COLUMN images_json TEXT"
     ]) {
       try { this.db.exec(statement); } catch { /* column already exists */ }
     }
+    this.db.exec(`UPDATE items SET images_json = CASE WHEN image_json IS NULL THEN '[]' ELSE json_array(json(image_json)) END WHERE images_json IS NULL`);
   }
 
   close(): void {
@@ -139,23 +152,28 @@ export class LeanStore {
   /** Inserts unseen entries as pending; returns how many were new. Existing rows only gain a picture they lacked. */
   addEntries(source: LeanSource, entries: readonly FeedEntry[], now: string): number {
     const insert = this.db.prepare(`INSERT OR IGNORE INTO items
-      (public_id, source_id, link_key, platform, display_name, content_type, require_relevance, link, title, text, source_published_at, first_seen_at, image_json, status)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`);
-    const fillImage = this.db.prepare("UPDATE items SET image_json = ? WHERE link_key = ? AND image_json IS NULL");
+      (public_id, source_id, link_key, platform, display_name, content_type, require_relevance, link, title, text, source_published_at, first_seen_at, image_json, images_json, status)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`);
+    const fillImages = this.db.prepare(`UPDATE items SET images_json = ?, image_json = ?
+      WHERE link_key = ? AND (
+        images_json IS NULL OR images_json = '[]' OR IFNULL(json_array_length(images_json), 0) < json_array_length(?)
+      )`);
     let added = 0;
     this.db.exec("BEGIN IMMEDIATE");
     try {
       for (const entry of entries) {
         const key = linkKey(entry.link);
-        const imageJson = entry.image === null ? null : JSON.stringify(entry.image);
+        const images = entry.images.length > 0 ? entry.images : (entry.image ? [entry.image] : []);
+        const imageJson = images[0] ? JSON.stringify(images[0]) : null;
+        const imagesJson = JSON.stringify(images);
         const contentType = source.platform === "x"
           ? contentTypeForTeamPost(source.sourceId, source.contentType, entry.title, entry.text)
           : source.contentType;
         const result = insert.run(publicIdFor(source.platform, key), source.sourceId, key, source.platform,
           source.displayName, contentType, source.requireRelevance ? 1 : 0, entry.link, entry.title, entry.text,
-          entry.sourcePublishedAt, now, imageJson);
+          entry.sourcePublishedAt, now, imageJson, imagesJson);
         added += Number(result.changes);
-        if (Number(result.changes) === 0 && imageJson !== null) fillImage.run(imageJson, key);
+        if (Number(result.changes) === 0 && images.length > 0) fillImages.run(imagesJson, imageJson, key, imagesJson);
       }
       this.db.exec("COMMIT");
     } catch (error) {
@@ -163,6 +181,16 @@ export class LeanStore {
       throw error;
     }
     return added;
+  }
+
+  replaceImages(link: string, images: readonly FeedImage[]): boolean {
+    if (images.length === 0) return false;
+    const json = JSON.stringify(images.slice(0, 4));
+    const result = this.db.prepare(`UPDATE items SET images_json = ?, image_json = ?
+      WHERE link_key = ? AND platform = 'x' AND (
+        images_json IS NULL OR images_json = '[]' OR IFNULL(json_array_length(images_json), 0) < json_array_length(?)
+      )`).run(json, JSON.stringify(images[0]), linkKey(link), json);
+    return Number(result.changes) === 1;
   }
 
   /** Imports an already-published item verbatim (used once to carry over the current site). */
