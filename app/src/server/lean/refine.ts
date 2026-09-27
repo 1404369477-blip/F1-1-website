@@ -3,6 +3,7 @@ import { join } from "node:path";
 
 import { REFINE_MODEL_CATALOG, REFINE_MODEL_IDS, isRefineModelId, type RefineModelId } from "../rss/refine-model.ts";
 import { applyChineseNameList, applyChineseNames } from "./chinese-names.ts";
+import { hasStrayEnglish } from "./article.ts";
 import { MODEL_PRIVATE_DIR } from "./config.ts";
 import type { StoredItem } from "./store.ts";
 
@@ -204,15 +205,32 @@ async function translateParagraphs(model: ModelEndpoint, fetcher: typeof fetch, 
   return translated;
 }
 
+function chineseCopyHasStray(result: RefineResult): boolean {
+  if (result.kind !== "ready") return false;
+  return [result.titleZh, result.summaryZh, ...result.keyPointsZh, ...(result.detailZh ?? [])].some((part) => hasStrayEnglish(part));
+}
+
 export async function refineItem(item: StoredItem, model: ModelEndpoint, fetcher: typeof fetch = fetch, paragraphs: readonly string[] | null = null): Promise<RefineResult> {
   const overviewParagraphs = paragraphs && paragraphs.length > 0 ? paragraphs.slice(0, TRANSLATION_CHUNK) : null;
+  const finish = async (overview: RefineResult): Promise<RefineResult> => {
+    if (overview.kind !== "ready" || !paragraphs || paragraphs.length === 0) return overview;
+    if (overview.detailZh?.length === paragraphs.length) return overview;
+    return { ...overview, detailZh: await translateParagraphs(model, fetcher, paragraphs) };
+  };
   let overview: RefineResult;
   try {
     overview = await requestRefine(item, model, fetcher, overviewParagraphs);
   } catch {
     overview = await requestRefine(item, model, fetcher, null);
   }
-  if (overview.kind !== "ready" || !paragraphs || paragraphs.length === 0) return overview;
-  if (overview.detailZh?.length === paragraphs.length) return overview;
-  return { ...overview, detailZh: await translateParagraphs(model, fetcher, paragraphs) };
+  let result = await finish(overview);
+  if (chineseCopyHasStray(result)) {
+    try {
+      const again = await finish(await requestRefine(item, model, fetcher, overviewParagraphs));
+      if (!chineseCopyHasStray(again)) result = again;
+    } catch {
+      // Keep the first Chinese copy when the second pass fails.
+    }
+  }
+  return result;
 }
