@@ -3520,3 +3520,29 @@ body.lb-open .utility-anchor { visibility: hidden; }
   }
 }
 
+/* 收起时内边距不能把 0fr 行撑开（移动端 .tl-detail 的 10+12+12 正好是 34px）。 */
+.tl-collapse:not(.is-open) > .tl-detail {
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.tl-media img {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+@media (max-width: 640px) {
+  .lb-top {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  .lightbox .lb-top .lb-count {
+    position: static;
+    left: auto;
+    translate: none;
+  }
+}
+

@@ -11,7 +11,7 @@ import { DEFAULT_EDITORIAL_DOMAINS, type LeanSource } from "../server/lean/confi
 import { importEditorInbox, markInboxPublished, parseSubmission, type InboxEntry } from "../server/lean/editor-inbox.ts";
 import { isAgencyImage, largeTwimgUrl, parseFeed } from "../server/lean/feed.ts";
 import { localizeImages, mediaKey } from "../server/lean/media.ts";
-import { extractArticleParagraphs, hasStrayEnglish } from "../server/lean/article.ts";
+import { englishOriginalTitle, extractArticleParagraphs, hasStrayEnglish, isChromeVideoPlayerLine } from "../server/lean/article.ts";
 import { applyChineseNames } from "../server/lean/chinese-names.ts";
 import { dropRepeatedPoints, leanRefineModelOrder, parseRefineOutput, refineRequestBody } from "../server/lean/refine.ts";
 import { REFINE_MODEL_CATALOG } from "../server/rss/refine-model.ts";
@@ -177,6 +177,14 @@ describe("lean article text", () => {
     expect(hasStrayEnglish("马德里ring赛道")).toBe(true);
     expect(hasStrayEnglish("红牛使用 DRS 和 FIA 规则")).toBe(false);
     expect(applyChineseNames("马德里ring赛道的 undercut 与出 pits")).toBe("马德里赛道的 提前进站 与出 维修区");
+    expect(applyChineseNames("由Netflix和进站 to 进站 Films制作")).toBe("由Netflix和Box to Box Films制作");
+    expect(applyChineseNames("Box to Box Films 的 box")).toBe("Box to Box Films 的 进站");
+    expect(applyChineseNames("马德里林（马德里赛道）赛道与蒙za")).toBe("马德里赛道与蒙扎");
+    expect(isChromeVideoPlayerLine("画面需使用Chrome浏览器以获得更好的视频播放体验")).toBe(true);
+    expect(isChromeVideoPlayerLine("The video player works best with the Chrome browser")).toBe(true);
+    expect(isChromeVideoPlayerLine("Thanks @GoogleChrome")).toBe(false);
+    expect(englishOriginalTitle("Verstappen wins in Baku")).toBe("Verstappen wins in Baku");
+    expect(englishOriginalTitle("F1西班牙大奖赛：Kimi Antonelli再夺冠")).toBeNull();
     expect(dropRepeatedPoints("维斯塔潘赢得比赛。", ["维斯塔潘赢得比赛", "发车时轮胎温度为90度"])).toEqual(["发车时轮胎温度为90度"]);
   });
 });
@@ -414,7 +422,11 @@ describe("lean editor inbox", () => {
 
   it("accepts tweets from the default allow-list", () => {
     const tweet = submission({ originalUrl: "https://x.com/F1/status/2103211618280604081", sourceDomain: "x.com", sourceName: "@F1" });
-    expect(parseSubmission(tweet, DEFAULT_EDITORIAL_DOMAINS, "ready", "2026-09-24T15:00:00.000Z").item.sourceId).toBe("editor-x-com");
+    const parsed = parseSubmission(tweet, DEFAULT_EDITORIAL_DOMAINS, "ready", "2026-09-24T15:00:00.000Z").item;
+    expect(parsed.sourceId).toBe("editor-x-com");
+    expect(parsed.platform).toBe("x");
+    expect(parsed.keyPointsZh).toEqual([]);
+    expect(parsed.publicId.startsWith("public-x-")).toBe(true);
     const legacy = submission({ originalUrl: "https://twitter.com/F1/status/1", sourceDomain: "twitter.com" });
     expect(parseSubmission(legacy, DEFAULT_EDITORIAL_DOMAINS, "ready", "2026-09-24T15:00:00.000Z").item.sourceId).toBe("editor-twitter-com");
   });

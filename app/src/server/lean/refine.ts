@@ -2,8 +2,8 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { REFINE_MODEL_CATALOG, REFINE_MODEL_IDS, isRefineModelId, type RefineModelId } from "../rss/refine-model.ts";
+import { hasStrayEnglish, isChromeVideoPlayerLine, stripChromeVideoPlayerSentences } from "./article.ts";
 import { applyChineseNameList, applyChineseNames } from "./chinese-names.ts";
-import { hasStrayEnglish } from "./article.ts";
 import { MODEL_PRIVATE_DIR } from "./config.ts";
 import type { StoredItem } from "./store.ts";
 
@@ -128,13 +128,24 @@ export function parseRefineOutput(raw: string, requireRelevance: boolean, paragr
     const untranslated = detailZh.findIndex((paragraph, index) => !HAN.test(paragraph) && expectsChinese(sources[index] ?? "the team said this sentence"));
     if (untranslated >= 0) throw new Error(`MODEL_OUTPUT_INVALID_DETAIL_LANGUAGE_${untranslated}`);
   }
+  const namedSummaryZh = stripChromeVideoPlayerSentences(applyChineseNames(summaryZh));
+  const namedSummaryEn = summaryEn === null ? null : stripChromeVideoPlayerSentences(summaryEn);
+  const namedPointsZh = applyChineseNameList(keyPointsZh) ?? [];
+  const keptZh: string[] = [];
+  const keptEn: string[] = [];
+  namedPointsZh.forEach((point, index) => {
+    const english = keyPointsEn[index] ?? "";
+    if (isChromeVideoPlayerLine(point) || (english !== "" && isChromeVideoPlayerLine(english))) return;
+    keptZh.push(point);
+    if (english !== "") keptEn.push(english);
+  });
   return {
     kind: "ready",
     titleZh: applyChineseNames(titleZh),
-    summaryZh: applyChineseNames(summaryZh),
-    summaryEn,
-    keyPointsZh: applyChineseNameList(keyPointsZh) ?? [],
-    keyPointsEn,
+    summaryZh: namedSummaryZh,
+    summaryEn: namedSummaryEn && namedSummaryEn.length > 0 ? namedSummaryEn : null,
+    keyPointsZh: keptZh,
+    keyPointsEn: keptEn,
     detailZh: applyChineseNameList(detailZh)
   };
 }

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.f1plus1.lean-cleanup</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/Users/chanai/.local/node-v24.18.0-darwin-arm64/bin/node</string>
+    <string>--no-warnings</string>
+    <string>--experimental-transform-types</string>
+    <string>scripts/lean-cleanup.ts</string>
+  </array>
+  <key>WorkingDirectory</key>
+  <string>/Users/chanai/F1-1-website/lean-runtime/app</string>
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key>
+    <integer>4</integer>
+    <key>Minute</key>
+    <integer>0</integer>
+  </dict>
+  <key>Nice</key>
+  <integer>10</integer>
+  <key>Umask</key>
+  <integer>63</integer>
+  <key>StandardOutPath</key>
+  <string>/Users/chanai/F1-1-website/lean-data/cleanup.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/chanai/F1-1-website/lean-data/cleanup.log</string>
+</dict>
+</plist>

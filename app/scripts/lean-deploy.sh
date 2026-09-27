@@ -14,7 +14,7 @@ cp "$SOURCE_APP/src/features/stories/public-static-schema.ts" "$RUNTIME_APP/src/
 cp "$SOURCE_APP/src/features/calendar/race-strip-model.ts" "$RUNTIME_APP/src/features/calendar/"
 mkdir -p "$RUNTIME_APP/data"
 cp "$SOURCE_APP"/data/f1-names-zh.json "$SOURCE_APP"/data/f1-calendar-overrides.json "$SOURCE_APP"/data/f1-calendar-2026.json "$RUNTIME_APP/data/"
-cp "$SOURCE_APP"/scripts/lean-cycle.ts "$SOURCE_APP"/scripts/lean-seed.ts "$SOURCE_APP"/scripts/lean-backfill-details.ts "$SOURCE_APP"/scripts/lean-backfill-x-images.ts "$SOURCE_APP"/scripts/fetch-f1-calendar.mjs "$RUNTIME_APP/scripts/"
+cp "$SOURCE_APP"/scripts/lean-cycle.ts "$SOURCE_APP"/scripts/lean-seed.ts "$SOURCE_APP"/scripts/lean-cleanup.ts "$SOURCE_APP"/scripts/lean-backfill-details.ts "$SOURCE_APP"/scripts/lean-backfill-x-images.ts "$SOURCE_APP"/scripts/fetch-f1-calendar.mjs "$SOURCE_APP"/scripts/com.f1plus1.lean.plist "$SOURCE_APP"/scripts/com.f1plus1.lean-cleanup.plist "$RUNTIME_APP/scripts/"
 
 cat > "$RUNTIME_APP/package.json" <<'JSON'
 {

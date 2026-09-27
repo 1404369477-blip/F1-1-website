@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export function isPublicStaticShellDirectory(path: string): boolean {
-  return !path.includes("..") && ["stories", "404", "_not-found", "_next", "data"].some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
+  return !path.includes("..") && ["stories", "archive", "404", "_not-found", "_next", "data"].some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
 }
 
 /** Shared by the shell builder and publisher; it permits no application source or private routes. */
@@ -10,7 +10,7 @@ export function isPublicStaticShellPath(path: string): boolean {
   return path === ".nojekyll"
     || path === "data/f1-calendar.json"
     || /^(?:index|404)\.(?:html|txt)$/u.test(path)
-    || /^(?:stories|_not-found)\/(?:index\.html|[^/]+\.txt)$/u.test(path)
+    || /^(?:stories|archive|_not-found)\/(?:index\.html|[^/]+\.txt)$/u.test(path)
     || path === "404/index.html"
     || /^__next\.[^/]+\.txt$/u.test(path)
     || /^_next\/static\/[a-zA-Z0-9_./-]+\.(?:js|css|woff2?)$/u.test(path);

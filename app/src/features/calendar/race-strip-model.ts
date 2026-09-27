@@ -160,6 +160,21 @@ function station(nameZh: string): string {
   return nameZh.endsWith("站") ? nameZh.slice(0, -1) : nameZh;
 }
 
+function nextStationLabel(race: CalendarRace): string {
+  const note = race.noteZh ? `（${race.noteZh}）` : "";
+  const place = `${station(race.nameZh)}${note}`;
+  return note ? `下站 ${place}${raceRange(race)}` : `下站 ${place} ${raceRange(race)}`;
+}
+
+/** True during a race session, from 15 minutes before the start until four hours after. Cleanup skips this window. */
+export function isRaceWindow(calendar: F1Calendar, now: Date): boolean {
+  const at = now.getTime();
+  return calendar.races.some((race) => activeSessions(race).some((session) => {
+    if (session.session.key !== "race") return false;
+    return at >= session.start - 15 * 60 * 1000 && at < session.start + 4 * 3600 * 1000;
+  }));
+}
+
 function durationMs(key: SessionKey): number {
   return SESSION_META[key].minutes * 60000;
 }
@@ -248,7 +263,7 @@ export function describeStrip(calendar: F1Calendar, now: Date): StripView | null
   const upcoming = upcomingRaces(calendar, focus.round, now);
   const metaPrevious = previous ? `上站 ${station(previous.nameZh)} · ${winnerName(previous)}` : "";
   const following = scheduled.find((race) => race.round > focus.round);
-  const metaNext = following ? `下站 ${station(following.nameZh)} ${raceRange(following)}` : "";
+  const metaNext = following ? nextStationLabel(following) : "";
   const meta = [metaPrevious, metaNext].filter(Boolean).join(" | ");
 
   if (live && live.race.round === focus.round) {

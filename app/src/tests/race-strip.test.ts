@@ -64,6 +64,7 @@ describe("race strip clock", () => {
     const after = describeStrip(calendar, new Date("2026-09-26T21:40:00+08:00"));
     expect(after?.headline).toContain("正赛已结束");
     expect(after?.meta.startsWith("上站 西班牙 · 安东内利")).toBe(true);
+    expect(after?.meta).toContain("下站 巴林（马来西亚·雪邦）10/2–4");
 
     const withWinner: F1Calendar = {
       ...calendar,

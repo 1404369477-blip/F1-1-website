@@ -862,6 +862,11 @@ export function FeedExperience() {
       dx: 0,
       locked: false
     };
+    try {
+      event.currentTarget.setPointerCapture(event.pointerId);
+    } catch {
+      // Pointer capture can be rejected by embedded or closing browsing contexts.
+    }
   };
 
   const handleMediaPointerMove = (event: ReactPointerEvent<HTMLSpanElement>, publicId: string): void => {
@@ -897,8 +902,8 @@ export function FeedExperience() {
     const dx = swipe.dx || event.clientX - swipe.x;
     const dy = event.clientY - swipe.y;
     const threshold = Math.max(44, Math.round(event.currentTarget.getBoundingClientRect().width * 0.12));
-    mediaSuppressClickUntilRef.current.set(publicId, event.timeStamp + 400);
     if (Math.abs(dx) < threshold || Math.abs(dx) <= Math.abs(dy)) return;
+    mediaSuppressClickUntilRef.current.set(publicId, event.timeStamp + 400);
     const now = event.timeStamp;
     if (now < (mediaLockUntilRef.current.get(publicId) ?? 0)) return;
     mediaLockUntilRef.current.set(publicId, now + 400);
@@ -1280,6 +1285,7 @@ export function FeedExperience() {
                 height={mainImage.height}
                 loading="lazy"
                 decoding="async"
+                draggable={false}
                 referrerPolicy="no-referrer"
                 tabIndex={0}
                 role="button"
@@ -1327,12 +1333,13 @@ export function FeedExperience() {
               language={selectedLanguage}
               onToggle={() => setFullTextByPublicId((current) => ({ ...current, [story.publicId]: !current[story.publicId] }))}
             />
-          ) : (
+          ) : null}
+          {imageFirst ? null : media}
+          {isX ? null : (
             <button type="button" className="card-snap-expand" aria-expanded={open} aria-controls={`det-${story.publicId}`} onClick={() => toggleItem(story.publicId)}>
               {open ? (selectedLanguage === "en" ? "Hide" : "收起") : (selectedLanguage === "en" ? "Expand" : "展开")}
             </button>
           )}
-          {imageFirst ? null : media}
 
           {isX ? null : (
           <div className={`tl-collapse${open ? " is-open" : ""}`}>
@@ -1615,6 +1622,7 @@ export function FeedExperience() {
       <footer className="site-footer">
         <div className="fs">
           <span>F1+1 · F1 中文资讯时间线</span>
+          <a href="/archive/">已归档</a>
         </div>
         <p>{IS_PUBLIC_STATIC_SITE ? "内容来自最近一次成功同步的公开资讯；聚合内容版权归原作者与来源所有。" : "内容通过公开 API 提供；聚合内容版权归原作者与来源所有。"}</p>
       </footer>

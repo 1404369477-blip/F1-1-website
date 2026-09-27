@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 
 import { normalizePublicStaticRequestKey } from "../../features/stories/public-static-schema.ts";
 import { LEAN_CONTENT_TYPES, PAGES_URL, type LeanContentType } from "./config.ts";
-import { isBoilerplateParagraph } from "./article.ts";
+import { englishOriginalTitle, isBoilerplateParagraph } from "./article.ts";
 import { isAgencyImage } from "./feed.ts";
 import type { LocalImage, LocalMedia } from "./media.ts";
 import type { StoredItem } from "./store.ts";
@@ -66,7 +66,7 @@ function feedItemWith(item: StoredItem, localMedia: LocalMedia, fullTextDenied: 
     source: { sourceId: item.sourceId, platform: item.platform, displayName: item.displayName, byline: item.displayName, accessStatus: "available" },
     media,
     originalLink: { enabled: true, url: item.link, reason: null },
-    originalTitle: item.title,
+    ...(englishOriginalTitle(item.title) ? { originalTitle: item.title } : {}),
     summaryEn: item.summaryEn,
     detailZh: showFull ? cleanParagraphs(item.detailZh) : undefined,
     detailEn: showFull ? cleanParagraphs(item.detailEn) : undefined,
@@ -110,12 +110,13 @@ function fullTextAllowed(link: string, denied: ReadonlySet<string>): boolean {
   }
 }
 
-/** Builds the static `/api/public/*` responses the published UI reads. `items` must be ready items. */
-export function buildSiteBundle(readyItems: readonly StoredItem[], generatedAt: string, localMedia: LocalMedia = new Map(), fullTextDenied: ReadonlySet<string> = new Set()): SiteBundle {
+/** Builds the static `/api/public/*` responses the published UI reads. `items` must be ready items inside the public window. Older ready items stay reachable from the archive page and their detail URLs. */
+export function buildSiteBundle(readyItems: readonly StoredItem[], generatedAt: string, localMedia: LocalMedia = new Map(), fullTextDenied: ReadonlySet<string> = new Set(), archivedItems: readonly StoredItem[] = []): SiteBundle {
   const items = [...readyItems].sort((a, b) => timelineAt(b).localeCompare(timelineAt(a)) || b.publicId.localeCompare(a.publicId));
+  const archived = [...archivedItems].sort((a, b) => timelineAt(b).localeCompare(timelineAt(a)) || b.publicId.localeCompare(a.publicId));
   const feedItem = (item: StoredItem) => feedItemWith(item, localMedia, fullTextDenied);
   const mediaFiles = new Map<string, string>();
-  for (const item of items) {
+  for (const item of [...items, ...archived]) {
     for (const picture of localImages(item, localMedia)) mediaFiles.set(picture.local.sitePath, picture.local.file);
   }
   const responses: Record<string, ResponseRef> = {};
@@ -153,17 +154,17 @@ export function buildSiteBundle(readyItems: readonly StoredItem[], generatedAt: 
     } while (cursor !== null);
   }
 
-  for (const item of items) {
+  for (const item of [...items, ...archived]) {
     const summary = item.summaryZh ?? "";
     add(`/api/public/stories/${item.publicId}?v=1`, 200, {
       schemaVersion: "public-read-v0.1",
-      story: { ...feedItem(item), leadZh: summary, bodyZh: [summary], keyPointsZh: item.keyPointsZh },
+      story: { ...feedItem(item), leadZh: summary || item.titleZh || item.title, bodyZh: [summary || item.titleZh || item.title], keyPointsZh: item.platform === "x" ? [] : item.keyPointsZh },
       relatedItems: relatedFor(item, items).map(feedItem)
     }, true);
   }
 
   const sortedResponses = Object.fromEntries(Object.entries(responses).sort(([a], [b]) => a.localeCompare(b)));
-  const sitemap = sitemapXml(items);
+  const sitemap = sitemapXml([...items, ...archived]);
   const rss = rssXml(items);
   const robots = Buffer.from("User-agent: *\nAllow: /\nSitemap: https://f1plus1.com/sitemap.xml\n");
   const contentFingerprint = sha256(JSON.stringify([
@@ -188,7 +189,23 @@ export function buildSiteBundle(readyItems: readonly StoredItem[], generatedAt: 
   files.set("sitemap.xml", sitemap);
   files.set("rss.xml", rss);
   files.set("robots.txt", robots);
+  files.set("archive.json", Buffer.from(JSON.stringify(archiveIndex(archived))));
   return { bundleId, contentFingerprint, files, mediaFiles, itemCount: items.length };
+}
+
+export type ArchiveMonth = { id: string; label: string; items: { publicId: string; title: string; publishedAt: string }[] };
+
+export function archiveIndex(items: readonly StoredItem[]): { schemaVersion: "archive-index-v1"; months: ArchiveMonth[] } {
+  const months = new Map<string, ArchiveMonth>();
+  for (const item of items) {
+    const at = timelineAt(item);
+    const id = at.slice(0, 7);
+    const [year, month] = id.split("-");
+    const bucket = months.get(id) ?? { id, label: `${year}年${Number(month)}月`, items: [] };
+    bucket.items.push({ publicId: item.publicId, title: item.titleZh ?? item.title, publishedAt: at });
+    months.set(id, bucket);
+  }
+  return { schemaVersion: "archive-index-v1", months: [...months.values()] };
 }
 
 function xmlEscape(value: string): string {

@@ -14,8 +14,31 @@ const STRAY_ALLOW = new Set(["f1", "fia", "drs", "gp"]);
 /** Visible page chrome that starts the comments, survey, or related-story block. */
 const ARTICLE_END = /there are no comments|what would you like to see|let us know what you would like|we want your opinion|class="lcp_catlist"|class="[^"]*more-from/i;
 
+/**
+ * Sky's video-player notice. Requires the word Chrome plus a browser word and a video word,
+ * so a sponsor tag such as @GoogleChrome is left alone.
+ */
+export function isChromeVideoPlayerLine(text: string): boolean {
+  return /(?<![A-Za-z])chrome(?![A-Za-z])/i.test(text)
+    && /浏览器|browser/i.test(text)
+    && /视频|video/i.test(text);
+}
+
 export function isBoilerplateParagraph(text: string): boolean {
-  return BOILERPLATE.test(text);
+  return BOILERPLATE.test(text) || isChromeVideoPlayerLine(text);
+}
+
+/** Drops video-player sentences from a summary. Other sentences stay. */
+export function stripChromeVideoPlayerSentences(text: string): string {
+  const parts = text.split(/(?<=[。！？.!?])/);
+  return parts.filter((part) => !isChromeVideoPlayerLine(part)).join("").replace(/\s{2,}/g, " ").trim();
+}
+
+/** A stored English title. Machine-translated Chinese in that column is not shown as the original. */
+export function englishOriginalTitle(title: string | null): string | null {
+  if (!title || !title.trim()) return null;
+  if (/[\u4e00-\u9fff]{2,}/.test(title)) return null;
+  return title.trim();
 }
 
 /** A Chinese sentence that still contains a lowercase English word. Names stay capitalized. English inside a gloss in parentheses is allowed. URLs and @handles are ignored. DRS, FIA, F1 and GP are allowed. */

@@ -5,7 +5,8 @@ import { resolve } from "node:path";
 
 import { DEFAULT_EDITORIAL_DOMAINS, leanPath, leanSources, REFINE_BATCH_LIMIT, SITE_MAX_AGE_DAYS, SITE_MAX_ITEMS, type LeanSource } from "./config.ts";
 import { isDenseWindow, needsWinnerRefresh, type F1Calendar } from "../../features/calendar/race-strip-model.ts";
-import { importEditorInbox, markInboxPublished, type EditorInboxSettings, type InboxReport } from "./editor-inbox.ts";
+import { importEditorInbox, markInboxPublished, refreshEditorTweets, type EditorInboxSettings, type InboxReport } from "./editor-inbox.ts";
+import { gcPagesCheckout } from "./cleanup.ts";
 import { backupStoreIfDue, type BackupReport } from "./backup.ts";
 import { fetchArticleParagraphs } from "./article.ts";
 import { fetchFeed } from "./feed.ts";
@@ -361,6 +362,11 @@ export async function runCycle(now: Date = new Date()): Promise<CycleReport | nu
     const state = readJson<LeanState>(leanPath("state.json"), { lastPublishedFingerprint: null, lastPublishedAt: null, lastCommit: null });
     const inboxRoot = leanPath("editor-inbox");
     const inbox = importInbox(store, inboxRoot, settings, now);
+    try {
+      await refreshEditorTweets(store);
+    } catch {
+      warnings.push("EDITOR_TWEETS_FAILED");
+    }
     const calendar = refreshCalendar(now);
     const schedule = readCalendar();
     const dense = schedule ? isDenseWindow(schedule, now) : false;
@@ -374,12 +380,13 @@ export async function runCycle(now: Date = new Date()): Promise<CycleReport | nu
 
     const minTimelineAt = new Date(now.getTime() - SITE_MAX_AGE_DAYS * 24 * 3600 * 1000).toISOString();
     const readyItems = store.ready(SITE_MAX_ITEMS, minTimelineAt);
+    const archivedItems = store.archived(minTimelineAt);
     const heldItems = store.held();
     const denied = new Set(Object.entries(settings.fullTextAllowed ?? {}).filter(([, allowed]) => allowed === false).map(([domain]) => domain));
-    const localized = await localizeMedia([...heldItems, ...readyItems], now);
-    const bundle = buildSiteBundle(readyItems, now.toISOString(), localized.media, denied);
+    const localized = await localizeMedia([...heldItems, ...readyItems, ...archivedItems], now);
+    const bundle = buildSiteBundle(readyItems, now.toISOString(), localized.media, denied, archivedItems);
     if (!settings.publish || heldItems.length > 0) {
-      stageSite(leanPath("preview"), heldItems.length > 0 ? buildSiteBundle([...heldItems, ...readyItems], now.toISOString(), localized.media, denied) : bundle);
+      stageSite(leanPath("preview"), heldItems.length > 0 ? buildSiteBundle([...heldItems, ...readyItems], now.toISOString(), localized.media, denied, archivedItems) : bundle);
     }
     let site: CycleReport["site"] = { items: bundle.itemCount, published: false, commit: null, reason: "UNCHANGED" };
     if (localized.report.error !== null) {
@@ -390,6 +397,7 @@ export async function runCycle(now: Date = new Date()): Promise<CycleReport | nu
     } else if (`${bundle.contentFingerprint}:${calendarToken()}` !== state.lastPublishedFingerprint) {
       try {
         const commit = publishBundle(leanPath("pages-checkout"), bundle);
+        if (!gcPagesCheckout(leanPath("pages-checkout"))) warnings.push("GIT_GC_FAILED");
         writeJsonAtomic(leanPath("state.json"), { lastPublishedFingerprint: `${bundle.contentFingerprint}:${calendarToken()}`, lastPublishedAt: now.toISOString(), lastCommit: commit });
         site = { items: bundle.itemCount, published: true, commit, reason: "PUBLISHED" };
       } catch (error) {

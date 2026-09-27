@@ -323,6 +323,43 @@ export class LeanStore {
       ORDER BY COALESCE(source_published_at, published_at) DESC, public_id DESC LIMIT ?`).all(minTimelineAt, maxItems) as Row[]).map(toItem);
   }
 
+  /** Ready stories older than the public homepage window. Detail pages still include them. */
+  archived(before: string): StoredItem[] {
+    return (this.db.prepare(`SELECT * FROM items WHERE status = 'ready' AND COALESCE(source_published_at, published_at) < ?
+      ORDER BY COALESCE(source_published_at, published_at) DESC, public_id DESC`).all(before) as Row[]).map(toItem);
+  }
+
+  editorStatusPosts(): StoredItem[] {
+    return (this.db.prepare(`SELECT * FROM items WHERE source_id LIKE 'editor-%' AND status IN ('ready', 'held')
+      AND (link LIKE '%x.com/%/status/%' OR link LIKE '%twitter.com/%/status/%')`).all() as Row[]).map(toItem);
+  }
+
+  /** Keeps the existing public id. Editor tweets are shown as X posts from here on. */
+  markEditorTweet(publicId: string, displayName: string, titleZh: string, summaryZh: string, detailZh: string[] | null, detailEn: string[] | null): void {
+    this.db.prepare(`UPDATE items SET platform = 'x', display_name = ?, title_zh = ?, summary_zh = ?, text = ?,
+      key_points_json = '[]', key_points_en_json = '[]', detail_zh_json = ?, detail_en_json = ? WHERE public_id = ?`)
+      .run(displayName, titleZh, summaryZh, summaryZh, detailZh === null ? null : JSON.stringify(detailZh), detailEn === null ? null : JSON.stringify(detailEn), publicId);
+  }
+
+  setOriginalTitle(publicId: string, title: string): void {
+    this.db.prepare("UPDATE items SET title = ? WHERE public_id = ?").run(title, publicId);
+  }
+
+  countSourceRunsBefore(before: string): number {
+    return Number((this.db.prepare("SELECT COUNT(*) AS n FROM source_runs WHERE last_attempt_at < ?").get(before) as { n: number }).n);
+  }
+
+  deleteSourceRunsBefore(before: string): number {
+    return Number(this.db.prepare("DELETE FROM source_runs WHERE last_attempt_at < ?").run(before).changes);
+  }
+
+  /** Compacts the live database after writing a standalone backup of the compacted file. */
+  vacuumInto(path: string): void {
+    const escaped = path.replaceAll("'", "''");
+    this.db.exec(`VACUUM INTO '${escaped}'`);
+    this.db.exec("VACUUM");
+  }
+
   lastAttemptAt(sourceId: string): string | null {
     const row = this.db.prepare("SELECT last_attempt_at FROM source_runs WHERE source_id = ?").get(sourceId) as Row | undefined;
     return row ? String(row.last_attempt_at) : null;

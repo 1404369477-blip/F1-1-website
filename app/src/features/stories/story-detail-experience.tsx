@@ -6,7 +6,7 @@ import { createPortal } from "react-dom";
 
 import { RaceStrip } from "../../components/RaceStrip";
 import { publicStoryHref } from "./public-site-config";
-import { editorialSectionLabel, hasEditorialExtras, isImageFirstCategory, originalArticleCta, originalArticleNote, uniqueEditorialParagraphs } from "./editorial";
+import { editorialSectionLabel, hasEditorialExtras, isImageFirstCategory, isSameEditorialText, originalArticleCta, originalArticleNote, uniqueEditorialParagraphs } from "./editorial";
 import {
   fetchPublicStory,
   isPublicStoryNotFound,
@@ -254,7 +254,7 @@ export function StoryDetailExperience({ publicId }: { publicId: string }) {
                 <span className="tl-cat">{story.category}</span>
               </span>
               <h1 className="tl-title" id="story-title">{copy?.title ?? story.title}</h1>
-              <p className="tl-lead">{copy?.lead ?? story.lead}</p>
+              {story.platform === "x" && isSameEditorialText(copy?.title ?? story.title, copy?.lead ?? story.lead) ? null : <p className="tl-lead">{copy?.lead ?? story.lead}</p>}
             </header>
 
             {story.state === "restricted" ? (

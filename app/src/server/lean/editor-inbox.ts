@@ -3,8 +3,8 @@ import { join } from "node:path";
 
 import { z } from "zod";
 
-import { EDITORIAL_IMAGE_HOSTS, LEAN_CONTENT_TYPES } from "./config.ts";
-import { isAgencyImage, largeTwimgUrl, type FeedImage } from "./feed.ts";
+import { EDITORIAL_IMAGE_HOSTS, LEAN_CONTENT_TYPES, RSSHUB_ACCESS_KEY_PATH, RSSHUB_ORIGIN } from "./config.ts";
+import { isAgencyImage, largeTwimgUrl, parseFeed, pickTweetImages, type FeedImage } from "./feed.ts";
 import { linkKey, publicIdFor, type LeanStore, type StoredItem } from "./store.ts";
 
 export const EDITOR_SUBMISSION_MAX_BYTES = 64 * 1024;
@@ -27,6 +27,18 @@ export type InboxEntry = {
 export type InboxReport = { enabled: boolean; imported: number; held: number; rejected: number; released: number };
 
 const chinese = (max: number) => z.string().trim().min(1).max(max).refine((value) => HAN.test(value), "NOT_CHINESE");
+const STATUS_URL = /^https?:\/\/(?:www\.)?(?:x|twitter)\.com\/([^/]+)\/status\/(\d+)/i;
+
+/** An editor link that is one tweet, not a news article. */
+export function xStatusFromUrl(url: string): { handle: string; id: string } | null {
+  const match = STATUS_URL.exec(url);
+  if (!match?.[1] || !match[2]) return null;
+  return { handle: match[1], id: match[2] };
+}
+
+export function stripSourceFootnote(text: string): string {
+  return text.replace(/[（(]来源：[^）)]{0,80}[）)]/g, "").replace(/\s{2,}/g, " ").trim();
+}
 
 const SubmissionSchema = z.object({
   schemaVersion: z.literal("editor-submission-v1"),
@@ -93,12 +105,15 @@ export function parseSubmission(raw: string, allowedDomains: readonly string[], 
   if ((detailZh === null) !== (detailEn === null)) throw new Rejection("INVALID_FIELD: detailZh detailEn must both be present or both be absent");
   if (detailZh && detailEn && detailZh.length !== detailEn.length) throw new Rejection("PARAGRAPH_COUNT_MISMATCH");
 
-  const keyPointsZh = (submission.keyPointsZh ?? []).map((point) => point.trim()).filter((point) => point !== "").slice(0, MAX_KEY_POINTS);
+  const tweet = xStatusFromUrl(submission.originalUrl);
+  const platform = tweet ? "x" as const : "rss" as const;
+  const keyPointsZh = platform === "x" ? [] : (submission.keyPointsZh ?? []).map((point) => point.trim()).filter((point) => point !== "").slice(0, MAX_KEY_POINTS);
+  const cleanDetail = (paragraphs: string[] | null) => paragraphs?.map((paragraph) => stripSourceFootnote(paragraph)).filter((paragraph) => paragraph.length > 0) ?? null;
   const item: StoredItem = {
-    publicId: publicIdFor("rss", linkKey(submission.originalUrl)),
+    publicId: publicIdFor(platform, linkKey(submission.originalUrl)),
     sourceId: `editor-${submission.sourceDomain.replace(/[^a-z0-9]+/g, "-")}`,
-    platform: "rss",
-    displayName: submission.sourceName,
+    platform,
+    displayName: tweet ? `@${tweet.handle}` : submission.sourceName,
     contentType: submission.contentType,
     requireRelevance: false,
     link: submission.originalUrl,
@@ -110,13 +125,13 @@ export function parseSubmission(raw: string, allowedDomains: readonly string[], 
     images: image ? [image] : [],
     status,
     attempts: 0,
-    titleZh: submission.titleZh,
-    summaryZh: submission.summaryZh,
+    titleZh: stripSourceFootnote(submission.titleZh),
+    summaryZh: stripSourceFootnote(submission.summaryZh),
     summaryEn: null,
     keyPointsZh,
     keyPointsEn: [],
-    detailEn,
-    detailZh,
+    detailEn: platform === "x" ? cleanDetail(detailEn) : detailEn,
+    detailZh: platform === "x" ? cleanDetail(detailZh) : detailZh,
     publishedAt: now
   };
   return { item, idempotencyKey: submission.idempotencyKey };
@@ -189,6 +204,65 @@ export function importEditorInbox(store: LeanStore, root: string, settings: Edit
     : previous;
   if (entries.length > 0 || report.released > 0 || !existsSync(paths.status)) writeStatus(paths.status, [...entries.reverse(), ...released], now);
   return report;
+}
+
+/** Loads every picture on an editor-submitted tweet (at most four) and stores the post as an X item. */
+export async function refreshEditorTweets(store: LeanStore, fetcher: typeof fetch = fetch): Promise<{ updated: number; images: number }> {
+  let updated = 0;
+  let images = 0;
+  for (const item of store.editorStatusPosts()) {
+    const tweet = xStatusFromUrl(item.link);
+    if (!tweet) continue;
+    const summaryZh = stripSourceFootnote(item.summaryZh ?? "");
+    const titleZh = stripSourceFootnote(item.titleZh ?? summaryZh);
+    const detailZh = item.detailZh?.map((paragraph) => stripSourceFootnote(paragraph)).filter((paragraph) => paragraph.length > 0) ?? null;
+    const detailEn = item.detailEn?.map((paragraph) => stripSourceFootnote(paragraph)).filter((paragraph) => paragraph.length > 0) ?? null;
+    const textChanged = item.platform !== "x" || item.displayName !== `@${tweet.handle}` || (item.summaryZh ?? "") !== summaryZh || item.keyPointsZh.length > 0;
+    if (textChanged) {
+      store.markEditorTweet(item.publicId, `@${tweet.handle}`, titleZh || summaryZh, summaryZh, detailZh && detailZh.length > 0 ? detailZh : null, detailEn && detailEn.length > 0 ? detailEn : null);
+      updated += 1;
+    }
+    if (item.images.length < 4) {
+      const pictures = await fetchStatusImages(tweet.handle, tweet.id, fetcher);
+      if (pictures.length > 0 && store.replaceImages(item.link, pictures)) images += 1;
+    }
+  }
+  return { updated, images };
+}
+
+async function fetchStatusImages(handle: string, id: string, fetcher: typeof fetch): Promise<FeedImage[]> {
+  let key = "";
+  try {
+    key = readFileSync(RSSHUB_ACCESS_KEY_PATH, "utf8").trim();
+  } catch {
+    return [];
+  }
+  const query = key.length > 0 ? `?key=${encodeURIComponent(key)}` : "";
+  for (const route of [`/twitter/tweet/${id}`, `/twitter/status/${id}`]) {
+    try {
+      const response = await fetcher(`${RSSHUB_ORIGIN}${route}${query}`, { signal: AbortSignal.timeout(20_000) });
+      if (!response.ok) continue;
+      const images = pickTweetImages(await response.text());
+      if (images.length > 0) return images.slice(0, 4);
+    } catch {
+      // The other route may still have the pictures.
+    }
+  }
+  try {
+    const response = await fetcher(`${RSSHUB_ORIGIN}/twitter/user/${encodeURIComponent(handle)}${query}`, { signal: AbortSignal.timeout(20_000) });
+    if (!response.ok) return [];
+    const entries = parseFeed({
+      sourceId: "editor-tweet",
+      platform: "x",
+      displayName: `@${handle}`,
+      feedUrl: `${RSSHUB_ORIGIN}/twitter/user/${handle}`,
+      contentType: "driver_social",
+      requireRelevance: false
+    }, await response.text());
+    return entries.find((entry) => entry.link.includes(`/status/${id}`))?.images.slice(0, 4) ?? [];
+  } catch {
+    return [];
+  }
 }
 
 /** Marks every accepted submission still awaiting publication as live in `commit`. */

@@ -67,7 +67,7 @@ function server(files: Map<string, string>) {
 
 describe("public static transport", () => {
   it("allows only public shell artifacts and rejects private routes, code, traversal, and source maps", () => {
-    for (const path of ["index.html", "stories/index.html", "404/index.html", "_not-found/__next._full.txt", "_next/static/chunks/app-123.js", ".nojekyll", "data/f1-calendar.json"]) expect(isPublicStaticShellPath(path)).toBe(true);
+    for (const path of ["index.html", "stories/index.html", "archive/index.html", "404/index.html", "_not-found/__next._full.txt", "_next/static/chunks/app-123.js", ".nojekyll", "data/f1-calendar.json"]) expect(isPublicStaticShellPath(path)).toBe(true);
     for (const path of ["admin/index.html", "api/public/feed.json", ".env", "src/app/page.tsx", "_next/static/app.js.map", "stories/../../private.txt", "/index.html"]) expect(isPublicStaticShellPath(path)).toBe(false);
     const files = ["index.html", "stories/index.html", "404.html", ".nojekyll"].map((path) => ({ path, sha256: "0".repeat(64), bytes: 0 }));
     expect(() => PublicStaticShellBuildSchema.parse({ schemaVersion: "public-static-shell-build-v1", basePath: "/", nodeVersion: "v24.18.0", files: [...files, files[0]] })).toThrow();

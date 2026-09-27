@@ -24,10 +24,16 @@ function pairsFrom(file: NameFile): [string, string][] {
 
 const pairs = pairsFrom(JSON.parse(readFileSync(namesPath, "utf8")) as NameFile);
 
+const BOX_TO_BOX = "\u0000BOXTOBOX\u0000";
+
 const TERM_REPLACEMENTS: ReadonlyArray<readonly [RegExp, string]> = [
+  [/马德里林（马德里赛道）赛道/g, "马德里赛道"],
+  [/马德里林赛道/g, "马德里赛道"],
+  [/马德里林/g, "马德里赛道"],
   [/马德里\s*ring\s*赛道/gi, "马德里赛道"],
   [/马德里\s*ring/gi, "马德里赛道"],
   [/\bMadring\b/g, "马德里赛道"],
+  [/蒙za/g, "蒙扎"],
   [/代rap小红牛/g, "代表小红牛"],
   [/角田裕pie/g, "角田裕毅"],
   [/红\s*bull\b/gi, "红牛"],
@@ -50,7 +56,10 @@ function preferChineseGloss(text: string): string {
 
 /** Replaces known English names in Chinese copy. English source text is left untouched. */
 export function applyChineseNames(text: string): string {
-  let next = text;
+  let next = text.replace(/进站\s*to\s*进站(?:\s*Films)?/gi, BOX_TO_BOX).replace(/Box\s+to\s+Box(?:\s+Films)?/gi, BOX_TO_BOX);
+  // "box" is a pit-stop word only as a whole word. The production company is restored below.
+  next = next.replace(/(?<![A-Za-z])box(?![A-Za-z])/gi, "进站");
+  next = next.replaceAll(BOX_TO_BOX, "Box to Box Films");
   for (const [english, chinese] of pairs) {
     const pattern = english.length < 4
       ? new RegExp(`(?<![A-Za-z])${escapeRegExp(english)}(?![A-Za-z])`, "g")
