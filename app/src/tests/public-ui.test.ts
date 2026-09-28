@@ -522,7 +522,7 @@ describe("public frontend API single-source integration", () => {
 
   it("keeps timeline slots, accordion wiring, lightbox and seven-state copy in the feed source", () => {
     expect(feedSource).toContain("tl-summary-btn");
-    expect(feedSource).toContain('aria-controls={`det-');
+    expect(feedSource).toContain("aria-controls={controlsId ? `det-");
     expect(feedSource).toContain("aria-expanded={open}");
     expect(feedSource).toContain("ph-main");
     expect(feedSource).toContain("tl-collapse");

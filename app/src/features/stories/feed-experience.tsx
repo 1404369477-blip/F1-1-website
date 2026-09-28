@@ -41,6 +41,7 @@ import {
 import { readHashParam, setHashParams } from "./hash-params";
 import { getTimelineSearchQuery, setTimelineSearchQuery, subscribeTimelineSearch } from "./timeline-search";
 import { RaceStrip } from "../../components/RaceStrip";
+import { PlayBadge } from "./play-badge";
 import { IS_PUBLIC_STATIC_SITE, publicStoryHref } from "./public-site-config";
 import { PublicStaticGenerationChangedError } from "./public-static-transport";
 import { usePublicSearch } from "./use-public-search";
@@ -65,6 +66,7 @@ type LightboxState = {
   images: ImageItem[];
   index: number;
   origin: { left: number; top: number; width: number; height: number } | null;
+  originalUrl: string | null;
 };
 
 type LightboxTrigger = {
@@ -235,7 +237,7 @@ function TimelineSkeleton() {
 
 type CardDeckProps = {
   stories: PublicStoryCardViewModel[];
-  onOpenLightbox: (images: PublicStoryImage[], index: number, trigger: HTMLElement, publicId: string) => void;
+  onOpenLightbox: (images: PublicStoryImage[], index: number, trigger: HTMLElement, publicId: string, originalUrl?: string | null) => void;
   onLoadMore: (() => void) | null;
 };
 
@@ -265,35 +267,78 @@ function contentHeight(element: HTMLElement): number {
   return height;
 }
 
-function ClampedPost({ paragraphs, expanded, language, onToggle }: {
+function textSelectionInside(root: HTMLElement): boolean {
+  const selection = window.getSelection();
+  if (!selection || selection.isCollapsed || selection.toString().trim() === "") return false;
+  return selection.anchorNode !== null && root.contains(selection.anchorNode);
+}
+
+function TimelineTitle({ isX, paragraphs, summary, title, category, open, controlsId, onToggle }: {
+  isX: boolean;
   paragraphs: readonly string[];
-  expanded: boolean;
-  language: "zh-CN" | "en";
+  summary: string;
+  title: string;
+  category: string;
+  open: boolean;
+  controlsId?: string;
   onToggle: () => void;
 }): ReactNode {
-  const ref = useRef<HTMLDivElement | null>(null);
+  const textRef = useRef<HTMLDivElement | null>(null);
   const [overflows, setOverflows] = useState(false);
+  const signature = paragraphs.join("\n");
   useLayoutEffect(() => {
-    const element = ref.current;
-    if (!element || expanded) return;
+    if (!isX) return;
+    const element = textRef.current;
+    if (!element || open) return;
     const measure = (): void => setOverflows(element.scrollHeight > element.clientHeight + 2);
     measure();
     const observer = new ResizeObserver(measure);
     observer.observe(element);
     return () => observer.disconnect();
-  }, [paragraphs.join("\n"), expanded]);
-  if (paragraphs.length === 0) return null;
-  return (
-    <>
-      <div ref={ref} className={`x-post-text${expanded ? " is-open" : ""}`}>
+  }, [isX, signature, open]);
+  const canToggle = isX ? overflows || open : true;
+  const body = isX
+    ? (paragraphs.length > 0 ? (
+      <div ref={textRef} className={`x-post-text${open ? " is-open" : ""}`}>
         {paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
       </div>
-      {overflows || expanded ? (
-        <button type="button" className="card-snap-expand" aria-expanded={expanded} onClick={onToggle}>
-          {expanded ? (language === "en" ? "Hide" : "收起") : (language === "en" ? "Expand" : "展开全文")}
-        </button>
-      ) : null}
+    ) : null)
+    : <span className="tl-lead">{summary}</span>;
+  const heading = (
+    <>
+      <span className="tl-head">
+        <span className="tl-cat">{category}</span>
+        {canToggle ? <span className="tl-chevron" aria-hidden="true">{open ? "▴" : "▾"}</span> : null}
+      </span>
+      <span className="tl-title">{title}</span>
+      {body}
     </>
+  );
+  if (!canToggle) return <div className="tl-summary-btn">{heading}</div>;
+  return (
+    <div
+      className={`tl-summary-btn is-toggle${open ? " is-open" : ""}`}
+      role="button"
+      tabIndex={0}
+      aria-expanded={open}
+      aria-controls={controlsId ? `det-${controlsId}` : undefined}
+      onClick={(event) => {
+        const target = event.target as HTMLElement;
+        if (target.closest("a, button")) {
+          event.stopPropagation();
+          return;
+        }
+        if (textSelectionInside(event.currentTarget)) return;
+        onToggle();
+      }}
+      onKeyDown={(event) => {
+        if (event.key !== "Enter" && event.key !== " ") return;
+        event.preventDefault();
+        onToggle();
+      }}
+    >
+      {heading}
+    </div>
   );
 }
 
@@ -383,7 +428,7 @@ function CardDeck({ stories, onOpenLightbox, onLoadMore }: CardDeckProps): React
 
   const handleImageClick = useCallback(
     (event: React.MouseEvent<HTMLImageElement>, story: PublicStoryCardViewModel, index: number): void => {
-      onOpenLightbox(story.images, index, event.currentTarget, story.publicId);
+      onOpenLightbox(story.images, index, event.currentTarget, story.publicId, story.originalUrl);
     },
     [onOpenLightbox]
   );
@@ -472,7 +517,7 @@ function CardDeck({ stories, onOpenLightbox, onLoadMore }: CardDeckProps): React
                     handleImageClick(event, story, imageIndex);
                   }}
                 />
-                {mainImage.kind === "video_poster" ? <span className="media-play" aria-hidden="true">▶</span> : null}
+                {mainImage.kind === "video_poster" ? <PlayBadge /> : null}
                 {story.images.length > 1 ? (
                   <span className="card-snap-img-count" aria-label={`${story.images.length} 张图片`}>
                     {story.images.length} 图
@@ -871,11 +916,6 @@ export function FeedExperience() {
       dx: 0,
       locked: false
     };
-    try {
-      event.currentTarget.setPointerCapture(event.pointerId);
-    } catch {
-      // Pointer capture can be rejected by embedded or closing browsing contexts.
-    }
   };
 
   const handleMediaPointerMove = (event: ReactPointerEvent<HTMLSpanElement>, publicId: string): void => {
@@ -899,19 +939,39 @@ export function FeedExperience() {
 
   const finishMediaPointer = (
     event: ReactPointerEvent<HTMLSpanElement>,
-    publicId: string,
-    count: number
+    story: PublicStoryCardViewModel,
+    images: ImageItem[],
+    activeIndex: number
   ): void => {
+    const publicId = story.publicId;
     const swipe = mediaSwipeRef.current;
     mediaSwipeRef.current = null;
     const image = event.currentTarget.querySelector<HTMLImageElement>(".ph-main");
     event.currentTarget.classList.remove("swiping");
     if (image) image.style.transform = "";
-    if (!swipe || swipe.id !== publicId || !swipe.locked) return;
-    const dx = swipe.dx || event.clientX - swipe.x;
+    if (!swipe || swipe.id !== publicId) return;
+    const dx = event.clientX - swipe.x;
     const dy = event.clientY - swipe.y;
+    const count = images.length;
+    const openPicture = (): void => {
+      if (!image) return;
+      mediaSuppressClickUntilRef.current.set(publicId, event.timeStamp + 400);
+      const current = images[activeIndex];
+      if (current?.kind === "video_poster" && story.originalUrl) {
+        window.open(story.originalUrl, "_blank", "noopener,noreferrer");
+        return;
+      }
+      openLightbox(images, activeIndex, image, publicId, story.originalUrl);
+    };
+    if (!swipe.locked) {
+      if (Math.abs(dx) < 6 && Math.abs(dy) < 6) openPicture();
+      return;
+    }
     const threshold = Math.max(44, Math.round(event.currentTarget.getBoundingClientRect().width * 0.12));
-    if (Math.abs(dx) < threshold || Math.abs(dx) <= Math.abs(dy)) return;
+    if (Math.abs(dx) < threshold || Math.abs(dx) <= Math.abs(dy)) {
+      openPicture();
+      return;
+    }
     mediaSuppressClickUntilRef.current.set(publicId, event.timeStamp + 400);
     const now = event.timeStamp;
     if (now < (mediaLockUntilRef.current.get(publicId) ?? 0)) return;
@@ -1021,14 +1081,15 @@ export function FeedExperience() {
     }
   }, [activeCategory, feedState, loadingMore, reloadChangedStaticGeneration]);
 
-  const openLightbox = useCallback((images: ImageItem[], index: number, trigger: HTMLElement, publicId: string): void => {
+  const openLightbox = useCallback((images: ImageItem[], index: number, trigger: HTMLElement, publicId: string, originalUrl: string | null = null): void => {
     lightboxClosingRef.current = false;
     lastTriggerRef.current = { element: trigger, publicId };
     const rect = trigger.getBoundingClientRect();
     setLightbox({
       images,
       index,
-      origin: { left: rect.left, top: rect.top, width: rect.width, height: rect.height }
+      origin: { left: rect.left, top: rect.top, width: rect.width, height: rect.height },
+      originalUrl
     });
   }, []);
 
@@ -1183,11 +1244,17 @@ export function FeedExperience() {
     images: ImageItem[],
     index: number,
     trigger: HTMLElement,
-    publicId: string
+    publicId: string,
+    originalUrl: string | null
   ): void => {
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
-      openLightbox(images, index, trigger, publicId);
+      const current = images[index];
+      if (current?.kind === "video_poster" && originalUrl) {
+        window.open(originalUrl, "_blank", "noopener,noreferrer");
+        return;
+      }
+      openLightbox(images, index, trigger, publicId, originalUrl);
     }
   };
 
@@ -1297,7 +1364,7 @@ export function FeedExperience() {
               data-count={images.length}
               onPointerDown={(event) => handleMediaPointerDown(event, story.publicId)}
               onPointerMove={(event) => handleMediaPointerMove(event, story.publicId)}
-              onPointerUp={(event) => finishMediaPointer(event, story.publicId, images.length)}
+              onPointerUp={(event) => finishMediaPointer(event, story, images, activeIndex)}
               onPointerCancel={cancelMediaPointer}
               onWheel={(event) => handleMediaWheel(event, story.publicId, images.length)}
             >
@@ -1322,11 +1389,11 @@ export function FeedExperience() {
                     window.open(story.originalUrl, "_blank", "noopener,noreferrer");
                     return;
                   }
-                  openLightbox(images, activeIndex, event.currentTarget, story.publicId);
+                  openLightbox(images, activeIndex, event.currentTarget, story.publicId, story.originalUrl);
                 }}
-                onKeyDown={(event) => handleMainImageKeyDown(event, images, activeIndex, event.currentTarget, story.publicId)}
+                onKeyDown={(event) => handleMainImageKeyDown(event, images, activeIndex, event.currentTarget, story.publicId, story.originalUrl)}
               />
-              {mainImage.kind === "video_poster" ? <span className="media-play" aria-hidden="true">▶</span> : null}
+              {mainImage.kind === "video_poster" ? <PlayBadge /> : null}
             </span>
           ) : null;
 
@@ -1343,27 +1410,20 @@ export function FeedExperience() {
         </div>
         <div className="tl-entry">
           {imageFirst ? media : null}
-          <div className="tl-summary-btn">
-            <span className="tl-head">
-              <span className="tl-cat">{selectedLanguage === "en" ? categoryLabelEn(story.category) : story.category}</span>
-            </span>
-            <span className="tl-title">{storyCopy?.title ?? story.title}</span>
-            {isX ? null : <span className="tl-lead">{storyCopy?.summary ?? story.summary}</span>}
-          </div>
-          {isX ? (
-            <ClampedPost
-              paragraphs={xParagraphs}
-              expanded={fullTextByPublicId[story.publicId] === true}
-              language={selectedLanguage}
-              onToggle={() => setFullTextByPublicId((current) => ({ ...current, [story.publicId]: !current[story.publicId] }))}
-            />
-          ) : null}
+          <TimelineTitle
+            isX={isX}
+            paragraphs={xParagraphs}
+            summary={storyCopy?.summary ?? story.summary}
+            title={storyCopy?.title ?? story.title}
+            category={selectedLanguage === "en" ? categoryLabelEn(story.category) : story.category}
+            open={isX ? fullTextByPublicId[story.publicId] === true : open}
+            controlsId={isX ? undefined : story.publicId}
+            onToggle={() => {
+              if (isX) setFullTextByPublicId((current) => ({ ...current, [story.publicId]: !current[story.publicId] }));
+              else toggleItem(story.publicId);
+            }}
+          />
           {imageFirst ? null : media}
-          {isX ? null : (
-            <button type="button" className="card-snap-expand" aria-expanded={open} aria-controls={`det-${story.publicId}`} onClick={() => toggleItem(story.publicId)}>
-              {open ? (selectedLanguage === "en" ? "Hide" : "收起") : (selectedLanguage === "en" ? "Expand" : "展开")}
-            </button>
-          )}
 
           {isX ? null : (
           <div className={`tl-collapse${open ? " is-open" : ""}`}>
@@ -1420,22 +1480,22 @@ export function FeedExperience() {
                   ) : detail?.status === "ready" ? (
                     detailCopy && hasEditorialExtras(detailCopy.lead, detailCopy.body, detailCopy.keyPoints) ? (
                       <>
-                        {shouldShowExpandedLead(storyCopy?.summary ?? story.summary, detailCopy.lead)
-                          ? <p className="tl-zh tl-detail-lead">{detailCopy.lead}</p>
-                          : null}
-                        {uniqueEditorialParagraphs(detailCopy.lead, detailCopy.body)
-                          .map((paragraph) => <p className="tl-zh" key={paragraph}>{paragraph}</p>)}
                         {detailCopy.keyPoints.length > 0 ? (
                           <ul className="tl-keypoints">
                             {detailCopy.keyPoints.map((point) => <li key={point}>{point}</li>)}
                           </ul>
                         ) : null}
+                        {shouldShowExpandedLead(storyCopy?.summary ?? story.summary, detailCopy.lead)
+                          ? <p className="tl-zh tl-detail-lead">{detailCopy.lead}</p>
+                          : null}
+                        {uniqueEditorialParagraphs(detailCopy.lead, detailCopy.body)
+                          .map((paragraph) => <p className="tl-zh" key={paragraph}>{paragraph}</p>)}
                         {(storyCopy?.body ?? []).map((paragraph) => <p className="tl-zh" key={paragraph}>{paragraph}</p>)}
                       </>
                     ) : null
                   ) : null}
                   <p className="tl-detail-actions">
-                    <a className="tl-detail-page-link" href={publicStoryHref(story.publicId)}>
+                    <a className="tl-detail-page-link" href={publicStoryHref(story.publicId)} onClick={(event) => event.stopPropagation()}>
                       {selectedLanguage === "en" ? "Open full extract page" : "打开站内详情"}
                     </a>
                   </p>
@@ -1458,12 +1518,13 @@ export function FeedExperience() {
                   href={story.originalUrl ?? ""}
                   rel="noopener noreferrer"
                   target="_blank"
+                  onClick={(event) => event.stopPropagation()}
                 >{originalLabel}</a>
               ) : (
                 <span className="tl-original-disabled">原文暂不可用</span>
               )}
               {isX ? (
-                <a className="tl-original-link" href={publicStoryHref(story.publicId)}>
+                <a className="tl-original-link" href={publicStoryHref(story.publicId)} onClick={(event) => event.stopPropagation()}>
                   {selectedLanguage === "en" ? "Details" : "站内详情"}
                 </a>
               ) : null}
@@ -1540,7 +1601,20 @@ export function FeedExperience() {
         {hasMultiple ? (
           <button type="button" className="lb-nav lb-next" aria-label="下一张" onClick={() => navigateLightbox(1)}>›</button>
         ) : null}
-        <img ref={lightboxImgRef} src={images[index]?.src ?? ""} alt={images[index]?.alt ?? ""} />
+        <span className="lb-frame">
+          <img
+            ref={lightboxImgRef}
+            src={images[index]?.src ?? ""}
+            alt={images[index]?.alt ?? ""}
+            onClick={(event) => {
+              event.stopPropagation();
+              if (images[index]?.kind === "video_poster" && lightbox.originalUrl) {
+                window.open(lightbox.originalUrl, "_blank", "noopener,noreferrer");
+              }
+            }}
+          />
+          {images[index]?.kind === "video_poster" ? <PlayBadge /> : null}
+        </span>
         {hasMultiple ? (
           <span className="lb-count lb-count-desktop" aria-live="polite">{index + 1} / {images.length}</span>
         ) : null}

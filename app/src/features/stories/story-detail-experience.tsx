@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 
 import { RaceStrip } from "../../components/RaceStrip";
+import { PlayBadge } from "./play-badge";
 import { publicStoryHref } from "./public-site-config";
 import { editorialSectionLabel, hasEditorialExtras, isImageFirstCategory, isSameEditorialText, originalArticleCta, originalArticleNote, uniqueEditorialParagraphs } from "./editorial";
 import {
@@ -246,8 +247,14 @@ export function StoryDetailExperience({ publicId, onStateChange }: { publicId: s
                 className="timeline-detail-media"
                 type="button"
                 ref={mediaTriggerRef}
-                aria-label="放大图片"
-                onClick={() => setMediaOpen(true)}
+                aria-label={mainImage.kind === "video_poster" ? "打开原帖" : "放大图片"}
+                onClick={() => {
+                  if (mainImage.kind === "video_poster" && story.originalUrl) {
+                    window.open(story.originalUrl, "_blank", "noopener,noreferrer");
+                    return;
+                  }
+                  setMediaOpen(true);
+                }}
               >
                 <img
                   className="ph-main"
@@ -258,6 +265,7 @@ export function StoryDetailExperience({ publicId, onStateChange }: { publicId: s
                   fetchPriority="high"
                   referrerPolicy="no-referrer"
                 />
+                {mainImage.kind === "video_poster" ? <PlayBadge /> : null}
               </button>
             ) : null}
             <header className="timeline-detail-summary">
@@ -277,8 +285,14 @@ export function StoryDetailExperience({ publicId, onStateChange }: { publicId: s
                 className="timeline-detail-media"
                 type="button"
                 ref={mediaTriggerRef}
-                aria-label="放大图片"
-                onClick={() => setMediaOpen(true)}
+                aria-label={mainImage.kind === "video_poster" ? "打开原帖" : "放大图片"}
+                onClick={() => {
+                  if (mainImage.kind === "video_poster" && story.originalUrl) {
+                    window.open(story.originalUrl, "_blank", "noopener,noreferrer");
+                    return;
+                  }
+                  setMediaOpen(true);
+                }}
               >
                 <img
                   className="ph-main"
@@ -289,6 +303,7 @@ export function StoryDetailExperience({ publicId, onStateChange }: { publicId: s
                   fetchPriority="high"
                   referrerPolicy="no-referrer"
                 />
+                {mainImage.kind === "video_poster" ? <PlayBadge /> : null}
               </button>
             ) : null}
 
@@ -403,7 +418,20 @@ export function StoryDetailExperience({ publicId, onStateChange }: { publicId: s
           }}
         >
           <button ref={lightboxCloseRef} type="button" className="lb-close" aria-label="关闭图片预览" onClick={closeMedia}>×</button>
-          <img src={mainImage.src} alt={mainImage.alt} referrerPolicy="no-referrer" />
+          <span className="lb-frame">
+            <img
+              src={mainImage.src}
+              alt={mainImage.alt}
+              referrerPolicy="no-referrer"
+              onClick={(event) => {
+                event.stopPropagation();
+                if (mainImage.kind === "video_poster" && story.originalUrl) {
+                  window.open(story.originalUrl, "_blank", "noopener,noreferrer");
+                }
+              }}
+            />
+            {mainImage.kind === "video_poster" ? <PlayBadge /> : null}
+          </span>
         </div>,
         document.body
       ) : null}
