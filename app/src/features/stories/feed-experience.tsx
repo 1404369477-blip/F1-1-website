@@ -920,7 +920,11 @@ export function FeedExperience() {
 
   const handleMediaPointerMove = (event: ReactPointerEvent<HTMLSpanElement>, publicId: string): void => {
     const swipe = mediaSwipeRef.current;
-    if (!swipe || swipe.id !== publicId || swipe.pointerId !== event.pointerId) return;
+    if (!swipe || swipe.id !== publicId) return;
+    if (swipe.pointerId !== event.pointerId) {
+      if (event.pointerType === "mouse") return;
+      swipe.pointerId = event.pointerId;
+    }
     const dx = event.clientX - swipe.x;
     const dy = event.clientY - swipe.y;
     if (!swipe.locked && Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
