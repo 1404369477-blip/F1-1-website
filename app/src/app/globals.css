@@ -2377,7 +2377,7 @@ body:not(.lb-open) .app {
 .x-post-text p { margin: 0 0 8px; }
 
 .card-fill-text.is-x {
-  flex: 0 1 auto;
+  flex: none;
   display: -webkit-box;
   -webkit-line-clamp: 6;
   -webkit-box-orient: vertical;
@@ -3023,6 +3023,7 @@ body.lb-open .utility-anchor { visibility: hidden; }
 
 /* ---------- 卡片头部（类别 + 计数器 + 时间） ---------- */
 .card-snap-header {
+  flex: none;
   display: flex;
   align-items: center;
   gap: var(--s1);
@@ -3057,10 +3058,13 @@ body.lb-open .utility-anchor { visibility: hidden; }
 /* ---------- 卡片视觉区域（图片 / 渐变背景） ---------- */
 .card-snap-visual {
   position: relative;
+  flex: 1 1 auto;
   width: 100%;
-  aspect-ratio: 16 / 9;
   height: auto;
   min-height: 0;
+  max-height: 100%;
+  /* 内联的竖图 aspect-ratio 会变成 flex 基准高度，把标题挤出卡片。 */
+  aspect-ratio: auto !important;
   overflow: hidden;
   border-radius: var(--r-md);
   background: var(--surface);
@@ -3114,13 +3118,20 @@ body.lb-open .utility-anchor { visibility: hidden; }
 
 /* ---------- 卡片内容区域 ---------- */
 .card-snap-body {
-  flex: 1;
+  flex: none;
   display: flex;
   flex-direction: column;
   gap: 6px;
   align-content: start;
   padding-top: 8px;
   overflow: hidden;
+  min-height: 0;
+  max-height: 100%;
+}
+
+.card-snap--no-image .card-snap-body,
+.card-snap-body:has(.card-fill-text.is-open) {
+  flex: 1 1 auto;
   min-height: 0;
 }
 
@@ -3134,22 +3145,42 @@ body.lb-open .utility-anchor { visibility: hidden; }
 }
 
 .card-fill-text {
-  flex: 0 1 auto;
+  flex: none;
   min-height: 0;
   overflow: hidden;
   position: relative;
 }
 
+.card-fill-text:not(.is-open) {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 6;
+  padding-bottom: 0.25em;
+}
+
 .card-fill-text.is-open {
+  display: block;
+  -webkit-line-clamp: unset;
+  flex: 1 1 0;
+  min-height: 0;
+  height: auto;
+  padding-bottom: 0.25em;
   overflow: auto;
 }
 
-.card-snap-body:has(.card-snap-expand) .card-fill {
+.card-snap--no-image .card-fill,
+.card-snap-body:has(.card-fill-text.is-open) .card-fill {
   flex: 1 1 auto;
+  min-height: 0;
 }
 
-.card-snap-body:has(.card-snap-expand) .card-fill-text {
-  flex: 1 1 auto;
+.card-snap:not(.card-snap--no-image) .card-snap-body:has(.card-snap-expand):not(:has(.card-fill-text.is-open)) .card-fill {
+  flex: 0 1 auto;
+  min-height: 0;
+}
+
+.card-snap-body:has(.card-snap-expand) .card-fill-text:not(.is-open) {
+  flex: none;
 }
 
 .card-fill-text.is-faded::after {
@@ -3177,6 +3208,7 @@ body.lb-open .utility-anchor { visibility: hidden; }
 }
 
 .card-snap-expand {
+  flex: none;
   justify-self: start;
   margin: 0;
   padding: 0;
@@ -3203,6 +3235,7 @@ body.lb-open .utility-anchor { visibility: hidden; }
 .story-full-source, .story-full-time { margin: 0; font-size: 12px; line-height: 1.5; color: var(--faint); }
 
 .card-snap-title {
+  flex: none;
   margin: 0;
   font-family: var(--font-display);
   font-size: 20px;
