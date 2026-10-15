@@ -384,7 +384,7 @@ afterAll(() => {
 describe("Admin exact release manifest", () => {
   it("freezes the QL1 target closure before any build artifact branch", () => {
     expect(ADMIN_RELEASE_RUNTIME_FILES).toHaveLength(ADMIN_RELEASE_RUNTIME_FILE_COUNT);
-    expect(ADMIN_RELEASE_RUNTIME_FILES).toHaveLength(207);
+    expect(ADMIN_RELEASE_RUNTIME_FILES).toHaveLength(208);
     expect(adminReleaseRuntimePathSetSha256(ADMIN_RELEASE_RUNTIME_FILES)).toBe(ADMIN_RELEASE_RUNTIME_PATH_SET_SHA256);
     expect(() => assertAdminReleaseRuntimePathContract(ADMIN_RELEASE_RUNTIME_FILES)).not.toThrow();
     expect(ADMIN_RELEASE_RUNTIME_FILES).not.toContain("scripts/public-release-bootstrap.ts");

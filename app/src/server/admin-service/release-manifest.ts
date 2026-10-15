@@ -111,6 +111,7 @@ export const ADMIN_RELEASE_RUNTIME_FILES = [
   "src/server/admin-service/refinement-model-settings.ts",
   "src/server/admin-service/model-provider-probe.ts",
   "src/server/admin-service/model-credentials.ts",
+  "src/server/admin-service/ops-local-health.ts",
   "src/server/admin-service/release-manifest.ts",
   "src/server/admin-service/runtime.ts",
   "src/server/admin-service/server.ts",
@@ -243,8 +244,8 @@ export const ADMIN_RELEASE_RUNTIME_FILES = [
 ] as const;
 
 const ADMIN_RELEASE_LEGACY_BOOTSTRAP_PATH = "scripts/public-release-bootstrap.ts" as const;
-export const ADMIN_RELEASE_RUNTIME_FILE_COUNT = 207 as const;
-export const ADMIN_RELEASE_RUNTIME_PATH_SET_SHA256 = "5cbcc890e44042af7018d029bbbb7b4883abac5ffbb88ad0a42e974a5f28c309" as const;
+export const ADMIN_RELEASE_RUNTIME_FILE_COUNT = 208 as const;
+export const ADMIN_RELEASE_RUNTIME_PATH_SET_SHA256 = "a6f66429befd3ce0e66bddbf69f71551a407b291c097823181749dcf52fd857c" as const;
 export const ADMIN_RELEASE_REQUIRED_RUNTIME_PATHS = Object.freeze([
   "migrations/rss-real/0005_second_rss_autosport.sql",
   "migrations/rss-real/0006_independent_rss_racefans_the_race.sql",
@@ -276,6 +277,7 @@ export const ADMIN_RELEASE_REQUIRED_RUNTIME_PATHS = Object.freeze([
   "src/server/admin-service/refinement-model-settings.ts",
   "src/server/admin-service/model-provider-probe.ts",
   "src/server/admin-service/model-credentials.ts",
+  "src/server/admin-service/ops-local-health.ts",
   "src/server/admin-service/bilingual-retry.ts",
   "src/admin-ui/settings.css",
   "src/admin-ui/settings.html",

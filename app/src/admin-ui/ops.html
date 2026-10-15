@@ -150,6 +150,33 @@
             </article>
           </div>
         </section>
+
+        <section class="ops-card ops-health" id="ops-health" aria-labelledby="ops-health-title">
+          <div class="ops-health-head">
+            <div>
+              <h2 id="ops-health-title">本机运维健康</h2>
+              <p class="ops-health-sub" id="ops-health-sub">只读摘要 · 来自 ops/*/status.json</p>
+            </div>
+            <div class="ops-flag" id="ops-health-flag"><span class="ops-flag-dot" aria-hidden="true"></span><span id="ops-health-flag-text">正在读取</span></div>
+          </div>
+          <p class="ops-as-of" id="ops-health-as-of">—</p>
+          <div class="ops-health-grid" id="ops-health-grid" aria-live="polite">
+            <article class="ops-health-kpi"><div class="k">公开站新鲜度</div><div class="v" id="ops-health-public">—</div><div class="s" id="ops-health-public-s">—</div></article>
+            <article class="ops-health-kpi"><div class="k">上轮 site.reason</div><div class="v" id="ops-health-site">—</div><div class="s" id="ops-health-refined">refined —</div></article>
+            <article class="ops-health-kpi"><div class="k">RSSHub</div><div class="v" id="ops-health-rsshub">—</div><div class="s" id="ops-health-rsshub-s">—</div></article>
+            <article class="ops-health-kpi"><div class="k">库存 counts</div><div class="v" id="ops-health-counts">—</div><div class="s" id="ops-health-counts-s">—</div></article>
+          </div>
+          <div class="ops-health-block">
+            <h3>LaunchAgent</h3>
+            <div class="ops-health-agents" id="ops-health-agents">正在读取</div>
+          </div>
+          <div class="ops-health-block">
+            <h3>告警 / 警告 / 提示</h3>
+            <div class="ops-health-signals" id="ops-health-signals">正在读取</div>
+          </div>
+          <p class="ops-health-note" id="ops-health-note">完整交互运维 UI 仍在本机 <a class="ops-lane-link" href="http://127.0.0.1:8764/" rel="noopener">http://127.0.0.1:8764/</a>（深链，非 iframe）。</p>
+        </section>
+
       </div>
     </section>
   </main>

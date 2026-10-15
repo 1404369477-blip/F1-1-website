@@ -2187,6 +2187,107 @@ body:has(.ops-app:not([hidden])) {
 .ops-waitb { background: var(--warning); }
 .ops-idleb { background: var(--ops-idle); }
 
+.ops-health {
+  margin-top: 18px;
+}
+
+.ops-health-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.ops-health-sub {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.ops-health-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.ops-health-kpi {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  background: color-mix(in oklab, var(--panel) 88%, transparent);
+}
+
+.ops-health-kpi .k {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.ops-health-kpi .v {
+  margin-top: 6px;
+  font-size: 22px;
+  font-weight: 650;
+  word-break: break-word;
+}
+
+.ops-health-kpi .s {
+  margin-top: 4px;
+  color: var(--faint);
+  font-size: 12px;
+}
+
+.ops-health-block {
+  margin-top: 16px;
+}
+
+.ops-health-block h3 {
+  margin: 0 0 8px;
+  font-size: 14px;
+}
+
+.ops-health-agents,
+.ops-health-signals {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.ops-health-agent {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  padding: 4px 0;
+  border-bottom: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
+}
+
+.ops-health-agent:last-child {
+  border-bottom: 0;
+}
+
+.ops-health-note {
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.ops-flag.is-wait,
+.ops-flag.is-stop,
+.ops-flag.is-idle {
+  opacity: 0.95;
+}
+
+@media (max-width: 800px) {
+  .ops-health-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .ops-health-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
 @media (max-width: 980px) {
   .ops-app {
     display: block;

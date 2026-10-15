@@ -36,6 +36,7 @@ import {
 
 import { ModelCredentialMutationSchema, ModelCredentialRoutes, MODEL_CREDENTIALS_PATH, MODEL_CREDENTIALS_SCHEMA, prepareModelCredentialMutation } from "./model-credentials.ts";
 import type { ModelProviderProbe } from "./model-provider-probe.ts";
+import { OPS_LOCAL_HEALTH_PATH, readOpsLocalHealth } from "./ops-local-health.ts";
 
 export const ADMIN_BILINGUAL_SCHEMA = "admin-bilingual-v1" as const;
 export const BILINGUAL_AUTHORITY_REASON = "AUTHORITY_EXTENSION_REQUIRED" as const;
@@ -687,6 +688,7 @@ export class BilingualAdminRoutes {
     }
     if (context.method === "GET" && context.path === "/api/admin/sources") return { status: 200, body: this.repository.sources() };
     if (context.method === "GET" && context.path === "/api/admin/operations/overview") return { status: 200, body: this.repository.operationsOverview() };
+    if (context.method === "GET" && context.path === OPS_LOCAL_HEALTH_PATH) return { status: 200, body: readOpsLocalHealth() };
     if (context.method === "GET" && context.path === "/api/admin/settings/refinement-model") {
       if (this.privateDir === undefined) {
         return { status: 503, body: { schemaVersion: ADMIN_REFINEMENT_MODEL_SCHEMA, reasonCode: "ADMIN_SETTINGS_UNAVAILABLE" } };

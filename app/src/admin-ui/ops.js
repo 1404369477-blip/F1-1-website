@@ -3,10 +3,12 @@
 
   const OVERVIEW_SCHEMA = "admin-operations-overview-v1";
   const RECENT_THREE_SCHEMA = "admin-bilingual-v1";
+  const HEALTH_SCHEMA = "admin-ops-local-health-v1";
   const SHANGHAI = "Asia/Shanghai";
   const endpoints = Object.freeze({
     overview: "/api/admin/operations/overview",
     recentThree: "/api/admin/bilingual/recent-three",
+    health: "/api/admin/ops/health",
     loginOptions: "/api/admin/auth/login/options",
     loginVerify: "/api/admin/auth/login/verify"
   });
@@ -57,6 +59,21 @@
     backupTitle: document.querySelector("#ops-backup-title"),
     backupCopy: document.querySelector("#ops-backup-copy"),
     safety: document.querySelector("#ops-safety"),
+    healthFlag: document.querySelector("#ops-health-flag"),
+    healthFlagText: document.querySelector("#ops-health-flag-text"),
+    healthAsOf: document.querySelector("#ops-health-as-of"),
+    healthSub: document.querySelector("#ops-health-sub"),
+    healthPublic: document.querySelector("#ops-health-public"),
+    healthPublicS: document.querySelector("#ops-health-public-s"),
+    healthSite: document.querySelector("#ops-health-site"),
+    healthRefined: document.querySelector("#ops-health-refined"),
+    healthRsshub: document.querySelector("#ops-health-rsshub"),
+    healthRsshubS: document.querySelector("#ops-health-rsshub-s"),
+    healthCounts: document.querySelector("#ops-health-counts"),
+    healthCountsS: document.querySelector("#ops-health-counts-s"),
+    healthAgents: document.querySelector("#ops-health-agents"),
+    healthSignals: document.querySelector("#ops-health-signals"),
+    healthNote: document.querySelector("#ops-health-note"),
     toast: document.querySelector("#toast")
   });
 
@@ -526,6 +543,103 @@
     }, OVERVIEW_REFRESH_MS);
   }
 
+
+  function levelClass(level) {
+    if (level === "ok") return "is-ok";
+    if (level === "warn" || level === "warning") return "is-wait";
+    if (level === "alert" || level === "error") return "is-stop";
+    return "is-idle";
+  }
+
+  function textOrDash(value) {
+    if (value === null || value === undefined || value === "") return "—";
+    return String(value);
+  }
+
+  function renderHealthUnread(message) {
+    if (!elements.healthFlagText) return;
+    elements.healthFlag.className = "ops-flag";
+    elements.healthFlagText.textContent = "读不到";
+    elements.healthAsOf.textContent = "—";
+    elements.healthSub.textContent = message || "本机 status.json 暂不可用";
+    elements.healthPublic.textContent = "—";
+    elements.healthPublicS.textContent = "—";
+    elements.healthSite.textContent = "—";
+    elements.healthRefined.textContent = "refined —";
+    elements.healthRsshub.textContent = "—";
+    elements.healthRsshubS.textContent = "—";
+    elements.healthCounts.textContent = "—";
+    elements.healthCountsS.textContent = "—";
+    elements.healthAgents.textContent = "暂无 LaunchAgent 摘要";
+    elements.healthSignals.textContent = "暂无告警摘要";
+  }
+
+  function renderHealth(health) {
+    if (!elements.healthFlagText) return;
+    if (!isObject(health) || health.schemaVersion !== HEALTH_SCHEMA) {
+      renderHealthUnread("健康摘要格式不匹配");
+      return;
+    }
+    const dash = isObject(health.dashboard) ? health.dashboard : null;
+    const admin = isObject(health.admin) ? health.admin : null;
+    const overall = dash && typeof dash.overall === "string" ? dash.overall : (admin && typeof admin.overall === "string" ? admin.overall : "unknown");
+    elements.healthFlag.className = `ops-flag ${levelClass(overall)}`;
+    elements.healthFlagText.textContent = overall;
+    const asOf = dash && typeof dash.generatedAt === "string" ? dash.generatedAt : health.generatedAt;
+    elements.healthAsOf.textContent = `快照 ${formatAsOf(asOf)}`;
+    elements.healthSub.textContent = typeof health.note === "string" ? health.note : "只读摘要 · 来自 ops/*/status.json";
+
+    const pub = dash && isObject(dash.public) ? dash.public : {};
+    const lag = pub.lagHours;
+    elements.healthPublic.textContent = typeof lag === "number" ? `${lag}h` : textOrDash(pub.level);
+    elements.healthPublicS.textContent = pub.stale === true ? "stale" : (pub.ok === true ? "fresh" : textOrDash(pub.level));
+
+    const lc = dash && isObject(dash.lastCycle) ? dash.lastCycle : {};
+    const site = isObject(lc.site) ? lc.site : {};
+    const refined = isObject(lc.refined) ? lc.refined : {};
+    elements.healthSite.textContent = textOrDash(site.reason);
+    elements.healthRefined.textContent = `refined ready ${textOrDash(refined.ready)} · failed ${textOrDash(refined.failed)}`;
+
+    const rh = dash && isObject(dash.rsshub) ? dash.rsshub : {};
+    elements.healthRsshub.textContent = rh.ok === true ? "up" : (rh.ok === false ? "down" : "—");
+    elements.healthRsshubS.textContent = rh.httpCode != null ? `HTTP ${rh.httpCode}` : textOrDash(rh.level);
+
+    const counts = dash && isObject(dash.counts) ? dash.counts : (admin && isObject(admin.countsStore) ? admin.countsStore : {});
+    elements.healthCounts.textContent = `ready ${textOrDash(counts.ready)}`;
+    elements.healthCountsS.textContent = `pending ${textOrDash(counts.pending)} · failed ${textOrDash(counts.failed)}`;
+
+    const agents = dash && isObject(dash.launchAgents) ? dash.launchAgents : {};
+    const agentKeys = Object.keys(agents);
+    if (agentKeys.length === 0) {
+      elements.healthAgents.textContent = "暂无 LaunchAgent 数据";
+    } else {
+      elements.healthAgents.replaceChildren();
+      for (const label of agentKeys) {
+        const info = isObject(agents[label]) ? agents[label] : {};
+        const row = document.createElement("div");
+        row.className = "ops-health-agent";
+        const st = textOrDash(info.state);
+        const loaded = info.loaded === true ? "loaded" : "not-loaded";
+        row.textContent = `${label} · ${loaded} · ${st}` + (info.lastExitCode != null ? ` · exit ${info.lastExitCode}` : "") + (info.runs != null ? ` · runs ${info.runs}` : "");
+        elements.healthAgents.append(row);
+      }
+    }
+
+    const alerts = dash && Array.isArray(dash.alerts) ? dash.alerts : [];
+    const warns = dash && Array.isArray(dash.warns) ? dash.warns : [];
+    const infos = dash && Array.isArray(dash.infos) ? dash.infos : [];
+    const adminInfos = admin && Array.isArray(admin.infos) ? admin.infos : [];
+    const parts = [];
+    if (alerts.length) parts.push(`告警 ${alerts.join(" · ")}`);
+    if (warns.length) parts.push(`警告 ${warns.join(" · ")}`);
+    if (infos.length || adminInfos.length) parts.push(`提示 ${[...infos, ...adminInfos].join(" · ")}`);
+    elements.healthSignals.textContent = parts.length ? parts.join(" ｜ ") : "无告警 / 警告 / 提示";
+
+    if (Array.isArray(health.errors) && health.errors.length) {
+      elements.healthSub.textContent = `部分读取失败：${health.errors.join("; ")}`;
+    }
+  }
+
   async function loadOverview() {
     const overview = requireSchema(await requestJson(endpoints.overview), OVERVIEW_SCHEMA);
     let recentThree = null;
@@ -535,8 +649,17 @@
       if (error instanceof AdminUiError && error.status === 401) throw error;
       recentThree = { items: [] };
     }
+    let health = null;
+    try {
+      health = requireSchema(await requestJson(endpoints.health), HEALTH_SCHEMA);
+    } catch (error) {
+      if (error instanceof AdminUiError && error.status === 401) throw error;
+      health = null;
+    }
     showApp();
     renderOverview(overview, recentThree);
+    if (health) renderHealth(health);
+    else renderHealthUnread("健康摘要暂不可用");
   }
 
   async function refreshOverview() {
@@ -564,6 +687,7 @@
       showUnreadPipeline();
       renderTraffic({});
       renderBackup({});
+      renderHealthUnread("运行数据暂不可用");
       toast(errorCopy(error));
     } finally {
       overviewLoading = false;

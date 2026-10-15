@@ -44,6 +44,7 @@ describe("Admin ops pipeline UI wiring", () => {
   it("loads overview and recent-three with GET only and no write mutations", () => {
     expect(script).toContain('overview: "/api/admin/operations/overview"');
     expect(script).toContain('recentThree: "/api/admin/bilingual/recent-three"');
+    expect(script).toContain('health: "/api/admin/ops/health"');
     expect(script).toContain('method: options.method ?? "GET"');
     expect(script).toContain("const OVERVIEW_REFRESH_MS = 15000");
     expect(script).toContain("publishBlocked");
@@ -53,6 +54,22 @@ describe("Admin ops pipeline UI wiring", () => {
     expect(script).not.toContain("fresh/verify");
     expect(script).not.toContain("X-CSRF-Token");
     expect(script).not.toContain("Idempotency-Key");
+  });
+
+  it("shows read-only local ops health summary with 8764 deep link", () => {
+    expect(html).toContain('id="ops-health"');
+    expect(html).toContain("本机运维健康");
+    expect(html).toContain("公开站新鲜度");
+    expect(html).toContain("上轮 site.reason");
+    expect(html).toContain("LaunchAgent");
+    expect(html).toContain("告警 / 警告 / 提示");
+    expect(html).toContain('href="http://127.0.0.1:8764/"');
+    expect(html).toContain("深链，非 iframe");
+    expect(script).toContain('HEALTH_SCHEMA = "admin-ops-local-health-v1"');
+    expect(script).toContain("renderHealth");
+    expect(script).not.toContain("8765");
+    expect(script).not.toContain("8766");
+    expect(css).toContain(".ops-health-grid");
   });
 
   it("keeps the five-station track stacked on 390px-class viewports", () => {

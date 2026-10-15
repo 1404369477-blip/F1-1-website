@@ -172,8 +172,8 @@ if (
 assertAdminReleaseRuntimePathContract();
 assertPublicReleaseRuntimePathContract();
 if (
-  ADMIN_RELEASE_RUNTIME_FILE_COUNT !== 207 ||
-  ADMIN_RELEASE_RUNTIME_FILES.length !== 207 ||
+  ADMIN_RELEASE_RUNTIME_FILE_COUNT !== 208 ||
+  ADMIN_RELEASE_RUNTIME_FILES.length !== 208 ||
   adminReleaseRuntimePathSetSha256() !== ADMIN_RELEASE_RUNTIME_PATH_SET_SHA256 ||
   PUBLIC_RELEASE_RUNTIME_FILE_COUNT !== 90 ||
   PUBLIC_RELEASE_RUNTIME_FILES.length !== 90
