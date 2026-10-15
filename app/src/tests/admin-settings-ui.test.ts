@@ -38,7 +38,7 @@ describe("refinement model settings", () => {
     expect(snapshot.current.modelId).toBe("deepseek-chat");
     expect(snapshot.current.displayName).toBe("DeepSeek Chat");
     expect(snapshot.updatedAt).toBeNull();
-    expect(snapshot.catalog.map((item) => item.modelId)).toEqual(["deepseek-chat", "glm-5.3-flash"]);
+    expect(snapshot.catalog.map((item) => item.modelId)).toEqual(["deepseek-chat", "glm-5.3-flash", "glm-4-flash"]);
     expect(snapshot.catalog[1]?.endpointHost).toBe("open.bigmodel.cn");
     expect(snapshot.catalog[0]?.endpointHost).toBe("api.deepseek.com");
     expect(snapshot.catalog[1]?.persistSupported).toBe(false);

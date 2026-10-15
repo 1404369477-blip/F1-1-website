@@ -2,7 +2,7 @@ import { readPrivateFile } from "./private-credential-file.ts";
 
 import { z } from "zod";
 
-export const REFINE_MODEL_IDS = ["deepseek-chat", "glm-5.3-flash"] as const;
+export const REFINE_MODEL_IDS = ["deepseek-chat", "glm-5.3-flash", "glm-4-flash"] as const;
 export type RefineModelId = (typeof REFINE_MODEL_IDS)[number];
 
 export const DEFAULT_REFINE_MODEL_ID = "deepseek-chat" as const;
@@ -57,6 +57,17 @@ export const REFINE_MODEL_CATALOG: Readonly<
     apiKeyInvalidCode: "GLM_API_KEY_INVALID",
     routeId: "route-glm",
     idempotencyPrefix: "glm",
+    persistMachineSummaryDraft: false,
+    errorPrefix: "GLM",
+  }),
+  "glm-4-flash": Object.freeze({
+    modelId: "glm-4-flash",
+    endpoint: "https://open.bigmodel.cn/api/paas/v4/chat/completions",
+    keyFileName: "glm-api-key",
+    apiKeyPattern: GLM_API_KEY_PATTERN,
+    apiKeyInvalidCode: "GLM_API_KEY_INVALID",
+    routeId: "route-glm",
+    idempotencyPrefix: "glm4",
     persistMachineSummaryDraft: false,
     errorPrefix: "GLM",
   }),

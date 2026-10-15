@@ -226,6 +226,14 @@ describe("runtime model fallback", () => {
     expect(fetcher).toHaveBeenCalledTimes(2);
   });
 
+  it("prefers temporary when a quality miss is followed by a rate-limited backup", async () => {
+    const fetcher = vi.fn<typeof fetch>()
+      .mockResolvedValueOnce(Response.json({ choices: [{ message: { content: "invalid private JSON" } }] }))
+      .mockResolvedValueOnce(new Response("private backup failure", { status: 429 }));
+    await expect(refineWithFallback(item, models, fetcher)).rejects.toThrow("MODEL_FALLBACK_TEMPORARY");
+    expect(fetcher).toHaveBeenCalledTimes(2);
+  });
+
   it("bounds permanent and network failures and never exposes provider or transport text", async () => {
     const permanent = vi.fn<typeof fetch>().mockImplementation(async () => new Response("private failure", { status: 403 }));
     await expect(refineWithFallback(item, models, permanent)).rejects.toThrow("MODEL_FALLBACK_PERMANENT");

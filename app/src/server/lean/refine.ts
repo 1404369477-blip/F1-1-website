@@ -16,7 +16,7 @@ export type ModelErrorKind = "temporary" | "permanent" | "quality";
 
 const REQUEST_TIMEOUT_MS = 60_000;
 /** Lean publishing prefers the faster flash model. DeepSeek remains the fallback. */
-export const DEFAULT_LEAN_REFINE_MODEL: RefineModelId = "glm-5.3-flash";
+export const DEFAULT_LEAN_REFINE_MODEL: RefineModelId = "glm-4-flash";
 const HAN = /\p{Script=Han}/u;
 
 const NAME_GUIDE = [
@@ -52,7 +52,10 @@ function readKey(fileName: string): string | null {
 
 export function leanRefineModelOrder(preferred?: string): RefineModelId[] {
   const first = preferred && isRefineModelId(preferred) ? preferred : DEFAULT_LEAN_REFINE_MODEL;
-  return [first, ...REFINE_MODEL_IDS.filter((id) => id !== first)];
+  const rest = REFINE_MODEL_IDS.filter((id) => id !== first);
+  const glmRest = rest.filter((id) => id.startsWith("glm-"));
+  const otherRest = rest.filter((id) => !id.startsWith("glm-"));
+  return [first, ...glmRest, ...otherRest];
 }
 
 export function resolveModels(preferred: string = DEFAULT_LEAN_REFINE_MODEL): ModelEndpoint[] {
@@ -158,8 +161,10 @@ export function parseRefineOutput(raw: string, requireRelevance: boolean, paragr
   let detailZh: string[] | null = null;
   if (paragraphCount > 0) {
     if (!Array.isArray(value.detailZh)) throw new Error("MODEL_OUTPUT_INVALID_DETAIL");
-    if (value.detailZh.length !== paragraphCount) throw new Error(`MODEL_OUTPUT_INVALID_DETAIL_LENGTH_${value.detailZh.length}_${paragraphCount}`);
-    detailZh = value.detailZh.map((paragraph) => typeof paragraph === "string" ? paragraph.trim() : "");
+    // Flash models sometimes over-segment; keep source-aligned prefix rather than failing the whole draft.
+    const detailRaw = value.detailZh.length > paragraphCount ? value.detailZh.slice(0, paragraphCount) : value.detailZh;
+    if (detailRaw.length !== paragraphCount) throw new Error(`MODEL_OUTPUT_INVALID_DETAIL_LENGTH_${value.detailZh.length}_${paragraphCount}`);
+    detailZh = detailRaw.map((paragraph) => typeof paragraph === "string" ? paragraph.trim() : "");
     if (detailZh.some((paragraph) => paragraph.length === 0)) throw new Error("MODEL_OUTPUT_INVALID_DETAIL_EMPTY");
     const untranslated = detailZh.findIndex((paragraph, index) => !HAN.test(paragraph) && expectsChinese(sources[index] ?? "the team said this sentence"));
     if (untranslated >= 0) throw new Error(`MODEL_OUTPUT_INVALID_DETAIL_LANGUAGE_${untranslated}`);
@@ -272,6 +277,11 @@ function hasUntranslatedCopy(result: RefineResult): boolean {
   );
 }
 
+function isDetailQualityError(error: unknown): boolean {
+  const code = error instanceof Error ? error.message : "";
+  return code.startsWith("MODEL_OUTPUT_INVALID_DETAIL");
+}
+
 export async function refineItem(item: StoredItem, model: ModelEndpoint, fetcher: typeof fetch = fetch, paragraphs: readonly string[] | null = null): Promise<RefineResult> {
   const overviewParagraphs = paragraphs && paragraphs.length > 0 ? paragraphs.slice(0, TRANSLATION_CHUNK) : null;
   const finish = async (overview: RefineResult): Promise<RefineResult> => {
@@ -280,16 +290,37 @@ export async function refineItem(item: StoredItem, model: ModelEndpoint, fetcher
     const initial = overview.detailZh ?? [];
     return { ...overview, detailZh: [...initial, ...await translateParagraphs(model, fetcher, paragraphs.slice(initial.length))] };
   };
-  const overview = await requestRefine(item, model, fetcher, overviewParagraphs);
-  let result = await finish(overview);
+  const run = async (includeOverviewDetail: boolean, correction = false): Promise<RefineResult> => {
+    const overview = await requestRefine(item, model, fetcher, includeOverviewDetail ? overviewParagraphs : null, correction);
+    return finish(overview);
+  };
+  let result: RefineResult;
+  try {
+    result = await run(true);
+  } catch (error) {
+    // Flash models often leave English in detailZh[0] during the combined overview call.
+    // Recover with title/summary only, then the dedicated paragraph translator.
+    if (!paragraphs?.length || !isDetailQualityError(error)) throw error;
+    result = await run(false);
+  }
   let correctionFailure: unknown;
   if (chineseCopyHasStray(result) || hasUntranslatedCopy(result)) {
     try {
-      const again = await finish(await requestRefine(item, model, fetcher, overviewParagraphs, true));
+      const again = await run(true, true);
       if (again.kind === "ready" && !chineseCopyHasStray(again) && !hasUntranslatedCopy(again)) result = again;
     } catch (error) {
-      correctionFailure = error;
-      // Keep the first Chinese copy when the second pass fails.
+      if (isDetailQualityError(error) && paragraphs?.length) {
+        try {
+          const again = await run(false, true);
+          if (again.kind === "ready" && !chineseCopyHasStray(again) && !hasUntranslatedCopy(again)) result = again;
+          else correctionFailure = error;
+        } catch (retryError) {
+          correctionFailure = retryError;
+        }
+      } else {
+        correctionFailure = error;
+        // Keep the first Chinese copy when the second pass fails.
+      }
     }
   }
   if (hasUntranslatedCopy(result)) {
@@ -314,6 +345,8 @@ export async function refineWithFallback(item: StoredItem, models: readonly Mode
       failures.push(classifyModelError(error));
     }
   }
+  // Prefer temporary when any model hit rate-limit/network so quality attempts are not burned while backups are unavailable.
+  // Permanent failures (402/401) alone must not convert a primary quality miss into temporary retries.
   const kind = failures.includes("temporary") ? "TEMPORARY" : failures.includes("quality") ? "QUALITY" : "PERMANENT";
   throw new Error(`MODEL_FALLBACK_${kind}`);
 }

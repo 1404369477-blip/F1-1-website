@@ -25,7 +25,8 @@ const HashSchema = z.string().regex(/^[0-9a-f]{64}$/);
 
 const DISPLAY_NAMES: Readonly<Record<RefineModelId, string>> = Object.freeze({
   "deepseek-chat": "DeepSeek Chat",
-  "glm-5.3-flash": "GLM 5.3 Flash"
+  "glm-5.3-flash": "GLM 5.3 Flash",
+  "glm-4-flash": "GLM 4 Flash"
 });
 
 export const RefinementModelMutationSchema = z.object({
