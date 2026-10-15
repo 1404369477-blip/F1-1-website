@@ -19,7 +19,7 @@ import { buildSiteBundle } from "../server/lean/site-bundle.ts";
 import { LeanStore, linkKey, type StoredItem } from "../server/lean/store.ts";
 import { contentTypeForTeamPost } from "../server/lean/x-category.ts";
 import { isNearDuplicateTweet, tweetSkipReason } from "../server/lean/x-filter.ts";
-import { resolvePublishSetting, xAccountDecision, xBackoffAfterAttempt } from "../server/lean/cycle.ts";
+import { countsTowardXBackoff, resolvePublishSetting, xAccountDecision, xBackoffAfterAttempt } from "../server/lean/cycle.ts";
 import { retainedGenerationIds, stageSite } from "../server/lean/pages-publish.ts";
 
 const rssSource: LeanSource = { sourceId: "motorsport-f1-news", platform: "rss", displayName: "Motorsport.com", feedUrl: "https://example.test/rss", contentType: "race_news", requireRelevance: false };
@@ -301,12 +301,20 @@ describe("lean publish setting", () => {
 
 describe("lean X fetch schedule", () => {
   const now = Date.parse("2026-09-26T12:00:00Z");
-  it("fetches inside a race window and waits 30 minutes outside it", () => {
-    expect(xAccountDecision({ now, lastAttemptAt: now - 5 * 60 * 1000, dense: true, pausedUntil: null })).toBe("fetch");
-    expect(xAccountDecision({ now, lastAttemptAt: now - 10 * 60 * 1000, dense: false, pausedUntil: null })).toBe("quiet");
-    expect(xAccountDecision({ now, lastAttemptAt: now - 31 * 60 * 1000, dense: false, pausedUntil: null })).toBe("fetch");
+  it("fetches frequent accounts densely and waits 20 minutes outside a race window", () => {
+    expect(xAccountDecision({ now, lastAttemptAt: now - 5 * 60 * 1000, dense: true, pausedUntil: null, fetchTier: "frequent" })).toBe("fetch");
+    expect(xAccountDecision({ now, lastAttemptAt: now - 10 * 60 * 1000, dense: false, pausedUntil: null, fetchTier: "frequent" })).toBe("quiet");
+    expect(xAccountDecision({ now, lastAttemptAt: now - 21 * 60 * 1000, dense: false, pausedUntil: null, fetchTier: "frequent" })).toBe("fetch");
   });
-  it("pauses an account after three timeouts and keeps it paused", () => {
+  it("keeps sparse accounts quiet even in dense mode", () => {
+    expect(xAccountDecision({ now, lastAttemptAt: now - 30 * 60 * 1000, dense: true, pausedUntil: null, fetchTier: "sparse" })).toBe("quiet");
+    expect(xAccountDecision({ now, lastAttemptAt: now - 3 * 60 * 60 * 1000 - 1, dense: true, pausedUntil: null, fetchTier: "sparse" })).toBe("fetch");
+  });
+  it("pauses an account after three backoff-worthy failures and counts 503/403", () => {
+    expect(countsTowardXBackoff("FEED_HTTP_503")).toBe(true);
+    expect(countsTowardXBackoff("FEED_HTTP_403")).toBe(true);
+    expect(countsTowardXBackoff("FEED_HTTP_429")).toBe(false);
+    expect(countsTowardXBackoff("timeout")).toBe(true);
     expect(xBackoffAfterAttempt(0, true, now).consecutiveTimeouts).toBe(1);
     expect(xBackoffAfterAttempt(1, true, now).consecutiveTimeouts).toBe(2);
     const paused = xBackoffAfterAttempt(2, true, now);
@@ -595,6 +603,29 @@ describe("lean media localization", () => {
     const third = await localizeImages(items, directory, new Date("2026-09-25T03:10:00Z"), { fetcher });
     expect(third.report.failed).toBe(1);
     expect(JSON.parse(readFileSync(join(directory, "failures.json"), "utf8"))[mediaKey(missing)]).toMatchObject({ attempts: 2, error: "IMAGE_HTTP_404" });
+  });
+
+  it("does not download missing pictures for items older than downloadSince", async () => {
+    directory = mkdtempSync(join(tmpdir(), "lean-media-age-"));
+    const png = await sharp({ create: { width: 800, height: 400, channels: 3, background: "#111111" } }).png().toBuffer();
+    const recentUrl = "https://cdn.motorsport.com/recent.jpg";
+    const oldUrl = "https://cdn.motorsport.com/old.jpg";
+    const calls: string[] = [];
+    const fetcher = (async (url: string) => {
+      calls.push(url);
+      return new Response(new Uint8Array(png), { headers: { "content-type": "image/png" } });
+    }) as unknown as typeof fetch;
+    const image = (url: string) => ({ url, mimeType: "image/jpeg" as const, declaredBytes: 1 });
+    const now = new Date("2026-10-11T00:00:00Z");
+    const items = [
+      readyItem(1, { image: image(recentUrl), sourcePublishedAt: "2026-10-09T00:00:00.000Z", firstSeenAt: "2026-10-09T00:00:00.000Z" }),
+      readyItem(2, { image: image(oldUrl), sourcePublishedAt: "2026-09-01T00:00:00.000Z", firstSeenAt: "2026-09-01T00:00:00.000Z" })
+    ];
+    const result = await localizeImages(items, directory, now, { fetcher, downloadSince: now.getTime() - 7 * 24 * 3600 * 1000 });
+    expect(calls).toEqual([recentUrl]);
+    expect(result.report).toEqual({ cached: 0, downloaded: 1, failed: 0, deferred: 0 });
+    expect(result.media.has(recentUrl)).toBe(true);
+    expect(result.media.has(oldUrl)).toBe(false);
   });
 
   it("keeps a picture an older published generation still uses", async () => {

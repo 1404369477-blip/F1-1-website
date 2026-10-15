@@ -4,6 +4,8 @@ import { join } from "node:path";
 export const LEAN_CONTENT_TYPES = ["race_news", "driver_social", "legends_history", "paddock_fun"] as const;
 export type LeanContentType = typeof LEAN_CONTENT_TYPES[number];
 
+export type XFetchTier = "frequent" | "sparse";
+
 export type LeanSource = Readonly<{
   sourceId: string;
   platform: "rss" | "x";
@@ -12,6 +14,8 @@ export type LeanSource = Readonly<{
   contentType: LeanContentType;
   /** Low-signal accounts must pass the model's F1 relevance check. */
   requireRelevance: boolean;
+  /** X only: 常更层 vs 稀更层. RSS omits this. */
+  fetchTier?: XFetchTier;
 }>;
 
 export const LEAN_DATA_ROOT = "/Users/chanai/F1-1-website/lean-data";
@@ -42,6 +46,8 @@ export const RSSHUB_ACCESS_KEY_PATH = "/Users/chanai/Library/Application Support
 
 export const SITE_MAX_ITEMS = 1500;
 export const SITE_MAX_AGE_DAYS = 60;
+/** Missing media is downloaded only for items this young (source_published_at or first_seen); older keep cache only. */
+export const MEDIA_DOWNLOAD_MAX_AGE_DAYS = 7;
 export const REFINE_BATCH_LIMIT = 40;
 
 const RSS_SOURCES: readonly LeanSource[] = [
@@ -50,20 +56,21 @@ const RSS_SOURCES: readonly LeanSource[] = [
   { sourceId: "skysports-f1-news", platform: "rss", displayName: "Sky Sports F1", feedUrl: "https://www.skysports.com/rss/12433", contentType: "race_news", requireRelevance: false }
 ];
 
-type XAccount = readonly [handle: string, contentType: LeanContentType, requireRelevance: boolean];
+type XAccount = readonly [handle: string, contentType: LeanContentType, requireRelevance: boolean, fetchTier: XFetchTier];
 
+/** 常更层 = frequent (core ~17); 稀更层 = sparse (legendary / casual / rarely updating). */
 const X_ACCOUNTS: readonly XAccount[] = [
-  ["F1", "race_news", false], ["fia", "race_news", false],
-  ["McLarenF1", "race_news", false], ["ScuderiaFerrari", "race_news", false], ["MercedesAMGF1", "race_news", false],
-  ["redbullracing", "race_news", false], ["WilliamsRacing", "race_news", false], ["AlpineF1Team", "race_news", false],
-  ["AstonMartinF1", "race_news", false], ["HaasF1Team", "race_news", false], ["audif1_", "race_news", false],
-  ["visacashapprb", "race_news", false],
-  ["LewisHamilton", "driver_social", false], ["Charles_Leclerc", "driver_social", false], ["LandoNorris", "driver_social", false],
-  ["Max33Verstappen", "driver_social", false], ["GeorgeRussell63", "driver_social", false], ["PierreGASLY", "driver_social", false],
-  ["alex_albon", "driver_social", false], ["alo_oficial", "driver_social", false],
-  ["ChrisMedlandF1", "race_news", false], ["tgruener", "race_news", false],
-  ["ZhouGuanyu24", "legends_history", true], ["NicoRosberg", "legends_history", true],
-  ["RichardHammond", "paddock_fun", true], ["MrJamesMay", "paddock_fun", true], ["JeremyClarkson", "paddock_fun", true]
+  ["F1", "race_news", false, "frequent"], ["fia", "race_news", false, "frequent"],
+  ["McLarenF1", "race_news", false, "frequent"], ["ScuderiaFerrari", "race_news", false, "frequent"], ["MercedesAMGF1", "race_news", false, "frequent"],
+  ["redbullracing", "race_news", false, "frequent"], ["WilliamsRacing", "race_news", false, "frequent"], ["AlpineF1Team", "race_news", false, "frequent"],
+  ["AstonMartinF1", "race_news", false, "frequent"], ["HaasF1Team", "race_news", false, "frequent"],
+  ["LewisHamilton", "driver_social", false, "frequent"], ["Charles_Leclerc", "driver_social", false, "frequent"], ["LandoNorris", "driver_social", false, "frequent"],
+  ["Max33Verstappen", "driver_social", false, "frequent"], ["GeorgeRussell63", "driver_social", false, "frequent"],
+  ["ChrisMedlandF1", "race_news", false, "frequent"], ["tgruener", "race_news", false, "frequent"],
+  ["audif1_", "race_news", false, "sparse"], ["visacashapprb", "race_news", false, "sparse"],
+  ["PierreGASLY", "driver_social", false, "sparse"], ["alex_albon", "driver_social", false, "sparse"], ["alo_oficial", "driver_social", false, "sparse"],
+  ["ZhouGuanyu24", "legends_history", true, "sparse"], ["NicoRosberg", "legends_history", true, "sparse"],
+  ["RichardHammond", "paddock_fun", true, "sparse"], ["MrJamesMay", "paddock_fun", true, "sparse"], ["JeremyClarkson", "paddock_fun", true, "sparse"]
 ];
 
 export function xSourceId(handle: string): string {
@@ -75,13 +82,14 @@ export function leanSources(enabledHandles: readonly string[] | "all"): LeanSour
   const accessKey = readFileSync(RSSHUB_ACCESS_KEY_PATH, "utf8").trim();
   const x = X_ACCOUNTS
     .filter(([handle]) => enabledHandles === "all" || enabledHandles.includes(handle))
-    .map(([handle, contentType, requireRelevance]): LeanSource => ({
+    .map(([handle, contentType, requireRelevance, fetchTier]): LeanSource => ({
       sourceId: xSourceId(handle),
       platform: "x",
       displayName: `@${handle}`,
       feedUrl: `${RSSHUB_ORIGIN}/twitter/user/${handle}/excludeReplies=1&includeRts=0?key=${accessKey}`,
       contentType,
-      requireRelevance
+      requireRelevance,
+      fetchTier
     }));
   return [...RSS_SOURCES, ...x];
 }

@@ -1,17 +1,17 @@
 import { statSync } from "node:fs";
 
-import { leanPath, leanSources } from "../src/server/lean/config.ts";
+import { leanPath, leanSources, MEDIA_DOWNLOAD_MAX_AGE_DAYS } from "../src/server/lean/config.ts";
 import { fetchFeed } from "../src/server/lean/feed.ts";
 import { localizeImages, mediaKey } from "../src/server/lean/media.ts";
 import { LeanStore, linkKey } from "../src/server/lean/store.ts";
 
-const WEEK_MS = 7 * 24 * 3600 * 1000;
+const RECENT_MS = MEDIA_DOWNLOAD_MAX_AGE_DAYS * 24 * 3600 * 1000;
 
 /** Refills images on recent X posts from the local RSSHub. Other columns stay as they are. */
 async function main(): Promise<void> {
   const store = new LeanStore(leanPath("store.sqlite"));
   const now = new Date();
-  const since = now.getTime() - WEEK_MS;
+  const since = now.getTime() - RECENT_MS;
   const recent = new Map(store.readyItems().filter((item) => item.platform === "x" && Date.parse(item.sourcePublishedAt ?? item.firstSeenAt) >= since).map((item) => [linkKey(item.link), item]));
   const sources = leanSources("all").filter((source) => source.platform === "x");
   let matched = 0;
@@ -35,7 +35,7 @@ async function main(): Promise<void> {
       }
     }
     const updated = store.readyItems().filter((item) => item.platform === "x" && recent.has(linkKey(item.link)));
-    const { report } = await localizeImages(updated, leanPath("media"), now);
+    const { report } = await localizeImages(updated, leanPath("media"), now, { downloadSince: since });
     let addedBytes = 0;
     let addedFiles = 0;
     for (const item of updated) {

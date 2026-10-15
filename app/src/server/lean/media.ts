@@ -66,7 +66,7 @@ function readFailures(path: string): Record<string, Failure> {
  * A picture that cannot be fetched is left out (the story shows no picture) and retried a few times.
  */
 export async function localizeImages(items: readonly StoredItem[], cacheDir: string, now: Date,
-  options: { fetcher?: typeof fetch; encode?: Encoder; retainKeys?: readonly string[] } = {}): Promise<{ media: LocalMedia; report: MediaReport }> {
+  options: { fetcher?: typeof fetch; encode?: Encoder; retainKeys?: readonly string[]; /** Only fetch missing files for items at/after this epoch ms; older stories still use cache. */ downloadSince?: number } = {}): Promise<{ media: LocalMedia; report: MediaReport }> {
   const fetcher = options.fetcher ?? fetch;
   const encode = options.encode ?? defaultEncoder;
   mkdirSync(cacheDir, { recursive: true, mode: 0o700 });
@@ -75,8 +75,15 @@ export async function localizeImages(items: readonly StoredItem[], cacheDir: str
   const media = new Map<string, LocalImage>();
   const report: MediaReport = { cached: 0, downloaded: 0, failed: 0, deferred: 0 };
 
-  const urls = [...new Set(items.flatMap((item) => (item.images.length > 0 ? item.images : (item.image ? [item.image] : []))
-    .filter((image) => !isAgencyImage(image.url)).map((image) => image.url)))];
+  const itemImages = (item: StoredItem) => (item.images.length > 0 ? item.images : (item.image ? [item.image] : []))
+    .filter((image) => !isAgencyImage(image.url)).map((image) => image.url);
+  const urls = [...new Set(items.flatMap(itemImages))];
+  const downloadable = new Set<string>();
+  for (const item of items) {
+    const stamp = Date.parse(item.sourcePublishedAt ?? item.firstSeenAt);
+    if (options.downloadSince !== undefined && !(Number.isFinite(stamp) && stamp >= options.downloadSince)) continue;
+    for (const url of itemImages(item)) downloadable.add(url);
+  }
   const missing: string[] = [];
   for (const url of urls) {
     const key = mediaKey(url);
@@ -86,6 +93,7 @@ export async function localizeImages(items: readonly StoredItem[], cacheDir: str
       report.cached++;
       continue;
     }
+    if (!downloadable.has(url)) continue;
     const failure = failures[key];
     if (failure && (failure.attempts >= MAX_ATTEMPTS || now.getTime() - Date.parse(failure.lastAt) < RETRY_AFTER_MS)) continue;
     missing.push(url);

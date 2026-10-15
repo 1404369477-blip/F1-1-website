@@ -3,7 +3,7 @@ import { createHash } from "node:crypto";
 import { closeSync, existsSync, mkdirSync, openSync, readdirSync, readFileSync, renameSync, unlinkSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-import { DEFAULT_EDITORIAL_DOMAINS, leanPath, leanSources, REFINE_BATCH_LIMIT, SITE_MAX_AGE_DAYS, SITE_MAX_ITEMS, type LeanSource } from "./config.ts";
+import { DEFAULT_EDITORIAL_DOMAINS, leanPath, leanSources, MEDIA_DOWNLOAD_MAX_AGE_DAYS, REFINE_BATCH_LIMIT, SITE_MAX_AGE_DAYS, SITE_MAX_ITEMS, type LeanSource } from "./config.ts";
 import { isDenseWindow, needsWinnerRefresh, type F1Calendar } from "../../features/calendar/race-strip-model.ts";
 import { importEditorInbox, markInboxPublished, refreshEditorTweets, type EditorInboxSettings, type InboxReport } from "./editor-inbox.ts";
 import { gcPagesCheckout } from "./cleanup.ts";
@@ -21,11 +21,17 @@ import { contentTypeForTeamPost } from "./x-category.ts";
 
 /** Entries older than this on first sight are history, not news; they are not summarized. */
 const MAX_NEW_ENTRY_AGE_MS = 3 * 24 * 3600 * 1000;
-/** Six parallel X fetches through the local RSSHub exceeded the 20s fetch timeout. */
-const FETCH_CONCURRENCY = 3;
-/** Outside a race window, each X account is fetched at most twice an hour. */
-const X_QUIET_INTERVAL_MS = 30 * 60 * 1000;
+/** Parallel feed fetches: keep normal low; dense may go up to 3. */
+const FETCH_CONCURRENCY_NORMAL = 2;
+const FETCH_CONCURRENCY_DENSE = 3;
+/** 常更层: tightened from 30m; outside dense, fetch at most every 20 minutes. */
+const X_QUIET_FREQUENT_MS = 20 * 60 * 1000;
+/** 稀更层: long quiet even inside a race window (dense must not max these out). */
+const X_QUIET_SPARSE_MS = 3 * 60 * 60 * 1000;
 const X_PAUSE_MS = 2 * 60 * 60 * 1000;
+/** Soft per-cycle cap on X accounts actually fetched (frequent preferred). */
+const X_FETCH_BUDGET_NORMAL = 12;
+const X_FETCH_BUDGET_DENSE = 20;
 const CALENDAR_QUIET_MS = 6 * 60 * 60 * 1000;
 const REFINE_CONCURRENCY = 4;
 
@@ -34,10 +40,21 @@ type LeanSettings = {
   publish: boolean;
   editorialDomains?: string[];
   editorInbox?: Partial<EditorInboxSettings>;
-  /** Preferred refine model. `glm-5.3-flash` is used when this is absent. */
+  /** Preferred refine model. `glm-4-flash` is used when this is absent. */
   LEAN_REFINE_MODEL?: string;
   /** Domain → whether full text may be shown. Missing domains stay allowed. */
   fullTextAllowed?: Record<string, boolean>;
+  /** Optional overrides for X fetch cadence / concurrency. */
+  xFetch?: {
+    frequentQuietMinutes?: number;
+    sparseQuietMinutes?: number;
+    concurrencyNormal?: number;
+    concurrencyDense?: number;
+    maxXPerCycleNormal?: number;
+    maxXPerCycleDense?: number;
+  };
+  /** Only download missing pictures for items newer than this many days; cached files still serve older stories. */
+  mediaDownloadMaxAgeDays?: number;
 };
 
 export type CycleReport = {
@@ -105,33 +122,99 @@ function isTimeout(message: string): boolean {
   return /timeout|aborted|timed out/i.test(message);
 }
 
-export function xAccountDecision(options: { now: number; lastAttemptAt: number | null; dense: boolean; pausedUntil: number | null }): "fetch" | "quiet" | "paused" {
+/** Timeouts plus hard feed denials from RSSHub / upstream. */
+export function countsTowardXBackoff(message: string): boolean {
+  return isTimeout(message) || message === "FEED_HTTP_503" || message === "FEED_HTTP_403";
+}
+
+function quietIntervalFor(tier: "frequent" | "sparse", settings?: LeanSettings["xFetch"]): number {
+  if (tier === "sparse") {
+    const minutes = settings?.sparseQuietMinutes;
+    return typeof minutes === "number" && minutes > 0 ? minutes * 60 * 1000 : X_QUIET_SPARSE_MS;
+  }
+  const minutes = settings?.frequentQuietMinutes;
+  return typeof minutes === "number" && minutes > 0 ? minutes * 60 * 1000 : X_QUIET_FREQUENT_MS;
+}
+
+export function xAccountDecision(options: {
+  now: number;
+  lastAttemptAt: number | null;
+  dense: boolean;
+  pausedUntil: number | null;
+  fetchTier?: "frequent" | "sparse";
+  quietIntervalMs?: number;
+}): "fetch" | "quiet" | "paused" {
   if (options.pausedUntil !== null && options.pausedUntil > options.now) return "paused";
-  if (options.dense) return "fetch";
-  if (options.lastAttemptAt !== null && options.now - options.lastAttemptAt < X_QUIET_INTERVAL_MS) return "quiet";
+  const tier = options.fetchTier ?? "frequent";
+  // Dense may intensify 常更层; 稀更层 always keeps its quiet interval.
+  if (options.dense && tier !== "sparse") return "fetch";
+  const quietMs = options.quietIntervalMs ?? (tier === "sparse" ? X_QUIET_SPARSE_MS : X_QUIET_FREQUENT_MS);
+  if (options.lastAttemptAt !== null && options.now - options.lastAttemptAt < quietMs) return "quiet";
   return "fetch";
 }
 
-export function xBackoffAfterAttempt(consecutiveTimeouts: number, timedOut: boolean, now: number): { consecutiveTimeouts: number; pausedUntil: string | null; justPaused: boolean } {
-  if (!timedOut) return { consecutiveTimeouts: 0, pausedUntil: null, justPaused: false };
+/** `consecutiveTimeouts` in x-backoff.json counts consecutive backoff-worthy failures (timeout / 503 / 403). */
+export function xBackoffAfterAttempt(consecutiveTimeouts: number, failed: boolean, now: number): { consecutiveTimeouts: number; pausedUntil: string | null; justPaused: boolean } {
+  if (!failed) return { consecutiveTimeouts: 0, pausedUntil: null, justPaused: false };
   const next = consecutiveTimeouts + 1;
   if (next >= 3) return { consecutiveTimeouts: 0, pausedUntil: new Date(now + X_PAUSE_MS).toISOString(), justPaused: true };
   return { consecutiveTimeouts: next, pausedUntil: null, justPaused: false };
 }
 
-/** X accounts follow the race window. Three timeouts in a row pause that account for two hours. */
-function xSourcesDue(sources: readonly LeanSource[], now: Date, dense: boolean, lastAttempt: (sourceId: string) => string | null): { due: LeanSource[]; skipped: number; paused: string[] } {
+function fetchConcurrency(dense: boolean, settings?: LeanSettings["xFetch"]): number {
+  const raw = dense ? settings?.concurrencyDense : settings?.concurrencyNormal;
+  const fallback = dense ? FETCH_CONCURRENCY_DENSE : FETCH_CONCURRENCY_NORMAL;
+  if (typeof raw !== "number" || !Number.isFinite(raw)) return fallback;
+  return Math.max(1, Math.min(dense ? FETCH_CONCURRENCY_DENSE : FETCH_CONCURRENCY_NORMAL, Math.floor(raw)));
+}
+
+function xFetchBudget(dense: boolean, settings?: LeanSettings["xFetch"]): number {
+  const raw = dense ? settings?.maxXPerCycleDense : settings?.maxXPerCycleNormal;
+  const fallback = dense ? X_FETCH_BUDGET_DENSE : X_FETCH_BUDGET_NORMAL;
+  if (typeof raw !== "number" || !Number.isFinite(raw)) return fallback;
+  return Math.max(1, Math.floor(raw));
+}
+
+/** Prefer 常更层, then accounts idle longest, then apply the per-cycle X budget. */
+function applyXFetchBudget(due: LeanSource[], budget: number, lastAttempt: (sourceId: string) => string | null): { due: LeanSource[]; budgetSkipped: number } {
+  const rss = due.filter((source) => source.platform !== "x");
+  const x = due.filter((source) => source.platform === "x");
+  if (x.length <= budget) return { due, budgetSkipped: 0 };
+  const ranked = [...x].sort((a, b) => {
+    const tierA = a.fetchTier === "sparse" ? 1 : 0;
+    const tierB = b.fetchTier === "sparse" ? 1 : 0;
+    if (tierA !== tierB) return tierA - tierB;
+    const atA = lastAttempt(a.sourceId);
+    const atB = lastAttempt(b.sourceId);
+    const tA = atA === null ? 0 : Date.parse(atA);
+    const tB = atB === null ? 0 : Date.parse(atB);
+    return (Number.isFinite(tA) ? tA : 0) - (Number.isFinite(tB) ? tB : 0);
+  });
+  return { due: [...rss, ...ranked.slice(0, budget)], budgetSkipped: ranked.length - budget };
+}
+
+/** X accounts follow tier quiet rules. Three backoff-worthy failures in a row pause that account for two hours. */
+function xSourcesDue(
+  sources: readonly LeanSource[],
+  now: Date,
+  dense: boolean,
+  lastAttempt: (sourceId: string) => string | null,
+  xFetch?: LeanSettings["xFetch"]
+): { due: LeanSource[]; skipped: number; paused: string[] } {
   const backoff = readJson<XBackoff>(leanPath("x-backoff.json"), {});
   const paused: string[] = [];
   let skipped = 0;
-  const due = sources.filter((source) => {
+  const candidates = sources.filter((source) => {
     if (source.platform !== "x") return true;
     const state = backoff[source.sourceId];
+    const tier = source.fetchTier === "sparse" ? "sparse" : "frequent";
     const decision = xAccountDecision({
       now: now.getTime(),
       lastAttemptAt: lastAttempt(source.sourceId) === null ? null : Date.parse(lastAttempt(source.sourceId)!),
       dense,
-      pausedUntil: state?.pausedUntil ? Date.parse(state.pausedUntil) : null
+      pausedUntil: state?.pausedUntil ? Date.parse(state.pausedUntil) : null,
+      fetchTier: tier,
+      quietIntervalMs: quietIntervalFor(tier, xFetch)
     });
     if (decision === "paused") {
       paused.push(source.sourceId);
@@ -143,13 +226,14 @@ function xSourcesDue(sources: readonly LeanSource[], now: Date, dense: boolean, 
     }
     return true;
   });
-  return { due, skipped, paused };
+  const budgeted = applyXFetchBudget(candidates, xFetchBudget(dense, xFetch), lastAttempt);
+  return { due: budgeted.due, skipped: skipped + budgeted.budgetSkipped, paused };
 }
 
 function rememberXResult(sourceId: string, error: string | null, now: Date): boolean {
   const backoff = readJson<XBackoff>(leanPath("x-backoff.json"), {});
   const current = backoff[sourceId] ?? { consecutiveTimeouts: 0, pausedUntil: null };
-  const next = xBackoffAfterAttempt(current.consecutiveTimeouts, error !== null && isTimeout(error), now.getTime());
+  const next = xBackoffAfterAttempt(current.consecutiveTimeouts, error !== null && countsTowardXBackoff(error), now.getTime());
   backoff[sourceId] = { consecutiveTimeouts: next.consecutiveTimeouts, pausedUntil: next.pausedUntil };
   writeJsonAtomic(leanPath("x-backoff.json"), backoff);
   return next.justPaused;
@@ -200,13 +284,13 @@ function acquireLock(path: string): (() => void) | null {
   return null;
 }
 
-async function collect(store: LeanStore, sources: readonly LeanSource[], now: Date): Promise<Pick<CycleReport, "sources" | "newEntries"> & { pausedNow: string[] }> {
+async function collect(store: LeanStore, sources: readonly LeanSource[], now: Date, concurrency: number): Promise<Pick<CycleReport, "sources" | "newEntries"> & { pausedNow: string[] }> {
   const failed: { sourceId: string; error: string }[] = [];
   const pausedNow: string[] = [];
   let newEntries = 0;
   const cutoff = now.getTime() - MAX_NEW_ENTRY_AGE_MS;
   const outcomes: { sourceId: string; platform: LeanSource["platform"]; error: string | null }[] = [];
-  await mapLimit(sources, FETCH_CONCURRENCY, async (source) => {
+  await mapLimit(sources, concurrency, async (source) => {
     try {
       const entries = (await fetchFeed(source)).filter((entry) => entry.sourcePublishedAt === null || Date.parse(entry.sourcePublishedAt) >= cutoff);
       newEntries += store.addEntries(source, entries, now.toISOString());
@@ -334,9 +418,15 @@ function publishedMediaKeys(): string[] {
   return readdirSync(directory).filter((name) => name.endsWith(".webp")).map((name) => name.slice(0, -".webp".length));
 }
 
-async function localizeMedia(items: readonly StoredItem[], now: Date): Promise<{ media: LocalMedia; report: CycleReport["media"] }> {
+function mediaDownloadMaxAgeDays(settings: LeanSettings): number {
+  const raw = settings.mediaDownloadMaxAgeDays;
+  return typeof raw === "number" && Number.isFinite(raw) && raw > 0 ? raw : MEDIA_DOWNLOAD_MAX_AGE_DAYS;
+}
+
+async function localizeMedia(items: readonly StoredItem[], now: Date, maxAgeDays: number): Promise<{ media: LocalMedia; report: CycleReport["media"] }> {
   try {
-    const { media, report } = await localizeImages(items, leanPath("media"), now, { retainKeys: publishedMediaKeys() });
+    const downloadSince = now.getTime() - maxAgeDays * 24 * 3600 * 1000;
+    const { media, report } = await localizeImages(items, leanPath("media"), now, { retainKeys: publishedMediaKeys(), downloadSince });
     return { media, report: { ...report, error: null } };
   } catch (error) {
     return { media: new Map(), report: { cached: 0, downloaded: 0, failed: 0, deferred: 0, error: error instanceof Error ? error.message.slice(0, 200) : "UNKNOWN" } };
@@ -375,8 +465,8 @@ export async function runCycle(now: Date = new Date()): Promise<CycleReport | nu
     const calendar = refreshCalendar(now);
     const schedule = readCalendar();
     const dense = schedule ? isDenseWindow(schedule, now) : false;
-    const xPlan = xSourcesDue(leanSources(settings.xHandles), now, dense, (sourceId) => store.lastAttemptAt(sourceId));
-    const collected = await collect(store, xPlan.due, now);
+    const xPlan = xSourcesDue(leanSources(settings.xHandles), now, dense, (sourceId) => store.lastAttemptAt(sourceId), settings.xFetch);
+    const collected = await collect(store, xPlan.due, now, fetchConcurrency(dense, settings.xFetch));
     const { pausedNow, ...collectedReport } = collected;
     const xFiltered = retireFilteredPosts(store);
     retagTeamDaily(store);
@@ -388,7 +478,7 @@ export async function runCycle(now: Date = new Date()): Promise<CycleReport | nu
     const archivedItems = store.archivedOutside(readyItems);
     const heldItems = store.held();
     const denied = new Set(Object.entries(settings.fullTextAllowed ?? {}).filter(([, allowed]) => allowed === false).map(([domain]) => domain));
-    const localized = await localizeMedia([...heldItems, ...readyItems, ...archivedItems], now);
+    const localized = await localizeMedia([...heldItems, ...readyItems, ...archivedItems], now, mediaDownloadMaxAgeDays(settings));
     const bundle = buildSiteBundle(readyItems, now.toISOString(), localized.media, denied, archivedItems);
     if (!settings.publish || heldItems.length > 0) {
       try {
