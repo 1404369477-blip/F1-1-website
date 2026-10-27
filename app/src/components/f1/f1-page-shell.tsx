@@ -190,7 +190,10 @@ export function F1PageShell({
       window.scrollTo({ top: 0, left: 0, behavior: "auto" });
     };
     const reducedMotion = prefersReducedMotion();
-    window.scrollTo({ top: 0, left: 0, behavior: reducedMotion ? "auto" : "smooth" });
+    const scrollBehavior = reducedMotion ? "auto" : "smooth";
+    document.querySelector(".card-deck")?.scrollTo({ top: 0, left: 0, behavior: scrollBehavior });
+    document.querySelector("main.app")?.scrollTo({ top: 0, left: 0, behavior: scrollBehavior });
+    window.scrollTo({ top: 0, left: 0, behavior: scrollBehavior });
     if (reducedMotion || window.scrollY === 0) {
       queueMicrotask(focusReadingStart);
       scrollRestoreCleanupRef.current = null;

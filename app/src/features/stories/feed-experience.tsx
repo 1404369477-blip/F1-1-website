@@ -1035,6 +1035,8 @@ export function FeedExperience() {
   }, []);
 
   const scrollToTop = useCallback((): void => {
+    document.querySelector(".card-deck")?.scrollTo({ top: 0, behavior: "auto" });
+    document.querySelector("main.app")?.scrollTo({ top: 0, behavior: "auto" });
     window.scrollTo({ top: 0, behavior: "auto" });
   }, []);
 
