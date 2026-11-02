@@ -1618,10 +1618,12 @@ h4 {
 
 .tl-title {
   display: block;
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: .004em;
-  color: var(--fg-strong);
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.42;
+  color: var(--fg);
+  text-wrap: balance;
   transition: color var(--t-fast) var(--ease);
 }
 
@@ -2586,8 +2588,9 @@ body.lb-open .utility-anchor { visibility: hidden; }
   margin: 0 0 8px;
   color: var(--fg);
   font-size: 16px;
-  font-weight: 650;
-  line-height: 1.35;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.42;
 }
 
 .timeline-detail-original {
@@ -2891,9 +2894,9 @@ body.lb-open .utility-anchor { visibility: hidden; }
 }
 
 .tl-item[data-kind="image-first"] .tl-title {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 600;
-  line-height: 1.35;
+  line-height: 1.42;
 }
 
 .tl-item .ph-main {
@@ -3121,9 +3124,9 @@ body.lb-open .utility-anchor { visibility: hidden; }
   flex: none;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 12px;
   align-content: start;
-  padding-top: 8px;
+  padding-top: 14px;
   overflow: hidden;
   min-height: 0;
   max-height: 100%;
@@ -3238,11 +3241,12 @@ body.lb-open .utility-anchor { visibility: hidden; }
   flex: none;
   margin: 0;
   font-family: var(--font-display);
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: .004em;
-  line-height: 1.25;
-  color: var(--fg-strong);
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.42;
+  color: var(--fg);
+  text-wrap: balance;
 }
 
 .card-snap-summary {
