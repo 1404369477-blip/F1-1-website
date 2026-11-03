@@ -1623,7 +1623,7 @@ h4 {
   letter-spacing: 0.01em;
   line-height: 1.42;
   color: var(--fg);
-  text-wrap: balance;
+  text-wrap: wrap;
   transition: color var(--t-fast) var(--ease);
 }
 
@@ -3229,9 +3229,14 @@ body.lb-open .utility-anchor { visibility: hidden; }
   max-width: 100%;
 }
 .story-full { display: grid; gap: 8px; margin-top: 8px; max-width: 100%; }
-.story-full, .story-full-p, .story-full-source, .story-full-time, .card-snap-title, .card-snap-summary, .tl-title, .tl-lead {
+.story-full, .story-full-p, .story-full-source, .story-full-time, .card-snap-summary, .tl-lead {
   overflow-wrap: anywhere;
   word-break: break-word;
+  max-width: 100%;
+}
+.card-snap-title, .tl-title {
+  overflow-wrap: break-word;
+  word-break: normal;
   max-width: 100%;
 }
 .story-full-p, .story-full p { margin: 0; font-size: 14.5px; line-height: 1.7; color: var(--fg); }
@@ -3246,7 +3251,7 @@ body.lb-open .utility-anchor { visibility: hidden; }
   letter-spacing: 0.01em;
   line-height: 1.42;
   color: var(--fg);
-  text-wrap: balance;
+  text-wrap: wrap;
 }
 
 .card-snap-summary {
