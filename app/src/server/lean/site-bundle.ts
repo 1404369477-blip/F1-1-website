@@ -41,6 +41,7 @@ export type PermanentStoryPage = Readonly<{
 }>;
 
 const sha256 = (value: Buffer | string): string => createHash("sha256").update(value).digest("hex");
+const NO_LOCAL_MEDIA: LocalMedia = new Map();
 
 function timelineAt(item: StoredItem): string {
   return item.sourcePublishedAt ?? item.publishedAt ?? item.firstSeenAt;
@@ -132,7 +133,7 @@ function searchExcerpt(value: string, maximum: number): string {
   return /[\uD800-\uDBFF]$/u.test(prefix) ? prefix.slice(0, -1) : prefix;
 }
 
-/** Builds the static `/api/public/*` responses the published UI reads. `items` must be ready items inside the public window. Older ready items stay reachable from the archive page and their detail URLs. */
+/** Builds the static `/api/public/*` responses the published UI reads. `items` must be ready items inside the public window. Older ready items stay reachable from the archive page and their detail URLs. Their pictures are left off the upload; that historical media is what pushed the Pages artifact past the sync timeout. */
 export function buildSiteBundle(readyItems: readonly StoredItem[], generatedAt: string, localMedia: LocalMedia = new Map(), fullTextDenied: ReadonlySet<string> = new Set(), archivedItems: readonly StoredItem[] = [], options: { preview?: boolean } = {}): SiteBundle {
   const order = (a: StoredItem, b: StoredItem) => timelineAt(b).localeCompare(timelineAt(a)) || b.publicId.localeCompare(a.publicId);
   const items = [...readyItems].filter((item) => item.status === "ready" || (options.preview && item.status === "held")).sort(order);
@@ -145,9 +146,11 @@ export function buildSiteBundle(readyItems: readonly StoredItem[], generatedAt: 
     seenIds.add(item.publicId);
   }
   const publicItems = allItems.filter((item) => item.status === "ready").sort(order);
-  const feedItem = (item: StoredItem) => feedItemWith(item, localMedia, fullTextDenied);
+  const pictured = new Set(items.map((item) => item.publicId));
+  const mediaFor = (item: StoredItem): LocalMedia => pictured.has(item.publicId) ? localMedia : NO_LOCAL_MEDIA;
+  const feedItem = (item: StoredItem) => feedItemWith(item, mediaFor(item), fullTextDenied);
   const mediaFiles = new Map<string, string>();
-  for (const item of allItems) {
+  for (const item of items) {
     for (const picture of localImages(item, localMedia)) mediaFiles.set(picture.local.sitePath, picture.local.file);
   }
   const responses: Record<string, ResponseRef> = {};
@@ -219,7 +222,7 @@ export function buildSiteBundle(readyItems: readonly StoredItem[], generatedAt: 
 
   const storyPages = new Map<string, PermanentStoryPage>();
   for (const item of publicItems) {
-    storyPages.set(`stories/${item.publicId}/index.html`, permanentStoryPage(item, localMedia, fullTextDenied));
+    storyPages.set(`stories/${item.publicId}/index.html`, permanentStoryPage(item, mediaFor(item), fullTextDenied));
   }
 
   const sortedResponses = Object.fromEntries(Object.entries(responses).sort(([a], [b]) => a.localeCompare(b)));

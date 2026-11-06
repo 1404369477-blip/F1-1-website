@@ -190,13 +190,13 @@ describe("lean article text", () => {
 });
 
 describe("published generations", () => {
-  it("keeps the larger of the six newest publishes and the last hour", () => {
+  it("keeps the larger of the two newest publishes and the last hour", () => {
     const now = new Date("2026-09-26T12:00:00.000Z");
     const hourly = Array.from({ length: 8 }, (_, index) => ({
       id: index.toString(16).padStart(64, "a"),
       publishedAt: new Date(now.getTime() - (index + 2) * 60 * 60 * 1000).toISOString()
     }));
-    expect(retainedGenerationIds(hourly, now)).toHaveLength(6);
+    expect(retainedGenerationIds(hourly, now)).toHaveLength(2);
     const burst = Array.from({ length: 8 }, (_, index) => ({
       id: index.toString(16).padStart(64, "b"),
       publishedAt: new Date(now.getTime() - index * 60 * 1000).toISOString()
@@ -204,7 +204,7 @@ describe("published generations", () => {
     expect(retainedGenerationIds(burst, now)).toHaveLength(8);
   });
 
-  it("keeps recent generations and their pictures, and drops older ones", () => {
+  it("keeps the two newest generations and only the current bundle's pictures", () => {
     const parent = mkdtempSync(join(tmpdir(), "lean-ui-"));
     const ui = join(parent, "ui");
     mkdirSync(ui);
@@ -225,6 +225,7 @@ describe("published generations", () => {
       writeFileSync(join(root, "site", media), "img");
     }
     writeFileSync(join(generations, "manifest.json"), JSON.stringify({ generations: records }));
+    writeFileSync(join(parent, "current.webp"), "img");
     const currentId = "d".repeat(64);
     const generatedAt = now.toISOString();
     const index = Buffer.from(JSON.stringify({ schemaVersion: "public-static-index-v1", generatedAt, responses: {} }));
@@ -232,7 +233,7 @@ describe("published generations", () => {
       bundleId: currentId,
       contentFingerprint: "e".repeat(64),
       itemCount: 0,
-      mediaFiles: new Map(),
+      mediaFiles: new Map([["media/current.webp", join(parent, "current.webp")]]),
       files: new Map([
         [`_public/generations/${currentId}/index.json`, index],
         ["_public/current.json", Buffer.from(JSON.stringify({
@@ -246,10 +247,13 @@ describe("published generations", () => {
     }, { now, uiDirectory: ui, workflowPath });
     const kept = readdirSync(join(root, "site/_public/generations")).filter((name) => name !== "manifest.json");
     expect(kept).toContain(currentId);
+    expect(kept).toContain(ids[6]);
     expect(kept).not.toContain(ids[0]);
-    expect(kept.length).toBe(6);
+    expect(kept).not.toContain(ids[5]);
+    expect(kept.length).toBe(2);
     expect(existsSync(join(root, "site", `media/${ids[0]!.slice(0, 20)}.webp`))).toBe(false);
-    expect(existsSync(join(root, "site", `media/${ids[6]!.slice(0, 20)}.webp`))).toBe(true);
+    expect(existsSync(join(root, "site", `media/${ids[6]!.slice(0, 20)}.webp`))).toBe(false);
+    expect(readFileSync(join(root, "site/media/current.webp"), "utf8")).toBe("img");
     expect(readFileSync(join(root, "CNAME"), "utf8")).toBe("f1plus1.com\n");
     rmSync(root, { recursive: true, force: true });
     rmSync(parent, { recursive: true, force: true });
@@ -523,6 +527,28 @@ describe("lean site bundle", () => {
     expect(byId.get(items[2].publicId)).toMatchObject({ state: "media_missing", media: null });
     expect(byId.get(items[3].publicId)).toMatchObject({ state: "media_missing", media: null });
     expect([...bundle.mediaFiles]).toEqual([["media/aaa.webp", "/cache/aaa.webp"]]);
+  });
+
+  it("keeps pictures for the homepage window and omits them from archive stories", () => {
+    const image = { url: "https://cdn.motorsport.com/a.jpg", mimeType: "image/jpeg" as const, declaredBytes: 1 };
+    const older = { url: "https://cdn.motorsport.com/old.jpg", mimeType: "image/jpeg" as const, declaredBytes: 1 };
+    const feed = readyItem(1, { image });
+    const archive = readyItem(2, { image: older });
+    const localMedia = new Map([
+      [image.url, { sitePath: "media/aaa.webp", file: "/cache/aaa.webp", bytes: 10 }],
+      [older.url, { sitePath: "media/old.webp", file: "/cache/old.webp", bytes: 99 }]
+    ]);
+    const bundle = buildSiteBundle([feed], "2026-09-24T14:00:00.000Z", localMedia, new Set(), [archive]);
+    expect([...bundle.mediaFiles.keys()]).toEqual(["media/aaa.webp"]);
+    const read = (path: string): unknown => JSON.parse(bundle.files.get(path)!.toString());
+    const pointer = PublicStaticPointerSchema.parse(read("_public/current.json"));
+    const index = PublicStaticIndexSchema.parse(read(pointer.indexPath));
+    const detail = read(`_public/generations/${pointer.bundleId}/${index.responses[`/api/public/stories/${archive.publicId}`].path}`) as { story: { state: string; media: unknown } };
+    expect(detail.story).toMatchObject({ state: "media_missing", media: null });
+    expect(bundle.storyPages?.get(`stories/${archive.publicId}/index.html`)?.ogImage).toBeNull();
+    expect(bundle.storyPages?.get(`stories/${archive.publicId}/index.html`)?.bodyHtml).not.toContain("media/");
+    expect(bundle.storyPages?.get(`stories/${feed.publicId}/index.html`)?.ogImage).toContain("media/aaa.webp");
+    expect(bundle.files.get("archive.json")?.toString()).toContain(archive.publicId);
   });
 });
 

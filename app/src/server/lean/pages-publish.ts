@@ -101,14 +101,13 @@ export function publicationArtifacts(bundle: SiteBundle, options?: { uiDirectory
   };
 }
 
-const GENERATION_KEEP_COUNT = 6;
+const GENERATION_KEEP_COUNT = 2;
 const GENERATION_KEEP_MS = 60 * 60 * 1000;
 const GENERATION_ID = /^[0-9a-f]{64}$/;
-const MEDIA_REF = /media\/[a-f0-9]{16,}\.webp/g;
 
 export type GenerationRecord = { id: string; publishedAt: string; generatedAt?: string };
 
-/** Keeps the larger of the newest six publishes and every publish from the last hour. */
+/** Keeps the larger of the newest two publishes and every publish from the last hour. */
 export function retainedGenerationIds(entries: readonly GenerationRecord[], now: Date): string[] {
   const sorted = [...entries].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt) || b.id.localeCompare(a.id));
   const newest = sorted.slice(0, GENERATION_KEEP_COUNT).map((entry) => entry.id);
@@ -130,23 +129,6 @@ function readGenerationManifest(directory: string): GenerationRecord[] {
   } catch {
     return [];
   }
-}
-
-function mediaRefsUnder(directory: string): string[] {
-  const found = new Set<string>();
-  const walk = (current: string): void => {
-    for (const name of readdirSync(current)) {
-      const path = join(current, name);
-      if (statSync(path).isDirectory()) {
-        walk(path);
-        continue;
-      }
-      const text = readFileSync(path, "utf8");
-      for (const match of text.matchAll(MEDIA_REF)) found.add(match[0]);
-    }
-  };
-  if (existsSync(directory)) walk(directory);
-  return [...found];
 }
 
 /**
@@ -201,7 +183,6 @@ export function stageSite(root: string, bundle: SiteBundle, options?: { now?: Da
   try {
     const previousGenerations = join(previousSite, "_public/generations");
     if (existsSync(previousGenerations)) cpSync(previousGenerations, join(scratch, "generations"), { recursive: true });
-    if (existsSync(join(previousSite, "media"))) cpSync(join(previousSite, "media"), join(scratch, "media"), { recursive: true });
     for (const name of readdirSync(root)) if (name !== ".git") rmSync(join(root, name), { recursive: true, force: true });
 
     const site = join(root, "site");
@@ -300,15 +281,9 @@ function restoreGenerations(site: string, scratch: string, currentId: string, no
     if (id === currentId) continue;
     const from = join(scratchGenerations, id);
     if (!existsSync(from)) continue;
+    // Pictures follow the current bundle only. Re-copying every file an older generation names
+    // kept the full historical media set on the next publish and blew the Pages artifact past 800MB.
     cpSync(from, join(destination, id), { recursive: true });
-    for (const ref of mediaRefsUnder(from)) {
-      const target = join(site, ref);
-      if (existsSync(target)) continue;
-      const source = join(scratch, ref);
-      if (!existsSync(source)) continue;
-      mkdirSync(dirname(target), { recursive: true });
-      cpSync(source, target);
-    }
   }
   const generations = records.filter((entry) => keep.has(entry.id)).sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
   writeFileSync(join(destination, "manifest.json"), `${JSON.stringify({ schemaVersion: "public-generations-manifest-v1", generations }, null, 2)}\n`);
