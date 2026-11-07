@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, utimesSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 import sharp from "sharp";
 import { afterEach, describe, expect, it } from "vitest";
@@ -20,7 +21,7 @@ import { LeanStore, linkKey, type StoredItem } from "../server/lean/store.ts";
 import { contentTypeForTeamPost } from "../server/lean/x-category.ts";
 import { isNearDuplicateTweet, tweetSkipReason } from "../server/lean/x-filter.ts";
 import { countsTowardXBackoff, resolvePublishSetting, xAccountDecision, xBackoffAfterAttempt } from "../server/lean/cycle.ts";
-import { retainedGenerationIds, stageSite } from "../server/lean/pages-publish.ts";
+import { PAGES_ARTIFACT_MAX_BYTES, PAGES_ARTIFACT_MAX_FILES, assertPagesArtifactWithinBudget, measureSiteTree, retainedGenerationIds, stageSite } from "../server/lean/pages-publish.ts";
 
 const rssSource: LeanSource = { sourceId: "motorsport-f1-news", platform: "rss", displayName: "Motorsport.com", feedUrl: "https://example.test/rss", contentType: "race_news", requireRelevance: false };
 const xSource: LeanSource = { sourceId: "x-f1", platform: "x", displayName: "@F1", feedUrl: "http://127.0.0.1:1200/twitter/user/F1", contentType: "race_news", requireRelevance: false };
@@ -190,21 +191,22 @@ describe("lean article text", () => {
 });
 
 describe("published generations", () => {
-  it("keeps the larger of the two newest publishes and the last hour", () => {
+  it("retains only the newest generation, including during a publish burst", () => {
     const now = new Date("2026-09-26T12:00:00.000Z");
     const hourly = Array.from({ length: 8 }, (_, index) => ({
       id: index.toString(16).padStart(64, "a"),
       publishedAt: new Date(now.getTime() - (index + 2) * 60 * 60 * 1000).toISOString()
     }));
-    expect(retainedGenerationIds(hourly, now)).toHaveLength(2);
+    expect(retainedGenerationIds(hourly)).toEqual([hourly[0]!.id]);
     const burst = Array.from({ length: 8 }, (_, index) => ({
       id: index.toString(16).padStart(64, "b"),
       publishedAt: new Date(now.getTime() - index * 60 * 1000).toISOString()
     }));
-    expect(retainedGenerationIds(burst, now)).toHaveLength(8);
+    expect(retainedGenerationIds(burst)).toEqual([burst[0]!.id]);
+    expect(retainedGenerationIds([])).toEqual([]);
   });
 
-  it("keeps the two newest generations and only the current bundle's pictures", () => {
+  it("publishes only the current generation and only the current bundle's pictures", () => {
     const parent = mkdtempSync(join(tmpdir(), "lean-ui-"));
     const ui = join(parent, "ui");
     mkdirSync(ui);
@@ -246,20 +248,22 @@ describe("published generations", () => {
       ])
     }, { now, uiDirectory: ui, workflowPath });
     const kept = readdirSync(join(root, "site/_public/generations")).filter((name) => name !== "manifest.json");
-    expect(kept).toContain(currentId);
-    expect(kept).toContain(ids[6]);
-    expect(kept).not.toContain(ids[0]);
-    expect(kept).not.toContain(ids[5]);
-    expect(kept.length).toBe(2);
+    expect(kept).toEqual([currentId]);
+    const manifest = JSON.parse(readFileSync(join(root, "site/_public/generations/manifest.json"), "utf8")) as { generations: { id: string }[] };
+    expect(manifest.generations.map((entry) => entry.id)).toEqual([currentId]);
     expect(existsSync(join(root, "site", `media/${ids[0]!.slice(0, 20)}.webp`))).toBe(false);
     expect(existsSync(join(root, "site", `media/${ids[6]!.slice(0, 20)}.webp`))).toBe(false);
     expect(readFileSync(join(root, "site/media/current.webp"), "utf8")).toBe("img");
     expect(readFileSync(join(root, "CNAME"), "utf8")).toBe("f1plus1.com\n");
+    const measured = measureSiteTree(join(root, "site"));
+    expect(measured.files).toBeGreaterThan(0);
+    expect(measured.files).toBeLessThanOrEqual(PAGES_ARTIFACT_MAX_FILES);
+    expect(measured.bytes).toBeLessThanOrEqual(PAGES_ARTIFACT_MAX_BYTES);
     rmSync(root, { recursive: true, force: true });
     rmSync(parent, { recursive: true, force: true });
   });
 
-  it("fills a missing publish time from the generation itself", () => {
+  it("drops an older generation instead of repairing it into the upload", () => {
     const parent = mkdtempSync(join(tmpdir(), "lean-ui-"));
     const ui = join(parent, "ui");
     mkdirSync(ui);
@@ -288,7 +292,8 @@ describe("published generations", () => {
       ])
     }, { now, uiDirectory: ui, workflowPath });
     const manifest = JSON.parse(readFileSync(join(root, "site/_public/generations/manifest.json"), "utf8")) as { generations: { id: string; publishedAt: string }[] };
-    expect(manifest.generations.find((entry) => entry.id === oldId)?.publishedAt).toBe(publishedAt);
+    expect(manifest.generations.map((entry) => entry.id)).toEqual([currentId]);
+    expect(existsSync(join(root, "site/_public/generations", oldId))).toBe(false);
     rmSync(root, { recursive: true, force: true });
     rmSync(parent, { recursive: true, force: true });
   });
@@ -549,6 +554,55 @@ describe("lean site bundle", () => {
     expect(bundle.storyPages?.get(`stories/${archive.publicId}/index.html`)?.bodyHtml).not.toContain("media/");
     expect(bundle.storyPages?.get(`stories/${feed.publicId}/index.html`)?.ogImage).toContain("media/aaa.webp");
     expect(bundle.files.get("archive.json")?.toString()).toContain(archive.publicId);
+  });
+
+  it("keeps the existing picture on a live story older than 3 days", () => {
+    const image = { url: "https://cdn.motorsport.com/older-live.jpg", mimeType: "image/jpeg" as const, declaredBytes: 1 };
+    const generatedAt = "2026-09-24T14:00:00.000Z";
+    const older = readyItem(7, {
+      image,
+      sourcePublishedAt: "2026-09-20T12:00:00.000Z",
+      titleZh: "四天前的比赛",
+      summaryZh: "图片仍随直播流发布"
+    });
+    const localMedia = new Map([[image.url, { sitePath: "media/older-live.webp", file: "/cache/older-live.webp", bytes: 88 }]]);
+    const bundle = buildSiteBundle([older], generatedAt, localMedia);
+    expect([...bundle.mediaFiles.keys()]).toEqual(["media/older-live.webp"]);
+    const read = (path: string): unknown => JSON.parse(bundle.files.get(path)!.toString());
+    const pointer = PublicStaticPointerSchema.parse(read("_public/current.json"));
+    const index = PublicStaticIndexSchema.parse(read(pointer.indexPath));
+    const detail = read(`_public/generations/${pointer.bundleId}/${index.responses[`/api/public/stories/${older.publicId}`].path}`) as {
+      story: { publicId: string; titleZh: string; summaryZh: string; state: string; media: { assetRef: string }[] }
+    };
+    expect(detail.story).toMatchObject({
+      publicId: older.publicId,
+      titleZh: "四天前的比赛",
+      summaryZh: "图片仍随直播流发布",
+      state: "ready",
+      media: [expect.objectContaining({ assetRef: "https://f1plus1.com/media/older-live.webp" })]
+    });
+    const page = bundle.storyPages?.get(`stories/${older.publicId}/index.html`);
+    expect(page?.title).toBe("四天前的比赛");
+    expect(page?.ogImage).toContain("media/older-live.webp");
+    expect(page?.bodyHtml).toContain("四天前的比赛");
+    expect(page?.bodyHtml).toContain("图片仍随直播流发布");
+  });
+});
+
+describe("pages artifact budget", () => {
+  it("rejects a tree that would sit in syncing_files until the action cap", () => {
+    expect(() => assertPagesArtifactWithinBudget({ files: PAGES_ARTIFACT_MAX_FILES, bytes: PAGES_ARTIFACT_MAX_BYTES })).not.toThrow();
+    expect(() => assertPagesArtifactWithinBudget({ files: PAGES_ARTIFACT_MAX_FILES + 1, bytes: 1 })).toThrow("PUBLISH_ARTIFACT_TOO_LARGE");
+    expect(() => assertPagesArtifactWithinBudget({ files: 1, bytes: PAGES_ARTIFACT_MAX_BYTES + 1 })).toThrow("PUBLISH_ARTIFACT_TOO_LARGE");
+  });
+
+  it("keeps the Pages workflow guard on the same budget and does not raise the capped timeout", () => {
+    const yaml = readFileSync(fileURLToPath(new URL("../../scripts/pages-workflow.yml", import.meta.url)), "utf8");
+    expect(yaml).toContain("cancel-in-progress: false");
+    expect(yaml).toContain("timeout: 600000");
+    expect(yaml).not.toContain("1200000");
+    expect(yaml).toContain(`max_files = ${PAGES_ARTIFACT_MAX_FILES}`);
+    expect(yaml).toContain(`max_bytes = ${PAGES_ARTIFACT_MAX_BYTES}`);
   });
 });
 

@@ -33,4 +33,9 @@ if [[ ! -d "$RUNTIME_APP/node_modules/fast-xml-parser" || ! -d "$RUNTIME_APP/nod
   (cd "$RUNTIME_APP" && PATH="$NODE_BIN:$PATH" npm install --omit=dev --no-audit --no-fund)
 fi
 
+# Publisher copies this into f1plus1 on every push. Path matches PAGES_WORKFLOW in src/server/lean/config.ts.
+PAGES_WORKFLOW_DEST="${LEAN_PAGES_WORKFLOW:-/Users/chanai/F1-1-website/.pages-publisher/runtime-20260912-r2/pages.yml}"
+mkdir -p "$(dirname "$PAGES_WORKFLOW_DEST")"
+cp "$SOURCE_APP/scripts/pages-workflow.yml" "$PAGES_WORKFLOW_DEST"
+
 echo "lean runtime ready: $RUNTIME_APP"

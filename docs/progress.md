@@ -2,6 +2,12 @@
 
 > 当前运行事实以[生产状态入口](当前生产状态与执行待办.md)为准。2026-09-24 及更早的待办已过时。归档前完整日志已[按原字节保存](archive/2026-09-24-project-handoff/originals/docs/progress.md.txt)。
 
+## 2026-11-07 — Pages `syncing_files` 超时
+
+`actions/deploy-pages` 把等待时间封死在 600000ms。上传 zip 大约 15 秒就结束，失败发生在 Pages 同步解压后的整棵树。11 月 7 日实测：成功的 #2205 是 3 份 generation、26603 个文件、解压 532MiB、zip 273MB；失败的 #2192 是 5 份、38859 个文件、zip 337MB，状态停在 `syncing_files` 直到 10 分钟被掐断。上一轮「最新 2 份，或最近 1 小时里更多的那一边」在大约 15 分钟一次的发布下会留下 3–5 份完整响应树。
+
+发布只留当前这一份 generation。已经打开的页面如果还指着旧目录，现有静态客户端会在 404 后重读 `current.json`。直播流里已有的图片全部保留，包括超过 3 天的；归档图片维持现在的策略，不把已经拿掉的归档图补回去。详情 JSON 和永久详情页仍在。不需要重编前端壳。推送前如果 `site/` 超过 24000 个文件或 512MiB 就拒绝。按 #2205 只留一份 generation、图片全留的计数是 13991 个文件、346MiB 解压、zip 大约 220MB。`cancel-in-progress` 仍是 false。要等办公室 M1 跑过 `lean-deploy.sh` 并完成一次确认发布后才算上线。
+
 ## 2026-11-06 — Pages 部署超时与站点体积
 
 `actions/deploy-pages` 等待时间为 20 分钟（`timeout: 1200000`），`cancel-in-progress` 仍为 false。减体积已装进 `lean-runtime` 并发布：`gh-pages` `b8348a905ed172dbabf987709efdcc0498410bfd`，公网确认 `2026-11-06T04:42:13.074Z`（上海时间 12:42:13）。首页窗口继续带图；归档正文和详情还在，归档图片不再打入制品。Actions 制品从上一笔成功发布的 850541184 字节降到 237879107 字节。这次保留了 2 份 generation，没有被一小时突发多留。

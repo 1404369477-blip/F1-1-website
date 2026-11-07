@@ -233,4 +233,41 @@ describe("public static transport", () => {
     expect(response.status).toBe(200);
     expect(origin.calls.some((path) => path.includes("manifest.json"))).toBe(true);
   });
+
+  it("rereads current.json after the previous generation is removed and keeps the live detail", async () => {
+    const picture = "https://f1plus1.com/media/older-live.webp";
+    const story = {
+      ...detail.story,
+      state: "ready",
+      titleZh: "四天前的图片还在",
+      summaryZh: "详情正文没有被换掉",
+      media: [{ kind: "source_image", assetRef: picture, mimeType: "image/webp", declaredBytes: 88, altZh: "四天前的图片还在 · 第 1 张" }]
+    };
+    const body = { schemaVersion: "public-read-v0.1", story, relatedItems: [] };
+    const previous = artifact([{ key: "/api/public/stories/public-static-story", body }], "2026-09-08T06:00:00.000Z");
+    const current = artifact([{ key: "/api/public/stories/public-static-story", body }], generatedAt);
+    const files = new Map(previous.files);
+    const origin = server(files);
+    const transport = createPublicStaticFetch({ fetchImpl: origin.fetch, retryDelaysMs: [0] });
+    const first = await transport.fetch("/api/public/stories/public-static-story", { headers: { Accept: "application/json" } });
+    expect(first.status).toBe(200);
+    expect((await first.json()).story.media[0].assetRef).toBe(picture);
+
+    for (const path of [...files.keys()]) {
+      if (path.includes(`/generations/${previous.bundleId}/`)) files.delete(path);
+    }
+    for (const [path, text] of current.files) files.set(path, text);
+    const again = await transport.fetch("/api/public/stories/public-static-story", { headers: { Accept: "application/json" } });
+    const payload = await again.json() as { story: { publicId: string; titleZh: string; summaryZh: string; media: { assetRef: string }[] } };
+    expect(again.status).toBe(200);
+    expect(payload.story).toMatchObject({
+      publicId: "public-static-story",
+      titleZh: "四天前的图片还在",
+      summaryZh: "详情正文没有被换掉",
+      media: [expect.objectContaining({ assetRef: picture })]
+    });
+    expect(origin.calls.some((path) => path.includes("current.json?read="))).toBe(true);
+    expect(origin.calls.some((path) => path.includes(`/generations/${current.bundleId}/responses/`))).toBe(true);
+    expect(origin.calls.some((path) => path.includes("manifest.json"))).toBe(true);
+  });
 });

@@ -133,7 +133,7 @@ function searchExcerpt(value: string, maximum: number): string {
   return /[\uD800-\uDBFF]$/u.test(prefix) ? prefix.slice(0, -1) : prefix;
 }
 
-/** Builds the static `/api/public/*` responses the published UI reads. `items` must be ready items inside the public window. Older ready items stay reachable from the archive page and their detail URLs. Their pictures are left off the upload; that historical media is what pushed the Pages artifact past the sync timeout. */
+/** Builds the static `/api/public/*` responses the published UI reads. `items` must be ready items inside the public window. Older ready items stay reachable from the archive page and their detail URLs. Archive pictures stay off the upload. Every live item that already has a site-hosted picture keeps it, including stories older than a few days. */
 export function buildSiteBundle(readyItems: readonly StoredItem[], generatedAt: string, localMedia: LocalMedia = new Map(), fullTextDenied: ReadonlySet<string> = new Set(), archivedItems: readonly StoredItem[] = [], options: { preview?: boolean } = {}): SiteBundle {
   const order = (a: StoredItem, b: StoredItem) => timelineAt(b).localeCompare(timelineAt(a)) || b.publicId.localeCompare(a.publicId);
   const items = [...readyItems].filter((item) => item.status === "ready" || (options.preview && item.status === "held")).sort(order);

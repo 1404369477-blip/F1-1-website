@@ -1,0 +1,61 @@
+name: Publish F1+1 public site
+on:
+  push:
+    branches: [gh-pages]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: f1plus1-pages
+  # Do not cancel a deploy that is already syncing. A newer push waits.
+  cancel-in-progress: false
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/gh-pages'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Reject a tree Pages cannot finish syncing
+        run: |
+          python3 - <<'PY'
+          import os, sys
+          root = "site"
+          files = 0
+          size = 0
+          for dirpath, _dirnames, filenames in os.walk(root):
+              for name in filenames:
+                  files += 1
+                  size += os.path.getsize(os.path.join(dirpath, name))
+          # Lockstep with PAGES_ARTIFACT_MAX_FILES / PAGES_ARTIFACT_MAX_BYTES
+          # in app/src/server/lean/pages-publish.ts.
+          # actions/deploy-pages clamps its own wait at 600000ms. A tree past
+          # this budget is what leaves the deployment on syncing_files until abort.
+          max_files = 24000
+          max_bytes = 536870912
+          print(f"pages artifact files={files} bytes={size}")
+          if files > max_files or size > max_bytes:
+              print(f"PAGES_ARTIFACT_TOO_LARGE files={files}/{max_files} bytes={size}/{max_bytes}", file=sys.stderr)
+              sys.exit(1)
+          PY
+      - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
+      - uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
+        with:
+          path: site
+      - name: Require current branch head
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          current=$(gh api repos/1404369477-blip/f1plus1/git/ref/heads/gh-pages --jq .object.sha)
+          test "$current" = "$GITHUB_SHA"
+      - uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
+        id: deployment
+        with:
+          # The action rejects anything above 600000. Staying under that cap is the artifact budget above.
+          timeout: 600000
