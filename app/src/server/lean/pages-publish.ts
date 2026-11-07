@@ -1,7 +1,6 @@
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 
 import { PAGES_BRANCH, PAGES_CNAME, PAGES_DEPLOY_KEY, PAGES_HTTPS_REMOTE, PAGES_KNOWN_HOSTS, PAGES_REMOTE, PAGES_TOKEN_PATH, PAGES_UI_DIRECTORY, PAGES_WORKFLOW, leanPath } from "./config.ts";
@@ -101,33 +100,47 @@ export function publicationArtifacts(bundle: SiteBundle, options?: { uiDirectory
   };
 }
 
-const GENERATION_KEEP_COUNT = 2;
-const GENERATION_KEEP_MS = 60 * 60 * 1000;
 const GENERATION_ID = /^[0-9a-f]{64}$/;
+
+/**
+ * actions/deploy-pages clamps its wait at 600000ms while status stays on syncing_files.
+ * These match the guard in app/scripts/pages-workflow.yml. A tree over the budget is
+ * rejected before push instead of being uploaded and aborted ten minutes later.
+ * Headroom above the projected one-generation, 3-day-picture tree (~13k files, ~250MiB).
+ */
+export const PAGES_ARTIFACT_MAX_FILES = 20_000;
+export const PAGES_ARTIFACT_MAX_BYTES = 320 * 1024 * 1024;
 
 export type GenerationRecord = { id: string; publishedAt: string; generatedAt?: string };
 
-/** Keeps the larger of the newest two publishes and every publish from the last hour. */
-export function retainedGenerationIds(entries: readonly GenerationRecord[], now: Date): string[] {
+/** Only the newest publish is uploaded. Each extra copy is another full response tree for Pages to sync. */
+export function retainedGenerationIds(entries: readonly GenerationRecord[]): string[] {
   const sorted = [...entries].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt) || b.id.localeCompare(a.id));
-  const newest = sorted.slice(0, GENERATION_KEEP_COUNT).map((entry) => entry.id);
-  const recent = sorted.filter((entry) => {
-    const at = Date.parse(entry.publishedAt);
-    return Number.isFinite(at) && now.getTime() - at <= GENERATION_KEEP_MS;
-  }).map((entry) => entry.id);
-  return [...new Set(recent.length > newest.length ? recent : newest)];
+  return sorted[0] ? [sorted[0].id] : [];
 }
 
-function readGenerationManifest(directory: string): GenerationRecord[] {
-  const path = join(directory, "manifest.json");
-  if (!existsSync(path)) return [];
-  try {
-    const parsed = JSON.parse(readFileSync(path, "utf8")) as { generations?: GenerationRecord[] };
-    return Array.isArray(parsed.generations)
-      ? parsed.generations.filter((entry) => typeof entry?.id === "string" && GENERATION_ID.test(entry.id) && typeof entry.publishedAt === "string")
-      : [];
-  } catch {
-    return [];
+export function measureSiteTree(root: string): { files: number; bytes: number } {
+  let files = 0;
+  let bytes = 0;
+  const walk = (directory: string): void => {
+    for (const entry of readdirSync(directory, { withFileTypes: true })) {
+      if (entry.isSymbolicLink()) continue;
+      const path = join(directory, entry.name);
+      if (entry.isDirectory()) walk(path);
+      else if (entry.isFile()) {
+        files += 1;
+        bytes += statSync(path).size;
+      }
+    }
+  };
+  if (existsSync(root)) walk(root);
+  return { files, bytes };
+}
+
+export function assertPagesArtifactWithinBudget(measurement: { files: number; bytes: number }): void {
+  if (measurement.files > PAGES_ARTIFACT_MAX_FILES || measurement.bytes > PAGES_ARTIFACT_MAX_BYTES) {
+    console.error(`PUBLISH_ARTIFACT_TOO_LARGE files=${measurement.files} bytes=${measurement.bytes}`);
+    throw new Error("PUBLISH_ARTIFACT_TOO_LARGE");
   }
 }
 
@@ -178,57 +191,51 @@ export function stageSite(root: string, bundle: SiteBundle, options?: { now?: Da
   const uiDirectory = options?.uiDirectory ?? PAGES_UI_DIRECTORY;
   const workflowPath = options?.workflowPath ?? PAGES_WORKFLOW;
   mkdirSync(root, { recursive: true, mode: 0o700 });
-  const previousSite = join(root, "site");
-  const scratch = mkdtempSync(join(tmpdir(), "f1-generations-"));
-  try {
-    const previousGenerations = join(previousSite, "_public/generations");
-    if (existsSync(previousGenerations)) cpSync(previousGenerations, join(scratch, "generations"), { recursive: true });
-    for (const name of readdirSync(root)) if (name !== ".git") rmSync(join(root, name), { recursive: true, force: true });
+  for (const name of readdirSync(root)) if (name !== ".git") rmSync(join(root, name), { recursive: true, force: true });
 
-    const site = join(root, "site");
-    cpSync(uiDirectory, site, { recursive: true });
-    for (const [path, bytes] of bundle.files) {
-      mkdirSync(dirname(join(site, path)), { recursive: true });
-      writeFileSync(join(site, path), bytes);
-    }
-    if (bundle.storyPages && bundle.storyPages.size > 0) {
-      const template = readFileSync(join(site, "stories/index.html"), "utf8");
-      for (const [path, story] of bundle.storyPages) {
-        if (!/^stories\/public-[a-z0-9-]{1,120}\/index\.html$/.test(path)) throw new Error("STORY_PAGE_PATH_INVALID");
-        mkdirSync(dirname(join(site, path)), { recursive: true });
-        writeFileSync(join(site, path), renderPermanentStoryPage(template, story));
-      }
-    }
-    if (bundle.mediaFiles.size > 0) mkdirSync(join(site, "media"), { recursive: true });
-    for (const [path, file] of bundle.mediaFiles) cpSync(file, join(site, path));
-    restoreGenerations(site, scratch, bundle.bundleId, now);
-    writeFileSync(join(site, ".nojekyll"), "");
-    // The Pages workflow reads CNAME from the branch root. The published site root is `site/`, so both copies are required.
-    writeFileSync(join(root, "CNAME"), `${PAGES_CNAME}\n`);
-    writeFileSync(join(site, "CNAME"), `${PAGES_CNAME}\n`);
-    const calendarFile = leanPath("f1-calendar.json");
-    if (existsSync(calendarFile)) {
-      mkdirSync(join(site, "data"), { recursive: true });
-      cpSync(calendarFile, join(site, "data/f1-calendar.json"));
-    }
-    writeFileSync(join(site, "_deployment.json"), JSON.stringify({
-      schemaVersion: "public-static-deployment-v1",
-      bundleId: bundle.bundleId,
-      uiManifestSha256: sha256File(join(dirname(uiDirectory), "ui.build-receipt.json")),
-      workflowSha256: sha256File(workflowPath),
-      storyTemplateSha256: existsSync(join(uiDirectory, "stories/index.html")) ? sha256File(join(uiDirectory, "stories/index.html")) : null
-    }));
-    mkdirSync(join(root, ".github/workflows"), { recursive: true });
-    cpSync(workflowPath, join(root, ".github/workflows/pages.yml"));
-    mkdirSync(join(root, ".sync"));
-    writeFileSync(join(root, ".sync/publication.json"), JSON.stringify({
-      schemaVersion: "lean-publication-v1",
-      bundleId: bundle.bundleId,
-      contentFingerprint: bundle.contentFingerprint
-    }));
-  } finally {
-    rmSync(scratch, { recursive: true, force: true });
+  const site = join(root, "site");
+  cpSync(uiDirectory, site, { recursive: true });
+  for (const [path, bytes] of bundle.files) {
+    mkdirSync(dirname(join(site, path)), { recursive: true });
+    writeFileSync(join(site, path), bytes);
   }
+  if (bundle.storyPages && bundle.storyPages.size > 0) {
+    const template = readFileSync(join(site, "stories/index.html"), "utf8");
+    for (const [path, story] of bundle.storyPages) {
+      if (!/^stories\/public-[a-z0-9-]{1,120}\/index\.html$/.test(path)) throw new Error("STORY_PAGE_PATH_INVALID");
+      mkdirSync(dirname(join(site, path)), { recursive: true });
+      writeFileSync(join(site, path), renderPermanentStoryPage(template, story));
+    }
+  }
+  if (bundle.mediaFiles.size > 0) mkdirSync(join(site, "media"), { recursive: true });
+  for (const [path, file] of bundle.mediaFiles) cpSync(file, join(site, path));
+  publishCurrentGenerationOnly(site, bundle.bundleId, now);
+  writeFileSync(join(site, ".nojekyll"), "");
+  // The Pages workflow reads CNAME from the branch root. The published site root is `site/`, so both copies are required.
+  writeFileSync(join(root, "CNAME"), `${PAGES_CNAME}\n`);
+  writeFileSync(join(site, "CNAME"), `${PAGES_CNAME}\n`);
+  const calendarFile = leanPath("f1-calendar.json");
+  if (existsSync(calendarFile)) {
+    mkdirSync(join(site, "data"), { recursive: true });
+    cpSync(calendarFile, join(site, "data/f1-calendar.json"));
+  }
+  writeFileSync(join(site, "_deployment.json"), JSON.stringify({
+    schemaVersion: "public-static-deployment-v1",
+    bundleId: bundle.bundleId,
+    uiManifestSha256: sha256File(join(dirname(uiDirectory), "ui.build-receipt.json")),
+    workflowSha256: sha256File(workflowPath),
+    storyTemplateSha256: existsSync(join(uiDirectory, "stories/index.html")) ? sha256File(join(uiDirectory, "stories/index.html")) : null
+  }));
+  mkdirSync(join(root, ".github/workflows"), { recursive: true });
+  cpSync(workflowPath, join(root, ".github/workflows/pages.yml"));
+  mkdirSync(join(root, ".sync"));
+  writeFileSync(join(root, ".sync/publication.json"), JSON.stringify({
+    schemaVersion: "lean-publication-v1",
+    bundleId: bundle.bundleId,
+    contentFingerprint: bundle.contentFingerprint
+  }));
+  // Budget the directory Actions uploads (`site/`), not the checkout around it.
+  assertPagesArtifactWithinBudget(measureSiteTree(site));
 }
 
 function generatedAtFrom(directory: string, fallback: string): string {
@@ -242,49 +249,15 @@ function generatedAtFrom(directory: string, fallback: string): string {
   }
 }
 
-function realPublishedAt(directory: string, publishedAt: string | undefined): string {
-  if (publishedAt && !publishedAt.startsWith("1970-01-01")) return publishedAt;
-  const generated = generatedAtFrom(directory, "");
-  if (generated !== "" && !generated.startsWith("1970-01-01")) return generated;
-  if (existsSync(directory)) {
-    const mtime = statSync(directory).mtime.toISOString();
-    if (!mtime.startsWith("1970-01-01")) return mtime;
-  }
-  return publishedAt ?? new Date(0).toISOString();
-}
-
-function restoreGenerations(site: string, scratch: string, currentId: string, now: Date): void {
-  const scratchGenerations = join(scratch, "generations");
-  const known = readGenerationManifest(scratchGenerations);
-  const seen = new Set(known.map((entry) => entry.id));
-  if (existsSync(scratchGenerations)) {
-    for (const name of readdirSync(scratchGenerations)) {
-      if (!GENERATION_ID.test(name) || seen.has(name)) continue;
-      const directory = join(scratchGenerations, name);
-      known.push({ id: name, publishedAt: realPublishedAt(directory, undefined), generatedAt: generatedAtFrom(directory, new Date(0).toISOString()) });
-    }
-  }
-  const currentDir = join(site, `_public/generations/${currentId}`);
-  const records = [
-    ...known.filter((entry) => entry.id !== currentId).map((entry) => {
-      const directory = join(scratchGenerations, entry.id);
-      const publishedAt = realPublishedAt(directory, entry.publishedAt);
-      return { ...entry, publishedAt, generatedAt: entry.generatedAt ?? generatedAtFrom(directory, publishedAt) };
-    }),
-    { id: currentId, publishedAt: now.toISOString(), generatedAt: generatedAtFrom(currentDir, now.toISOString()) }
-  ];
-  const keep = new Set(retainedGenerationIds(records, now));
-  keep.add(currentId);
+function publishCurrentGenerationOnly(site: string, currentId: string, now: Date): void {
+  if (!GENERATION_ID.test(currentId)) throw new Error("PUBLISH_BUNDLE_ID_INVALID");
   const destination = join(site, "_public/generations");
   mkdirSync(destination, { recursive: true });
-  for (const id of keep) {
-    if (id === currentId) continue;
-    const from = join(scratchGenerations, id);
-    if (!existsSync(from)) continue;
-    // Pictures follow the current bundle only. Re-copying every file an older generation names
-    // kept the full historical media set on the next publish and blew the Pages artifact past 800MB.
-    cpSync(from, join(destination, id), { recursive: true });
+  for (const name of readdirSync(destination)) {
+    if (name !== currentId && name !== "manifest.json") rmSync(join(destination, name), { recursive: true, force: true });
   }
-  const generations = records.filter((entry) => keep.has(entry.id)).sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+  const kept = retainedGenerationIds([{ id: currentId, publishedAt: now.toISOString() }]);
+  if (kept.length !== 1 || kept[0] !== currentId) throw new Error("PUBLISH_GENERATION_RETENTION_INVALID");
+  const generations = [{ id: currentId, publishedAt: now.toISOString(), generatedAt: generatedAtFrom(join(destination, currentId), now.toISOString()) }];
   writeFileSync(join(destination, "manifest.json"), `${JSON.stringify({ schemaVersion: "public-generations-manifest-v1", generations }, null, 2)}\n`);
 }

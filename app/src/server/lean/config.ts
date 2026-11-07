@@ -46,6 +46,11 @@ export const RSSHUB_ACCESS_KEY_PATH = "/Users/chanai/Library/Application Support
 
 export const SITE_MAX_ITEMS = 1500;
 export const SITE_MAX_AGE_DAYS = 60;
+/**
+ * Photos ship only for live stories this recent. The 1500-item cap currently spans about a week,
+ * and the day-3-to-7 photos were the bulk of the image bytes Pages has to sync.
+ */
+export const SITE_PICTURE_MAX_AGE_DAYS = 3;
 /** Missing media is downloaded only for items this young (source_published_at or first_seen); older keep cache only. */
 export const MEDIA_DOWNLOAD_MAX_AGE_DAYS = 7;
 export const REFINE_BATCH_LIMIT = 40;
