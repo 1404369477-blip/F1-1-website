@@ -360,8 +360,8 @@ describe("lean model output", () => {
   });
 
   it("prefers GLM and keeps DeepSeek as the fallback", () => {
-    expect(leanRefineModelOrder(undefined)).toEqual(["glm-4-flash", "glm-5.3-flash", "deepseek-chat"]);
-    expect(leanRefineModelOrder("deepseek-chat")).toEqual(["deepseek-chat", "glm-5.3-flash", "glm-4-flash"]);
+    expect(leanRefineModelOrder(undefined)).toEqual(["glm-5.3-flash", "deepseek-chat"]);
+    expect(leanRefineModelOrder("deepseek-chat")).toEqual(["deepseek-chat", "glm-5.3-flash"]);
     expect(REFINE_MODEL_CATALOG["glm-5.3-flash"].endpoint).toBe("https://open.bigmodel.cn/api/paas/v4/chat/completions");
     expect(refineRequestBody("glm-5.3-flash", [])).toMatchObject({
       model: "glm-5.3-flash",
@@ -556,27 +556,36 @@ describe("lean site bundle", () => {
     expect(bundle.files.get("archive.json")?.toString()).toContain(archive.publicId);
   });
 
-  it("omits pictures from live stories outside the 3-day window", () => {
-    const recentImage = { url: "https://cdn.motorsport.com/new.jpg", mimeType: "image/jpeg" as const, declaredBytes: 1 };
-    const staleImage = { url: "https://cdn.motorsport.com/stale.jpg", mimeType: "image/jpeg" as const, declaredBytes: 1 };
+  it("keeps the existing picture on a live story older than 3 days", () => {
+    const image = { url: "https://cdn.motorsport.com/older-live.jpg", mimeType: "image/jpeg" as const, declaredBytes: 1 };
     const generatedAt = "2026-09-24T14:00:00.000Z";
-    const recent = readyItem(1, { image: recentImage, sourcePublishedAt: "2026-09-24T12:00:00.000Z" });
-    const stale = readyItem(2, { image: staleImage, sourcePublishedAt: "2026-09-20T14:00:00.000Z" });
-    const localMedia = new Map([
-      [recentImage.url, { sitePath: "media/new.webp", file: "/cache/new.webp", bytes: 10 }],
-      [staleImage.url, { sitePath: "media/stale.webp", file: "/cache/stale.webp", bytes: 99 }]
-    ]);
-    const bundle = buildSiteBundle([recent, stale], generatedAt, localMedia);
-    expect([...bundle.mediaFiles.keys()]).toEqual(["media/new.webp"]);
+    const older = readyItem(7, {
+      image,
+      sourcePublishedAt: "2026-09-20T12:00:00.000Z",
+      titleZh: "四天前的比赛",
+      summaryZh: "图片仍随直播流发布"
+    });
+    const localMedia = new Map([[image.url, { sitePath: "media/older-live.webp", file: "/cache/older-live.webp", bytes: 88 }]]);
+    const bundle = buildSiteBundle([older], generatedAt, localMedia);
+    expect([...bundle.mediaFiles.keys()]).toEqual(["media/older-live.webp"]);
     const read = (path: string): unknown => JSON.parse(bundle.files.get(path)!.toString());
     const pointer = PublicStaticPointerSchema.parse(read("_public/current.json"));
     const index = PublicStaticIndexSchema.parse(read(pointer.indexPath));
-    const feed = read(`_public/generations/${pointer.bundleId}/${index.responses["/api/public/feed"].path}`) as { items: { publicId: string; state: string; media: unknown }[] };
-    const byId = new Map(feed.items.map((item) => [item.publicId, item]));
-    expect(byId.get(recent.publicId)).toMatchObject({ state: "ready", media: [expect.objectContaining({ assetRef: "https://f1plus1.com/media/new.webp" })] });
-    expect(byId.get(stale.publicId)).toMatchObject({ state: "media_missing", media: null });
-    expect(bundle.storyPages?.get(`stories/${stale.publicId}/index.html`)?.ogImage).toBeNull();
-    expect(bundle.storyPages?.get(`stories/${recent.publicId}/index.html`)?.ogImage).toContain("media/new.webp");
+    const detail = read(`_public/generations/${pointer.bundleId}/${index.responses[`/api/public/stories/${older.publicId}`].path}`) as {
+      story: { publicId: string; titleZh: string; summaryZh: string; state: string; media: { assetRef: string }[] }
+    };
+    expect(detail.story).toMatchObject({
+      publicId: older.publicId,
+      titleZh: "四天前的比赛",
+      summaryZh: "图片仍随直播流发布",
+      state: "ready",
+      media: [expect.objectContaining({ assetRef: "https://f1plus1.com/media/older-live.webp" })]
+    });
+    const page = bundle.storyPages?.get(`stories/${older.publicId}/index.html`);
+    expect(page?.title).toBe("四天前的比赛");
+    expect(page?.ogImage).toContain("media/older-live.webp");
+    expect(page?.bodyHtml).toContain("四天前的比赛");
+    expect(page?.bodyHtml).toContain("图片仍随直播流发布");
   });
 });
 

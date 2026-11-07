@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 
 import { isPublicStaticId, normalizePublicStaticRequestKey } from "../../features/stories/public-static-schema.ts";
 import { PUBLIC_SEARCH_PATH, PUBLIC_SEARCH_TEXT_LIMITS, PublicSearchIndexSchema } from "../../features/stories/public-search-schema.ts";
-import { LEAN_CONTENT_TYPES, PAGES_URL, SITE_PICTURE_MAX_AGE_DAYS, type LeanContentType } from "./config.ts";
+import { LEAN_CONTENT_TYPES, PAGES_URL, type LeanContentType } from "./config.ts";
 import { englishOriginalTitle, isBoilerplateParagraph } from "./article.ts";
 import { isAgencyImage } from "./feed.ts";
 import type { LocalImage, LocalMedia } from "./media.ts";
@@ -45,15 +45,6 @@ const NO_LOCAL_MEDIA: LocalMedia = new Map();
 
 function timelineAt(item: StoredItem): string {
   return item.sourcePublishedAt ?? item.publishedAt ?? item.firstSeenAt;
-}
-
-/** Live stories older than this keep their text and detail URL; their pictures are not uploaded. */
-function inPictureWindow(item: StoredItem, generatedAt: string): boolean {
-  const at = Date.parse(timelineAt(item));
-  const now = Date.parse(generatedAt);
-  if (!Number.isFinite(at) || !Number.isFinite(now)) return false;
-  const age = now - at;
-  return age >= 0 && age <= SITE_PICTURE_MAX_AGE_DAYS * 24 * 60 * 60 * 1000;
 }
 
 /** Only site-hosted copies are referenced; a picture without one is left out rather than hot-linked. */
@@ -142,7 +133,7 @@ function searchExcerpt(value: string, maximum: number): string {
   return /[\uD800-\uDBFF]$/u.test(prefix) ? prefix.slice(0, -1) : prefix;
 }
 
-/** Builds the static `/api/public/*` responses the published UI reads. `items` must be ready items inside the public window. Older ready items stay reachable from the archive page and their detail URLs, without pictures. Live items outside the picture window keep that same text and URL, and their pictures are left off the upload too. */
+/** Builds the static `/api/public/*` responses the published UI reads. `items` must be ready items inside the public window. Older ready items stay reachable from the archive page and their detail URLs. Archive pictures stay off the upload. Every live item that already has a site-hosted picture keeps it, including stories older than a few days. */
 export function buildSiteBundle(readyItems: readonly StoredItem[], generatedAt: string, localMedia: LocalMedia = new Map(), fullTextDenied: ReadonlySet<string> = new Set(), archivedItems: readonly StoredItem[] = [], options: { preview?: boolean } = {}): SiteBundle {
   const order = (a: StoredItem, b: StoredItem) => timelineAt(b).localeCompare(timelineAt(a)) || b.publicId.localeCompare(a.publicId);
   const items = [...readyItems].filter((item) => item.status === "ready" || (options.preview && item.status === "held")).sort(order);
@@ -155,12 +146,12 @@ export function buildSiteBundle(readyItems: readonly StoredItem[], generatedAt: 
     seenIds.add(item.publicId);
   }
   const publicItems = allItems.filter((item) => item.status === "ready").sort(order);
-  const pictured = new Set(items.filter((item) => inPictureWindow(item, generatedAt)).map((item) => item.publicId));
+  const pictured = new Set(items.map((item) => item.publicId));
   const mediaFor = (item: StoredItem): LocalMedia => pictured.has(item.publicId) ? localMedia : NO_LOCAL_MEDIA;
   const feedItem = (item: StoredItem) => feedItemWith(item, mediaFor(item), fullTextDenied);
   const mediaFiles = new Map<string, string>();
   for (const item of items) {
-    for (const picture of localImages(item, mediaFor(item))) mediaFiles.set(picture.local.sitePath, picture.local.file);
+    for (const picture of localImages(item, localMedia)) mediaFiles.set(picture.local.sitePath, picture.local.file);
   }
   const responses: Record<string, ResponseRef> = {};
   const bodies = new Map<string, Buffer>();

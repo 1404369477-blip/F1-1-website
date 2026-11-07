@@ -106,10 +106,11 @@ const GENERATION_ID = /^[0-9a-f]{64}$/;
  * actions/deploy-pages clamps its wait at 600000ms while status stays on syncing_files.
  * These match the guard in app/scripts/pages-workflow.yml. A tree over the budget is
  * rejected before push instead of being uploaded and aborted ten minutes later.
- * Headroom above the projected one-generation, 3-day-picture tree (~13k files, ~250MiB).
+ * One generation plus the current live picture set measured 13991 files and 346MiB.
+ * Headroom above that still rejects a third full response copy (~26k files, ~549MiB).
  */
-export const PAGES_ARTIFACT_MAX_FILES = 20_000;
-export const PAGES_ARTIFACT_MAX_BYTES = 320 * 1024 * 1024;
+export const PAGES_ARTIFACT_MAX_FILES = 24_000;
+export const PAGES_ARTIFACT_MAX_BYTES = 512 * 1024 * 1024;
 
 export type GenerationRecord = { id: string; publishedAt: string; generatedAt?: string };
 

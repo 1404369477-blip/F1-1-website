@@ -37,8 +37,8 @@ jobs:
           # in app/src/server/lean/pages-publish.ts.
           # actions/deploy-pages clamps its own wait at 600000ms. A tree past
           # this budget is what leaves the deployment on syncing_files until abort.
-          max_files = 20000
-          max_bytes = 335544320
+          max_files = 24000
+          max_bytes = 536870912
           print(f"pages artifact files={files} bytes={size}")
           if files > max_files or size > max_bytes:
               print(f"PAGES_ARTIFACT_TOO_LARGE files={files}/{max_files} bytes={size}/{max_bytes}", file=sys.stderr)
