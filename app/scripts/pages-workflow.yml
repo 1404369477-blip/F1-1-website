@@ -7,6 +7,10 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  # Read this run's artifact list and the deploy step's check annotations.
+  # deploy-pages itself lists artifacts with the runner results token.
+  actions: read
+  checks: read
 concurrency:
   group: f1plus1-pages
   # Do not cancel a deploy that is already syncing. A newer push waits.
@@ -17,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url || steps.deployment_retry.outputs.page_url }}
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -54,8 +58,347 @@ jobs:
         run: |
           current=$(gh api repos/1404369477-blip/f1plus1/git/ref/heads/gh-pages --jq .object.sha)
           test "$current" = "$GITHUB_SHA"
-      - uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
+      # upload-pages-artifact can finalize while the list deploy-pages reads is still empty.
+      # That list is the artifact results service, not a missing upload. The public Actions
+      # API for this run can lag separately. Wait until the results list shows one
+      # github-pages artifact (and the Actions API does too, when it answers), then deploy.
+      # Bound is a few minutes. A still-empty results list fails closed instead of calling deploy.
+      - name: Wait until github-pages is listed for this run
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PAGES_ARTIFACT_COMMAND: wait
+          PAGES_ARTIFACT_WAIT_SECONDS: "180"
+          PAGES_ARTIFACT_POLL_SECONDS: "5"
+        run: |
+          cat > "$RUNNER_TEMP/pages-artifact-gate.py" <<'PY'
+          # BEGIN pages-artifact-gate
+          import base64
+          import json
+          import os
+          import time
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+
+          class NoRedirect(urllib.request.HTTPRedirectHandler):
+              def redirect_request(self, req, fp, code, msg, headers, newurl):
+                  return None
+
+          OPENER = urllib.request.build_opener(NoRedirect)
+
+          def bounded_seconds(name, default, cap):
+              raw = os.environ.get(name, "").strip()
+              if raw == "":
+                  value = float(default)
+              else:
+                  try:
+                      value = float(raw)
+                  except ValueError:
+                      raise SystemExit("PAGES_ARTIFACT_WAIT_INVALID")
+              if value < 0 or value > cap:
+                  raise SystemExit("PAGES_ARTIFACT_WAIT_INVALID")
+              return value
+
+          def backend_ids(token):
+              parts = token.split(".")
+              if len(parts) < 2:
+                  return None
+              payload = parts[1]
+              pad = "=" * ((4 - len(payload) % 4) % 4)
+              try:
+                  data = json.loads(base64.urlsafe_b64decode(payload + pad))
+              except Exception:
+                  return None
+              scp = data.get("scp") if isinstance(data, dict) else None
+              if not isinstance(scp, str):
+                  return None
+              for scope in scp.split(" "):
+                  fields = scope.split(":")
+                  if len(fields) == 3 and fields[0] == "Actions.Results" and fields[1] and fields[2]:
+                      return fields[1], fields[2]
+              return None
+
+          def request_json(method, url, token, payload=None):
+              data = None if payload is None else json.dumps(payload).encode("utf-8")
+              headers = {
+                  "Accept": "application/vnd.github+json",
+                  "User-Agent": "f1plus1-pages-artifact-gate",
+              }
+              if token:
+                  headers["Authorization"] = "Bearer " + token
+              if data is not None:
+                  headers["Content-Type"] = "application/json"
+              request = urllib.request.Request(url, data=data, headers=headers, method=method)
+              try:
+                  with OPENER.open(request, timeout=30) as response:
+                      status = response.status
+                      raw = response.read()
+              except urllib.error.HTTPError as error:
+                  status = error.code
+                  try:
+                      raw = error.read()
+                  except Exception:
+                      raw = b""
+              except Exception:
+                  return None, None
+              if not raw:
+                  return status, None
+              try:
+                  return status, json.loads(raw.decode("utf-8"))
+              except Exception:
+                  return status, None
+
+          def count_named(artifacts):
+              if not isinstance(artifacts, list):
+                  return None
+              count = 0
+              for artifact in artifacts:
+                  if not isinstance(artifact, dict):
+                      continue
+                  if artifact.get("name") != "github-pages":
+                      continue
+                  if artifact.get("expired") is True:
+                      continue
+                  count += 1
+              return count
+
+          def query_results():
+              token = os.environ.get("ACTIONS_RUNTIME_TOKEN", "").strip()
+              results_url = os.environ.get("ACTIONS_RESULTS_URL", "").strip()
+              if token == "" or results_url == "":
+                  return "unavailable"
+              ids = backend_ids(token)
+              if ids is None:
+                  return "unavailable"
+              parts = urllib.parse.urlsplit(results_url)
+              if parts.scheme not in ("https", "http") or parts.netloc == "":
+                  return "unavailable"
+              url = (
+                  parts.scheme
+                  + "://"
+                  + parts.netloc
+                  + "/twirp/github.actions.results.api.v1.ArtifactService/ListArtifacts"
+              )
+              status, body = request_json(
+                  "POST",
+                  url,
+                  token,
+                  {"workflowRunBackendId": ids[0], "workflowJobRunBackendId": ids[1]},
+              )
+              if status is None:
+                  print("results_list=error", flush=True)
+                  return "error"
+              if status in (401, 403):
+                  print("results_list=http_" + str(status), flush=True)
+                  return "unavailable"
+              if status != 200 or not isinstance(body, dict):
+                  print("results_list=http_" + str(status), flush=True)
+                  return "error"
+              count = count_named(body.get("artifacts"))
+              if count is None:
+                  print("results_list=invalid", flush=True)
+                  return "error"
+              if count > 1:
+                  return "ambiguous"
+              return count
+
+          def query_actions_api():
+              token = os.environ.get("GH_TOKEN", "").strip() or os.environ.get("GITHUB_TOKEN", "").strip()
+              repo = os.environ.get("GITHUB_REPOSITORY", "").strip()
+              run_id = os.environ.get("GITHUB_RUN_ID", "").strip()
+              if token == "" or repo.count("/") != 1 or run_id == "":
+                  return "unavailable"
+              api = os.environ.get("GITHUB_API_URL", "https://api.github.com").rstrip("/")
+              owner, name = repo.split("/", 1)
+              url = (
+                  api
+                  + "/repos/"
+                  + urllib.parse.quote(owner)
+                  + "/"
+                  + urllib.parse.quote(name)
+                  + "/actions/runs/"
+                  + urllib.parse.quote(run_id)
+                  + "/artifacts?per_page=100&name=github-pages"
+              )
+              status, body = request_json("GET", url, token)
+              if status is None:
+                  print("actions_api=error", flush=True)
+                  return "error"
+              if status in (401, 403):
+                  print("actions_api=http_" + str(status), flush=True)
+                  return "unavailable"
+              if status != 200 or not isinstance(body, dict):
+                  print("actions_api=http_" + str(status), flush=True)
+                  return "error"
+              total = body.get("total_count")
+              count = count_named(body.get("artifacts"))
+              if isinstance(total, int) and total > 1:
+                  return "ambiguous"
+              if count is None:
+                  print("actions_api=invalid", flush=True)
+                  return "error"
+              if count > 1:
+                  return "ambiguous"
+              return count
+
+          def wait_for_artifact():
+              deadline = time.monotonic() + bounded_seconds("PAGES_ARTIFACT_WAIT_SECONDS", 180, 180)
+              poll = bounded_seconds("PAGES_ARTIFACT_POLL_SECONDS", 5, 30)
+              while True:
+                  results = query_results()
+                  rest = query_actions_api()
+                  print("pages artifact poll results=" + str(results) + " actions_api=" + str(rest), flush=True)
+                  if results == "ambiguous" or rest == "ambiguous":
+                      raise SystemExit("PAGES_ARTIFACT_AMBIGUOUS")
+                  if results == "unavailable" and rest == "unavailable":
+                      raise SystemExit("PAGES_ARTIFACT_POLL_UNAVAILABLE")
+                  if results == 1 and rest in (1, "unavailable"):
+                      print("github-pages artifact is listed", flush=True)
+                      return
+                  if results == "unavailable" and rest == 1:
+                      print("github-pages artifact is listed on the Actions API", flush=True)
+                      return
+                  if time.monotonic() >= deadline:
+                      if results == 1:
+                          print("actions_api lagging; results service lists github-pages", flush=True)
+                          return
+                      raise SystemExit("PAGES_ARTIFACT_METADATA_TIMEOUT")
+                  remaining = deadline - time.monotonic()
+                  time.sleep(poll if poll < remaining else remaining)
+
+          def annotation_messages():
+              token = os.environ.get("GH_TOKEN", "").strip() or os.environ.get("GITHUB_TOKEN", "").strip()
+              repo = os.environ.get("GITHUB_REPOSITORY", "").strip()
+              run_id = os.environ.get("GITHUB_RUN_ID", "").strip()
+              attempt = os.environ.get("GITHUB_RUN_ATTEMPT", "1").strip() or "1"
+              job_name = os.environ.get("GITHUB_JOB", "deploy").strip() or "deploy"
+              if token == "" or repo.count("/") != 1 or run_id == "":
+                  return None
+              api = os.environ.get("GITHUB_API_URL", "https://api.github.com").rstrip("/")
+              owner, name = repo.split("/", 1)
+              root = api + "/repos/" + urllib.parse.quote(owner) + "/" + urllib.parse.quote(name)
+              urls = [
+                  root + "/actions/runs/" + urllib.parse.quote(run_id) + "/attempts/" + urllib.parse.quote(attempt) + "/jobs?per_page=100",
+                  root + "/actions/runs/" + urllib.parse.quote(run_id) + "/jobs?per_page=100",
+              ]
+              body = None
+              for url in urls:
+                  status, parsed = request_json("GET", url, token)
+                  if status == 200 and isinstance(parsed, dict):
+                      body = parsed
+                      break
+                  if status == 404:
+                      continue
+                  if status in (401, 403):
+                      print("deploy_annotations=http_" + str(status), flush=True)
+                      return None
+              if not isinstance(body, dict):
+                  return None
+              jobs = body.get("jobs")
+              if not isinstance(jobs, list):
+                  return None
+              chosen = None
+              for job in jobs:
+                  if isinstance(job, dict) and job.get("name") == job_name:
+                      chosen = job
+              if not isinstance(chosen, dict):
+                  return []
+              check_url = chosen.get("check_run_url")
+              if not isinstance(check_url, str) or check_url == "":
+                  return []
+              status, parsed = request_json("GET", check_url + "/annotations?per_page=100", token)
+              if status != 200 or not isinstance(parsed, list):
+                  return None
+              messages = []
+              for item in parsed:
+                  if isinstance(item, dict) and isinstance(item.get("message"), str):
+                      messages.append(item["message"])
+              return messages
+
+          def classify_failure():
+              if os.environ.get("PAGES_DEPLOY_PAGE_URL", "").strip():
+                  print("deployment was created; not retrying", flush=True)
+                  raise SystemExit(1)
+              missing = "No artifacts named " + '"github-pages"' + " were found"
+              blockers = (
+                  "Timeout reached, aborting!",
+                  "Multiple artifacts named ",
+                  "Deployment failed",
+                  "Artifact could not be deployed",
+                  "Too many errors, aborting",
+                  "Failed with status code:",
+              )
+              deadline = time.monotonic() + bounded_seconds("PAGES_DEPLOY_CLASSIFY_SECONDS", 30, 60)
+              poll = bounded_seconds("PAGES_ARTIFACT_POLL_SECONDS", 5, 30)
+              while True:
+                  messages = annotation_messages()
+                  if messages:
+                      blob = "\n".join(messages)
+                      blocked = any(part in blob for part in blockers)
+                      if missing in blob and not blocked:
+                          pause = bounded_seconds("PAGES_DEPLOY_RETRY_PAUSE_SECONDS", 10, 30)
+                          if pause:
+                              time.sleep(pause)
+                          if query_results() == "ambiguous" or query_actions_api() == "ambiguous":
+                              raise SystemExit("PAGES_ARTIFACT_AMBIGUOUS")
+                          path = os.environ.get("GITHUB_OUTPUT", "").strip()
+                          if path == "":
+                              raise SystemExit("PAGES_DEPLOY_OUTPUT_MISSING")
+                          with open(path, "a", encoding="utf-8") as handle:
+                              handle.write("retry=true\n")
+                          print("missing github-pages metadata; retrying deploy once", flush=True)
+                          return
+                      if blocked or missing in blob:
+                          print("deploy failure is not missing artifact metadata", flush=True)
+                          raise SystemExit(1)
+                  if time.monotonic() >= deadline:
+                      print("deploy failure was not classified as missing artifact metadata", flush=True)
+                      raise SystemExit(1)
+                  remaining = deadline - time.monotonic()
+                  time.sleep(poll if poll < remaining else remaining)
+
+          def main():
+              command = os.environ.get("PAGES_ARTIFACT_COMMAND", "")
+              if command == "wait":
+                  wait_for_artifact()
+              elif command == "classify":
+                  classify_failure()
+              else:
+                  raise SystemExit("PAGES_ARTIFACT_COMMAND_INVALID")
+
+          if __name__ == "__main__":
+              main()
+          # END pages-artifact-gate
+          PY
+          python3 "$RUNNER_TEMP/pages-artifact-gate.py"
+      - name: Deploy to GitHub Pages
         id: deployment
+        continue-on-error: true
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
         with:
           # The action rejects anything above 600000. Staying under that cap is the artifact budget above.
           timeout: 600000
+      # page_url is set only after a Pages deployment object exists. syncing_files and the
+      # action timeout happen after that, so they do not enter this step. A metadata miss exits
+      # before setOutput. One later deploy does not upload a second artifact.
+      - name: Classify a missing github-pages artifact
+        id: deploy_class
+        if: steps.deployment.outcome == 'failure' && steps.deployment.outputs.page_url == ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PAGES_ARTIFACT_COMMAND: classify
+          PAGES_DEPLOY_CLASSIFY_SECONDS: "30"
+          PAGES_DEPLOY_RETRY_PAUSE_SECONDS: "10"
+          PAGES_DEPLOY_PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: python3 "$RUNNER_TEMP/pages-artifact-gate.py"
+      - name: Retry deploy when artifact metadata was missing
+        id: deployment_retry
+        if: steps.deploy_class.outputs.retry == 'true'
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
+        with:
+          timeout: 600000
+      - name: Require a successful Pages deployment
+        if: steps.deployment.outcome != 'success' && steps.deployment_retry.outcome != 'success'
+        run: |
+          echo "Pages deployment did not succeed" >&2
+          exit 1

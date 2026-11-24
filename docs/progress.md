@@ -2,6 +2,12 @@
 
 > 当前运行事实以[生产状态入口](当前生产状态与执行待办.md)为准。2026-09-24 及更早的待办已过时。归档前完整日志已[按原字节保存](archive/2026-09-24-project-handoff/originals/docs/progress.md.txt)。
 
+## 2026-11-24 — Pages 制品列表竞态
+
+`actions/upload-pages-artifact` 已经成功时，`actions/deploy-pages` 仍可能立刻在本 run 的制品列表里看到 0 个 `github-pages`，作业大约 30 秒失败。这不是 `syncing_files` 的 10 分钟上限，也不是文件数或体积超限。源工作流在核对当前分支头之后最多等 180 秒：deploy-pages 读取的结果服务列表里要有恰好一份 `github-pages`；Actions API 能回答时也要能看到。若部署在创建 Pages deployment 之前就因找不到该制品失败，只再部署一次，不再上传。`cancel-in-progress` 仍是 false，24000 个文件 / 512MiB 和 `timeout: 600000` 不变。
+
+模板还在源码里。办公室 M1 的 `pages.yml` 和 f1plus1 `gh-pages` 都还是旧文件。下一次内容发布要带上这个修复，需要先在 M1 更新源码并跑 `lean-deploy.sh`，或另行推一次只改工作流的提交。不要为这件事重发故事。
+
 ## 2026-11-07 — Pages `syncing_files` 超时
 
 `actions/deploy-pages` 把等待时间封死在 600000ms。上传 zip 大约 15 秒就结束，失败发生在 Pages 同步解压后的整棵树。11 月 7 日实测：成功的 #2205 是 3 份 generation、26603 个文件、解压 532MiB、zip 273MB；失败的 #2192 是 5 份、38859 个文件、zip 337MB，状态停在 `syncing_files` 直到 10 分钟被掐断。上一轮「最新 2 份，或最近 1 小时里更多的那一边」在大约 15 分钟一次的发布下会留下 3–5 份完整响应树。
