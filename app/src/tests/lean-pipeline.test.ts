@@ -599,10 +599,13 @@ describe("pages artifact budget", () => {
   it("keeps the Pages workflow guard on the same budget and does not raise the capped timeout", () => {
     const yaml = readFileSync(fileURLToPath(new URL("../../scripts/pages-workflow.yml", import.meta.url)), "utf8");
     expect(yaml).toContain("cancel-in-progress: false");
+    expect(yaml).not.toContain("cancel-in-progress: true");
     expect(yaml).toContain("timeout: 600000");
     expect(yaml).not.toContain("1200000");
     expect(yaml).toContain(`max_files = ${PAGES_ARTIFACT_MAX_FILES}`);
     expect(yaml).toContain(`max_bytes = ${PAGES_ARTIFACT_MAX_BYTES}`);
+    expect(yaml).toContain('test "$current" = "$GITHUB_SHA"');
+    expect(yaml).toContain('PAGES_ARTIFACT_WAIT_SECONDS: "180"');
   });
 });
 
