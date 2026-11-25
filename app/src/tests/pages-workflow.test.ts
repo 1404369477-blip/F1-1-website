@@ -140,22 +140,33 @@ describe("pages publish workflow", () => {
     expect(yaml).toContain('PAGES_ARTIFACT_POLL_SECONDS: "5"');
     expect(yaml).toContain('PAGES_DEPLOY_CLASSIFY_SECONDS: "30"');
     expect(yaml).toContain('PAGES_DEPLOY_RETRY_PAUSE_SECONDS: "10"');
-    expect(yaml.split("continue-on-error: true")).toHaveLength(2);
+    expect(yaml.split("continue-on-error: true")).toHaveLength(3);
     expect(yaml.split("actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e")).toHaveLength(3);
+    expect(yaml).toContain("actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd");
+    expect(yaml).toContain('core.exportVariable("ACTIONS_RUNTIME_TOKEN", token)');
+    expect(yaml).toContain('core.exportVariable("ACTIONS_RESULTS_URL", resultsUrl)');
+    expect(yaml).toContain("core.setSecret(token)");
     expect(yaml).toContain("steps.deployment.outputs.page_url == ''");
-    expect(yaml).toContain("steps.deploy_class.outputs.retry == 'true'");
+    expect(yaml).toContain("steps.deploy_class.outputs.retry != 'false'");
+    expect(yaml).toContain("!cancelled()");
+    expect(yaml).not.toContain("steps.deploy_class.outputs.retry == 'true'");
+    expect(yaml).not.toContain("github-pages artifact is listed on the Actions API");
     expect(yaml).not.toContain('No artifacts named "github-pages" were found');
 
     const head = yaml.indexOf("Require current branch head");
+    const expose = yaml.indexOf("Expose the artifact results credentials");
     const wait = yaml.indexOf("Wait until github-pages is listed for this run");
     const deploy = yaml.indexOf("Deploy to GitHub Pages");
     const classify = yaml.indexOf("Classify a missing github-pages artifact");
     const retry = yaml.indexOf("Retry deploy when artifact metadata was missing");
+    const classifyStep = yaml.slice(classify, retry);
     expect(head).toBeGreaterThan(yaml.indexOf("actions/upload-pages-artifact@"));
-    expect(wait).toBeGreaterThan(head);
+    expect(expose).toBeGreaterThan(head);
+    expect(wait).toBeGreaterThan(expose);
     expect(deploy).toBeGreaterThan(wait);
     expect(classify).toBeGreaterThan(deploy);
     expect(retry).toBeGreaterThan(classify);
+    expect(classifyStep).toContain("continue-on-error: true");
     expect(yaml.indexOf("continue-on-error: true")).toBeLessThan(retry);
   });
 
@@ -275,6 +286,107 @@ describe("pages publish workflow", () => {
     }
   });
 
+  it("does not deploy on the first poll when the results list is unavailable and the Actions API already lists the artifact", async () => {
+    let resultsCalls = 0;
+    let apiCalls = 0;
+    const server = await withServer(async (url, _body, respond) => {
+      if (url.pathname.endsWith("/ListArtifacts")) {
+        resultsCalls += 1;
+        respond(401, { message: "not yet" });
+        return;
+      }
+      apiCalls += 1;
+      respond(200, listedArtifact(1));
+    });
+    try {
+      const result = await runGate({
+        PAGES_ARTIFACT_COMMAND: "wait",
+        PAGES_ARTIFACT_WAIT_SECONDS: "0.35",
+        PAGES_ARTIFACT_POLL_SECONDS: "0.05",
+        GITHUB_API_URL: server.base,
+        GITHUB_REPOSITORY: "acme/f1",
+        GITHUB_RUN_ID: "99",
+        GH_TOKEN: REST_MARKER,
+        ACTIONS_RUNTIME_TOKEN: fakeRuntimeToken(),
+        ACTIONS_RESULTS_URL: server.base
+      });
+      expect(result.status).toBe(0);
+      expect(resultsCalls).toBeGreaterThanOrEqual(3);
+      expect(apiCalls).toBeGreaterThanOrEqual(3);
+      expect(result.stdout).toContain("results_list=http_401");
+      expect(result.stdout).toContain("results service stayed unavailable for the full wait");
+      expect(result.stdout).not.toContain("github-pages artifact is listed");
+      assertNoSecrets(result.stdout + result.stderr);
+    } finally {
+      await server.close();
+    }
+  });
+
+  it("keeps polling when the results credentials are missing even though the Actions API lists the artifact", async () => {
+    let apiCalls = 0;
+    const server = await withServer(async (url, _body, respond) => {
+      expect(url.pathname.endsWith("/ListArtifacts")).toBe(false);
+      apiCalls += 1;
+      respond(200, listedArtifact(1));
+    });
+    try {
+      const result = await runGate({
+        PAGES_ARTIFACT_COMMAND: "wait",
+        PAGES_ARTIFACT_WAIT_SECONDS: "0.35",
+        PAGES_ARTIFACT_POLL_SECONDS: "0.05",
+        GITHUB_API_URL: server.base,
+        GITHUB_REPOSITORY: "acme/f1",
+        GITHUB_RUN_ID: "99",
+        GH_TOKEN: REST_MARKER
+      });
+      expect(result.status).toBe(0);
+      expect(apiCalls).toBeGreaterThanOrEqual(3);
+      expect(result.stdout).toContain("results_list=missing_credentials");
+      expect(result.stdout).not.toContain("results_list=http_");
+      expect(result.stdout).toContain("results service stayed unavailable for the full wait");
+      expect(result.stdout).not.toContain("github-pages artifact is listed");
+      assertNoSecrets(result.stdout + result.stderr);
+    } finally {
+      await server.close();
+    }
+  });
+
+  it("deploys as soon as the results list shows the artifact after earlier unavailable polls", async () => {
+    let resultsCalls = 0;
+    const server = await withServer(async (url, _body, respond) => {
+      if (url.pathname.endsWith("/ListArtifacts")) {
+        resultsCalls += 1;
+        if (resultsCalls < 3) {
+          respond(401, {});
+          return;
+        }
+        respond(200, listedArtifact(1));
+        return;
+      }
+      respond(200, listedArtifact(1));
+    });
+    try {
+      const result = await runGate({
+        PAGES_ARTIFACT_COMMAND: "wait",
+        PAGES_ARTIFACT_WAIT_SECONDS: "2",
+        PAGES_ARTIFACT_POLL_SECONDS: "0.05",
+        GITHUB_API_URL: server.base,
+        GITHUB_REPOSITORY: "acme/f1",
+        GITHUB_RUN_ID: "99",
+        GH_TOKEN: REST_MARKER,
+        ACTIONS_RUNTIME_TOKEN: fakeRuntimeToken(),
+        ACTIONS_RESULTS_URL: server.base
+      });
+      expect(result.status).toBe(0);
+      expect(resultsCalls).toBe(3);
+      expect(result.stdout).toContain("github-pages artifact is listed");
+      expect(result.stdout).not.toContain("grace period");
+      assertNoSecrets(result.stdout + result.stderr);
+    } finally {
+      await server.close();
+    }
+  });
+
   it("proceeds after the bound when the results service is ready and the Actions API is still empty", async () => {
     const server = await withServer(async (url, _body, respond) => {
       respond(200, url.pathname.endsWith("/ListArtifacts") ? listedArtifact(1) : listedArtifact(0));
@@ -314,6 +426,7 @@ describe("pages publish workflow", () => {
     const metadata = "Error: No artifacts named " + '"github-pages"' + " were found for this workflow run.";
     const cases = [
       { message: metadata, pageUrl: "", retry: true },
+      { message: "Found 0 artifact(s)", pageUrl: "", retry: true },
       { message: "Timeout reached, aborting!", pageUrl: "", retry: false },
       { message: "Deployment failed, try again later.", pageUrl: "", retry: false },
       { message: "Artifact could not be deployed. Please ensure the content does not contain any hard links.", pageUrl: "", retry: false },
@@ -353,9 +466,13 @@ describe("pages publish workflow", () => {
           expect(result.status).toBe(0);
           expect(result.output).toBe("retry=true\n");
           expect(result.stdout).toContain("retrying deploy once");
-        } else {
+        } else if (item.pageUrl) {
           expect(result.status).toBe(1);
-          expect(result.output).not.toContain("retry=true");
+          expect(result.output).not.toContain("retry=");
+        } else {
+          expect(result.status).toBe(0);
+          expect(result.output).toBe("retry=false\n");
+          expect(result.stdout).toContain("not missing artifact metadata");
         }
         assertNoSecrets(result.stdout + result.stderr + result.output);
       } finally {
@@ -364,7 +481,7 @@ describe("pages publish workflow", () => {
     }
   });
 
-  it("does not retry when the failure annotations never identify missing metadata", async () => {
+  it("retries once when annotations are not ready before the classify window ends", async () => {
     const location = { base: "" };
     const server = await withServer(async (url, _body, respond) => {
       if (url.pathname.endsWith("/jobs")) {
@@ -387,9 +504,37 @@ describe("pages publish workflow", () => {
         GITHUB_JOB: "deploy",
         GH_TOKEN: REST_MARKER
       });
-      expect(result.status).toBe(1);
+      expect(result.status).toBe(0);
       expect(result.stdout).toContain("not classified as missing artifact metadata");
-      expect(result.output).not.toContain("retry=true");
+      expect(result.stdout).toContain("retrying deploy once");
+      expect(result.output).toBe("retry=true\n");
+      assertNoSecrets(result.stdout + result.stderr + result.output);
+    } finally {
+      await server.close();
+    }
+  });
+
+  it("retries once when the checks API cannot be read and does not fail the classify command", async () => {
+    const server = await withServer(async (_url, _body, respond) => {
+      respond(500, { message: "annotations not ready" });
+    });
+    try {
+      const result = await runGate({
+        PAGES_ARTIFACT_COMMAND: "classify",
+        PAGES_DEPLOY_CLASSIFY_SECONDS: "0.25",
+        PAGES_DEPLOY_RETRY_PAUSE_SECONDS: "0",
+        PAGES_ARTIFACT_POLL_SECONDS: "0.05",
+        PAGES_DEPLOY_PAGE_URL: "",
+        GITHUB_API_URL: server.base,
+        GITHUB_REPOSITORY: "acme/f1",
+        GITHUB_RUN_ID: "99",
+        GITHUB_JOB: "deploy",
+        GH_TOKEN: REST_MARKER
+      });
+      expect(result.status).toBe(0);
+      expect(result.stdout).toContain("retrying deploy once");
+      expect(result.output).toBe("retry=true\n");
+      expect(result.stderr).not.toContain("Error");
     } finally {
       await server.close();
     }

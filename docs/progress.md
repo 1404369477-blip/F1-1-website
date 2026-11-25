@@ -2,6 +2,14 @@
 
 > 当前运行事实以[生产状态入口](当前生产状态与执行待办.md)为准。2026-09-24 及更早的待办已过时。归档前完整日志已[按原字节保存](archive/2026-09-24-project-handoff/originals/docs/progress.md.txt)。
 
+## 2026-11-25 — Pages 结果列表等待没有发出请求
+
+11 月 24 日装进 f1plus1 的等待没有问到 `actions/deploy-pages` 使用的结果服务。`ACTIONS_RUNTIME_TOKEN` 和 `ACTIONS_RESULTS_URL` 只注入 Node action，`run` 步骤里是空的，探针记 `results=unavailable`，又因为公开 Actions API 已经列出 1 个制品而马上部署。11 月 25 日 12 次发布，7 次成功、5 次失败；失败都在大约 40 秒到 1 分 4 秒内结束，等待步骤是 0 秒。失败日志是 `Found 0 artifact(s)` 和 `No artifacts named "github-pages"`。分类只看 30 秒内的 Checks 注释，注释来不及就以退出码 1 结束，重试步骤被跳过。
+
+源工作流先用 `actions/github-script` 把结果服务凭证导出给后面的 `run` 步骤。结果列表不可用时，即使 Actions API 已经列出制品也继续等到上限，到点才部署。结果列表明确回答 0 份时仍然失败关闭。第一次 deploy 没有创建 deployment（`page_url` 为空）时，注释如果来不及读到，仍然再部署一次；分类失败不再把作业打断。已有 deployment 的 `Deployment failed, try again later` 不重试，避免再创建一个 deployment。`cancel-in-progress` 仍是 false，24000 个文件 / 512MiB 和两处 `timeout: 600000` 不变。
+
+这次只改源码模板。M1 的 `pages.yml` 和 f1plus1 `gh-pages` 还是 11 月 24 日那一版。下一次内容发布要带上这个修复，需要先在 M1 更新源码并跑 `lean-deploy.sh`，或另行推一次只改工作流的提交。不要为这件事重发故事，也不要直接推 `gh-pages`。
+
 ## 2026-11-24 — Pages 制品列表竞态
 
 `actions/upload-pages-artifact` 已经成功时，`actions/deploy-pages` 仍可能立刻在本 run 的制品列表里看到 0 个 `github-pages`，作业大约 30 秒失败。这不是 `syncing_files` 的 10 分钟上限，也不是文件数或体积超限。源工作流在核对当前分支头之后最多等 180 秒：deploy-pages 读取的结果服务列表里要有恰好一份 `github-pages`；Actions API 能回答时也要能看到。若部署在创建 Pages deployment 之前就因找不到该制品失败，只再部署一次，不再上传。`cancel-in-progress` 仍是 false，24000 个文件 / 512MiB 和 `timeout: 600000` 不变。

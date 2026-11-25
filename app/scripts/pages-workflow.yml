@@ -8,7 +8,8 @@ permissions:
   pages: write
   id-token: write
   # Read this run's artifact list and the deploy step's check annotations.
-  # deploy-pages itself lists artifacts with the runner results token.
+  # The results-service token is injected only into Node.js actions. github-script
+  # re-exports it for the wait below. deploy-pages lists artifacts with that token.
   actions: read
   checks: read
 concurrency:
@@ -59,10 +60,22 @@ jobs:
           current=$(gh api repos/1404369477-blip/f1plus1/git/ref/heads/gh-pages --jq .object.sha)
           test "$current" = "$GITHUB_SHA"
       # upload-pages-artifact can finalize while the list deploy-pages reads is still empty.
-      # That list is the artifact results service, not a missing upload. The public Actions
-      # API for this run can lag separately. Wait until the results list shows one
-      # github-pages artifact (and the Actions API does too, when it answers), then deploy.
-      # Bound is a few minutes. A still-empty results list fails closed instead of calling deploy.
+      # That list is the results service. ACTIONS_RUNTIME_TOKEN and ACTIONS_RESULTS_URL
+      # exist only in Node.js actions, so a run step cannot query it until one re-exports
+      # them. The public Actions API can show the artifact first; that is not this list.
+      # Wait until the results list shows one github-pages artifact. If the results list
+      # cannot be read, keep polling for the whole bound before deploying. A results list
+      # that answers and stays empty fails closed instead of calling deploy.
+      - name: Expose the artifact results credentials
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
+        with:
+          script: |
+            const token = process.env.ACTIONS_RUNTIME_TOKEN || ""
+            const resultsUrl = process.env.ACTIONS_RESULTS_URL || ""
+            if (token) core.setSecret(token)
+            core.exportVariable("ACTIONS_RUNTIME_TOKEN", token)
+            core.exportVariable("ACTIONS_RESULTS_URL", resultsUrl)
+            core.info(token && resultsUrl ? "results credentials exported" : "results credentials missing")
       - name: Wait until github-pages is listed for this run
         env:
           GH_TOKEN: ${{ github.token }}
@@ -166,12 +179,15 @@ jobs:
               token = os.environ.get("ACTIONS_RUNTIME_TOKEN", "").strip()
               results_url = os.environ.get("ACTIONS_RESULTS_URL", "").strip()
               if token == "" or results_url == "":
+                  print("results_list=missing_credentials", flush=True)
                   return "unavailable"
               ids = backend_ids(token)
               if ids is None:
+                  print("results_list=unreadable_token", flush=True)
                   return "unavailable"
               parts = urllib.parse.urlsplit(results_url)
               if parts.scheme not in ("https", "http") or parts.netloc == "":
+                  print("results_list=bad_url", flush=True)
                   return "unavailable"
               url = (
                   parts.scheme
@@ -255,12 +271,15 @@ jobs:
                   if results == 1 and rest in (1, "unavailable"):
                       print("github-pages artifact is listed", flush=True)
                       return
-                  if results == "unavailable" and rest == 1:
-                      print("github-pages artifact is listed on the Actions API", flush=True)
-                      return
                   if time.monotonic() >= deadline:
                       if results == 1:
                           print("actions_api lagging; results service lists github-pages", flush=True)
+                          return
+                      # The Actions API is not the list deploy-pages reads. Keep
+                      # polling while the results list cannot be read. After the
+                      # whole bound, deploy once; a still-empty deploy is retried.
+                      if results == "unavailable" and rest == 1:
+                          print("results service stayed unavailable for the full wait; deploying after that grace period", flush=True)
                           return
                       raise SystemExit("PAGES_ARTIFACT_METADATA_TIMEOUT")
                   remaining = deadline - time.monotonic()
@@ -315,11 +334,31 @@ jobs:
                       messages.append(item["message"])
               return messages
 
+          def write_retry(value):
+              path = os.environ.get("GITHUB_OUTPUT", "").strip()
+              if path == "":
+                  raise SystemExit("PAGES_DEPLOY_OUTPUT_MISSING")
+              with open(path, "a", encoding="utf-8") as handle:
+                  handle.write("retry=" + value + "\n")
+
+          def pause_before_retry():
+              pause = bounded_seconds("PAGES_DEPLOY_RETRY_PAUSE_SECONDS", 10, 30)
+              if pause:
+                  time.sleep(pause)
+
+          def refuse_ambiguous_retry():
+              if query_results() == "ambiguous" or query_actions_api() == "ambiguous":
+                  write_retry("false")
+                  raise SystemExit("PAGES_ARTIFACT_AMBIGUOUS")
+
           def classify_failure():
               if os.environ.get("PAGES_DEPLOY_PAGE_URL", "").strip():
                   print("deployment was created; not retrying", flush=True)
                   raise SystemExit(1)
-              missing = "No artifacts named " + '"github-pages"' + " were found"
+              missing_markers = (
+                  "No artifacts named " + '"github-pages"' + " were found",
+                  "Found 0 artifact(s)",
+              )
               blockers = (
                   "Timeout reached, aborting!",
                   "Multiple artifacts named ",
@@ -334,26 +373,26 @@ jobs:
                   messages = annotation_messages()
                   if messages:
                       blob = "\n".join(messages)
+                      has_missing = any(part in blob for part in missing_markers)
                       blocked = any(part in blob for part in blockers)
-                      if missing in blob and not blocked:
-                          pause = bounded_seconds("PAGES_DEPLOY_RETRY_PAUSE_SECONDS", 10, 30)
-                          if pause:
-                              time.sleep(pause)
-                          if query_results() == "ambiguous" or query_actions_api() == "ambiguous":
-                              raise SystemExit("PAGES_ARTIFACT_AMBIGUOUS")
-                          path = os.environ.get("GITHUB_OUTPUT", "").strip()
-                          if path == "":
-                              raise SystemExit("PAGES_DEPLOY_OUTPUT_MISSING")
-                          with open(path, "a", encoding="utf-8") as handle:
-                              handle.write("retry=true\n")
+                      if has_missing and not blocked:
+                          pause_before_retry()
+                          refuse_ambiguous_retry()
+                          write_retry("true")
                           print("missing github-pages metadata; retrying deploy once", flush=True)
                           return
-                      if blocked or missing in blob:
+                      if blocked:
                           print("deploy failure is not missing artifact metadata", flush=True)
-                          raise SystemExit(1)
+                          write_retry("false")
+                          return
                   if time.monotonic() >= deadline:
-                      print("deploy failure was not classified as missing artifact metadata", flush=True)
-                      raise SystemExit(1)
+                      # Checks annotations lag the deploy log. Missing metadata is
+                      # already in that log; do not fail the job and skip the retry.
+                      print("deploy failure was not classified as missing artifact metadata; retrying deploy once", flush=True)
+                      pause_before_retry()
+                      refuse_ambiguous_retry()
+                      write_retry("true")
+                      return
                   remaining = deadline - time.monotonic()
                   time.sleep(poll if poll < remaining else remaining)
 
@@ -380,10 +419,13 @@ jobs:
           timeout: 600000
       # page_url is set only after a Pages deployment object exists. syncing_files and the
       # action timeout happen after that, so they do not enter this step. A metadata miss exits
-      # before setOutput. One later deploy does not upload a second artifact.
+      # before setOutput. Annotations often arrive after this job would already be dead, so an
+      # unclassified failure still retries once. continue-on-error keeps a classify failure from
+      # skipping that retry. One later deploy does not upload a second artifact.
       - name: Classify a missing github-pages artifact
         id: deploy_class
-        if: steps.deployment.outcome == 'failure' && steps.deployment.outputs.page_url == ''
+        if: "${{ !cancelled() && steps.deployment.outcome == 'failure' && steps.deployment.outputs.page_url == '' }}"
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
           PAGES_ARTIFACT_COMMAND: classify
@@ -393,12 +435,12 @@ jobs:
         run: python3 "$RUNNER_TEMP/pages-artifact-gate.py"
       - name: Retry deploy when artifact metadata was missing
         id: deployment_retry
-        if: steps.deploy_class.outputs.retry == 'true'
+        if: "${{ !cancelled() && steps.deployment.outcome == 'failure' && steps.deployment.outputs.page_url == '' && steps.deploy_class.outputs.retry != 'false' }}"
         uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
         with:
           timeout: 600000
       - name: Require a successful Pages deployment
-        if: steps.deployment.outcome != 'success' && steps.deployment_retry.outcome != 'success'
+        if: "${{ !cancelled() && steps.deployment.outcome != 'success' && steps.deployment_retry.outcome != 'success' }}"
         run: |
           echo "Pages deployment did not succeed" >&2
           exit 1
