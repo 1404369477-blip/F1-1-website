@@ -606,6 +606,11 @@ describe("pages artifact budget", () => {
     expect(yaml).toContain(`max_bytes = ${PAGES_ARTIFACT_MAX_BYTES}`);
     expect(yaml).toContain('test "$current" = "$GITHUB_SHA"');
     expect(yaml).toContain('PAGES_ARTIFACT_WAIT_SECONDS: "180"');
+    expect(yaml).toContain("actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd");
+    expect(yaml).toContain('core.exportVariable("ACTIONS_RUNTIME_TOKEN", token)');
+    expect(yaml).not.toContain("github-pages artifact is listed on the Actions API");
+    expect(yaml).toContain("steps.deploy_class.outputs.retry != 'false'");
+    expect(yaml).toContain("continue-on-error: true");
   });
 });
 
